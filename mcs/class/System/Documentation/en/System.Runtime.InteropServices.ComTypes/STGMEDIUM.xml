@@ -1,8 +1,10 @@
 <Type Name="STGMEDIUM" FullName="System.Runtime.InteropServices.ComTypes.STGMEDIUM">
   <TypeSignature Language="C#" Value="public struct STGMEDIUM" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit STGMEDIUM extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ValueType</BaseTypeName>
@@ -15,9 +17,11 @@
   <Members>
     <Member MemberName="pUnkForRelease">
       <MemberSignature Language="C#" Value="public object pUnkForRelease;" />
+      <MemberSignature Language="ILAsm" Value=".field public object pUnkForRelease" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -29,9 +33,11 @@
     </Member>
     <Member MemberName="tymed">
       <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.ComTypes.TYMED tymed;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.ComTypes.TYMED tymed" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.TYMED</ReturnType>
@@ -43,9 +49,11 @@
     </Member>
     <Member MemberName="unionmember">
       <MemberSignature Language="C#" Value="public IntPtr unionmember;" />
+      <MemberSignature Language="ILAsm" Value=".field public native int unionmember" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>

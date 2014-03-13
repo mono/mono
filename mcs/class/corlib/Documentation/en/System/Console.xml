@@ -1,6 +1,7 @@
 <Type Name="Console" FullName="System.Console" FullNameSP="System_Console" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed Console extends System.Object" />
   <TypeSignature Language="C#" Value="public static class Console" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed Console extends System.Object" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -72,8 +73,13 @@ public class ConsoleTest {
   </Docs>
   <Members>
     <Member MemberName="BackgroundColor">
-      <MemberSignature Language="C#" Value="public static ConsoleColor BackgroundColor { set; get; }" />
+      <MemberSignature Language="C#" Value="public static ConsoleColor BackgroundColor { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.ConsoleColor BackgroundColor" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ConsoleColor</ReturnType>
       </ReturnValue>
@@ -83,14 +89,15 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Beep">
+      <MemberSignature Language="C#" Value="public static void Beep ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Beep() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Beep">
-      <MemberSignature Language="C#" Value="public static void Beep ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -100,14 +107,15 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Beep">
+      <MemberSignature Language="C#" Value="public static void Beep (int frequency, int duration);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Beep(int32 frequency, int32 duration) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Beep">
-      <MemberSignature Language="C#" Value="public static void Beep (int frequency, int duration);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -122,14 +130,15 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BufferHeight">
-      <MemberSignature Language="C#" Value="public static int BufferHeight { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int BufferHeight { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 BufferHeight" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -139,14 +148,15 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BufferWidth">
-      <MemberSignature Language="C#" Value="public static int BufferWidth { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int BufferWidth { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 BufferWidth" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -156,14 +166,15 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CancelKeyPress">
       <MemberSignature Language="C#" Value="public static event ConsoleCancelEventHandler CancelKeyPress;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.ConsoleCancelEventHandler CancelKeyPress" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ConsoleCancelEventHandler</ReturnType>
       </ReturnValue>
@@ -172,13 +183,10 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CapsLock">
       <MemberSignature Language="C#" Value="public static bool CapsLock { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool CapsLock" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -195,7 +203,12 @@ public class ConsoleTest {
     </Member>
     <Member MemberName="Clear">
       <MemberSignature Language="C#" Value="public static void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Clear() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -205,14 +218,15 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="CursorLeft">
+      <MemberSignature Language="C#" Value="public static int CursorLeft { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 CursorLeft" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CursorLeft">
-      <MemberSignature Language="C#" Value="public static int CursorLeft { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -222,13 +236,10 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CursorSize">
-      <MemberSignature Language="C#" Value="public static int CursorSize { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int CursorSize { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 CursorSize" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -244,8 +255,13 @@ public class ConsoleTest {
       </Docs>
     </Member>
     <Member MemberName="CursorTop">
-      <MemberSignature Language="C#" Value="public static int CursorTop { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int CursorTop { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 CursorTop" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -255,14 +271,15 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="CursorVisible">
+      <MemberSignature Language="C#" Value="public static bool CursorVisible { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool CursorVisible" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CursorVisible">
-      <MemberSignature Language="C#" Value="public static bool CursorVisible { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -272,15 +289,17 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Error">
       <MemberSignature Language="ILASM" Value=".property class System.IO.TextWriter Error { public hidebysig static specialname class System.IO.TextWriter get_Error() }" />
       <MemberSignature Language="C#" Value="public static System.IO.TextWriter Error { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.IO.TextWriter Error" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.TextWriter</ReturnType>
       </ReturnValue>
@@ -305,15 +324,15 @@ public class ConsoleTest {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ForegroundColor">
+      <MemberSignature Language="C#" Value="public static ConsoleColor ForegroundColor { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.ConsoleColor ForegroundColor" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ForegroundColor">
-      <MemberSignature Language="C#" Value="public static ConsoleColor ForegroundColor { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.ConsoleColor</ReturnType>
       </ReturnValue>
@@ -323,15 +342,17 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="In">
       <MemberSignature Language="ILASM" Value=".property class System.IO.TextReader In { public hidebysig static specialname class System.IO.TextReader get_In() }" />
       <MemberSignature Language="C#" Value="public static System.IO.TextReader In { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.IO.TextReader In" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.TextReader</ReturnType>
       </ReturnValue>
@@ -355,15 +376,15 @@ public class ConsoleTest {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="InputEncoding">
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding InputEncoding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.Encoding InputEncoding" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="InputEncoding">
-      <MemberSignature Language="C#" Value="public static System.Text.Encoding InputEncoding { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -373,14 +394,63 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="IsErrorRedirected">
+      <MemberSignature Language="C#" Value="public static bool IsErrorRedirected { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool IsErrorRedirected" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsInputRedirected">
+      <MemberSignature Language="C#" Value="public static bool IsInputRedirected { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool IsInputRedirected" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsOutputRedirected">
+      <MemberSignature Language="C#" Value="public static bool IsOutputRedirected { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool IsOutputRedirected" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="KeyAvailable">
+      <MemberSignature Language="C#" Value="public static bool KeyAvailable { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool KeyAvailable" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="KeyAvailable">
-      <MemberSignature Language="C#" Value="public static bool KeyAvailable { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -390,13 +460,10 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LargestWindowHeight">
       <MemberSignature Language="C#" Value="public static int LargestWindowHeight { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 LargestWindowHeight" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -413,6 +480,7 @@ public class ConsoleTest {
     </Member>
     <Member MemberName="LargestWindowWidth">
       <MemberSignature Language="C#" Value="public static int LargestWindowWidth { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 LargestWindowWidth" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -429,7 +497,12 @@ public class ConsoleTest {
     </Member>
     <Member MemberName="MoveBufferArea">
       <MemberSignature Language="C#" Value="public static void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight, int targetLeft, int targetTop);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void MoveBufferArea(int32 sourceLeft, int32 sourceTop, int32 sourceWidth, int32 sourceHeight, int32 targetLeft, int32 targetTop) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -452,14 +525,15 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="MoveBufferArea">
+      <MemberSignature Language="C#" Value="public static void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight, int targetLeft, int targetTop, char sourceChar, ConsoleColor sourceForeColor, ConsoleColor sourceBackColor);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void MoveBufferArea(int32 sourceLeft, int32 sourceTop, int32 sourceWidth, int32 sourceHeight, int32 targetLeft, int32 targetTop, char sourceChar, valuetype System.ConsoleColor sourceForeColor, valuetype System.ConsoleColor sourceBackColor) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MoveBufferArea">
-      <MemberSignature Language="C#" Value="public static void MoveBufferArea (int sourceLeft, int sourceTop, int sourceWidth, int sourceHeight, int targetLeft, int targetTop, char sourceChar, ConsoleColor sourceForeColor, ConsoleColor sourceBackColor);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -488,13 +562,10 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NumberLock">
       <MemberSignature Language="C#" Value="public static bool NumberLock { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool NumberLock" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -512,7 +583,13 @@ public class ConsoleTest {
     <Member MemberName="OpenStandardError">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.Stream OpenStandardError()" />
       <MemberSignature Language="C#" Value="public static System.IO.Stream OpenStandardError ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.Stream OpenStandardError() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -527,16 +604,17 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OpenStandardError">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.Stream OpenStandardError(int32 bufferSize)" />
+      <MemberSignature Language="C#" Value="public static System.IO.Stream OpenStandardError (int bufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.Stream OpenStandardError(int32 bufferSize) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenStandardError">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.Stream OpenStandardError(int32 bufferSize)" />
-      <MemberSignature Language="C#" Value="public static System.IO.Stream OpenStandardError (int bufferSize);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -560,16 +638,17 @@ public class ConsoleTest {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OpenStandardInput">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.Stream OpenStandardInput()" />
+      <MemberSignature Language="C#" Value="public static System.IO.Stream OpenStandardInput ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.Stream OpenStandardInput() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenStandardInput">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.Stream OpenStandardInput()" />
-      <MemberSignature Language="C#" Value="public static System.IO.Stream OpenStandardInput ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -584,16 +663,17 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OpenStandardInput">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.Stream OpenStandardInput(int32 bufferSize)" />
+      <MemberSignature Language="C#" Value="public static System.IO.Stream OpenStandardInput (int bufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.Stream OpenStandardInput(int32 bufferSize) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenStandardInput">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.Stream OpenStandardInput(int32 bufferSize)" />
-      <MemberSignature Language="C#" Value="public static System.IO.Stream OpenStandardInput (int bufferSize);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -617,16 +697,17 @@ public class ConsoleTest {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OpenStandardOutput">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.Stream OpenStandardOutput()" />
+      <MemberSignature Language="C#" Value="public static System.IO.Stream OpenStandardOutput ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.Stream OpenStandardOutput() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenStandardOutput">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.Stream OpenStandardOutput()" />
-      <MemberSignature Language="C#" Value="public static System.IO.Stream OpenStandardOutput ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -641,16 +722,17 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OpenStandardOutput">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.Stream OpenStandardOutput(int32 bufferSize)" />
+      <MemberSignature Language="C#" Value="public static System.IO.Stream OpenStandardOutput (int bufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.Stream OpenStandardOutput(int32 bufferSize) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenStandardOutput">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.Stream OpenStandardOutput(int32 bufferSize)" />
-      <MemberSignature Language="C#" Value="public static System.IO.Stream OpenStandardOutput (int bufferSize);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.Stream</ReturnType>
       </ReturnValue>
@@ -675,16 +757,17 @@ public class ConsoleTest {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Out">
+      <MemberSignature Language="ILASM" Value=".property class System.IO.TextWriter Out { public hidebysig static specialname class System.IO.TextWriter get_Out() }" />
+      <MemberSignature Language="C#" Value="public static System.IO.TextWriter Out { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.IO.TextWriter Out" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Out">
-      <MemberSignature Language="ILASM" Value=".property class System.IO.TextWriter Out { public hidebysig static specialname class System.IO.TextWriter get_Out() }" />
-      <MemberSignature Language="C#" Value="public static System.IO.TextWriter Out { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.TextWriter</ReturnType>
       </ReturnValue>
@@ -708,15 +791,15 @@ public class ConsoleTest {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OutputEncoding">
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding OutputEncoding { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.Encoding OutputEncoding" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OutputEncoding">
-      <MemberSignature Language="C#" Value="public static System.Text.Encoding OutputEncoding { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -726,15 +809,17 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Read">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 Read()" />
       <MemberSignature Language="C#" Value="public static int Read ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Read() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -762,15 +847,15 @@ public class ConsoleTest {
         <exception cref="T:System.IO.IOException">An I/O error occurred.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadKey">
       <MemberSignature Language="C#" Value="public static ConsoleKeyInfo ReadKey ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.ConsoleKeyInfo ReadKey() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ConsoleKeyInfo</ReturnType>
       </ReturnValue>
@@ -781,14 +866,15 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ReadKey">
+      <MemberSignature Language="C#" Value="public static ConsoleKeyInfo ReadKey (bool intercept);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.ConsoleKeyInfo ReadKey(bool intercept) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadKey">
-      <MemberSignature Language="C#" Value="public static ConsoleKeyInfo ReadKey (bool intercept);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.ConsoleKeyInfo</ReturnType>
       </ReturnValue>
@@ -802,15 +888,17 @@ public class ConsoleTest {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadLine">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static string ReadLine()" />
       <MemberSignature Language="C#" Value="public static string ReadLine ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ReadLine() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -835,15 +923,15 @@ if the end of the input stream has already been reached.
         <exception cref="T:System.OutOfMemoryException">There is insufficient memory to allocate a buffer for the returned string.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ResetColor">
       <MemberSignature Language="C#" Value="public static void ResetColor ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ResetColor() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -853,14 +941,15 @@ if the end of the input stream has already been reached.
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="SetBufferSize">
+      <MemberSignature Language="C#" Value="public static void SetBufferSize (int width, int height);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetBufferSize(int32 width, int32 height) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetBufferSize">
-      <MemberSignature Language="C#" Value="public static void SetBufferSize (int width, int height);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -875,14 +964,15 @@ if the end of the input stream has already been reached.
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="SetCursorPosition">
+      <MemberSignature Language="C#" Value="public static void SetCursorPosition (int left, int top);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetCursorPosition(int32 left, int32 top) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetCursorPosition">
-      <MemberSignature Language="C#" Value="public static void SetCursorPosition (int left, int top);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -897,15 +987,17 @@ if the end of the input stream has already been reached.
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetError">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetError(class System.IO.TextWriter newError)" />
       <MemberSignature Language="C#" Value="public static void SetError (System.IO.TextWriter newError);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetError(class System.IO.TextWriter newError) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -931,16 +1023,17 @@ to the system's standard error stream.</block>
         <permission cref="T:System.Security.Permissions.SecurityPermissionFlag">Requires <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" /> permission.</permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SetIn">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetIn(class System.IO.TextReader newIn)" />
+      <MemberSignature Language="C#" Value="public static void SetIn (System.IO.TextReader newIn);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetIn(class System.IO.TextReader newIn) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetIn">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetIn(class System.IO.TextReader newIn)" />
-      <MemberSignature Language="C#" Value="public static void SetIn (System.IO.TextReader newIn);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -967,16 +1060,17 @@ to the system's standard error stream.</block>
         <permission cref="T:System.Security.Permissions.SecurityPermissionFlag">Requires permission to execute unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" /> .</permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SetOut">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetOut(class System.IO.TextWriter newOut)" />
+      <MemberSignature Language="C#" Value="public static void SetOut (System.IO.TextWriter newOut);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetOut(class System.IO.TextWriter newOut) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetOut">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetOut(class System.IO.TextWriter newOut)" />
-      <MemberSignature Language="C#" Value="public static void SetOut (System.IO.TextWriter newOut);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1002,15 +1096,15 @@ the system's standard output stream.</block>
         <permission cref="T:System.Security.Permissions.SecurityPermissionFlag">Requires permission to execute unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" /> .</permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetWindowPosition">
       <MemberSignature Language="C#" Value="public static void SetWindowPosition (int left, int top);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetWindowPosition(int32 left, int32 top) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1025,14 +1119,15 @@ the system's standard output stream.</block>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="SetWindowSize">
+      <MemberSignature Language="C#" Value="public static void SetWindowSize (int width, int height);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetWindowSize(int32 width, int32 height) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetWindowSize">
-      <MemberSignature Language="C#" Value="public static void SetWindowSize (int width, int height);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1047,14 +1142,15 @@ the system's standard output stream.</block>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Title">
+      <MemberSignature Language="C#" Value="public static string Title { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property string Title" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Title">
-      <MemberSignature Language="C#" Value="public static string Title { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1064,14 +1160,15 @@ the system's standard output stream.</block>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="TreatControlCAsInput">
+      <MemberSignature Language="C#" Value="public static bool TreatControlCAsInput { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool TreatControlCAsInput" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TreatControlCAsInput">
-      <MemberSignature Language="C#" Value="public static bool TreatControlCAsInput { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1081,14 +1178,15 @@ the system's standard output stream.</block>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WindowHeight">
-      <MemberSignature Language="C#" Value="public static int WindowHeight { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int WindowHeight { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 WindowHeight" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1098,14 +1196,15 @@ the system's standard output stream.</block>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WindowLeft">
-      <MemberSignature Language="C#" Value="public static int WindowLeft { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int WindowLeft { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 WindowLeft" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1115,14 +1214,15 @@ the system's standard output stream.</block>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WindowTop">
-      <MemberSignature Language="C#" Value="public static int WindowTop { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int WindowTop { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 WindowTop" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1132,14 +1232,15 @@ the system's standard output stream.</block>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WindowWidth">
-      <MemberSignature Language="C#" Value="public static int WindowWidth { set; get; }" />
+      <MemberSignature Language="C#" Value="public static int WindowWidth { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 WindowWidth" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1149,15 +1250,17 @@ the system's standard output stream.</block>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Write">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(bool value)" />
       <MemberSignature Language="C#" Value="public static void Write (bool value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(bool value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1178,16 +1281,17 @@ the system's standard output stream.</block>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public static void Write (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(char value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(valuetype System.Char value)" />
-      <MemberSignature Language="C#" Value="public static void Write (char value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1203,16 +1307,17 @@ the system's standard output stream.</block>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(class System.Char[] buffer)" />
+      <MemberSignature Language="C#" Value="public static void Write (char[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(char[] buffer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(class System.Char[] buffer)" />
-      <MemberSignature Language="C#" Value="public static void Write (char[] buffer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1231,16 +1336,17 @@ the system's standard output stream.</block>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(decimal value)" />
+      <MemberSignature Language="C#" Value="public static void Write (decimal value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(valuetype System.Decimal value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(decimal value)" />
-      <MemberSignature Language="C#" Value="public static void Write (decimal value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1261,16 +1367,17 @@ the system's standard output stream.</block>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(float64 value)" />
+      <MemberSignature Language="C#" Value="public static void Write (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(float64 value)" />
-      <MemberSignature Language="C#" Value="public static void Write (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1291,16 +1398,17 @@ the system's standard output stream.</block>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(int32 value)" />
+      <MemberSignature Language="C#" Value="public static void Write (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(int32 value)" />
-      <MemberSignature Language="C#" Value="public static void Write (int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1321,16 +1429,17 @@ the system's standard output stream.</block>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(int64 value)" />
+      <MemberSignature Language="C#" Value="public static void Write (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(int64 value)" />
-      <MemberSignature Language="C#" Value="public static void Write (long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1352,16 +1461,17 @@ the system's standard output stream.</block>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(object value)" />
+      <MemberSignature Language="C#" Value="public static void Write (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(object value)" />
-      <MemberSignature Language="C#" Value="public static void Write (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1388,16 +1498,17 @@ output stream.</block>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(float32 value)" />
+      <MemberSignature Language="C#" Value="public static void Write (float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(float32 value)" />
-      <MemberSignature Language="C#" Value="public static void Write (float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1419,16 +1530,17 @@ output stream.</block>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(string value)" />
+      <MemberSignature Language="C#" Value="public static void Write (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(string value)" />
-      <MemberSignature Language="C#" Value="public static void Write (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1451,16 +1563,22 @@ output stream.</block>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public static void Write (uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(unsigned int32 value)" />
-      <MemberSignature Language="C#" Value="public static void Write (uint value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1484,6 +1602,12 @@ output stream.</block>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public static void Write (ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(unsigned int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1494,11 +1618,6 @@ output stream.</block>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(unsigned int64 value)" />
-      <MemberSignature Language="C#" Value="public static void Write (ulong value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1524,21 +1643,17 @@ output stream.</block>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(string format, object arg0)" />
+      <MemberSignature Language="C#" Value="public static void Write (string format, object arg0);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(string format, object arg0) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(string format, object arg0)" />
-      <MemberSignature Language="C#" Value="public static void Write (string format, object arg0);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1569,16 +1684,17 @@ output stream.</block>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(string format, class System.Object[] arg)" />
+      <MemberSignature Language="C#" Value="public static void Write (string format, object[] arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(string format, object[] arg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(string format, class System.Object[] arg)" />
-      <MemberSignature Language="C#" Value="public static void Write (string format, object[] arg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1617,16 +1733,17 @@ output stream.</block>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public static void Write (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(class System.Char[] buffer, int32 index, int32 count)" />
-      <MemberSignature Language="C#" Value="public static void Write (char[] buffer, int index, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1657,16 +1774,17 @@ output stream.</block>
           <paramref name="buffer" /> is <see langword="null" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(string format, object arg0, object arg1)" />
+      <MemberSignature Language="C#" Value="public static void Write (string format, object arg0, object arg1);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(string format, object arg0, object arg1) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(string format, object arg0, object arg1)" />
-      <MemberSignature Language="C#" Value="public static void Write (string format, object arg0, object arg1);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1699,16 +1817,17 @@ output stream.</block>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(string format, object arg0, object arg1, object arg2)" />
+      <MemberSignature Language="C#" Value="public static void Write (string format, object arg0, object arg1, object arg2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(string format, object arg0, object arg1, object arg2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Write(string format, object arg0, object arg1, object arg2)" />
-      <MemberSignature Language="C#" Value="public static void Write (string format, object arg0, object arg1, object arg2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1750,15 +1869,21 @@ output stream.</block>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public static void Write (string format, object arg0, object arg1, object arg2, object arg3);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Write(string format, object arg0, object arg1, object arg2, object arg3) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Write">
-      <MemberSignature Language="C#" Value="public static void Write (string format, object arg0, object arg1, object arg2, object arg3);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1778,21 +1903,17 @@ output stream.</block>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine()" />
+      <MemberSignature Language="C#" Value="public static void WriteLine ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine()" />
-      <MemberSignature Language="C#" Value="public static void WriteLine ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1809,16 +1930,17 @@ output stream.</block>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(bool value)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (bool value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(bool value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(bool value)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (bool value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1843,16 +1965,17 @@ stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(valuetype System.Char value)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (char value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(char value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(valuetype System.Char value)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (char value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1877,16 +2000,17 @@ stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(class System.Char[] buffer)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (char[] buffer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(char[] buffer) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(class System.Char[] buffer)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (char[] buffer);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1914,16 +2038,17 @@ stream.</para>
           <paramref name="buffer" /> is <see langword="null" />. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(decimal value)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (decimal value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(valuetype System.Decimal value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(decimal value)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (decimal value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1946,16 +2071,17 @@ line terminator can be set using the <see cref="P:System.IO.TextWriter.NewLine" 
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(float64 value)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(float64 value)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1978,16 +2104,17 @@ line terminator can be set using the<see cref="P:System.IO.TextWriter.NewLine" q
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(int32 value)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(int32 value)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2012,16 +2139,17 @@ stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(int64 value)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(int64 value)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2046,16 +2174,17 @@ stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(object value)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(object value)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2081,16 +2210,17 @@ stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(float32 value)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(float32 value)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2114,16 +2244,17 @@ of the <see cref="P:System.Console.Out" /> stream.</para>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>ExtendedNumerics</ExcludedLibrary>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(string value)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (string value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(string value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(string value)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (string value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2148,16 +2279,22 @@ stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(unsigned int32 value)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(unsigned int32 value)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (uint value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2184,6 +2321,12 @@ stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(unsigned int64 value)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(unsigned int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2194,11 +2337,6 @@ stream.</para>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(unsigned int64 value)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (ulong value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2225,21 +2363,17 @@ stream.</para>
         <exception cref="T:System.IO.IOException">An I/O error occurred. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(string format, object arg0)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (string format, object arg0);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(string format, object arg0) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(string format, object arg0)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (string format, object arg0);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2275,16 +2409,17 @@ stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(string format, class System.Object[] arg)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (string format, object[] arg);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(string format, object[] arg) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(string format, class System.Object[] arg)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (string format, object[] arg);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2328,16 +2463,17 @@ stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(class System.Char[] buffer, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (char[] buffer, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(char[] buffer, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(class System.Char[] buffer, int32 index, int32 count)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (char[] buffer, int index, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2374,16 +2510,17 @@ stream.</para>
           <paramref name="buffer" /> is <see langword="null" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(string format, object arg0, object arg1)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (string format, object arg0, object arg1);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(string format, object arg0, object arg1) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(string format, object arg0, object arg1)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (string format, object arg0, object arg1);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2421,16 +2558,17 @@ stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(string format, object arg0, object arg1, object arg2)" />
+      <MemberSignature Language="C#" Value="public static void WriteLine (string format, object arg0, object arg1, object arg2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(string format, object arg0, object arg1, object arg2) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void WriteLine(string format, object arg0, object arg1, object arg2)" />
-      <MemberSignature Language="C#" Value="public static void WriteLine (string format, object arg0, object arg1, object arg2);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2470,15 +2608,21 @@ stream.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WriteLine">
+      <MemberSignature Language="C#" Value="public static void WriteLine (string format, object arg0, object arg1, object arg2, object arg3);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteLine(string format, object arg0, object arg1, object arg2, object arg3) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteLine">
-      <MemberSignature Language="C#" Value="public static void WriteLine (string format, object arg0, object arg1, object arg2, object arg3);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2498,16 +2642,6 @@ stream.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

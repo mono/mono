@@ -562,10 +562,19 @@ namespace Mono.Tools.LocaleBuilder
 					case "en":
 						nfe.CurrencySymbol = "$";
 						break;
+					case "bs":
+						nfe.CurrencySymbol = "KM";
+						break;
 					case "es":
 					case "fr":
+					case "de":
+					case "it":
+					case "se":
 						nfe.CurrencySymbol = "€";
 						break;
+					case "hr":
+						nfe.CurrencySymbol = "kn";
+						break;				
 					case "pt":
 						nfe.CurrencySymbol = "R$";
 						break;
@@ -586,6 +595,7 @@ namespace Mono.Tools.LocaleBuilder
 						nfe.CurrencySymbol = "Din.";
 						break;
 					case "zh":
+					case "zh-Hans":
 						nfe.CurrencySymbol = "¥";
 						break;
 					case "zh-Hant":
@@ -607,7 +617,7 @@ namespace Mono.Tools.LocaleBuilder
 						} else {
 							// .NET has weird concept of territory data available for neutral cultures (e.g. en, es, pt)
 							// We have to manually disambiguate the correct entry (which is artofficial anyway)
-							throw new ApplicationException (string.Format ("Ambiguous currency data for `{0}'", ci.Name));
+							throw new ApplicationException (string.Format ("Ambiguous currency data for `{0}'. Possible values '{1}'", ci.Name, string.Join (", ", children)));
 						}
 
 						break;
@@ -997,10 +1007,14 @@ namespace Mono.Tools.LocaleBuilder
 				ProcessAllNodes (nodes, df.MonthNames, AddOrReplaceValue);
 
 				// Apply global rule first <alias source="locale" path="../../monthContext[@type='format']/monthWidth[@type='abbreviated']"/>
-				nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='abbreviated']/month");
-				ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
-				nodes = node.SelectNodes ("months/monthContext[@type='stand-alone']/monthWidth[@type='abbreviated']/month");
-				ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
+				if (ci.Name == "ja" || ci.Name == "ja-JP") {
+					// Use common number style
+				} else {
+					nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='abbreviated']/month");
+					ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
+					nodes = node.SelectNodes ("months/monthContext[@type='stand-alone']/monthWidth[@type='abbreviated']/month");
+					ProcessAllNodes (nodes, df.AbbreviatedMonthNames, AddOrReplaceValue);
+				}
 
 				nodes = node.SelectNodes ("months/monthContext[@type='format']/monthWidth[@type='wide']/month");
 				if (nodes != null) {
@@ -1059,17 +1073,30 @@ namespace Mono.Tools.LocaleBuilder
 					// Apply global rule first <alias source="locale" path="../dayPeriodWidth[@type='wide']"/>
 					el = node.SelectSingleNode ("dayPeriods/dayPeriodContext/dayPeriodWidth[@type='wide']/dayPeriod[@type='am']");
 
-				if (el != null)
-					df.AMDesignator = el.InnerText;
+				switch (ci.Name) {
+				case "en-AU":
+					df.AMDesignator = "AM";
+					break;
+				default:
+					if (el != null)
+						df.AMDesignator = el.InnerText;
+					break;
+				}
 
 				el = node.SelectSingleNode ("dayPeriods/dayPeriodContext/dayPeriodWidth[@type='abbreviated']/dayPeriod[@type='pm']");
 				if (el == null)
 					// Apply global rule first <alias source="locale" path="../dayPeriodWidth[@type='wide']"/>
 					el = node.SelectSingleNode ("dayPeriods/dayPeriodContext/dayPeriodWidth[@type='wide']/dayPeriod[@type='pm']");
 
-				// No data
-				if (el != null)
-					df.PMDesignator = el.InnerText;
+				switch (ci.Name) {
+				case "en-AU":
+					df.PMDesignator = "PM";
+					break;
+				default:
+					if (el != null)
+						df.PMDesignator = el.InnerText;
+					break;
+				}
 			}
 
 			var ni = ci.NumberFormatEntry;
@@ -1120,12 +1147,31 @@ namespace Mono.Tools.LocaleBuilder
 				if (el != null)
 					ni.PercentSymbol = el.InnerText;
 
-				el = node.SelectSingleNode ("group");
-				if (el != null) {
-					ni.NumberGroupSeparator =
-					ni.PercentGroupSeparator =
-					ni.CurrencyGroupSeparator = el.InnerText;
+			}
+
+			string value = null;
+
+			// .net has incorrect separators for some countries and we want to be compatible
+			switch (ci.Name) {
+			case "es-ES":
+				// es-ES does not have group separator but .net has '.'
+				value = ".";
+				break;
+			default:
+				if (node != null) {
+					el = node.SelectSingleNode ("group");
+					if (el != null) {
+						value = el.InnerText;
+					}
 				}
+
+				break;
+			}
+					
+			if (value != null) {
+				ni.NumberGroupSeparator =
+				ni.PercentGroupSeparator =
+				ni.CurrencyGroupSeparator = value;
 			}
 		}
 

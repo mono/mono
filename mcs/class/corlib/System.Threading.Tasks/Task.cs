@@ -76,6 +76,8 @@ namespace System.Threading.Tasks
 		CancellationToken token;
 		CancellationTokenRegistration? cancellationRegistration;
 
+		ExecutionContext ec;
+
 		internal const TaskCreationOptions WorkerTaskNotSupportedOptions = TaskCreationOptions.LongRunning | TaskCreationOptions.PreferFairness;
 
 		const TaskCreationOptions MaxTaskCreationOptions =
@@ -158,6 +160,8 @@ namespace System.Threading.Tasks
 
 			if (token.CanBeCanceled && !ignoreCancellation)
 				cancellationRegistration = token.Register (l => ((Task) l).CancelReal (), this);
+
+			ec = ExecutionContext.Capture (false, true);
 		}
 
 		static bool HasFlag (TaskCreationOptions opt, TaskCreationOptions member)
@@ -428,7 +432,10 @@ namespace System.Threading.Tasks
 				status = TaskStatus.Running;
 				
 				try {
-					InnerInvoke ();
+					if (ec != null)
+						ExecutionContext.Run (ec, l => ((Task) l).InnerInvoke (), this);
+					else
+						InnerInvoke ();
 				} catch (OperationCanceledException oce) {
 					if (token != CancellationToken.None && oce.CancellationToken == token)
 						CancelReal ();

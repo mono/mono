@@ -1,8 +1,10 @@
 <Type Name="StrongBox&lt;T&gt;" FullName="System.Runtime.CompilerServices.StrongBox&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class StrongBox&lt;T&gt; : System.Runtime.CompilerServices.IStrongBox" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit StrongBox`1&lt;T&gt; extends System.Object implements class System.Runtime.CompilerServices.IStrongBox" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
     <TypeParameter Name="T" />
@@ -22,10 +24,25 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public StrongBox ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public StrongBox (T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(!T value) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="value" Type="T" />
@@ -37,10 +54,12 @@
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.CompilerServices.IStrongBox.Value">
-      <MemberSignature Language="C#" Value="object System.Runtime.CompilerServices.IStrongBox.Value { set; get; }" />
+      <MemberSignature Language="C#" Value="object System.Runtime.CompilerServices.IStrongBox.Value { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object System.Runtime.CompilerServices.IStrongBox.Value" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -53,9 +72,11 @@
     </Member>
     <Member MemberName="Value">
       <MemberSignature Language="C#" Value="public T Value;" />
+      <MemberSignature Language="ILAsm" Value=".field public !T Value" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>T</ReturnType>

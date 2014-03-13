@@ -1,6 +1,7 @@
 <Type Name="CharSet" FullName="System.Runtime.InteropServices.CharSet" FullNameSP="System_Runtime_InteropServices_CharSet" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable CharSet extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum CharSet" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CharSet extends System.Enum" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,6 +13,11 @@
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para>Specifies which character set marshaled strings are required to use.</para>
@@ -29,7 +35,13 @@ example that uses the <see cref="T:System.Runtime.InteropServices.CharSet" /> en
     <Member MemberName="Ansi">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Ansi = 2" />
       <MemberSignature Language="C#" Value="Ansi" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Ansi = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
@@ -43,16 +55,17 @@ example that uses the <see cref="T:System.Runtime.InteropServices.CharSet" /> en
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Auto">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Auto = 4" />
+      <MemberSignature Language="C#" Value="Auto" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Auto = int32(4)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Auto">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Auto = 4" />
-      <MemberSignature Language="C#" Value="Auto" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
@@ -66,15 +79,16 @@ example that uses the <see cref="T:System.Runtime.InteropServices.CharSet" /> en
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet None = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="None">
-      <MemberSignature Language="C#" Value="None" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
@@ -83,16 +97,17 @@ example that uses the <see cref="T:System.Runtime.InteropServices.CharSet" /> en
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Unicode">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Unicode = 3" />
+      <MemberSignature Language="C#" Value="Unicode" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Unicode = int32(3)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Unicode">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Runtime.InteropServices.CharSet Unicode = 3" />
-      <MemberSignature Language="C#" Value="Unicode" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
@@ -105,17 +120,7 @@ example that uses the <see cref="T:System.Runtime.InteropServices.CharSet" /> en
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

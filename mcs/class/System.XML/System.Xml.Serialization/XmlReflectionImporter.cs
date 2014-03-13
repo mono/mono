@@ -798,6 +798,7 @@ namespace System.Xml.Serialization {
 						if (atts == null) atts = new XmlAttributes (prop);
 						if (atts.XmlIgnore) continue;
 						if (!prop.CanWrite) {
+							if (prop.PropertyType.IsInterface && typeof (IEnumerable).IsAssignableFrom (prop.PropertyType)) continue;
 							if (prop.PropertyType.IsGenericType && TypeData.GetGenericListItemType (prop.PropertyType) == null) continue; // check this before calling GetTypeData() which raises error for missing Add(). See bug #704813.
 							if (TypeTranslator.GetTypeData (prop.PropertyType).SchemaType != SchemaTypes.Array || prop.PropertyType.IsArray) continue;
 						}

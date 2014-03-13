@@ -1,6 +1,7 @@
 <Type Name="File" FullName="System.IO.File" FullNameSP="System_IO_File" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed File extends System.Object" />
   <TypeSignature Language="C#" Value="public static class File" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit File extends System.Object" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,6 +15,11 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para> Provides information and performs operations on
@@ -59,6 +65,7 @@
   <Members>
     <Member MemberName="AppendAllLines">
       <MemberSignature Language="C#" Value="public static void AppendAllLines (string path, System.Collections.Generic.IEnumerable&lt;string&gt; contents);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AppendAllLines(string path, class System.Collections.Generic.IEnumerable`1&lt;string&gt; contents) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -79,6 +86,7 @@
     </Member>
     <Member MemberName="AppendAllLines">
       <MemberSignature Language="C#" Value="public static void AppendAllLines (string path, System.Collections.Generic.IEnumerable&lt;string&gt; contents, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AppendAllLines(string path, class System.Collections.Generic.IEnumerable`1&lt;string&gt; contents, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -101,7 +109,12 @@
     </Member>
     <Member MemberName="AppendAllText">
       <MemberSignature Language="C#" Value="public static void AppendAllText (string path, string contents);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AppendAllText(string path, string contents) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -116,14 +129,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="AppendAllText">
+      <MemberSignature Language="C#" Value="public static void AppendAllText (string path, string contents, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AppendAllText(string path, string contents, class System.Text.Encoding encoding) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AppendAllText">
-      <MemberSignature Language="C#" Value="public static void AppendAllText (string path, string contents, System.Text.Encoding encoding);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -140,15 +154,17 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AppendText">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.StreamWriter AppendText(string path)" />
       <MemberSignature Language="C#" Value="public static System.IO.StreamWriter AppendText (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.StreamWriter AppendText(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.StreamWriter</ReturnType>
       </ReturnValue>
@@ -191,16 +207,17 @@ interpreted as relative to the current working directory. <block subset="none" t
         <exception cref="T:System.UnauthorizedAccessException">Access is denied. The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Copy(string sourceFileName, string destFileName)" />
+      <MemberSignature Language="C#" Value="public static void Copy (string sourceFileName, string destFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Copy(string sourceFileName, string destFileName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Copy">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Copy(string sourceFileName, string destFileName)" />
-      <MemberSignature Language="C#" Value="public static void Copy (string sourceFileName, string destFileName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -245,16 +262,17 @@ as relative to the current working directory. <block subset="none" type="note">T
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Copy">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Copy(string sourceFileName, string destFileName, bool overwrite)" />
+      <MemberSignature Language="C#" Value="public static void Copy (string sourceFileName, string destFileName, bool overwrite);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Copy(string sourceFileName, string destFileName, bool overwrite) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Copy">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Copy(string sourceFileName, string destFileName, bool overwrite)" />
-      <MemberSignature Language="C#" Value="public static void Copy (string sourceFileName, string destFileName, bool overwrite);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -301,16 +319,17 @@ as relative to the current working directory. <block subset="none" type="note">T
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Create(string path)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Create (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.FileStream Create(string path) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Create(string path)" />
-      <MemberSignature Language="C#" Value="public static System.IO.FileStream Create (string path);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -348,16 +367,17 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Create(string path, int32 bufferSize)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Create (string path, int bufferSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.FileStream Create(string path, int32 bufferSize) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Create(string path, int32 bufferSize)" />
-      <MemberSignature Language="C#" Value="public static System.IO.FileStream Create (string path, int bufferSize);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -401,15 +421,15 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="public static System.IO.FileStream Create (string path, int bufferSize, System.IO.FileOptions options);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.FileStream Create(string path, int32 bufferSize, valuetype System.IO.FileOptions options) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -427,14 +447,15 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Create (string path, int bufferSize, System.IO.FileOptions options, System.Security.AccessControl.FileSecurity fileSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.FileStream Create(string path, int32 bufferSize, valuetype System.IO.FileOptions options, class System.Security.AccessControl.FileSecurity fileSecurity) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public static System.IO.FileStream Create (string path, int bufferSize, System.IO.FileOptions options, System.Security.AccessControl.FileSecurity fileSecurity);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -454,15 +475,17 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateText">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.StreamWriter CreateText(string path)" />
       <MemberSignature Language="C#" Value="public static System.IO.StreamWriter CreateText (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.StreamWriter CreateText(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.StreamWriter</ReturnType>
       </ReturnValue>
@@ -502,15 +525,15 @@ working directory. To obtain the current working directory, see <see cref="M:Sys
         <exception cref="T:System.UnauthorizedAccessException">Access is denied. The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Decrypt">
       <MemberSignature Language="C#" Value="public static void Decrypt (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Decrypt(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -523,15 +546,17 @@ working directory. To obtain the current working directory, see <see cref="M:Sys
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Delete">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static void Delete(string path)" />
       <MemberSignature Language="C#" Value="public static void Delete (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Delete(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -565,15 +590,15 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write to the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Encrypt">
       <MemberSignature Language="C#" Value="public static void Encrypt (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Encrypt(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -586,15 +611,17 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Exists">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static bool Exists(string path)" />
       <MemberSignature Language="C#" Value="public static bool Exists (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Exists(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -622,15 +649,15 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAccessControl">
       <MemberSignature Language="C#" Value="public static System.Security.AccessControl.FileSecurity GetAccessControl (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.AccessControl.FileSecurity GetAccessControl(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.FileSecurity</ReturnType>
       </ReturnValue>
@@ -644,14 +671,15 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetAccessControl">
+      <MemberSignature Language="C#" Value="public static System.Security.AccessControl.FileSecurity GetAccessControl (string path, System.Security.AccessControl.AccessControlSections includeSections);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.AccessControl.FileSecurity GetAccessControl(string path, valuetype System.Security.AccessControl.AccessControlSections includeSections) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAccessControl">
-      <MemberSignature Language="C#" Value="public static System.Security.AccessControl.FileSecurity GetAccessControl (string path, System.Security.AccessControl.AccessControlSections includeSections);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.AccessControl.FileSecurity</ReturnType>
       </ReturnValue>
@@ -667,14 +695,16 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAttributes">
       <MemberSignature Language="C#" Value="public static System.IO.FileAttributes GetAttributes (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.IO.FileAttributes GetAttributes(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.FileAttributes</ReturnType>
       </ReturnValue>
@@ -687,16 +717,17 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetCreationTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime GetCreationTime(string path)" />
+      <MemberSignature Language="C#" Value="public static DateTime GetCreationTime (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.DateTime GetCreationTime(string path) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCreationTime">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime GetCreationTime(string path)" />
-      <MemberSignature Language="C#" Value="public static DateTime GetCreationTime (string path);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -731,15 +762,16 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetCreationTimeUtc">
+      <MemberSignature Language="C#" Value="public static DateTime GetCreationTimeUtc (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.DateTime GetCreationTimeUtc(string path) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCreationTimeUtc">
-      <MemberSignature Language="C#" Value="public static DateTime GetCreationTimeUtc (string path);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -752,16 +784,17 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetLastAccessTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime GetLastAccessTime(string path)" />
+      <MemberSignature Language="C#" Value="public static DateTime GetLastAccessTime (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.DateTime GetLastAccessTime(string path) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetLastAccessTime">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime GetLastAccessTime(string path)" />
-      <MemberSignature Language="C#" Value="public static DateTime GetLastAccessTime (string path);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -796,15 +829,16 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetLastAccessTimeUtc">
+      <MemberSignature Language="C#" Value="public static DateTime GetLastAccessTimeUtc (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.DateTime GetLastAccessTimeUtc(string path) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetLastAccessTimeUtc">
-      <MemberSignature Language="C#" Value="public static DateTime GetLastAccessTimeUtc (string path);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -817,16 +851,17 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetLastWriteTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime GetLastWriteTime(string path)" />
+      <MemberSignature Language="C#" Value="public static DateTime GetLastWriteTime (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.DateTime GetLastWriteTime(string path) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetLastWriteTime">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.DateTime GetLastWriteTime(string path)" />
-      <MemberSignature Language="C#" Value="public static DateTime GetLastWriteTime (string path);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -861,15 +896,16 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetLastWriteTimeUtc">
+      <MemberSignature Language="C#" Value="public static DateTime GetLastWriteTimeUtc (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.DateTime GetLastWriteTimeUtc(string path) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetLastWriteTimeUtc">
-      <MemberSignature Language="C#" Value="public static DateTime GetLastWriteTimeUtc (string path);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
@@ -882,16 +918,17 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Move">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Move(string sourceFileName, string destFileName)" />
+      <MemberSignature Language="C#" Value="public static void Move (string sourceFileName, string destFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Move(string sourceFileName, string destFileName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Move">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Move(string sourceFileName, string destFileName)" />
-      <MemberSignature Language="C#" Value="public static void Move (string sourceFileName, string destFileName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -930,16 +967,17 @@ working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" qua
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Open (string path, System.IO.FileMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Open">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode)" />
-      <MemberSignature Language="C#" Value="public static System.IO.FileStream Open (string path, System.IO.FileMode mode);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -985,16 +1023,17 @@ as relative to the current working directory. <block subset="none" type="note">T
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and write the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Open (string path, System.IO.FileMode mode, System.IO.FileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Open">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access)" />
-      <MemberSignature Language="C#" Value="public static System.IO.FileStream Open (string path, System.IO.FileMode mode, System.IO.FileAccess access);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -1046,16 +1085,17 @@ as relative to the current working directory. <block subset="none" type="note">T
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and might also require permission to write to the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Open">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream Open (string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Open">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream Open(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share)" />
-      <MemberSignature Language="C#" Value="public static System.IO.FileStream Open (string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -1108,16 +1148,17 @@ as relative to the current working directory. <block subset="none" type="note">T
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and might also require permission to write the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OpenRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream OpenRead(string path)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream OpenRead (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.FileStream OpenRead(string path) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream OpenRead(string path)" />
-      <MemberSignature Language="C#" Value="public static System.IO.FileStream OpenRead (string path);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -1153,16 +1194,17 @@ as relative to the current working directory. <block subset="none" type="note">T
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OpenText">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.StreamReader OpenText(string path)" />
+      <MemberSignature Language="C#" Value="public static System.IO.StreamReader OpenText (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.StreamReader OpenText(string path) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenText">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.StreamReader OpenText(string path)" />
-      <MemberSignature Language="C#" Value="public static System.IO.StreamReader OpenText (string path);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.StreamReader</ReturnType>
       </ReturnValue>
@@ -1199,16 +1241,17 @@ as relative to the current working directory. <block subset="none" type="note">T
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="OpenWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream OpenWrite(string path)" />
+      <MemberSignature Language="C#" Value="public static System.IO.FileStream OpenWrite (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.FileStream OpenWrite(string path) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="OpenWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.IO.FileStream OpenWrite(string path)" />
-      <MemberSignature Language="C#" Value="public static System.IO.FileStream OpenWrite (string path);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.FileStream</ReturnType>
       </ReturnValue>
@@ -1245,15 +1288,15 @@ as relative to the current working directory. <block subset="none" type="note">T
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to write the specified file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadAllBytes">
       <MemberSignature Language="C#" Value="public static byte[] ReadAllBytes (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] ReadAllBytes(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -1267,14 +1310,15 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadAllLines">
       <MemberSignature Language="C#" Value="public static string[] ReadAllLines (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string[] ReadAllLines(string path) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -1288,14 +1332,15 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadAllLines">
       <MemberSignature Language="C#" Value="public static string[] ReadAllLines (string path, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string[] ReadAllLines(string path, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -1311,14 +1356,15 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ReadAllText">
+      <MemberSignature Language="C#" Value="public static string ReadAllText (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ReadAllText(string path) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadAllText">
-      <MemberSignature Language="C#" Value="public static string ReadAllText (string path);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1332,14 +1378,15 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ReadAllText">
+      <MemberSignature Language="C#" Value="public static string ReadAllText (string path, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string ReadAllText(string path, class System.Text.Encoding encoding) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadAllText">
-      <MemberSignature Language="C#" Value="public static string ReadAllText (string path, System.Text.Encoding encoding);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1355,13 +1402,10 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadLines">
       <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;string&gt; ReadLines (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;string&gt; ReadLines(string path) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1381,6 +1425,7 @@ as relative to the current working directory. <block subset="none" type="note">T
     </Member>
     <Member MemberName="ReadLines">
       <MemberSignature Language="C#" Value="public static System.Collections.Generic.IEnumerable&lt;string&gt; ReadLines (string path, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.Generic.IEnumerable`1&lt;string&gt; ReadLines(string path, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1402,7 +1447,12 @@ as relative to the current working directory. <block subset="none" type="note">T
     </Member>
     <Member MemberName="Replace">
       <MemberSignature Language="C#" Value="public static void Replace (string sourceFileName, string destinationFileName, string destinationBackupFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Replace(string sourceFileName, string destinationFileName, string destinationBackupFileName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1419,14 +1469,15 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="C#" Value="public static void Replace (string sourceFileName, string destinationFileName, string destinationBackupFileName, bool ignoreMetadataErrors);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Replace(string sourceFileName, string destinationFileName, string destinationBackupFileName, bool ignoreMetadataErrors) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Replace">
-      <MemberSignature Language="C#" Value="public static void Replace (string sourceFileName, string destinationFileName, string destinationBackupFileName, bool ignoreMetadataErrors);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1445,14 +1496,15 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="SetAccessControl">
+      <MemberSignature Language="C#" Value="public static void SetAccessControl (string path, System.Security.AccessControl.FileSecurity fileSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetAccessControl(string path, class System.Security.AccessControl.FileSecurity fileSecurity) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetAccessControl">
-      <MemberSignature Language="C#" Value="public static void SetAccessControl (string path, System.Security.AccessControl.FileSecurity fileSecurity);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1467,14 +1519,16 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetAttributes">
       <MemberSignature Language="C#" Value="public static void SetAttributes (string path, System.IO.FileAttributes fileAttributes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetAttributes(string path, valuetype System.IO.FileAttributes fileAttributes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1488,16 +1542,17 @@ as relative to the current working directory. <block subset="none" type="note">T
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SetCreationTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetCreationTime(string path, valuetype System.DateTime creationTime)" />
+      <MemberSignature Language="C#" Value="public static void SetCreationTime (string path, DateTime creationTime);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetCreationTime(string path, valuetype System.DateTime creationTime) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetCreationTime">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetCreationTime(string path, valuetype System.DateTime creationTime)" />
-      <MemberSignature Language="C#" Value="public static void SetCreationTime (string path, DateTime creationTime);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1534,15 +1589,16 @@ as relative to the current working directory. <block subset="none" type="note">T
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SetCreationTimeUtc">
+      <MemberSignature Language="C#" Value="public static void SetCreationTimeUtc (string path, DateTime creationTimeUtc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetCreationTimeUtc(string path, valuetype System.DateTime creationTimeUtc) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetCreationTimeUtc">
-      <MemberSignature Language="C#" Value="public static void SetCreationTimeUtc (string path, DateTime creationTimeUtc);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1556,16 +1612,17 @@ as relative to the current working directory. <block subset="none" type="note">T
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SetLastAccessTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetLastAccessTime(string path, valuetype System.DateTime lastAccessTime)" />
+      <MemberSignature Language="C#" Value="public static void SetLastAccessTime (string path, DateTime lastAccessTime);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetLastAccessTime(string path, valuetype System.DateTime lastAccessTime) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetLastAccessTime">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetLastAccessTime(string path, valuetype System.DateTime lastAccessTime)" />
-      <MemberSignature Language="C#" Value="public static void SetLastAccessTime (string path, DateTime lastAccessTime);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1603,15 +1660,16 @@ as relative to the current working directory. <block subset="none" type="note">T
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SetLastAccessTimeUtc">
+      <MemberSignature Language="C#" Value="public static void SetLastAccessTimeUtc (string path, DateTime lastAccessTimeUtc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetLastAccessTimeUtc(string path, valuetype System.DateTime lastAccessTimeUtc) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetLastAccessTimeUtc">
-      <MemberSignature Language="C#" Value="public static void SetLastAccessTimeUtc (string path, DateTime lastAccessTimeUtc);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1625,16 +1683,17 @@ as relative to the current working directory. <block subset="none" type="note">T
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SetLastWriteTime">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetLastWriteTime(string path, valuetype System.DateTime lastWriteTime)" />
+      <MemberSignature Language="C#" Value="public static void SetLastWriteTime (string path, DateTime lastWriteTime);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetLastWriteTime(string path, valuetype System.DateTime lastWriteTime) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetLastWriteTime">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void SetLastWriteTime(string path, valuetype System.DateTime lastWriteTime)" />
-      <MemberSignature Language="C#" Value="public static void SetLastWriteTime (string path, DateTime lastWriteTime);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1672,15 +1731,16 @@ as relative to the current working directory. <block subset="none" type="note">T
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SetLastWriteTimeUtc">
+      <MemberSignature Language="C#" Value="public static void SetLastWriteTimeUtc (string path, DateTime lastWriteTimeUtc);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetLastWriteTimeUtc(string path, valuetype System.DateTime lastWriteTimeUtc) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SetLastWriteTimeUtc">
-      <MemberSignature Language="C#" Value="public static void SetLastWriteTimeUtc (string path, DateTime lastWriteTimeUtc);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1694,15 +1754,15 @@ as relative to the current working directory. <block subset="none" type="note">T
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteAllBytes">
       <MemberSignature Language="C#" Value="public static void WriteAllBytes (string path, byte[] bytes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteAllBytes(string path, unsigned int8[] bytes) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1717,13 +1777,10 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteAllLines">
       <MemberSignature Language="C#" Value="public static void WriteAllLines (string path, System.Collections.Generic.IEnumerable&lt;string&gt; contents);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteAllLines(string path, class System.Collections.Generic.IEnumerable`1&lt;string&gt; contents) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1744,7 +1801,12 @@ as relative to the current working directory. <block subset="none" type="note">T
     </Member>
     <Member MemberName="WriteAllLines">
       <MemberSignature Language="C#" Value="public static void WriteAllLines (string path, string[] contents);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteAllLines(string path, string[] contents) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1759,13 +1821,10 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteAllLines">
       <MemberSignature Language="C#" Value="public static void WriteAllLines (string path, System.Collections.Generic.IEnumerable&lt;string&gt; contents, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteAllLines(string path, class System.Collections.Generic.IEnumerable`1&lt;string&gt; contents, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1788,7 +1847,12 @@ as relative to the current working directory. <block subset="none" type="note">T
     </Member>
     <Member MemberName="WriteAllLines">
       <MemberSignature Language="C#" Value="public static void WriteAllLines (string path, string[] contents, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteAllLines(string path, string[] contents, class System.Text.Encoding encoding) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1805,14 +1869,15 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="WriteAllText">
+      <MemberSignature Language="C#" Value="public static void WriteAllText (string path, string contents);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteAllText(string path, string contents) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteAllText">
-      <MemberSignature Language="C#" Value="public static void WriteAllText (string path, string contents);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1827,14 +1892,15 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="WriteAllText">
+      <MemberSignature Language="C#" Value="public static void WriteAllText (string path, string contents, System.Text.Encoding encoding);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void WriteAllText(string path, string contents, class System.Text.Encoding encoding) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WriteAllText">
-      <MemberSignature Language="C#" Value="public static void WriteAllText (string path, string contents, System.Text.Encoding encoding);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1851,16 +1917,7 @@ as relative to the current working directory. <block subset="none" type="note">T
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

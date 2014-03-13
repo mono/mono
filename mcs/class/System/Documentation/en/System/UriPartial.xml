@@ -1,6 +1,7 @@
 <Type Name="UriPartial" FullName="System.UriPartial" FullNameSP="System_UriPartial" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable UriPartial extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum UriPartial" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed UriPartial extends System.Enum" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +9,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -27,7 +29,13 @@
     <Member MemberName="Authority">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.UriPartial Authority = 1" />
       <MemberSignature Language="C#" Value="Authority" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriPartial Authority = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriPartial</ReturnType>
       </ReturnValue>
@@ -39,15 +47,17 @@
 </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Path">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.UriPartial Path = 2" />
       <MemberSignature Language="C#" Value="Path" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriPartial Path = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriPartial</ReturnType>
       </ReturnValue>
@@ -59,16 +69,14 @@
 </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Query">
       <MemberSignature Language="C#" Value="Query" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriPartial Query = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriPartial</ReturnType>
@@ -80,7 +88,13 @@
     <Member MemberName="Scheme">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.UriPartial Scheme = 0" />
       <MemberSignature Language="C#" Value="Scheme" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.UriPartial Scheme = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.UriPartial</ReturnType>
       </ReturnValue>
@@ -92,10 +106,6 @@
         </summary>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

@@ -1,18 +1,20 @@
 <Type Name="CodeTypeReferenceOptions" FullName="System.CodeDom.CodeTypeReferenceOptions">
   <TypeSignature Language="C#" Value="public enum CodeTypeReferenceOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CodeTypeReferenceOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Attributes>
     <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+      <AttributeName>System.Flags</AttributeName>
     </Attribute>
     <Attribute>
-      <AttributeName>System.Flags</AttributeName>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
@@ -23,7 +25,12 @@
   <Members>
     <Member MemberName="GenericTypeParameter">
       <MemberSignature Language="C#" Value="GenericTypeParameter" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.CodeDom.CodeTypeReferenceOptions GenericTypeParameter = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.CodeTypeReferenceOptions</ReturnType>
       </ReturnValue>
@@ -31,13 +38,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GlobalReference">
       <MemberSignature Language="C#" Value="GlobalReference" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.CodeDom.CodeTypeReferenceOptions GlobalReference = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.CodeTypeReferenceOptions</ReturnType>
       </ReturnValue>
@@ -45,9 +54,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

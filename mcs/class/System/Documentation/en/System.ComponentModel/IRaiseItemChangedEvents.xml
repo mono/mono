@@ -1,8 +1,10 @@
 <Type Name="IRaiseItemChangedEvents" FullName="System.ComponentModel.IRaiseItemChangedEvents">
   <TypeSignature Language="C#" Value="public interface IRaiseItemChangedEvents" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IRaiseItemChangedEvents" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
@@ -13,7 +15,12 @@
   <Members>
     <Member MemberName="RaisesItemChangedEvents">
       <MemberSignature Language="C#" Value="public bool RaisesItemChangedEvents { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool RaisesItemChangedEvents" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -23,9 +30,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

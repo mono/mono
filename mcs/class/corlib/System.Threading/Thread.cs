@@ -696,8 +696,7 @@ namespace System.Threading {
 
 		public void Start() {
 			// propagate informations from the original thread to the new thread
-			if (!ExecutionContext.IsFlowSuppressed ())
-				ec_to_set = ExecutionContext.Capture ();
+			ec_to_set = ExecutionContext.Capture (false, true);
 			Internal._serialized_principal = CurrentThread.Internal._serialized_principal;
 
 			// Thread_internal creates and starts the new thread, 
@@ -858,13 +857,15 @@ namespace System.Threading {
 			Internal.stack_size = CheckStackSize (maxStackSize);
 		}
 
-		[MonoTODO ("limited to CompressedStack support")]
 		public ExecutionContext ExecutionContext {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 			get {
 				if (_ec == null)
 					_ec = new ExecutionContext ();
 				return _ec;
+			}
+			internal set {
+				_ec = value;
 			}
 		}
 

@@ -1,6 +1,7 @@
 <Type Name="IPHostEntry" FullName="System.Net.IPHostEntry" FullNameSP="System_Net_IPHostEntry" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public IPHostEntry extends System.Object" />
   <TypeSignature Language="C#" Value="public class IPHostEntry" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit IPHostEntry extends System.Object" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +9,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -56,7 +58,13 @@ public class IPHostEntryTest {
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public IPHostEntry ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
@@ -64,15 +72,17 @@ public class IPHostEntryTest {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddressList">
       <MemberSignature Language="ILASM" Value=".property class System.Net.IPAddress[] AddressList { public hidebysig specialname instance class System.Net.IPAddress[] get_AddressList() public hidebysig specialname instance void set_AddressList(class System.Net.IPAddress[] value) }" />
-      <MemberSignature Language="C#" Value="public System.Net.IPAddress[] AddressList { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.IPAddress[] AddressList { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.IPAddress[] AddressList" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress[]</ReturnType>
       </ReturnValue>
@@ -89,15 +99,17 @@ public class IPHostEntryTest {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Aliases">
       <MemberSignature Language="ILASM" Value=".property class System.String[] Aliases { public hidebysig specialname instance class System.String[] get_Aliases() public hidebysig specialname instance void set_Aliases(class System.String[] value) }" />
-      <MemberSignature Language="C#" Value="public string[] Aliases { set; get; }" />
+      <MemberSignature Language="C#" Value="public string[] Aliases { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] Aliases" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -113,15 +125,17 @@ public class IPHostEntryTest {
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HostName">
       <MemberSignature Language="ILASM" Value=".property string HostName { public hidebysig specialname instance string get_HostName() public hidebysig specialname instance void set_HostName(string value) }" />
-      <MemberSignature Language="C#" Value="public string HostName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string HostName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string HostName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -145,10 +159,6 @@ public class IPHostEntryTest {
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

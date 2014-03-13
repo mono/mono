@@ -1,8 +1,10 @@
 <Type Name="IOrderedEnumerable&lt;TElement&gt;" FullName="System.Linq.IOrderedEnumerable&lt;TElement&gt;">
   <TypeSignature Language="C#" Value="public interface IOrderedEnumerable&lt;TElement&gt; : System.Collections.Generic.IEnumerable&lt;TElement&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IOrderedEnumerable`1&lt;TElement&gt; implements class System.Collections.Generic.IEnumerable`1&lt;!TElement&gt;, class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
     <TypeParameter Name="TElement" />
@@ -19,31 +21,33 @@
   </Docs>
   <Members>
     <Member MemberName="CreateOrderedEnumerable&lt;TKey&gt;">
-      <MemberSignature Language="C#" Value="public System.Linq.IOrderedEnumerable&lt;TElement&gt; CreateOrderedEnumerable&lt;TKey&gt; (Func&lt;TElement,TKey&gt; selector, System.Collections.Generic.IComparer&lt;TKey&gt; comparer, bool descending);" />
+      <MemberSignature Language="C#" Value="public System.Linq.IOrderedEnumerable&lt;TElement&gt; CreateOrderedEnumerable&lt;TKey&gt; (Func&lt;TElement,TKey&gt; keySelector, System.Collections.Generic.IComparer&lt;TKey&gt; comparer, bool descending);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Linq.IOrderedEnumerable`1&lt;!TElement&gt; CreateOrderedEnumerable&lt;TKey&gt;(class System.Func`2&lt;!TElement, !!TKey&gt; keySelector, class System.Collections.Generic.IComparer`1&lt;!!TKey&gt; comparer, bool descending) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IOrderedEnumerable&lt;TElement&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TKey" />
+      </TypeParameters>
       <Parameters>
-        <Parameter Name="selector" Type="System.Func&lt;TElement,TKey&gt;" />
+        <Parameter Name="keySelector" Type="System.Func&lt;TElement,TKey&gt;" />
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
         <Parameter Name="descending" Type="System.Boolean" />
       </Parameters>
       <Docs>
         <typeparam name="TKey">To be added.</typeparam>
-        <param name="selector">To be added.</param>
+        <param name="keySelector">To be added.</param>
         <param name="comparer">To be added.</param>
         <param name="descending">To be added.</param>
         <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TKey" />
-      </TypeParameters>
     </Member>
   </Members>
 </Type>

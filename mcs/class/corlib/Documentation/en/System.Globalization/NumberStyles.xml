@@ -1,6 +1,7 @@
 <Type Name="NumberStyles" FullName="System.Globalization.NumberStyles" FullNameSP="System_Globalization_NumberStyles" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable NumberStyles extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum NumberStyles" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed NumberStyles extends System.Enum" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -49,7 +50,13 @@ operator.</para>
     <Member MemberName="AllowCurrencySymbol">
       <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowCurrencySymbol = 0x100" />
       <MemberSignature Language="C#" Value="AllowCurrencySymbol" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowCurrencySymbol = int32(256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -62,16 +69,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowDecimalPoint">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowDecimalPoint = 0x20" />
+      <MemberSignature Language="C#" Value="AllowDecimalPoint" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowDecimalPoint = int32(32)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowDecimalPoint">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowDecimalPoint = 0x20" />
-      <MemberSignature Language="C#" Value="AllowDecimalPoint" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -84,16 +92,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowExponent">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowExponent = 0x80" />
+      <MemberSignature Language="C#" Value="AllowExponent" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowExponent = int32(128)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowExponent">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowExponent = 0x80" />
-      <MemberSignature Language="C#" Value="AllowExponent" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -119,16 +128,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowHexSpecifier">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowHexSpecifier = 0x200" />
+      <MemberSignature Language="C#" Value="AllowHexSpecifier" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowHexSpecifier = int32(512)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowHexSpecifier">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowHexSpecifier = 0x200" />
-      <MemberSignature Language="C#" Value="AllowHexSpecifier" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -145,16 +155,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowLeadingSign">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowLeadingSign = 0x4" />
+      <MemberSignature Language="C#" Value="AllowLeadingSign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowLeadingSign = int32(4)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowLeadingSign">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowLeadingSign = 0x4" />
-      <MemberSignature Language="C#" Value="AllowLeadingSign" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -167,16 +178,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowLeadingWhite">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowLeadingWhite = 0x1" />
+      <MemberSignature Language="C#" Value="AllowLeadingWhite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowLeadingWhite = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowLeadingWhite">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowLeadingWhite = 0x1" />
-      <MemberSignature Language="C#" Value="AllowLeadingWhite" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -189,16 +201,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowParentheses">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowParentheses = 0x10" />
+      <MemberSignature Language="C#" Value="AllowParentheses" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowParentheses = int32(16)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowParentheses">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowParentheses = 0x10" />
-      <MemberSignature Language="C#" Value="AllowParentheses" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -211,16 +224,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowThousands">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowThousands = 0x40" />
+      <MemberSignature Language="C#" Value="AllowThousands" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowThousands = int32(64)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowThousands">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowThousands = 0x40" />
-      <MemberSignature Language="C#" Value="AllowThousands" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -234,16 +248,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowTrailingSign">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowTrailingSign = 0x8" />
+      <MemberSignature Language="C#" Value="AllowTrailingSign" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowTrailingSign = int32(8)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowTrailingSign">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowTrailingSign = 0x8" />
-      <MemberSignature Language="C#" Value="AllowTrailingSign" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -256,16 +271,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllowTrailingWhite">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowTrailingWhite = 0x2" />
+      <MemberSignature Language="C#" Value="AllowTrailingWhite" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowTrailingWhite = int32(2)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllowTrailingWhite">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles AllowTrailingWhite = 0x2" />
-      <MemberSignature Language="C#" Value="AllowTrailingWhite" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -278,16 +294,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Any">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles Any = AllowLeadingWhite | AllowTrailingWhite | AllowLeadingSign | AllowTrailingSign | AllowParentheses | AllowDecimalPoint | AllowThousands | AllowExponent | AllowCurrencySymbol" />
+      <MemberSignature Language="C#" Value="Any" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles Any = int32(511)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Any">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles Any = AllowLeadingWhite | AllowTrailingWhite | AllowLeadingSign | AllowTrailingSign | AllowParentheses | AllowDecimalPoint | AllowThousands | AllowExponent | AllowCurrencySymbol" />
-      <MemberSignature Language="C#" Value="Any" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -300,16 +317,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Currency">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles Currency = AllowLeadingWhite | AllowTrailingWhite | AllowLeadingSign | AllowTrailingSign | AllowParentheses | AllowDecimalPoint | AllowThousands | AllowCurrencySymbol" />
+      <MemberSignature Language="C#" Value="Currency" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles Currency = int32(383)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Currency">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles Currency = AllowLeadingWhite | AllowTrailingWhite | AllowLeadingSign | AllowTrailingSign | AllowParentheses | AllowDecimalPoint | AllowThousands | AllowCurrencySymbol" />
-      <MemberSignature Language="C#" Value="Currency" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -322,16 +340,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Float">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles Float = AllowLeadingWhite | AllowTrailingWhite | AllowLeadingSign | AllowDecimalPoint | AllowExponent" />
+      <MemberSignature Language="C#" Value="Float" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles Float = int32(167)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Float">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles Float = AllowLeadingWhite | AllowTrailingWhite | AllowLeadingSign | AllowDecimalPoint | AllowExponent" />
-      <MemberSignature Language="C#" Value="Float" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -344,16 +363,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="HexNumber">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles HexNumber = AllowLeadingWhite | AllowTrailingWhite | AllowHexSpecifier" />
+      <MemberSignature Language="C#" Value="HexNumber" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles HexNumber = int32(515)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="HexNumber">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles HexNumber = AllowLeadingWhite | AllowTrailingWhite | AllowHexSpecifier" />
-      <MemberSignature Language="C#" Value="HexNumber" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -366,16 +386,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Integer">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles Integer = AllowLeadingWhite | AllowTrailingWhite | AllowLeadingSign" />
+      <MemberSignature Language="C#" Value="Integer" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles Integer = int32(7)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Integer">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles Integer = AllowLeadingWhite | AllowTrailingWhite | AllowLeadingSign" />
-      <MemberSignature Language="C#" Value="Integer" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -388,16 +409,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles None = 0x0" />
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles None = int32(0)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="None">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles None = 0x0" />
-      <MemberSignature Language="C#" Value="None" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -410,16 +432,17 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Number">
+      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles Number = AllowLeadingWhite | AllowTrailingWhite | AllowLeadingSign | AllowTrailingSign | AllowDecimalPoint | AllowThousands" />
+      <MemberSignature Language="C#" Value="Number" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.NumberStyles Number = int32(111)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Number">
-      <MemberSignature Language="ILASM" Value=".field public static literal valuetype System.Globalization.NumberStyles Number = AllowLeadingWhite | AllowTrailingWhite | AllowLeadingSign | AllowTrailingSign | AllowDecimalPoint | AllowThousands" />
-      <MemberSignature Language="C#" Value="Number" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.NumberStyles</ReturnType>
       </ReturnValue>
@@ -432,11 +455,6 @@ operator.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

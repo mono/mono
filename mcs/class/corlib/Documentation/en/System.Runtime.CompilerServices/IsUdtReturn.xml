@@ -1,5 +1,6 @@
 <Type Name="IsUdtReturn" FullName="System.Runtime.CompilerServices.IsUdtReturn">
   <TypeSignature Language="C#" Value="public static class IsUdtReturn" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit IsUdtReturn extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>

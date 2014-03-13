@@ -1,0 +1,62 @@
+<Type Name="IParameterInspector" FullName="System.ServiceModel.Dispatcher.IParameterInspector">
+  <TypeSignature Language="C#" Value="public interface IParameterInspector" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IParameterInspector" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AfterCall">
+      <MemberSignature Language="C#" Value="public void AfterCall (string operationName, object[] outputs, object returnValue, object correlationState);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AfterCall(string operationName, object[] outputs, object returnValue, object correlationState) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="operationName" Type="System.String" />
+        <Parameter Name="outputs" Type="System.Object[]" />
+        <Parameter Name="returnValue" Type="System.Object" />
+        <Parameter Name="correlationState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="operationName">To be added.</param>
+        <param name="outputs">To be added.</param>
+        <param name="returnValue">To be added.</param>
+        <param name="correlationState">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeforeCall">
+      <MemberSignature Language="C#" Value="public object BeforeCall (string operationName, object[] inputs);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object BeforeCall(string operationName, object[] inputs) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Object</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="operationName" Type="System.String" />
+        <Parameter Name="inputs" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="operationName">To be added.</param>
+        <param name="inputs">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

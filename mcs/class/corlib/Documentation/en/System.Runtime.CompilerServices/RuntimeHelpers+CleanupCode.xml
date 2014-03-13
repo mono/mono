@@ -1,5 +1,6 @@
 <Type Name="RuntimeHelpers+CleanupCode" FullName="System.Runtime.CompilerServices.RuntimeHelpers+CleanupCode">
   <TypeSignature Language="C#" Value="public delegate void RuntimeHelpers.CleanupCode(object userData, bool exceptionThrown);" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed RuntimeHelpers/CleanupCode extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>

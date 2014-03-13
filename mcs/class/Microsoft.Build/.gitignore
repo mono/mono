@@ -4,3 +4,5 @@ bin/
 *.docstates
 *.suo
 Microsoft.Build.Internal/ExpressionParser.cs
+Microsoft.Build.Internal/y.output
+Test/FunctionalTestProject*.csproj

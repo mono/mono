@@ -1,0 +1,45 @@
+<Type Name="LockRecursionPolicy" FullName="System.Threading.LockRecursionPolicy">
+  <TypeSignature Language="C#" Value="public enum LockRecursionPolicy" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed LockRecursionPolicy extends System.Enum" />
+  <AssemblyInfo>
+    <AssemblyName>System.Core</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Enum</BaseTypeName>
+  </Base>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="NoRecursion">
+      <MemberSignature Language="C#" Value="NoRecursion" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.LockRecursionPolicy NoRecursion = int32(0)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.LockRecursionPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="SupportsRecursion">
+      <MemberSignature Language="C#" Value="SupportsRecursion" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Threading.LockRecursionPolicy SupportsRecursion = int32(1)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Threading.LockRecursionPolicy</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

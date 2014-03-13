@@ -1,5 +1,6 @@
 <Type Name="IsConst" FullName="System.Runtime.CompilerServices.IsConst">
   <TypeSignature Language="C#" Value="public static class IsConst" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit IsConst extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>

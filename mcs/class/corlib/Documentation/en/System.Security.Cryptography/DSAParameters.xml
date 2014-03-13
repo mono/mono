@@ -1,5 +1,6 @@
 <Type Name="DSAParameters" FullName="System.Security.Cryptography.DSAParameters">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct DSAParameters" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit DSAParameters extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,6 +13,11 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>DSA Parameters.</summary>
     <remarks>To be added</remarks>
@@ -19,7 +25,13 @@
   <Members>
     <Member MemberName="Counter">
       <MemberSignature Language="C#" Value="public int Counter;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 Counter" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -28,15 +40,16 @@
         <summary>Counter for the primes generation.</summary>
         <remarks>It is possible to verify the primes p and q by using this parameter.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="G">
+      <MemberSignature Language="C#" Value="public byte[] G;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] G" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="G">
-      <MemberSignature Language="C#" Value="public byte[] G;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -45,15 +58,16 @@
         <summary>To be added</summary>
         <remarks>The numbers P, Q and G may be shared for a group of users.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="J">
+      <MemberSignature Language="C#" Value="public byte[] J;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] J" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="J">
-      <MemberSignature Language="C#" Value="public byte[] J;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -62,15 +76,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="P">
+      <MemberSignature Language="C#" Value="public byte[] P;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] P" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="P">
-      <MemberSignature Language="C#" Value="public byte[] P;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -79,15 +94,16 @@
         <summary>A prime modulus.</summary>
         <remarks>The numbers P, Q and G may be shared for a group of users.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Q">
+      <MemberSignature Language="C#" Value="public byte[] Q;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] Q" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Q">
-      <MemberSignature Language="C#" Value="public byte[] Q;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -96,15 +112,16 @@
         <summary>A prime divisor of (p - 1).</summary>
         <remarks>The numbers P, Q and G may be shared for a group of users.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Seed">
+      <MemberSignature Language="C#" Value="public byte[] Seed;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] Seed" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Seed">
-      <MemberSignature Language="C#" Value="public byte[] Seed;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -113,15 +130,16 @@
         <summary>Seed for the primes generation.</summary>
         <remarks>It is possible to verify the primes p and q by using this parameter.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="X">
+      <MemberSignature Language="C#" Value="public byte[] X;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] X" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="X">
-      <MemberSignature Language="C#" Value="public byte[] X;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -137,15 +155,16 @@ While this structure has the <see cref="T:System.SerializableAttribute" /> attri
 </para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Y">
+      <MemberSignature Language="C#" Value="public byte[] Y;" />
+      <MemberSignature Language="ILAsm" Value=".field public unsigned int8[] Y" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Y">
-      <MemberSignature Language="C#" Value="public byte[] Y;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -154,16 +173,6 @@ While this structure has the <see cref="T:System.SerializableAttribute" /> attri
         <summary>The public key.</summary>
         <remarks>The public key, Y = G^X mod P.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

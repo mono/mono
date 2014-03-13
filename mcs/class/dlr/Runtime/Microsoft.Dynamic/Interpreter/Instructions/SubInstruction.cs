@@ -32,7 +32,7 @@ using Microsoft.Scripting.Runtime;
 using Microsoft.Scripting.Utils;
 
 namespace Microsoft.Scripting.Interpreter {
-    internal abstract class SubInstruction : AritmeticInstruction {
+    internal abstract class SubInstruction : ArithmeticInstruction {
 
         private static Instruction _Int16, _Int32, _Int64, _UInt16, _UInt32, _UInt64, _Single, _Double;
 
@@ -117,7 +117,7 @@ namespace Microsoft.Scripting.Interpreter {
         }
     }
 
-    internal abstract class SubOvfInstruction : AritmeticInstruction {
+    internal abstract class SubOvfInstruction : ArithmeticInstruction {
 
         private static Instruction _Int16, _Int32, _Int64, _UInt16, _UInt32, _UInt64, _Single, _Double;
 

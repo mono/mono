@@ -28,10 +28,11 @@ namespace Microsoft.Scripting.Interpreter {
 
         internal const int MaxParameters = 16;
         internal TRet Run0<TRet>() {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<TRet>)_compiled)();
             }
-
+#endif
             var frame = MakeFrame();
             var current = frame.Enter();
             try { _interpreter.Run(frame); } finally { frame.Leave(current); }
@@ -39,11 +40,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid0() {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action)_compiled)();
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             var current = frame.Enter();
             try { _interpreter.Run(frame); } finally { frame.Leave(current); }
@@ -56,10 +58,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action(lambda.RunVoid0);
         }
         internal TRet Run1<T0,TRet>(T0 arg0) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,TRet>)_compiled)(arg0);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             var current = frame.Enter();
@@ -68,11 +71,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid1<T0>(T0 arg0) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0>)_compiled)(arg0);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             var current = frame.Enter();
@@ -86,10 +90,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0>(lambda.RunVoid1<T0>);
         }
         internal TRet Run2<T0,T1,TRet>(T0 arg0,T1 arg1) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,TRet>)_compiled)(arg0, arg1);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -99,11 +104,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid2<T0,T1>(T0 arg0,T1 arg1) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1>)_compiled)(arg0, arg1);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -118,10 +124,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1>(lambda.RunVoid2<T0,T1>);
         }
         internal TRet Run3<T0,T1,T2,TRet>(T0 arg0,T1 arg1,T2 arg2) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,TRet>)_compiled)(arg0, arg1, arg2);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -132,11 +139,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid3<T0,T1,T2>(T0 arg0,T1 arg1,T2 arg2) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2>)_compiled)(arg0, arg1, arg2);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -152,10 +160,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2>(lambda.RunVoid3<T0,T1,T2>);
         }
         internal TRet Run4<T0,T1,T2,T3,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,TRet>)_compiled)(arg0, arg1, arg2, arg3);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -167,11 +176,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid4<T0,T1,T2,T3>(T0 arg0,T1 arg1,T2 arg2,T3 arg3) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3>)_compiled)(arg0, arg1, arg2, arg3);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -188,10 +198,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2,T3>(lambda.RunVoid4<T0,T1,T2,T3>);
         }
         internal TRet Run5<T0,T1,T2,T3,T4,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,T4,TRet>)_compiled)(arg0, arg1, arg2, arg3, arg4);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -204,11 +215,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid5<T0,T1,T2,T3,T4>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3,T4>)_compiled)(arg0, arg1, arg2, arg3, arg4);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -226,10 +238,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2,T3,T4>(lambda.RunVoid5<T0,T1,T2,T3,T4>);
         }
         internal TRet Run6<T0,T1,T2,T3,T4,T5,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,T4,T5,TRet>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -243,11 +256,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid6<T0,T1,T2,T3,T4,T5>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3,T4,T5>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -266,10 +280,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2,T3,T4,T5>(lambda.RunVoid6<T0,T1,T2,T3,T4,T5>);
         }
         internal TRet Run7<T0,T1,T2,T3,T4,T5,T6,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,T4,T5,T6,TRet>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -284,11 +299,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid7<T0,T1,T2,T3,T4,T5,T6>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3,T4,T5,T6>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -308,10 +324,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2,T3,T4,T5,T6>(lambda.RunVoid7<T0,T1,T2,T3,T4,T5,T6>);
         }
         internal TRet Run8<T0,T1,T2,T3,T4,T5,T6,T7,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,T4,T5,T6,T7,TRet>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -327,11 +344,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid8<T0,T1,T2,T3,T4,T5,T6,T7>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3,T4,T5,T6,T7>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -352,10 +370,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2,T3,T4,T5,T6,T7>(lambda.RunVoid8<T0,T1,T2,T3,T4,T5,T6,T7>);
         }
         internal TRet Run9<T0,T1,T2,T3,T4,T5,T6,T7,T8,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,T4,T5,T6,T7,T8,TRet>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -372,11 +391,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid9<T0,T1,T2,T3,T4,T5,T6,T7,T8>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3,T4,T5,T6,T7,T8>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -398,10 +418,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2,T3,T4,T5,T6,T7,T8>(lambda.RunVoid9<T0,T1,T2,T3,T4,T5,T6,T7,T8>);
         }
         internal TRet Run10<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,TRet>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -419,11 +440,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid10<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -446,10 +468,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>(lambda.RunVoid10<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9>);
         }
         internal TRet Run11<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9,T10 arg10) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,TRet>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -468,11 +491,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid11<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9,T10 arg10) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -496,10 +520,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>(lambda.RunVoid11<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10>);
         }
         internal TRet Run12<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9,T10 arg10,T11 arg11) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,TRet>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -519,11 +544,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid12<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9,T10 arg10,T11 arg11) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -548,10 +574,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11>(lambda.RunVoid12<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11>);
         }
         internal TRet Run13<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9,T10 arg10,T11 arg11,T12 arg12) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,TRet>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -572,11 +599,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid13<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9,T10 arg10,T11 arg11,T12 arg12) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -602,10 +630,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12>(lambda.RunVoid13<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12>);
         }
         internal TRet Run14<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9,T10 arg10,T11 arg11,T12 arg12,T13 arg13) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,TRet>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -627,11 +656,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid14<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9,T10 arg10,T11 arg11,T12 arg12,T13 arg13) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -658,10 +688,11 @@ namespace Microsoft.Scripting.Interpreter {
             return new Action<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13>(lambda.RunVoid14<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13>);
         }
         internal TRet Run15<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,TRet>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9,T10 arg10,T11 arg11,T12 arg12,T13 arg13,T14 arg14) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 return ((Func<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14,TRet>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;
@@ -684,11 +715,12 @@ namespace Microsoft.Scripting.Interpreter {
         }
 
         internal void RunVoid15<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14>(T0 arg0,T1 arg1,T2 arg2,T3 arg3,T4 arg4,T5 arg5,T6 arg6,T7 arg7,T8 arg8,T9 arg9,T10 arg10,T11 arg11,T12 arg12,T13 arg13,T14 arg14) {
+#if !MONO_INTERPRETER
             if (_compiled != null || TryGetCompiled()) {
                 ((Action<T0,T1,T2,T3,T4,T5,T6,T7,T8,T9,T10,T11,T12,T13,T14>)_compiled)(arg0, arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, arg10, arg11, arg12, arg13, arg14);
                 return;
             }
-
+#endif
             var frame = MakeFrame();
             frame.Data[0] = arg0;
             frame.Data[1] = arg1;

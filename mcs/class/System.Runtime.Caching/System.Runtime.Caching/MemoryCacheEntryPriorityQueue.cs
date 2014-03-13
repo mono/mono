@@ -88,8 +88,10 @@ namespace System.Runtime.Caching
 					newSize = halfTheSize + (heapCount / 3);
 				}
 
-				if ((heapCount < halfTheSize) && newSize > -1)
+				if ((heapCount < halfTheSize) && newSize > -1) {
 					Array.Resize <MemoryCacheEntry> (ref heap, newSize);
+					heapSize = newSize;
+				}
 			}
 			
 			return heap;

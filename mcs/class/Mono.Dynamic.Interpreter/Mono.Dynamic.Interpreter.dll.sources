@@ -42,7 +42,7 @@ Assembly/AssemblyInfo.cs
 
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/AddInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/AndInstruction.cs
-../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/AritmeticInstruction.cs
+../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ArithmeticInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ArrayOperations.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/CallInstruction.cs
 ../dlr/Runtime/Microsoft.Dynamic/Interpreter/Instructions/ComparisonInstruction.cs

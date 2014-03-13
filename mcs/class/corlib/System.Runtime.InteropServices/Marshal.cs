@@ -581,6 +581,13 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
+#if NET_4_5
+		public static Type GetTypeFromCLSID (Guid clsid)
+		{
+			throw new NotImplementedException ();			
+		}
+#endif
+
 #if !FULL_AOT_RUNTIME
 		[Obsolete]
 		[MonoTODO]

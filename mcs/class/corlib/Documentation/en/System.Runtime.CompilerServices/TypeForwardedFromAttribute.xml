@@ -1,5 +1,6 @@
 <Type Name="TypeForwardedFromAttribute" FullName="System.Runtime.CompilerServices.TypeForwardedFromAttribute">
   <TypeSignature Language="C#" Value="public sealed class TypeForwardedFromAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TypeForwardedFromAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -10,7 +11,7 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Interface | System.AttributeTargets.Delegate | System.AttributeTargets.All)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Class | System.AttributeTargets.Struct | System.AttributeTargets.Enum | System.AttributeTargets.Interface | System.AttributeTargets.Delegate | System.AttributeTargets.All, Inherited=false)</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
@@ -20,6 +21,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public TypeForwardedFromAttribute (string assemblyFullName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string assemblyFullName) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -35,6 +37,7 @@
     </Member>
     <Member MemberName="AssemblyFullName">
       <MemberSignature Language="C#" Value="public string AssemblyFullName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string AssemblyFullName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

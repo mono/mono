@@ -724,9 +724,7 @@ namespace System.Web
 				string header = content_type;
 
 				if (charset_set || header == "text/plain" || header == "text/html") {
-					if (header.IndexOf ("charset=") == -1) {
-						if (charset == null || charset == "")
-							charset = ContentEncoding.HeaderName;
+					if (header.IndexOf ("charset=") == -1 && !string.IsNullOrEmpty (charset)) {
 						header += "; charset=" + charset;
 					}
 				}

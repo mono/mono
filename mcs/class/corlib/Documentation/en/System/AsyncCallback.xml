@@ -1,6 +1,7 @@
 <Type Name="AsyncCallback" FullName="System.AsyncCallback" FullNameSP="System_AsyncCallback" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable AsyncCallback extends System.Delegate" />
   <TypeSignature Language="C#" Value="public delegate void AsyncCallback(IAsyncResult ar);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed AsyncCallback extends System.MulticastDelegate" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,6 +13,17 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Parameters>
+    <Parameter Name="ar" Type="System.IAsyncResult" />
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
   <Docs>
     <param name="ar">A <see cref="T:System.IAsyncResult" /> object containing information about the asynchronous operation that has completed.</param>
     <summary>
@@ -21,15 +33,4 @@
   </Docs>
   <Members />
   <TypeExcluded>0</TypeExcluded>
-  <Parameters>
-    <Parameter Name="ar" Type="System.IAsyncResult" />
-  </Parameters>
-  <ReturnValue>
-    <ReturnType>System.Void</ReturnType>
-  </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

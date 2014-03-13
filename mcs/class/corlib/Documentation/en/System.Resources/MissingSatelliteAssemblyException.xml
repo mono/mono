@@ -38,9 +38,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MissingSatelliteAssemblyException (string message);" />
@@ -59,9 +56,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected MissingSatelliteAssemblyException (System.Runtime.Serialization.SerializationInfo info, System.Runtime.Serialization.StreamingContext context);" />
@@ -82,9 +76,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MissingSatelliteAssemblyException (string message, Exception inner);" />
@@ -105,9 +96,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MissingSatelliteAssemblyException (string message, string cultureName);" />
@@ -128,9 +116,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
     </Member>
     <Member MemberName="CultureName">
       <MemberSignature Language="C#" Value="public string CultureName { get; }" />
@@ -149,9 +134,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyVersions>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyVersions>
     </Member>
   </Members>
 </Type>

@@ -39,11 +39,12 @@ namespace Microsoft.Scripting.Interpreter {
         private readonly Interpreter _interpreter;
         private readonly Expression _lambda;
 
+#if !MONO_INTERPRETER
         // Adaptive compilation support:
         private Type _compiledDelegateType;
         private Delegate _compiled;
         private readonly object _compileLock = new object();
-
+#endif
         internal LightDelegateCreator(Interpreter interpreter, LambdaExpression lambda) {
             Assert.NotNull(lambda);
             _interpreter = interpreter;
@@ -63,7 +64,7 @@ namespace Microsoft.Scripting.Interpreter {
         private bool HasClosure {
             get { return _interpreter != null && _interpreter.ClosureSize > 0; }
         }
-
+#if !MONO_INTERPRETER
         internal bool HasCompiled {
             get { return _compiled != null; }
         }
@@ -75,12 +76,13 @@ namespace Microsoft.Scripting.Interpreter {
         internal bool SameDelegateType {
             get { return _compiledDelegateType == DelegateType; }
         }
-
+#endif
         internal Delegate CreateDelegate() {
             return CreateDelegate(null);
         }
 
         internal Delegate CreateDelegate(StrongBox<object>[] closure) {
+#if !MONO_INTERPRETER
             if (_compiled != null) {
                 // If the delegate type we want is not a Func/Action, we can't
                 // use the compiled code directly. So instead just fall through
@@ -102,7 +104,7 @@ namespace Microsoft.Scripting.Interpreter {
                 Debug.Assert(compiled.GetType() == DelegateType);
                 return compiled;
             }
-
+#endif
             // Otherwise, we'll create an interpreted LightLambda
             return new LightLambda(this, closure, _interpreter._compilationThreshold).MakeDelegate(DelegateType);
         }
@@ -118,6 +120,7 @@ namespace Microsoft.Scripting.Interpreter {
             }
         }
 
+#if !MONO_INTERPRETER
         /// <summary>
         /// Used by LightLambda to get the compiled delegate.
         /// </summary>
@@ -190,5 +193,6 @@ namespace Microsoft.Scripting.Interpreter {
                 return lambda.Type;
             }
         }
+#endif
     }
 }

@@ -1,5 +1,6 @@
 <Type Name="AssemblyNameFlags" FullName="System.Reflection.AssemblyNameFlags">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum AssemblyNameFlags" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed AssemblyNameFlags extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -26,7 +27,12 @@
   <Members>
     <Member MemberName="EnableJITcompileOptimizer">
       <MemberSignature Language="C#" Value="EnableJITcompileOptimizer" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.AssemblyNameFlags EnableJITcompileOptimizer = int32(16384)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.AssemblyNameFlags</ReturnType>
       </ReturnValue>
@@ -34,14 +40,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EnableJITcompileTracking">
       <MemberSignature Language="C#" Value="EnableJITcompileTracking" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.AssemblyNameFlags EnableJITcompileTracking = int32(32768)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.AssemblyNameFlags</ReturnType>
       </ReturnValue>
@@ -49,14 +56,16 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.AssemblyNameFlags None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.AssemblyNameFlags</ReturnType>
       </ReturnValue>
@@ -65,15 +74,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PublicKey">
       <MemberSignature Language="C#" Value="PublicKey" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.AssemblyNameFlags PublicKey = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.AssemblyNameFlags</ReturnType>
       </ReturnValue>
@@ -82,15 +92,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Retargetable">
+      <MemberSignature Language="C#" Value="Retargetable" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.AssemblyNameFlags Retargetable = int32(256)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Retargetable">
-      <MemberSignature Language="C#" Value="Retargetable" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.AssemblyNameFlags</ReturnType>
       </ReturnValue>
@@ -99,11 +110,6 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -1,6 +1,7 @@
 <Type Name="LingerOption" FullName="System.Net.Sockets.LingerOption" FullNameSP="System_Net_Sockets_LingerOption" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public LingerOption extends System.Object" />
   <TypeSignature Language="C#" Value="public class LingerOption" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit LingerOption extends System.Object" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +9,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -40,16 +42,22 @@ less than zero or greater than <see cref="F:System.UInt16.MaxValue" />.
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(bool enable, int32 seconds)" />
-      <MemberSignature Language="C#" Value="public LingerOption (bool enable, int secs);" />
+      <MemberSignature Language="C#" Value="public LingerOption (bool enable, int seconds);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool enable, int32 seconds) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="enable" Type="System.Boolean" />
-        <Parameter Name="secs" Type="System.Int32" />
+        <Parameter Name="seconds" Type="System.Int32" />
       </Parameters>
       <Docs>
         <param name="enable">A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> enables the linger option and <see langword="false" /> disables the option.</param>
-        <param name="secs">To be added.</param>
+        <param name="seconds">To be added.</param>
         <summary>
           <para>Constructs and initializes a new instance of
       the <see cref="T:System.Net.Sockets.LingerOption" /> class.</para>
@@ -60,15 +68,17 @@ less than zero or greater than <see cref="F:System.UInt16.MaxValue" />.
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Enabled">
       <MemberSignature Language="ILASM" Value=".property bool Enabled { public hidebysig specialname instance bool get_Enabled() public hidebysig specialname instance void set_Enabled(bool value) }" />
-      <MemberSignature Language="C#" Value="public bool Enabled { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool Enabled { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Enabled" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -89,15 +99,17 @@ less than zero or greater than <see cref="F:System.UInt16.MaxValue" />.
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LingerTime">
       <MemberSignature Language="ILASM" Value=".property int32 LingerTime { public hidebysig specialname instance int32 get_LingerTime() public hidebysig specialname instance void set_LingerTime(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int LingerTime { set; get; }" />
+      <MemberSignature Language="C#" Value="public int LingerTime { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 LingerTime" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -121,10 +133,6 @@ property is less than zero or greater than
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

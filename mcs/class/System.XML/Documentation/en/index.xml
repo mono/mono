@@ -4,11 +4,13 @@
   <Types>
     <Namespace Name="System.Xml">
       <Type Name="ConformanceLevel" Kind="Enumeration" />
+      <Type Name="DtdProcessing" Kind="Enumeration" />
       <Type Name="EntityHandling" Kind="Enumeration" />
       <Type Name="Formatting" Kind="Enumeration" />
       <Type Name="IHasXmlNode" Kind="Interface" />
       <Type Name="IXmlLineInfo" Kind="Interface" />
       <Type Name="IXmlNamespaceResolver" Kind="Interface" />
+      <Type Name="NamespaceHandling" Kind="Enumeration" />
       <Type Name="NameTable" Kind="Class" />
       <Type Name="NewLineHandling" Kind="Enumeration" />
       <Type Name="ReadState" Kind="Enumeration" />
@@ -101,6 +103,7 @@
       <Type Name="XmlSchemaException" Kind="Class" />
       <Type Name="XmlSchemaExternal" Kind="Class" />
       <Type Name="XmlSchemaFacet" Kind="Class" />
+      <Type Name="XmlSchemaFacet+Facet" Kind="Enumeration" />
       <Type Name="XmlSchemaForm" Kind="Enumeration" />
       <Type Name="XmlSchemaFractionDigitsFacet" Kind="Class" />
       <Type Name="XmlSchemaGroup" Kind="Class" />
@@ -220,6 +223,9 @@
       <Type Name="XmlSerializationGeneratedCode" Kind="Class" />
       <Type Name="XmlSerializationReadCallback" Kind="Delegate" />
       <Type Name="XmlSerializationReader" Kind="Class" />
+      <Type Name="XmlSerializationReader+CollectionFixup" Kind="Class" />
+      <Type Name="XmlSerializationReader+CollectionItemFixup" Kind="Class" />
+      <Type Name="XmlSerializationReader+Fixup" Kind="Class" />
       <Type Name="XmlSerializationWriteCallback" Kind="Delegate" />
       <Type Name="XmlSerializationWriter" Kind="Class" />
       <Type Name="XmlSerializer" Kind="Class" />
@@ -276,46 +282,20 @@
   </Types>
   <Title>System.Xml</Title>
   <Assemblies>
-    <Assembly Name="System.Xml" Version="2.0.0.0">
+    <Assembly Name="System.Xml" Version="4.0.0.0">
+      <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+          <AttributeName>System.Reflection.AssemblyCompany("Mono development team")</AttributeName>
         </Attribute>
         <Attribute>
-          <AttributeName>System.Reflection.AssemblyFileVersion("2.0.50727.1433")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(true)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Reflection.AssemblyInformationalVersion("2.0.50727.1433")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Resources.SatelliteContractVersion("2.0.0.0")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Reflection.AssemblyCopyright("(c) various MONO Authors")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Reflection.AssemblyProduct("MONO Common language infrastructure")</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Reflection.AssemblyCompany("MONO development team")</AttributeName>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) Various Mono authors")</AttributeName>
         </Attribute>
         <Attribute>
           <AttributeName>System.Reflection.AssemblyDefaultAlias("System.Xml.dll")</AttributeName>
@@ -324,7 +304,37 @@
           <AttributeName>System.Reflection.AssemblyDescription("System.Xml.dll")</AttributeName>
         </Attribute>
         <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("Mono Common Language Infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
           <AttributeName>System.Reflection.AssemblyTitle("System.Xml.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("4.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.CompilationRelaxations(System.Runtime.CompilerServices.CompilationRelaxations.NoStringInterning)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.InternalsVisibleTo("System.Xml.Linq, PublicKey=00000000000000000400000000000000")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
         </Attribute>
       </Attributes>
     </Assembly>

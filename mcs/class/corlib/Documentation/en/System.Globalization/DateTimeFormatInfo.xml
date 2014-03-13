@@ -1,6 +1,7 @@
 <Type Name="DateTimeFormatInfo" FullName="System.Globalization.DateTimeFormatInfo" FullNameSP="System_Globalization_DateTimeFormatInfo" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable DateTimeFormatInfo extends System.Object implements System.ICloneable, System.IFormatProvider" />
   <TypeSignature Language="C#" Value="public sealed class DateTimeFormatInfo : ICloneable, IFormatProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit DateTimeFormatInfo extends System.Object implements class System.ICloneable, class System.IFormatProvider" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -21,6 +22,11 @@
       <InterfaceName>System.IFormatProvider</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para>Defines culture-specific formats and patterns for
@@ -228,7 +234,13 @@ list of white space characters.</block><list type="table"><listheader><term>Form
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public DateTimeFormatInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
@@ -240,16 +252,17 @@ list of white space characters.</block><list type="table"><listheader><term>Form
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AbbreviatedDayNames">
+      <MemberSignature Language="ILASM" Value=".property class System.String[] AbbreviatedDayNames { public hidebysig specialname instance class System.String[] get_AbbreviatedDayNames() public hidebysig specialname instance void set_AbbreviatedDayNames(class System.String[] value) }" />
+      <MemberSignature Language="C#" Value="public string[] AbbreviatedDayNames { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] AbbreviatedDayNames" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AbbreviatedDayNames">
-      <MemberSignature Language="ILASM" Value=".property class System.String[] AbbreviatedDayNames { public hidebysig specialname instance class System.String[] get_AbbreviatedDayNames() public hidebysig specialname instance void set_AbbreviatedDayNames(class System.String[] value) }" />
-      <MemberSignature Language="C#" Value="public string[] AbbreviatedDayNames { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -275,15 +288,20 @@ containing the culture-specific abbreviated names of the days of the week.</para
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AbbreviatedMonthGenitiveNames">
+      <MemberSignature Language="C#" Value="public string[] AbbreviatedMonthGenitiveNames { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] AbbreviatedMonthGenitiveNames" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AbbreviatedMonthGenitiveNames">
-      <MemberSignature Language="C#" Value="public string[] AbbreviatedMonthGenitiveNames { set; get; }" />
-      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -293,20 +311,17 @@ containing the culture-specific abbreviated names of the days of the week.</para
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AbbreviatedMonthNames">
       <MemberSignature Language="ILASM" Value=".property class System.String[] AbbreviatedMonthNames { public hidebysig specialname instance class System.String[] get_AbbreviatedMonthNames() public hidebysig specialname instance void set_AbbreviatedMonthNames(class System.String[] value) }" />
-      <MemberSignature Language="C#" Value="public string[] AbbreviatedMonthNames { set; get; }" />
+      <MemberSignature Language="C#" Value="public string[] AbbreviatedMonthNames { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] AbbreviatedMonthNames" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -336,16 +351,17 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AMDesignator">
+      <MemberSignature Language="ILASM" Value=".property string AMDesignator { public hidebysig specialname instance string get_AMDesignator() public hidebysig specialname instance void set_AMDesignator(string value) }" />
+      <MemberSignature Language="C#" Value="public string AMDesignator { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string AMDesignator" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AMDesignator">
-      <MemberSignature Language="ILASM" Value=".property string AMDesignator { public hidebysig specialname instance string get_AMDesignator() public hidebysig specialname instance void set_AMDesignator(string value) }" />
-      <MemberSignature Language="C#" Value="public string AMDesignator { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -365,15 +381,16 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Calendar">
+      <MemberSignature Language="C#" Value="public System.Globalization.Calendar Calendar { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Globalization.Calendar Calendar" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Calendar">
-      <MemberSignature Language="C#" Value="public System.Globalization.Calendar Calendar { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.Calendar</ReturnType>
       </ReturnValue>
@@ -382,15 +399,16 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="CalendarWeekRule">
+      <MemberSignature Language="C#" Value="public System.Globalization.CalendarWeekRule CalendarWeekRule { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Globalization.CalendarWeekRule CalendarWeekRule" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CalendarWeekRule">
-      <MemberSignature Language="C#" Value="public System.Globalization.CalendarWeekRule CalendarWeekRule { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.CalendarWeekRule</ReturnType>
       </ReturnValue>
@@ -399,16 +417,17 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Clone">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object Clone()" />
+      <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Clone() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Clone">
-      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object Clone()" />
-      <MemberSignature Language="C#" Value="public object Clone ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -432,16 +451,17 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CurrentInfo">
+      <MemberSignature Language="ILASM" Value=".property class System.Globalization.DateTimeFormatInfo CurrentInfo { public hidebysig static specialname class System.Globalization.DateTimeFormatInfo get_CurrentInfo() }" />
+      <MemberSignature Language="C#" Value="public static System.Globalization.DateTimeFormatInfo CurrentInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Globalization.DateTimeFormatInfo CurrentInfo" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrentInfo">
-      <MemberSignature Language="ILASM" Value=".property class System.Globalization.DateTimeFormatInfo CurrentInfo { public hidebysig static specialname class System.Globalization.DateTimeFormatInfo get_CurrentInfo() }" />
-      <MemberSignature Language="C#" Value="public static System.Globalization.DateTimeFormatInfo CurrentInfo { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeFormatInfo</ReturnType>
       </ReturnValue>
@@ -459,16 +479,17 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="DateSeparator">
+      <MemberSignature Language="ILASM" Value=".property string DateSeparator { public hidebysig specialname instance string get_DateSeparator() public hidebysig specialname instance void set_DateSeparator(string value) }" />
+      <MemberSignature Language="C#" Value="public string DateSeparator { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DateSeparator" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DateSeparator">
-      <MemberSignature Language="ILASM" Value=".property string DateSeparator { public hidebysig specialname instance string get_DateSeparator() public hidebysig specialname instance void set_DateSeparator(string value) }" />
-      <MemberSignature Language="C#" Value="public string DateSeparator { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -487,16 +508,17 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="DayNames">
+      <MemberSignature Language="ILASM" Value=".property class System.String[] DayNames { public hidebysig specialname instance class System.String[] get_DayNames() public hidebysig specialname instance void set_DayNames(class System.String[] value) }" />
+      <MemberSignature Language="C#" Value="public string[] DayNames { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] DayNames" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DayNames">
-      <MemberSignature Language="ILASM" Value=".property class System.String[] DayNames { public hidebysig specialname instance class System.String[] get_DayNames() public hidebysig specialname instance void set_DayNames(class System.String[] value) }" />
-      <MemberSignature Language="C#" Value="public string[] DayNames { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -520,15 +542,16 @@ containing the culture-specific full names of the days of the week.</para>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="FirstDayOfWeek">
+      <MemberSignature Language="C#" Value="public DayOfWeek FirstDayOfWeek { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.DayOfWeek FirstDayOfWeek" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FirstDayOfWeek">
-      <MemberSignature Language="C#" Value="public DayOfWeek FirstDayOfWeek { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.DayOfWeek</ReturnType>
       </ReturnValue>
@@ -537,16 +560,17 @@ containing the culture-specific full names of the days of the week.</para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="FullDateTimePattern">
+      <MemberSignature Language="ILASM" Value=".property string FullDateTimePattern { public hidebysig specialname instance string get_FullDateTimePattern() public hidebysig specialname instance void set_FullDateTimePattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string FullDateTimePattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string FullDateTimePattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FullDateTimePattern">
-      <MemberSignature Language="ILASM" Value=".property string FullDateTimePattern { public hidebysig specialname instance string get_FullDateTimePattern() public hidebysig specialname instance void set_FullDateTimePattern(string value) }" />
-      <MemberSignature Language="C#" Value="public string FullDateTimePattern { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -567,15 +591,16 @@ containing the culture-specific full names of the days of the week.</para>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetAbbreviatedDayName">
+      <MemberSignature Language="C#" Value="public string GetAbbreviatedDayName (DayOfWeek dayofweek);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetAbbreviatedDayName(valuetype System.DayOfWeek dayofweek) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAbbreviatedDayName">
-      <MemberSignature Language="C#" Value="public string GetAbbreviatedDayName (DayOfWeek dayofweek);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -588,15 +613,16 @@ containing the culture-specific full names of the days of the week.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetAbbreviatedEraName">
+      <MemberSignature Language="C#" Value="public string GetAbbreviatedEraName (int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetAbbreviatedEraName(int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAbbreviatedEraName">
-      <MemberSignature Language="C#" Value="public string GetAbbreviatedEraName (int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -609,16 +635,17 @@ containing the culture-specific full names of the days of the week.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetAbbreviatedMonthName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string GetAbbreviatedMonthName(int32 month)" />
+      <MemberSignature Language="C#" Value="public string GetAbbreviatedMonthName (int month);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetAbbreviatedMonthName(int32 month) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAbbreviatedMonthName">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string GetAbbreviatedMonthName(int32 month)" />
-      <MemberSignature Language="C#" Value="public string GetAbbreviatedMonthName (int month);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -707,15 +734,16 @@ containing the culture-specific full names of the days of the week.</para>
           <paramref name="month" /> is less than 1 or greater than 13.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetAllDateTimePatterns">
+      <MemberSignature Language="C#" Value="public string[] GetAllDateTimePatterns ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetAllDateTimePatterns() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAllDateTimePatterns">
-      <MemberSignature Language="C#" Value="public string[] GetAllDateTimePatterns ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -725,15 +753,16 @@ containing the culture-specific full names of the days of the week.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetAllDateTimePatterns">
+      <MemberSignature Language="C#" Value="public string[] GetAllDateTimePatterns (char format);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetAllDateTimePatterns(char format) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAllDateTimePatterns">
-      <MemberSignature Language="C#" Value="public string[] GetAllDateTimePatterns (char format);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -746,15 +775,16 @@ containing the culture-specific full names of the days of the week.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetDayName">
+      <MemberSignature Language="C#" Value="public string GetDayName (DayOfWeek dayofweek);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetDayName(valuetype System.DayOfWeek dayofweek) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDayName">
-      <MemberSignature Language="C#" Value="public string GetDayName (DayOfWeek dayofweek);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -767,16 +797,17 @@ containing the culture-specific full names of the days of the week.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetEra">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 GetEra(string eraName)" />
+      <MemberSignature Language="C#" Value="public int GetEra (string eraName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 GetEra(string eraName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEra">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance int32 GetEra(string eraName)" />
-      <MemberSignature Language="C#" Value="public int GetEra (string eraName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -803,16 +834,17 @@ containing the culture-specific full names of the days of the week.</para>
           <paramref name="eraName" /> is a null reference.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetEraName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string GetEraName(int32 era)" />
+      <MemberSignature Language="C#" Value="public string GetEraName (int era);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetEraName(int32 era) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEraName">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string GetEraName(int32 era)" />
-      <MemberSignature Language="C#" Value="public string GetEraName (int era);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -839,16 +871,17 @@ containing the culture-specific full names of the days of the week.</para>
           <paramref name="era" /> does not represent a valid era in calendar for the current thread.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetFormat">
+      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object GetFormat(class System.Type formatType)" />
+      <MemberSignature Language="C#" Value="public object GetFormat (Type formatType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object GetFormat(class System.Type formatType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetFormat">
-      <MemberSignature Language="ILASM" Value=".method public final hidebysig virtual object GetFormat(class System.Type formatType)" />
-      <MemberSignature Language="C#" Value="public object GetFormat (Type formatType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -872,15 +905,16 @@ containing the culture-specific full names of the days of the week.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetInstance">
+      <MemberSignature Language="C#" Value="public static System.Globalization.DateTimeFormatInfo GetInstance (IFormatProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Globalization.DateTimeFormatInfo GetInstance(class System.IFormatProvider provider) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetInstance">
-      <MemberSignature Language="C#" Value="public static System.Globalization.DateTimeFormatInfo GetInstance (IFormatProvider provider);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeFormatInfo</ReturnType>
       </ReturnValue>
@@ -893,16 +927,17 @@ containing the culture-specific full names of the days of the week.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetMonthName">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string GetMonthName(int32 month)" />
+      <MemberSignature Language="C#" Value="public string GetMonthName (int month);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetMonthName(int32 month) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMonthName">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance string GetMonthName(int32 month)" />
-      <MemberSignature Language="C#" Value="public string GetMonthName (int month);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -991,15 +1026,20 @@ containing the culture-specific full names of the days of the week.</para>
           <paramref name="month" /> is less than 1 or greater than 13.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetShortestDayName">
       <MemberSignature Language="C#" Value="public string GetShortestDayName (DayOfWeek dayOfWeek);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string GetShortestDayName(valuetype System.DayOfWeek dayOfWeek) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1013,20 +1053,17 @@ containing the culture-specific full names of the days of the week.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="InvariantInfo">
       <MemberSignature Language="ILASM" Value=".property class System.Globalization.DateTimeFormatInfo InvariantInfo { public hidebysig static specialname class System.Globalization.DateTimeFormatInfo get_InvariantInfo() }" />
       <MemberSignature Language="C#" Value="public static System.Globalization.DateTimeFormatInfo InvariantInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Globalization.DateTimeFormatInfo InvariantInfo" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeFormatInfo</ReturnType>
       </ReturnValue>
@@ -1043,16 +1080,17 @@ containing the culture-specific full names of the days of the week.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsReadOnly">
+      <MemberSignature Language="ILASM" Value=".property bool IsReadOnly { public hidebysig specialname instance bool get_IsReadOnly() }" />
+      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsReadOnly">
-      <MemberSignature Language="ILASM" Value=".property bool IsReadOnly { public hidebysig specialname instance bool get_IsReadOnly() }" />
-      <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1071,16 +1109,17 @@ containing the culture-specific full names of the days of the week.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LongDatePattern">
+      <MemberSignature Language="ILASM" Value=".property string LongDatePattern { public hidebysig specialname instance string get_LongDatePattern() public hidebysig specialname instance void set_LongDatePattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string LongDatePattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LongDatePattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LongDatePattern">
-      <MemberSignature Language="ILASM" Value=".property string LongDatePattern { public hidebysig specialname instance string get_LongDatePattern() public hidebysig specialname instance void set_LongDatePattern(string value) }" />
-      <MemberSignature Language="C#" Value="public string LongDatePattern { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1101,16 +1140,17 @@ containing the culture-specific full names of the days of the week.</para>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="LongTimePattern">
+      <MemberSignature Language="ILASM" Value=".property string LongTimePattern { public hidebysig specialname instance string get_LongTimePattern() public hidebysig specialname instance void set_LongTimePattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string LongTimePattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LongTimePattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LongTimePattern">
-      <MemberSignature Language="ILASM" Value=".property string LongTimePattern { public hidebysig specialname instance string get_LongTimePattern() public hidebysig specialname instance void set_LongTimePattern(string value) }" />
-      <MemberSignature Language="C#" Value="public string LongTimePattern { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1131,16 +1171,17 @@ containing the culture-specific full names of the days of the week.</para>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="MonthDayPattern">
+      <MemberSignature Language="ILASM" Value=".property string MonthDayPattern { public hidebysig specialname instance string get_MonthDayPattern() public hidebysig specialname instance void set_MonthDayPattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string MonthDayPattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string MonthDayPattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MonthDayPattern">
-      <MemberSignature Language="ILASM" Value=".property string MonthDayPattern { public hidebysig specialname instance string get_MonthDayPattern() public hidebysig specialname instance void set_MonthDayPattern(string value) }" />
-      <MemberSignature Language="C#" Value="public string MonthDayPattern { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1161,15 +1202,20 @@ containing the culture-specific full names of the days of the week.</para>
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="MonthGenitiveNames">
+      <MemberSignature Language="C#" Value="public string[] MonthGenitiveNames { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] MonthGenitiveNames" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MonthGenitiveNames">
-      <MemberSignature Language="C#" Value="public string[] MonthGenitiveNames { set; get; }" />
-      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -1179,20 +1225,17 @@ containing the culture-specific full names of the days of the week.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MonthNames">
       <MemberSignature Language="ILASM" Value=".property class System.String[] MonthNames { public hidebysig specialname instance class System.String[] get_MonthNames() public hidebysig specialname instance void set_MonthNames(class System.String[] value) }" />
-      <MemberSignature Language="C#" Value="public string[] MonthNames { set; get; }" />
+      <MemberSignature Language="C#" Value="public string[] MonthNames { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] MonthNames" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -1223,15 +1266,20 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NativeCalendarName">
       <MemberSignature Language="C#" Value="public string NativeCalendarName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string NativeCalendarName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1241,20 +1289,17 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PMDesignator">
       <MemberSignature Language="ILASM" Value=".property string PMDesignator { public hidebysig specialname instance string get_PMDesignator() public hidebysig specialname instance void set_PMDesignator(string value) }" />
-      <MemberSignature Language="C#" Value="public string PMDesignator { set; get; }" />
+      <MemberSignature Language="C#" Value="public string PMDesignator { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PMDesignator" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1273,16 +1318,17 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ReadOnly">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Globalization.DateTimeFormatInfo ReadOnly(class System.Globalization.DateTimeFormatInfo dtfi)" />
+      <MemberSignature Language="C#" Value="public static System.Globalization.DateTimeFormatInfo ReadOnly (System.Globalization.DateTimeFormatInfo dtfi);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Globalization.DateTimeFormatInfo ReadOnly(class System.Globalization.DateTimeFormatInfo dtfi) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReadOnly">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Globalization.DateTimeFormatInfo ReadOnly(class System.Globalization.DateTimeFormatInfo dtfi)" />
-      <MemberSignature Language="C#" Value="public static System.Globalization.DateTimeFormatInfo ReadOnly (System.Globalization.DateTimeFormatInfo dtfi);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.DateTimeFormatInfo</ReturnType>
       </ReturnValue>
@@ -1308,15 +1354,16 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
           <paramref name="dtfi" /> is a null reference.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="RFC1123Pattern">
+      <MemberSignature Language="C#" Value="public string RFC1123Pattern { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string RFC1123Pattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RFC1123Pattern">
-      <MemberSignature Language="C#" Value="public string RFC1123Pattern { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1325,15 +1372,20 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetAllDateTimePatterns">
       <MemberSignature Language="C#" Value="public void SetAllDateTimePatterns (string[] patterns, char format);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetAllDateTimePatterns(string[] patterns, char format) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1348,20 +1400,17 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="ShortDatePattern">
       <MemberSignature Language="ILASM" Value=".property string ShortDatePattern { public hidebysig specialname instance string get_ShortDatePattern() public hidebysig specialname instance void set_ShortDatePattern(string value) }" />
-      <MemberSignature Language="C#" Value="public string ShortDatePattern { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ShortDatePattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ShortDatePattern" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1382,15 +1431,15 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ShortestDayNames">
+      <MemberSignature Language="C#" Value="public string[] ShortestDayNames { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] ShortestDayNames" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ShortestDayNames">
-      <MemberSignature Language="C#" Value="public string[] ShortestDayNames { set; get; }" />
-      <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -1405,15 +1454,17 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ShortTimePattern">
       <MemberSignature Language="ILASM" Value=".property string ShortTimePattern { public hidebysig specialname instance string get_ShortTimePattern() public hidebysig specialname instance void set_ShortTimePattern(string value) }" />
-      <MemberSignature Language="C#" Value="public string ShortTimePattern { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ShortTimePattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ShortTimePattern" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1434,15 +1485,16 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SortableDateTimePattern">
+      <MemberSignature Language="C#" Value="public string SortableDateTimePattern { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SortableDateTimePattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SortableDateTimePattern">
-      <MemberSignature Language="C#" Value="public string SortableDateTimePattern { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1451,16 +1503,17 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="TimeSeparator">
+      <MemberSignature Language="ILASM" Value=".property string TimeSeparator { public hidebysig specialname instance string get_TimeSeparator() public hidebysig specialname instance void set_TimeSeparator(string value) }" />
+      <MemberSignature Language="C#" Value="public string TimeSeparator { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TimeSeparator" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="TimeSeparator">
-      <MemberSignature Language="ILASM" Value=".property string TimeSeparator { public hidebysig specialname instance string get_TimeSeparator() public hidebysig specialname instance void set_TimeSeparator(string value) }" />
-      <MemberSignature Language="C#" Value="public string TimeSeparator { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1479,15 +1532,16 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="UniversalSortableDateTimePattern">
+      <MemberSignature Language="C#" Value="public string UniversalSortableDateTimePattern { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string UniversalSortableDateTimePattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UniversalSortableDateTimePattern">
-      <MemberSignature Language="C#" Value="public string UniversalSortableDateTimePattern { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1496,16 +1550,17 @@ cultures with 12-month calendars the 13th element of the array is an empty strin
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="YearMonthPattern">
+      <MemberSignature Language="ILASM" Value=".property string YearMonthPattern { public hidebysig specialname instance string get_YearMonthPattern() public hidebysig specialname instance void set_YearMonthPattern(string value) }" />
+      <MemberSignature Language="C#" Value="public string YearMonthPattern { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string YearMonthPattern" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="YearMonthPattern">
-      <MemberSignature Language="ILASM" Value=".property string YearMonthPattern { public hidebysig specialname instance string get_YearMonthPattern() public hidebysig specialname instance void set_YearMonthPattern(string value) }" />
-      <MemberSignature Language="C#" Value="public string YearMonthPattern { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1527,17 +1582,7 @@ methods associate the format pattern returned by this property with the
         <exception cref="T:System.InvalidOperationException">The current instance is read-only and a set operation was attempted. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

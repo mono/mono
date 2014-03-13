@@ -1,8 +1,10 @@
 <Type Name="XsltMessageEncounteredEventHandler" FullName="System.Xml.Xsl.XsltMessageEncounteredEventHandler">
   <TypeSignature Language="C#" Value="public delegate void XsltMessageEncounteredEventHandler(object sender, XsltMessageEncounteredEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XsltMessageEncounteredEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

@@ -1,6 +1,7 @@
 <Type Name="Thread" FullName="System.Threading.Thread" FullNameSP="System_Threading_Thread" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed Thread extends System.Object" />
   <TypeSignature Language="C#" Value="public sealed class Thread : System.Runtime.ConstrainedExecution.CriticalFinalizerObject, System.Runtime.InteropServices._Thread" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit Thread extends System.Runtime.ConstrainedExecution.CriticalFinalizerObject implements class System.Runtime.InteropServices._Thread" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -18,6 +19,17 @@
       <InterfaceName>System.Runtime.InteropServices._Thread</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._Thread))</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para> Represents a sequential
@@ -51,7 +63,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Thread (System.Threading.ParameterizedThreadStart start);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Threading.ParameterizedThreadStart start) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="start" Type="System.Threading.ParameterizedThreadStart" />
       </Parameters>
@@ -61,15 +78,17 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Threading.ThreadStart start)" />
       <MemberSignature Language="C#" Value="public Thread (System.Threading.ThreadStart start);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Threading.ThreadStart start) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="start" Type="System.Threading.ThreadStart" />
@@ -94,15 +113,15 @@ class.</para>
           <paramref name="start " />is <see langword="null" /> . </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Thread (System.Threading.ParameterizedThreadStart start, int maxStackSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Threading.ParameterizedThreadStart start, int32 maxStackSize) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="start" Type="System.Threading.ParameterizedThreadStart" />
         <Parameter Name="maxStackSize" Type="System.Int32" />
@@ -114,14 +133,15 @@ class.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Thread (System.Threading.ThreadStart start, int maxStackSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Threading.ThreadStart start, int32 maxStackSize) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public Thread (System.Threading.ThreadStart start, int maxStackSize);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="start" Type="System.Threading.ThreadStart" />
         <Parameter Name="maxStackSize" Type="System.Int32" />
@@ -133,15 +153,17 @@ class.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Abort">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Abort()" />
       <MemberSignature Language="C#" Value="public void Abort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Abort() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -251,16 +273,17 @@ terminated as a result of a successful call to <see cref="M:System.Threading.Thr
         <permission cref="!:System.Security.SecurityPermission">Requires permission to control the thread to be aborted. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlThread" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Abort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Abort(object stateInfo)" />
+      <MemberSignature Language="C#" Value="public void Abort (object stateInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Abort(object stateInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Abort">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Abort(object stateInfo)" />
-      <MemberSignature Language="C#" Value="public void Abort (object stateInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -294,15 +317,16 @@ property.</para>
         <permission cref="!:System.Security.SecurityPermission">Requires permission to control the thread to be aborted. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.ControlThread" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AllocateDataSlot">
+      <MemberSignature Language="C#" Value="public static LocalDataStoreSlot AllocateDataSlot ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.LocalDataStoreSlot AllocateDataSlot() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllocateDataSlot">
-      <MemberSignature Language="C#" Value="public static LocalDataStoreSlot AllocateDataSlot ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.LocalDataStoreSlot</ReturnType>
       </ReturnValue>
@@ -312,15 +336,16 @@ property.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AllocateNamedDataSlot">
+      <MemberSignature Language="C#" Value="public static LocalDataStoreSlot AllocateNamedDataSlot (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.LocalDataStoreSlot AllocateNamedDataSlot(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AllocateNamedDataSlot">
-      <MemberSignature Language="C#" Value="public static LocalDataStoreSlot AllocateNamedDataSlot (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.LocalDataStoreSlot</ReturnType>
       </ReturnValue>
@@ -333,23 +358,11 @@ property.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ApartmentState">
-      <MemberSignature Language="C#" Value="public System.Threading.ApartmentState ApartmentState { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Threading.ApartmentState ApartmentState { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Threading.ApartmentState ApartmentState" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Threading.ApartmentState</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -360,19 +373,19 @@ property.</para>
           <AttributeName>System.Obsolete("Deprecated in favor of GetApartmentState, SetApartmentState and TrySetApartmentState.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Threading.ApartmentState</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="BeginCriticalRegion">
       <MemberSignature Language="C#" Value="public static void BeginCriticalRegion ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void BeginCriticalRegion() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -382,19 +395,20 @@ property.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
     </Member>
     <Member MemberName="BeginThreadAffinity">
       <MemberSignature Language="C#" Value="public static void BeginThreadAffinity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void BeginThreadAffinity() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -404,10 +418,25 @@ property.</para>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
     </Member>
     <Member MemberName="CurrentContext">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.Contexts.Context CurrentContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Runtime.Remoting.Contexts.Context CurrentContext" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.Contexts.Context</ReturnType>
       </ReturnValue>
@@ -416,15 +445,16 @@ property.</para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="CurrentCulture">
+      <MemberSignature Language="C#" Value="public System.Globalization.CultureInfo CurrentCulture { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Globalization.CultureInfo CurrentCulture" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrentCulture">
-      <MemberSignature Language="C#" Value="public System.Globalization.CultureInfo CurrentCulture { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureInfo</ReturnType>
       </ReturnValue>
@@ -433,15 +463,16 @@ property.</para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="CurrentPrincipal">
+      <MemberSignature Language="C#" Value="public static System.Security.Principal.IPrincipal CurrentPrincipal { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Security.Principal.IPrincipal CurrentPrincipal" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrentPrincipal">
-      <MemberSignature Language="C#" Value="public static System.Security.Principal.IPrincipal CurrentPrincipal { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Principal.IPrincipal</ReturnType>
       </ReturnValue>
@@ -450,16 +481,22 @@ property.</para>
         <value>An object implementing <see cref="T:System.Security.Principal.IPrincipal" /> which encapsulates information about the principal which the thread is executing on behalf of.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="CurrentThread">
+      <MemberSignature Language="ILASM" Value=".property class System.Threading.Thread CurrentThread { public hidebysig static specialname class System.Threading.Thread get_CurrentThread() }" />
+      <MemberSignature Language="C#" Value="public static System.Threading.Thread CurrentThread { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Threading.Thread CurrentThread" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CurrentThread">
-      <MemberSignature Language="ILASM" Value=".property class System.Threading.Thread CurrentThread { public hidebysig static specialname class System.Threading.Thread get_CurrentThread() }" />
-      <MemberSignature Language="C#" Value="public static System.Threading.Thread CurrentThread { get; }" />
-      <MemberType>Property</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Threading.Thread</ReturnType>
       </ReturnValue>
@@ -479,20 +516,16 @@ instance that represents the currently executing thread.</SPAN>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CurrentUICulture">
+      <MemberSignature Language="C#" Value="public System.Globalization.CultureInfo CurrentUICulture { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Globalization.CultureInfo CurrentUICulture" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="CurrentUICulture">
-      <MemberSignature Language="C#" Value="public System.Globalization.CultureInfo CurrentUICulture { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureInfo</ReturnType>
       </ReturnValue>
@@ -501,24 +534,11 @@ instance that represents the currently executing thread.</SPAN>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EndCriticalRegion">
       <MemberSignature Language="C#" Value="public static void EndCriticalRegion ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void EndCriticalRegion() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -528,10 +548,6 @@ instance that represents the currently executing thread.</SPAN>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="EndThreadAffinity">
-      <MemberSignature Language="C#" Value="public static void EndThreadAffinity ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -541,6 +557,11 @@ instance that represents the currently executing thread.</SPAN>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="EndThreadAffinity">
+      <MemberSignature Language="C#" Value="public static void EndThreadAffinity ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void EndThreadAffinity() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -550,19 +571,20 @@ instance that represents the currently executing thread.</SPAN>
           <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="ExecutionContext">
-      <MemberSignature Language="C#" Value="public System.Threading.ExecutionContext ExecutionContext { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
-        <ReturnType>System.Threading.ExecutionContext</ReturnType>
+        <ReturnType>System.Void</ReturnType>
       </ReturnValue>
+      <Parameters />
       <Docs>
         <summary>To be added.</summary>
-        <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ExecutionContext">
+      <MemberSignature Language="C#" Value="public System.Threading.ExecutionContext ExecutionContext { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Threading.ExecutionContext ExecutionContext" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -572,11 +594,30 @@ instance that represents the currently executing thread.</SPAN>
           <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Threading.ExecutionContext</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
     </Member>
     <Member MemberName="Finalize">
       <MemberSignature Language="ILASM" Value=".method family hidebysig virtual void Finalize()" />
       <MemberSignature Language="C#" Value="~Thread ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -595,18 +636,16 @@ instance that represents the currently executing thread.</SPAN>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="FreeNamedDataSlot">
       <MemberSignature Language="C#" Value="public static void FreeNamedDataSlot (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void FreeNamedDataSlot(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -618,15 +657,15 @@ instance that represents the currently executing thread.</SPAN>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetApartmentState">
       <MemberSignature Language="C#" Value="public System.Threading.ApartmentState GetApartmentState ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.Threading.ApartmentState GetApartmentState() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Threading.ApartmentState</ReturnType>
       </ReturnValue>
@@ -637,23 +676,11 @@ instance that represents the currently executing thread.</SPAN>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCompressedStack">
       <MemberSignature Language="C#" Value="public System.Threading.CompressedStack GetCompressedStack ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Threading.CompressedStack GetCompressedStack() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Threading.CompressedStack</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -664,10 +691,25 @@ instance that represents the currently executing thread.</SPAN>
           <AttributeName>System.Obsolete("see CompressedStack class")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Threading.CompressedStack</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="GetData">
       <MemberSignature Language="C#" Value="public static object GetData (LocalDataStoreSlot slot);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object GetData(class System.LocalDataStoreSlot slot) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -680,16 +722,17 @@ instance that represents the currently executing thread.</SPAN>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetDomain">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.AppDomain GetDomain()" />
+      <MemberSignature Language="C#" Value="public static AppDomain GetDomain ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.AppDomain GetDomain() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDomain">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.AppDomain GetDomain()" />
-      <MemberSignature Language="C#" Value="public static AppDomain GetDomain ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.AppDomain</ReturnType>
       </ReturnValue>
@@ -706,15 +749,16 @@ instance that represents the currently executing thread.</SPAN>
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
+    </Member>
+    <Member MemberName="GetDomainID">
+      <MemberSignature Language="C#" Value="public static int GetDomainID ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 GetDomainID() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDomainID">
-      <MemberSignature Language="C#" Value="public static int GetDomainID ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -724,15 +768,20 @@ instance that represents the currently executing thread.</SPAN>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -743,19 +792,16 @@ instance that represents the currently executing thread.</SPAN>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetNamedDataSlot">
       <MemberSignature Language="C#" Value="public static LocalDataStoreSlot GetNamedDataSlot (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.LocalDataStoreSlot GetNamedDataSlot(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.LocalDataStoreSlot</ReturnType>
       </ReturnValue>
@@ -768,15 +814,16 @@ instance that represents the currently executing thread.</SPAN>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Interrupt">
+      <MemberSignature Language="C#" Value="public void Interrupt ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Interrupt() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Interrupt">
-      <MemberSignature Language="C#" Value="public void Interrupt ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -785,16 +832,17 @@ instance that represents the currently executing thread.</SPAN>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsAlive">
+      <MemberSignature Language="ILASM" Value=".property bool IsAlive { public hidebysig specialname instance bool get_IsAlive() }" />
+      <MemberSignature Language="C#" Value="public bool IsAlive { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAlive" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsAlive">
-      <MemberSignature Language="ILASM" Value=".property bool IsAlive { public hidebysig specialname instance bool get_IsAlive() }" />
-      <MemberSignature Language="C#" Value="public bool IsAlive { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -816,16 +864,17 @@ if this thread has been started, and has not terminated; otherwise,
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsBackground">
+      <MemberSignature Language="ILASM" Value=".property bool IsBackground { public hidebysig specialname instance bool get_IsBackground() public hidebysig specialname instance void set_IsBackground(bool value) }" />
+      <MemberSignature Language="C#" Value="public bool IsBackground { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsBackground" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsBackground">
-      <MemberSignature Language="ILASM" Value=".property bool IsBackground { public hidebysig specialname instance bool get_IsBackground() public hidebysig specialname instance void set_IsBackground(bool value) }" />
-      <MemberSignature Language="C#" Value="public bool IsBackground { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -859,15 +908,16 @@ value indicating whether a thread is a background thread.</para>
         <exception cref="T:System.Threading.ThreadStateException"> The thread has reached the <see cref="F:System.Threading.ThreadState.Stopped" /> state. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsThreadPoolThread">
+      <MemberSignature Language="C#" Value="public bool IsThreadPoolThread { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsThreadPoolThread" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsThreadPoolThread">
-      <MemberSignature Language="C#" Value="public bool IsThreadPoolThread { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -876,16 +926,17 @@ value indicating whether a thread is a background thread.</para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Join">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Join()" />
+      <MemberSignature Language="C#" Value="public void Join ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Join() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Join">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Join()" />
-      <MemberSignature Language="C#" Value="public void Join ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -910,16 +961,17 @@ value indicating whether a thread is a background thread.</para>
         <exception cref="T:System.Threading.ThreadStateException">The caller attempted to join a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Join">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Join(int32 millisecondsTimeout)" />
+      <MemberSignature Language="C#" Value="public bool Join (int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Join(int32 millisecondsTimeout) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Join">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Join(int32 millisecondsTimeout)" />
-      <MemberSignature Language="C#" Value="public bool Join (int millisecondsTimeout);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -953,16 +1005,17 @@ that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state.</p
         <exception cref="T:System.Threading.ThreadStateException">The caller attempted to join a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Join">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Join(valuetype System.TimeSpan timeout)" />
+      <MemberSignature Language="C#" Value="public bool Join (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Join(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Join">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance bool Join(valuetype System.TimeSpan timeout)" />
-      <MemberSignature Language="C#" Value="public bool Join (TimeSpan timeout);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1000,24 +1053,11 @@ except for the return value.</block>
         <exception cref="T:System.Threading.ThreadStateException">The caller attempted to join a thread that is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ManagedThreadId">
       <MemberSignature Language="C#" Value="public int ManagedThreadId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 ManagedThreadId" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Int32</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1027,10 +1067,25 @@ except for the return value.</block>
           <AttributeName>get: System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+        <since version=".NET 2.0" />
+      </Docs>
     </Member>
     <Member MemberName="MemoryBarrier">
       <MemberSignature Language="C#" Value="public static void MemoryBarrier ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void MemoryBarrier() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1041,16 +1096,17 @@ except for the return value.</block>
         </summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Name">
+      <MemberSignature Language="ILASM" Value=".property string Name { public hidebysig specialname instance string get_Name() public hidebysig specialname instance void set_Name(string value) }" />
+      <MemberSignature Language="C#" Value="public string Name { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Name">
-      <MemberSignature Language="ILASM" Value=".property string Name { public hidebysig specialname instance string get_Name() public hidebysig specialname instance void set_Name(string value) }" />
-      <MemberSignature Language="C#" Value="public string Name { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1074,16 +1130,17 @@ except for the return value.</block>
         <exception cref="T:System.InvalidOperationException">A set operation was requested, and the <see langword="Name" /> property has already been set.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Priority">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Threading.ThreadPriority Priority { public hidebysig specialname instance valuetype System.Threading.ThreadPriority get_Priority() public hidebysig specialname instance void set_Priority(valuetype System.Threading.ThreadPriority value) }" />
+      <MemberSignature Language="C#" Value="public System.Threading.ThreadPriority Priority { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Threading.ThreadPriority Priority" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Priority">
-      <MemberSignature Language="ILASM" Value=".property valuetype System.Threading.ThreadPriority Priority { public hidebysig specialname instance valuetype System.Threading.ThreadPriority get_Priority() public hidebysig specialname instance void set_Priority(valuetype System.Threading.ThreadPriority value) }" />
-      <MemberSignature Language="C#" Value="public System.Threading.ThreadPriority Priority { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.ThreadPriority</ReturnType>
       </ReturnValue>
@@ -1137,16 +1194,17 @@ except for the return value.</block>
         <exception cref="T:System.ArgumentException">The value specified for a set operation is not a valid <see cref="T:System.Threading.ThreadPriority" /> value. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ResetAbort">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void ResetAbort()" />
+      <MemberSignature Language="C#" Value="public static void ResetAbort ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void ResetAbort() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ResetAbort">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void ResetAbort()" />
-      <MemberSignature Language="C#" Value="public static void ResetAbort ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1178,23 +1236,11 @@ from terminating the thread.</para>
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Resume">
       <MemberSignature Language="C#" Value="public void Resume ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Resume() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1205,10 +1251,23 @@ from terminating the thread.</para>
           <AttributeName>System.Obsolete("")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="SetApartmentState">
       <MemberSignature Language="C#" Value="public void SetApartmentState (System.Threading.ApartmentState state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetApartmentState(valuetype System.Threading.ApartmentState state) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1221,14 +1280,21 @@ from terminating the thread.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetCompressedStack">
       <MemberSignature Language="C#" Value="public void SetCompressedStack (System.Threading.CompressedStack stack);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetCompressedStack(class System.Threading.CompressedStack stack) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("see CompressedStack class")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1240,20 +1306,16 @@ from terminating the thread.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SetData">
+      <MemberSignature Language="C#" Value="public static void SetData (LocalDataStoreSlot slot, object data);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SetData(class System.LocalDataStoreSlot slot, object data) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("see CompressedStack class")</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="SetData">
-      <MemberSignature Language="C#" Value="public static void SetData (LocalDataStoreSlot slot, object data);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1267,16 +1329,17 @@ from terminating the thread.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Sleep">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sleep(int32 millisecondsTimeout)" />
+      <MemberSignature Language="C#" Value="public static void Sleep (int millisecondsTimeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sleep(int32 millisecondsTimeout) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Sleep">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sleep(int32 millisecondsTimeout)" />
-      <MemberSignature Language="C#" Value="public static void Sleep (int millisecondsTimeout);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1297,16 +1360,17 @@ from terminating the thread.</para>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="millisecondsTimeout" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" qualify="true" /> .</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Sleep">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sleep(valuetype System.TimeSpan timeout)" />
+      <MemberSignature Language="C#" Value="public static void Sleep (TimeSpan timeout);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Sleep(valuetype System.TimeSpan timeout) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Sleep">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void Sleep(valuetype System.TimeSpan timeout)" />
-      <MemberSignature Language="C#" Value="public static void Sleep (TimeSpan timeout);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1329,15 +1393,21 @@ from terminating the thread.</para>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="timeout" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> milliseconds, or is greater than <see cref="F:System.Int32.MaxValue" qualify="true" /> milliseconds.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="SpinWait">
+      <MemberSignature Language="C#" Value="public static void SpinWait (int iterations);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void SpinWait(int32 iterations) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SpinWait">
-      <MemberSignature Language="C#" Value="public static void SpinWait (int iterations);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1349,21 +1419,17 @@ from terminating the thread.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Start">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Start()" />
+      <MemberSignature Language="C#" Value="public void Start ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Start() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Start">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Start()" />
-      <MemberSignature Language="C#" Value="public void Start ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1422,15 +1488,15 @@ class ThreadTest{
         </example>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Start">
       <MemberSignature Language="C#" Value="public void Start (object parameter);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Start(object parameter) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1443,22 +1509,11 @@ class ThreadTest{
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Suspend">
       <MemberSignature Language="C#" Value="public void Suspend ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Suspend() cil managed" />
       <MemberType>Method</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Void</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1469,10 +1524,24 @@ class ThreadTest{
           <AttributeName>System.Obsolete("")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._Thread.GetIDsOfNames">
       <MemberSignature Language="C#" Value="void _Thread.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Thread.GetIDsOfNames(valuetype System.Guid riid, native int rgszNames, unsigned int32 cNames, unsigned int32 lcid, native int rgDispId) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1492,15 +1561,16 @@ class ThreadTest{
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._Thread.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _Thread.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Thread.GetTypeInfo(unsigned int32 iTInfo, unsigned int32 lcid, native int ppTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._Thread.GetTypeInfo">
-      <MemberSignature Language="C#" Value="void _Thread.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1516,15 +1586,16 @@ class ThreadTest{
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._Thread.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _Thread.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Thread.GetTypeInfoCount(unsigned int32 pcTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._Thread.GetTypeInfoCount">
-      <MemberSignature Language="C#" Value="void _Thread.GetTypeInfoCount (out uint pcTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1536,15 +1607,16 @@ class ThreadTest{
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._Thread.Invoke">
+      <MemberSignature Language="C#" Value="void _Thread.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._Thread.Invoke(unsigned int32 dispIdMember, valuetype System.Guid riid, unsigned int32 lcid, int16 wFlags, native int pDispParams, native int pVarResult, native int pExcepInfo, native int puArgErr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._Thread.Invoke">
-      <MemberSignature Language="C#" Value="void _Thread.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1570,16 +1642,17 @@ class ThreadTest{
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ThreadState">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Threading.ThreadState ThreadState { public hidebysig specialname instance valuetype System.Threading.ThreadState get_ThreadState() }" />
+      <MemberSignature Language="C#" Value="public System.Threading.ThreadState ThreadState { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Threading.ThreadState ThreadState" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ThreadState">
-      <MemberSignature Language="ILASM" Value=".property valuetype System.Threading.ThreadState ThreadState { public hidebysig specialname instance valuetype System.Threading.ThreadState get_ThreadState() }" />
-      <MemberSignature Language="C#" Value="public System.Threading.ThreadState ThreadState { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Threading.ThreadState</ReturnType>
       </ReturnValue>
@@ -1601,15 +1674,15 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TrySetApartmentState">
       <MemberSignature Language="C#" Value="public bool TrySetApartmentState (System.Threading.ApartmentState state);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool TrySetApartmentState(valuetype System.Threading.ApartmentState state) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1623,15 +1696,17 @@ class ThreadTest{
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="VolatileRead">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static byte VolatileRead (class System.Byte&amp; address)" />
       <MemberSignature Language="C#" Value="public static byte VolatileRead (ref byte address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8 VolatileRead(unsigned int8 address) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
@@ -1651,16 +1726,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 VolatileRead (class System.Double&amp; address)" />
+      <MemberSignature Language="C#" Value="public static double VolatileRead (ref double address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 VolatileRead(float64 address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float64 VolatileRead (class System.Double&amp; address)" />
-      <MemberSignature Language="C#" Value="public static double VolatileRead (ref double address);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
@@ -1680,16 +1756,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 VolatileRead (class System.Int16&amp; address)" />
+      <MemberSignature Language="C#" Value="public static short VolatileRead (ref short address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 VolatileRead(int16 address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 VolatileRead (class System.Int16&amp; address)" />
-      <MemberSignature Language="C#" Value="public static short VolatileRead (ref short address);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -1709,16 +1786,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 VolatileRead (class System.Int32&amp; address)" />
+      <MemberSignature Language="C#" Value="public static int VolatileRead (ref int address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 VolatileRead(int32 address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 VolatileRead (class System.Int32&amp; address)" />
-      <MemberSignature Language="C#" Value="public static int VolatileRead (ref int address);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1738,16 +1816,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 VolatileRead (class System.Int64&amp; address)" />
+      <MemberSignature Language="C#" Value="public static long VolatileRead (ref long address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 VolatileRead(int64 address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 VolatileRead (class System.Int64&amp; address)" />
-      <MemberSignature Language="C#" Value="public static long VolatileRead (ref long address);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -1767,16 +1846,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static intptr VolatileRead (class System.IntPtr&amp; address)" />
+      <MemberSignature Language="C#" Value="public static IntPtr VolatileRead (ref IntPtr address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int VolatileRead(native int address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static intptr VolatileRead (class System.IntPtr&amp; address)" />
-      <MemberSignature Language="C#" Value="public static IntPtr VolatileRead (ref IntPtr address);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -1797,16 +1877,17 @@ class ThreadTest{
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static object VolatileRead (class System.Object&amp; address)" />
+      <MemberSignature Language="C#" Value="public static object VolatileRead (ref object address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig object VolatileRead(object address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static object VolatileRead (class System.Object&amp; address)" />
-      <MemberSignature Language="C#" Value="public static object VolatileRead (ref object address);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -1826,16 +1907,22 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static sbyte VolatileRead (class System.Sbyte&amp; address)" />
+      <MemberSignature Language="C#" Value="public static sbyte VolatileRead (ref sbyte address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int8 VolatileRead(int8 address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static sbyte VolatileRead (class System.Sbyte&amp; address)" />
-      <MemberSignature Language="C#" Value="public static sbyte VolatileRead (ref sbyte address);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.SByte</ReturnType>
       </ReturnValue>
@@ -1855,21 +1942,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 VolatileRead (class System.Single&amp; address)" />
+      <MemberSignature Language="C#" Value="public static float VolatileRead (ref float address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float32 VolatileRead(float32 address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static float32 VolatileRead (class System.Single&amp; address)" />
-      <MemberSignature Language="C#" Value="public static float VolatileRead (ref float address);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
@@ -1889,16 +1972,22 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static uint16 VolatileRead (class System.UInt16&amp; address)" />
+      <MemberSignature Language="C#" Value="public static ushort VolatileRead (ref ushort address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int16 VolatileRead(unsigned int16 address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static uint16 VolatileRead (class System.UInt16&amp; address)" />
-      <MemberSignature Language="C#" Value="public static ushort VolatileRead (ref ushort address);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.UInt16</ReturnType>
       </ReturnValue>
@@ -1918,6 +2007,12 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static uint32 VolatileRead (class System.UInt32&amp; address)" />
+      <MemberSignature Language="C#" Value="public static uint VolatileRead (ref uint address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int32 VolatileRead(unsigned int32 address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1928,11 +2023,6 @@ class ThreadTest{
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static uint32 VolatileRead (class System.UInt32&amp; address)" />
-      <MemberSignature Language="C#" Value="public static uint VolatileRead (ref uint address);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
@@ -1952,6 +2042,12 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static uint64 VolatileRead (class System.UInt64&amp; address)" />
+      <MemberSignature Language="C#" Value="public static ulong VolatileRead (ref ulong address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int64 VolatileRead(unsigned int64 address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1962,11 +2058,6 @@ class ThreadTest{
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static uint64 VolatileRead (class System.UInt64&amp; address)" />
-      <MemberSignature Language="C#" Value="public static ulong VolatileRead (ref ulong address);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UInt64</ReturnType>
       </ReturnValue>
@@ -1986,6 +2077,11 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileRead">
+      <MemberSignature Language="C#" Value="public static UIntPtr VolatileRead (ref UIntPtr address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native unsigned int VolatileRead(native unsigned int address) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1996,10 +2092,6 @@ class ThreadTest{
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="VolatileRead">
-      <MemberSignature Language="C#" Value="public static UIntPtr VolatileRead (ref UIntPtr address);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.UIntPtr</ReturnType>
       </ReturnValue>
@@ -2018,21 +2110,17 @@ class ThreadTest{
           <para>The value at the given address is atomically loaded with acquire semantics, meaning that the read is guaranteed to occur prior to any references to memory that occur after the execution of this method in the current thread. It is recommended that <see cref="M:System.Threading.Thread.VolatileRead" /> and <see cref="M:System.Threading.Thread.VolatileWrite" /> be used in conjunction. Calling this method affects only this single access; other accesses to the same location are required to also be made using this method or <see cref="M:System.Threading.Thread.VolatileWrite" /> if the volatile semantics are to be preserved. This method has exactly the same semantics as using the volatile prefix on the load CIL instruction, except that atomicity is provided for all types, not just those 32 bits or smaller in size. <block subset="none" type="note">For additional information, see Partition I of the CLI Specification.</block></para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Byte&amp; address, byte value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref byte address, byte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(unsigned int8 address, unsigned int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Byte&amp; address, byte value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref byte address, byte value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2051,16 +2139,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Double&amp; address, float64 value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref double address, double value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(float64 address, float64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Double&amp; address, float64 value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref double address, double value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2079,16 +2168,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Int16&amp; address, int16 value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref short address, short value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(int16 address, int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Int16&amp; address, int16 value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref short address, short value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2107,16 +2197,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Int32&amp; address, int32 value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref int address, int value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(int32 address, int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Int32&amp; address, int32 value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref int address, int value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2135,16 +2226,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Int64&amp; address, int64 value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref long address, long value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(int64 address, int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Int64&amp; address, int64 value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref long address, long value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2163,16 +2255,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.IntPtr&amp; address, IntPtr value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref IntPtr address, IntPtr value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(native int address, native int value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.IntPtr&amp; address, IntPtr value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref IntPtr address, IntPtr value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2192,16 +2285,17 @@ class ThreadTest{
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Object&amp; address, object value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref object address, object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(object address, object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Object&amp; address, object value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref object address, object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2220,16 +2314,22 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.SByte&amp; address, sbyte value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref sbyte address, sbyte value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(int8 address, int8 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.SByte&amp; address, sbyte value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref sbyte address, sbyte value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2248,21 +2348,17 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Single&amp; address, float32 value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref float address, float value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(float32 address, float32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.Single&amp; address, float32 value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref float address, float value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2281,16 +2377,22 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.UInt16&amp; address, uint16 value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref ushort address, ushort value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(unsigned int16 address, unsigned int16 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.UInt16&amp; address, uint16 value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref ushort address, ushort value);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2309,6 +2411,12 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.UInt32&amp; address, uint32 value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref uint address, uint value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(unsigned int32 address, unsigned int32 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2319,11 +2427,6 @@ class ThreadTest{
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.UInt32&amp; address, uint32 value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref uint address, uint value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2342,6 +2445,11 @@ class ThreadTest{
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref ulong address, ulong value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(unsigned int64 address, unsigned int64 value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2352,10 +2460,6 @@ class ThreadTest{
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref ulong address, ulong value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2373,6 +2477,12 @@ class ThreadTest{
           <para>The value is written atomically to the specified address with release semantics, meaning that the write is guaranteed to happen after any references to memory that occur prior to the execution. It is recommended that <see cref="M:System.Threading.Thread.VolatileRead" /> and <see cref="M:System.Threading.Thread.VolatileWrite" /> be used in conjunction. Calling this method affects only this single access; other accesses to the same location are required to also be made using this method or <see cref="M:System.Threading.Thread.VolatileRead" /> if the volatile semantics are to be preserved. This method has exactly the same semantics as using the volatile prefix on the store CIL instruction, except that atomicity is provided for all types, not just those 32 bits or smaller in size. <block subset="none" type="note">For additional information, see Partition I of the CLI Specification.</block></para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="VolatileWrite">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.UIntPtr&amp; address, UIntPtr value)" />
+      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref UIntPtr address, UIntPtr value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void VolatileWrite(native unsigned int address, native unsigned int value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2383,11 +2493,6 @@ class ThreadTest{
           <AttributeName>System.CLSCompliant(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="VolatileWrite">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static void VolatileWrite (class System.UIntPtr&amp; address, UIntPtr value)" />
-      <MemberSignature Language="C#" Value="public static void VolatileWrite (ref UIntPtr address, UIntPtr value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -2407,28 +2512,29 @@ class ThreadTest{
       </Docs>
       <Excluded>1</Excluded>
       <ExcludedLibrary>RuntimeInfrastructure</ExcludedLibrary>
+    </Member>
+    <Member MemberName="Yield">
+      <MemberSignature Language="C#" Value="public static bool Yield ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Yield() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ClassInterface(System.Runtime.InteropServices.ClassInterfaceType.None)</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComDefaultInterface(typeof(System.Runtime.InteropServices._Thread))</AttributeName>
-    </Attribute>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

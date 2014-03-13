@@ -1,0 +1,127 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.Runtime.Serialization" Version="4.0.0.0">
+      <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("Mono development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) Various Mono authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.Runtime.Serialization.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.Runtime.Serialization.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("Mono Common Language Infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.Runtime.Serialization.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("4.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComCompatibleVersion(1, 0, 3300, 0)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.SecurityCritical(System.Security.SecurityCriticalScope.Explicit)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System.Runtime.Serialization">
+      <Type Name="CollectionDataContractAttribute" Kind="Class" />
+      <Type Name="ContractNamespaceAttribute" Kind="Class" />
+      <Type Name="DataContractAttribute" Kind="Class" />
+      <Type Name="DataContractResolver" Kind="Class" />
+      <Type Name="DataContractSerializer" Kind="Class" />
+      <Type Name="DataContractSerializerSettings" Kind="Class" />
+      <Type Name="DataMemberAttribute" Kind="Class" />
+      <Type Name="DateTimeFormat" Kind="Class" />
+      <Type Name="EmitTypeInformation" Kind="Enumeration" />
+      <Type Name="EnumMemberAttribute" Kind="Class" />
+      <Type Name="ExportOptions" Kind="Class" />
+      <Type Name="ExtensionDataObject" Kind="Class" />
+      <Type Name="IDataContractSurrogate" Kind="Interface" />
+      <Type Name="IExtensibleDataObject" Kind="Interface" />
+      <Type Name="IgnoreDataMemberAttribute" Kind="Class" />
+      <Type Name="ImportOptions" Kind="Class" />
+      <Type Name="InvalidDataContractException" Kind="Class" />
+      <Type Name="KnownTypeAttribute" Kind="Class" />
+      <Type Name="NetDataContractSerializer" Kind="Class" />
+      <Type Name="XmlObjectSerializer" Kind="Class" />
+      <Type Name="XmlSerializableServices" Kind="Class" />
+      <Type Name="XsdDataContractExporter" Kind="Class" />
+      <Type Name="XsdDataContractImporter" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Serialization.Configuration">
+      <Type Name="DataContractSerializerSection" Kind="Class" />
+      <Type Name="DeclaredTypeElement" Kind="Class" />
+      <Type Name="DeclaredTypeElementCollection" Kind="Class" />
+      <Type Name="ParameterElement" Kind="Class" />
+      <Type Name="ParameterElementCollection" Kind="Class" />
+      <Type Name="SerializationSectionGroup" Kind="Class" />
+      <Type Name="TypeElement" Kind="Class" />
+      <Type Name="TypeElementCollection" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Runtime.Serialization.Json">
+      <Type Name="DataContractJsonSerializer" Kind="Class" />
+      <Type Name="DataContractJsonSerializerSettings" Kind="Class" />
+      <Type Name="IXmlJsonReaderInitializer" Kind="Interface" />
+      <Type Name="IXmlJsonWriterInitializer" Kind="Interface" />
+      <Type Name="JsonReaderWriterFactory" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Xml">
+      <Type Name="IFragmentCapableXmlDictionaryWriter" Kind="Interface" />
+      <Type Name="IStreamProvider" Kind="Interface" />
+      <Type Name="IXmlBinaryReaderInitializer" Kind="Interface" />
+      <Type Name="IXmlBinaryWriterInitializer" Kind="Interface" />
+      <Type Name="IXmlDictionary" Kind="Interface" />
+      <Type Name="IXmlMtomReaderInitializer" Kind="Interface" />
+      <Type Name="IXmlMtomWriterInitializer" Kind="Interface" />
+      <Type Name="IXmlTextReaderInitializer" Kind="Interface" />
+      <Type Name="IXmlTextWriterInitializer" Kind="Interface" />
+      <Type Name="OnXmlDictionaryReaderClose" Kind="Delegate" />
+      <Type Name="UniqueId" Kind="Class" />
+      <Type Name="XmlBinaryReaderSession" Kind="Class" />
+      <Type Name="XmlBinaryWriterSession" Kind="Class" />
+      <Type Name="XmlDictionary" Kind="Class" />
+      <Type Name="XmlDictionaryReader" Kind="Class" />
+      <Type Name="XmlDictionaryReaderQuotas" Kind="Class" />
+      <Type Name="XmlDictionaryString" Kind="Class" />
+      <Type Name="XmlDictionaryWriter" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>System.Runtime.Serialization</Title>
+</Overview>
