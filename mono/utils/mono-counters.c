@@ -73,7 +73,7 @@ mono_counters_new (MonoCounterCategory category, const char *name, MonoCounterTy
 	const int sizes[] = { 4, 8, sizeof (void*) };
 	void *addr;
 
-	g_assert (type >= MONO_COUNTER_TYPE_INT && type <= MONO_COUNTER_TYPE_WORD);
+	g_assert (type >= MONO_COUNTER_TYPE_INT && type < MONO_COUNTER_TYPE_MAX);
 
 	addr = mono_counters_alloc_space (sizes [type]);
 	if (!addr)
@@ -132,14 +132,16 @@ mono_counters_register (const char* name, int type, void *addr)
 		break;
 	case MONO_COUNTER_LONG:
 	case MONO_COUNTER_ULONG:
-	case MONO_COUNTER_DOUBLE:
 		counter_type = MONO_COUNTER_TYPE_LONG;
+		break;
+	case MONO_COUNTER_DOUBLE:
+		counter_type = MONO_COUNTER_TYPE_DOUBLE;
 		break;
 	case MONO_COUNTER_WORD:
 		counter_type = MONO_COUNTER_TYPE_WORD;
 		break;
 	case MONO_COUNTER_STRING:
-		g_error ("IMPLEMENT ME");
+		g_error ("String counters no longer work");
 	case MONO_COUNTER_TIME_INTERVAL:
 		counter_type = MONO_COUNTER_TYPE_LONG;
 		unit = MONO_COUNTER_UNIT_TIME;
@@ -189,9 +191,18 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 		else
 			value = *(gint64*)counter->addr;
 		if (counter->unit == MONO_COUNTER_UNIT_TIME)
-			fprintf (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)value / 1000.0);
+			fprintf (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)value / 10000.0);
 		else
 			fprintf (outfile, ENTRY_FMT "%lld\n", counter->name, value);
+		break;
+	}
+	case MONO_COUNTER_TYPE_DOUBLE:{
+		double value;
+		if (counter->is_callback)
+			value = ((DoubleFunc)counter->addr) ();
+		else
+			value = *(double*)counter->addr;
+		fprintf (outfile, ENTRY_FMT "%.4f ms\n", counter->name, value);
 		break;
 	}
 	}

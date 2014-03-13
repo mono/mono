@@ -22,6 +22,9 @@ typedef enum {
 	MONO_COUNTER_TYPE_INT, /* 4 bytes */
 	MONO_COUNTER_TYPE_LONG, /* 8 bytes */
 	MONO_COUNTER_TYPE_WORD, /* machine word */
+	MONO_COUNTER_TYPE_DOUBLE,
+
+	MONO_COUNTER_TYPE_MAX
 } MonoCounterType;
 
 typedef enum {
@@ -43,10 +46,9 @@ typedef struct _MonoCounter MonoCounter;
 TODO:
 	Helpers based on size.
 	Helpers for constants.
-	String type.
+	The old-style counter string type won't work as they cannot be safely sampled during execution.
 	Sampler function that take user data (could we use them for user perf counters?)
 	Dynamic category registration.
-	Error handling/assertion
 	MonoCounter size diet once we're done with the above.
 */
 void*
