@@ -218,7 +218,7 @@
 #include "utils/mono-mmap.h"
 #include "utils/mono-time.h"
 #include "utils/mono-semaphore.h"
-#include "utils/mono-counters.h"
+#include "utils/mono-counters-internals.h"
 #include "utils/mono-proclib.h"
 #include "utils/mono-memory-model.h"
 #include "utils/mono-logger-internal.h"
@@ -353,6 +353,10 @@ static long long time_major_fragment_creation = 0;
 
 int gc_debug_level = 0;
 FILE* gc_debug_file;
+
+/* New style counters */
+static int *major_gc_count;
+static int *minor_gc_count;
 
 /*
 void
@@ -2212,6 +2216,9 @@ init_stats (void)
 	if (inited)
 		return;
 
+	minor_gc_count = mono_counters_new_int (MONO_COUNTER_CAT_GC, "Minor GC collections", MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_UNIT_MONOTONIC);
+	major_gc_count = mono_counters_new_int (MONO_COUNTER_CAT_GC, "Major GC collections", MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_UNIT_MONOTONIC);
+
 	mono_counters_register ("Minor fragment clear", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_pre_collection_fragment_clear);
 	mono_counters_register ("Minor pinning", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_pinning);
 	mono_counters_register ("Minor scan remembered set", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &time_minor_scan_remsets);
@@ -2579,6 +2586,7 @@ collect_nursery (SgenGrayQueue *unpin_queue, gboolean finish_up_concurrent_mark)
 
 	stat_minor_gcs++;
 	gc_stats.minor_gc_count ++;
+	mono_counters_inc (minor_gc_count);
 
 	MONO_GC_CHECKPOINT_1 (GENERATION_NURSERY);
 
@@ -3074,6 +3082,7 @@ major_start_collection (gboolean concurrent, int *old_next_pin_slot)
 	binary_protocol_collection_begin (stat_major_gcs, GENERATION_OLD);
 
 	current_collection_generation = GENERATION_OLD;
+
 #ifndef DISABLE_PERFCOUNTERS
 	mono_perfcounters->gc_collections1++;
 #endif
@@ -3104,6 +3113,7 @@ major_start_collection (gboolean concurrent, int *old_next_pin_slot)
 	SGEN_LOG (1, "Start major collection %d", stat_major_gcs);
 	stat_major_gcs++;
 	gc_stats.major_gc_count ++;
+	mono_counters_inc (major_gc_count);
 
 	if (major_collector.start_major_collection)
 		major_collector.start_major_collection ();

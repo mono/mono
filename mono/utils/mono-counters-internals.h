@@ -11,11 +11,9 @@ typedef enum {
 	MONO_COUNTER_CAT_GENERICS,
 	MONO_COUNTER_CAT_SECURITY,
 
-	MONO_COUNTER_CAT_REMOTING,
-	MONO_COUNTER_CAT_EXC,
 	MONO_COUNTER_CAT_THREAD,
 	MONO_COUNTER_CAT_THREADPOOL,
-	MONO_COUNTER_CAT_IO,
+	MONO_COUNTER_CAT_SYS,
 } MonoCounterCategory;
 
 typedef enum {
@@ -29,10 +27,11 @@ typedef enum {
 
 typedef enum {
 	MONO_COUNTER_UNIT_NONE,  /* It's a raw value that needs special handling from the consumer */
-	MONO_COUNTER_UNIT_QUANTITY, /* Quantity of the given counter */
+	MONO_COUNTER_UNIT_BYTES, /* Quantity of bytes the counter represent */
 	MONO_COUNTER_UNIT_TIME,  /* This is a timestap in 100n units */
-	MONO_COUNTER_UNIT_EVENT, /* Number of times the given event happens */
+	MONO_COUNTER_UNIT_EVENTS, /* Number of times the given event happens */
 	MONO_COUNTER_UNIT_CONFIG, /* Configuration knob of the runtime */
+	MONO_COUNTER_UNIT_PERCENTAGE, /* Percentage of something */
 } MonoCounterUnit;
 
 typedef enum {
@@ -68,5 +67,7 @@ mono_counters_register_full (MonoCounterCategory category, const char *name, Mon
 #define mono_counters_new_long_const(cat,name,unit,value) do { gint64 *__ptr = mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance); *__ptr = value; } while (0)
 #define mono_counters_new_double_const(cat,name,unit,value) do { double *__ptr = mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance); *__ptr = value; } while (0)
 
+#define mono_counters_inc(counter_ptr) do { *(counter_ptr) += 1; } while(0)
+#define mono_counters_add(counter_ptr, val) do { *(counter_ptr) += val; } while(0)
 
 #endif
