@@ -21,6 +21,7 @@ monoutils_sources = \
 	dlmalloc.c      	\
 	mono-counters.c		\
 	mono-compiler.h		\
+	mono-counters-internals.h	\
 	mono-dl.c		\
 	mono-dl.h		\
 	mono-internal-hash.c	\
