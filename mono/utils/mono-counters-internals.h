@@ -69,5 +69,6 @@ mono_counters_register_full (MonoCounterCategory category, const char *name, Mon
 
 #define mono_counters_inc(counter_ptr) do { *(counter_ptr) += 1; } while(0)
 #define mono_counters_add(counter_ptr, val) do { *(counter_ptr) += val; } while(0)
+#define mono_counters_set(counter_ptr, val) do { *(counter_ptr) = val; } while(0)
 
 #endif
