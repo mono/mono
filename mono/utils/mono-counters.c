@@ -37,7 +37,7 @@ MonoCounter*
 mono_counters_register_full (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr)
 {
 	MonoCounter *counter;
-	counter = malloc (sizeof (MonoCounter));
+	counter = g_new0 (MonoCounter, 1);
 	if (!counter)
 		return NULL;
 	counter->name = name;
@@ -64,13 +64,13 @@ static void*
 mono_counters_alloc_space (int size)
 {
 	//FIXME actually alloc memory from perf-counters
-	return g_malloc (size);
+	return g_malloc0 (size);
 }
 
 void*
 mono_counters_new (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance)
 {
-	const int sizes[] = { 4, 8, sizeof (void*) };
+	const int sizes[] = { 4, 8, sizeof (void*), 8 };
 	void *addr;
 
 	g_assert (type >= MONO_COUNTER_TYPE_INT && type < MONO_COUNTER_TYPE_MAX);
@@ -151,7 +151,7 @@ mono_counters_register (const char* name, int type, void *addr)
 	}
 
 	counter = mono_counters_register_full (cat, name, counter_type, unit, MONO_COUNTER_UNIT_VARIABLE, addr);
-	if (counter && type & MONO_COUNTER_CALLBACK)
+	if (counter && (type & MONO_COUNTER_CALLBACK))
 		counter->is_callback = TRUE;
 }
 
