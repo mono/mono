@@ -1109,8 +1109,8 @@ namespace Mono.CSharp
 				return false;
 
 			if (declarators != null) {
-				if ((mod_flags_src & Modifiers.DEFAULT_ACCESS_MODIFER) != 0)
-					mod_flags_src &= ~(Modifiers.AccessibilityMask | Modifiers.DEFAULT_ACCESS_MODIFER);
+				if ((mod_flags_src & Modifiers.DEFAULT_ACCESS_MODIFIER) != 0)
+					mod_flags_src &= ~(Modifiers.AccessibilityMask | Modifiers.DEFAULT_ACCESS_MODIFIER);
 
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
 				foreach (var d in declarators) {

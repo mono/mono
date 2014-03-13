@@ -144,8 +144,8 @@ namespace Mono.CSharp
 			}
 
 			if ((existing.ModFlags & Modifiers.AccessibilityMask) != (next_part.ModFlags & Modifiers.AccessibilityMask) &&
-				((existing.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) == 0 &&
-				 (next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) == 0)) {
+				((existing.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFIER) == 0 &&
+				 (next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFIER) == 0)) {
 					 Report.SymbolRelatedToPreviousError (existing);
 				Report.Error (262, next_part.Location,
 					"Partial declarations of `{0}' have conflicting accessibility modifiers",
@@ -172,10 +172,10 @@ namespace Mono.CSharp
 				}
 			}
 
-			if ((next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) != 0) {
-				existing.ModFlags |= next_part.ModFlags & ~(Modifiers.DEFAULT_ACCESS_MODIFER | Modifiers.AccessibilityMask);
-			} else if ((existing.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) != 0) {
-				existing.ModFlags &= ~(Modifiers.DEFAULT_ACCESS_MODIFER | Modifiers.AccessibilityMask);
+			if ((next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFIER) != 0) {
+				existing.ModFlags |= next_part.ModFlags & ~(Modifiers.DEFAULT_ACCESS_MODIFIER | Modifiers.AccessibilityMask);
+			} else if ((existing.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFIER) != 0) {
+				existing.ModFlags &= ~(Modifiers.DEFAULT_ACCESS_MODIFIER | Modifiers.AccessibilityMask);
 				existing.ModFlags |= next_part.ModFlags;
 			} else {
 				existing.ModFlags |= next_part.ModFlags;
