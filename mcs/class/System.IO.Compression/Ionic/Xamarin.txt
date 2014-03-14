@@ -1,0 +1,5 @@
+This is a subset of the Ionic.Zip library.
+
+The modifications to the original are:
+ * Changed the visibility of all public types to internal
+ * Added two methods to ZipFile.cs (sorrounded with #region Xamarin so they're easy to find)
