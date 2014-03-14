@@ -44,6 +44,7 @@
 #include <mono/utils/mono-tls.h>
 #include <mono/utils/atomic.h>
 #include <mono/utils/mono-memory-model.h>
+#include <mono/utils/mono-counters-internals.h>
 
 #include <mono/metadata/gc-internal.h>
 
@@ -162,6 +163,10 @@ static MonoNativeTlsKey current_object_key;
 static GHashTable *joinable_threads;
 static int joinable_thread_count;
 
+/* Counters */
+static int *thread_count;
+
+
 #ifdef MONO_HAVE_FAST_TLS
 /* we need to use both the Tls* functions and __thread because
  * the gc needs to see all the threads 
@@ -273,7 +278,7 @@ static gboolean handle_store(MonoThread *thread, gboolean force_attach)
 	g_assert (thread->internal_thread);
 	mono_g_hash_table_insert(threads, (gpointer)(gsize)(thread->internal_thread->tid),
 				 thread->internal_thread);
-
+	mono_counters_inc (thread_count);
 	mono_threads_unlock ();
 
 	return TRUE;
@@ -305,6 +310,7 @@ static gboolean handle_remove(MonoInternalThread *thread)
 	else
 		ret = FALSE;
 	
+	mono_counters_dec (thread_count);
 	mono_threads_unlock ();
 
 	/* Don't close the handle here, wait for the object finalizer
@@ -2522,6 +2528,8 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 	 * anything up.
 	 */
 	GetCurrentProcess ();
+
+	thread_count = mono_counters_new_int (MONO_COUNTER_CAT_THREAD,"Thread Count", MONO_COUNTER_UNIT_NONE, MONO_COUNTER_UNIT_VARIABLE);
 }
 
 void mono_thread_cleanup (void)
