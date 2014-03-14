@@ -86,9 +86,13 @@ namespace System.Net
 			get { throw new NotSupportedException (); }
 		}		
 #if NET_4_0
-		[MonoTODO ("for portable library support")]
+
 		public virtual bool SupportsHeaders {
-			get { throw new NotImplementedException (); }
+			get {
+				// The managed stack always returns this as true, it is only
+				// the Silverlight stack that does not support this.
+				return true;
+			}
 		}
 #endif
 		// Methods
