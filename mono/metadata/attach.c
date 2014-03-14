@@ -290,7 +290,6 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 	agent_assembly = mono_assembly_open (agent, &open_status);
 	if (!agent_assembly) {
 		fprintf (stderr, "Cannot open agent assembly '%s': %s.\n", agent, mono_image_strerror (open_status));
-		g_free (agent);
 		return 2;
 	}
 
@@ -302,14 +301,12 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 	entry = mono_image_get_entry_point (image);
 	if (!entry) {
 		g_print ("Assembly '%s' doesn't have an entry point.\n", mono_image_get_filename (image));
-		g_free (agent);
 		return 1;
 	}
 
 	method = mono_get_method (image, entry, NULL);
 	if (method == NULL){
 		g_print ("The entry point method of assembly '%s' could not be loaded\n", agent);
-		g_free (agent);
 		return 1;
 	}
 	
@@ -319,8 +316,6 @@ mono_attach_load_agent (MonoDomain *domain, char *agent, char *args, MonoObject 
 	} else {
 		main_args = (MonoArray*)mono_array_new (domain, mono_defaults.string_class, 0);
 	}
-
-	g_free (agent);
 
 	pa [0] = main_args;
 	mono_runtime_invoke (method, NULL, pa, exc);
@@ -482,6 +477,12 @@ transport_start_receive (void)
 	g_assert (receiver_thread_handle);
 }
 
+static void
+mono_perf_agent_start (const char *args)
+{
+	printf ("START AGENT: %s\n", args);
+}
+
 static guint32 WINAPI
 receiver_thread (void *arg)
 {
@@ -507,7 +508,7 @@ receiver_thread (void *arg)
 		mono_thread_internal_current ()->state |= ThreadState_Background;
 
 		while (TRUE) {
-			char *cmd, *agent_name, *agent_args;
+			char *cmd;
 			guint8 *body;
 
 			/* Read Header */
@@ -547,14 +548,23 @@ receiver_thread (void *arg)
 			cmd = decode_string_value (p, &p, p_end);
 			if (cmd == NULL)
 				break;
-			g_assert (!strcmp (cmd, "attach"));
+			if (!strcmp (cmd, "attach")) {
+				char *agent_name = decode_string_value (p, &p, p_end);
+				char *agent_args = decode_string_value (p, &p, p_end);
 
-			agent_name = decode_string_value (p, &p, p_end);
-			agent_args = decode_string_value (p, &p, p_end);
+				printf ("attach: Loading agent '%s'.\n", agent_name);
+				mono_attach_load_agent (mono_domain_get (), agent_name, agent_args, &exc);
+				g_free (agent_name);
+				g_free (agent_args);
+			} else if (!strcmp (cmd, "perf-agent")) {
+				char *perf_args = decode_string_value (p, &p, p_end);
+				mono_perf_agent_start (perf_args);
+				g_free (perf_args);
+			} else {
+				g_warning ("Invalid attach command: %s", cmd);
+			}
 
-			printf ("attach: Loading agent '%s'.\n", agent_name);
-			mono_attach_load_agent (mono_domain_get (), agent_name, agent_args, &exc);
-
+			g_free (cmd);
 			g_free (body);
 
 			// FIXME: Send back a result

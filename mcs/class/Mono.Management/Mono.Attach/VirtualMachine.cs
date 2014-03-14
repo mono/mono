@@ -64,10 +64,8 @@ namespace Mono.Attach
 			return res;
 		}
 
-		/*
-		 * Loads the specific agent assembly into this vm.
-		 */
-		public void Attach (string agent, string args) {
+
+		void SendCommand (Action<NetworkStream> action) {
 			string user = UnixUserInfo.GetRealUser ().UserName;
 
 			// Check whenever the attach socket exists
@@ -108,24 +106,55 @@ namespace Mono.Attach
 
 			UnixClient client = new UnixClient (path);
 
-			NetworkStream stream = client.GetStream ();
+			using (NetworkStream stream = client.GetStream ()) {
+				// Write header
+				byte[] magic = new byte [] { (byte)'M', (byte)'O', (byte)'N', (byte)'O', 1, 0 };
+				stream.Write (magic, 0, magic.Length);
 
-			// Compose payload
-			MemoryStream ms = new MemoryStream ();
-			BinaryWriter writer = new BinaryWriter (ms);
-			write_string (writer, "attach");
-			write_string (writer, agent);
-			write_string (writer, args);
+				//Send command
+				action (stream);
+				stream.Flush ();
+			}
 
-			// Write header
-			byte[] magic = new byte [] { (byte)'M', (byte)'O', (byte)'N', (byte)'O', 1, 0 };
-			stream.Write (magic, 0, magic.Length);
+		}
 
-			// Write payload length
-			new BinaryWriter (stream).Write ((int)ms.Length);
+		/*
+		 * Loads the specific agent assembly into this vm.
+		 */
+		public void Attach (string agent, string args) {
+			SendCommand (stream => {
+				// Compose payload
+				MemoryStream ms = new MemoryStream ();
+				BinaryWriter writer = new BinaryWriter (ms);
+				write_string (writer, "attach");
+				write_string (writer, agent);
+				write_string (writer, args);
 
-			// Write payload
-			stream.Write (ms.GetBuffer (), 0, (int)ms.Length);
+				// Write payload length
+				new BinaryWriter (stream).Write ((int)ms.Length);
+
+				// Write payload
+				stream.Write (ms.GetBuffer (), 0, (int)ms.Length);
+			});
+		}
+
+		/*
+		 * Start the perf agent into this vm
+		 */
+		public void StartPerfAgent (string args) {
+			SendCommand (stream => {
+				// Compose payload
+				MemoryStream ms = new MemoryStream ();
+				BinaryWriter writer = new BinaryWriter (ms);
+				write_string (writer, "perf-agent");
+				write_string (writer, args);
+
+				// Write payload length
+				new BinaryWriter (stream).Write ((int)ms.Length);
+
+				// Write payload
+				stream.Write (ms.GetBuffer (), 0, (int)ms.Length);
+			});
 		}
 
 		enum PrimitiveType : byte {
