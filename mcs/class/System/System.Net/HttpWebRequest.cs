@@ -593,10 +593,11 @@ namespace System.Net
 			get { return servicePoint; }
 		}
 #if NET_4_0
-		[MonoTODO ("for portable library support")]
 		public virtual bool SupportsCookieContainer { 
 			get {
-				throw new NotImplementedException ();
+				// The managed implementation supports the cookie container
+				// it is only Silverlight that returns false here
+				return true;
 			}
 		}
 #endif
