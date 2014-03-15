@@ -25,7 +25,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 
 using NUnit.Framework;
 using System;
@@ -86,7 +85,7 @@ namespace Test.System.Data.Common
 				//This is expected
 			}
 
-			//Thord row
+			//Third row
 			dataReader.Read ();
 			Assert.AreEqual ("row_3", dataReader.GetFieldValue<string> (0), "#6");
 			expected_data = new byte[] { 0x00 };
@@ -160,4 +159,3 @@ namespace Test.System.Data.Common
 	}
 }
 
-#endif // NET_2_0
