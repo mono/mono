@@ -128,15 +128,15 @@ namespace System.Collections.Concurrent
 		}
 		
 		public bool TryPeek (out T result)
-		{		
+		{
 			Node first = head.Next;	
-			
-			if (IsEmpty || first == null) {
+
+			if (first == null) {
 				result = default (T);
 				return false;
 			}
-							
-			result = first.Value;			
+
+			result = first.Value;
 			return true;
 		}
 		
