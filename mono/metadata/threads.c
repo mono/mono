@@ -1618,8 +1618,9 @@ gint64 ves_icall_System_Threading_Interlocked_Increment_Long (gint64 *location)
 		mono_interlocked_unlock ();
 		return ret;
 	}
-#endif
+#else
 	return InterlockedIncrement64 (location);
+#endif
 }
 
 gint32 ves_icall_System_Threading_Interlocked_Decrement_Int (gint32 *location)
@@ -1638,8 +1639,9 @@ gint64 ves_icall_System_Threading_Interlocked_Decrement_Long (gint64 * location)
 		mono_interlocked_unlock ();
 		return ret;
 	}
-#endif
+#else
 	return InterlockedDecrement64 (location);
+#endif
 }
 
 gint32 ves_icall_System_Threading_Interlocked_Exchange_Int (gint32 *location, gint32 value)
@@ -1682,19 +1684,31 @@ ves_icall_System_Threading_Interlocked_Exchange_Long (gint64 *location, gint64 v
 		mono_interlocked_unlock ();
 		return ret;
 	}
-#endif
+#else
 	return InterlockedExchange64 (location, value);
+#endif
 }
 
 gdouble 
 ves_icall_System_Threading_Interlocked_Exchange_Double (gdouble *location, gdouble value)
 {
+#if SIZEOF_VOID_P == 4
+	if (G_UNLIKELY ((size_t)location & 0x7)) {
+		gdouble ret;
+		mono_interlocked_lock ();
+		ret = *location;
+		*location = value;
+		mono_interlocked_unlock ();
+		return ret;
+	}
+#else
 	LongDoubleUnion val, ret;
 
 	val.fval = value;
 	ret.ival = (gint64)InterlockedExchange64((gint64 *) location, val.ival);
 
 	return ret.fval;
+#endif
 }
 
 gint32 ves_icall_System_Threading_Interlocked_CompareExchange_Int(gint32 *location, gint32 value, gint32 comparand)
@@ -1763,8 +1777,9 @@ ves_icall_System_Threading_Interlocked_CompareExchange_Long (gint64 *location, g
 		mono_interlocked_unlock ();
 		return old;
 	}
-#endif
+#else
 	return InterlockedCompareExchange64 (location, value, comparand);
+#endif
 }
 
 MonoObject*
@@ -1803,8 +1818,9 @@ ves_icall_System_Threading_Interlocked_Add_Long (gint64 *location, gint64 value)
 		mono_interlocked_unlock ();
 		return ret;
 	}
-#endif
+#else
 	return InterlockedAdd64 (location, value);
+#endif
 }
 
 gint64 
@@ -1818,8 +1834,9 @@ ves_icall_System_Threading_Interlocked_Read_Long (gint64 *location)
 		mono_interlocked_unlock ();
 		return ret;
 	}
-#endif
+#else
 	return InterlockedRead64 (location);
+#endif
 }
 
 void
@@ -2322,8 +2339,9 @@ ves_icall_System_Threading_Volatile_Read8 (void *ptr)
 		mono_interlocked_unlock ();
 		return val;
 	}
-#endif
+#else
 	return InterlockedRead64 (ptr);
+#endif
 }
 
 void *
@@ -2345,11 +2363,12 @@ ves_icall_System_Threading_Volatile_ReadDouble (void *ptr)
 		mono_interlocked_unlock ();
 		return val;
 	}
-#endif
+#else
 
 	u.ival = InterlockedRead64 (ptr);
 
 	return u.fval;
+#endif
 }
 
 float
@@ -2444,9 +2463,10 @@ ves_icall_System_Threading_Volatile_Write8 (void *ptr, gint64 value)
 		mono_interlocked_unlock ();
 		return;
 	}
-#endif
+#else
 
 	InterlockedWrite64 (ptr, value);
+#endif
 }
 
 void
@@ -2467,11 +2487,12 @@ ves_icall_System_Threading_Volatile_WriteDouble (void *ptr, double value)
 		mono_interlocked_unlock ();
 		return;
 	}
-#endif
+#else
 
 	u.fval = value;
 
 	InterlockedWrite64 (ptr, u.ival);
+#endif
 }
 
 void
