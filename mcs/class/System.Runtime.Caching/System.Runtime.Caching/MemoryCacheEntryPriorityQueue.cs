@@ -199,11 +199,11 @@ namespace System.Runtime.Caching
 					break;
 				
 				heap [index] = parent;
+				heap [parentIndex] = item;
+				
 				index = parentIndex;
 				parentIndex = (index - 1) >> 1;
 			}
-
-			heap [index] = item;
 		}
 	}
 }
