@@ -98,8 +98,14 @@ namespace System.Configuration {
 #endif
 		}
 
-		public override void Save()
+		public override void Save ()
 		{
+			var e = new CancelEventArgs ();
+
+			OnSettingsSaving (this, e);
+			if (e.Cancel)
+				return;
+
 #if (CONFIGURATION_DEP)
 			Context.CurrentSettings = this;
 			/* ew.. this needs to be more efficient */
