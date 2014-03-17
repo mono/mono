@@ -626,6 +626,7 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 {
 	guint8 *code, *buf, *tramp;
 	int size;
+	gboolean far_addr = FALSE;
 
 	tramp = mono_get_trampoline_code (tramp_type);
 
@@ -636,7 +637,23 @@ mono_arch_create_specific_trampoline (gpointer arg1, MonoTrampolineType tramp_ty
 
 	code = buf = mono_domain_code_reserve_align (domain, size, 1);
 
-	amd64_call_code (code, tramp);
+
+	if (((gint64)tramp - (gint64)code) >> 31 != 0 && ((gint64)tramp - (gint64)code) >> 31 != -1) {
+#ifndef MONO_ARCH_NOMAP32BIT
+		g_assert_not_reached ();
+#endif
+		far_addr = TRUE;
+		size += 16;
+		code = buf = mono_domain_code_reserve_align (domain, size, 1);
+	}
+
+	if (far_addr) {
+		amd64_mov_reg_imm (code, AMD64_R11, tramp);
+		amd64_call_reg (code, AMD64_R11);
+	} else {
+		amd64_call_code (code, tramp);
+	}
+
 	/* The trampoline code will obtain the argument from the instruction stream */
 	if ((((guint64)arg1) >> 32) == 0) {
 		*code = 0x4;
