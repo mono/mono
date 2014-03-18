@@ -1010,9 +1010,20 @@ namespace Mono.CSharp
 
 			for (int i = 0; i < initialized_fields.Count; ++i) {
 				FieldInitializer fi = initialized_fields [i];
+
+				//
+				// Clone before resolving otherwise when field initializer is needed
+				// in more than 1 constructor any resolve after the initial one would
+				// only took the resolved expression which is problem for expressions
+				// that generate extra expressions or code during Resolve phase
+				//
+				var cloned = fi.Clone (new CloneContext ());
+
 				ExpressionStatement s = fi.ResolveStatement (ec);
-				if (s == null)
+				if (s == null) {
+					initialized_fields [i] = new FieldInitializer (fi.Field, ErrorExpression.Instance, Location.Null);
 					continue;
+				}
 
 				//
 				// Field is re-initialized to its default value => removed
@@ -1022,6 +1033,7 @@ namespace Mono.CSharp
 
 				ec.AssignmentInfoOffset += fi.AssignmentOffset;
 				ec.CurrentBlock.AddScopeStatement (new StatementExpression (s));
+				initialized_fields [i] = (FieldInitializer) cloned;
 			}
 		}
 

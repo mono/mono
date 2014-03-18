@@ -5792,6 +5792,14 @@ namespace Mono.CSharp {
 			}
 		}
 
+		protected override void CloneTo (CloneContext clonectx, Expression target)
+		{
+			var t = (FieldExpr) target;
+
+			if (InstanceExpression != null)
+				t.InstanceExpression = InstanceExpression.Clone (clonectx);
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			return CreateExpressionTree (ec, true);

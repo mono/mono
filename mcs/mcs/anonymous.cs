@@ -1267,7 +1267,7 @@ namespace Mono.CSharp {
 				throw new InternalErrorException (e, loc);
 			}
 
-			if (!ec.IsInProbingMode) {
+			if (!ec.IsInProbingMode && !etree_conversion) {
 				compatibles.Add (type, am ?? EmptyExpression.Null);
 			}
 
