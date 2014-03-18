@@ -173,7 +173,7 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 #if SIZEOF_VOID_P == 8
 	case MONO_COUNTER_TYPE_WORD:
 #endif
-	case MONO_COUNTER_TYPE_LONG:{
+	case MONO_COUNTER_TYPE_LONG: {
 		gint64 value;
 		if (counter->is_callback)
 			value = ((LongFunc)counter->addr) ();
@@ -185,7 +185,7 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 			fprintf (outfile, ENTRY_FMT "%lld\n", counter->name, value);
 		break;
 	}
-	case MONO_COUNTER_TYPE_DOUBLE:{
+	case MONO_COUNTER_TYPE_DOUBLE: {
 		double value;
 		if (counter->is_callback)
 			value = ((DoubleFunc)counter->addr) ();
