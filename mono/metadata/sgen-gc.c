@@ -2275,8 +2275,8 @@ init_stats (void)
 #endif
 
 	/* New style counters */
-	minor_gc_count = mono_counters_new_int (MONO_COUNTER_CAT_GC, "Minor GC collections", MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_UNIT_MONOTONIC);
-	major_gc_count = mono_counters_new_int (MONO_COUNTER_CAT_GC, "Major GC collections", MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_UNIT_MONOTONIC);
+	minor_gc_count = mono_counters_new_int (MONO_COUNTER_CAT_GC, "Minor GC collections", MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_MONOTONIC);
+	major_gc_count = mono_counters_new_int (MONO_COUNTER_CAT_GC, "Major GC collections", MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_MONOTONIC);
 
 	inited = TRUE;
 }

@@ -38,6 +38,7 @@
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/gc-internal.h>
 #include <mono/utils/mono-threads.h>
+#include <mono/utils/mono-counters-agent.h>
 #include "attach.h"
 
 /*
@@ -477,12 +478,6 @@ transport_start_receive (void)
 	g_assert (receiver_thread_handle);
 }
 
-static void
-mono_perf_agent_start (const char *args)
-{
-	printf ("START AGENT: %s\n", args);
-}
-
 static guint32 WINAPI
 receiver_thread (void *arg)
 {
@@ -557,9 +552,9 @@ receiver_thread (void *arg)
 				g_free (agent_name);
 				g_free (agent_args);
 			} else if (!strcmp (cmd, "perf-agent")) {
-				char *perf_args = decode_string_value (p, &p, p_end);
-				mono_perf_agent_start (perf_args);
-				g_free (perf_args);
+				char *agent_args = decode_string_value (p, &p, p_end);
+				mono_counters_agent_start (agent_args);
+				g_free (agent_args);
 			} else {
 				g_warning ("Invalid attach command: %s", cmd);
 			}

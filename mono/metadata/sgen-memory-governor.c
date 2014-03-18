@@ -402,10 +402,10 @@ sgen_memgov_try_alloc_space (mword size, int space)
 void
 sgen_memgov_init (glong max_heap, glong soft_limit, double allowance_ratio, double save_target)
 {
-	active_heap_memory = mono_counters_new_word (MONO_COUNTER_CAT_GC, "Active Heap Size", MONO_COUNTER_UNIT_BYTES, MONO_COUNTER_UNIT_VARIABLE);
-	allocated_heap_memory = mono_counters_new_word (MONO_COUNTER_CAT_GC, "Current Heap Size", MONO_COUNTER_UNIT_BYTES, MONO_COUNTER_UNIT_VARIABLE);
-	minor_collection_allowance = mono_counters_new_word (MONO_COUNTER_CAT_GC, "Max Heap Size", MONO_COUNTER_UNIT_BYTES, MONO_COUNTER_UNIT_VARIABLE);
-	total_gc_memory = mono_counters_new_word (MONO_COUNTER_CAT_GC, "GC Memory Usage", MONO_COUNTER_UNIT_BYTES, MONO_COUNTER_UNIT_VARIABLE);
+	active_heap_memory = mono_counters_new_word (MONO_COUNTER_CAT_GC, "Active Heap Size", MONO_COUNTER_UNIT_BYTES, MONO_COUNTER_VARIABLE);
+	allocated_heap_memory = mono_counters_new_word (MONO_COUNTER_CAT_GC, "Current Heap Size", MONO_COUNTER_UNIT_BYTES, MONO_COUNTER_VARIABLE);
+	minor_collection_allowance = mono_counters_new_word (MONO_COUNTER_CAT_GC, "Max Heap Size", MONO_COUNTER_UNIT_BYTES, MONO_COUNTER_VARIABLE);
+	total_gc_memory = mono_counters_new_word (MONO_COUNTER_CAT_GC, "GC Memory Usage", MONO_COUNTER_UNIT_BYTES, MONO_COUNTER_VARIABLE);
 
 	if (soft_limit)
 		soft_heap_limit = soft_limit;

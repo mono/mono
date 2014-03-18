@@ -7,17 +7,6 @@
 #include <glib.h>
 #include "mono-counters-internals.h"
 
-struct _MonoCounter {
-	MonoCounter *next;
-	const char *name;
-	void *addr;
-	MonoCounterType type;
-	MonoCounterCategory category;
-	MonoCounterUnit unit;
-	MonoCounterVariance variance;
-	gboolean is_callback;
-};
-
 static MonoCounter *counters = NULL;
 static int valid_mask = 0;
 
@@ -150,7 +139,7 @@ mono_counters_register (const char* name, int type, void *addr)
 		g_error ("Invalid type %x", type & MONO_COUNTER_TYPE_MASK);
 	}
 
-	counter = mono_counters_register_full (cat, name, counter_type, unit, MONO_COUNTER_UNIT_VARIABLE, addr);
+	counter = mono_counters_register_full (cat, name, counter_type, unit, MONO_COUNTER_VARIABLE, addr);
 	if (counter && (type & MONO_COUNTER_CALLBACK))
 		counter->is_callback = TRUE;
 }
@@ -334,4 +323,119 @@ mono_runtime_resource_set_callback (MonoResourceCallback callback)
 	limit_reached = callback;
 }
 
+MonoCounter*
+mono_counters_get (MonoCounterCategory category, const char* name)
+{
+	MonoCounter *counter = counters;
 
+	while (counter) {
+		if (counter->category == category && !strcmp (counter->name, name))
+			return counter;
+		counter = counter->next;
+	}
+	
+	return NULL;
+}
+
+int
+mono_counters_sample (MonoCounter* counter, char* buffer, int size)
+{
+	switch (counter->type) {
+	case MONO_COUNTER_TYPE_INT:
+#if SIZEOF_VOID_P == 4
+	case MONO_COUNTER_TYPE_WORD:
+#endif
+		if (size < 4)
+			return -1;
+		
+		if (counter->is_callback) {
+			int value = ((IntFunc)counter->addr) ();
+			memcpy(buffer, &value, 4);
+		} else {
+			memcpy(buffer, counter->addr, 4);
+		}
+		
+		return 4;
+	case MONO_COUNTER_TYPE_LONG:
+#if SIZEOF_VOID_P == 8
+	case MONO_COUNTER_TYPE_WORD:
+#endif
+		if (size < 8)
+			return -1;
+		
+		if (counter->is_callback) {
+			long value = ((LongFunc)counter->addr) ();
+			memcpy(buffer, &value, 8);
+		} else {
+			memcpy(buffer, counter->addr, 8);
+		}
+		
+		return 8;
+	case MONO_COUNTER_DOUBLE:
+		if (size < 8)
+			return -1;
+		
+		if (counter->is_callback) {
+			double value = ((DoubleFunc)counter->addr) ();
+			memcpy(buffer, &value, 8);
+		} else {
+			memcpy(buffer, counter->addr, 8);
+		}
+		
+		return 8;
+	}
+	
+	return -1;
+}
+
+int
+mono_counters_size (MonoCounter* counter)
+{
+	switch (counter->type) {
+	case MONO_COUNTER_TYPE_INT:
+#if SIZEOF_VOID_P == 4
+	case MONO_COUNTER_TYPE_WORD:
+#endif
+		return 4;
+	case MONO_COUNTER_TYPE_LONG:
+#if SIZEOF_VOID_P == 8
+	case MONO_COUNTER_TYPE_WORD:
+#endif
+	case MONO_COUNTER_DOUBLE:
+		return 8;
+	}
+	
+	return -1;
+}
+
+/* Keep this in sync with the MonoCounterCategory enum */
+static const char* category_names[] = {
+	"Mono JIT",
+	"Mono GC",
+	"Mono Metadata",
+	"Mono Generics",
+	"Mono Security",
+
+	"Mono Thread",
+	"Mono ThreadPool",
+	"Mono System",
+};
+
+MonoCounterCategory
+mono_counters_category_name_to_id (const char* name)
+{
+	int i;
+	for (i = 0; i < MONO_COUNTER_CAT_MAX; ++i) {
+		if (!strcmp (category_names [i], name))
+			return i;
+	}
+	return -1;
+}
+
+const char*
+mono_counters_category_id_to_name (MonoCounterCategory id)
+{
+	if (id < 0 || id >= MONO_COUNTER_CAT_MAX)
+		return NULL;
+	return category_names [id];
+}

@@ -2529,7 +2529,7 @@ void mono_thread_init (MonoThreadStartCB start_cb,
 	 */
 	GetCurrentProcess ();
 
-	thread_count = mono_counters_new_int (MONO_COUNTER_CAT_THREAD,"Thread Count", MONO_COUNTER_UNIT_NONE, MONO_COUNTER_UNIT_VARIABLE);
+	thread_count = mono_counters_new_int (MONO_COUNTER_CAT_THREAD,"Thread Count", MONO_COUNTER_UNIT_NONE, MONO_COUNTER_VARIABLE);
 }
 
 void mono_thread_cleanup (void)
