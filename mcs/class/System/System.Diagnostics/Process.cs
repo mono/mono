@@ -1517,7 +1517,7 @@ namespace System.Diagnostics {
 		[ComVisibleAttribute(false)] 
 		public void CancelErrorRead ()
 		{
-			if (process_handle == IntPtr.Zero || output_stream == null || StartInfo.RedirectStandardOutput == false)
+			if (process_handle == IntPtr.Zero || error_stream == null || StartInfo.RedirectStandardError == false)
 				throw new InvalidOperationException ("Standard output has not been redirected or process has not been started.");
 
 			if ((async_mode & AsyncModes.SyncOutput) != 0)
