@@ -65,6 +65,8 @@ namespace Mono.Attach
 		}
 
 
+		const int WAIT_LOOP_COUNT = 100;
+
 		void SendCommand (Action<NetworkStream> action) {
 			string user = UnixUserInfo.GetRealUser ().UserName;
 
@@ -84,13 +86,13 @@ namespace Mono.Attach
 
 					// Wait for the socket file to materialize
 					int i;
-					for (i = 0; i < 10; ++i) {
+					for (i = 0; i < WAIT_LOOP_COUNT; ++i) {
 						if (File.Exists (socket_file))
 							break;
 						Thread.Sleep (100);
 					}
 
-					if (i == 10)
+					if (i == WAIT_LOOP_COUNT)
 						throw new Exception (String.Format ("Runtime failed to create attach socket '{0}'.", socket_file));
 				} finally {
 					File.Delete (trigger_file);
