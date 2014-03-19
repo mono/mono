@@ -56,7 +56,9 @@ struct _MonoCounter {
 	MonoCounterCategory category;
 	MonoCounterUnit unit;
 	MonoCounterVariance variance;
-	gboolean is_callback;
+	int callback_style;
+	gboolean is_synthetic;
+	void *user_arg;
 };
 
 /*
@@ -78,7 +80,7 @@ int mono_counters_size   (MonoCounter* counter) MONO_INTERNAL;
 
 MonoCounterCategory mono_counters_category_name_to_id (const char* name) MONO_INTERNAL;
 const char* mono_counters_category_id_to_name (MonoCounterCategory id) MONO_INTERNAL;
-
+void mono_counters_free_counter (MonoCounter* counter) MONO_INTERNAL;
 
 #define mono_counters_new_int(cat,name,unit,variance) mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance)
 #define mono_counters_new_word(cat,name,unit,variance) mono_counters_new(cat,name,MONO_COUNTER_TYPE_WORD,unit,variance)

@@ -56,20 +56,20 @@ static int frequency;
 static GSList* counters;
 static gboolean agent_running;
 
-static int
-parse_counters_all (MonoCounter* counter, void** args)
+static void
+free_agent_memory (void)
 {
-	static short index = 0;
+	GSList *counter = counters;
+	while (counter) {
+		MonoCounterAgent *ct = counter->data;
 
-	MonoCounterAgent* _counter = g_malloc(sizeof(MonoCounterAgent));
-	_counter->counter = counter;
-	_counter->value   = NULL;
-	_counter->index   = index;
+		mono_counters_free_counter (ct->counter);
+		g_free (ct->value);
+		g_free (ct);
 
-	counters = g_slist_append (counters, _counter);
-	index   += 1;
-	
-	return 1;
+		counter = counter->next;
+	}
+	g_slist_free (counters);
 }
 
 static void
@@ -244,6 +244,7 @@ mono_counters_agent_sampling_thread (void* ptr)
 cleanup:
 	if (socketfd != -1)
 		close (socketfd);
+	free_agent_memory ();
 	agent_running = FALSE;
 	return NULL;
 }

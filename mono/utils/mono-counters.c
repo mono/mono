@@ -10,6 +10,12 @@
 static MonoCounter *counters = NULL;
 static int valid_mask = 0;
 
+enum {
+	NO_CB,
+	CB_NO_ARG,
+	CB_WITH_ARG,
+};
+
 /**
  * mono_counters_enable:
  * @section_mask: a mask listing the sections that will be displayed
@@ -141,17 +147,17 @@ mono_counters_register (const char* name, int type, void *addr)
 
 	counter = mono_counters_register_full (cat, name, counter_type, unit, MONO_COUNTER_VARIABLE, addr);
 	if (counter && (type & MONO_COUNTER_CALLBACK))
-		counter->is_callback = TRUE;
+		counter->callback_style = CB_NO_ARG;
 }
 
 
 typedef int (*IntFunc) (void);
-typedef guint (*UIntFunc) (void);
 typedef gint64 (*LongFunc) (void);
-typedef guint64 (*ULongFunc) (void);
-typedef gssize (*PtrFunc) (void);
 typedef double (*DoubleFunc) (void);
-typedef char* (*StrFunc) (void);
+typedef int (*IntFunc2) (void*);
+typedef gint64 (*LongFunc2) (void*);
+typedef double (*DoubleFunc2) (void*);
+
 
 #define ENTRY_FMT "%-36s: "
 static void
@@ -162,10 +168,7 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 #endif
 	case MONO_COUNTER_TYPE_INT: {
 		int value;
-		if (counter->is_callback)
-			value = ((IntFunc)counter->addr) ();
-		else
-			value = *(int*)counter->addr;
+		mono_counters_sample (counter, (char*)&value, 4);
 		fprintf (outfile, ENTRY_FMT "%d\n", counter->name, value);
 		break;
 	}
@@ -175,10 +178,8 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 #endif
 	case MONO_COUNTER_TYPE_LONG: {
 		gint64 value;
-		if (counter->is_callback)
-			value = ((LongFunc)counter->addr) ();
-		else
-			value = *(gint64*)counter->addr;
+		mono_counters_sample (counter, (char*)&value, 8);
+
 		if (counter->unit == MONO_COUNTER_UNIT_TIME)
 			fprintf (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)value / 10000.0);
 		else
@@ -187,10 +188,8 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 	}
 	case MONO_COUNTER_TYPE_DOUBLE: {
 		double value;
-		if (counter->is_callback)
-			value = ((DoubleFunc)counter->addr) ();
-		else
-			value = *(double*)counter->addr;
+		mono_counters_sample (counter, (char*)&value, 8);
+
 		fprintf (outfile, ENTRY_FMT "%.4f ms\n", counter->name, value);
 		break;
 	}
@@ -341,48 +340,72 @@ int
 mono_counters_sample (MonoCounter* counter, char* buffer, int size)
 {
 	switch (counter->type) {
-	case MONO_COUNTER_TYPE_INT:
 #if SIZEOF_VOID_P == 4
 	case MONO_COUNTER_TYPE_WORD:
 #endif
+	case MONO_COUNTER_TYPE_INT: {
+		int value;
 		if (size < 4)
 			return -1;
-		
-		if (counter->is_callback) {
-			int value = ((IntFunc)counter->addr) ();
-			memcpy(buffer, &value, 4);
-		} else {
-			memcpy(buffer, counter->addr, 4);
+
+		switch (counter->callback_style) {
+		case NO_CB:
+			value = *(int*)counter->addr;
+			break;
+		case CB_NO_ARG:
+			value = ((IntFunc)counter->addr) ();
+			break;
+		case CB_WITH_ARG:
+			value = ((IntFunc2)counter->addr) (counter->user_arg);
+			break;
 		}
+		memcpy (buffer, &value, 4);
 		
 		return 4;
-	case MONO_COUNTER_TYPE_LONG:
+	}
 #if SIZEOF_VOID_P == 8
 	case MONO_COUNTER_TYPE_WORD:
 #endif
+	case MONO_COUNTER_TYPE_LONG: {
+		gint64 value;
 		if (size < 8)
 			return -1;
 		
-		if (counter->is_callback) {
-			long value = ((LongFunc)counter->addr) ();
-			memcpy(buffer, &value, 8);
-		} else {
-			memcpy(buffer, counter->addr, 8);
+		switch (counter->callback_style) {
+		case NO_CB:
+			value = *(gint64*)counter->addr;
+			break;
+		case CB_NO_ARG:
+			value = ((LongFunc)counter->addr) ();
+			break;
+		case CB_WITH_ARG:
+			value = ((LongFunc2)counter->addr) (counter->user_arg);
+			break;
 		}
-		
+		memcpy (buffer, &value, 8);
+
 		return 8;
-	case MONO_COUNTER_DOUBLE:
+	}
+	case MONO_COUNTER_DOUBLE: {
+		double value;
 		if (size < 8)
 			return -1;
 		
-		if (counter->is_callback) {
-			double value = ((DoubleFunc)counter->addr) ();
-			memcpy(buffer, &value, 8);
-		} else {
-			memcpy(buffer, counter->addr, 8);
+		switch (counter->callback_style) {
+		case NO_CB:
+			value = *(double*)counter->addr;
+			break;
+		case CB_NO_ARG:
+			value = ((DoubleFunc)counter->addr) ();
+			break;
+		case CB_WITH_ARG:
+			value = ((DoubleFunc2)counter->addr) (counter->user_arg);
+			break;
 		}
-		
+		memcpy (buffer, &value, 8);
+
 		return 8;
+	}
 	}
 	
 	return -1;
@@ -438,4 +461,12 @@ mono_counters_category_id_to_name (MonoCounterCategory id)
 	if (id < 0 || id >= MONO_COUNTER_CAT_MAX)
 		return NULL;
 	return category_names [id];
+}
+
+
+void
+mono_counters_free_counter (MonoCounter *counter)
+{
+	if (counter->is_synthetic)
+		g_free (counter);
 }
