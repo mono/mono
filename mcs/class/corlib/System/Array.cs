@@ -3019,7 +3019,7 @@ namespace System
 			return IndexOf<T> (array, value, startIndex, array.Length - startIndex);
 		}
 
-		public static int IndexOf<T> (T [] array, T value, int startIndex, int count)
+		public static int IndexOf<T> (T[] array, T value, int startIndex, int count)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -3028,14 +3028,7 @@ namespace System
 			if (count < 0 || startIndex < array.GetLowerBound (0) || startIndex - 1 > array.GetUpperBound (0) - count)
 				throw new ArgumentOutOfRangeException ();
 
-			int max = startIndex + count;
-			EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
-			for (int i = startIndex; i < max; i++) {
-				if (equalityComparer.Equals (array [i], value))
-					return i;
-			}
-
-			return -1;
+			return EqualityComparer<T>.Default.IndexOf (array, value, startIndex, startIndex + count);
 		}
 		
 		public static int LastIndexOf<T> (T [] array, T value)
@@ -3154,12 +3147,29 @@ namespace System
 			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length);
 		}
 
+		#region Unsafe array operations
+
+		//
+		// Loads array index with no safety checks (JIT intristics)
+		//
 		internal static T UnsafeLoad<T> (T[] array, int index) {
 			return array [index];
 		}
 
+		//
+		// Stores values at specified array index with no safety checks (JIT intristics)
+		//
 		internal static void UnsafeStore<T> (T[] array, int index, T value) {
 			array [index] = value;
 		}
+
+		//
+		// Moved value from instance into target of different type with no checks (JIT intristics)
+		//
+		internal static R UnsafeMov<S,R> (S instance) {
+			return (R)(object) instance;
+		}
+
+		#endregion
 	}
 }
