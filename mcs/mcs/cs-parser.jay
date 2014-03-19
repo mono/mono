@@ -904,10 +904,12 @@ class_member_declarations
 	: class_member_declaration
 	  {
 		lexer.parsing_modifiers = true;
+		lexer.parsing_block = 0;
 	  }
 	| class_member_declarations class_member_declaration
 	  {
 		lexer.parsing_modifiers = true;
+		lexer.parsing_block = 0;
 	  }
 	;
 	
@@ -1968,10 +1970,12 @@ interface_member_declarations
 	: interface_member_declaration
 	  {
 		lexer.parsing_modifiers = true;
+		lexer.parsing_block = 0;
 	  }
 	| interface_member_declarations interface_member_declaration
 	  {
 		lexer.parsing_modifiers = true;
+		lexer.parsing_block = 0;
 	  }
 	;
 

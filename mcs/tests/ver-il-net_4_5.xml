@@ -14398,6 +14398,12 @@
       <method name="Void Test_8(System.DateTime)" attrs="129">
         <size>39</size>
       </method>
+      <method name="Void Test_16()" attrs="129">
+        <size>20</size>
+      </method>
+      <method name="Boolean Test(System.Object, Int32)" attrs="145">
+        <size>10</size>
+      </method>
     </type>
   </test>
   <test name="gtest-410.cs">
@@ -21680,6 +21686,28 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-30.cs">
+    <type name="C">
+      <method name="System.Action`2[System.Object,System.Object] get_TappedCallback()" attrs="2182">
+        <size>14</size>
+      </method>
+      <method name="Void set_TappedCallback(System.Action`2[System.Object,System.Object])" attrs="2182">
+        <size>8</size>
+      </method>
+      <method name="System.String Create[T1,T2](System.Linq.Expressions.Expression`1[System.Func`2[T1,T2]])" attrs="150">
+        <size>10</size>
+      </method>
+      <method name="Void Main()" attrs="150">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>76</size>
+      </method>
+      <method name="Void .ctor(Action`2)" attrs="6278">
+        <size>76</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)" attrs="150">
@@ -26372,6 +26400,39 @@
       </method>
       <method name="Void Main()" attrs="150">
         <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-lambda-34.cs">
+    <type name="Program">
+      <method name="Void Main()" attrs="145">
+        <size>8</size>
+      </method>
+      <method name="Boolean SomeMethod()" attrs="145">
+        <size>52</size>
+      </method>
+      <method name="Boolean F(System.Func`1[System.Boolean])" attrs="148">
+        <size>10</size>
+      </method>
+      <method name="Boolean F1(Int32, Int32 ByRef)" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Boolean Ferror(Int32)" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Boolean Fouter()" attrs="145">
+        <size>10</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Program+&lt;SomeMethod&gt;c__AnonStorey0">
+      <method name="Boolean &lt;&gt;m__0()" attrs="131">
+        <size>44</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
