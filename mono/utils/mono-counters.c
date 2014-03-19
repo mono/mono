@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <glib.h>
 #include "mono-counters-internals.h"
+#include "mono-proclib.h"
+#include <unistd.h>
 
 static MonoCounter *counters = NULL;
 static int valid_mask = 0;
@@ -28,8 +30,8 @@ mono_counters_enable (int section_mask)
 	valid_mask = section_mask & MONO_COUNTER_SECTION_MASK;
 }
 
-MonoCounter*
-mono_counters_register_full (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr)
+static MonoCounter*
+mono_counters_new_full (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr)
 {
 	MonoCounter *counter;
 	counter = g_new0 (MonoCounter, 1);
@@ -41,7 +43,15 @@ mono_counters_register_full (MonoCounterCategory category, const char *name, Mon
 	counter->category = category;
 	counter->unit = unit;
 	counter->variance = variance;
-	counter->next = NULL;
+	return counter;
+}
+
+MonoCounter*
+mono_counters_register_full (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr)
+{
+	MonoCounter *counter = mono_counters_new_full (category, name, type, unit, variance, addr);
+	if (!counter)
+		return NULL;
 
 	/* Append */
 	if (counters) {
@@ -308,6 +318,50 @@ mono_runtime_resource_limit (int resource_type, uintptr_t soft_limit, uintptr_t 
 	return 1;
 }
 
+static gint64
+sample_cpu (void *arg)
+{
+	int kind = GPOINTER_TO_INT (arg);
+	return mono_process_get_data (GINT_TO_POINTER (getpid ()), kind);
+}
+
+static MonoCounter*
+get_sys_counter (const char *name)
+{
+	MonoCounter *counter = NULL;
+	int type = 0;
+	if (!strcmp (name, "User Time")) {
+		counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "User Time", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_TIME, MONO_COUNTER_VARIABLE, NULL);
+		type = MONO_PROCESS_USER_TIME;
+	} else if (!strcmp (name, "System Time")) {
+		counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "System Time", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_TIME, MONO_COUNTER_VARIABLE, NULL);
+		type = MONO_PROCESS_SYSTEM_TIME;
+	} else if (!strcmp (name, "Total Time")) {
+		counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "Total Time", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_TIME, MONO_COUNTER_VARIABLE, NULL);
+		type = MONO_PROCESS_TOTAL_TIME;
+	} else if (!strcmp (name, "Working Set")) {
+		counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "Working Set", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_BYTES, MONO_COUNTER_VARIABLE, NULL);
+		type = MONO_PROCESS_WORKING_SET;
+	} else if (!strcmp (name, "Private Bytes")) {
+		counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "Private Bytes", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_BYTES, MONO_COUNTER_VARIABLE, NULL);
+		type = MONO_PROCESS_PRIVATE_BYTES;
+	} else if (!strcmp (name, "Virtual Bytes")) {
+		counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "Virtual Bytes", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_BYTES, MONO_COUNTER_VARIABLE, NULL);
+		type = MONO_PROCESS_VIRTUAL_BYTES;
+	} else if (!strcmp (name, "Page Faults")) {
+		counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "Page Faults", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_VARIABLE, NULL);
+		type = MONO_PROCESS_FAULTS;
+	}
+	
+	if (!counter)
+		return NULL;
+		
+	counter->addr = &sample_cpu;
+	counter->is_synthetic = TRUE;
+	counter->callback_style = CB_WITH_ARG;
+	counter->user_arg = GINT_TO_POINTER (type);
+	return counter;
+}
 /**
  * mono_runtime_resource_set_callback:
  * @callback: a function pointer
@@ -332,7 +386,9 @@ mono_counters_get (MonoCounterCategory category, const char* name)
 			return counter;
 		counter = counter->next;
 	}
-	
+	if (category == MONO_COUNTER_CAT_SYS)
+		return get_sys_counter (name);
+
 	return NULL;
 }
 
