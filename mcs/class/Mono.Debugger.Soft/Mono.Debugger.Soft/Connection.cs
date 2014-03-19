@@ -214,6 +214,12 @@ namespace Mono.Debugger.Soft
 		public long Assembly;
 	}		
 
+	class FieldMirrorInfo {
+		public string Name;
+		public long Parent, TypeId;
+		public int Attrs;
+	}
+
 	enum TokenType {
 		STRING = 0,
 		TYPE = 1,
@@ -405,7 +411,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 27;
+		internal const int MINOR_VERSION = 28;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -426,6 +432,7 @@ namespace Mono.Debugger.Soft
 			METHOD = 22,
 			TYPE = 23,
 			MODULE = 24,
+			FIELD = 25,
 			EVENT = 64
 		}
 
@@ -554,6 +561,10 @@ namespace Mono.Debugger.Soft
 			GET_INTERFACES = 16,
 			GET_INTERFACE_MAP = 17,
 			IS_INITIALIZED = 18
+		}
+
+		enum CmdField {
+			GET_INFO = 1
 		}
 
 		[Flags]
@@ -1357,6 +1368,9 @@ namespace Mono.Debugger.Soft
 			case CommandSet.MODULE:
 				cmd = ((CmdModule)command).ToString ();
 				break;
+			case CommandSet.FIELD:
+				cmd = ((CmdField)command).ToString ();
+				break;
 			case CommandSet.EVENT:
 				cmd = ((CmdEvent)command).ToString ();
 				break;
@@ -2133,6 +2147,16 @@ namespace Mono.Debugger.Soft
 		internal bool Type_IsInitialized (long id) {
 			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.IS_INITIALIZED, new PacketWriter ().WriteId (id));
 			return r.ReadInt () == 1;
+		}
+
+		/*
+		 * FIELD
+		 */
+
+		internal FieldMirrorInfo Field_GetInfo (long id) {
+			PacketReader r = SendReceive (CommandSet.FIELD, (int)CmdField.GET_INFO, new PacketWriter ().WriteId (id));
+			FieldMirrorInfo info = new FieldMirrorInfo { Name = r.ReadString (), Parent = r.ReadId (), TypeId = r.ReadId (), Attrs = r.ReadInt () };
+			return info;
 		}
 
 		/*

@@ -521,6 +521,24 @@ namespace Mono.Debugger.Soft
 			return GetObject <ThreadMirror> (id);
 		}
 
+		Dictionary <long, FieldInfoMirror> fields;
+		object fields_lock = new object ();
+
+		internal FieldInfoMirror GetField (long id) {
+			lock (fields_lock) {
+				if (fields == null)
+					fields = new Dictionary <long, FieldInfoMirror> ();
+				FieldInfoMirror obj;
+				if (id == 0)
+					return null;
+				if (!fields.TryGetValue (id, out obj)) {
+					obj = new FieldInfoMirror (this, id);
+					fields [id] = obj;
+				}
+				return obj;
+			}
+	    }
+
 		object requests_lock = new object ();
 
 		internal void AddRequest (EventRequest req, int id) {

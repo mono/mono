@@ -3432,6 +3432,20 @@ public class DebuggerTests
 
 		Assert.AreEqual (wait_one_this, local_0, "#14.2");
 	}
+
+	[Test]
+	public void GetMethodBody () {
+		var bevent = run_until ("Main");
+
+		var m = bevent.Method.DeclaringType.GetMethod ("get_IntProperty");
+		var body = m.GetMethodBody ();
+		foreach (var ins in body.Instructions) {
+			if (ins.OpCode == OpCodes.Ldfld) {
+				var field = (FieldInfoMirror)ins.Operand;
+				Assert.AreEqual ("field_i", field.Name);
+			}
+		}
+	}
 }
 
 }
