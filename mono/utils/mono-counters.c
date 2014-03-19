@@ -442,7 +442,7 @@ mono_counters_sample (MonoCounter* counter, char* buffer, int size)
 
 		return 8;
 	}
-	case MONO_COUNTER_DOUBLE: {
+	case MONO_COUNTER_TYPE_DOUBLE: {
 		double value;
 		if (size < 8)
 			return -1;
@@ -480,7 +480,7 @@ mono_counters_size (MonoCounter* counter)
 #if SIZEOF_VOID_P == 8
 	case MONO_COUNTER_TYPE_WORD:
 #endif
-	case MONO_COUNTER_DOUBLE:
+	case MONO_COUNTER_TYPE_DOUBLE:
 		return 8;
 	}
 	
