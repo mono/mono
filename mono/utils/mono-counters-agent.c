@@ -94,7 +94,7 @@ parse_counters_names (const char *counters_names)
 		}
 	
 		category = mono_counters_category_name_to_id (split [0]);
-		if (!category) {
+		if (category < 0) {
 			g_warning ("Category %s not found", split [0]);
 			goto end;
 		}
