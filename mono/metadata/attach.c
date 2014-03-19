@@ -142,6 +142,7 @@ static char*
 decode_string_value (guint8 *buf, guint8 **endbuf, guint8 *limit)
 {
 	int type;
+	int shift = 0;
     gint32 length;
 	guint8 *p = buf;
 	char *s;
@@ -156,10 +157,9 @@ decode_string_value (guint8 *buf, guint8 **endbuf, guint8 *limit)
 	length = 0;
 	while (TRUE) {
 		guint8 b = decode_byte (p, &p, limit);
-		
-		length <<= 8;
-		length += b;
-		if (b <= 0x7f)
+		length += (b & 0x7f) << shift;
+		shift += 7;
+		if ((b & 0x80) == 0)
 			break;
 	}
 
@@ -562,7 +562,8 @@ receiver_thread (void *arg)
 			g_free (cmd);
 			g_free (body);
 
-			// FIXME: Send back a result
+			/* The attach protocol currently is unidirectional */
+			break;
 		}
 
 		close (conn_fd);
