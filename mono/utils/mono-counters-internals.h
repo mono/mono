@@ -82,19 +82,34 @@ MonoCounterCategory mono_counters_category_name_to_id (const char* name) MONO_IN
 const char* mono_counters_category_id_to_name (MonoCounterCategory id) MONO_INTERNAL;
 void mono_counters_free_counter (MonoCounter* counter) MONO_INTERNAL;
 
-#define mono_counters_new_int(cat,name,unit,variance) mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance)
-#define mono_counters_new_word(cat,name,unit,variance) mono_counters_new(cat,name,MONO_COUNTER_TYPE_WORD,unit,variance)
-#define mono_counters_new_long(cat,name,unit,variance) mono_counters_new(cat,name,MONO_COUNTER_TYPE_LONG,unit,variance)
-#define mono_counters_new_double(cat,name,unit,variance) mono_counters_new(cat,name,MONO_COUNTER_TYPE_double,unit,variance)
+/* Helpers */
 
-#define mono_counters_new_int_const(cat,name,unit,value) do { int *__ptr = mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance); *__ptr = value; } while (0)
-#define mono_counters_new_word_const(cat,name,unit,value) do { ssize_t *__ptr = mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance); *__ptr = value; } while (0)
-#define mono_counters_new_long_const(cat,name,unit,value) do { gint64 *__ptr = mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance); *__ptr = value; } while (0)
-#define mono_counters_new_double_const(cat,name,unit,value) do { double *__ptr = mono_counters_new(cat,name,MONO_COUNTER_TYPE_INT,unit,variance); *__ptr = value; } while (0)
+/*
+These helpers provide a typed struct and a bunch of helper functions:
+Structs: IntCounter LongCounter, WordCounter, DoubleCounter
+factory functions: mono_counters_new_int, mono_counters_new_const_int
+update functions: mono_counters_int_set, mono_counters_int_inc, mono_counters_int_dec
+read functions: mono_counters_int_get
+*/
+#define MK_COUNTER_HELPERS(TYPE, NAME, CAPITALIZED_NAME,COUNTER_TYPE) \
+typedef struct { TYPE *pointer; } CAPITALIZED_NAME ##Counter;	\
+static void mono_counters_ ## NAME ## _set (CAPITALIZED_NAME ##Counter counter, TYPE value) { (*counter.pointer) += value; }	\
+static TYPE mono_counters_ ## NAME ## _get (CAPITALIZED_NAME ##Counter counter) { return *counter.pointer; }	\
+static void mono_counters_ ## NAME ## _inc (CAPITALIZED_NAME ##Counter counter) { (*counter.pointer) += 1; }	\
+static void mono_counters_ ## NAME ## _dec (CAPITALIZED_NAME ##Counter counter) { (*counter.pointer) += 1; }	\
+static CAPITALIZED_NAME ##Counter mono_counters_new_ ## NAME (MonoCounterCategory category, const char *name, MonoCounterUnit unit, MonoCounterVariance variance) {	\
+	CAPITALIZED_NAME ##Counter c = { mono_counters_new(category, name, MONO_COUNTER_TYPE_ ## COUNTER_TYPE, unit, variance) };	\
+	return c;	\
+}	\
+static void mono_counters_new_const_ ## NAME (MonoCounterCategory category, const char *name, MonoCounterUnit unit, TYPE value) {	\
+	CAPITALIZED_NAME ##Counter c = { mono_counters_new(category, name, MONO_COUNTER_TYPE_ ## COUNTER_TYPE, unit, MONO_COUNTER_CONSTANT) };	\
+	mono_counters_ ## NAME ## _set (c, value);	\
+}	\
 
-#define mono_counters_inc(counter_ptr) do { *(counter_ptr) += 1; } while(0)
-#define mono_counters_dec(counter_ptr) do { *(counter_ptr) += -1; } while(0)
-#define mono_counters_add(counter_ptr, val) do { *(counter_ptr) += val; } while(0)
-#define mono_counters_set(counter_ptr, val) do { *(counter_ptr) = val; } while(0)
+MK_COUNTER_HELPERS(int,int,Int,INT)
+MK_COUNTER_HELPERS(gint64,long,Long,LONG)
+MK_COUNTER_HELPERS(ssize_t,word,Word,WORD)
+MK_COUNTER_HELPERS(double,double,Double,DOUBLE)
+
 
 #endif
