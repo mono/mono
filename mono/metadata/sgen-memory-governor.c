@@ -46,13 +46,13 @@ static double default_allowance_nursery_size_ratio = SGEN_DEFAULT_ALLOWANCE_NURS
 static double save_target_ratio = SGEN_DEFAULT_SAVE_TARGET_RATIO;
 
 /* Heap memory is in use*/
-static mword *active_heap_memory;
+static WordCounter active_heap_memory;
 
 /* Heap memory is currently allocated */
-static mword *allocated_heap_memory;
+static WordCounter allocated_heap_memory;
 
 /* An estimate of the total consumption by the GC */
-static mword *total_gc_memory;
+static WordCounter total_gc_memory;
 
 
 /* GC triggers. */
@@ -62,7 +62,7 @@ static gboolean debug_print_allowance = FALSE;
 
 /* use this to tune when to do a major/minor collection */
 static mword memory_pressure = 0;
-static mword *minor_collection_allowance;
+static WordCounter minor_collection_allowance;
 static int minor_collection_sections_alloced = 0;
 
 static int last_major_num_sections = 0;
@@ -77,6 +77,11 @@ static mword last_collection_los_memory_alloced;
 
 static mword sgen_memgov_available_free_space (void);
 
+static void
+atomic_counter_add (WordCounter counter, size_t val)
+{
+	SGEN_ATOMIC_ADD_P (*(size_t*)counter.pointer, val);
+}
 
 static mword
 double_to_mword_with_saturation (double value)
@@ -102,7 +107,7 @@ sgen_memgov_try_calculate_minor_collection_allowance (gboolean overwrite)
 
 	if (!*major_collector.have_swept) {
 		if (overwrite)
-			*minor_collection_allowance = MIN_MINOR_COLLECTION_ALLOWANCE;
+			mono_counters_word_set (minor_collection_allowance, MIN_MINOR_COLLECTION_ALLOWANCE);
 		return;
 	}
 
@@ -133,13 +138,13 @@ sgen_memgov_try_calculate_minor_collection_allowance (gboolean overwrite)
 	 */
 	allowance_target = double_to_mword_with_saturation ((double)save_target * (double)(minor_collection_sections_alloced * major_collector.section_size + last_collection_los_memory_alloced) / (double)(num_major_sections_saved * major_collector.section_size + los_memory_saved));
 
-	*minor_collection_allowance = MAX (MIN (allowance_target, num_major_sections * major_collector.section_size + los_memory_usage), MIN_MINOR_COLLECTION_ALLOWANCE);
+	mono_counters_word_set (minor_collection_allowance, MAX (MIN (allowance_target, num_major_sections * major_collector.section_size + los_memory_usage), MIN_MINOR_COLLECTION_ALLOWANCE));
 
-	if (new_heap_size + *minor_collection_allowance > soft_heap_limit) {
+	if (new_heap_size + mono_counters_word_get (minor_collection_allowance) > soft_heap_limit) {
 		if (new_heap_size > soft_heap_limit)
-			*minor_collection_allowance = MIN_MINOR_COLLECTION_ALLOWANCE;
+			mono_counters_word_set (minor_collection_allowance, MIN_MINOR_COLLECTION_ALLOWANCE);
 		else
-			*minor_collection_allowance = MAX (soft_heap_limit - new_heap_size, MIN_MINOR_COLLECTION_ALLOWANCE);
+			mono_counters_word_set (minor_collection_allowance, MAX (soft_heap_limit - new_heap_size, MIN_MINOR_COLLECTION_ALLOWANCE));
 	}
 
 	if (debug_print_allowance) {
@@ -149,7 +154,7 @@ sgen_memgov_try_calculate_minor_collection_allowance (gboolean overwrite)
 				  (long)(old_major + last_collection_old_los_memory_usage), (long)old_major, (long)last_collection_old_los_memory_usage);
 		SGEN_LOG (1, "After collection: %ld bytes (%ld major, %ld LOS)",
 				  (long)new_heap_size, (long)new_major, (long)last_collection_los_memory_usage);
-		SGEN_LOG (1, "Allowance: %ld bytes", (long)*minor_collection_allowance);
+		SGEN_LOG (1, "Allowance: %ld bytes", (long)mono_counters_word_get (minor_collection_allowance));
 	}
 
 	if (major_collector.have_computed_minor_collection_allowance)
@@ -167,7 +172,7 @@ sgen_need_major_collection (mword space_needed)
 		return FALSE;
 	los_alloced = los_memory_usage - MIN (last_collection_los_memory_usage, los_memory_usage);
 	return (space_needed > sgen_memgov_available_free_space ()) ||
-		minor_collection_sections_alloced * major_collector.section_size + los_alloced > *minor_collection_allowance;
+		minor_collection_sections_alloced * major_collector.section_size + los_alloced > mono_counters_word_get (minor_collection_allowance);
 }
 
 void
@@ -262,7 +267,7 @@ sgen_register_major_sections_alloced (int num_sections)
 mword
 sgen_get_minor_collection_allowance (void)
 {
-	return *minor_collection_allowance;
+	return mono_counters_word_get (minor_collection_allowance);
 }
 
 /* Memory pressure API */
@@ -314,9 +319,9 @@ sgen_alloc_os_memory (size_t size, SgenAllocFlags flags, const char *assert_desc
 	ptr = mono_valloc (0, size, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE));
 	sgen_assert_memory_alloc (ptr, size, assert_description);
 	if (ptr) {
-		SGEN_ATOMIC_ADD_P (*total_gc_memory, size);
+		atomic_counter_add (total_gc_memory, size);
 		if (flags & SGEN_ALLOC_HEAP) {
-			SGEN_ATOMIC_ADD_P (*allocated_heap_memory, size);
+			atomic_counter_add (allocated_heap_memory, size);
 			MONO_GC_HEAP_ALLOC ((mword)ptr, size);
 		}
 	}
@@ -334,9 +339,9 @@ sgen_alloc_os_memory_aligned (size_t size, mword alignment, SgenAllocFlags flags
 	ptr = mono_valloc_aligned (size, alignment, prot_flags_for_activate (flags & SGEN_ALLOC_ACTIVATE));
 	sgen_assert_memory_alloc (ptr, size, assert_description);
 	if (ptr) {
-		SGEN_ATOMIC_ADD_P (*total_gc_memory, size);
+		atomic_counter_add (total_gc_memory, size);
 		if (flags & SGEN_ALLOC_HEAP) {
-			SGEN_ATOMIC_ADD_P (*allocated_heap_memory, size);
+			atomic_counter_add (allocated_heap_memory, size);
 			MONO_GC_HEAP_ALLOC ((mword)ptr, size);
 		}
 	}
@@ -352,9 +357,9 @@ sgen_free_os_memory (void *addr, size_t size, SgenAllocFlags flags)
 	g_assert (!(flags & ~SGEN_ALLOC_HEAP));
 
 	mono_vfree (addr, size);
-	SGEN_ATOMIC_ADD_P (*total_gc_memory, -size);
+	atomic_counter_add (total_gc_memory, -size);
 	if (flags & SGEN_ALLOC_HEAP) {
-		SGEN_ATOMIC_ADD_P (*allocated_heap_memory, -size);
+		atomic_counter_add (allocated_heap_memory, -size);
 		MONO_GC_HEAP_FREE ((mword)addr, size);
 	}
 }
@@ -362,7 +367,7 @@ sgen_free_os_memory (void *addr, size_t size, SgenAllocFlags flags)
 int64_t
 mono_gc_get_heap_size (void)
 {
-	return *total_gc_memory;
+	return mono_counters_word_get (total_gc_memory);
 }
 
 
@@ -375,14 +380,14 @@ for other parts of the GC.
 static mword
 sgen_memgov_available_free_space (void)
 {
-	return max_heap_size - MIN (*active_heap_memory, max_heap_size);
+	return max_heap_size - MIN (mono_counters_word_get (active_heap_memory), max_heap_size);
 }
 
 
 void
 sgen_memgov_release_space (mword size, int space)
 {
-	SGEN_ATOMIC_ADD_P (*active_heap_memory, -size);
+	atomic_counter_add (active_heap_memory, -size);
 }
 
 /*
@@ -394,8 +399,8 @@ sgen_memgov_try_alloc_space (mword size, int space)
 	if (sgen_memgov_available_free_space () < size)
 		return FALSE;
 
-	SGEN_ATOMIC_ADD_P (*active_heap_memory, size);
-	mono_runtime_resource_check_limit (MONO_RESOURCE_GC_HEAP, *active_heap_memory);
+	atomic_counter_add (active_heap_memory, size);
+	mono_runtime_resource_check_limit (MONO_RESOURCE_GC_HEAP, mono_counters_word_get (active_heap_memory));
 	return TRUE;
 }
 
@@ -410,7 +415,7 @@ sgen_memgov_init (glong max_heap, glong soft_limit, double allowance_ratio, doub
 	if (soft_limit)
 		soft_heap_limit = soft_limit;
 
-	*minor_collection_allowance = MIN_MINOR_COLLECTION_ALLOWANCE;
+	mono_counters_word_set (minor_collection_allowance, MIN_MINOR_COLLECTION_ALLOWANCE);
 
 	if (max_heap == 0)
 		return;
@@ -431,7 +436,7 @@ sgen_memgov_init (glong max_heap, glong soft_limit, double allowance_ratio, doub
 
 	if (save_target)
 		save_target_ratio = save_target;
-	*minor_collection_allowance = MIN_MINOR_COLLECTION_ALLOWANCE;
+	mono_counters_word_set (minor_collection_allowance, MIN_MINOR_COLLECTION_ALLOWANCE);
 }
 
 void

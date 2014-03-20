@@ -16,8 +16,6 @@
 #include <mono/utils/gc_wrapper.h>
 
 typedef struct {
-	int minor_gc_count;
-	int major_gc_count;
 	long long minor_gc_time_usecs;
 	long long major_gc_time_usecs;
 } GCStats;

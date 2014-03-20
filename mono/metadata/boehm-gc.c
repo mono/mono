@@ -30,6 +30,7 @@
 #include <mono/utils/dtrace.h>
 #include <mono/utils/gc_wrapper.h>
 #include <mono/utils/mono-mutex.h>
+#include <mono/utils/mono-counters-internals.h>
 
 #if HAVE_BOEHM_GC
 
@@ -51,6 +52,9 @@ void *pthread_get_stackaddr_np(pthread_t);
 
 static gboolean gc_initialized = FALSE;
 static mono_mutex_t mono_gc_lock;
+
+/* Counters */
+static IntCounter major_gc_count;
 
 static void*
 boehm_thread_register (MonoThreadInfo* info, void *baseptr);
@@ -205,6 +209,9 @@ mono_gc_base_init (void)
 	mono_thread_info_attach (&dummy);
 
 	mono_gc_enable_events ();
+
+	major_gc_count = mono_counters_new_int (MONO_COUNTER_CAT_GC, "Major GC collections", MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_MONOTONIC);
+
 	gc_initialized = TRUE;
 }
 
@@ -428,7 +435,7 @@ on_gc_notification (GCEventType event)
 		if (mono_perfcounters)
 			mono_perfcounters->gc_collections0++;
 #endif
-		gc_stats.major_gc_count ++;
+		mono_counters_int_inc (major_gc_count);
 		gc_start_time = mono_100ns_ticks ();
 		break;
 

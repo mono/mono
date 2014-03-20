@@ -164,7 +164,7 @@ static GHashTable *joinable_threads;
 static int joinable_thread_count;
 
 /* Counters */
-static int *thread_count;
+static IntCounter thread_count;
 
 
 #ifdef MONO_HAVE_FAST_TLS
@@ -278,7 +278,7 @@ static gboolean handle_store(MonoThread *thread, gboolean force_attach)
 	g_assert (thread->internal_thread);
 	mono_g_hash_table_insert(threads, (gpointer)(gsize)(thread->internal_thread->tid),
 				 thread->internal_thread);
-	mono_counters_inc (thread_count);
+	mono_counters_int_inc (thread_count);
 	mono_threads_unlock ();
 
 	return TRUE;
@@ -310,7 +310,7 @@ static gboolean handle_remove(MonoInternalThread *thread)
 	else
 		ret = FALSE;
 	
-	mono_counters_dec (thread_count);
+	mono_counters_int_dec (thread_count);
 	mono_threads_unlock ();
 
 	/* Don't close the handle here, wait for the object finalizer

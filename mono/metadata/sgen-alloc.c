@@ -45,6 +45,7 @@
 #include "metadata/profiler-private.h"
 #include "metadata/marshal.h"
 #include "metadata/method-builder.h"
+#include "metadata/mono-gc.h"
 #include "utils/mono-memory-model.h"
 #include "utils/mono-counters.h"
 
@@ -117,13 +118,13 @@ alloc_degraded (MonoVTable *vtable, size_t size, gboolean for_mature)
 	void *p;
 
 	if (!for_mature) {
-		if (last_major_gc_warned < stat_major_gcs) {
+		if (last_major_gc_warned < mono_gc_collection_count (1)) {
 			++num_degraded;
 			if (num_degraded == 1 || num_degraded == 3)
 				fprintf (stderr, "Warning: Degraded allocation.  Consider increasing nursery-size if the warning persists.\n");
 			else if (num_degraded == 10)
 				fprintf (stderr, "Warning: Repeated degraded allocation.  Consider increasing nursery-size.\n");
-			last_major_gc_warned = stat_major_gcs;
+			last_major_gc_warned = mono_gc_collection_count (1);
 		}
 		InterlockedExchangeAdd (&degraded_mode, size);
 		sgen_ensure_free_space (size);
