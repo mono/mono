@@ -75,7 +75,7 @@ mono_counters_alloc_space (int size)
 void*
 mono_counters_new (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance)
 {
-	const int sizes[] = { 4, 8, sizeof (void*), 8 };
+	const int sizes[] = { 4, 8, SIZEOF_VOID_P, 8 };
 	void *addr;
 
 	g_assert (type >= MONO_COUNTER_TYPE_INT && type < MONO_COUNTER_TYPE_MAX);
