@@ -1534,6 +1534,12 @@ after a SIGSEGV or SIGABRT in unmanaged code.
 This option will suspend the program when a native SIGSEGV is received.
 This is useful for debugging crashes which do not happen under gdb,
 since a live process contains more information than a core file.
+.TP
+\fBcheck-pinvoke-callconv\fR
+This option causes the runtime to check for calling convention
+mismatches when using pinvoke, i.e. mixing cdecl/stdcall. It only
+works on windows. If a mismatch is detected, an
+ExecutionEngineException is thrown.
 .ne
 .RE
 .TP
