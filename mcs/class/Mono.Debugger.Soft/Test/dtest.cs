@@ -3446,6 +3446,17 @@ public class DebuggerTests
 			}
 		}
 	}
+
+	[Test]
+	public void EvaluateMethod () {
+		var bevent = run_until ("evaluate_method_2");
+
+		var m = bevent.Method.DeclaringType.GetMethod ("get_IntProperty");
+
+		var this_obj = bevent.Thread.GetFrames ()[0].GetThis ();
+		var v = m.Evaluate (this_obj, null);
+		AssertValue (42, v);
+	}
 }
 
 }

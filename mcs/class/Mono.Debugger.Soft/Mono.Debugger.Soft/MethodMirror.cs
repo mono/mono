@@ -407,5 +407,21 @@ namespace Mono.Debugger.Soft
 				return meta;
 			}
 		}
+
+		//
+		// Evaluate the method on the client using an IL interpreter.
+		// Only supports a subset of IL instructions. Doesn't change
+		// debuggee state.
+		// Returns the result of the evaluation, or null for methods
+		// which return void.
+		// Throws a NotSupportedException if the method body contains
+		// unsupported IL instructions, or if evaluating the method
+		// would change debuggee state.
+		//
+		public Value Evaluate (Value this_val, Value[] args) {
+			var interp = new ILInterpreter (this);
+
+			return interp.Evaluate (this_val, args);
+		}
 	}
 }
