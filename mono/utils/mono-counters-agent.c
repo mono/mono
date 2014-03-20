@@ -70,6 +70,9 @@ free_agent_memory (void)
 		counter = counter->next;
 	}
 	g_slist_free (counters);
+	g_free ((char*)inspector_ip);
+	counters = NULL;
+	inspector_ip = NULL;
 }
 
 static void
@@ -123,7 +126,7 @@ end:
 static void
 parse_address (const char *address)
 {
-	inspector_ip = DEFAULT_ADDRESS;
+	inspector_ip = NULL;
 	inspector_port = DEFAULT_PORT;
 
 	if (address) {
@@ -136,6 +139,8 @@ parse_address (const char *address)
 
 		g_strfreev(split);
 	}
+	if (!inspector_ip)
+		inspector_ip = g_strdup (DEFAULT_ADDRESS);
 }
 
 static gboolean

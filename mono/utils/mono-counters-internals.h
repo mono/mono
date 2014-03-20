@@ -40,7 +40,7 @@ typedef enum {
 
 typedef enum {
 	MONO_COUNTER_CONSTANT = 1, /* This counter doesn't change. Agent will only send it once */
-	MONO_COUNTER_MONOTONIC, /* This counter value always increase/decreate over time */
+	MONO_COUNTER_MONOTONIC, /* This counter value always increase/decreases over time */
 	MONO_COUNTER_VARIABLE, /* This counter value can be anything on each sampling */
 
 	MONO_COUNTER_VARIANCE_MAX
@@ -96,7 +96,7 @@ typedef struct { TYPE *pointer; } CAPITALIZED_NAME ##Counter;	\
 static void mono_counters_ ## NAME ## _set (CAPITALIZED_NAME ##Counter counter, TYPE value) { (*counter.pointer) += value; }	\
 static TYPE mono_counters_ ## NAME ## _get (CAPITALIZED_NAME ##Counter counter) { return *counter.pointer; }	\
 static void mono_counters_ ## NAME ## _inc (CAPITALIZED_NAME ##Counter counter) { (*counter.pointer) += 1; }	\
-static void mono_counters_ ## NAME ## _dec (CAPITALIZED_NAME ##Counter counter) { (*counter.pointer) += 1; }	\
+static void mono_counters_ ## NAME ## _dec (CAPITALIZED_NAME ##Counter counter) { (*counter.pointer) -= 1; }	\
 static CAPITALIZED_NAME ##Counter mono_counters_new_ ## NAME (MonoCounterCategory category, const char *name, MonoCounterUnit unit, MonoCounterVariance variance) {	\
 	CAPITALIZED_NAME ##Counter c = { mono_counters_new(category, name, MONO_COUNTER_TYPE_ ## COUNTER_TYPE, unit, variance) };	\
 	return c;	\

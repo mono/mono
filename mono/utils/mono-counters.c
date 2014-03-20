@@ -2,12 +2,15 @@
  * Copyright 2006-2010 Novell
  * Copyright 2011 Xamarin Inc
  */
-
+#include "config.h"
 #include <stdlib.h>
 #include <glib.h>
 #include "mono-counters-internals.h"
 #include "mono-proclib.h"
+
+#ifdef HAVE_UNISTD_H
 #include <unistd.h>
+#endif
 
 static MonoCounter *counters = NULL;
 static int valid_mask = 0;
@@ -65,6 +68,9 @@ mono_counters_register_full (MonoCounterCategory category, const char *name, Mon
 	return counter;
 }
 
+/*
+This function is a placeholder, it should eventually be replaced by code that allocs in the shm perfcounter arena.
+*/
 static void*
 mono_counters_alloc_space (int size)
 {
@@ -72,6 +78,19 @@ mono_counters_alloc_space (int size)
 	return g_malloc0 (size);
 }
 
+/**
+ * mono_counters_new:
+ * @category: The category of this counter
+ * @name: The name of this counter
+ * @type: The type size of the counter
+ * @variance: The expected semantics of the values sampled.
+ *
+ * Register a new counter within the runtime.
+ *
+ * Avoid this function if possible and use the specialized helpers.
+ *
+ * Returns: The address of the counter.
+ */
 void*
 mono_counters_new (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance)
 {
@@ -88,7 +107,6 @@ mono_counters_new (MonoCounterCategory category, const char *name, MonoCounterTy
 
 	return addr;
 }
-
 
 static int
 section_to_category (int type)
@@ -160,14 +178,12 @@ mono_counters_register (const char* name, int type, void *addr)
 		counter->callback_style = CB_NO_ARG;
 }
 
-
 typedef int (*IntFunc) (void);
 typedef gint64 (*LongFunc) (void);
 typedef double (*DoubleFunc) (void);
 typedef int (*IntFunc2) (void*);
 typedef gint64 (*LongFunc2) (void*);
 typedef double (*DoubleFunc2) (void*);
-
 
 #define ENTRY_FMT "%-36s: "
 static void
@@ -322,6 +338,7 @@ static gint64
 sample_cpu (void *arg)
 {
 	int kind = GPOINTER_TO_INT (arg);
+	//FIXME replace getpid with something portable.
 	return mono_process_get_data (GINT_TO_POINTER (getpid ()), kind);
 }
 
