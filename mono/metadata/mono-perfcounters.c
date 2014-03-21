@@ -342,7 +342,7 @@ static GHashTable *pid_to_shared_area = NULL;
 
 /* forward definitions */
 static MonoCounter* mc_get_custom_counter (const char *cat_name, const char *counter_name);
-static void mc_enumerate_custom_counters (CountersEnumCallback cb);
+static gboolean mc_enumerate_custom_counters (CountersEnumCallback cb);
 
 static MonoSharedArea *
 load_sarea_for_pid (int pid)
@@ -470,7 +470,7 @@ mono_perfcounters_init (void)
 	shared_area->size = 4096;
 	mono_perfcounters = &shared_area->counters;
 
-	mono_counters_add_data_source (mc_get_custom_counter, mc_enumerate_custom_counters);
+	// mono_counters_add_data_source (mc_get_custom_counter, mc_enumerate_custom_counters);
 }
 
 static int
@@ -1699,6 +1699,10 @@ mono_perfcounter_instance_names (MonoString *category, MonoString *machine)
 	}
 }
 
+typedef struct {
+	CountersEnumCallback cb;
+	gboolean ok;
+} EnumCountersData;
 
 static gboolean
 enumerate_category (SharedHeader *header, void *data)
@@ -1706,7 +1710,7 @@ enumerate_category (SharedHeader *header, void *data)
 	int i;
 	SharedCategory *cat;
 	char *p;
-	CountersEnumCallback cb = data;
+	EnumCountersData *ecd = data;
 	if (header->ftype != FTYPE_CATEGORY)
 		return TRUE;
 
@@ -1715,17 +1719,24 @@ enumerate_category (SharedHeader *header, void *data)
 	p = custom_category_counters (cat);
 	for (i = 0; i < cat->num_counters; ++i) {
 		SharedCounter *counter = (SharedCounter*)p;
-		cb (cat->name, counter->name);
+		if (!ecd->cb (cat->name, counter->name)) {
+			ecd->ok = FALSE;
+			return FALSE;
+		}
 		p += 1 + strlen (p + 1) + 1; /* skip counter type and name */
 		p += strlen (p) + 1; /* skip counter help */
 	}
 	return TRUE;
 }
 
-static void
+static gboolean
 mc_enumerate_custom_counters (CountersEnumCallback cb)
 {
-	foreach_shared_item (enumerate_category, (void*)cb);
+	EnumCountersData ecd;
+	ecd.cb = cb;
+	ecd.ok = TRUE;
+	foreach_shared_item (enumerate_category, (void*)&ecd);
+	return ecd.ok;
 }
 
 typedef struct {

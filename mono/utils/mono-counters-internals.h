@@ -63,8 +63,8 @@ struct _MonoCounter {
 	void *user_arg;
 };
 
-typedef void (*CountersEnumCallback) (const char *category, const char *name);
-typedef void (*CountersDataSourceForeach) (CountersEnumCallback);
+typedef gboolean (*CountersEnumCallback) (const char *category, const char *name);
+typedef gboolean (*CountersDataSourceForeach) (CountersEnumCallback);
 typedef MonoCounter* (*CountersDataSourceGet) (const char *, const char *name);
 
 /*

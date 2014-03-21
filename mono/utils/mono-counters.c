@@ -376,6 +376,18 @@ mono_counters_new_synt_func (MonoCounterCategory category, const char *name, Mon
 	counter->user_arg = user_arg;
 	return counter;
 }
+
+static const char* sys_counter_names[] = {
+	"User Time",
+	"System Time",
+	"Total Time",
+	"Working Set",
+	"Private Bytes",
+	"Virtual Bytes",
+	"Page Faults",
+	NULL
+};
+
 static MonoCounter*
 get_sys_counter (const char *name)
 {
@@ -414,17 +426,16 @@ get_sys_counter (const char *name)
 	return counter;
 }
 
-static void
+static gboolean
 enum_sys_counter (CountersEnumCallback cb)
 {
+	int i;
 	const char *cat = mono_counters_category_id_to_name (MONO_COUNTER_CAT_SYS);
-	cb (cat, "User Time");
-	cb (cat, "System Time");
-	cb (cat, "Total Time");
-	cb (cat, "Working Set");
-	cb (cat, "Private Bytes");
-	cb (cat, "Virtual Bytes");
-	cb (cat, "Page Faults");
+	for (i = 0; sys_counter_names [i]; ++i) {
+		if (!cb (cat, sys_counter_names [i]))
+			return FALSE;
+	}
+	return TRUE;
 }
 
 /**
@@ -475,13 +486,17 @@ mono_counters_foreach (CountersEnumCallback cb)
 	DataSource *ds;
 	MonoCounter *counter;
 	
-	for (counter = counters; counter; counter = counter->next)
-		cb (mono_counters_category_id_to_name (counter->category), counter->name);
+	for (counter = counters; counter; counter = counter->next) {
+		if (!cb (mono_counters_category_id_to_name (counter->category), counter->name))
+			return;
+	}
+	if (!enum_sys_counter (cb))
+		return;
 
-	enum_sys_counter (cb);
-
-	for (ds = data_sources; ds; ds->next)
-		ds->foreach (cb);
+	for (ds = data_sources; ds; ds->next) {
+		if (!ds->foreach (cb))
+			return;
+	}
 }
 
 void

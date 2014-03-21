@@ -37,7 +37,7 @@ enum {
 	SRV_HELLO,
 	SRV_LIST_COUNTERS,
 	SRV_ADD_COUNTERS,
-	SRV_REMOTE_COUNTER,
+	SRV_REMOVE_COUNTER,
 	SVR_SAMPLES,
 };
 	
@@ -243,18 +243,24 @@ do_hello (int socketfd)
 }
 
 static gboolean
-do_list_counters (int socketfd)
+write_string (int socketfd, const char *str)
 {
-	char cmd = SRV_LIST_COUNTERS;
+	short size = -1;
 
-	if (!write_buffer_to_socket (socketfd, (char*)&cmd, 1))
+	//Null is encoded as -1
+	if (!str)
+		return write_buffer_to_socket (socketfd, (char*)&size, 2);
+
+	size = strlen (str);
+	printf ("LEN is %d\n", size);
+ 
+	if (!write_buffer_to_socket (socketfd, (char*)&size, 2))
 		return FALSE;
 
-	if (!write_counter_agent_headers (socketfd))
-		return FALSE;
-
-	return TRUE;
+	printf ("str %s\n", str);
+	return write_buffer_to_socket (socketfd, str, size);
 }
+
 
 static char*
 read_string (int socketfd)
@@ -271,6 +277,36 @@ read_string (int socketfd)
 	string [len] = '\0';
 	return string;
 }
+
+
+static int _sock;
+static gboolean
+write_counter (const char *category, const char *name)
+{
+	printf ("adding %s %s\n", category, name);
+
+	if (!write_string (_sock, category))
+		return FALSE;
+	if (!write_string (_sock, name))
+		return FALSE;
+	return TRUE;
+}
+
+static gboolean
+do_list_counters (int socketfd)
+{
+	char cmd = SRV_LIST_COUNTERS;
+
+	if (!write_buffer_to_socket (socketfd, (char*)&cmd, 1))
+		return FALSE;
+
+	_sock = socketfd;
+	mono_counters_foreach (write_counter);
+	write_string (socketfd, NULL);
+
+	return TRUE;
+}
+
 
 static gboolean
 do_add_counter (int socketfd)
@@ -289,7 +325,7 @@ do_add_counter (int socketfd)
 		goto fail;
 	
 	counter = mono_counters_get (category, name);
-	if (counter) {
+	if (!counter) {
 		status = AGENT_STATUS_EXISTING;
 		goto done;
 	}
@@ -323,7 +359,7 @@ fail:
 static gboolean
 do_remove_counter (int socketfd)
 {
-	char cmd = SRV_REMOTE_COUNTER;
+	char cmd = SRV_REMOVE_COUNTER;
 	short index;
 	char status;
 	GSList *item;
@@ -414,9 +450,7 @@ do_sampling (int socketfd)
 static void*
 mono_counters_agent_sampling_thread (void* ptr)
 {
-	GSList *item;
 	int ret, socketfd = -1;
-	short count = 0;
 	struct sockaddr_in inspector_addr;
 	struct timeval timeout;
 	fd_set socketfd_set;
@@ -443,28 +477,7 @@ mono_counters_agent_sampling_thread (void* ptr)
 		goto cleanup;
 	}
 
-	for (item = counters; item; item = item->next)
-		++count;
-
-	if (!write_buffer_to_socket (socketfd, (char*)&count, 2))
-		goto cleanup;
-
-	for (item = counters; item; item = item->next) {
-		MonoCounterAgent* counter = item->data;
-
-		int len = strlen (counter->counter->name);
-
-		if (!write_buffer_to_socket(socketfd, (char*)&counter->counter->category, 4) ||
-			!write_buffer_to_socket (socketfd, (char*)&len, 4) ||
-			!write_buffer_to_socket (socketfd, (char*)counter->counter->name, len) ||
-			!write_buffer_to_socket (socketfd, (char*)&counter->counter->type, 4) ||
-			!write_buffer_to_socket (socketfd, (char*)&counter->counter->unit, 4) ||
-			!write_buffer_to_socket (socketfd, (char*)&counter->counter->variance, 4) ||
-			!write_buffer_to_socket (socketfd, (char*)&counter->index, 2))
-			goto cleanup;
-	}
-
-	if (!do_hello(socketfd))
+	if (!do_hello (socketfd))
 	 		goto cleanup;
 
  	for (;;) {
@@ -509,6 +522,9 @@ mono_counters_agent_sampling_thread (void* ptr)
 				if (!do_remove_counter (socketfd))
 					goto cleanup;
 				break;
+			case 127:
+				g_warning ("closing connection");
+				goto cleanup;
 			default:
 				g_warning ("Unknown perf-agent command %d", cmd);
 			}
