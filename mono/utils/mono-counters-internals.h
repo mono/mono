@@ -61,6 +61,8 @@ struct _MonoCounter {
 	void *user_arg;
 };
 
+typedef void (*CountersEnumCallback) (const char *category, const char *name);
+
 /*
 Limitations:
 	The old-style string counter type won't work as they cannot be safely sampled during execution.
@@ -77,6 +79,9 @@ MonoCounter* mono_counters_register_full (MonoCounterCategory category, const ch
 MonoCounter* mono_counters_get (MonoCounterCategory category, const char* name) MONO_INTERNAL;
 int mono_counters_sample (MonoCounter* counter, char* buffer, int size) MONO_INTERNAL;
 int mono_counters_size   (MonoCounter* counter) MONO_INTERNAL;
+void mono_counters_foreach (CountersEnumCallback cb) MONO_INTERNAL;
+
+
 
 MonoCounterCategory mono_counters_category_name_to_id (const char* name) MONO_INTERNAL;
 const char* mono_counters_category_id_to_name (MonoCounterCategory id) MONO_INTERNAL;

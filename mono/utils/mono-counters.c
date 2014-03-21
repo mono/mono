@@ -342,6 +342,7 @@ sample_cpu (void *arg)
 	return mono_process_get_data (GINT_TO_POINTER (getpid ()), kind);
 }
 
+
 static MonoCounter*
 get_sys_counter (const char *name)
 {
@@ -379,6 +380,20 @@ get_sys_counter (const char *name)
 	counter->user_arg = GINT_TO_POINTER (type);
 	return counter;
 }
+
+static void
+enum_sys_counter (CountersEnumCallback cb)
+{
+	const char *cat = mono_counters_category_id_to_name (MONO_COUNTER_CAT_SYS);
+	cb (cat, "User Time");
+	cb (cat, "System Time");
+	cb (cat, "Total Time");
+	cb (cat, "Working Set");
+	cb (cat, "Private Bytes");
+	cb (cat, "Virtual Bytes");
+	cb (cat, "Page Faults");
+}
+
 /**
  * mono_runtime_resource_set_callback:
  * @callback: a function pointer
@@ -407,6 +422,17 @@ mono_counters_get (MonoCounterCategory category, const char* name)
 		return get_sys_counter (name);
 
 	return NULL;
+}
+
+void
+mono_counters_foreach (CountersEnumCallback cb)
+{
+	MonoCounter *counter;
+
+	for (counter = counters; counter; counter = counter->next)
+		cb (mono_counters_category_id_to_name (counter->category), counter->name);
+
+	enum_sys_counter (cb);
 }
 
 int
