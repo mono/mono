@@ -352,6 +352,19 @@ sample_cpu (void *arg)
 	return mono_process_get_data (GINT_TO_POINTER (getpid ()), kind);
 }
 
+void*
+mono_counters_new_synt (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *fun_addr, void *user_arg)
+{
+	MonoCounter *counter = NULL;
+	counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "User Time", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_TIME, MONO_COUNTER_VARIABLE, fun_addr);
+	if (!counter)
+		return NULL;
+
+	counter->is_synthetic = TRUE;
+	counter->callback_style = CB_WITH_ARG;
+	counter->user_arg = user_arg;
+	return counter;
+}
 
 static MonoCounter*
 get_sys_counter (const char *name)

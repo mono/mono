@@ -71,12 +71,16 @@ Limitations:
 
 TODO:
 	Size-bounded String counter.
-	Sampler function that take user data arguments (could we use them for user perf counters?)
 	Dynamic category registration.
 	MonoCounter size diet once we're done with the above.
+
+FIXME
+	The naming schema for the counters sucks, cleanup and unify with mono-counters.h
 */
 void* mono_counters_new (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance) MONO_INTERNAL;
 MonoCounter* mono_counters_register_full (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr) MONO_INTERNAL;
+
+void* mono_counters_new_synt (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *fun_addr, void *user_arg) MONO_INTERNAL;
 
 MonoCounter* mono_counters_get (MonoCounterCategory category, const char* name) MONO_INTERNAL;
 int mono_counters_sample (MonoCounter* counter, char* buffer, int size) MONO_INTERNAL;
