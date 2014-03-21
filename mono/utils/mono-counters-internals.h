@@ -15,6 +15,8 @@ typedef enum {
 	MONO_COUNTER_CAT_THREADPOOL,
 	MONO_COUNTER_CAT_SYS,
 
+	MONO_COUNTER_CAT_CUSTOM,
+
 	MONO_COUNTER_CAT_MAX
 } MonoCounterCategory;
 
@@ -63,7 +65,7 @@ struct _MonoCounter {
 
 typedef void (*CountersEnumCallback) (const char *category, const char *name);
 typedef void (*CountersDataSourceForeach) (CountersEnumCallback);
-typedef MonoCounter* (*CountersDataSourceGet) (MonoCounterCategory, const char *name);
+typedef MonoCounter* (*CountersDataSourceGet) (const char *, const char *name);
 
 /*
 Limitations:
@@ -80,9 +82,10 @@ FIXME
 void* mono_counters_new (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance) MONO_INTERNAL;
 MonoCounter* mono_counters_register_full (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr) MONO_INTERNAL;
 
-void* mono_counters_new_synt (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *fun_addr, void *user_arg) MONO_INTERNAL;
+void* mono_counters_new_synt (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr) MONO_INTERNAL;
+void* mono_counters_new_synt_func (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *fun_addr, void *user_arg) MONO_INTERNAL;
 
-MonoCounter* mono_counters_get (MonoCounterCategory category, const char* name) MONO_INTERNAL;
+MonoCounter* mono_counters_get (const char *category, const char* name) MONO_INTERNAL;
 int mono_counters_sample (MonoCounter* counter, char* buffer, int size) MONO_INTERNAL;
 int mono_counters_size   (MonoCounter* counter) MONO_INTERNAL;
 void mono_counters_foreach (CountersEnumCallback cb) MONO_INTERNAL;

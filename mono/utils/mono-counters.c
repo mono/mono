@@ -353,7 +353,18 @@ sample_cpu (void *arg)
 }
 
 void*
-mono_counters_new_synt (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *fun_addr, void *user_arg)
+mono_counters_new_synt (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr)
+{
+	MonoCounter *counter = NULL;
+	counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "User Time", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_TIME, MONO_COUNTER_VARIABLE, addr);
+	if (!counter)
+		return NULL;
+	counter->is_synthetic = TRUE;
+	return counter;
+}
+
+void*
+mono_counters_new_synt_func (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *fun_addr, void *user_arg)
 {
 	MonoCounter *counter = NULL;
 	counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "User Time", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_TIME, MONO_COUNTER_VARIABLE, fun_addr);
@@ -365,7 +376,6 @@ mono_counters_new_synt (MonoCounterCategory category, const char *name, MonoCoun
 	counter->user_arg = user_arg;
 	return counter;
 }
-
 static MonoCounter*
 get_sys_counter (const char *name)
 {
@@ -432,26 +442,29 @@ mono_runtime_resource_set_callback (MonoResourceCallback callback)
 }
 
 MonoCounter*
-mono_counters_get (MonoCounterCategory category, const char* name)
+mono_counters_get (const char *cat_name, const char* name)
 {
 	MonoCounter *counter = counters;
 	DataSource *ds;
+	MonoCounterCategory category = mono_counters_category_name_to_id (cat_name);
 
-	while (counter) {
-		if (counter->category == category && !strcmp (counter->name, name))
-			return counter;
-		counter = counter->next;
-	}
-	if (category == MONO_COUNTER_CAT_SYS) {
-		counter = get_sys_counter (name);
-		if (counter)
-			return counter;
-	}
-
-	for (ds = data_sources; ds; ds->next) {
-		counter = ds->get (category, name);
-		if (counter)
-			return counter;
+	if (category >= 0) {
+		while (counter) {
+			if (counter->category == category && !strcmp (counter->name, name))
+				return counter;
+			counter = counter->next;
+		}
+		if (category == MONO_COUNTER_CAT_SYS) {
+			counter = get_sys_counter (name);
+			if (counter)
+				return counter;
+		}
+	} else {
+		for (ds = data_sources; ds; ds->next) {
+			counter = ds->get (cat_name, name);
+			if (counter)
+				return counter;
+		}
 	}
 	return NULL;
 }
@@ -587,6 +600,8 @@ static const char* category_names[] = {
 	"Mono Thread",
 	"Mono ThreadPool",
 	"Mono System",
+
+	"Custom",
 };
 
 MonoCounterCategory

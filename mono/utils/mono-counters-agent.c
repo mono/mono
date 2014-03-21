@@ -116,7 +116,6 @@ parse_counters_names (const char *counters_names)
 	names = g_strsplit (counters_names, ";", -1);
 
 	for (ptr = names; *ptr; ++ptr) {
-		MonoCounterCategory category;
 		MonoCounter *counter;
 		gchar **split = g_strsplit (*ptr, "/", 2);
 
@@ -124,14 +123,8 @@ parse_counters_names (const char *counters_names)
 			g_warning ("Bad counter format '%s' use Category/Name", *ptr);
 			goto end;
 		}
-	
-		category = mono_counters_category_name_to_id (split [0]);
-		if (category < 0) {
-			g_warning ("Category %s not found", split [0]);
-			goto end;
-		}
 
-		counter  = mono_counters_get (category, split [1]);
+		counter  = mono_counters_get (split [0], split [1]);
 		if (!counter) {
 			g_warning ("Counter %s not found in category %s", split [1], split [0]);
 			goto end;
@@ -286,35 +279,19 @@ do_add_counter (int socketfd)
 	char *category = NULL;
 	char *name = NULL;
 	char status;
-	MonoCounterCategory category_id;
 	MonoCounter *counter;
 	MonoCounterAgent *added_counter;
-	GSList *item;
 
 	if (!(category = read_string (socketfd)))
 		goto fail;
 
 	if (!(name = read_string (socketfd)))
 		goto fail;
-
-	category_id = mono_counters_category_name_to_id (category);
-	if (category < 0) {
-		status = AGENT_STATUS_NOTFOUND;
-		goto done;
-	}
 	
-	counter = mono_counters_get (category_id, name);
-	if (!counter) {
-		status = AGENT_STATUS_NOTFOUND;
+	counter = mono_counters_get (category, name);
+	if (counter) {
+		status = AGENT_STATUS_EXISTING;
 		goto done;
-	}
-	
-	for (item = counters; item; item = item->next) {
-		MonoCounterAgent *counter_agent = item->data;
-		if (counter_agent->counter->category == category_id && strcmp (counter_agent->counter->name, name) == 0) {
-			status = AGENT_STATUS_EXISTING;
-			goto done;
-		}
 	}
 
 	added_counter = add_counter (counter);
