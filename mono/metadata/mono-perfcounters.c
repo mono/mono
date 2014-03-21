@@ -1845,7 +1845,7 @@ mc_get_custom_counter (const char *cat_name, const char *counter_name)
 
 	return mono_counters_new_synt (
 		MONO_COUNTER_CAT_CUSTOM,
-		scounter->name,
+		g_strdup_printf("%s:%s", cat_name, counter_name),
 		MONO_COUNTER_TYPE_LONG,
 		MONO_COUNTER_UNIT_NONE, //XXX can we do better?
 		MONO_COUNTER_VARIABLE, //XXX can we do better?

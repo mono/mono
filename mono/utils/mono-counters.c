@@ -356,7 +356,7 @@ void*
 mono_counters_new_synt (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *addr)
 {
 	MonoCounter *counter = NULL;
-	counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "User Time", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_TIME, MONO_COUNTER_VARIABLE, addr);
+	counter = mono_counters_new_full (category, name, MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_TIME, MONO_COUNTER_VARIABLE, addr);
 	if (!counter)
 		return NULL;
 	counter->is_synthetic = TRUE;
@@ -367,7 +367,7 @@ void*
 mono_counters_new_synt_func (MonoCounterCategory category, const char *name, MonoCounterType type, MonoCounterUnit unit, MonoCounterVariance variance, void *fun_addr, void *user_arg)
 {
 	MonoCounter *counter = NULL;
-	counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "User Time", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_TIME, MONO_COUNTER_VARIABLE, fun_addr);
+	counter = mono_counters_new_full (category, name, MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_TIME, MONO_COUNTER_VARIABLE, fun_addr);
 	if (!counter)
 		return NULL;
 
@@ -627,7 +627,7 @@ mono_counters_category_name_to_id (const char* name)
 		if (!strcmp (category_names [i], name))
 			return i;
 	}
-	return MONO_COUNTER_CAT_MAX;
+	return -1;
 }
 
 const char*
@@ -642,6 +642,9 @@ mono_counters_category_id_to_name (MonoCounterCategory id)
 void
 mono_counters_free_counter (MonoCounter *counter)
 {
-	if (counter->is_synthetic)
+	if (counter->is_synthetic) {
+		if (counter->category == MONO_COUNTER_CAT_CUSTOM)
+			g_free ((char*)counter->name);
 		g_free (counter);
+	}
 }

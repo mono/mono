@@ -309,8 +309,11 @@ do_add_counter (int socketfd)
 	char cmd = SRV_ADD_COUNTERS;
 	char *category = NULL;
 	char *name = NULL;
+	char *search_name = NULL;
 	char status;
 	MonoCounter *counter;
+	GSList *list;
+	MonoCounterCategory mcat;
 	MonoCounterAgent *added_counter;
 
 	if (!(category = read_string (socketfd)))
@@ -318,10 +321,27 @@ do_add_counter (int socketfd)
 
 	if (!(name = read_string (socketfd)))
 		goto fail;
-	
+
+	mcat = mono_counters_category_name_to_id (category);
+
+	search_name = name;
+	if (mcat >= MONO_COUNTER_CAT_MAX) {
+		mcat = MONO_COUNTER_CAT_CUSTOM;
+		search_name = g_strdup_printf ("%s:%s", category, name);
+	}
+
+	for (list = counters; list; list = list->next) {
+		MonoCounterAgent *ac = list->data;
+		MonoCounter *c = ac->counter;
+		if (c->category == mcat && !strcmp (c->name, search_name)) {
+			status = AGENT_STATUS_EXISTING;
+			goto fail;
+		}
+	}
+
 	counter = mono_counters_get (category, name);
 	if (!counter) {
-		status = AGENT_STATUS_EXISTING;
+		status = AGENT_STATUS_NOTFOUND;
 		goto done;
 	}
 
@@ -348,6 +368,8 @@ done:
 fail:
 	g_free(category);
 	g_free(name);
+	if (search_name != name)
+		g_free (search_name);
 	return FALSE;
 }
 
