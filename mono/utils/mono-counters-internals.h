@@ -62,6 +62,8 @@ struct _MonoCounter {
 };
 
 typedef void (*CountersEnumCallback) (const char *category, const char *name);
+typedef void (*CountersDataSourceForeach) (CountersEnumCallback);
+typedef MonoCounter* (*CountersDataSourceGet) (MonoCounterCategory, const char *name);
 
 /*
 Limitations:
@@ -81,7 +83,7 @@ int mono_counters_sample (MonoCounter* counter, char* buffer, int size) MONO_INT
 int mono_counters_size   (MonoCounter* counter) MONO_INTERNAL;
 void mono_counters_foreach (CountersEnumCallback cb) MONO_INTERNAL;
 
-
+void mono_counters_add_data_source (CountersDataSourceGet get_cb, CountersDataSourceForeach foreach_cb) MONO_INTERNAL;
 
 MonoCounterCategory mono_counters_category_name_to_id (const char* name) MONO_INTERNAL;
 const char* mono_counters_category_id_to_name (MonoCounterCategory id) MONO_INTERNAL;

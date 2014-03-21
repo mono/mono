@@ -12,14 +12,24 @@
 #include <unistd.h>
 #endif
 
-static MonoCounter *counters = NULL;
+static MonoCounter *counters;
 static int valid_mask = 0;
+
+typedef struct _DataSource DataSource;
+struct _DataSource {
+	DataSource *next;
+	CountersDataSourceGet get;
+	CountersDataSourceForeach foreach;
+};
+
+static DataSource *data_sources;
 
 enum {
 	NO_CB,
 	CB_NO_ARG,
 	CB_WITH_ARG,
 };
+
 
 /**
  * mono_counters_enable:
@@ -412,27 +422,50 @@ MonoCounter*
 mono_counters_get (MonoCounterCategory category, const char* name)
 {
 	MonoCounter *counter = counters;
+	DataSource *ds;
 
 	while (counter) {
 		if (counter->category == category && !strcmp (counter->name, name))
 			return counter;
 		counter = counter->next;
 	}
-	if (category == MONO_COUNTER_CAT_SYS)
-		return get_sys_counter (name);
+	if (category == MONO_COUNTER_CAT_SYS) {
+		counter = get_sys_counter (name);
+		if (counter)
+			return counter;
+	}
 
+	for (ds = data_sources; ds; ds->next) {
+		counter = ds->get (category, name);
+		if (counter)
+			return counter;
+	}
 	return NULL;
 }
 
 void
 mono_counters_foreach (CountersEnumCallback cb)
 {
+	DataSource *ds;
 	MonoCounter *counter;
-
+	
 	for (counter = counters; counter; counter = counter->next)
 		cb (mono_counters_category_id_to_name (counter->category), counter->name);
 
 	enum_sys_counter (cb);
+
+	for (ds = data_sources; ds; ds->next)
+		ds->foreach (cb);
+}
+
+void
+mono_counters_add_data_source (CountersDataSourceGet get_cb, CountersDataSourceForeach foreach_cb)
+{
+	DataSource *ds = g_new0 (DataSource, 1);
+	ds->get = get_cb;
+	ds->foreach = foreach_cb;
+	ds->next = data_sources;
+	data_sources = ds;
 }
 
 int
