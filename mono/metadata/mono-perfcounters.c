@@ -470,7 +470,7 @@ mono_perfcounters_init (void)
 	shared_area->size = 4096;
 	mono_perfcounters = &shared_area->counters;
 
-	// mono_counters_add_data_source (mc_get_custom_counter, mc_enumerate_custom_counters);
+	mono_counters_add_data_source (mc_get_custom_counter, mc_enumerate_custom_counters);
 }
 
 static int
@@ -1545,8 +1545,8 @@ mono_perfcounter_counter_names (MonoString *category, MonoString *machine)
 		int i;
 		res = mono_array_new (domain, mono_get_string_class (), scat->num_counters);
 		for (i = 0; i < scat->num_counters; ++i) {
-			mono_array_setref (res, i, mono_string_new (domain, p + 1));
-			p += 1 + strlen (p + 1) + 1; /* skip counter type and name */
+			mono_array_setref (res, i, mono_string_new (domain, p + 2));
+			p += 2 + strlen (p + 1) + 1; /* skip counter type and name */
 			p += strlen (p) + 1; /* skip counter help */
 		}
 		perfctr_unlock ();
@@ -1723,7 +1723,7 @@ enumerate_category (SharedHeader *header, void *data)
 			ecd->ok = FALSE;
 			return FALSE;
 		}
-		p += 1 + strlen (p + 1) + 1; /* skip counter type and name */
+		p += 2 + strlen (p + 1) + 1; /* skip counter type and name */
 		p += strlen (p) + 1; /* skip counter help */
 	}
 	return TRUE;
@@ -1777,7 +1777,7 @@ cstr_find_custom_counter (SharedCategory* cat, const char *name)
 		SharedCounter *counter = (SharedCounter*)p;
 		if (strcmp (name, counter->name) == 0)
 			return counter;
-		p += 1 + strlen (p + 1) + 1; /* skip counter type and name */
+		p += 2 + strlen (p + 1) + 1; /* skip counter type and name */
 		p += strlen (p) + 1; /* skip counter help */
 	}
 	return NULL;
@@ -1807,12 +1807,12 @@ cstr_instance_search (SharedHeader *header, void *data)
 }
 
 static SharedInstance*
-cstr_find_custom_instance (SharedCategory* cat, const char *counter_name)
+cstr_find_custom_instance (SharedCategory* cat)
 {
 	CstrInstanceSearch search;
 	search.cat_offset = (char*)cat - (char*)shared_area;
 	search.cat = cat;
-	search.instance = counter_name;
+	search.instance = ".";
 	search.result = NULL;
 	foreach_shared_item (cstr_instance_search, &search);
 	return search.result;
@@ -1834,7 +1834,7 @@ mc_get_custom_counter (const char *cat_name, const char *counter_name)
 	if (!scounter)
 		return NULL;
 
-	inst = cstr_find_custom_instance (scat, counter_name);
+	inst = cstr_find_custom_instance (scat);
 	if (!inst)
 		return NULL;
 

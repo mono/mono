@@ -459,7 +459,7 @@ mono_counters_get (const char *cat_name, const char* name)
 	DataSource *ds;
 	MonoCounterCategory category = mono_counters_category_name_to_id (cat_name);
 
-	if (category >= 0) {
+	if (category < MONO_COUNTER_CAT_MAX) {
 		while (counter) {
 			if (counter->category == category && !strcmp (counter->name, name))
 				return counter;
@@ -471,7 +471,7 @@ mono_counters_get (const char *cat_name, const char* name)
 				return counter;
 		}
 	} else {
-		for (ds = data_sources; ds; ds->next) {
+		for (ds = data_sources; ds; ds = ds->next) {
 			counter = ds->get (cat_name, name);
 			if (counter)
 				return counter;
@@ -493,7 +493,7 @@ mono_counters_foreach (CountersEnumCallback cb)
 	if (!enum_sys_counter (cb))
 		return;
 
-	for (ds = data_sources; ds; ds->next) {
+	for (ds = data_sources; ds; ds = ds->next) {
 		if (!ds->foreach (cb))
 			return;
 	}
@@ -627,7 +627,7 @@ mono_counters_category_name_to_id (const char* name)
 		if (!strcmp (category_names [i], name))
 			return i;
 	}
-	return -1;
+	return MONO_COUNTER_CAT_MAX;
 }
 
 const char*

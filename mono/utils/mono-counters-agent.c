@@ -252,12 +252,9 @@ write_string (int socketfd, const char *str)
 		return write_buffer_to_socket (socketfd, (char*)&size, 2);
 
 	size = strlen (str);
-	printf ("LEN is %d\n", size);
- 
 	if (!write_buffer_to_socket (socketfd, (char*)&size, 2))
 		return FALSE;
 
-	printf ("str %s\n", str);
 	return write_buffer_to_socket (socketfd, str, size);
 }
 
@@ -283,8 +280,6 @@ static int _sock;
 static gboolean
 write_counter (const char *category, const char *name)
 {
-	printf ("adding %s %s\n", category, name);
-
 	if (!write_string (_sock, category))
 		return FALSE;
 	if (!write_string (_sock, name))
