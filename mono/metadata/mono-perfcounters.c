@@ -33,6 +33,7 @@
 #include "metadata/object-internals.h"
 /* for mono_stats */
 #include "metadata/class-internals.h"
+#include "utils/mono-counters-internals.h"
 #include "utils/mono-time.h"
 #include "utils/mono-mmap.h"
 #include "utils/mono-proclib.h"
@@ -339,6 +340,10 @@ typedef struct {
 /* maps a pid to a ExternalSArea pointer */
 static GHashTable *pid_to_shared_area = NULL;
 
+/* forward definitions */
+static MonoCounter* mc_get_custom_counter (const char *cat_name, const char *counter_name);
+static void mc_enumerate_custom_counters (CountersEnumCallback cb);
+
 static MonoSharedArea *
 load_sarea_for_pid (int pid)
 {
@@ -464,6 +469,8 @@ mono_perfcounters_init (void)
 	shared_area->data_start = d_offset;
 	shared_area->size = 4096;
 	mono_perfcounters = &shared_area->counters;
+
+	mono_counters_add_data_source (mc_get_custom_counter, mc_enumerate_custom_counters);
 }
 
 static int
@@ -1691,6 +1698,149 @@ mono_perfcounter_instance_names (MonoString *category, MonoString *machine)
 		return mono_array_new (mono_domain_get (), mono_get_string_class (), 0);
 	}
 }
+
+
+static gboolean
+enumerate_category (SharedHeader *header, void *data)
+{
+	int i;
+	SharedCategory *cat;
+	char *p;
+	CountersEnumCallback cb = data;
+	if (header->ftype != FTYPE_CATEGORY)
+		return TRUE;
+
+
+	cat = (SharedCategory*)header;
+	p = custom_category_counters (cat);
+	for (i = 0; i < cat->num_counters; ++i) {
+		SharedCounter *counter = (SharedCounter*)p;
+		cb (cat->name, counter->name);
+		p += 1 + strlen (p + 1) + 1; /* skip counter type and name */
+		p += strlen (p) + 1; /* skip counter help */
+	}
+	return TRUE;
+}
+
+static void
+mc_enumerate_custom_counters (CountersEnumCallback cb)
+{
+	foreach_shared_item (enumerate_category, (void*)cb);
+}
+
+typedef struct {
+	const char *name;
+	SharedCategory *cat;
+} CStrCatSearch;
+
+static gboolean
+cstr_category_search (SharedHeader *header, void *data)
+{
+	CStrCatSearch *search = data;
+	if (header->ftype == FTYPE_CATEGORY) {
+		SharedCategory *cat = (SharedCategory*)header;
+		if (strcmp (search->name, cat->name) == 0) {
+			search->cat = cat;
+			return FALSE;
+		}
+	}
+	return TRUE;
+}
+
+static SharedCategory*
+cstr_find_custom_category (const char *name)
+{
+	CStrCatSearch search;
+	search.name = name;
+	search.cat = NULL;
+	foreach_shared_item (cstr_category_search, &search);
+	return search.cat;
+}
+
+static SharedCounter*
+cstr_find_custom_counter (SharedCategory* cat, const char *name)
+{
+	int i;
+	char *p = custom_category_counters (cat);
+	for (i = 0; i < cat->num_counters; ++i) {
+		SharedCounter *counter = (SharedCounter*)p;
+		if (strcmp (name, counter->name) == 0)
+			return counter;
+		p += 1 + strlen (p + 1) + 1; /* skip counter type and name */
+		p += strlen (p) + 1; /* skip counter help */
+	}
+	return NULL;
+}
+
+typedef struct {
+	unsigned int cat_offset;
+	SharedCategory* cat;
+	const char *instance;
+	SharedInstance* result;
+} CstrInstanceSearch;
+
+static gboolean
+cstr_instance_search (SharedHeader *header, void *data)
+{
+	CstrInstanceSearch *search = data;
+	if (header->ftype == FTYPE_INSTANCE) {
+		SharedInstance *ins = (SharedInstance*)header;
+		if (search->cat_offset == ins->category_offset) {
+			if (strcmp (search->instance, ins->instance_name) == 0) {
+				search->result = ins;
+				return FALSE;
+			}
+		}
+	}
+	return TRUE;
+}
+
+static SharedInstance*
+cstr_find_custom_instance (SharedCategory* cat, const char *counter_name)
+{
+	CstrInstanceSearch search;
+	search.cat_offset = (char*)cat - (char*)shared_area;
+	search.cat = cat;
+	search.instance = counter_name;
+	search.result = NULL;
+	foreach_shared_item (cstr_instance_search, &search);
+	return search.result;
+}
+
+static MonoCounter*
+mc_get_custom_counter (const char *cat_name, const char *counter_name)
+{
+	SharedCounter *scounter;
+	SharedInstance* inst;
+	int size;
+	void *addr;
+
+	SharedCategory *scat = cstr_find_custom_category (cat_name);
+	if (!scat)
+		return NULL;
+
+	scounter = cstr_find_custom_counter (scat, counter_name);
+	if (!scounter)
+		return NULL;
+
+	inst = cstr_find_custom_instance (scat, counter_name);
+	if (!inst)
+		return NULL;
+
+	size = sizeof (SharedInstance) + strlen (inst->instance_name);
+	size += 7;
+	size &= ~7;
+	addr = (char*)inst + size + scounter->seq_num * sizeof (guint64);
+
+	return mono_counters_new_synt (
+		MONO_COUNTER_CAT_CUSTOM,
+		scounter->name,
+		MONO_COUNTER_TYPE_LONG,
+		MONO_COUNTER_UNIT_NONE, //XXX can we do better?
+		MONO_COUNTER_VARIABLE, //XXX can we do better?
+		addr);
+}
+
 #else
 void*
 mono_perfcounter_get_impl (MonoString* category, MonoString* counter, MonoString* instance, MonoString* machine, int *type, MonoBoolean *custom)
