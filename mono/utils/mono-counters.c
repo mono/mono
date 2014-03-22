@@ -344,6 +344,26 @@ mono_runtime_resource_limit (int resource_type, uintptr_t soft_limit, uintptr_t 
 	return 1;
 }
 
+
+enum {
+	CPU_LOAD_AVG_1  = MONO_PROCESS_END + 1,
+	CPU_LOAD_AVG_5  = MONO_PROCESS_END + 2,
+	CPU_LOAD_AVG_15 = MONO_PROCESS_END + 3,
+	
+};
+
+
+static double
+sample_cpu_doule (void *arg)
+{
+	int kind = GPOINTER_TO_INT (arg);
+
+	double load [3];
+	if (getloadavg (load, 3) > 0)
+		return load [kind - CPU_LOAD_AVG_1];
+	return 0;
+}
+
 static gint64
 sample_cpu (void *arg)
 {
@@ -385,6 +405,9 @@ static const char* sys_counter_names[] = {
 	"Private Bytes",
 	"Virtual Bytes",
 	"Page Faults",
+	"CPU Load Average - 1min",
+	"CPU Load Average - 5min",
+	"CPU Load Average - 15min",
 	NULL
 };
 
@@ -414,12 +437,24 @@ get_sys_counter (const char *name)
 	} else if (!strcmp (name, "Page Faults")) {
 		counter = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "Page Faults", MONO_COUNTER_TYPE_LONG, MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_VARIABLE, NULL);
 		type = MONO_PROCESS_FAULTS;
+	} else if (!strcmp (name, "CPU Load Average - 1min")) {
+		counter  = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "CPU Load Average - 1min", MONO_COUNTER_TYPE_DOUBLE, MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_VARIABLE, NULL);
+		type = CPU_LOAD_AVG_1;
+	} else if (!strcmp (name, "CPU Load Average - 5min")) {
+		counter  = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "CPU Load Average - 5min", MONO_COUNTER_TYPE_DOUBLE, MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_VARIABLE, NULL);
+		type = CPU_LOAD_AVG_5;
+	} else if (!strcmp (name, "CPU Load Average - 15min")) {
+		counter  = mono_counters_new_full (MONO_COUNTER_CAT_SYS, "CPU Load Average - 15min", MONO_COUNTER_TYPE_DOUBLE, MONO_COUNTER_UNIT_EVENTS, MONO_COUNTER_VARIABLE, NULL);
+		type = CPU_LOAD_AVG_15;
 	}
 	
 	if (!counter)
 		return NULL;
-		
-	counter->addr = &sample_cpu;
+
+	if (type > MONO_PROCESS_END)
+		counter->addr = &sample_cpu_doule;
+	else
+		counter->addr = &sample_cpu;
 	counter->is_synthetic = TRUE;
 	counter->callback_style = CB_WITH_ARG;
 	counter->user_arg = GINT_TO_POINTER (type);
