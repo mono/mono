@@ -18962,6 +18962,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-607.cs">
+    <type name="A">
+      <method name="System.Func`1[System.String] E(System.String ByRef)" attrs="134">
+        <size>26</size>
+      </method>
+      <method name="System.Func`1[System.String] F(System.String ByRef)" attrs="134">
+        <size>26</size>
+      </method>
+      <method name="Void Main()" attrs="145">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void .ctor(String&amp;)" attrs="6278">
+        <size>15</size>
+      </method>
+      <method name="System.String D()" attrs="134">
+        <size>14</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anontype-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
