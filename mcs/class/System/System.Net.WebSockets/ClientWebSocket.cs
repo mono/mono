@@ -282,7 +282,7 @@ namespace System.Net.WebSockets
 			var opCode = (byte)type;
 			var length = buffer.Count;
 
-			headerBuffer[0] = (byte)(opCode | (endOfMessage ? 0 : 0x80));
+			headerBuffer[0] = (byte)(opCode | (endOfMessage ? 0x80 : 0));
 			if (length < 126) {
 				headerBuffer[1] = (byte)length;
 			} else if (length <= ushort.MaxValue) {
