@@ -18,8 +18,8 @@ public class A
 	}
 	public Func<String> F (out string b)
 	{
-		return new Func<String>(new C (out b).D);
+		return new Func<String> (new C (out b).D);
 	}
-	static void Main() {
+	static void Main () {
 	}
 }

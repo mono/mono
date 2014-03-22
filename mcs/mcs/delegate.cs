@@ -582,8 +582,8 @@ namespace Mono.CSharp {
 		}
 
 		public override void FlowAnalysis (FlowAnalysisContext fc) {
-			base.FlowAnalysis(fc);
-			this.method_group.FlowAnalysis(fc);
+			base.FlowAnalysis (fc);
+			method_group.FlowAnalysis (fc);
 		}
 
 		void Error_ConversionFailed (ResolveContext ec, MethodSpec method, Expression return_type)
