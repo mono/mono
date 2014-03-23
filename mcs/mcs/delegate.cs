@@ -581,6 +581,11 @@ namespace Mono.CSharp {
 			ec.Emit (OpCodes.Newobj, constructor_method);
 		}
 
+		public override void FlowAnalysis (FlowAnalysisContext fc) {
+			base.FlowAnalysis (fc);
+			method_group.FlowAnalysis (fc);
+		}
+
 		void Error_ConversionFailed (ResolveContext ec, MethodSpec method, Expression return_type)
 		{
 			var invoke_method = Delegate.GetInvokeMethod (type);
