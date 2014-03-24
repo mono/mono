@@ -359,8 +359,34 @@ sample_cpu_doule (void *arg)
 	int kind = GPOINTER_TO_INT (arg);
 
 	double load [3];
+#ifdef PLATFORM_MACH
 	if (getloadavg (load, 3) > 0)
 		return load [kind - CPU_LOAD_AVG_1];
+#else
+	FILE *f;
+	char buffer[512];
+	int len;
+	char *first, *second, *third;
+	f = fopen ("/proc/loadavg", "r");
+	if (!f)
+		return 0;
+	len = fread (buffer, 1, sizeof (buffer), f);
+	fclose (f);
+	if (len <= 0)
+		return 0;
+
+	first = buffer;
+	second = strchr (first, ' ') + 1;
+	third = strchr (second, ' ') + 1;
+	second [-1] = 0;
+	third [-1] = 0;
+	*strchr (third, ' ') = 0;
+	printf ("vals %s %s %s\n", first, second, third);
+	load [0] = strtod (first, NULL);
+	load [1] = strtod (second, NULL);
+	load [2] = strtod (third, NULL);
+	return load [kind - CPU_LOAD_AVG_1];
+#endif
 	return 0;
 }
 
