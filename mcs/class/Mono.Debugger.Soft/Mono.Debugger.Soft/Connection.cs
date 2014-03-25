@@ -411,7 +411,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 28;
+		internal const int MINOR_VERSION = 29;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -495,7 +495,8 @@ namespace Mono.Debugger.Soft
 			/* FIXME: Merge into GET_INFO when the major protocol version is increased */
 			GET_ID = 5,
 			/* Ditto */
-			GET_TID = 6
+			GET_TID = 6,
+			SET_IP = 7
 		}
 
 		enum CmdEventRequest {
@@ -1938,6 +1939,10 @@ namespace Mono.Debugger.Soft
 
 		internal long Thread_GetTID (long id) {
 			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_TID, new PacketWriter ().WriteId (id)).ReadLong ();
+		}
+
+		internal void Thread_SetIP (long id, long method_id, long il_offset) {
+			SendReceive (CommandSet.THREAD, (int)CmdThread.SET_IP, new PacketWriter ().WriteId (id).WriteId (method_id).WriteLong (il_offset));
 		}
 
 		/*
