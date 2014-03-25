@@ -102,7 +102,8 @@ scripts_4_0 = \
 	svcutil$(SCRIPT_SUFFIX)			\
 	ccrewrite$(SCRIPT_SUFFIX)		\
 	cccheck$(SCRIPT_SUFFIX)			\
-	mdbrebase$(SCRIPT_SUFFIX)
+	mdbrebase$(SCRIPT_SUFFIX)		\
+	ikdasm$(SCRIPT_SUFFIX)
 
 MDOC_SUBCOMMANDS = \
 	mdoc-assemble \
