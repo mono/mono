@@ -241,7 +241,7 @@ if ($ndk)
 		$export = "set";
 	}
 
-	if ($setenv and ($ENV{$SDK_ROOT_ENV} or $ENV{$SDK_ROOT_ENV}))
+	if ($setenv and ($ENV{$SDK_ROOT_ENV} or $ENV{$NDK_ROOT_ENV}))
 	{
 		print "Outputing updated environment:\n";
 		print "\t'$setenv'\n";
