@@ -1057,7 +1057,7 @@ namespace MonoTests.System.Numerics
 		}
 
 		[Test]
-		public void LeftShitByInt ()
+		public void LeftShiftByInt ()
 		{
 			var v = BigInteger.Parse("230794411440927908251127453634");
 
@@ -1135,7 +1135,7 @@ namespace MonoTests.System.Numerics
 
 
 		[Test]
-		public void RightShitByInt ()
+		public void RightShiftByInt ()
 		{
 			var v = BigInteger.Parse("230794411440927908251127453634");
 			v = v * BigInteger.Pow (2, 70);
