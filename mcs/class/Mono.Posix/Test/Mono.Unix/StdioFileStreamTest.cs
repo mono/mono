@@ -500,7 +500,7 @@ namespace MonoTests.System.IO
 		[Test]
 		public void TestClose ()
 		{
-#if FUCK
+#if 0
 			string path = TempFolder + Path.DirectorySeparatorChar + "TestClose";
 			DeleteFile (path);
 
