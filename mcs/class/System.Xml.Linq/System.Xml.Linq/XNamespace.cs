@@ -72,9 +72,10 @@ namespace System.Xml.Linq
 
 		public XName GetName (string localName)
 		{
-			if (table == null)
-				table = new Dictionary<string, XName> ();
-			lock (table) {
+			lock (nstable) {
+				if (table == null)
+					table = new Dictionary<string, XName> ();
+
 				XName ret;
 				if (!table.TryGetValue (localName, out ret)) {
 					ret = new XName (localName, this);

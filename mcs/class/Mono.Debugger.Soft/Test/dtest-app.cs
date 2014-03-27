@@ -284,6 +284,7 @@ public class Tests : TestsBase, ITest2
 		type_load ();
 		regress ();
 		gc_suspend ();
+		set_ip ();
 		if (args.Length > 0 && args [0] == "domain-test")
 			/* This takes a lot of time, so execute it conditionally */
 			domains ();
@@ -293,6 +294,7 @@ public class Tests : TestsBase, ITest2
 			frames_in_native ();
 		if (args.Length > 0 && args [0] == "invoke-single-threaded")
 			new Tests ().invoke_single_threaded ();
+		new Tests ().evaluate_method ();
 		return 3;
 	}
 
@@ -1273,6 +1275,35 @@ public class Tests : TestsBase, ITest2
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void generic_method<T> () where T : class {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void evaluate_method_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public void evaluate_method () {
+		field_i = 42;
+		evaluate_method_2 ();
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void set_ip_1 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	static void set_ip_2 () {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void set_ip () {
+		int i, j;
+
+		i = 1;
+		set_ip_1 ();
+		i = 5;
+		j = 5;
+		set_ip_2 ();
 	}
 }
 

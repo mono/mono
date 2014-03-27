@@ -1267,7 +1267,7 @@ namespace Mono.CSharp {
 				throw new InternalErrorException (e, loc);
 			}
 
-			if (!ec.IsInProbingMode) {
+			if (!ec.IsInProbingMode && !etree_conversion) {
 				compatibles.Add (type, am ?? EmptyExpression.Null);
 			}
 
@@ -1599,6 +1599,7 @@ namespace Mono.CSharp {
 			var da_ontrue = fc.DefiniteAssignmentOnTrue;
 			var da_onfalse = fc.DefiniteAssignmentOnFalse;
 
+			fc.DefiniteAssignmentOnTrue = fc.DefiniteAssignmentOnFalse = null;
 			block.FlowAnalysis (fc);
 
 			fc.ParametersBlock = prev_pb;

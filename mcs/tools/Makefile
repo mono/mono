@@ -46,7 +46,8 @@ net_4_0_dirs := \
 	ccrewrite	\
 	cccheck		\
 	security	\
-	mdbrebase
+	mdbrebase	\
+	ikdasm
 
 net_2_0_dirs := \
 	$(per_profile_dirs)

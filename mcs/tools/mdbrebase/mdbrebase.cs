@@ -93,7 +93,7 @@ class MdbRebase
 		input.Dispose ();
 
 		File.Delete (finalMdb);
-		new FileInfo (tmpMdb).MoveTo (finalMdb);
+		File.Move (tmpMdb, finalMdb);
 	}
 }
 

@@ -687,4 +687,6 @@ System/UriPartial.cs
 System/UriTypeConverter.cs
 System/UriElements.cs
 System/UriParseComponents.cs
+System.Runtime.InteropServices/DefaultParameterValueAttribute.cs
+System.Runtime.InteropServices/HandleCollector.cs
 System.Windows.Input/ICommand.cs

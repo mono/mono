@@ -102,6 +102,20 @@ namespace MonoTests.System.Net.Http.Headers
 			Assert.AreEqual (2, res.Ranges.First ().From, "#31");
 			Assert.IsNull (res.Ranges.First ().To, "#32");
 			Assert.AreEqual ("ddd=2-, 1-4", res.ToString (), "#33");
+
+			res = RangeHeaderValue.Parse ("bytes=0-");
+			Assert.AreEqual ("bytes", res.Unit, "#40");
+			Assert.AreEqual (0, res.Ranges.First ().From, "#41");
+			Assert.IsNull (res.Ranges.First ().To, "#42");
+			Assert.AreEqual ("bytes=0-", res.ToString (), "#43");
+
+			res = RangeHeaderValue.Parse ("bytes=0-,-9");
+			Assert.AreEqual ("bytes", res.Unit, "#50");
+			Assert.AreEqual (0, res.Ranges.First ().From, "#51");
+			Assert.IsNull (res.Ranges.First ().To, "#52");
+			Assert.IsNull (res.Ranges.Skip (1).First ().From, "#53");
+			Assert.AreEqual (9, res.Ranges.Skip (1).First ().To, "#54");
+			Assert.AreEqual ("bytes=0-, -9", res.ToString (), "#55");
 		}
 
 		[Test]

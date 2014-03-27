@@ -189,6 +189,8 @@ namespace Mono.CSharp
 		{
 			if (loader.Corlib != null && !(loader.Corlib is AssemblyBuilder)) {
 				Builder.__SetImageRuntimeVersion (loader.Corlib.ImageRuntimeVersion, 0x20000);
+			} else if (module.Compiler.Settings.RuntimeMetadataVersion != null) {
+				Builder.__SetImageRuntimeVersion (module.Compiler.Settings.RuntimeMetadataVersion, 0x20000);
 			} else {
 				// Sets output file metadata version when there is no mscorlib
 				switch (module.Compiler.Settings.StdLibRuntimeVersion) {

@@ -1225,7 +1225,7 @@ namespace Mono.CSharp
 		// Tonizes `?' using custom disambiguous rules to return one
 		// of following tokens: INTERR_NULLABLE, OP_COALESCING, INTERR
 		//
-		// Tricky expression look like:
+		// Tricky expression looks like:
 		//
 		// Foo ? a = x ? b : c;
 		//
@@ -1304,17 +1304,26 @@ namespace Mono.CSharp
 					int interrs = 1;
 					int colons = 0;
 					int braces = 0;
+					int parens = 0;
 					//
 					// All shorcuts failed, do it hard way
 					//
 					while ((ntoken = xtoken ()) != Token.EOF) {
-						if (ntoken == Token.OPEN_BRACE) {
+						switch (ntoken) {
+						case Token.OPEN_BRACE:
 							++braces;
 							continue;
-						}
-
-						if (ntoken == Token.CLOSE_BRACE) {
+						case Token.OPEN_PARENS:
+						case Token.OPEN_PARENS_CAST:
+						case Token.OPEN_PARENS_LAMBDA:
+							++parens;
+							continue;
+						case Token.CLOSE_BRACE:
 							--braces;
+							continue;
+						case Token.CLOSE_PARENS:
+							if (parens > 0)
+								--parens;
 							continue;
 						}
 
@@ -1323,6 +1332,9 @@ namespace Mono.CSharp
 
 						if (ntoken == Token.SEMICOLON)
 							break;
+
+						if (parens != 0)
+							continue;
 						
 						if (ntoken == Token.COLON) {
 							if (++colons == interrs)

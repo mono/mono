@@ -2618,7 +2618,7 @@ mono_marshal_method_from_wrapper (MonoMethod *wrapper)
 			return res;
 	case MONO_WRAPPER_MANAGED_TO_NATIVE:
 		info = mono_marshal_get_wrapper_info (wrapper);
-		if (info && (info->subtype == WRAPPER_SUBTYPE_NONE || info->subtype == WRAPPER_SUBTYPE_NATIVE_FUNC_AOT))
+		if (info && (info->subtype == WRAPPER_SUBTYPE_NONE || info->subtype == WRAPPER_SUBTYPE_NATIVE_FUNC_AOT || info->subtype == WRAPPER_SUBTYPE_PINVOKE))
 			return info->d.managed_to_native.method;
 		else
 			return NULL;
@@ -9056,7 +9056,7 @@ mono_marshal_get_native_wrapper (MonoMethod *method, gboolean check_exceptions, 
 									mb, csig, csig->param_count + 16);
 	mono_mb_free (mb);
 
-	info = mono_wrapper_info_create (res, WRAPPER_SUBTYPE_NONE);
+	info = mono_wrapper_info_create (res, WRAPPER_SUBTYPE_PINVOKE);
 	info->d.managed_to_native.method = method;
 	mono_marshal_set_wrapper_info (res, info);
 

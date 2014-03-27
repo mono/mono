@@ -122,7 +122,7 @@
 #endif
 
 /* Version number of the AOT file format */
-#define MONO_AOT_FILE_VERSION 99
+#define MONO_AOT_FILE_VERSION 100
 
 //TODO: This is x86/amd64 specific.
 #define mono_simd_shuffle_mask(a,b,c,d) ((a) | ((b) << 2) | ((c) << 4) | ((d) << 6))
@@ -1412,6 +1412,8 @@ typedef struct {
 	MonoInst *lmf_var;
 	MonoInst *lmf_addr_var;
 
+	MonoInst *stack_inbalance_var;
+
 	unsigned char   *cil_start;
 #ifdef __native_client_codegen__
 	/* this alloc is not aligned, native_code */
@@ -1486,6 +1488,7 @@ typedef struct {
 	guint            has_indirection : 1;
 	guint            has_atomic_add_new_i4 : 1;
 	guint            has_atomic_exchange_i4 : 1;
+	guint            check_pinvoke_callconv : 1;
 	gpointer         debug_info;
 	guint32          lmf_offset;
     guint16          *intvars;
@@ -1843,6 +1846,10 @@ typedef struct {
 	 * Load AOT JIT info eagerly.
 	 */
 	gboolean load_aot_jit_info_eagerly;
+	/*
+	 * Check for pinvoke calling convention mismatches.
+	 */
+	gboolean check_pinvoke_callconv;
 } MonoDebugOptions;
 
 enum {
@@ -2867,6 +2874,12 @@ gboolean SIG_HANDLER_SIGNATURE (mono_chain_signal) MONO_INTERNAL;
 #define ARCH_HAVE_DUMMY_INIT 1
 #else
 #define ARCH_HAVE_DUMMY_INIT 0
+#endif
+
+#ifdef MONO_CROSS_COMPILE
+#define MONO_IS_CROSS_COMPILE 1
+#else
+#define MONO_IS_CROSS_COMPILE 0
 #endif
 
 #endif /* __MONO_MINI_H__ */

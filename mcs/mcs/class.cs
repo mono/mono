@@ -144,8 +144,8 @@ namespace Mono.CSharp
 			}
 
 			if ((existing.ModFlags & Modifiers.AccessibilityMask) != (next_part.ModFlags & Modifiers.AccessibilityMask) &&
-				((existing.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) == 0 &&
-				 (next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) == 0)) {
+				((existing.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFIER) == 0 &&
+				 (next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFIER) == 0)) {
 					 Report.SymbolRelatedToPreviousError (existing);
 				Report.Error (262, next_part.Location,
 					"Partial declarations of `{0}' have conflicting accessibility modifiers",
@@ -172,10 +172,10 @@ namespace Mono.CSharp
 				}
 			}
 
-			if ((next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) != 0) {
-				existing.ModFlags |= next_part.ModFlags & ~(Modifiers.DEFAULT_ACCESS_MODIFER | Modifiers.AccessibilityMask);
-			} else if ((existing.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) != 0) {
-				existing.ModFlags &= ~(Modifiers.DEFAULT_ACCESS_MODIFER | Modifiers.AccessibilityMask);
+			if ((next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFIER) != 0) {
+				existing.ModFlags |= next_part.ModFlags & ~(Modifiers.DEFAULT_ACCESS_MODIFIER | Modifiers.AccessibilityMask);
+			} else if ((existing.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFIER) != 0) {
+				existing.ModFlags &= ~(Modifiers.DEFAULT_ACCESS_MODIFIER | Modifiers.AccessibilityMask);
 				existing.ModFlags |= next_part.ModFlags;
 			} else {
 				existing.ModFlags |= next_part.ModFlags;
@@ -1010,9 +1010,20 @@ namespace Mono.CSharp
 
 			for (int i = 0; i < initialized_fields.Count; ++i) {
 				FieldInitializer fi = initialized_fields [i];
+
+				//
+				// Clone before resolving otherwise when field initializer is needed
+				// in more than 1 constructor any resolve after the initial one would
+				// only took the resolved expression which is problem for expressions
+				// that generate extra expressions or code during Resolve phase
+				//
+				var cloned = fi.Clone (new CloneContext ());
+
 				ExpressionStatement s = fi.ResolveStatement (ec);
-				if (s == null)
+				if (s == null) {
+					initialized_fields [i] = new FieldInitializer (fi.Field, ErrorExpression.Instance, Location.Null);
 					continue;
+				}
 
 				//
 				// Field is re-initialized to its default value => removed
@@ -1022,6 +1033,7 @@ namespace Mono.CSharp
 
 				ec.AssignmentInfoOffset += fi.AssignmentOffset;
 				ec.CurrentBlock.AddScopeStatement (new StatementExpression (s));
+				initialized_fields [i] = (FieldInitializer) cloned;
 			}
 		}
 

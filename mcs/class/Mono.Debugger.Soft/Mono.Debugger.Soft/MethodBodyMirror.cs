@@ -169,8 +169,7 @@ namespace Mono.Debugger.Soft
 						instr.Operand = vm.GetType (t.Id);
 						break;
 					case TokenType.FIELD:
-						// FIXME: No vm.GetField ()
-						//instr.Operand = vm.GetField (t.Id);
+						instr.Operand = vm.GetField (t.Id);
 						break;
 					case TokenType.METHOD:
 						instr.Operand = vm.GetMethod (t.Id);

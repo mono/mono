@@ -150,7 +150,7 @@ typedef struct MonoAotOptions {
 
 typedef struct MonoAotStats {
 	int ccount, mcount, lmfcount, abscount, gcount, ocount, genericcount;
-	int code_size, info_size, ex_info_size, unwind_info_size, got_size, class_info_size, got_info_size;
+	int code_size, info_size, ex_info_size, unwind_info_size, got_size, class_info_size, got_info_size, plt_size;
 	int methods_without_got_slots, direct_calls, all_calls, llvm_count;
 	int got_slots, offsets_size;
 	int got_slot_types [MONO_PATCH_INFO_NONE];
@@ -558,6 +558,12 @@ emit_set_arm_mode (MonoAotCompile *acfg)
 	fprintf (acfg->fp, ".code 32\n");
 }
 
+static inline void
+emit_code_bytes (MonoAotCompile *acfg, const guint8* buf, int size)
+{
+	emit_bytes (acfg, buf, size);
+}
+
 /* ARCHITECTURE SPECIFIC CODE */
 
 #if defined(TARGET_X86) || defined(TARGET_AMD64) || defined(TARGET_ARM) || defined(TARGET_POWERPC)
@@ -919,6 +925,7 @@ arch_emit_plt_entry (MonoAotCompile *acfg, int index)
 		emit_symbol_diff (acfg, acfg->got_symbol, ".", ((acfg->plt_got_offset_base + index) * sizeof (gpointer)) -4);
 		/* Used by mono_aot_get_plt_info_offset */
 		emit_int32 (acfg, acfg->plt_got_info_offsets [index]);
+		acfg->stats.plt_size += 10;
 #elif defined(__native_client_codegen__)
 		guint8 buf [256];
 		guint8 *buf_aligned = ALIGN_TO(buf, kNaClAlignment);
@@ -2655,7 +2662,7 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 			} else if (info->subtype == WRAPPER_SUBTYPE_NATIVE_FUNC_AOT) {
 				encode_method_ref (acfg, info->d.managed_to_native.method, p, &p);
 			} else {
-				g_assert (info->subtype == WRAPPER_SUBTYPE_NONE);
+				g_assert (info->subtype == WRAPPER_SUBTYPE_NONE || info->subtype == WRAPPER_SUBTYPE_PINVOKE);
 				encode_method_ref (acfg, info->d.managed_to_native.method, p, &p);
 			}
 			break;
@@ -4483,6 +4490,8 @@ get_file_index (MonoAotCompile *acfg, const char *source_file)
 	return findex;
 }
 
+#define INST_LEN 1
+
 /*
  * emit_and_reloc_code:
  *
@@ -4529,7 +4538,7 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 	g_ptr_array_sort (patches, compare_patches);
 
 	start_index = 0;
-	for (i = 0; i < code_len; i++) {
+	for (i = 0; i < code_len; i += INST_LEN) {
 		patch_info = NULL;
 		for (pindex = start_index; pindex < patches->len; ++pindex) {
 			patch_info = g_ptr_array_index (patches, pindex);
@@ -4559,7 +4568,7 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 				int code_size;
  
 				arch_emit_got_offset (acfg, code + i, &code_size);
-				i += code_size - 1;
+				i += code_size - INST_LEN;
 				skip = TRUE;
 				patch_info->type = MONO_PATCH_INFO_NONE;
 				break;
@@ -4583,7 +4592,7 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 				}
 
 				arch_emit_objc_selector_ref (acfg, code + i, index, &code_size);
-				i += code_size - 1;
+				i += code_size - INST_LEN;
 				skip = TRUE;
 				patch_info->type = MONO_PATCH_INFO_NONE;
 				break;
@@ -4662,14 +4671,14 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 					int call_size;
 
 					arch_emit_direct_call (acfg, direct_call_target, external_call, FALSE, patch_info, &call_size);
-					i += call_size - 1;
+					i += call_size - INST_LEN;
 				} else {
 					int code_size;
 
 					got_slot = get_got_offset (acfg, patch_info);
 
 					arch_emit_got_access (acfg, code + i, got_slot, &code_size);
-					i += code_size - 1;
+					i += code_size - INST_LEN;
 				}
 				skip = TRUE;
 			}
@@ -4690,15 +4699,15 @@ emit_and_reloc_code (MonoAotCompile *acfg, MonoMethod *method, guint8 *code, gui
 			if (pindex < patches->len && patch_info->ip.i > i) {
 				int limit;
 
-				for (limit = i + 1; limit < patch_info->ip.i; ++limit) {
+				for (limit = i + INST_LEN; limit < patch_info->ip.i; limit += INST_LEN) {
 					if (locs && locs [limit])
 						break;
 				}
 
-				emit_bytes (acfg, code + i, limit - i);
-				i = limit - 1;
+				emit_code_bytes (acfg, code + i, limit - i);
+				i = limit - INST_LEN;
 			} else {
-				emit_bytes (acfg, code + i, 1);
+				emit_code_bytes (acfg, code + i, INST_LEN);
 			}
 		}
 	}
@@ -7238,16 +7247,16 @@ emit_code (MonoAotCompile *acfg)
 		method = cfg->orig_method;
 
 		if (acfg->aot_opts.full_aot && cfg->orig_method->klass->valuetype) {
+			int call_size;
+
 			index = get_method_index (acfg, method);
 			sprintf (symbol, "ut_%d", index);
 
 			emit_int32 (acfg, index);
 			if (acfg->direct_method_addresses) {
-				emit_unset_mode (acfg);
-				if (acfg->thumb_mixed && cfg->compile_llvm)
-					fprintf (acfg->fp, "\n\tblx %s\n", symbol);
-				else
-					fprintf (acfg->fp, "\n\tbl %s\n", symbol);
+#ifdef MONO_ARCH_AOT_SUPPORTED
+				arch_emit_direct_call (acfg, symbol, FALSE, acfg->thumb_mixed && cfg->compile_llvm, NULL, &call_size);
+#endif
 			} else {
 				emit_symbol_diff (acfg, symbol, acfg->methods_symbol, 0);
 			}
@@ -8669,7 +8678,7 @@ int
 mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 {
 	MonoImage *image = ass->image;
-	int i, res;
+	int i, res, all_sizes;
 	MonoAotCompile *acfg;
 	char *outfile_name, *tmp_outfile_name, *p;
 	char llvm_stats_msg [256];
@@ -9019,7 +9028,19 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 		sprintf (llvm_stats_msg, ", LLVM: %d (%d%%)", acfg->stats.llvm_count, acfg->stats.mcount ? (acfg->stats.llvm_count * 100) / acfg->stats.mcount : 100);
 	else
 		strcpy (llvm_stats_msg, "");
-	printf ("Code: %d Info: %d Ex Info: %d Unwind Info: %d Class Info: %d PLT: %d GOT Info: %d GOT: %d Offsets: %d\n", acfg->stats.code_size, acfg->stats.info_size, acfg->stats.ex_info_size, acfg->stats.unwind_info_size, acfg->stats.class_info_size, acfg->plt_offset, acfg->stats.got_info_size, (int)(acfg->got_offset * sizeof (gpointer)), acfg->stats.offsets_size);
+
+	all_sizes = acfg->stats.code_size + acfg->stats.info_size + acfg->stats.ex_info_size + acfg->stats.unwind_info_size + acfg->stats.class_info_size + acfg->stats.got_info_size + acfg->stats.offsets_size + acfg->stats.plt_size;
+
+	printf ("Code: %d(%d%%) Info: %d(%d%%) Ex Info: %d(%d%%) Unwind Info: %d(%d%%) Class Info: %d(%d%%) PLT: %d(%d%%) GOT Info: %d(%d%%) Offsets: %d(%d%%) GOT: %d\n",
+			acfg->stats.code_size, acfg->stats.code_size * 100 / all_sizes,
+			acfg->stats.info_size, acfg->stats.info_size * 100 / all_sizes,
+			acfg->stats.ex_info_size, acfg->stats.ex_info_size * 100 / all_sizes,
+			acfg->stats.unwind_info_size, acfg->stats.unwind_info_size * 100 / all_sizes,
+			acfg->stats.class_info_size, acfg->stats.class_info_size * 100 / all_sizes,
+			acfg->stats.plt_size ? acfg->stats.plt_size : acfg->plt_offset, acfg->stats.plt_size ? acfg->stats.plt_size * 100 / all_sizes : 0,
+			acfg->stats.got_info_size, acfg->stats.got_info_size * 100 / all_sizes,
+			acfg->stats.offsets_size, acfg->stats.offsets_size * 100 / all_sizes,
+			(int)(acfg->got_offset * sizeof (gpointer)));
 	printf ("Compiled: %d/%d (%d%%)%s, No GOT slots: %d (%d%%), Direct calls: %d (%d%%)\n", 
 			acfg->stats.ccount, acfg->stats.mcount, acfg->stats.mcount ? (acfg->stats.ccount * 100) / acfg->stats.mcount : 100,
 			llvm_stats_msg,

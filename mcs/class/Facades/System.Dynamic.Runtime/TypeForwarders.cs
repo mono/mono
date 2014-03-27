@@ -41,6 +41,7 @@
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Dynamic.SetMemberBinder))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Dynamic.UnaryOperationBinder))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.DynamicExpression))]
+[assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Linq.Expressions.DynamicExpressionVisitor))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.CompilerServices.CallSite))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.CompilerServices.CallSite<>))]
 [assembly: System.Runtime.CompilerServices.TypeForwardedToAttribute(typeof(System.Runtime.CompilerServices.CallSiteBinder))]

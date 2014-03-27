@@ -39,20 +39,22 @@ using System.Globalization;
 
 namespace System.Net {
 
-	class CookieParser {
-		string header;
+	struct CookieParser
+	{
+		static readonly string[] cookieExpiresFormats =
+			new string[] { "r",
+					"ddd, dd'-'MMM'-'yyyy HH':'mm':'ss 'GMT'",
+					"ddd, dd'-'MMM'-'yy HH':'mm':'ss 'GMT'" };
+
+		readonly string header;
+		readonly int length;
 		int pos;
-		int length;
 
-		public CookieParser (string header) : this (header, 0)
-		{
-		}
-
-		public CookieParser (string header, int position)
+		public CookieParser (string header)
 		{
 			this.header = header;
-			this.pos = position;
 			this.length = header.Length;
+			pos = 0;
 		}
 
 		public IEnumerable<Cookie> Parse ()
@@ -123,8 +125,7 @@ namespace System.Net {
 			if ((name == null) || (name == string.Empty))
 				throw new InvalidOperationException ();
 
-			name = name.ToUpper ();
-			switch (name) {
+			switch (name.ToUpperInvariant ()) {
 			case "COMMENT":
 				if (cookie.Comment == null)
 					cookie.Comment = val;
@@ -159,7 +160,7 @@ namespace System.Net {
 					val = val + ", " + GetCookieValue ();
 				}
 
-				cookie.Expires = CookieParser.TryParseCookieExpires (val);
+				cookie.Expires = TryParseCookieExpires (val);
 				break;
 			case "PATH":
 				cookie.Path = val;
@@ -225,22 +226,26 @@ namespace System.Net {
 
 		static bool IsWeekDay (string value)
 		{
-			foreach (string day in weekDays) {
-				if (value.ToLower ().Equals (day))
-					return true;
+			switch (value.ToLowerInvariant ()) {
+			case "mon":
+			case "tue":
+			case "wed":
+			case "thu":
+			case "fri":
+			case "sat":
+			case "sun":
+			case "monday":
+			case "tuesday":
+			case "wednesday":
+			case "thursday":
+			case "friday":
+			case "saturday":
+			case "sunday":
+				return true;
+			default:
+				return false;
 			}
-			return false;
 		}
-
-		static string[] weekDays =
-			new string[] { "mon", "tue", "wed", "thu", "fri", "sat", "sun",
-				       "monday", "tuesday", "wednesday", "thursday",
-				       "friday", "saturday", "sunday" };
-
-		static string[] cookieExpiresFormats =
-			new string[] { "r",
-					"ddd, dd'-'MMM'-'yyyy HH':'mm':'ss 'GMT'",
-					"ddd, dd'-'MMM'-'yy HH':'mm':'ss 'GMT'" };
 
 		static DateTime TryParseCookieExpires (string value)
 		{

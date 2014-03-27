@@ -91,5 +91,28 @@ namespace Mono.Debugger.Soft
 		public static bool NativeTransitions {
 			get; set;
 		}
+
+		/*
+		 * Set the location where execution will return when this thread is
+		 * resumed.
+		 * Throws:
+		 * ArgumentException - if L doesn't refer to a location in the
+		 * current method of this thread.
+		 * NotSupportedException - if continuing at L is not supported
+		 * for any other reason.
+		 * Since protocol version 29.
+		 */
+		public void SetIP (Location loc) {
+			if (loc == null)
+				throw new ArgumentNullException ("loc");
+			try {
+				vm.conn.Thread_SetIP (id, loc.Method.Id, loc.ILOffset);
+			} catch (CommandException ex) {
+				if (ex.ErrorCode == ErrorCode.INVALID_ARGUMENT)
+					throw new ArgumentException ("loc doesn't refer to a location in the current method of this thread.", "loc");
+				else
+					throw;
+			}
+		}
     }
 }
