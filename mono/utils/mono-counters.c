@@ -359,7 +359,7 @@ sample_cpu_doule (void *arg)
 	int kind = GPOINTER_TO_INT (arg);
 
 	double load [3];
-#ifdef PLATFORM_MACH
+#ifdef TARGET_MACH
 	if (getloadavg (load, 3) > 0)
 		return load [kind - CPU_LOAD_AVG_1];
 #else
