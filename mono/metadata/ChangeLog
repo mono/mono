@@ -23294,7 +23294,7 @@ Fri May 27 14:45:56 CEST 2005 Paolo Molaro <lupus@ximian.com>
 2005-05-11  Martin Baulig  <martin@ximian.com>
 
 	* mono-debug.c, mono-debug-debugger.c: Revert Paolo's locking
-	changes as they're broken and completely fuck up the debugger.
+	changes as they're broken and mess with the debugger.
 
 	* mono-debug.c (mono_debug_add_method): Properly unlock on error.
 
