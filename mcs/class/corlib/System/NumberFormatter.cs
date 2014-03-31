@@ -775,6 +775,7 @@ namespace System
 		[ThreadStatic]
 		static NumberFormatter threadNumberFormatter;
 
+		[ThreadStatic]
 		static NumberFormatter userFormatProvider;
 
 		private static NumberFormatter GetInstance (IFormatProvider fp)
