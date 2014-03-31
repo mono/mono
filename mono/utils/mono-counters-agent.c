@@ -1,5 +1,7 @@
 /*
  * Copyright 2014 Xamarin Inc
+ *
+ * Note : see the end of this file for a full description of the protocol.
  */
 
 #include <config.h>
@@ -40,23 +42,6 @@ enum {
 	SRV_REMOVE_COUNTER,
 	SVR_SAMPLES,
 };
-	
-/**
- * Protocol :
- * | Headers | Values | Values | ... [Infinity]
- *
- * Headers :
- * | Count (2) | Counter | Counter | ... [Count]
- *
- * Counter :
- * | Category (4) | Name Length (8) | Name (Name Length) | Type (4) | Unit (4) | Variance (4) | Index (2) |
- *
- * Values :
- * | Timestamp (8) | Value | Value | ... | -1 (2) |
- *
- * Value :
- * | Index (2) | Size (2) | Value (Size) |
- */
 
 typedef struct MonoCounterAgent {
 	MonoCounter *counter;
@@ -65,7 +50,8 @@ typedef struct MonoCounterAgent {
 	short index;
 } MonoCounterAgent;
 
-static const char *inspector_ip;
+static const char *inspector_dest;
+static const char *inspector_type;
 static int inspector_port;
 static gint64 interval;
 
@@ -87,9 +73,11 @@ free_agent_memory (void)
 		counter = counter->next;
 	}
 	g_slist_free (counters);
-	g_free ((char*)inspector_ip);
+	g_free ((char*)inspector_type);
+	g_free ((char*)inspector_dest);
 	counters = NULL;
-	inspector_ip = NULL;
+	inspector_type = NULL;
+	inspector_dest = NULL;
 	current_index = 0;
 }
 
@@ -137,36 +125,69 @@ end:
 	g_strfreev (names);
 }
 
-#define DEFAULT_ADDRESS "127.0.0.1"
+#define DEFAULT_TYPE "tcp"
+#define DEFAULT_DEST "127.0.0.1"
 #define DEFAULT_PORT 8888
+
+static void
+parse_tcp_address (const char *address)
+{
+	inspector_type = "tcp";
+
+	gchar **split = g_strsplit (address, ":", 2);
+
+	if (split [0])
+		inspector_dest = g_strdup (split [0]);
+	if (split [1])
+		inspector_port = strtol (split [1], NULL, 10);
+
+       g_strfreev (split);
+}
+
+static void
+parse_file_address (const char *address)
+{
+	inspector_type = "file";
+	inspector_dest = g_strdup (address);
+}
 
 static void
 parse_address (const char *address)
 {
-	inspector_ip = NULL;
+	inspector_type = NULL;
+	inspector_dest = NULL;
 	inspector_port = DEFAULT_PORT;
 
 	if (address) {
-		gchar **split = g_strsplit (address, ":", 2);
+		gchar **split = g_strsplit (address, "://", 2);
 
-		if (split [0])
-			inspector_ip = g_strdup (split [0]);
-		if (split [1])
-			inspector_port = strtol (split [1], NULL, 10);
+		if (split [1] == NULL) {
+			parse_tcp_address (split[0]);
+		} else {
+			if (strcmp (split [0], "file") == 0) {
+				parse_file_address (split [1]);
+			} else if (strcmp (split [0], "tcp") == 0) {
+				parse_tcp_address (split [1]);
+			} else {
+				g_warning ("Unknown address type '%s'", split [0]);
+			}
+		}
 
-		g_strfreev(split);
+		g_strfreev (split);
 	}
-	if (!inspector_ip)
-		inspector_ip = g_strdup (DEFAULT_ADDRESS);
+	if (!inspector_type)
+		inspector_type = g_strdup (DEFAULT_TYPE);
+	if (!inspector_dest)
+		inspector_dest = g_strdup (DEFAULT_DEST);
 }
 
 static gboolean
-write_buffer_to_socket (int fd, const char* buffer, size_t size)
+write_buffer (int fd, const char* buffer, size_t size)
 {
 	size_t sent = 0;
-	
+
 	while (sent < size) {
-		ssize_t res = send (fd, buffer + sent, size - sent, 0);
+		ssize_t res = write (fd, buffer + sent, size - sent);
 		if (res <= 0)
 			return FALSE;
 		sent += res;
@@ -176,12 +197,12 @@ write_buffer_to_socket (int fd, const char* buffer, size_t size)
 }
 
 static gboolean
-read_socket_to_buffer (int fd, char* buffer, size_t size)
+read_buffer (int fd, char* buffer, size_t size)
 {
 	size_t recvd = 0;
 
 	while (recvd < size) {
-		ssize_t res = recv (fd, buffer + recvd, size - recvd, 0);
+		ssize_t res = read (fd, buffer + recvd, size - recvd);
 		if (res <= 0)
 			return FALSE;
 		recvd += res;
@@ -191,33 +212,69 @@ read_socket_to_buffer (int fd, char* buffer, size_t size)
 }
 
 static gboolean
-write_counter_agent_header (int socketfd, MonoCounterAgent *counter_agent)
+write_string (int fd, const char *str)
 {
-	int len = strlen (counter_agent->counter->name);
+	int size = -1;
 
-	if (!write_buffer_to_socket(socketfd, (char*)&counter_agent->counter->category, 4) ||
-		!write_buffer_to_socket (socketfd, (char*)&len, 4) ||
-		!write_buffer_to_socket (socketfd, (char*) counter_agent->counter->name, len) ||
-		!write_buffer_to_socket (socketfd, (char*)&counter_agent->counter->type, 4) ||
-		!write_buffer_to_socket (socketfd, (char*)&counter_agent->counter->unit, 4) ||
-		!write_buffer_to_socket (socketfd, (char*)&counter_agent->counter->variance, 4) ||
-		!write_buffer_to_socket (socketfd, (char*)&counter_agent->index, 2))
+	if (!str)
+		return write_buffer (fd, (char*)&size, 4);
+
+	size = strlen (str);
+	if (!write_buffer (fd, (char*)&size, 4))
+		return FALSE;
+	if (!write_buffer (fd, str, size))
 		return FALSE;
 
 	return TRUE;
 }
 
 static gboolean
-write_counter_agent_headers (int socketfd)
+read_string (int fd, char **str)
+{
+	int len;
+
+	if (!read_buffer (fd, (char*)&len, 4))
+		return FALSE;
+
+	if (len < 0) {
+		*str = NULL;
+		return TRUE;
+	}
+
+	*str = g_malloc(len + 1);
+	if (!read_buffer (fd, *str, len))
+		return FALSE;
+
+	(*str) [len] = '\0';
+
+	return TRUE;
+}
+
+static gboolean
+write_counter_agent_header (int fd, MonoCounterAgent *counter_agent)
+{
+	if (!write_buffer(fd, (char*)&counter_agent->counter->category, 4) ||
+		!write_string (fd, counter_agent->counter->name) ||
+		!write_buffer (fd, (char*)&counter_agent->counter->type, 4) ||
+		!write_buffer (fd, (char*)&counter_agent->counter->unit, 4) ||
+		!write_buffer (fd, (char*)&counter_agent->counter->variance, 4) ||
+		!write_buffer (fd, (char*)&counter_agent->index, 2))
+		return FALSE;
+
+	return TRUE;
+}
+
+static gboolean
+write_counter_agent_headers (int fd)
 {
 	short count = g_slist_length (counters);
 	GSList *item;
 
-	if (!write_buffer_to_socket (socketfd, (char*)&count, 2))
+	if (!write_buffer (fd, (char*)&count, 2))
 		return FALSE;
 
 	for (item = counters; item; item = item->next) {
-		if (!write_counter_agent_header (socketfd, item->data))
+		if (!write_counter_agent_header (fd, item->data))
 			return FALSE;
 	}
 
@@ -225,56 +282,22 @@ write_counter_agent_headers (int socketfd)
 }
 
 static gboolean
-do_hello (int socketfd)
+do_hello (int fd)
 {
 	char cmd = SRV_HELLO;
 	short version = MONO_COUNTERS_AGENT_PROTOCOL_VERSION;
 
-	if (!write_buffer_to_socket (socketfd, (char*)&cmd, 1))
+	if (!write_buffer (fd, (char*)&cmd, 1))
 		return FALSE;
 
-	if (!write_buffer_to_socket (socketfd, (char*)&version, 2))
+	if (!write_buffer (fd, (char*)&version, 2))
 		return FALSE;
 
-	if (!write_counter_agent_headers (socketfd))
+	if (!write_counter_agent_headers (fd))
 		return FALSE;
 
 	return TRUE;
 }
-
-static gboolean
-write_string (int socketfd, const char *str)
-{
-	short size = -1;
-
-	//Null is encoded as -1
-	if (!str)
-		return write_buffer_to_socket (socketfd, (char*)&size, 2);
-
-	size = strlen (str);
-	if (!write_buffer_to_socket (socketfd, (char*)&size, 2))
-		return FALSE;
-
-	return write_buffer_to_socket (socketfd, str, size);
-}
-
-
-static char*
-read_string (int socketfd)
-{
-	int len;
-	char *string;
-
-	if (!read_socket_to_buffer (socketfd, (char*)&len, 4))
-		return NULL;
-
-	string = g_malloc(len + 1);
-	if (!read_socket_to_buffer (socketfd, string, len))
-		return FALSE;
-	string [len] = '\0';
-	return string;
-}
-
 
 static int _sock;
 static gboolean
@@ -288,23 +311,23 @@ write_counter (const char *category, const char *name)
 }
 
 static gboolean
-do_list_counters (int socketfd)
+do_list_counters (int fd)
 {
 	char cmd = SRV_LIST_COUNTERS;
 
-	if (!write_buffer_to_socket (socketfd, (char*)&cmd, 1))
+	if (!write_buffer (fd, (char*)&cmd, 1))
 		return FALSE;
 
-	_sock = socketfd;
+	_sock = fd;
 	mono_counters_foreach (write_counter);
-	write_string (socketfd, NULL);
+	write_string (fd, NULL);
 
 	return TRUE;
 }
 
 
 static gboolean
-do_add_counter (int socketfd)
+do_add_counter (int fd)
 {
 	char cmd = SRV_ADD_COUNTERS;
 	char *category = NULL;
@@ -316,10 +339,10 @@ do_add_counter (int socketfd)
 	MonoCounterCategory mcat;
 	MonoCounterAgent *added_counter;
 
-	if (!(category = read_string (socketfd)))
+	if (!read_string (fd, &category) || !category)
 		goto fail;
 
-	if (!(name = read_string (socketfd)))
+	if (!read_string (fd, &name) || !name)
 		goto fail;
 
 	mcat = mono_counters_category_name_to_id (category);
@@ -352,14 +375,14 @@ done:
 	g_free (category);
 	g_free (name);
 
-	if (!write_buffer_to_socket (socketfd, (char*)&cmd, 1))
+	if (!write_buffer (fd, (char*)&cmd, 1))
 		return FALSE;
 
-	if (!write_buffer_to_socket (socketfd, &status, 1))
+	if (!write_buffer (fd, &status, 1))
 		return FALSE;
 
 	if (status == AGENT_STATUS_OK) {
-		if (!write_counter_agent_header (socketfd, added_counter))
+		if (!write_counter_agent_header (fd, added_counter))
 			return FALSE;
 	}
 
@@ -374,7 +397,7 @@ fail:
 }
 
 static gboolean
-do_remove_counter (int socketfd)
+do_remove_counter (int fd)
 {
 	char cmd = SRV_REMOVE_COUNTER;
 	short index;
@@ -382,7 +405,7 @@ do_remove_counter (int socketfd)
 	GSList *item;
 	MonoCounterAgent *counter_agent = NULL, *counter_agent_tmp;
 
-	if (!read_socket_to_buffer (socketfd, (char*)&index, 2))
+	if (!read_buffer (fd, (char*)&index, 2))
 		return FALSE;
 
 	if (index < 0) {
@@ -407,14 +430,14 @@ do_remove_counter (int socketfd)
 		}
 	}
 
-	if (!write_buffer_to_socket (socketfd, (char*)&cmd, 1))
+	if (!write_buffer (fd, (char*)&cmd, 1))
 		return FALSE;
 
-	return write_buffer_to_socket (socketfd, &status, 1);
+	return write_buffer (fd, &status, 1);
 }
 
 static gboolean
-do_sampling (int socketfd)
+do_sampling (int fd)
 {
 	short end;
 	char cmd = SVR_SAMPLES;
@@ -422,11 +445,11 @@ do_sampling (int socketfd)
 	GSList *item;
 	MonoCounterAgent *counter_agent;
 
-	if (!write_buffer_to_socket (socketfd, (char*)&cmd, 1))
+	if (!write_buffer (fd, (char*)&cmd, 1))
 		return FALSE;
 
 	gint64 timestamp = mono_100ns_datetime ();
-	if (!write_buffer_to_socket (socketfd, (char*)&timestamp, 8))
+	if (!write_buffer (fd, (char*)&timestamp, 8))
 		return FALSE;
 
 	for (item = counters; item; item = item->next) {
@@ -451,21 +474,21 @@ do_sampling (int socketfd)
 
 		memcpy (counter_agent->value, buffer, size);
 
-		if (!write_buffer_to_socket (socketfd, (char*)&counter_agent->index, 2) ||
-			!write_buffer_to_socket (socketfd, (char*)&size, 2) ||
-			!write_buffer_to_socket (socketfd, buffer, size))
+		if (!write_buffer (fd, (char*)&counter_agent->index, 2) ||
+			!write_buffer (fd, (char*)&size, 2) ||
+			!write_buffer (fd, buffer, size))
 			return FALSE;
 	}
 
 	end = -1;
-	if (!write_buffer_to_socket (socketfd, (char*)&end, 2))
+	if (!write_buffer (fd, (char*)&end, 2))
 		return FALSE;
 
 	return TRUE;
 }
 
 static void*
-mono_counters_agent_sampling_thread (void* ptr)
+mono_counters_agent_tcp_sampling_thread (void* ptr)
 {
 	int ret, socketfd = -1;
 	struct sockaddr_in inspector_addr;
@@ -473,29 +496,29 @@ mono_counters_agent_sampling_thread (void* ptr)
 	fd_set socketfd_set;
 	gint64 last_sampling = 0, now;
 	char cmd;
-	
+
 	if ((socketfd = socket (AF_INET, SOCK_STREAM, 0)) < 0) {
-		g_warning ("mono-counters-agent: error with socket : %s", strerror (errno));
+		g_warning ("Error with socket : %s", strerror (errno));
 		return NULL;
 	}
-	
+
 	memset (&inspector_addr, 0, sizeof (inspector_addr));
-	
+
 	inspector_addr.sin_family = AF_INET;
 	inspector_addr.sin_port = htons (inspector_port);
-	
-	if (!inet_pton (AF_INET, inspector_ip, &inspector_addr.sin_addr)) {
-		g_warning ("mono-counters-agent: error with inet_pton : %s", strerror (errno));
+
+	if (!inet_pton (AF_INET, inspector_dest, &inspector_addr.sin_addr)) {
+		g_warning ("Error with inet_pton : %s", strerror (errno));
 		goto cleanup;
 	}
-	
+
 	if (connect(socketfd, (struct sockaddr*)&inspector_addr, sizeof(inspector_addr)) < 0) {
-		g_warning ("mono-counters-agent: error with connect : %s", strerror(errno));
+		g_warning ("Error with connect : %s", strerror(errno));
 		goto cleanup;
 	}
 
 	if (!do_hello (socketfd))
-	 		goto cleanup;
+	 	goto cleanup;
 
  	for (;;) {
 		now = mono_100ns_datetime ();
@@ -513,7 +536,7 @@ mono_counters_agent_sampling_thread (void* ptr)
 		if ((ret = select (socketfd + 1, &socketfd_set, NULL, NULL, &timeout)) < 0) {
 			if (errno == EINTR)
  				continue;
-			g_warning ("mono-counters-agent: error with select : %s", strerror(errno));
+			g_warning ("Error with select : %s", strerror(errno));
 			goto cleanup;
 		}
 
@@ -523,7 +546,7 @@ mono_counters_agent_sampling_thread (void* ptr)
 
 			last_sampling = mono_100ns_datetime ();
 		} else {
-			if (!read_socket_to_buffer (socketfd, (char*)&cmd, 1))
+			if (!read_buffer (socketfd, (char*)&cmd, 1))
  				goto cleanup;
 
 			switch (cmd) {
@@ -540,7 +563,7 @@ mono_counters_agent_sampling_thread (void* ptr)
 					goto cleanup;
 				break;
 			case 127:
-				g_warning ("closing connection");
+				g_warning ("Closing connection");
 				goto cleanup;
 			default:
 				g_warning ("Unknown perf-agent command %d", cmd);
@@ -555,6 +578,34 @@ cleanup:
 	agent_running = FALSE;
 	return NULL;
 }
+
+static void*
+mono_counters_agent_file_sampling_thread (void* ptr)
+{
+	int filefd = -1;
+
+	if ((filefd = open (inspector_dest, O_WRONLY | O_APPEND | O_CREAT | O_TRUNC | O_EXLOCK, 0644)) < 0) {
+		g_warning ("Impossible to open output file '%s'", inspector_dest);
+		goto cleanup;
+	}
+
+	if (!do_hello (filefd))
+	 	goto cleanup;
+
+ 	for (;;) {
+		if (!do_sampling (filefd))
+			goto cleanup;
+
+		usleep (interval * 1000);
+	}
+
+cleanup:
+	if (filefd != -1)
+		close (filefd);
+	free_agent_memory ();
+	agent_running = FALSE;
+	return NULL;
+};
 
 static void
 parse_configuration (const gchar* configuration)
@@ -579,10 +630,10 @@ parse_configuration (const gchar* configuration)
 			interval = strtoll (opt, NULL, 10);
 		}
 	}
-	
+
 	parse_counters_names(counters_names);
 	parse_address(address);
-	
+
 	g_free((void*)counters_names);
 	g_free((void*)address);
 	g_strfreev(opts);
@@ -597,7 +648,11 @@ mono_counters_agent_start (const char *args)
 	}
 	agent_running = TRUE;
 	parse_configuration(args);
-	mono_threads_create_thread ((LPTHREAD_START_ROUTINE)&mono_counters_agent_sampling_thread, NULL, 0, 0, NULL);
+
+	if (strcmp (inspector_type, "tcp") == 0)
+		mono_threads_create_thread ((LPTHREAD_START_ROUTINE)&mono_counters_agent_tcp_sampling_thread, NULL, 0, 0, NULL);
+	else if (strcmp (inspector_type, "file") == 0)
+		mono_threads_create_thread ((LPTHREAD_START_ROUTINE)&mono_counters_agent_file_sampling_thread, NULL, 0, 0, NULL);
 }
 
 #else
@@ -609,3 +664,102 @@ mono_counters_agent_start (const char *args)
 }
 
 #endif
+
+/*
+ * Full Protocol Description :
+ *
+ * DEFINITIONS:
+ *
+ * Agent : running in the Mono VM, tcp client or write to a file, in charge of : sending the samples to the inspector, execute add/remove/list counters commands.
+ *
+ * Inspector : tcp server or read a file, in charge of : displaying samples, send add/remove/lists counters commands. Can be written in any language that support socket or file streaming.
+ *
+ * TYPES:
+ *
+ * remark: there is two ways to send a list of values :
+ *  - first, you can send the count first, and then the values
+ *  - second, you send the values and finish the list by an end value ( marked as ‘type…endtype(value = end)’ )
+ *
+ * Char:
+ * [value: 1 byte]
+ *
+ * Short:
+ * [value: 2 bytes]
+ *
+ * Int:
+ * [value: 4 bytes]
+ *
+ * Long:
+ * [value: 8 bytes]
+ *
+ * Double:
+ * [value: 8 bytes]
+ *
+ * String: if value == null, then length = -1 and there is no value;
+ * [length: int]
+ * [value: length * char]
+ *
+ * Header: describe a counter that is going to be sent during sampling
+ * [category: int]
+ * [name: string]
+ * [type: int]
+ * [unit: int]
+ * [variance: int]
+ * [index: short]
+ *
+ * Headers: list of header
+ * [count: short] number of header
+ * [value: count * header]
+ *
+ * Counter:
+ * [name: string]
+ * [category: string]
+ *
+ * Value:
+ * [index: short]
+ * [size: short]
+ * [value: size * char]
+ *
+ * ResponseStatus:
+ * [id: char] possible values : { 0x00: OK, 0x01: NOK, 0x02: NOTFOUND, 0x03: EXISTING }
+ *
+ * COMMANDS:
+ *
+ * Hello: first command of the protocol, sent by the agent to the inspector on connection. One way from agent to inspector.
+ * [cmd: char] 0
+ * [version: short] version of the protocol, currently 0.1 => 1
+ * [headers: headers] the agent counters headers.
+ *
+ * List counters: list all the mono counters that are available for sampling. Request-Response from inspector to agent.
+ * Request:
+ * [cmd: char(value = 1)]
+ * Response:
+ * [cmd: char(value = 1)]
+ * [mono counter: counter…string(value = null)]
+ *
+ * Add Counter: add a counter to the sample set. Request-Response from inspector to agent.
+ * Request:
+ * [cmd: char(value = 2)]
+ * [name: string]
+ * [category: string]
+ * Response:
+ * [cmd: char(value = 2)]
+ * [status: response_status]
+ * [header: header]
+ *
+ * Remove Counter: remove counter from the sample set. Request-Response from inspector to agent.
+ * Request:
+ * [cmd: char(value = 3)]
+ * [index: short]
+ * Response:
+ * [cmd: char(value = 3)]
+ * [status: response_status]
+ *
+ * Sampling: actual sampling of the data. One way from agent to inspector.
+ * [cmd: 4]
+ * [timestamp: long]
+ * [values: value…short(value = -1)]
+ *
+ * Good Bye: close the connection. One way from inspector to agent.
+ * [cmd: 127]
+ */
