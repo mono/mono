@@ -35,7 +35,7 @@ ifeq (moonlight_raw, $(PROFILE))
 LIB_MCS_FLAGS += -d:SECURITY_DEP
 endif
 endif
-ifeq (monotouch, $(PROFILE))
+ifeq (monotouch, $(subst _runtime,,$(PROFILE)))
 LIB_MCS_FLAGS += -d:SECURITY_DEP
 endif
 
