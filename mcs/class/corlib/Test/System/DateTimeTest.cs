@@ -1262,8 +1262,12 @@ namespace MonoTests.System
 		public void Parse_Bug53023b ()
 		{
 			foreach (CultureInfo ci in CultureInfo.GetCultures (CultureTypes.SpecificCultures)) {
-				DateTime.Parse ("01-Sep-05", ci);
-				DateTime.Parse ("4:35:35 AM", ci);
+				try {
+					DateTime.Parse ("01-Sep-05", ci);
+					DateTime.Parse ("4:35:35 AM", ci);
+				} catch {
+					Assert.Fail (ci.Name);
+				}
 			}
 		}
 
