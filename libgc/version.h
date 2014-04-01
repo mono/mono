@@ -1,4 +1,4 @@
-/* The version here should match that in configure/configure.in	*/
+/* The version here should match that in configure/configure.ac	*/
 /* Eventually this one may become unnecessary.  For now we need	*/
 /* it to keep the old-style build process working.		*/
 #define GC_TMP_VERSION_MAJOR 6
