@@ -12,6 +12,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include <pthread.h>
+#include <fcntl.h>
 #include <glib.h>
 #include <unistd.h>
 #include <arpa/inet.h>
@@ -584,7 +585,7 @@ mono_counters_agent_file_sampling_thread (void* ptr)
 {
 	int filefd = -1;
 
-	if ((filefd = open (inspector_dest, O_WRONLY | O_APPEND | O_CREAT | O_TRUNC | O_EXLOCK, 0644)) < 0) {
+	if ((filefd = open (inspector_dest, O_WRONLY | O_APPEND | O_CREAT | O_TRUNC, 0644)) < 0) {
 		g_warning ("Impossible to open output file '%s'", inspector_dest);
 		goto cleanup;
 	}
