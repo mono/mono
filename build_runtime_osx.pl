@@ -157,7 +157,7 @@ for my $arch (@arches)
 
 	if (!$iphone_simulator)
 	{
-		my $cmdline = "gcc -arch $arch -bundle -reexport_library mono/mini/.libs/libmono.a -isysroot $xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk -mmacosx-version-min=$macversion -all_load -liconv -o $libtarget/MonoBundleBinary";
+		my $cmdline = "gcc -arch $arch -bundle -Wl,-reexport_library mono/mini/.libs/libmono.a -isysroot $xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk -mmacosx-version-min=$macversion -all_load -liconv -o $libtarget/MonoBundleBinary";
 		print "About to call this cmdline to make a bundle:\n$cmdline\n";
 		system($cmdline) eq 0 or die("failed to link libmono.a into mono bundle");
 
