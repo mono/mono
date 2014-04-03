@@ -1119,7 +1119,7 @@ namespace System.Net
 			sendChunked = false;
 		}
 		
-		bool Redirect (WebAsyncResult result, HttpStatusCode code)
+		bool Redirect (WebAsyncResult result, HttpStatusCode code, WebResponse response)
 		{
 			redirects++;
 			Exception e = null;
@@ -1148,6 +1148,9 @@ namespace System.Net
 				e = new ProtocolViolationException ("Invalid status code: " + (int) code);
 				break;
 			}
+
+			if (method != "GET" && !InternalAllowBuffering)
+				e = new WebException ("The request requires buffering data to succeed.", null, WebExceptionStatus.ProtocolError, webResponse);
 
 			if (e != null)
 				throw e;
@@ -1716,7 +1719,7 @@ namespace System.Net
 				bool b = false;
 				int c = (int) code;
 				if (allowAutoRedirect && c >= 300) {
-					b = Redirect (result, code);
+					b = Redirect (result, code, webResponse);
 					if (InternalAllowBuffering && writeStream.WriteBufferLength > 0) {
 						bodyBuffer = writeStream.WriteBuffer;
 						bodyBufferLength = writeStream.WriteBufferLength;
