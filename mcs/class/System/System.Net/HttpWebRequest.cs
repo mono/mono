@@ -56,6 +56,7 @@ namespace System.Net
 		bool allowBuffering = true;
 		X509CertificateCollection certificates;
 		string connectionGroup;
+		bool haveContentLength;
 		long contentLength = -1;
 		HttpContinueDelegate continueDelegate;
 		CookieContainer cookieContainer;
@@ -277,6 +278,7 @@ namespace System.Net
 					throw new ArgumentOutOfRangeException ("value", "Content-Length must be >= 0");
 					
 				contentLength = value;
+				haveContentLength = true;
 			}
 		}
 		
@@ -1153,6 +1155,10 @@ namespace System.Net
 			contentLength = -1;
 			//bodyBufferLength = 0;
 			//bodyBuffer = null;
+			if (sendChunked) {
+				sendChunked = false;
+				webHeaders.RemoveInternal ("Transfer-Encoding");
+			}
 			uriString = webResponse.Headers ["Location"];
 
 			if (uriString == null)
@@ -1187,7 +1193,7 @@ namespace System.Net
 					if (contentLength > 0)
 						continue100 = true;
 
-					if (gotRequestStream || contentLength > 0)
+					if (haveContentLength || gotRequestStream || contentLength > 0)
 						webHeaders.SetInternal ("Content-Length", contentLength.ToString ());
 				}
 				webHeaders.RemoveInternal ("Transfer-Encoding");
