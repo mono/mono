@@ -26,7 +26,7 @@ TEST_MCS_FLAGS = -r:System.Drawing.dll -r:Mono.Security.dll -r:System.Data -r:Sy
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 LIB_MCS_FLAGS = -nowarn:618 -d:CONFIGURATION_2_0 -unsafe $(RESOURCE_FILES:%=-resource:%)
 TEST_MCS_FLAGS += -r:System.Configuration
-PROFILE_ANY_MOBILE := $(filter monotouch monodroid xammac, $(PROFILE))
+PROFILE_ANY_MOBILE := $(filter monotouch monotouch_runtime monodroid xammac, $(PROFILE))
 NOT_SL := $(filter net_2_0 net_4_0 net_4_5 monotouch_runtime monodroid mobile xammac, $(PROFILE))
 endif
 ifeq (2.1, $(FRAMEWORK_VERSION))
