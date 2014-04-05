@@ -2879,7 +2879,7 @@ namespace System
 			if (length != 0)
 				fixed (byte* bytePtr = bytes)
 					try {
-						if (value == null && length > 0)
+						if (value == null)
 							throw new ArgumentOutOfRangeException ("ptr", "Value, startIndex and length do not refer to a valid string.");
 						memcpy (bytePtr, (byte*) (value + startIndex), length);
 					} catch (NullReferenceException) {
