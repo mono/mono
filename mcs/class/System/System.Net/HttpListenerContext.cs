@@ -177,9 +177,10 @@ namespace System.Net {
 			string acceptKey = StreamWebSocket.CreateAcceptKey (secKey);
 			var rstream = cnc.GetRequestStream (false, -1);
 			var wstream = new NetworkStream (cnc.Hijack ());
-			string header = "HTTP/1.1 101 Switching Protocols\r\n";
-			header += "Upgrade: websocket\r\nConnection: Upgrade\r\n";
-			header += "Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";
+			string header = "HTTP/1.1 101 Switching Protocols\r\n" +
+				"Upgrade: websocket\r\n" +
+				"Connection: Upgrade\r\n" +
+				"Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";
 			var headerBytes = Encoding.ASCII.GetBytes (header);
 			await wstream.WriteAsync (headerBytes, 0, headerBytes.Length);
 			return new HttpListenerWebSocketContext (rstream, wstream, request, user, subProtocol);
