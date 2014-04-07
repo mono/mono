@@ -37,6 +37,7 @@ using System.Security.Principal;
 using System.Text;
 
 #if NET_4_5
+using System.Net.Sockets;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
 #endif
@@ -175,7 +176,7 @@ namespace System.Net {
 			}
 			string acceptKey = StreamWebSocket.CreateAcceptKey (secKey);
 			var rstream = cnc.GetRequestStream (false, -1);
-			var wstream = cnc.Hijack ();
+			var wstream = new NetworkStream (cnc.Hijack ());
 			string header = "HTTP/1.1 101 Switching Protocols\r\n";
 			header += "Upgrade: websocket\r\nConnection: Upgrade\r\n";
 			header += "Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";

@@ -209,10 +209,14 @@ namespace System.Net {
 			return o_stream;
 		}
 
-		internal Stream Hijack ()
+		internal Socket Hijack ()
 		{
 			// TODO: disable normal request/response.
-			return stream;
+			RemoveConnection ();
+			var s = sock;
+			sock = null;
+			o_stream = null;
+			return s;
 		}
 
 		static void OnRead (IAsyncResult ares)
