@@ -1926,6 +1926,75 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.That (ex.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#3");
 			}
 		}
+		
+		// Xamarin Bugzilla 18398.  Simulate recursive rearming task continuations that are typical in long-running 
+		// servers, and verify that Tasks are not getting leaked.
+		//
+		[Test]
+		public void TaskContinuationChainLeak()
+		{
+			// Start cranking out tasks, starting each new task upon completion of and from inside the prior task.
+			//
+			var tester = new TaskContinuationChainLeakTester();
+			tester.Run();
+			
+			// Pile up some tasks.
+			//
+			Thread.Sleep(500);
+
+			// Head task should be out of scope by now.  Manually run the GC and expect that it gets collected.
+			// 
+			GC.Collect();
+			GC.WaitForPendingFinalizers();
+
+			try
+			{
+				// It's important that we do the asserting while the task recursion is still going, since that is the 
+				// crux of the problem scenario.
+				//
+				tester.Assert();
+			}
+			finally
+			{
+				tester.Stop();
+			}
+		}
+
+		class TaskContinuationChainLeakTester
+		{
+			volatile bool m_bStop;
+			
+			WeakReference<Task> m_headTaskWeakRef;
+
+			public void Run()
+			{
+				m_headTaskWeakRef = new WeakReference<Task>(StartNewTask());
+			}
+
+			public Task StartNewTask()
+			{
+				if (m_bStop) return null;
+
+				return Task.Factory.StartNew(DummyWorker).ContinueWith(task => StartNewTask());
+			}
+
+			public void Stop()
+			{
+				m_bStop = true;
+			}
+
+			public void Assert()
+			{
+				Task task = null;
+				Assert.IsFalse(m_headTaskWeakRef.TryGetTarget(out task));
+			}
+
+			void DummyWorker()
+			{
+				Thread.Sleep(1);
+			}
+		}
+		
 #endif
 	}
 }
