@@ -16,6 +16,7 @@ struct _MonoProfiler {
 };
 
 void on_runtime_initialized (MonoProfiler *prof);
+void on_runtime_shutdown (MonoProfiler *prof);
 void mono_profiler_startup (const char *desc);
 
 void
@@ -29,12 +30,18 @@ on_runtime_initialized (MonoProfiler *prof)
 }
 
 void
+on_runtime_shutdown (MonoProfiler *prof)
+{
+	mono_counters_agent_stop ();
+}
+
+void
 mono_profiler_startup (const char *desc)
 {
 	MonoProfiler *prof = g_new0 (MonoProfiler, 1);
 
 	prof->desc = g_strdup (desc);
 
-	mono_profiler_install (prof, NULL);
+	mono_profiler_install (prof, on_runtime_shutdown);
 	mono_profiler_install_runtime_initialized (on_runtime_initialized);
 }
