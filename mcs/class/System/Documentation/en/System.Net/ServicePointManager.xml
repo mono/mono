@@ -109,7 +109,7 @@ instance. </para>
 	  <example>
 	    <para>The following example removes weak (export) ciphers from the list that will be offered to the server.</para>
 	    <code lang="C#">
-ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable&lt;string&gt; allCiphers) => {
+ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable&lt;string&gt; allCiphers) =&gt; {
     return from cipher in allCiphers where !cipher.Contains ("EXPORT")
     select cipher;
 };
@@ -119,10 +119,11 @@ ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnum
 	  <para>Example: Use AES128 (preference) or AES256 (allowed) but no other ciphers.</para>
 
 	  <code lang="C#">
-ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable<string> allCiphers) => {
+ServicePointManager.ClientCipherSuitesCallback += (SecurityProtocolType p, IEnumerable&lt;string&gt; allCiphers) =&gt; {
     string prefix = p == SecurityProtocolType.Tls ? "TLS_" : "SSL_";
-    return new List<string> { prefix + "RSA_WITH_AES_128_CBC_SHA", prefix + "RSA_WITH_AES_256_CBC_SHA" };
+    return new List&lt;string&gt; { prefix + "RSA_WITH_AES_128_CBC_SHA", prefix + "RSA_WITH_AES_256_CBC_SHA" };
 };
+    </code>
 	</example>
       </remarks>
       </Docs>
