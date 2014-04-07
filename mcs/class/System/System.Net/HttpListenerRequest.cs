@@ -528,11 +528,11 @@ namespace System.Net {
 		public bool IsWebSocketRequest {
 			get {
 				string connection = headers.Get ("Connection");
-				if (connection == null || String.Compare (connection, "upgrade", StringComparison.OrdinalIgnoreCase) != 0) {
+				if (connection == null || ! connection.Equals ("upgrade", StringComparison.OrdinalIgnoreCase)) {
 					return false;
 				}
 				string upgrade = headers.Get ("Upgrade");
-				if (upgrade == null || String.Compare (upgrade, "websocket", StringComparison.OrdinalIgnoreCase) != 0) {
+				if (upgrade == null || ! upgrade.Equals ("websocket", StringComparison.OrdinalIgnoreCase)) {
 					return false;
 				}
 				return true;
