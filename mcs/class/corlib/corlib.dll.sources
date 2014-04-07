@@ -415,6 +415,7 @@ System.Globalization/NumberStyles.cs
 System.Globalization/PersianCalendar.cs
 System.Globalization/RegionInfo.cs
 System.Globalization/RegionInfo.MonoTouch.cs
+System.Globalization/SortVersion.cs
 System.Globalization/StringInfo.cs
 System.Globalization/TaiwanCalendar.cs
 System.Globalization/TaiwanLunisolarCalendar.cs
