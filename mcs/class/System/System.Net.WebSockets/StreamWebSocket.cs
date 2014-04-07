@@ -79,7 +79,9 @@ namespace System.Net.WebSockets {
 				writeStream.Dispose ();
 				writeStream = null;
 			}
-			state = WebSocketState.Aborted;
+			if (state != WebSocketState.Closed) {
+				state = WebSocketState.Aborted;
+			}
 		}
 
 		public override WebSocketState State {
@@ -173,10 +175,12 @@ namespace System.Net.WebSockets {
 				UnmaskInPlace (mask, tmpBuffer, 0, (int)length);
 				var closeStatus = (WebSocketCloseStatus)(tmpBuffer[0] << 8 | tmpBuffer[1]);
 				var closeDesc = tmpBuffer.Length > 2 ? Encoding.UTF8.GetString (tmpBuffer, 2, tmpBuffer.Length - 2) : string.Empty;
-				if (state == WebSocketState.Open) {
+				if (state == WebSocketState.CloseSent) {
 					await SendCloseFrame (WebSocketCloseStatus.NormalClosure, "Received Close", cancellationToken).ConfigureAwait (false);
+					InnerClose ();
+				} else {
+					state = WebSocketState.CloseReceived;
 				}
-				state = WebSocketState.Closed;
 				return new WebSocketReceiveResult ((int)length, type, isLast, closeStatus, closeDesc);
 			} else {
 				var readLength = (int)(buffer.Count < length ? buffer.Count : length);
@@ -194,17 +198,28 @@ namespace System.Net.WebSockets {
 		{
 			EnsureWebSocketConnected ();
 			await SendCloseFrame (closeStatus, statusDescription, cancellationToken).ConfigureAwait (false);
-			state = WebSocketState.CloseSent;
-			// TODO: figure what's exceptions are thrown if the server returns something faulty here
-			await ReceiveAsync (new ArraySegment<byte> (new byte[0]), cancellationToken).ConfigureAwait (false);
-			state = WebSocketState.Closed;
+			if (state == WebSocketState.Open) {
+				state = WebSocketState.CloseSent;
+				while (true) {
+					// TODO: figure what's exceptions are thrown if the server returns something faulty here
+					var result = await ReceiveAsync (new ArraySegment<byte> (new byte[0]), cancellationToken).ConfigureAwait (false);
+					if (result.MessageType == WebSocketMessageType.Close) {
+						break;
+					}
+				}
+			}
+			InnerClose ();
 		}
 
 		public override async Task CloseOutputAsync (WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken)
 		{
 			EnsureWebSocketConnected ();
 			await SendCloseFrame (closeStatus, statusDescription, cancellationToken).ConfigureAwait (false);
-			state = WebSocketState.CloseSent;
+			if (state == WebSocketState.CloseReceived) {
+				InnerClose ();
+			} else {
+				state = WebSocketState.CloseSent;
+			}
 		}
 
 		async Task SendCloseFrame (WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken)
@@ -215,6 +230,15 @@ namespace System.Net.WebSockets {
 			if (!string.IsNullOrEmpty (statusDescription))
 				Encoding.UTF8.GetBytes (statusDescription, 0, statusDescription.Length, statusDescBuffer, 2);
 			await SendAsync (new ArraySegment<byte> (statusDescBuffer), WebSocketMessageType.Close, true, cancellationToken).ConfigureAwait (false);
+		}
+
+		void InnerClose()
+		{
+			readStream.Dispose ();
+			readStream = null;
+			writeStream.Dispose ();
+			writeStream = null;
+			state = WebSocketState.Closed;
 		}
 
 		public static string CreateAcceptKey(string secKey)
