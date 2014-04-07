@@ -779,8 +779,8 @@ namespace MonoTests.System.Threading.Tasks
 					}, TaskCreationOptions.AttachedToParent);
 				}, TaskCreationOptions.AttachedToParent);
 			});
-			t.Wait ();
-			Assert.IsTrue (result);
+			Assert.IsTrue (t.Wait (4000), "#1");
+			Assert.IsTrue (result, "#2");
 		}
 
 		[Test]
