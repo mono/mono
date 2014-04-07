@@ -11,7 +11,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <errno.h>
-#include <pthread.h>
 #include <fcntl.h>
 #include <glib.h>
 #include <unistd.h>
@@ -57,8 +56,9 @@ static int inspector_port;
 static gint64 interval;
 
 static GSList* counters;
-static gboolean agent_running;
+static gboolean agent_running = FALSE;
 static short current_index = 0;
+static int fd = -1;
 
 static void
 free_agent_memory (void)
@@ -183,7 +183,7 @@ parse_address (const char *address)
 }
 
 static gboolean
-write_buffer (int fd, const char* buffer, size_t size)
+write_buffer (const char* buffer, size_t size)
 {
 	size_t sent = 0;
 
@@ -198,7 +198,7 @@ write_buffer (int fd, const char* buffer, size_t size)
 }
 
 static gboolean
-read_buffer (int fd, char* buffer, size_t size)
+read_buffer (char* buffer, size_t size)
 {
 	size_t recvd = 0;
 
@@ -213,28 +213,28 @@ read_buffer (int fd, char* buffer, size_t size)
 }
 
 static gboolean
-write_string (int fd, const char *str)
+write_string (const char *str)
 {
 	int size = -1;
 
 	if (!str)
-		return write_buffer (fd, (char*)&size, 4);
+		return write_buffer ((char*)&size, 4);
 
 	size = strlen (str);
-	if (!write_buffer (fd, (char*)&size, 4))
+	if (!write_buffer ((char*)&size, 4))
 		return FALSE;
-	if (!write_buffer (fd, str, size))
+	if (!write_buffer (str, size))
 		return FALSE;
 
 	return TRUE;
 }
 
 static gboolean
-read_string (int fd, char **str)
+read_string (char **str)
 {
 	int len;
 
-	if (!read_buffer (fd, (char*)&len, 4))
+	if (!read_buffer ((char*)&len, 4))
 		return FALSE;
 
 	if (len < 0) {
@@ -243,7 +243,7 @@ read_string (int fd, char **str)
 	}
 
 	*str = g_malloc(len + 1);
-	if (!read_buffer (fd, *str, len))
+	if (!read_buffer (*str, len))
 		return FALSE;
 
 	(*str) [len] = '\0';
@@ -252,30 +252,30 @@ read_string (int fd, char **str)
 }
 
 static gboolean
-write_counter_agent_header (int fd, MonoCounterAgent *counter_agent)
+write_counter_agent_header (MonoCounterAgent *counter_agent)
 {
-	if (!write_buffer(fd, (char*)&counter_agent->counter->category, 4) ||
-		!write_string (fd, counter_agent->counter->name) ||
-		!write_buffer (fd, (char*)&counter_agent->counter->type, 4) ||
-		!write_buffer (fd, (char*)&counter_agent->counter->unit, 4) ||
-		!write_buffer (fd, (char*)&counter_agent->counter->variance, 4) ||
-		!write_buffer (fd, (char*)&counter_agent->index, 2))
+	if (!write_buffer((char*)&counter_agent->counter->category, 4) ||
+		!write_string (counter_agent->counter->name) ||
+		!write_buffer ((char*)&counter_agent->counter->type, 4) ||
+		!write_buffer ((char*)&counter_agent->counter->unit, 4) ||
+		!write_buffer ((char*)&counter_agent->counter->variance, 4) ||
+		!write_buffer ((char*)&counter_agent->index, 2))
 		return FALSE;
 
 	return TRUE;
 }
 
 static gboolean
-write_counter_agent_headers (int fd)
+write_counter_agent_headers ()
 {
 	short count = g_slist_length (counters);
 	GSList *item;
 
-	if (!write_buffer (fd, (char*)&count, 2))
+	if (!write_buffer ((char*)&count, 2))
 		return FALSE;
 
 	for (item = counters; item; item = item->next) {
-		if (!write_counter_agent_header (fd, item->data))
+		if (!write_counter_agent_header (item->data))
 			return FALSE;
 	}
 
@@ -283,52 +283,50 @@ write_counter_agent_headers (int fd)
 }
 
 static gboolean
-do_hello (int fd)
+do_hello ()
 {
 	char cmd = SRV_HELLO;
 	short version = MONO_COUNTERS_AGENT_PROTOCOL_VERSION;
 
-	if (!write_buffer (fd, (char*)&cmd, 1))
+	if (!write_buffer ((char*)&cmd, 1))
 		return FALSE;
 
-	if (!write_buffer (fd, (char*)&version, 2))
+	if (!write_buffer ((char*)&version, 2))
 		return FALSE;
 
-	if (!write_counter_agent_headers (fd))
+	if (!write_counter_agent_headers ())
 		return FALSE;
 
 	return TRUE;
 }
 
-static int _sock;
 static gboolean
 write_counter (const char *category, const char *name)
 {
-	if (!write_string (_sock, category))
+	if (!write_string (category))
 		return FALSE;
-	if (!write_string (_sock, name))
+	if (!write_string (name))
 		return FALSE;
 	return TRUE;
 }
 
 static gboolean
-do_list_counters (int fd)
+do_list_counters ()
 {
 	char cmd = SRV_LIST_COUNTERS;
 
-	if (!write_buffer (fd, (char*)&cmd, 1))
+	if (!write_buffer ((char*)&cmd, 1))
 		return FALSE;
 
-	_sock = fd;
 	mono_counters_foreach (write_counter);
-	write_string (fd, NULL);
+	write_string (NULL);
 
 	return TRUE;
 }
 
 
 static gboolean
-do_add_counter (int fd)
+do_add_counter ()
 {
 	char cmd = SRV_ADD_COUNTERS;
 	char *category = NULL;
@@ -340,10 +338,10 @@ do_add_counter (int fd)
 	MonoCounterCategory mcat;
 	MonoCounterAgent *added_counter;
 
-	if (!read_string (fd, &category) || !category)
+	if (!read_string (&category) || !category)
 		goto fail;
 
-	if (!read_string (fd, &name) || !name)
+	if (!read_string (&name) || !name)
 		goto fail;
 
 	mcat = mono_counters_category_name_to_id (category);
@@ -376,14 +374,14 @@ done:
 	g_free (category);
 	g_free (name);
 
-	if (!write_buffer (fd, (char*)&cmd, 1))
+	if (!write_buffer ((char*)&cmd, 1))
 		return FALSE;
 
-	if (!write_buffer (fd, &status, 1))
+	if (!write_buffer (&status, 1))
 		return FALSE;
 
 	if (status == AGENT_STATUS_OK) {
-		if (!write_counter_agent_header (fd, added_counter))
+		if (!write_counter_agent_header (added_counter))
 			return FALSE;
 	}
 
@@ -398,7 +396,7 @@ fail:
 }
 
 static gboolean
-do_remove_counter (int fd)
+do_remove_counter ()
 {
 	char cmd = SRV_REMOVE_COUNTER;
 	short index;
@@ -406,7 +404,7 @@ do_remove_counter (int fd)
 	GSList *item;
 	MonoCounterAgent *counter_agent = NULL, *counter_agent_tmp;
 
-	if (!read_buffer (fd, (char*)&index, 2))
+	if (!read_buffer ((char*)&index, 2))
 		return FALSE;
 
 	if (index < 0) {
@@ -431,14 +429,14 @@ do_remove_counter (int fd)
 		}
 	}
 
-	if (!write_buffer (fd, (char*)&cmd, 1))
+	if (!write_buffer ((char*)&cmd, 1))
 		return FALSE;
 
-	return write_buffer (fd, &status, 1);
+	return write_buffer (&status, 1);
 }
 
 static gboolean
-do_sampling (int fd)
+do_sampling ()
 {
 	short end;
 	char cmd = SVR_SAMPLES;
@@ -446,11 +444,11 @@ do_sampling (int fd)
 	GSList *item;
 	MonoCounterAgent *counter_agent;
 
-	if (!write_buffer (fd, (char*)&cmd, 1))
+	if (!write_buffer ((char*)&cmd, 1))
 		return FALSE;
 
 	gint64 timestamp = mono_100ns_datetime ();
-	if (!write_buffer (fd, (char*)&timestamp, 8))
+	if (!write_buffer ((char*)&timestamp, 8))
 		return FALSE;
 
 	for (item = counters; item; item = item->next) {
@@ -475,14 +473,14 @@ do_sampling (int fd)
 
 		memcpy (counter_agent->value, buffer, size);
 
-		if (!write_buffer (fd, (char*)&counter_agent->index, 2) ||
-			!write_buffer (fd, (char*)&size, 2) ||
-			!write_buffer (fd, buffer, size))
+		if (!write_buffer ((char*)&counter_agent->index, 2) ||
+			!write_buffer ((char*)&size, 2) ||
+			!write_buffer (buffer, size))
 			return FALSE;
 	}
 
 	end = -1;
-	if (!write_buffer (fd, (char*)&end, 2))
+	if (!write_buffer ((char*)&end, 2))
 		return FALSE;
 
 	return TRUE;
@@ -491,14 +489,14 @@ do_sampling (int fd)
 static void*
 mono_counters_agent_tcp_sampling_thread (void* ptr)
 {
-	int ret, socketfd = -1;
+	int ret;
 	struct sockaddr_in inspector_addr;
 	struct timeval timeout;
 	fd_set socketfd_set;
 	gint64 last_sampling = 0, now;
 	char cmd;
 
-	if ((socketfd = socket (AF_INET, SOCK_STREAM, 0)) < 0) {
+	if ((fd = socket (AF_INET, SOCK_STREAM, 0)) < 0) {
 		g_warning ("Error with socket : %s", strerror (errno));
 		return NULL;
 	}
@@ -513,15 +511,15 @@ mono_counters_agent_tcp_sampling_thread (void* ptr)
 		goto cleanup;
 	}
 
-	if (connect(socketfd, (struct sockaddr*)&inspector_addr, sizeof(inspector_addr)) < 0) {
+	if (connect(fd, (struct sockaddr*)&inspector_addr, sizeof(inspector_addr)) < 0) {
 		g_warning ("Error with connect : %s", strerror(errno));
 		goto cleanup;
 	}
 
-	if (!do_hello (socketfd))
+	if (!do_hello ())
 	 	goto cleanup;
 
- 	for (;;) {
+	while (agent_running) {
 		now = mono_100ns_datetime ();
 		if (last_sampling == 0 || now > last_sampling + interval * 10000) {
 			timeout.tv_sec = 0;
@@ -532,9 +530,9 @@ mono_counters_agent_tcp_sampling_thread (void* ptr)
 		}
 
 		FD_ZERO (&socketfd_set);
-		FD_SET (socketfd, &socketfd_set);
+		FD_SET (fd, &socketfd_set);
 
-		if ((ret = select (socketfd + 1, &socketfd_set, NULL, NULL, &timeout)) < 0) {
+		if ((ret = select (fd + 1, &socketfd_set, NULL, NULL, &timeout)) < 0) {
 			if (errno == EINTR)
  				continue;
 			g_warning ("Error with select : %s", strerror(errno));
@@ -542,25 +540,25 @@ mono_counters_agent_tcp_sampling_thread (void* ptr)
 		}
 
 		if (ret == 0) {
-			if (!do_sampling (socketfd))
+			if (!do_sampling ())
  				goto cleanup;
 
 			last_sampling = mono_100ns_datetime ();
 		} else {
-			if (!read_buffer (socketfd, (char*)&cmd, 1))
+			if (!read_buffer ((char*)&cmd, 1))
  				goto cleanup;
 
 			switch (cmd) {
 			case 0:
-				if (!do_list_counters (socketfd))
+				if (!do_list_counters ())
 					goto cleanup;
 				break;
 			case 1:
-				if (!do_add_counter (socketfd))
+				if (!do_add_counter ())
 					goto cleanup;
 				break;
 			case 2:
-				if (!do_remove_counter (socketfd))
+				if (!do_remove_counter ())
 					goto cleanup;
 				break;
 			case 127:
@@ -573,38 +571,30 @@ mono_counters_agent_tcp_sampling_thread (void* ptr)
 	}
 
 cleanup:
-	if (socketfd != -1)
-		close (socketfd);
-	free_agent_memory ();
-	agent_running = FALSE;
+	mono_counters_agent_stop ();
 	return NULL;
 }
 
 static void*
 mono_counters_agent_file_sampling_thread (void* ptr)
 {
-	int filefd = -1;
-
-	if ((filefd = open (inspector_dest, O_WRONLY | O_APPEND | O_CREAT | O_TRUNC, 0644)) < 0) {
+	if ((fd = open (inspector_dest, O_WRONLY | O_APPEND | O_CREAT | O_TRUNC, 0644)) < 0) {
 		g_warning ("Impossible to open output file '%s'", inspector_dest);
 		goto cleanup;
 	}
 
-	if (!do_hello (filefd))
+	if (!do_hello ())
 	 	goto cleanup;
 
- 	for (;;) {
-		if (!do_sampling (filefd))
+	while (agent_running) {
+		if (!do_sampling ())
 			goto cleanup;
 
 		usleep (interval * 1000);
 	}
 
 cleanup:
-	if (filefd != -1)
-		close (filefd);
-	free_agent_memory ();
-	agent_running = FALSE;
+	mono_counters_agent_stop ();
 	return NULL;
 };
 
@@ -656,10 +646,33 @@ mono_counters_agent_start (const char *args)
 		mono_threads_create_thread ((LPTHREAD_START_ROUTINE)&mono_counters_agent_file_sampling_thread, NULL, 0, 0, NULL);
 }
 
+void
+mono_counters_agent_stop ()
+{
+	if (!agent_running) {
+		g_warning ("Agent not running");
+		return;
+	}
+
+	if (fd != -1) {
+		close (fd);
+		fd = -1;
+	}
+	free_agent_memory ();
+
+	agent_running = FALSE;
+}
+
 #else
 
 void
 mono_counters_agent_start (const char *args)
+{
+	g_warning ("Perf agent not supported on windows");
+}
+
+void
+mono_counters_agent_stop ()
 {
 	g_warning ("Perf agent not supported on windows");
 }
