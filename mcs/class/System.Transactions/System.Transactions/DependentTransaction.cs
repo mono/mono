@@ -13,8 +13,13 @@ using System.Runtime.Serialization;
 namespace System.Transactions
 {
 	[MonoTODO ("Not supported yet")]
+#if !WINDOWS_PHONE && !NETFX_CORE
 	[Serializable]
-	public sealed class DependentTransaction : Transaction, ISerializable
+#endif
+	public sealed class DependentTransaction : Transaction
+#if !WINDOWS_PHONE && !NETFX_CORE
+		, ISerializable
+#endif
 	{
 //		Transaction parent;
 //		DependentCloneOption option;
@@ -37,6 +42,7 @@ namespace System.Transactions
 			throw new NotImplementedException ();
 		}
 
+#if !WINDOWS_PHONE && !NETFX_CORE
 		void ISerializable.GetObjectData (SerializationInfo info,
 			StreamingContext context)
 		{
@@ -45,6 +51,7 @@ namespace System.Transactions
 //				"option", typeof (DependentCloneOption));
 			completed = info.GetBoolean ("completed");
 		}
+#endif
 	}
 }
 

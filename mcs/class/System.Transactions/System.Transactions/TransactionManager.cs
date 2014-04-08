@@ -9,8 +9,8 @@
 // (C)2006 Novell Inc,
 //
 #if NET_2_0
-using System.Configuration;
 #if !MOBILE
+using System.Configuration;
 using System.Transactions.Configuration;
 #endif
 
