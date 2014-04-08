@@ -9,7 +9,25 @@
 //
 
 using System;
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System.Transactions;
 
 namespace MonoTests.System.Transactions
@@ -49,33 +67,42 @@ namespace MonoTests.System.Transactions
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void TransactionScopeCompleted1 ()
 		{
 			using (TransactionScope scope = new TransactionScope ()) {
 				scope.Complete ();
-				/* Can't access ambient transaction after scope.Complete */
-				TransactionStatus status = Transaction.Current.TransactionInformation.Status;
+				try {
+					TransactionStatus status = Transaction.Current.TransactionInformation.Status;
+					Assert.Fail ("Expected an exception of type InvalidOperationException");
+				} catch (InvalidOperationException) {
+					// Can't access ambient transaction after scope.Complete
+				}
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void TransactionScopeCompleted2 ()
 		{
 			using (TransactionScope scope = new TransactionScope ()) {
 				scope.Complete ();
-				Transaction.Current = Transaction.Current;
+				try {
+					Transaction.Current = Transaction.Current;
+					Assert.Fail ("Expected an exception of type InvalidOperationException");
+				} catch (InvalidOperationException) {
+				} 
 			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void TransactionScopeCompleted3 ()
 		{
 			using (TransactionScope scope = new TransactionScope ()) {
 				scope.Complete ();
-				scope.Complete ();
+				try {
+					scope.Complete ();
+					Assert.Fail ("Expected an exception of type InvalidOperationException");
+				} catch (InvalidOperationException) {
+				}
 			}
 		}
 
@@ -349,11 +376,11 @@ namespace MonoTests.System.Transactions
 		}
 
 		[Test]
-		[ExpectedException (typeof (TransactionAbortedException))]
 		public void NestedTransactionScope10 ()
 		{
 			IntResourceManager irm = new IntResourceManager (1);
 			bool failed = false;
+			TransactionAbortedException expectedException = null;
 
 			Assert.IsNull (Transaction.Current, "Ambient transaction exists (before)");
 			using (TransactionScope scope = new TransactionScope ()) {
@@ -366,14 +393,20 @@ namespace MonoTests.System.Transactions
 					scope2.Complete (); */
 				}
 
-				using (TransactionScope scope3 = new TransactionScope ()) {
-					/* Aborted transaction cannot be used for another
-					 * TransactionScope 
-					 */
-					//Assert.Fail ("Should not reach here.");
-					failed = true;
+				try {
+					using (TransactionScope scope3 = new TransactionScope ()) {
+						/* Aborted transaction cannot be used for another
+						 * TransactionScope 
+						 */
+						//Assert.Fail ("Should not reach here.");
+						failed = true;
+					}
+				} catch (TransactionAbortedException ex)
+				{
+					expectedException = ex;
 				}
 			}
+			Assert.IsNotNull ( expectedException, "Expected an exception of type TransactionAbortedException" );
 			Assert.IsFalse ( failed, "Aborted Tx cannot be used for another TransactionScope" );
 		}
 
@@ -403,23 +436,26 @@ namespace MonoTests.System.Transactions
 		}
 
 		[Test]
-		[ExpectedException (typeof (TransactionAbortedException))]
 		public void NestedTransactionScope13 ()
 		{
 			IntResourceManager irm = new IntResourceManager ( 1 );
 
 			Assert.IsNull ( Transaction.Current, "Ambient transaction exists (before)" );
-			using ( TransactionScope scope = new TransactionScope () ) {
-				irm.Value = 2;
+			try {
+				using ( TransactionScope scope = new TransactionScope () ) {
+					irm.Value = 2;
 
-				using ( TransactionScope scope2 = new TransactionScope () ) {
-					irm.Value = 4;
-					/* Not completing this, so the transaction will
-					 * get aborted 
-					scope2.Complete (); */
+					using ( TransactionScope scope2 = new TransactionScope () ) {
+						irm.Value = 4;
+						/* Not completing this, so the transaction will
+						 * get aborted 
+						scope2.Complete (); */
+					}
+
+					scope.Complete ();
 				}
-
-				scope.Complete ();
+				Assert.Fail ( "Expected an exception of type TransactionAbortedException" );
+			} catch (TransactionAbortedException) {
 			}
 		}
 		#endregion
@@ -679,7 +715,6 @@ namespace MonoTests.System.Transactions
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void ExplicitTransaction6 ()
 		{
 			CommittableTransaction ct = new CommittableTransaction ();
@@ -688,11 +723,14 @@ namespace MonoTests.System.Transactions
 			irm.Value = 2;
 			ct.Commit ();
 
-			ct.Commit ();
+			try {
+				ct.Commit ();
+				Assert.Fail ("Expected an exception of type InvalidOperationException");
+			} catch (InvalidOperationException) {
+			}
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
 		public void ExplicitTransaction6a ()
 		{
 			CommittableTransaction ct = new CommittableTransaction ();
@@ -701,10 +739,15 @@ namespace MonoTests.System.Transactions
 			irm.Value = 2;
 			ct.Commit ();
 
-			/* Using a already committed transaction in a new 
-			 * TransactionScope
-			 */
-			TransactionScope scope = new TransactionScope ( ct );
+			try
+			{
+				TransactionScope scope = new TransactionScope(ct);
+				Assert.Fail("Expected an exception of type InvalidOperationException");
+			}
+			catch (InvalidOperationException)
+			{
+				// Using a already committed transaction in a new TransactionScope
+			}
 		}
 
 		[Test]
@@ -814,7 +857,6 @@ namespace MonoTests.System.Transactions
 		}
 
 		[Test]
-		[ExpectedException (typeof (TransactionException))]
 		public void ExplicitTransaction7 ()
 		{
 			CommittableTransaction ct = new CommittableTransaction ();
@@ -823,7 +865,11 @@ namespace MonoTests.System.Transactions
 			irm.Value = 2;
 			ct.Commit ();
 			/* Cannot accept any new work now, so TransactionException */
-			ct.Rollback ();
+			try {
+				ct.Rollback ();
+				Assert.Fail ("Expected an exception of type TransactionException");
+			} catch (TransactionException) {
+			}
 		}
 
 		[Test]
@@ -867,14 +913,18 @@ namespace MonoTests.System.Transactions
 		}
 
 		[Test]
-		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorkingOnWindowsPhone")]
 		public void ExplicitTransaction9 ()
 		{
 			CommittableTransaction ct = new CommittableTransaction ();
 
 			IntResourceManager irm = new IntResourceManager ( 1 );
 			ct.BeginCommit ( null, null );
-			ct.BeginCommit ( null, null );
+			try {
+				ct.BeginCommit ( null, null );
+				Assert.Fail ("Expected an exception of type InvalidOperationException");
+			} catch (InvalidOperationException) {
+			}
 		}
 
 		[Test]
@@ -931,6 +981,7 @@ namespace MonoTests.System.Transactions
 		}
 
 		[Test]
+		[Category ("NotWorkingOnWindowsPhone")]
 		public void ExplicitTransaction10b ()
 		{
 			CommittableTransaction ct = new CommittableTransaction ();
@@ -959,7 +1010,7 @@ namespace MonoTests.System.Transactions
 		}
 
 		[Test]
-		[ExpectedException ( typeof (ArgumentException))]
+		[Category ("NotWorkingOnWindowsPhone")]
 		public void ExplicitTransaction12 ()
 		{
 			CommittableTransaction ct = new CommittableTransaction ();
@@ -967,7 +1018,11 @@ namespace MonoTests.System.Transactions
 			IntResourceManager irm = new IntResourceManager ( 1 );
 			irm.FailPrepare = true;
 			ct.BeginCommit ( null, null );
-			ct.EndCommit ( null );
+			try {
+				ct.EndCommit ( null );
+				Assert.Fail ( "Expected an exception of type ArgumentException" );
+			} catch (ArgumentException) {
+			}
 		}
 
 		[Test]

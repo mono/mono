@@ -9,14 +9,36 @@
 
 using System;
 using System.Transactions;
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
+#endif // USE_MSUNITTEST
 using System.Threading;
 
 namespace  MonoTests.System.Transactions {
 
-	[TestFixture]
+
+	// Not all tests working, see:
 	// https://bugzilla.novell.com/show_bug.cgi?id=463999
-	[Category ("NotWorking")]
+	//
+	// All tests marked with NotWorkingOnWindowsPhone fail on WP8
+	// as a result of delegate.BeginInvoke not being supported.
+	[TestFixture]
 	public class AsyncTest {
 
 		[SetUp]
@@ -36,7 +58,8 @@ namespace  MonoTests.System.Transactions {
 		}
 
 		[Test]
-		[ExpectedException ( typeof ( InvalidOperationException ) )]
+		[Category ("NotWorking")]
+		[Category ("NotWorkingOnWindowsPhone")]
 		public void AsyncFail1 ()
 		{
 			IntResourceManager irm = new IntResourceManager ( 1 );
@@ -49,12 +72,17 @@ namespace  MonoTests.System.Transactions {
 			irm.Value = 2;
 
 			IAsyncResult ar = ct.BeginCommit ( null, null );
-			IAsyncResult ar2 = ct.BeginCommit ( null, null );
+			try {
+				IAsyncResult ar2 = ct.BeginCommit(null, null);
+				Assert.Fail("Expected an exception of type InvalidOperationException");
+			} catch (InvalidOperationException) {
+			}
 		}
 
 
 		[Test]
-		[ExpectedException (typeof (TransactionAbortedException))]
+		[Category ("NotWorking")]
+		[Category ("NotWorkingOnWindowsPhone")]
 		public void AsyncFail2 ()
 		{
 			IntResourceManager irm = new IntResourceManager ( 1 );
@@ -69,7 +97,11 @@ namespace  MonoTests.System.Transactions {
 
 			IAsyncResult ar = ct.BeginCommit ( null, null );
 
-			ct.EndCommit ( ar );
+			try {
+				ct.EndCommit(ar);
+				Assert.Fail("Expected an exception of type TransactionAbortedException");
+			} catch (TransactionAbortedException) {
+			}
 		}
 
 		AsyncCallback callback = null;
@@ -94,6 +126,8 @@ namespace  MonoTests.System.Transactions {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		[Category ("NotWorkingOnWindowsPhone")]
 		public void AsyncFail3 ()
 		{
 			delayedException = null;
@@ -109,7 +143,11 @@ namespace  MonoTests.System.Transactions {
 
 			callback = new AsyncCallback (CommitCallback);
 			IAsyncResult ar = ct.BeginCommit ( callback, 5 );
+#if WINDOWS_PHONE || NETFX_CORE
+			mr.WaitOne (new TimeSpan (0, 0, 60));
+#else
 			mr.WaitOne (new TimeSpan (0, 0, 60), true);
+#endif
 
 			Assert.IsTrue ( called, "callback not called" );
 			Assert.AreEqual ( 5, state, "state not preserved" );
@@ -119,6 +157,8 @@ namespace  MonoTests.System.Transactions {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		[Category ("NotWorkingOnWindowsPhone")]
 		public void Async1 ()
 		{
 			IntResourceManager irm = new IntResourceManager ( 1 );
@@ -131,7 +171,11 @@ namespace  MonoTests.System.Transactions {
 
 			callback = new AsyncCallback (CommitCallback);
 			IAsyncResult ar = ct.BeginCommit ( callback, 5);
+#if WINDOWS_PHONE || NETFX_CORE
+			mr.WaitOne(new TimeSpan(0, 2, 0));
+#else
 			mr.WaitOne (new TimeSpan (0, 2, 0), true);
+#endif
 
 			Assert.IsTrue (called, "callback not called" );
 			Assert.AreEqual ( 5, state, "State not received back");
@@ -141,6 +185,8 @@ namespace  MonoTests.System.Transactions {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		[Category ("NotWorkingOnWindowsPhone")]
 		public void Async2 ()
 		{
 			IntResourceManager irm = new IntResourceManager ( 1 );
@@ -165,6 +211,8 @@ namespace  MonoTests.System.Transactions {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		[Category ("NotWorkingOnWindowsPhone")]
 		public void Async3 ()
 		{
 			IntResourceManager irm = new IntResourceManager ( 1 );
@@ -183,6 +231,8 @@ namespace  MonoTests.System.Transactions {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		[Category ("NotWorkingOnWindowsPhone")]
 		public void Async4 ()
 		{
 			IntResourceManager irm = new IntResourceManager ( 1 );
@@ -202,6 +252,8 @@ namespace  MonoTests.System.Transactions {
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		[Category ("NotWorkingOnWindowsPhone")]
 		public void Async5 ()
 		{
 			IntResourceManager irm = new IntResourceManager ( 1 );

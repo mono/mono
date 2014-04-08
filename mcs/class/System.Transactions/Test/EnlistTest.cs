@@ -15,11 +15,30 @@
 
 using System;
 using System.Transactions;
+#if USE_MSUNITTEST
+#if WINDOWS_PHONE || NETFX_CORE
+using Microsoft.VisualStudio.TestPlatform.UnitTestFramework;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestPlatform.UnitTestFramework.TestCategoryAttribute;
+#else // !WINDOWS_PHONE && !NETFX_CORE
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using TestFixtureAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestClassAttribute;
+using SetUpAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestInitializeAttribute;
+using TearDownAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCleanupAttribute;
+using TestAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestMethodAttribute;
+using CategoryAttribute = Microsoft.VisualStudio.TestTools.UnitTesting.TestCategoryAttribute;
+#endif // WINDOWS_PHONE || NETFX_CORE
+#else // !USE_MSUNITTEST
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
+#endif // USE_MSUNITTEST
 
 namespace MonoTests.System.Transactions {
-
+	
+	// All tests marked with NotWorkingOnWindowsStore fail in Windows
+	// Store Apps due to Durable (DTC) not being implemented
 	[TestFixture]
 	public class EnlistTest {
 
@@ -69,32 +88,38 @@ namespace MonoTests.System.Transactions {
 		}
 
 		[Test]
-		[ExpectedException ( typeof ( TransactionAbortedException ) )]
 		public void Vol1_Dur0_Fail2 ()
 		{
 			IntResourceManager irm = new IntResourceManager (1);
 
 			irm.FailPrepare = true;
 
-			using (TransactionScope scope = new TransactionScope ()) {
-				irm.Value = 2;
+			try {
+				using (TransactionScope scope = new TransactionScope ()) {
+					irm.Value = 2;
 
-				scope.Complete ();
+					scope.Complete();
+				}
+				Assert.Fail("Expected an exception of type TransactionAbortedException");
+			} catch (TransactionAbortedException) {
 			}
 		}
 
 		[Test]
-		[ExpectedException ( typeof ( TransactionAbortedException ) )]
 		public void Vol1_Dur0_Fail3 ()
 		{
 			IntResourceManager irm = new IntResourceManager (1);
 			irm.UseSingle = true;
 			irm.FailSPC = true;
 
-			using (TransactionScope scope = new TransactionScope ()) {
-				irm.Value = 2;
+			try {
+				using (TransactionScope scope = new TransactionScope ()) {
+					irm.Value = 2;
 
-				scope.Complete ();
+						scope.Complete();
+				}
+				Assert.Fail("Expected an exception of type TransactionAbortedException");
+			} catch (TransactionAbortedException) {
 			}
 		}
 
@@ -146,6 +171,8 @@ namespace MonoTests.System.Transactions {
 		 */ 
 		[Test]
 		[Category ("NotWorking")]
+		[Category ("NotWorkingOnWindowsPhone")]
+		[Category ("NotWorkingOnWindowsStore")]
 		public void Vol0_Dur1_2PC ()
 		{
 			IntResourceManager irm = new IntResourceManager (1);
@@ -266,7 +293,11 @@ namespace MonoTests.System.Transactions {
 		 * durable doesn't complete SPC
 		 */
 		[Test]
-		[Ignore ( "Correct this test, it should throw TimeOutException or something" )]
+		[Ignore (
+#if !USE_MSUNITTEST
+			"Correct this test, it should throw TimeOutException or something" 
+#endif
+		)]
 		public void Vol2_Dur1_Fail2 ()
 		{
 			TransactionAbortedException exception = null;
@@ -311,7 +342,11 @@ namespace MonoTests.System.Transactions {
 
 		/* Same as Vol2_Dur1_Fail2, but with a volatile manager timming out */
 		[Test]
-		[Ignore ( "Correct this test, it should throw TimeOutException or something" )]
+		[Ignore(
+#if !USE_MSUNITTEST
+			"Correct this test, it should throw TimeOutException or something" 
+#endif
+		)]
 		public void Vol2_Dur1_Fail2b()
 		{
 			TransactionAbortedException exception = null;
@@ -557,6 +592,8 @@ namespace MonoTests.System.Transactions {
 		 */
 		[Test]
 		[Category ("NotWorking")]
+		[Category ("NotWorkingOnWindowsPhone")]
+		[Category ("NotWorkingOnWindowsStore")]
 		public void Vol0_Dur2 ()
 		{
 			IntResourceManager [] irm = new IntResourceManager [2];
@@ -764,9 +801,9 @@ namespace MonoTests.System.Transactions {
 			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
 			Assert.AreEqual(TransactionStatus.Aborted, status, "TransactionStatus != Aborted");
 			Assert.IsNotNull(ex, "Exception not thrown");
-			Assert.That (ex, InstanceOf( typeof(TransactionAbortedException)), "Invalid exception thrown");
+			AssertIsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid exception thrown");
 			Assert.IsNotNull(ex.InnerException, "InnerException is null");
-			Assert.That (ex.InnerException, InstanceOf( typeof(NotSupportedException)), "Invalid inner exception thrown");
+			AssertIsInstanceOfType(typeof(NotSupportedException), ex.InnerException, "Invalid inner exception thrown");
 		}
 
 		[Test]
@@ -804,12 +841,12 @@ namespace MonoTests.System.Transactions {
 			Assert.IsNotNull(ex, "Exception not thrown");
 #if MS_EXCEPTIONS_BEHAVIOR
 			// MS.NET will relay the exception thrown by RM instead of wrapping it on a TransactionAbortedException.
-			InstanceOf(typeof(NotSupportedException), ex, "Invalid exception thrown");
+			AssertIsInstanceOfType(typeof(NotSupportedException), ex, "Invalid type of exception thrown");
 #else
 			// Mono wrapps the exception into a TransactionAbortedException.
-			Assert.That (ex, InstanceOf( typeof(TransactionAbortedException)), "Invalid type of exception thrown");
+			AssertIsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid type of exception thrown");
 			Assert.IsNotNull(ex.InnerException, "InnerException not thrown");
-			Assert.That (ex.InnerException, InstanceOf( typeof(NotSupportedException)), "Invalid inner exception thrown");
+			AssertIsInstanceOfType(typeof(NotSupportedException), ex.InnerException, "Invalid inner exception thrown");
 #endif
 		}
 
@@ -847,7 +884,7 @@ namespace MonoTests.System.Transactions {
 			Assert.IsFalse(called, "TransactionCompleted event handler _was_ called!?!?!");
 			Assert.IsNotNull(ex, "Exception not thrown");
 			// MS.NET will relay the exception thrown by RM instead of wrapping it on a TransactionAbortedException.
-			Assert.That (ex, InstanceOf( typeof(NotSupportedException)), "Invalid exception thrown");
+			AssertIsInstanceOfType(typeof(NotSupportedException), ex, "Invalid exception thrown");
 		}
 
 		[Test]
@@ -882,9 +919,9 @@ namespace MonoTests.System.Transactions {
 
 			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
 			Assert.IsNotNull(ex, "Exception not thrown");
-			Assert.That (ex, InstanceOf( typeof(TransactionAbortedException)), "Invalid exception thrown");
+			AssertIsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid exception thrown");
 			Assert.IsNotNull(ex.InnerException, "InnerException is null");
-			Assert.That (ex.InnerException, InstanceOf( typeof(NotSupportedException)), "Invalid inner exception thrown");
+			AssertIsInstanceOfType(typeof(NotSupportedException), ex.InnerException, "Invalid inner exception thrown");
 			Assert.AreEqual(TransactionStatus.Aborted, status, "TransactionStatus != Aborted");
 		}
 		#endregion
@@ -1033,7 +1070,7 @@ namespace MonoTests.System.Transactions {
 			Assert.AreEqual(rm1.ThrowThisException, ex, "Exception does not come from the expected RM");
 #else
 			// Mono wrapps the exception into a TransactionAbortedException.
-			Assert.That (ex, InstanceOf( typeof(TransactionAbortedException)), "Invalid type of exception thrown");
+			AssertIsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid type of exception thrown");
 			Assert.IsNotNull(ex.InnerException, "InnerException not thrown");
 			Assert.AreEqual(rm1.ThrowThisException, ex.InnerException, "Exception does not come from the expected RM \n Ex: {0}", ex);
 #endif
@@ -1084,7 +1121,7 @@ namespace MonoTests.System.Transactions {
 			Assert.AreEqual(rm1.ThrowThisException, ex, "Exception does not come from the expected RM \n Ex: {0}", ex);
 #else
 			// Mono wrapps the exception into a TransactionAbortedException.
-			Assert.That (ex, InstanceOf( typeof(TransactionAbortedException)), "Invalid type of exception thrown");
+			AssertIsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid type of exception thrown");
 			Assert.IsNotNull(ex.InnerException, "InnerException not thrown");
 			Assert.AreEqual(rm1.ThrowThisException, ex.InnerException, "Exception does not come from the expected RM \n Ex: {0}", ex);
 #endif
@@ -1175,9 +1212,9 @@ namespace MonoTests.System.Transactions {
 
 			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
 			Assert.IsNotNull(ex, "Exception not thrown");
-			Assert.That (ex, InstanceOf( typeof(TransactionAbortedException)), "Invalid exception thrown");
+			AssertIsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid exception thrown");
 			Assert.IsNotNull(ex.InnerException, "InnerException is null");
-			Assert.That (ex.InnerException, InstanceOf( typeof(InvalidOperationException)), "Invalid inner exception thrown");
+			AssertIsInstanceOfType(typeof(InvalidOperationException), ex.InnerException, "Invalid inner exception thrown");
 			Assert.AreEqual(TransactionStatus.Aborted, status, "TransactionStatus != Aborted");
 		}
 
@@ -1220,9 +1257,9 @@ namespace MonoTests.System.Transactions {
 
 			Assert.IsTrue(called, "TransactionCompleted event handler not called!");
 			Assert.IsNotNull(ex, "Exception not thrown");
-			Assert.That (ex, InstanceOf( typeof(TransactionAbortedException)), "Invalid exception thrown");
+			AssertIsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid exception thrown");
 			Assert.IsNotNull(ex.InnerException, "InnerException is null");
-			Assert.That (ex.InnerException, InstanceOf( typeof(NotSupportedException)), "Invalid inner exception thrown");
+			AssertIsInstanceOfType(typeof(NotSupportedException), ex.InnerException, "Invalid inner exception thrown");
 			Assert.AreEqual(TransactionStatus.Aborted, status, "TransactionStatus != Aborted");
 		}
 
@@ -1275,7 +1312,7 @@ namespace MonoTests.System.Transactions {
 			Assert.AreEqual(rm2.ThrowThisException, ex, "Exception does not come from the expected RM");
 #else
 			// Mono wrapps the exception into a TransactionAbortedException.
-			Assert.That (ex, InstanceOf( typeof(TransactionAbortedException)), "Invalid type of exception thrown");
+			AssertIsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid type of exception thrown");
 			Assert.IsNotNull(ex.InnerException, "InnerException not thrown");
 			Assert.AreEqual(rm2.ThrowThisException, ex.InnerException, "Exception does not come from the expected RM \n Ex: {0}", ex.InnerException);
 #endif
@@ -1330,7 +1367,7 @@ namespace MonoTests.System.Transactions {
 			Assert.AreEqual(rm1.ThrowThisException, ex, "Exception does not come from the expected RM");
 #else
 			// Mono wrapps the exception into a TransactionAbortedException.
-			Assert.That (ex, InstanceOf( typeof(TransactionAbortedException)), "Invalid type of exception thrown");
+			AssertIsInstanceOfType(typeof(TransactionAbortedException), ex, "Invalid type of exception thrown");
 			Assert.IsNotNull(ex.InnerException, "InnerException not thrown");
 			Assert.AreEqual(rm1.ThrowThisException, ex.InnerException, "Exception does not come from the expected RM \n Ex: {0}", ex);
 #endif
@@ -1341,9 +1378,13 @@ namespace MonoTests.System.Transactions {
 
 		#endregion
 
-		public static InstanceOfTypeConstraint InstanceOf (Type expectedType)
+		private static void AssertIsInstanceOfType(Type exceptionType, Exception exception, string message)
 		{
-			return new InstanceOfTypeConstraint (expectedType);
+#if USE_MSUNITTEST
+			Assert.IsInstanceOfType(exception, exceptionType, message);
+#else
+			Assert.IsInstanceOf(exceptionType, exception, message);
+#endif
 		}
 	}
 }
