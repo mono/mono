@@ -48,7 +48,7 @@ namespace System.Threading.Tasks
 		static Task current;
 		
 		// parent is the outer task in which this task is created
-		readonly Task parent;
+		Task parent;
 		// A reference to a Task on which this continuation is attached to
 		Task contAncestor;
 		
@@ -573,13 +573,22 @@ namespace System.Threading.Tasks
 				wait_handle.Set ();
 
 			// Tell parent that we are finished
-			if (parent != null && HasFlag (creationOptions, TaskCreationOptions.AttachedToParent) &&
+			if (parent != null && HasFlag (creationOptions, TaskCreationOptions.AttachedToParent)) {
+				if(
 #if NET_4_5
-			    !HasFlag (parent.CreationOptions, TaskCreationOptions.DenyChildAttach) &&
+					!HasFlag (parent.CreationOptions, TaskCreationOptions.DenyChildAttach) &&
 #endif
-				status != TaskStatus.WaitingForChildrenToComplete) {
-				parent.ChildCompleted (this.Exception);
+					status != TaskStatus.WaitingForChildrenToComplete) {
+						parent.ChildCompleted (this.Exception);
+					}
 			}
+			else {
+				// Break the reference back to the parent, otherwise any Tasks created from another Task's thread of 
+				// execution will create an undesired linked-list that the GC cannot free. See bug #18398.
+				//
+				parent = null;
+			}
+			
 
 			// Completions are already processed when task is canceled or faulted
 			if (status == TaskStatus.RanToCompletion)
@@ -889,6 +898,7 @@ namespace System.Threading.Tasks
 			// Set action to null so that the GC can collect the delegate and thus
 			// any big object references that the user might have captured in a anonymous method
 			if (disposing) {
+				parent = null;
 				invoker = null;
 				state = null;
 				if (cancellationRegistration != null)
