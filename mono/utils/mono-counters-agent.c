@@ -635,15 +635,18 @@ mono_counters_agent_start (const char *args)
 {
 	if (agent_running) {
 		g_warning ("Agent already running");
-		return;
-	}
-	agent_running = TRUE;
-	parse_configuration(args);
+	} else {
+		agent_running = TRUE;
+		parse_configuration(args);
 
-	if (strcmp (inspector_type, "tcp") == 0)
-		mono_threads_create_thread ((LPTHREAD_START_ROUTINE)&mono_counters_agent_tcp_sampling_thread, NULL, 0, 0, NULL);
-	else if (strcmp (inspector_type, "file") == 0)
-		mono_threads_create_thread ((LPTHREAD_START_ROUTINE)&mono_counters_agent_file_sampling_thread, NULL, 0, 0, NULL);
+		if (fd != -1)
+			close (fd);
+
+		if (strcmp (inspector_type, "tcp") == 0)
+			mono_threads_create_thread ((LPTHREAD_START_ROUTINE)&mono_counters_agent_tcp_sampling_thread, NULL, 0, 0, NULL);
+		else if (strcmp (inspector_type, "file") == 0)
+			mono_threads_create_thread ((LPTHREAD_START_ROUTINE)&mono_counters_agent_file_sampling_thread, NULL, 0, 0, NULL);
+	}
 }
 
 void
@@ -651,16 +654,15 @@ mono_counters_agent_stop ()
 {
 	if (!agent_running) {
 		g_warning ("Agent not running");
-		return;
-	}
+	} else {
+		agent_running = FALSE;
 
-	if (fd != -1) {
-		close (fd);
-		fd = -1;
+		if (fd != -1) {
+			close (fd);
+			fd = -1;
+		}
+		free_agent_memory ();
 	}
-	free_agent_memory ();
-
-	agent_running = FALSE;
 }
 
 #else
