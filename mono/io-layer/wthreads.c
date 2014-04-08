@@ -17,6 +17,7 @@
 #include <signal.h>
 #include <sched.h>
 #include <sys/time.h>
+#include <time.h>
 #include <errno.h>
 #include <sys/types.h>
 #include <unistd.h>
