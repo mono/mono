@@ -37,6 +37,20 @@
 #include <valgrind/memcheck.h>
 #endif
 
+#ifdef PLATFORM_ANDROID
+/*
+ * HACK
+ * Android supports clock_*(), but didn't declare them consistently until
+ * recently, e.g. on NDK r8e API-3, API-4, and API-5 declare them in <time.h>,
+ * but higher API levels do not. This isn't corrected until r9c, which
+ * Wrench isn't currently using.
+ *
+ * Manually declare them so that we don't get implicit declaration errors.
+ */
+extern int clock_gettime(clockid_t, struct timespec *);
+extern int clock_nanosleep(clockid_t, int, const struct timespec *, struct timespec *);
+#endif  /* PLATFORM_ANDROID */
+
 #if 0
 #define DEBUG(...) g_message(__VA_ARGS__)
 #else
