@@ -1926,72 +1926,74 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.That (ex.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#3");
 			}
 		}
-		
-		// Xamarin Bugzilla 18398.  Simulate recursive rearming task continuations that are typical in long-running 
-		// servers, and verify that Tasks are not getting leaked.
-		//
+
 		[Test]
 		public void TaskContinuationChainLeak()
 		{
 			// Start cranking out tasks, starting each new task upon completion of and from inside the prior task.
 			//
-			var tester = new TaskContinuationChainLeakTester();
-			tester.Run();
-			
-			// Pile up some tasks.
-			//
-			Thread.Sleep(500);
+			var tester = new TaskContinuationChainLeakTester ();
+			tester.Run ();
+			tester.TasksPilledUp.WaitOne ();
 
 			// Head task should be out of scope by now.  Manually run the GC and expect that it gets collected.
 			// 
-			GC.Collect();
-			GC.WaitForPendingFinalizers();
+			GC.Collect ();
+			GC.WaitForPendingFinalizers ();
 
-			try
-			{
+			try {
 				// It's important that we do the asserting while the task recursion is still going, since that is the 
 				// crux of the problem scenario.
 				//
-				tester.Assert();
-			}
-			finally
-			{
-				tester.Stop();
+				tester.Verify ();
+			} finally {
+				tester.Stop ();
 			}
 		}
 
 		class TaskContinuationChainLeakTester
 		{
 			volatile bool m_bStop;
-			
-			WeakReference<Task> m_headTaskWeakRef;
+			int counter;
+			ManualResetEvent mre = new ManualResetEvent (false);
+			WeakReference<Task> headTaskWeakRef;
 
-			public void Run()
-			{
-				m_headTaskWeakRef = new WeakReference<Task>(StartNewTask());
+			public ManualResetEvent TasksPilledUp {
+				get {
+					return mre;
+				}
 			}
 
-			public Task StartNewTask()
+			public void Run ()
 			{
-				if (m_bStop) return null;
-
-				return Task.Factory.StartNew(DummyWorker).ContinueWith(task => StartNewTask());
+				headTaskWeakRef = new WeakReference<Task> (StartNewTask ());
 			}
 
-			public void Stop()
+			public Task StartNewTask ()
+			{
+				if (m_bStop)
+					return null;
+
+				if (++counter == 50)
+					mre.Set ();
+
+				return Task.Factory.StartNew (DummyWorker).ContinueWith (task => StartNewTask ());
+			}
+
+			public void Stop ()
 			{
 				m_bStop = true;
 			}
 
-			public void Assert()
+			public void Verify ()
 			{
-				Task task = null;
-				Assert.IsFalse(m_headTaskWeakRef.TryGetTarget(out task));
+				Task task;
+				Assert.IsFalse (headTaskWeakRef.TryGetTarget (out task));
 			}
 
-			void DummyWorker()
+			void DummyWorker ()
 			{
-				Thread.Sleep(1);
+				Thread.Sleep (0);
 			}
 		}
 		
