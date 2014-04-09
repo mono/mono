@@ -554,5 +554,21 @@ namespace MonoTests.System.Collections.Generic {
 				throw new ArgumentNullException ();  // Important aspect for test (same as what StringComparer.Ordinal does, and different from GenericEqualityComparer<string>)
 			}
 		}
+
+		[Test]
+		public void TrimWithoutChange ()
+		{
+			var lookup = new HashSet<string> ();
+
+			for (int i = 0; i < 10000; i++) {
+				lookup.Add (i.ToString ());
+			}
+
+			lookup.Remove (3.ToString ());
+
+			for (int i = 0; i < 1000; i++) {
+				lookup.TrimExcess ();
+			}
+		}
 	}
 }
