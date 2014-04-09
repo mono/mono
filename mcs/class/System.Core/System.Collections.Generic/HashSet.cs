@@ -199,9 +199,9 @@ namespace System.Collections.Generic {
 			}
 		}
 
-		void Resize (int size)
+		void Resize ()
 		{
-			int newSize = HashPrimeNumbers.ToPrime (size);
+			int newSize = HashPrimeNumbers.ToPrime ((table.Length << 1) | 1);
 
 			// allocate new hash table and link slots array
 			var newTable = new int [newSize];
@@ -250,7 +250,7 @@ namespace System.Collections.Generic {
 				return false;
 
 			if (++count > threshold) {
-				Resize ((table.Length << 1) | 1);
+				Resize ();
 				index = (hashCode & int.MaxValue) % table.Length;
 			}
 
@@ -371,7 +371,7 @@ namespace System.Collections.Generic {
 
 		public void TrimExcess ()
 		{
-			Resize (count);
+			Resize ();
 		}
 
 		// set operations
