@@ -22,7 +22,7 @@
     <returns>The ordered list of all cipher suites you wish to support.</returns>
     <remarks>
       <para>This type is only available in Mono and Xamarin products.</para>
-      <para>See the <see cref="P:System.Net.ServicePointManager.ClientCipherSuitesCallback"/> property for examples of how this is used.
+      <para>See the <see cref="P:System.Net.ServicePointManager.ClientCipherSuitesCallback"/> property for examples of how this is used.</para>
     </remarks>
   </Docs>
 </Type>
