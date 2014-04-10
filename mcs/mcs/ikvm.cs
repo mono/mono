@@ -464,12 +464,12 @@ namespace Mono.CSharp
 									return null;
 								}
 
-								if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey) && an.Version.Equals (loaded_name.Version)) {
+								if ((an.Flags & AssemblyNameFlags.PublicKey) == (loaded_name.Flags & AssemblyNameFlags.PublicKey)) {
 									compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
 									compiler.Report.SymbolRelatedToPreviousError (fileName);
 									compiler.Report.Error (1703,
-										"An assembly with the same identity `{0}' has already been imported. Consider removing one of the references",
-										an.FullName);
+										"An assembly `{0} with the same identity has already been imported. Consider removing one of the references",
+										an.Name);
 									return null;
 								}
 							}
