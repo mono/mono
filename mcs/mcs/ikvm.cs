@@ -468,7 +468,7 @@ namespace Mono.CSharp
 									compiler.Report.SymbolRelatedToPreviousError (entry.Item2);
 									compiler.Report.SymbolRelatedToPreviousError (fileName);
 									compiler.Report.Error (1703,
-										"An assembly `{0} with the same identity has already been imported. Consider removing one of the references",
+										"An assembly `{0}' with the same identity has already been imported. Consider removing one of the references",
 										an.Name);
 									return null;
 								}
