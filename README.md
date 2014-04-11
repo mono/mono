@@ -83,10 +83,13 @@ For people with non-standard installations of the auto* utils and of
 pkg-config (common on misconfigured OSX and windows boxes), you could get
 an error like this:
 
-`./configure: line 19176: syntax error near unexpected token 'PKG_CHECK_MODULES(BASE_DEPENDENCIES,' ...`
+	./configure: line 19176: syntax error near unexpected token 'PKG_CHECK_MODULES(BASE_DEPENDENCIES,' ...
 
 This means that you need to set the ACLOCAL_FLAGS environment variable
-when invoking autogen.sh, like this: `ACLOCAL_FLAGS="-I $acprefix/share/aclocal" ./autogen.sh --prefix=/usr/local`
+when invoking autogen.sh, like this: 
+
+        ACLOCAL_FLAGS="-I $acprefix/share/aclocal" ./autogen.sh --prefix=/usr/local
+
 where $acprefix is the prefix where aclocal has been installed.
 This will automatically go into the mcs/ tree and build the
 binaries there.
@@ -97,7 +100,7 @@ runtime called 'mono'.  You can use two make variables
 EXTERNAL_MCS and EXTERNAL_RUNTIME to override these.  e.g., you
 can say:
 
-`make EXTERNAL_MCS=/foo/bar/mcs EXTERNAL_RUNTIME=/somewhere/else/mono`
+	make EXTERNAL_MCS=/foo/bar/mcs EXTERNAL_RUNTIME=/somewhere/else/mono
 
 If you don't have a working Mono installation
 ---------------------------------------------
@@ -136,7 +139,7 @@ class libraries, you need to re-run 'configure' with the
 Expect to find a few test suite failures. As a sanity check, you
 can compare the failures you got with
 
-`https://wrench.mono-project.com/Wrench/`
+    https://wrench.mono-project.com/Wrench/
 
 You can now install mono with: `make install`
 
@@ -153,10 +156,9 @@ building Mono might want to use:
 * `--with-sgen=yes,no` - Generational GC support: Used to enable or disable the
 compilation of a Mono runtime with the SGen garbage collector.
 
-  * On platforms that support it, after building Mono, you
-will have both a mono binary and a mono-sgen binary.
-Mono uses Boehm, while mono-sgen uses the Simple
-Generational GC.
+  * On platforms that support it, after building Mono, you will have
+both a mono binary and a mono-sgen binary.  Mono uses Boehm, while
+mono-sgen uses the Simple Generational GC.
 
 * `--with-gc=[boehm, included, sgen, none]` - Selects the default Boehm garbage
 collector engine to use.
