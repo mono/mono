@@ -209,9 +209,10 @@ namespace System.Net {
 			return o_stream;
 		}
 
-		internal Socket Hijack ()
+		internal Socket Hijack (out byte[] buffer)
 		{
 			// TODO: disable normal request/response.
+			buffer = ms.GetBuffer ();
 			RemoveConnection ();
 			var s = sock;
 			sock = null;

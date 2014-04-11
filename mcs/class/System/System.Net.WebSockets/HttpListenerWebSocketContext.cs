@@ -43,14 +43,14 @@ namespace System.Net.WebSockets
 	public class HttpListenerWebSocketContext : WebSocketContext
 	{
 		HttpListenerRequest request;
-		StreamWebSocket webSocket;
+		StreamWebSocket websocket;
 		IPrincipal user;
 
-		internal HttpListenerWebSocketContext(RequestStream requestStream, Stream writeStream, HttpListenerRequest request, IPrincipal user, string subProtocol)
+		internal HttpListenerWebSocketContext(StreamWebSocket websocket, HttpListenerRequest request, IPrincipal user)
 		{
+			this.websocket = websocket;
 			this.request = request;
 			this.user = user;
-			webSocket = new StreamWebSocket (requestStream, writeStream, 16 * 1024, false, subProtocol);
 		}
 
 		public override CookieCollection CookieCollection {
@@ -120,7 +120,7 @@ namespace System.Net.WebSockets
 
 		public override WebSocket WebSocket {
 			get {
-				return webSocket;
+				return websocket;
 			}
 		}
 	}
