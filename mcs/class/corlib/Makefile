@@ -24,6 +24,14 @@ endif
 
 endif
 
+ifeq (xammac, $(PROFILE))
+PLATFORM_includes = corlib.dll.sources
+PLATFORM_excludes = xammac_corlib.dll.exclude.sources
+response = $(wildcard $(PROFILE)_$(LIBRARY).sources)
+@echo $(PLATFORM_includes) $(PLATFORM_excludes)
+@sort $(PLATFORM_includes) $(PLATFORM_excludes) | uniq -u | $(PLATFORM_CHANGE_SEPARATOR_CMD) > $(response)
+endif
+
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 LIBRARY_INSTALL_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 
