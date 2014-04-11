@@ -175,7 +175,7 @@ namespace System.Net {
 				throw new WebSocketException ("Request doesn't contain Origin header");
 			}
 			string acceptKey = StreamWebSocket.CreateAcceptKey (secKey);
-			byte[] preloaded;
+			ArraySegment<byte> preloaded;
 			var stream = new NetworkStream (cnc.Hijack (out preloaded));
 			string header = "HTTP/1.1 101 Switching Protocols\r\n" +
 				"Upgrade: websocket\r\n" +
@@ -183,7 +183,7 @@ namespace System.Net {
 				"Sec-WebSocket-Accept: " + acceptKey + "\r\n\r\n";
 			var headerBytes = Encoding.ASCII.GetBytes (header);
 			await stream.WriteAsync (headerBytes, 0, headerBytes.Length);
-			var ws = new StreamWebSocket (stream, stream, null, subProtocol, false, new ArraySegment<byte> (preloaded));
+			var ws = new StreamWebSocket (stream, stream, null, subProtocol, false, preloaded);
 			return new HttpListenerWebSocketContext (ws, request, user);
 		}
 
