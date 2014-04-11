@@ -235,14 +235,15 @@ namespace System.Net.WebSockets {
 			EnsureWebSocketConnected ();
 			await SendCloseFrame (closeStatus, statusDescription, cancellationToken).ConfigureAwait (false);
 			if (state == WebSocketState.Open) {
+				this.closeStatus = closeStatus;
 				state = WebSocketState.CloseSent;
-				while (true) {
+				do {
 					// TODO: figure what's exceptions are thrown if the server returns something faulty here
 					var result = await ReceiveAsync (new ArraySegment<byte> (new byte[0]), cancellationToken).ConfigureAwait (false);
 					if (result.MessageType == WebSocketMessageType.Close) {
 						break;
 					}
-				}
+				} while (true);
 			}
 			InnerClose ();
 		}
