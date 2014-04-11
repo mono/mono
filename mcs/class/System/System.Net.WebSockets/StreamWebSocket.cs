@@ -151,18 +151,35 @@ namespace System.Net.WebSockets {
 			}
 		}
 
+		private bool isLast;
+		private bool isMasked;
+		private WebSocketMessageType receivedType;
+		private int remainOffset;
+		private int remainBytes = 0;
+		private byte[] mask = new byte[4];
+
 		public override async Task<WebSocketReceiveResult> ReceiveAsync (ArraySegment<byte> buffer, CancellationToken cancellationToken)
 		{
 			EnsureWebSocketConnected ();
 			ValidateArraySegment (buffer);
 			EnsureWebSocketState (WebSocketState.Open, WebSocketState.CloseSent);
 
+			if (remainBytes > 0) {
+				var readLength = (int)(buffer.Count < remainBytes ? buffer.Count : remainBytes);
+				await InternalReadAsync (buffer.Array, buffer.Offset, readLength);
+				if (isMasked)
+					UnmaskInPlace (mask, buffer.Array, buffer.Offset, readLength, remainOffset);
+				remainOffset += readLength;
+				remainBytes -= readLength;
+				return new WebSocketReceiveResult (readLength, receivedType, isLast && remainBytes == 0);
+			}
+
 			try {
 				// First read the two first bytes to know what we are doing next
 				await InternalReadAsync (headerBuffer, 0, 2);
-				var isLast = (headerBuffer[0] >> 7) > 0;
-				var isMasked = (headerBuffer[1] >> 7) > 0;
-				var type = (WebSocketMessageType)(headerBuffer[0] & 0xF);
+				isLast = (headerBuffer[0] >> 7) > 0;
+				isMasked = (headerBuffer[1] >> 7) > 0;
+				receivedType = (WebSocketMessageType)(headerBuffer[0] & 0xF);
 				long length = headerBuffer[1] & 0x7F;
 				int offset = 0;
 				if (length == 126) {
@@ -176,13 +193,11 @@ namespace System.Net.WebSockets {
 					for (int i = 2; i <= 9; i++)
 						length = (length << 8) | headerBuffer[i];
 				}
-
-				byte[] mask = new byte[4];
 				if (isMasked) {
 					await InternalReadAsync (mask, 0, 4);
 				}
 
-				if (type == WebSocketMessageType.Close) {
+				if (receivedType == WebSocketMessageType.Close) {
 					var tmpBuffer = new byte[length];
 					await InternalReadAsync (tmpBuffer, 0, tmpBuffer.Length);
 					if (isMasked)
@@ -195,14 +210,15 @@ namespace System.Net.WebSockets {
 					} else {
 						state = WebSocketState.CloseReceived;
 					}
-					return new WebSocketReceiveResult ((int)length, type, isLast, closeStatus, closeDesc);
+					return new WebSocketReceiveResult ((int)length, receivedType, isLast, closeStatus, closeDesc);
 				} else {
 					var readLength = (int)(buffer.Count < length ? buffer.Count : length);
 					await InternalReadAsync (buffer.Array, buffer.Offset, readLength);
+					remainBytes = (int)length - readLength;
+					remainOffset = readLength;
 					if (isMasked)
 						UnmaskInPlace (mask, buffer.Array, buffer.Offset, readLength);
-					// TODO: Skip remains if buffer is smaller than frame?
-					return new WebSocketReceiveResult ((int)length, type, isLast);
+					return new WebSocketReceiveResult (readLength, receivedType, isLast && remainBytes == 0);
 				}
 			} catch (IOException e) {
 				InnerClose ();
@@ -339,11 +355,10 @@ namespace System.Net.WebSockets {
 				sendBuffer[dataOffset + i] = (byte)(data.Array[data.Offset + i] ^ sendBuffer[offset + (i % 4)]);
 		}
 
-		void UnmaskInPlace(byte[] mask, byte[] data, int offset, int length)
+		static void UnmaskInPlace(byte[] mask, byte[] data, int offset, int length, int frameOffset=0)
 		{
-			for (int i = 0; i < length; i++) {
-				data[i + offset] ^= mask[i % 4];
-			}
+			for (int i = 0; i < length; i++)
+				data[offset + i] ^= mask[(frameOffset + i) % 4];
 		}
 
 		void EnsureWebSocketConnected ()
