@@ -8086,3 +8086,16 @@ mini_replace_type (MonoType *type)
 	type = mono_type_get_underlying_type (type);
 	return mini_native_type_replace_type (type);
 }
+
+//*! @todo fix link error
+MonoType*   
+mini_native_type_replace_type (MonoType *type)
+{
+    return type;
+}
+
+//*! @todo fix link error
+MonoInst*   mono_emit_native_types_intrinsics (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
+{
+    return NULL;
+}
