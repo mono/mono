@@ -57,8 +57,19 @@ namespace System.Net.WebSockets {
 
 		bool maskSend;
 		const int HeaderMaxLength = 14;
+		// This should be less than int.MaxValue because WebSocketReceiveResult.Count is int.
+		const int MaxReceiveSize = 64 * 1024 * 1024;
 		byte[] headerBuffer;
 		byte[] sendBuffer;
+
+		enum OpCode {
+			Continuation = 0,
+			Text = 1,
+			Binary = 2,
+			Close = 8,
+			Ping = 9,
+			Pong = 10,
+		}
 
 		public StreamWebSocket (Stream rstream, Stream wstream, Socket socket, string subProtocol, bool maskSend, ArraySegment<byte> preloaded)
 		{
@@ -124,6 +135,22 @@ namespace System.Net.WebSockets {
 
 		public override Task SendAsync (ArraySegment<byte> buffer, WebSocketMessageType messageType, bool endOfMessage, CancellationToken cancellationToken)
 		{
+			OpCode opCode;
+			switch (messageType) {
+			case WebSocketMessageType.Text:
+				opCode = OpCode.Text;
+				break;
+			case WebSocketMessageType.Binary:
+				opCode = OpCode.Binary;
+				break;
+			default:
+				throw new WebSocketException (WebSocketError.InvalidMessageType);
+			}
+			return InternalSendAsync (buffer, opCode, endOfMessage, cancellationToken);
+		}
+
+		Task InternalSendAsync (ArraySegment<byte> buffer, OpCode opCode, bool endOfMessage, CancellationToken cancellationToken)
+		{
 			EnsureWebSocketState (WebSocketState.Open, WebSocketState.CloseReceived);
 			ValidateArraySegment (buffer);
 			if (wstream == null)
@@ -133,14 +160,14 @@ namespace System.Net.WebSockets {
 			if (sendBuffer == null || sendBuffer.Length < count)
 				sendBuffer = new byte[count];
 
-			int headerSize = WriteHeader (messageType, buffer.Count, endOfMessage);
+			int headerSize = WriteHeader (opCode, buffer.Count, endOfMessage);
 			int frameSize;
 			if (maskSend) {
 				MaskData (headerSize, buffer);
-				frameSize = headerSize + buffer.Count + 4;
+				frameSize = (int)(headerSize + buffer.Count + 4);
 			} else {
 				Array.Copy (buffer.Array, buffer.Offset, sendBuffer, headerSize, buffer.Count);
-				frameSize = headerSize + buffer.Count;
+				frameSize = (int)(headerSize + buffer.Count);
 			}
 			try {
 				return wstream.WriteAsync (sendBuffer, 0, frameSize, cancellationToken);
@@ -154,8 +181,8 @@ namespace System.Net.WebSockets {
 		private bool isLast;
 		private bool isMasked;
 		private WebSocketMessageType receivedType;
-		private int remainOffset;
-		private int remainBytes = 0;
+		private long remainOffset;
+		private long remainBytes = 0;
 		private byte[] mask = new byte[4];
 
 		public override async Task<WebSocketReceiveResult> ReceiveAsync (ArraySegment<byte> buffer, CancellationToken cancellationToken)
@@ -165,66 +192,111 @@ namespace System.Net.WebSockets {
 			EnsureWebSocketState (WebSocketState.Open, WebSocketState.CloseSent);
 
 			if (remainBytes > 0) {
-				var readLength = (int)(buffer.Count < remainBytes ? buffer.Count : remainBytes);
+				int readLength = (int)(buffer.Count < remainBytes ? buffer.Count : remainBytes);
 				await InternalReadAsync (buffer.Array, buffer.Offset, readLength);
 				if (isMasked)
-					UnmaskInPlace (mask, buffer.Array, buffer.Offset, readLength, remainOffset);
+					UnmaskInPlace (mask, buffer.Array, buffer.Offset, readLength, (int)remainOffset);
 				remainOffset += readLength;
 				remainBytes -= readLength;
 				return new WebSocketReceiveResult (readLength, receivedType, isLast && remainBytes == 0);
 			}
 
-			try {
-				// First read the two first bytes to know what we are doing next
-				await InternalReadAsync (headerBuffer, 0, 2);
-				isLast = (headerBuffer[0] >> 7) > 0;
-				isMasked = (headerBuffer[1] >> 7) > 0;
-				receivedType = (WebSocketMessageType)(headerBuffer[0] & 0xF);
-				long length = headerBuffer[1] & 0x7F;
-				int offset = 0;
-				if (length == 126) {
-					offset = 2;
-					await InternalReadAsync (headerBuffer, 2, offset);
-					length = (headerBuffer[2] << 8) | headerBuffer[3];
-				} else if (length == 127) {
-					offset = 8;
-					await InternalReadAsync (headerBuffer, 2, offset);
-					length = 0;
-					for (int i = 2; i <= 9; i++)
-						length = (length << 8) | headerBuffer[i];
-				}
-				if (isMasked) {
-					await InternalReadAsync (mask, 0, 4);
-				}
-
-				if (receivedType == WebSocketMessageType.Close) {
-					var tmpBuffer = new byte[length];
-					await InternalReadAsync (tmpBuffer, 0, tmpBuffer.Length);
-					if (isMasked)
-						UnmaskInPlace (mask, tmpBuffer, 0, (int)length);
-					var closeStatus = (WebSocketCloseStatus)(tmpBuffer[0] << 8 | tmpBuffer[1]);
-					var closeDesc = tmpBuffer.Length > 2 ? Encoding.UTF8.GetString (tmpBuffer, 2, tmpBuffer.Length - 2) : string.Empty;
-					if (state == WebSocketState.CloseSent) {
-						await SendCloseFrame (WebSocketCloseStatus.NormalClosure, "Received Close", cancellationToken).ConfigureAwait (false);
+			do {
+				try {
+					// First read the two first bytes to know what we are doing next
+					await InternalReadAsync (headerBuffer, 0, 2);
+					isLast = (headerBuffer[0] >> 7) > 0;
+					isMasked = (headerBuffer[1] >> 7) > 0;
+					OpCode opCode = (OpCode)(headerBuffer[0] & 0xF);
+					bool isControl = opCode >= OpCode.Close;
+					switch (opCode) {
+					case OpCode.Continuation:  // receivedType is same to previous.
+						break;
+					case OpCode.Text:
+						receivedType = WebSocketMessageType.Text;
+						break;
+					case OpCode.Binary:
+						receivedType = WebSocketMessageType.Binary;
+						break;
+					case OpCode.Close:
+						receivedType = WebSocketMessageType.Close;
+						break;
+					case OpCode.Ping:  // ping
+						continue;
+					case OpCode.Pong: // pong
+						continue;
+					default:
 						InnerClose ();
-					} else {
-						state = WebSocketState.CloseReceived;
+						closeStatus = WebSocketCloseStatus.InvalidMessageType;
+						throw new WebSocketException (WebSocketError.InvalidMessageType);
 					}
-					return new WebSocketReceiveResult ((int)length, receivedType, isLast, closeStatus, closeDesc);
-				} else {
-					var readLength = (int)(buffer.Count < length ? buffer.Count : length);
-					await InternalReadAsync (buffer.Array, buffer.Offset, readLength);
-					remainBytes = (int)length - readLength;
-					remainOffset = readLength;
+
+					long length = headerBuffer[1] & 0x7F;
+					int offset = 0;
+					if (length == 126) {
+						offset = 2;
+						await InternalReadAsync (headerBuffer, 2, offset);
+						length = (headerBuffer[2] << 8) | headerBuffer[3];
+					} else if (length == 127) {
+						offset = 8;
+						await InternalReadAsync (headerBuffer, 2, offset);
+						length = 0;
+						for (long i = 2; i <= 9; i++)
+							length = (length << 8) | headerBuffer[i];
+						// MSB of 64bit length should be 0  (RFC 6455 5.2)
+						if (length < 0) {
+							InnerClose ();
+							closeStatus = WebSocketCloseStatus.ProtocolError;
+							throw new WebSocketException (WebSocketError.Faulted, "Too large frame.");
+						}
+					}
 					if (isMasked)
-						UnmaskInPlace (mask, buffer.Array, buffer.Offset, readLength);
-					return new WebSocketReceiveResult (readLength, receivedType, isLast && remainBytes == 0);
+						await InternalReadAsync (mask, 0, 4);
+
+					if (isControl) {
+						if (length > 125 || !isLast) {
+							// Control frame should not fragmented and payload size should <= 125 (RFC 6455 5.5)
+							InnerClose ();
+							closeStatus = WebSocketCloseStatus.ProtocolError;
+							throw new WebSocketException (WebSocketError.Faulted, "Control frame is fragmented or too large");
+						}
+						var tmpBuffer = new byte[length];
+						await InternalReadAsync (tmpBuffer, 0, tmpBuffer.Length);
+						if (isMasked)
+							UnmaskInPlace (mask, tmpBuffer, 0, (int)length);
+						switch (opCode) {
+						case OpCode.Close:
+							var closeStatus = (WebSocketCloseStatus)(tmpBuffer[0] << 8 | tmpBuffer[1]);
+							var closeDesc = tmpBuffer.Length > 2 ? Encoding.UTF8.GetString (tmpBuffer, 2, tmpBuffer.Length - 2) : string.Empty;
+							if (state == WebSocketState.CloseSent) {
+								await SendCloseFrame (WebSocketCloseStatus.NormalClosure, "Received Close", cancellationToken).ConfigureAwait (false);
+								InnerClose ();
+							} else {
+								state = WebSocketState.CloseReceived;
+							}
+							return new WebSocketReceiveResult ((int)length, receivedType, isLast, closeStatus, closeDesc);
+						case OpCode.Ping:
+							await InternalSendAsync (new ArraySegment<byte> (tmpBuffer, 0, (int)length), OpCode.Pong, true, cancellationToken);
+							break;
+						default:
+							break;
+						}
+					} else {
+						int readLength = (int)Math.Min(MaxReceiveSize, Math.Min(buffer.Count, length));
+						await InternalReadAsync (buffer.Array, buffer.Offset, readLength);
+						remainBytes = length - readLength;
+						remainOffset = readLength;
+						if (isMasked)
+							UnmaskInPlace (mask, buffer.Array, buffer.Offset, (int)readLength);
+						return new WebSocketReceiveResult ((int)readLength, receivedType, isLast && remainBytes == 0);
+					}
+				} catch (IOException e) {
+					InnerClose ();
+					closeStatus = WebSocketCloseStatus.EndpointUnavailable;
+					return new WebSocketReceiveResult (0, WebSocketMessageType.Close, true, closeStatus, e.Message);
 				}
-			} catch (IOException e) {
-				InnerClose ();
-				closeStatus = WebSocketCloseStatus.EndpointUnavailable;
-				return new WebSocketReceiveResult ((int)0, WebSocketMessageType.Close, true, closeStatus, e.Message);
-			}
+			} while (true);
+			// Don't come here.
 		}
 
 		// The damn difference between those two methods is that CloseAsync will wait for server acknowledgement before completing
@@ -279,12 +351,15 @@ namespace System.Net.WebSockets {
 
 		async Task SendCloseFrame (WebSocketCloseStatus closeStatus, string statusDescription, CancellationToken cancellationToken)
 		{
-			var statusDescBuffer = string.IsNullOrEmpty (statusDescription) ? new byte[2] : new byte[2 + Encoding.UTF8.GetByteCount (statusDescription)];
-			statusDescBuffer[0] = (byte)(((ushort)closeStatus) >> 8);
-			statusDescBuffer[1] = (byte)(((ushort)closeStatus) & 0xFF);
+			int frameLength = 2;
 			if (!string.IsNullOrEmpty (statusDescription))
-				Encoding.UTF8.GetBytes (statusDescription, 0, statusDescription.Length, statusDescBuffer, 2);
-			await SendAsync (new ArraySegment<byte> (statusDescBuffer), WebSocketMessageType.Close, true, cancellationToken).ConfigureAwait (false);
+				frameLength += Encoding.UTF8.GetByteCount (statusDescription);
+			byte[] buffer = sendBuffer.Length >= frameLength ?  sendBuffer : new byte[frameLength];
+			buffer[0] = (byte)(((ushort)closeStatus) >> 8);
+			buffer[1] = (byte)(((ushort)closeStatus) & 0xFF);
+			if (!string.IsNullOrEmpty (statusDescription))
+				Encoding.UTF8.GetBytes (statusDescription, 0, statusDescription.Length, buffer, 2);
+			await SendAsync (new ArraySegment<byte> (buffer, 0, frameLength), WebSocketMessageType.Close, true, cancellationToken).ConfigureAwait (false);
 		}
 
 		void InnerClose()
@@ -307,12 +382,12 @@ namespace System.Net.WebSockets {
 			return Convert.ToBase64String (SHA1.Create ().ComputeHash (Encoding.ASCII.GetBytes (secKey + Magic)));
 		}
 
-		int WriteHeader (WebSocketMessageType type, int length, bool endOfMessage)
+		int WriteHeader (OpCode opCode, int length, bool endOfMessage)
 		{
-			var opCode = (byte)type;
+			byte op = (byte)opCode;
 			int headerLength;
 
-			sendBuffer[0] = (byte)(opCode | (endOfMessage ? 0x80 : 0x0));
+			sendBuffer[0] = (byte)(op | (endOfMessage ? 0x80 : 0x0));
 			if (length < 126) {
 				sendBuffer[1] = (byte)length;
 				headerLength = 2;
