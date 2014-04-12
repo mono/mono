@@ -3,7 +3,7 @@
 //
 // Authors:
 //	  Jérémie Laval <jeremie dot laval at xamarin dot com>
-//    INADA Naoki <songofacandy at gmail dot com>
+//	  INADA Naoki <songofacandy at gmail dot com>
 //
 // Copyright 2013-2014 Xamarin Inc (http://www.xamarin.com).
 //
