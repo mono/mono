@@ -170,10 +170,6 @@ namespace System.Net {
 			if (secKey == null) {
 				throw new WebSocketException ("Request doesn't contain Sec-WebSocket-Key header");
 			}
-			string origin = request.Headers ["Origin"];
-			if (origin == null) {
-				throw new WebSocketException ("Request doesn't contain Origin header");
-			}
 			string acceptKey = StreamWebSocket.CreateAcceptKey (secKey);
 			ArraySegment<byte> preloaded;
 			var stream = new NetworkStream (cnc.Hijack (out preloaded));
