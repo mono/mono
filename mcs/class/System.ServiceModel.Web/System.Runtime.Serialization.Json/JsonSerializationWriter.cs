@@ -137,9 +137,9 @@ namespace System.Runtime.Serialization.Json
 						writer.WriteEndElement ();
 						writer.WriteEndElement ();
 					}
-				} else if (TypeMap.IsCollection (type)) { // array
+				} else if (graph is Array || TypeMap.IsEnumerable (type)) {
 					writer.WriteAttributeString ("type", "array");
-					foreach (object o in (ICollection) graph) {
+					foreach (object o in (IEnumerable) graph) {
 						writer.WriteStartElement ("item");
 						// when it is typed, then no need to output "__type"
 						WriteObjectContent (o, false, !(graph is Array && type.GetElementType () != typeof (object)));
