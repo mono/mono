@@ -1,12 +1,10 @@
 //
-// TargetDotNetFrameworkVersion.cs: Represents framework version.
+// SortVersion.cs
 //
 // Authors:
-//   Marek Sieradzki (marek.sieradzki@gmail.com)
-//   Marek Safar (marek.safar@gmail.com)
+//	Marek Safar  <marek.safar@gmail.com>
 //
-// (C) 2005 Marek Sieradzki
-// Copyright 2011 Xamarin Inc.
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,44 +24,58 @@
 // LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+//
 
-namespace Microsoft.Build.Utilities
-{
-	// If changing something here then update
-	// ToolLocationHelper.GetPathToDotNetFramework also
-	#if MICROSOFT_BUILD_DLL
-	internal
-	#else
-	public
-	#endif
-	enum TargetDotNetFrameworkVersion
-	{
-		Version11,
-		Version20,
-#if NET_3_5
-		Version30,
-		Version35,
-#endif
-#if NET_4_0
-		Version40,
-#endif
 #if NET_4_5
-		Version45,
-#endif
-#if XBUILD_12
-		Version451,
-#endif
 
-#if XBUILD_12
-		VersionLatest = Version451
-#elif NET_4_5
-		VersionLatest = Version45
-#elif NET_4_0
-		VersionLatest = Version40
-#elif NET_3_5
-		VersionLatest = Version35
-#else
-		VersionLatest = Version20
-#endif
+using System.Collections.Generic;
+
+namespace System.Globalization
+{
+	[Serializable]
+	public sealed class SortVersion : IEquatable<SortVersion>
+	{
+		public SortVersion (int fullVersion, Guid sortId)
+		{
+			FullVersion = fullVersion;
+			SortId = sortId;
+		}
+
+		public Guid SortId { get; private set; }
+
+		public int FullVersion { get; private set; }
+
+		public override bool Equals (object obj)
+		{
+			return Equals (obj as SortVersion);
+		}
+
+		public override int GetHashCode ()
+		{
+			return FullVersion.GetHashCode ();
+		}
+
+		public bool Equals (SortVersion other)
+		{
+			if (other == null)
+				return false;
+
+			return FullVersion == other.FullVersion && SortId == other.SortId;
+		}
+
+		public static bool operator == (SortVersion left, SortVersion right)
+		{
+			if (left != null)
+				return left.Equals (right);
+
+			return right == null || right.Equals (left);
+		}
+
+		public static bool operator != (SortVersion left, SortVersion right)
+		{
+			return !(left == right);
+		}
 	}
 }
+
+#endif

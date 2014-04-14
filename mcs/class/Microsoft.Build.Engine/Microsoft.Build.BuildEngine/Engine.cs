@@ -110,10 +110,12 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			Toolsets.Add (new Toolset ("2.0",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20)));
+#if NET_3_5
 			Toolsets.Add (new Toolset ("3.0",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version30)));
 			Toolsets.Add (new Toolset ("3.5",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version35)));
+#endif
 #if NET_4_0
 			Toolsets.Add (new Toolset ("4.0",
 						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));

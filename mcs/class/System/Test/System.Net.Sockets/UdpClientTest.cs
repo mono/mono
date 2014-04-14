@@ -44,6 +44,7 @@ namespace MonoTests.System.Net.Sockets {
 			Assert.IsTrue (client.MulticastLoopback, "MulticastLoopback");
 			//Assert.AreEqual (32, client.Ttl, "Ttl");
 #endif
+			client.Close ();
 		}
 
 		[Test] // .ctor (AddressFamily)
@@ -93,6 +94,7 @@ namespace MonoTests.System.Net.Sockets {
 			Assert.IsTrue (client.MulticastLoopback, "#B:MulticastLoopback");
 			//Assert.AreEqual (32, client.Ttl, "#B:Ttl");
 #endif
+			client.Close ();
 		}
 
 		[Test] // .ctor (AddressFamily)
@@ -134,56 +136,58 @@ namespace MonoTests.System.Net.Sockets {
 		[Test] // .ctor (Int32)
 		public void Constructor3 ()
 		{
-			MyUdpClient client;
 			Socket s;
 			IPEndPoint localEP;
 
-			client = new MyUdpClient (IPEndPoint.MinPort);
-			s = client.Client;
-			Assert.IsNotNull (s, "#A:Client");
-			Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#A:Client:AddressFamily");
-			Assert.IsFalse (s.Connected, "#A:Client:Connected");
-#if NET_2_0
-			Assert.IsTrue (s.IsBound, "#A:Client:IsBound");
-#endif
-			Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#A:Client:ProtocolType");
-			Assert.AreEqual (SocketType.Dgram, s.SocketType, "#A:Client:SocketType");
-			Assert.IsFalse (client.Active, "#A:Active");
-#if NET_2_0
-			Assert.IsFalse (client.DontFragment, "#A:DontFragment");
-			Assert.IsFalse (client.EnableBroadcast, "#A:EnableBroadcast");
-			//Assert.IsFalse (client.ExclusiveAddressUse, "#A:ExclusiveAddressUse");
-			Assert.IsTrue (client.MulticastLoopback, "#A:MulticastLoopback");
-			//Assert.AreEqual (32, client.Ttl, "#A:Ttl");
-#endif
-			localEP = s.LocalEndPoint as IPEndPoint;
-			Assert.IsNotNull (localEP, "#A:Client:LocalEndpoint");
-			Assert.AreEqual (IPAddress.Any, localEP.Address, "#A:Client:LocalEndPoint/Address");
-			Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#A:Client:LocalEndPoint/AddressFamily");
-
-			client = new MyUdpClient (IPEndPoint.MaxPort);
-			s = client.Client;
-			Assert.IsNotNull (s, "#B:Client");
-			Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#B:Client:AddressFamily");
-			Assert.IsFalse (s.Connected, "#B:Client:Connected");
-#if NET_2_0
-			Assert.IsTrue (s.IsBound, "#B:Client:IsBound");
-#endif
-			Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#B:Client:ProtocolType");
-			Assert.AreEqual (SocketType.Dgram, s.SocketType, "#B:Client:SocketType");
-			Assert.IsFalse (client.Active, "#B:Active");
-#if NET_2_0
-			Assert.IsFalse (client.DontFragment, "#B:DontFragment");
-			Assert.IsFalse (client.EnableBroadcast, "#B:EnableBroadcast");
-			//Assert.IsFalse (client.ExclusiveAddressUse, "#B:ExclusiveAddressUse");
-			Assert.IsTrue (client.MulticastLoopback, "#B:MulticastLoopback");
-			//Assert.AreEqual (32, client.Ttl, "#B:Ttl");
-#endif
-			localEP = s.LocalEndPoint as IPEndPoint;
-			Assert.IsNotNull (localEP, "#B:Client:LocalEndpoint");
-			Assert.AreEqual (IPAddress.Any, localEP.Address, "#B:Client:LocalEndPoint/Address");
-			Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#B:Client:LocalEndPoint/AddressFamily");
-			Assert.AreEqual (IPEndPoint.MaxPort, localEP.Port, "#B:Client:LocalEndPoint/Port");
+			using (MyUdpClient client = new MyUdpClient (IPEndPoint.MinPort)) 
+			{
+				s = client.Client;
+				Assert.IsNotNull (s, "#A:Client");
+				Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#A:Client:AddressFamily");
+				Assert.IsFalse (s.Connected, "#A:Client:Connected");
+	#if NET_2_0
+				Assert.IsTrue (s.IsBound, "#A:Client:IsBound");
+	#endif
+				Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#A:Client:ProtocolType");
+				Assert.AreEqual (SocketType.Dgram, s.SocketType, "#A:Client:SocketType");
+				Assert.IsFalse (client.Active, "#A:Active");
+	#if NET_2_0
+				Assert.IsFalse (client.DontFragment, "#A:DontFragment");
+				Assert.IsFalse (client.EnableBroadcast, "#A:EnableBroadcast");
+				//Assert.IsFalse (client.ExclusiveAddressUse, "#A:ExclusiveAddressUse");
+				Assert.IsTrue (client.MulticastLoopback, "#A:MulticastLoopback");
+				//Assert.AreEqual (32, client.Ttl, "#A:Ttl");
+	#endif
+				localEP = s.LocalEndPoint as IPEndPoint;
+				Assert.IsNotNull (localEP, "#A:Client:LocalEndpoint");
+				Assert.AreEqual (IPAddress.Any, localEP.Address, "#A:Client:LocalEndPoint/Address");
+				Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#A:Client:LocalEndPoint/AddressFamily");
+			}
+			using (MyUdpClient client = new MyUdpClient (IPEndPoint.MaxPort))
+			{
+				s = client.Client;
+				Assert.IsNotNull (s, "#B:Client");
+				Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#B:Client:AddressFamily");
+				Assert.IsFalse (s.Connected, "#B:Client:Connected");
+	#if NET_2_0
+				Assert.IsTrue (s.IsBound, "#B:Client:IsBound");
+	#endif
+				Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#B:Client:ProtocolType");
+				Assert.AreEqual (SocketType.Dgram, s.SocketType, "#B:Client:SocketType");
+				Assert.IsFalse (client.Active, "#B:Active");
+	#if NET_2_0
+				Assert.IsFalse (client.DontFragment, "#B:DontFragment");
+				Assert.IsFalse (client.EnableBroadcast, "#B:EnableBroadcast");
+				//Assert.IsFalse (client.ExclusiveAddressUse, "#B:ExclusiveAddressUse");
+				Assert.IsTrue (client.MulticastLoopback, "#B:MulticastLoopback");
+				//Assert.AreEqual (32, client.Ttl, "#B:Ttl");
+	#endif
+				localEP = s.LocalEndPoint as IPEndPoint;
+				Assert.IsNotNull (localEP, "#B:Client:LocalEndpoint");
+				Assert.AreEqual (IPAddress.Any, localEP.Address, "#B:Client:LocalEndPoint/Address");
+				Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#B:Client:LocalEndPoint/AddressFamily");
+				Assert.AreEqual (IPEndPoint.MaxPort, localEP.Port, "#B:Client:LocalEndPoint/Port");
+			}
 		}
 
 		[Test] // .ctor (Int32)
@@ -215,36 +219,37 @@ namespace MonoTests.System.Net.Sockets {
 		[Test] // .ctor (IPEndPoint)
 		public void Constructor4 ()
 		{
-			MyUdpClient client;
 			Socket s;
 			IPEndPoint localEP;
 			IPEndPoint clientEP;
 
 			clientEP = new IPEndPoint (IPAddress.Loopback, 8001);
-			client = new MyUdpClient (clientEP);
-			s = client.Client;
-			Assert.IsNotNull (s, "#A:Client");
-			Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#A:Client:AddressFamily");
-			Assert.IsFalse (s.Connected, "#A:Client:Connected");
+			using (MyUdpClient client = new MyUdpClient (clientEP))
+			{
+				s = client.Client;
+				Assert.IsNotNull (s, "#A:Client");
+				Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#A:Client:AddressFamily");
+				Assert.IsFalse (s.Connected, "#A:Client:Connected");
 #if NET_2_0
-			Assert.IsTrue (s.IsBound, "#A:Client:IsBound");
+				Assert.IsTrue (s.IsBound, "#A:Client:IsBound");
 #endif
-			Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#A:Client:ProtocolType");
-			Assert.AreEqual (SocketType.Dgram, s.SocketType, "#A:Client:SocketType");
-			Assert.IsFalse (client.Active, "#A:Active");
+				Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#A:Client:ProtocolType");
+				Assert.AreEqual (SocketType.Dgram, s.SocketType, "#A:Client:SocketType");
+				Assert.IsFalse (client.Active, "#A:Active");
 #if NET_2_0
-			Assert.IsFalse (client.DontFragment, "#A:DontFragment");
-			Assert.IsFalse (client.EnableBroadcast, "#A:EnableBroadcast");
-			//Assert.IsFalse (client.ExclusiveAddressUse, "#A:ExclusiveAddressUse");
-			Assert.IsTrue (client.MulticastLoopback, "#A:MulticastLoopback");
-			//Assert.AreEqual (32, client.Ttl, "#A:Ttl");
+				Assert.IsFalse (client.DontFragment, "#A:DontFragment");
+				Assert.IsFalse (client.EnableBroadcast, "#A:EnableBroadcast");
+				//Assert.IsFalse (client.ExclusiveAddressUse, "#A:ExclusiveAddressUse");
+				Assert.IsTrue (client.MulticastLoopback, "#A:MulticastLoopback");
+				//Assert.AreEqual (32, client.Ttl, "#A:Ttl");
 #endif
-			localEP = s.LocalEndPoint as IPEndPoint;
-			Assert.IsNotNull (localEP, "#A:Client:LocalEndpoint");
-			Assert.IsFalse (object.ReferenceEquals (clientEP, localEP), "#A:Client:LocalEndPoint/ReferenceEquality");
-			Assert.AreEqual (clientEP.Address, localEP.Address, "#A:Client:LocalEndPoint/Address");
-			Assert.AreEqual (clientEP.AddressFamily, localEP.AddressFamily, "#A:Client:LocalEndPoint/AddressFamily");
-			Assert.AreEqual (clientEP.Port, localEP.Port, "#A:Client:LocalEndPoint/Port");
+				localEP = s.LocalEndPoint as IPEndPoint;
+				Assert.IsNotNull (localEP, "#A:Client:LocalEndpoint");
+				Assert.IsFalse (object.ReferenceEquals (clientEP, localEP), "#A:Client:LocalEndPoint/ReferenceEquality");
+				Assert.AreEqual (clientEP.Address, localEP.Address, "#A:Client:LocalEndPoint/Address");
+				Assert.AreEqual (clientEP.AddressFamily, localEP.AddressFamily, "#A:Client:LocalEndPoint/AddressFamily");
+				Assert.AreEqual (clientEP.Port, localEP.Port, "#A:Client:LocalEndPoint/Port");
+			}
 		}
 
 		[Test] // .ctor (IPEndPoint)
@@ -264,56 +269,59 @@ namespace MonoTests.System.Net.Sockets {
 		[Test] // .ctor (Int32, AddressFamily)
 		public void Constructor5 ()
 		{
-			MyUdpClient client;
 			Socket s;
 			IPEndPoint localEP;
 
-			client = new MyUdpClient (IPEndPoint.MinPort, AddressFamily.InterNetwork);
-			s = client.Client;
-			Assert.IsNotNull (s, "#A:Client");
-			Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#A:Client:AddressFamily");
-			Assert.IsFalse (s.Connected, "#A:Client:Connected");
+			using (MyUdpClient client = new MyUdpClient (IPEndPoint.MinPort, AddressFamily.InterNetwork))
+			{
+				s = client.Client;
+				Assert.IsNotNull (s, "#A:Client");
+				Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#A:Client:AddressFamily");
+				Assert.IsFalse (s.Connected, "#A:Client:Connected");
 #if NET_2_0
-			Assert.IsTrue (s.IsBound, "#A:Client:IsBound");
+				Assert.IsTrue (s.IsBound, "#A:Client:IsBound");
 #endif
-			Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#A:Client:ProtocolType");
-			Assert.AreEqual (SocketType.Dgram, s.SocketType, "#A:Client:SocketType");
-			Assert.IsFalse (client.Active, "#A:Active");
+				Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#A:Client:ProtocolType");
+				Assert.AreEqual (SocketType.Dgram, s.SocketType, "#A:Client:SocketType");
+				Assert.IsFalse (client.Active, "#A:Active");
 #if NET_2_0
-			//Assert.IsFalse (client.DontFragment, "#A:DontFragment");
-			Assert.IsFalse (client.EnableBroadcast, "#A:EnableBroadcast");
-			//Assert.IsFalse (client.ExclusiveAddressUse, "#A:ExclusiveAddressUse");
-			Assert.IsTrue (client.MulticastLoopback, "#A:MulticastLoopback");
-			//Assert.AreEqual (32, client.Ttl, "#A:Ttl");
+				//Assert.IsFalse (client.DontFragment, "#A:DontFragment");
+				Assert.IsFalse (client.EnableBroadcast, "#A:EnableBroadcast");
+				//Assert.IsFalse (client.ExclusiveAddressUse, "#A:ExclusiveAddressUse");
+				Assert.IsTrue (client.MulticastLoopback, "#A:MulticastLoopback");
+				//Assert.AreEqual (32, client.Ttl, "#A:Ttl");
 #endif
-			localEP = s.LocalEndPoint as IPEndPoint;
-			Assert.IsNotNull (localEP, "#A:Client:LocalEndpoint");
-			Assert.AreEqual (IPAddress.Any, localEP.Address, "#A:Client:LocalEndPoint/Address");
-			Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#A:Client:LocalEndPoint/AddressFamily");
+				localEP = s.LocalEndPoint as IPEndPoint;
+				Assert.IsNotNull (localEP, "#A:Client:LocalEndpoint");
+				Assert.AreEqual (IPAddress.Any, localEP.Address, "#A:Client:LocalEndPoint/Address");
+				Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#A:Client:LocalEndPoint/AddressFamily");
+			}
 
-			client = new MyUdpClient (IPEndPoint.MaxPort, AddressFamily.InterNetworkV6);
-			s = client.Client;
-			Assert.IsNotNull (s, "#B:Client");
-			Assert.AreEqual (AddressFamily.InterNetworkV6, s.AddressFamily, "#B:Client:AddressFamily");
-			Assert.IsFalse (s.Connected, "#B:Client:Connected");
+			using (MyUdpClient client = new MyUdpClient (IPEndPoint.MaxPort, AddressFamily.InterNetworkV6))
+			{
+				s = client.Client;
+				Assert.IsNotNull (s, "#B:Client");
+				Assert.AreEqual (AddressFamily.InterNetworkV6, s.AddressFamily, "#B:Client:AddressFamily");
+				Assert.IsFalse (s.Connected, "#B:Client:Connected");
 #if NET_2_0
-			Assert.IsTrue (s.IsBound, "#B:Client:IsBound");
+				Assert.IsTrue (s.IsBound, "#B:Client:IsBound");
 #endif
-			Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#B:Client:ProtocolType");
-			Assert.AreEqual (SocketType.Dgram, s.SocketType, "#B:Client:SocketType");
-			Assert.IsFalse (client.Active, "#B:Active");
+				Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#B:Client:ProtocolType");
+				Assert.AreEqual (SocketType.Dgram, s.SocketType, "#B:Client:SocketType");
+				Assert.IsFalse (client.Active, "#B:Active");
 #if NET_2_0
-			//Assert.IsFalse (client.DontFragment, "#B:DontFragment");
-			Assert.IsFalse (client.EnableBroadcast, "#B:EnableBroadcast");
-			//Assert.IsFalse (client.ExclusiveAddressUse, "#B:ExclusiveAddressUse");
-			Assert.IsTrue (client.MulticastLoopback, "#B:MulticastLoopback");
-			//Assert.AreEqual (32, client.Ttl, "#B:Ttl");
+				//Assert.IsFalse (client.DontFragment, "#B:DontFragment");
+				Assert.IsFalse (client.EnableBroadcast, "#B:EnableBroadcast");
+				//Assert.IsFalse (client.ExclusiveAddressUse, "#B:ExclusiveAddressUse");
+				Assert.IsTrue (client.MulticastLoopback, "#B:MulticastLoopback");
+				//Assert.AreEqual (32, client.Ttl, "#B:Ttl");
 #endif
-			localEP = s.LocalEndPoint as IPEndPoint;
-			Assert.IsNotNull (localEP, "#B:Client:LocalEndpoint");
-			Assert.AreEqual (IPAddress.IPv6Any, localEP.Address, "#B:Client:LocalEndPoint/Address");
-			Assert.AreEqual (AddressFamily.InterNetworkV6, localEP.AddressFamily, "#B:Client:LocalEndPoint/AddressFamily");
-			Assert.AreEqual (IPEndPoint.MaxPort, localEP.Port, "#B:Client:LocalEndPoint/Port");
+				localEP = s.LocalEndPoint as IPEndPoint;
+				Assert.IsNotNull (localEP, "#B:Client:LocalEndpoint");
+				Assert.AreEqual (IPAddress.IPv6Any, localEP.Address, "#B:Client:LocalEndPoint/Address");
+				Assert.AreEqual (AddressFamily.InterNetworkV6, localEP.AddressFamily, "#B:Client:LocalEndPoint/AddressFamily");
+				Assert.AreEqual (IPEndPoint.MaxPort, localEP.Port, "#B:Client:LocalEndPoint/Port");
+			}
 		}
 
 		[Test] // .ctor (Int32, AddressFamily)
@@ -385,57 +393,59 @@ namespace MonoTests.System.Net.Sockets {
 		[Test] // .ctor (String, Int32)
 		public void Constructor6 ()
 		{
-			MyUdpClient client;
 			Socket s;
 			IPEndPoint localEP;
 
 			// Bug #5503
 			// UDP port 0 doesn't seem to be valid.
-			client = new MyUdpClient ("127.0.0.1", 53);
-			s = client.Client;
-			Assert.IsNotNull (s, "#A:Client");
-			Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#A:Client:AddressFamily");
-			Assert.IsTrue (s.Connected, "#A:Client:Connected");
+			using (MyUdpClient client = new MyUdpClient ("127.0.0.1", 53))
+			{
+				s = client.Client;
+				Assert.IsNotNull (s, "#A:Client");
+				Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#A:Client:AddressFamily");
+				Assert.IsTrue (s.Connected, "#A:Client:Connected");
 #if NET_2_0
-			Assert.IsTrue (s.IsBound, "#A:Client:IsBound");
+				Assert.IsTrue (s.IsBound, "#A:Client:IsBound");
 #endif
-			Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#A:Client:ProtocolType");
-			Assert.AreEqual (SocketType.Dgram, s.SocketType, "#A:Client:SocketType");
-			Assert.IsTrue (client.Active, "#A:Active");
+				Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#A:Client:ProtocolType");
+				Assert.AreEqual (SocketType.Dgram, s.SocketType, "#A:Client:SocketType");
+				Assert.IsTrue (client.Active, "#A:Active");
 #if NET_2_0
-			Assert.IsFalse (client.DontFragment, "#A:DontFragment");
-			Assert.IsFalse (client.EnableBroadcast, "#A:EnableBroadcast");
-			//Assert.IsFalse (client.ExclusiveAddressUse, "#A:ExclusiveAddressUse");
-			//Assert.IsFalse (client.MulticastLoopback, "#A:MulticastLoopback");
-			//Assert.AreEqual (32, client.Ttl, "#A:Ttl");
+				Assert.IsFalse (client.DontFragment, "#A:DontFragment");
+				Assert.IsFalse (client.EnableBroadcast, "#A:EnableBroadcast");
+				//Assert.IsFalse (client.ExclusiveAddressUse, "#A:ExclusiveAddressUse");
+				//Assert.IsFalse (client.MulticastLoopback, "#A:MulticastLoopback");
+				//Assert.AreEqual (32, client.Ttl, "#A:Ttl");
 #endif
-			localEP = s.LocalEndPoint as IPEndPoint;
-			Assert.IsNotNull (localEP, "#A:Client:LocalEndpoint");
-			Assert.AreEqual (IPAddress.Loopback, localEP.Address, "#A:Client:LocalEndPoint/Address");
-			Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#A:Client:LocalEndPoint/AddressFamily");
-
-			client = new MyUdpClient ("127.0.0.1", IPEndPoint.MaxPort);
-			s = client.Client;
-			Assert.IsNotNull (s, "#B:Client");
-			Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#B:Client:AddressFamily");
-			Assert.IsTrue (s.Connected, "#B:Client:Connected");
+				localEP = s.LocalEndPoint as IPEndPoint;
+				Assert.IsNotNull (localEP, "#A:Client:LocalEndpoint");
+				Assert.AreEqual (IPAddress.Loopback, localEP.Address, "#A:Client:LocalEndPoint/Address");
+				Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#A:Client:LocalEndPoint/AddressFamily");
+			}
+			using (MyUdpClient client = new MyUdpClient ("127.0.0.1", IPEndPoint.MaxPort))
+			{
+				s = client.Client;
+				Assert.IsNotNull (s, "#B:Client");
+				Assert.AreEqual (AddressFamily.InterNetwork, s.AddressFamily, "#B:Client:AddressFamily");
+				Assert.IsTrue (s.Connected, "#B:Client:Connected");
 #if NET_2_0
-			Assert.IsTrue (s.IsBound, "#B:Client:IsBound");
+				Assert.IsTrue (s.IsBound, "#B:Client:IsBound");
 #endif
-			Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#B:Client:ProtocolType");
-			Assert.AreEqual (SocketType.Dgram, s.SocketType, "#B:Client:SocketType");
-			Assert.IsTrue (client.Active, "#B:Active");
+				Assert.AreEqual (ProtocolType.Udp, s.ProtocolType, "#B:Client:ProtocolType");
+				Assert.AreEqual (SocketType.Dgram, s.SocketType, "#B:Client:SocketType");
+				Assert.IsTrue (client.Active, "#B:Active");
 #if NET_2_0
-			Assert.IsFalse (client.DontFragment, "#B:DontFragment");
-			Assert.IsFalse (client.EnableBroadcast, "#B:EnableBroadcast");
-			//Assert.IsFalse (client.ExclusiveAddressUse, "#B:ExclusiveAddressUse");
-			//Assert.IsFalse (client.MulticastLoopback, "#B:MulticastLoopback");
-			//Assert.AreEqual (32, client.Ttl, "#B:Ttl");
+				Assert.IsFalse (client.DontFragment, "#B:DontFragment");
+				Assert.IsFalse (client.EnableBroadcast, "#B:EnableBroadcast");
+				//Assert.IsFalse (client.ExclusiveAddressUse, "#B:ExclusiveAddressUse");
+				//Assert.IsFalse (client.MulticastLoopback, "#B:MulticastLoopback");
+				//Assert.AreEqual (32, client.Ttl, "#B:Ttl");
 #endif
-			localEP = s.LocalEndPoint as IPEndPoint;
-			Assert.IsNotNull (localEP, "#B:Client:LocalEndpoint");
-			Assert.AreEqual (IPAddress.Loopback, localEP.Address, "#B:Client:LocalEndPoint/Address");
-			Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#B:Client:LocalEndPoint/AddressFamily");
+				localEP = s.LocalEndPoint as IPEndPoint;
+				Assert.IsNotNull (localEP, "#B:Client:LocalEndpoint");
+				Assert.AreEqual (IPAddress.Loopback, localEP.Address, "#B:Client:LocalEndPoint/Address");
+				Assert.AreEqual (AddressFamily.InterNetwork, localEP.AddressFamily, "#B:Client:LocalEndPoint/AddressFamily");
+			}
 		}
 
 		[Test] // .ctor (String, Int32)

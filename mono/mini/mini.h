@@ -526,6 +526,7 @@ extern gboolean mono_dont_free_global_codeman;
 extern gboolean mono_do_x86_stack_align;
 extern const char *mono_build_date;
 extern gboolean mono_do_signal_chaining;
+extern gboolean mono_do_crash_chaining;
 extern gboolean mono_use_llvm;
 extern gboolean mono_do_single_method_regression;
 extern guint32 mono_single_method_regression_opt;
@@ -1488,6 +1489,7 @@ typedef struct {
 	guint            has_indirection : 1;
 	guint            has_atomic_add_new_i4 : 1;
 	guint            has_atomic_exchange_i4 : 1;
+	guint            has_atomic_cas_i4 : 1;
 	guint            check_pinvoke_callconv : 1;
 	gpointer         debug_info;
 	guint32          lmf_offset;
@@ -2336,6 +2338,7 @@ gpointer  mono_arch_get_gsharedvt_call_info     (gpointer addr, MonoMethodSignat
 gboolean  mono_arch_opcode_needs_emulation      (MonoCompile *cfg, int opcode) MONO_INTERNAL;
 gboolean  mono_arch_tail_call_supported         (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig) MONO_INTERNAL;
 int       mono_arch_translate_tls_offset        (int offset) MONO_INTERNAL;
+gboolean  mono_arch_opcode_supported            (int opcode) MONO_INTERNAL;
 
 #ifdef MONO_ARCH_SOFT_FLOAT_FALLBACK
 gboolean  mono_arch_is_soft_float               (void) MONO_INTERNAL;

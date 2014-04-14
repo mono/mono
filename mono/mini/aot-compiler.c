@@ -128,6 +128,7 @@ typedef struct MonoAotOptions {
 	gboolean dwarf_debug;
 	gboolean soft_debug;
 	gboolean log_generics;
+	gboolean log_instances;
 	gboolean direct_pinvoke;
 	gboolean direct_icalls;
 	gboolean no_direct_calls;
@@ -146,6 +147,7 @@ typedef struct MonoAotOptions {
 	gboolean autoreg;
 	char *mtriple;
 	char *llvm_path;
+	char *instances_logfile_path;
 } MonoAotOptions;
 
 typedef struct MonoAotStats {
@@ -240,6 +242,7 @@ typedef struct MonoAotCompile {
 	int objc_selector_index, objc_selector_index_2;
 	GPtrArray *objc_selectors;
 	GHashTable *objc_selector_to_index;
+	FILE *instances_logfile;
 } MonoAotCompile;
 
 typedef struct {
@@ -3880,7 +3883,8 @@ add_generic_class_with_depth (MonoAotCompile *acfg, MonoClass *klass, int depth,
 	 * Use gsharedvt for generic collections with vtype arguments to avoid code blowup.
 	 * Enable this only for some classes since gsharedvt might not support all methods.
 	 */
-	if ((acfg->opts & MONO_OPT_GSHAREDVT) && klass->image == mono_defaults.corlib && klass->generic_class && klass->generic_class->context.class_inst && is_vt_inst (klass->generic_class->context.class_inst) && (!strcmp (klass->name, "Dictionary`2") || !strcmp (klass->name, "List`1")))
+	if ((acfg->opts & MONO_OPT_GSHAREDVT) && klass->image == mono_defaults.corlib && klass->generic_class && klass->generic_class->context.class_inst && is_vt_inst (klass->generic_class->context.class_inst) &&
+		(!strcmp (klass->name, "Dictionary`2") || !strcmp (klass->name, "List`1") || !strcmp (klass->name, "ReadOnlyCollection`1")))
 		use_gsharedvt = TRUE;
 
 	iter = NULL;
@@ -6284,6 +6288,11 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->no_instances = TRUE;
 		} else if (str_begins_with (arg, "log-generics")) {
 			opts->log_generics = TRUE;
+		} else if (str_begins_with (arg, "log-instances=")) {
+			opts->log_instances = TRUE;
+			opts->instances_logfile_path = g_strdup (arg + strlen ("log-instances="));
+		} else if (str_begins_with (arg, "log-instances")) {
+			opts->log_instances = TRUE;
 		} else if (str_begins_with (arg, "mtriple=")) {
 			opts->mtriple = g_strdup (arg + strlen ("mtriple="));
 		} else if (str_begins_with (arg, "llvm-path=")) {
@@ -6603,6 +6612,13 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 		mono_destroy_compile (cfg);
 		mono_acfg_unlock (acfg);
 		return;
+	}
+
+	if (method->is_inflated && acfg->aot_opts.log_instances) {
+		if (acfg->instances_logfile)
+			fprintf (acfg->instances_logfile, "%s ### %d\n", mono_method_full_name (method, TRUE), cfg->code_size);
+		else
+			printf ("%s ### %d\n", mono_method_full_name (method, TRUE), cfg->code_size);
 	}
 
 	/* Adds generic instances referenced by this method */
@@ -8756,6 +8772,14 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 	if (acfg->aot_opts.full_aot)
 		acfg->flags |= MONO_AOT_FILE_FLAG_FULL_AOT;
+
+	if (acfg->aot_opts.instances_logfile_path) {
+		acfg->instances_logfile = fopen (acfg->aot_opts.instances_logfile_path, "w");
+		if (!acfg->instances_logfile) {
+			fprintf (stderr, "Unable to create logfile: '%s'.\n", acfg->aot_opts.instances_logfile_path);
+			exit (1);
+		}
+	}
 
 	load_profile_files (acfg);
 

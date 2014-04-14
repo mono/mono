@@ -432,7 +432,7 @@ namespace Mono.CSharp
 			if (String.Empty != match.Result("${line}"))
 				error.Line=Int32.Parse(match.Result("${line}"));
 			if (String.Empty != match.Result("${column}"))
-				error.Column=Int32.Parse(match.Result("${column}"));
+				error.Column=Int32.Parse(match.Result("${column}").Trim('+'));
 
 			string level = match.Result ("${level}");
 			if (level == "warning")

@@ -56,6 +56,7 @@ namespace System.Net
 		bool allowBuffering = true;
 		X509CertificateCollection certificates;
 		string connectionGroup;
+		bool haveContentLength;
 		long contentLength = -1;
 		HttpContinueDelegate continueDelegate;
 		CookieContainer cookieContainer;
@@ -277,6 +278,7 @@ namespace System.Net
 					throw new ArgumentOutOfRangeException ("value", "Content-Length must be >= 0");
 					
 				contentLength = value;
+				haveContentLength = true;
 			}
 		}
 		
@@ -1109,8 +1111,15 @@ namespace System.Net
 			if (continueDelegate != null)
 				continueDelegate (statusCode, headers);
 		}
+
+		void RewriteRedirectToGet ()
+		{
+			method = "GET";
+			webHeaders.RemoveInternal ("Transfer-Encoding");
+			sendChunked = false;
+		}
 		
-		bool Redirect (WebAsyncResult result, HttpStatusCode code)
+		bool Redirect (WebAsyncResult result, HttpStatusCode code, WebResponse response)
 		{
 			redirects++;
 			Exception e = null;
@@ -1122,12 +1131,12 @@ namespace System.Net
 			case HttpStatusCode.MovedPermanently: // 301
 			case HttpStatusCode.Redirect: // 302
 				if (method == "POST")
-					method = "GET";
+					RewriteRedirectToGet ();
 				break;
 			case HttpStatusCode.TemporaryRedirect: // 307
 				break;
 			case HttpStatusCode.SeeOther: //303
-				method = "GET";
+				RewriteRedirectToGet ();
 				break;
 			case HttpStatusCode.NotModified: // 304
 				return false;
@@ -1140,12 +1149,19 @@ namespace System.Net
 				break;
 			}
 
+			if (method != "GET" && !InternalAllowBuffering)
+				e = new WebException ("The request requires buffering data to succeed.", null, WebExceptionStatus.ProtocolError, webResponse);
+
 			if (e != null)
 				throw e;
 
 			contentLength = -1;
 			//bodyBufferLength = 0;
 			//bodyBuffer = null;
+			if (sendChunked) {
+				sendChunked = false;
+				webHeaders.RemoveInternal ("Transfer-Encoding");
+			}
 			uriString = webResponse.Headers ["Location"];
 
 			if (uriString == null)
@@ -1180,7 +1196,7 @@ namespace System.Net
 					if (contentLength > 0)
 						continue100 = true;
 
-					if (gotRequestStream || contentLength > 0)
+					if (haveContentLength || gotRequestStream || contentLength > 0)
 						webHeaders.SetInternal ("Content-Length", contentLength.ToString ());
 				}
 				webHeaders.RemoveInternal ("Transfer-Encoding");
@@ -1703,7 +1719,7 @@ namespace System.Net
 				bool b = false;
 				int c = (int) code;
 				if (allowAutoRedirect && c >= 300) {
-					b = Redirect (result, code);
+					b = Redirect (result, code, webResponse);
 					if (InternalAllowBuffering && writeStream.WriteBufferLength > 0) {
 						bodyBuffer = writeStream.WriteBuffer;
 						bodyBufferLength = writeStream.WriteBufferLength;

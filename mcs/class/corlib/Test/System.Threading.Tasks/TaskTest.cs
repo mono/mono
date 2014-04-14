@@ -779,8 +779,8 @@ namespace MonoTests.System.Threading.Tasks
 					}, TaskCreationOptions.AttachedToParent);
 				}, TaskCreationOptions.AttachedToParent);
 			});
-			t.Wait ();
-			Assert.IsTrue (result);
+			Assert.IsTrue (t.Wait (4000), "#1");
+			Assert.IsTrue (result, "#2");
 		}
 
 		[Test]
@@ -1926,6 +1926,77 @@ namespace MonoTests.System.Threading.Tasks
 				Assert.That (ex.InnerException, Is.TypeOf (typeof (TaskCanceledException)), "#3");
 			}
 		}
+
+		[Test]
+		public void TaskContinuationChainLeak()
+		{
+			// Start cranking out tasks, starting each new task upon completion of and from inside the prior task.
+			//
+			var tester = new TaskContinuationChainLeakTester ();
+			tester.Run ();
+			tester.TasksPilledUp.WaitOne ();
+
+			// Head task should be out of scope by now.  Manually run the GC and expect that it gets collected.
+			// 
+			GC.Collect ();
+			GC.WaitForPendingFinalizers ();
+
+			try {
+				// It's important that we do the asserting while the task recursion is still going, since that is the 
+				// crux of the problem scenario.
+				//
+				tester.Verify ();
+			} finally {
+				tester.Stop ();
+			}
+		}
+
+		class TaskContinuationChainLeakTester
+		{
+			volatile bool m_bStop;
+			int counter;
+			ManualResetEvent mre = new ManualResetEvent (false);
+			WeakReference<Task> headTaskWeakRef;
+
+			public ManualResetEvent TasksPilledUp {
+				get {
+					return mre;
+				}
+			}
+
+			public void Run ()
+			{
+				headTaskWeakRef = new WeakReference<Task> (StartNewTask ());
+			}
+
+			public Task StartNewTask ()
+			{
+				if (m_bStop)
+					return null;
+
+				if (++counter == 50)
+					mre.Set ();
+
+				return Task.Factory.StartNew (DummyWorker).ContinueWith (task => StartNewTask ());
+			}
+
+			public void Stop ()
+			{
+				m_bStop = true;
+			}
+
+			public void Verify ()
+			{
+				Task task;
+				Assert.IsFalse (headTaskWeakRef.TryGetTarget (out task));
+			}
+
+			void DummyWorker ()
+			{
+				Thread.Sleep (0);
+			}
+		}
+		
 #endif
 	}
 }

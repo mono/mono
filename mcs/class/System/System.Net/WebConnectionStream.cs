@@ -514,6 +514,13 @@ namespace System.Net
 				Buffer.BlockCopy (buffer, offset, newBuffer, head.Length, size);
 				Buffer.BlockCopy (crlf, 0, newBuffer, head.Length + size, crlf.Length);
 
+				if (allowBuffering) {
+					if (writeBuffer == null)
+						writeBuffer = new MemoryStream ();
+					writeBuffer.Write (buffer, offset, size);
+					totalWritten += size;
+				}
+
 				buffer = newBuffer;
 				offset = 0;
 				size = chunkSize;

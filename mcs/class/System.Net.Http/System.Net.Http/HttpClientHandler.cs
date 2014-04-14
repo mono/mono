@@ -35,6 +35,8 @@ namespace System.Net.Http
 {
 	public class HttpClientHandler : HttpMessageHandler
 	{
+		static long groupCounter;
+
 		bool allowAutoRedirect;
 		DecompressionMethods automaticDecompression;
 		CookieContainer cookieContainer;
@@ -48,6 +50,9 @@ namespace System.Net.Http
 		bool useProxy;
 		ClientCertificateOption certificate;
 		bool sentRequest;
+		HttpWebRequest wrequest;
+		string connectionGroupName;
+		bool disposed;
 
 		public HttpClientHandler ()
 		{
@@ -56,6 +61,7 @@ namespace System.Net.Http
 			maxRequestContentBufferSize = int.MaxValue;
 			useCookies = true;
 			useProxy = true;
+			connectionGroupName = "HttpClientHandler" + Interlocked.Increment (ref groupCounter);
 		}
 
 		internal void EnsureModifiability ()
@@ -215,7 +221,14 @@ namespace System.Net.Http
 
 		protected override void Dispose (bool disposing)
 		{
-			// TODO: ?
+			if (disposing) {
+				if (wrequest != null) {
+					wrequest.ServicePoint.CloseConnectionGroup (wrequest.ConnectionGroupName);
+					Volatile.Write (ref wrequest, null);
+				}
+				Volatile.Write (ref disposed, true);
+			}
+
 			base.Dispose (disposing);
 		}
 
@@ -224,7 +237,7 @@ namespace System.Net.Http
 			var wr = new HttpWebRequest (request.RequestUri);
 			wr.ThrowOnError = false;
 
-			wr.ConnectionGroupName = "HttpClientHandler";
+			wr.ConnectionGroupName = connectionGroupName;
 			wr.Method = request.Method.Method;
 			wr.ProtocolVersion = request.Version;
 
@@ -298,8 +311,11 @@ namespace System.Net.Http
 
 		protected async internal override Task<HttpResponseMessage> SendAsync (HttpRequestMessage request, CancellationToken cancellationToken)
 		{
-			sentRequest = true;
-			var wrequest = CreateWebRequest (request);
+			if (disposed)
+				throw new ObjectDisposedException (GetType ().ToString ());
+
+			Volatile.Write (ref sentRequest, true);
+			wrequest = CreateWebRequest (request);
 
 			if (request.Content != null) {
 				var headers = wrequest.Headers;

@@ -215,14 +215,19 @@ namespace Mono.Security.Cryptography {
 						_userPathExists = Directory.Exists (_userPath);
 						if (!_userPathExists) {
 							try {
-								Directory.CreateDirectory (_userPath);
-								ProtectUser (_userPath);
-								_userPathExists = true;
+								Directory.CreateDirectory (_userPath);						
 							}
 							catch (Exception e) {
 								string msg = Locale.GetText ("Could not create user key store '{0}'.");
 								throw new CryptographicException (String.Format (msg, _userPath), e);
 							}
+
+							if (!ProtectUser (_userPath)) {
+								string msg = Locale.GetText ("Could not secure user key store '{0}'.");
+								throw new IOException (String.Format (msg, _userPath));
+							} 
+
+							_userPathExists = true;
 						}
 					}
 				}
@@ -248,13 +253,18 @@ namespace Mono.Security.Cryptography {
 						if (!_machinePathExists) {
 							try {
 								Directory.CreateDirectory (_machinePath);
-								ProtectMachine (_machinePath);
-								_machinePathExists = true;
 							}
 							catch (Exception e) {
 								string msg = Locale.GetText ("Could not create machine key store '{0}'.");
 								throw new CryptographicException (String.Format (msg, _machinePath), e);
 							}
+
+							if (!ProtectMachine (_machinePath)) {
+								string msg = Locale.GetText ("Could not secure machine key store '{0}'.");
+								throw new IOException (String.Format (msg, _machinePath));
+							}
+
+							_machinePathExists = true;
 						}
 					}
 				}

@@ -30,6 +30,9 @@ using System.IO;
 using Microsoft.Build.BuildEngine;
 using NUnit.Framework;
 using System.Text;
+using Microsoft.Build.Tasks;
+using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 
 namespace MonoTests.Microsoft.Build.Tasks {
 
@@ -51,6 +54,18 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		{
 			Directory.Delete (source_path, true);
 			Directory.Delete (target_path, true);
+		}
+
+		[Test]
+		public void TestCopy_MissingSourceFile ()
+		{
+			Copy copy = new Copy ();
+			copy.BuildEngine = new TestEngine ();
+			copy.SourceFiles = new ITaskItem [1];
+			copy.SourceFiles [0] = new TaskItem ("SourceDoesNotExist");
+			copy.DestinationFiles = new ITaskItem [1];
+			copy.DestinationFiles [0] = new TaskItem ("DestDoesNotExist");
+			Assert.IsFalse (copy.Execute ());
 		}
 
 		[Test]

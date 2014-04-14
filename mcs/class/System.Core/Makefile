@@ -21,7 +21,7 @@ ifeq (xammac, $(PROFILE))
 LIB_MCS_FLAGS += -d:FEATURE_CORE_DLR,FEATURE_REFEMIT
 endif
 
-ifeq (monotouch, $(PROFILE))
+ifeq (monotouch, $(subst _runtime,,$(PROFILE)))
 LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 CYCLIC_DEPS := $(INTERPRETER_DEP)
@@ -35,6 +35,10 @@ NO_SIGN_ASSEMBLY = yes
 NO_INSTALL = yes
 endif
 
+endif
+
+ifeq (monotouch_runtime, $(PROFILE))
+LIB_MCS_FLAGS += -d:FULL_AOT_RUNTIME
 endif
 
 ifeq (4, $(FRAMEWORK_VERSION_MAJOR))

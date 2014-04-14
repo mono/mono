@@ -168,7 +168,11 @@ xammac_dirs := \
 	System.Net.Http
 
 monotouch_runtime_dirs := \
-	corlib
+	corlib \
+	System \
+	System.Core \
+	System.XML \
+	Mono.CSharp
 
 monotouch_dirs := \
 	Mono.CSharp	\

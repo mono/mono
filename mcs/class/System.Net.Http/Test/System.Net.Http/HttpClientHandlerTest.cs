@@ -117,5 +117,19 @@ namespace MonoTests.System.Net.Http
 				h.AllowAutoRedirect = false;
 			}
 		}
+
+		[Test]
+		public void Disposed ()
+		{
+			var h = new HttpClientHandler ();
+			h.Dispose ();
+			var c = new HttpClient (h);
+			try {
+				c.GetAsync ("http://google.com").Wait ();
+				Assert.Fail ("#1");
+			} catch (AggregateException e) {
+				Assert.IsTrue (e.InnerException is ObjectDisposedException, "#2");
+			}
+		}
 	}
 }

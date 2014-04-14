@@ -55,6 +55,9 @@ namespace Microsoft.Scripting.Interpreter {
                 return GetArrayAccessor(info, argumentCount);
             }
 
+#if FULL_AOT_RUNTIME
+            return new MethodInfoCallInstruction(info, argumentCount);
+#else
             if (ReflectionUtils.IsDynamicMethod(info) || !info.IsStatic && info.DeclaringType.IsValueType()) {
                 return new MethodInfoCallInstruction(info, argumentCount);
             }
@@ -109,7 +112,8 @@ namespace Microsoft.Scripting.Interpreter {
                 }
             }
 
-            return res;            
+            return res;
+#endif
         }
 
         private static CallInstruction GetArrayAccessor(MethodInfo info, int argumentCount) {
