@@ -547,8 +547,12 @@ namespace System.Net.Mail {
 				MailAddress from = message.From;
 				if (from == null)
 					from = defaultFrom;
-				
-				SendHeader (HeaderName.Date, DateTime.Now.ToString ("ddd, dd MMM yyyy HH':'mm':'ss zzz", DateTimeFormatInfo.InvariantInfo));
+
+				string dt = DateTime.Now.ToString("ddd, dd MMM yyyy HH':'mm':'ss zzz", DateTimeFormatInfo.InvariantInfo);
+				// remove ':' from time zone offset (e.g. from "+01:00")
+				dt = dt.Remove(dt.Length - 3, 1);
+				SendHeader(HeaderName.Date, dt);
+
 				SendHeader (HeaderName.From, EncodeAddress(from));
 				SendHeader (HeaderName.To, EncodeAddresses(message.To));
 				if (message.CC.Count > 0)
