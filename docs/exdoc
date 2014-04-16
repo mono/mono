@@ -1,17 +1,23 @@
 #!/usr/bin/perl
 
 if ($ARGV[0] eq "-h"){
-    $dir = $ARGV[1];
+    $sourcedir = $ARGV[1];
+    $dir = $sourcedir;
     $html = 1;
     shift @ARGV;
     shift @ARGV;
 }
 
+if ($ARGV[0] eq "-t"){
+    $dir = $ARGV[1];
+    shift @ARGV;
+}
+
 if ($html){
-    opendir (D, "$dir/sources/") || die "Can not open $dir";
+    opendir (D, "$sourcedir/sources/") || die "Can not open $dir";
     while ($n = readdir (D)){
 	if ($n =~ /mono-api-.*\.html$/){
-	    open (IN, "$dir/sources/$n") || die "Can not open $n";
+	    open (IN, "$sourcedir/sources/$n") || die "Can not open $n";
 	    $files[$filecount] = $n;
 	    while (<IN>){
 		@files_content[$filecount] .= $_;
