@@ -63769,6 +63769,46 @@
       </method>
     </type>
   </test>
+  <test name="test-ex-filter-01.cs">
+    <type name="X">
+      <method name="Int32 Main()" attrs="150">
+        <size>45</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-ex-filter-02.cs">
+    <type name="X">
+      <method name="Int32 TestGeneral()" attrs="145">
+        <size>75</size>
+      </method>
+      <method name="Int32 TestSpecific()" attrs="145">
+        <size>131</size>
+      </method>
+      <method name="Boolean Foo(System.Action)" attrs="145">
+        <size>16</size>
+      </method>
+      <method name="Int32 Main()" attrs="150">
+        <size>61</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;TestSpecific&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>13</size>
+      </method>
+      <method name="Void &lt;&gt;m__1()" attrs="131">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-externalias-01.cs">
     <type name="Test">
       <method name="Int32 Main()" attrs="150">
@@ -66281,11 +66321,11 @@
       </method>
     </type>
     <type name="S">
-      <method name="Decimal get_Property()" attrs="2179">
-        <size>15</size>
-      </method>
       <method name="Void .ctor(Decimal)" attrs="6278">
         <size>8</size>
+      </method>
+      <method name="System.Decimal get_Property()" attrs="2179">
+        <size>15</size>
       </method>
     </type>
   </test>
