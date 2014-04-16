@@ -3,8 +3,8 @@
 
 import sys
 
-gdb.execute ("file %s" % sys.argv [0])
-gdb.execute ("r --break *:* %s" % " ".join (sys.argv[1:len(sys.argv)]))
+gdb.execute ("file %s".format (sys.argv [0]))
+gdb.execute ("r --break *:* %s".format (" ".join (sys.argv [1:len (sys.argv)])))
 
 while True:
 	try:
