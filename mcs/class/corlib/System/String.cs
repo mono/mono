@@ -2046,7 +2046,7 @@ namespace System
 						if (arg is IFormattable)
 							str = ((IFormattable)arg).ToString (arg_format, provider);
 						else
-							str = arg.ToString ();
+							str = arg.ToString () ?? Empty;
 					}
 
 					// pad formatted string and append to result

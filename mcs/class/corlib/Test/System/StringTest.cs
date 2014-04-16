@@ -37,6 +37,13 @@ public class StringTest
 		}
 	}
 
+	class ToNullStringer
+	{
+		public override string ToString()
+		{
+			return null;
+		}
+	}
 
 	private CultureInfo orgCulture;
 
@@ -1207,6 +1214,13 @@ public class StringTest
 	{
 		var s = String.Format (new NullFormatter (), "{0:}", "test");
 		Assert.AreEqual ("test", s);
+	}
+
+	[Test]
+	public void Format_Arg_ToNullStringer ()
+	{
+		var s = String.Format ("{0}", new ToNullStringer ());
+		Assert.AreEqual ("", s);
 	}
 
 	[Test]
