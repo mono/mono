@@ -63772,7 +63772,7 @@
   <test name="test-ex-filter-01.cs">
     <type name="X">
       <method name="Int32 Main()" attrs="150">
-        <size>45</size>
+        <size>46</size>
       </method>
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
@@ -63782,10 +63782,10 @@
   <test name="test-ex-filter-02.cs">
     <type name="X">
       <method name="Int32 TestGeneral()" attrs="145">
-        <size>75</size>
+        <size>77</size>
       </method>
       <method name="Int32 TestSpecific()" attrs="145">
-        <size>131</size>
+        <size>157</size>
       </method>
       <method name="Boolean Foo(System.Action)" attrs="145">
         <size>16</size>

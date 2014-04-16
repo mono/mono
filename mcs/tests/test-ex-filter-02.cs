@@ -27,6 +27,12 @@ class X
 			return 1;
 		} catch (Exception e) if (e is InvalidOperationException) {
 			Console.WriteLine (e);
+
+			int paramIndex = 0;
+			while (paramIndex < 3) {
+				paramIndex++;
+			}
+						
 			return 1;
 		} catch (ApplicationException) {
 			return 0;
