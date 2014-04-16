@@ -420,6 +420,8 @@ struct _MonoClass {
 
 	/* Rarely used fields of classes */
 	MonoClassExt *ext;
+
+	void *user_data;
 };
 
 #define MONO_CLASS_IMPLEMENTS_INTERFACE(k,uiid) (((uiid) <= (k)->max_interface_id) && ((k)->interface_bitmap [(uiid) >> 3] & (1 << ((uiid)&7))))
