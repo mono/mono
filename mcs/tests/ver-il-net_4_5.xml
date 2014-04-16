@@ -60817,6 +60817,14 @@
         <size>13</size>
       </method>
     </type>
+    <type name="AwaitNS.MemberAccess">
+      <method name="Void M()" attrs="145">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
   </test>
   <test name="test-async-23.cs">
     <type name="MyContext">

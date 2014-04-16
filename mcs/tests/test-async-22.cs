@@ -165,4 +165,13 @@ namespace AwaitNS
 			};
 		}
 	}
+
+	class MemberAccess
+	{
+		static void M ()
+		{
+			var await = new string[0];
+			var l = await.Length;			
+		}
+	}
 }

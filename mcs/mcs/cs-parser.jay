@@ -3202,6 +3202,12 @@ member_access
 		$$ = new MemberAccess (new BaseThis (GetLocation ($1)), lt.Value, (TypeArguments) $4, lt.Location);
 		lbag.AddLocation ($$, GetLocation ($2));
 	  }
+	| AWAIT DOT identifier_inside_body opt_type_argument_list
+	  {
+		var lt = (LocatedToken) $3;
+		$$ = new MemberAccess (new SimpleName ("await", ((LocatedToken) $1).Location), lt.Value, (TypeArguments) $4, lt.Location);
+		lbag.AddLocation ($$, GetLocation ($2));
+	  }
 	| qualified_alias_member identifier_inside_body opt_type_argument_list
 	  {
 		var lt1 = (LocatedToken) $1;
