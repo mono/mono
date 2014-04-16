@@ -12,7 +12,7 @@ class Program
 
 struct S
 {
-	string pp;
+	public string pp;
 	
 	public void Test ()
 	{

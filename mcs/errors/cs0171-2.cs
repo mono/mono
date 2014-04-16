@@ -5,7 +5,7 @@ using System;
 
 struct S
 {
-	event EventHandler ev;
+	public event EventHandler ev;
 	
 	public S (int i)
 	{

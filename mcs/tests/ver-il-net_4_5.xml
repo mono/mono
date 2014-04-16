@@ -49588,6 +49588,21 @@
       </method>
     </type>
   </test>
+  <test name="test-888.cs">
+    <type name="S1">
+      <method name="Void .ctor(Int32)" attrs="6278">
+        <size>2</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-89.cs">
     <type name="X">
       <method name="X F(Int32)" attrs="145">

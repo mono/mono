@@ -10,5 +10,5 @@ struct Sample {
         void Initialize() {
         }
         
-        string text;
+        public string text;
 }
