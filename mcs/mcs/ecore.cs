@@ -4477,7 +4477,7 @@ namespace Mono.CSharp {
 			//
 			// We have not reached end of parameters list due to params or used default parameters
 			//
-			if (j < candidate_pd.Count && j < best_pd.Count) {
+			while (j < candidate_pd.Count && j < best_pd.Count) {
 				var cand_param = candidate_pd.FixedParameters [j];
 				var best_param = best_pd.FixedParameters [j];
 
@@ -4486,10 +4486,15 @@ namespace Mono.CSharp {
 					// LAMESPEC:
 					//
 					// void Foo (params int[]) is better than void Foo (int i = 0) for Foo ()
-					// void Foo (string[] s, string value = null) is better than Foo (string s, params string[]) for Foo (null)
+					// void Foo (string[] s, string value = null) is better than Foo (string s, params string[]) for Foo (null) or Foo ()
 					//
 					if (cand_param.HasDefaultValue != best_param.HasDefaultValue)
 						return !candidate_params;
+
+					if (cand_param.HasDefaultValue) {
+						++j;
+						continue;
+					}
 				} else {
 					//
 					// Neither is better when not all arguments are provided
@@ -4501,6 +4506,8 @@ namespace Mono.CSharp {
 					if (cand_param.HasDefaultValue && best_param.HasDefaultValue)
 						return false;
 				}
+
+				break;
 			}
 
 			if (candidate_pd.Count != best_pd.Count)
