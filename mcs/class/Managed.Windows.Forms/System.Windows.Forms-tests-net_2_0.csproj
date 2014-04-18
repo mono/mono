@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{ACB51CEF-A814-4043-BF38-5C5532CC6837}</ProjectGuid>
+    <ProjectGuid>{4A3A8DC3-F8A2-47E9-96F5-1C8F7E4C3D77}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,612</NoWarn>
     <OutputPath>bin\Debug\System.Windows.Forms-tests-net_2_0</OutputPath>
@@ -255,42 +255,45 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_2_0.csproj">
-      <Project>{19413C30-6E39-4AAC-B9D1-FC88082E74C8}</Project>
+      <Project>{EC4EB1AA-1E23-4F9A-832A-FED2E5EA9630}</Project>
       <Name>Managed.Windows.Forms\System.Windows.Forms-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
-      <Project>{49220562-83E1-49A2-971F-5D31C4AB0258}</Project>
+      <Project>{69458D09-40A2-48AD-8C0F-0E437CF5FE6D}</Project>
       <Name>System.Data\System.Data-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_2_0.csproj">
-      <Project>{CA7E5301-90D2-4C07-87B7-851AA216D4C9}</Project>
+      <Project>{458980DE-3D7C-4BBA-BA18-673EDC030AFE}</Project>
       <Name>System.Drawing\System.Drawing-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Accessibility\Accessibility-net_2_0.csproj">
-      <Project>{6088F0A1-9658-4B71-86DB-8685B9279154}</Project>
+      <Project>{43A23ADA-35D9-4A48-BCE5-C21C081C6676}</Project>
       <Name>Accessibility\Accessibility-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
+      <Project>{080698DE-8AF0-496E-9AD7-58B6C605328A}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_2_0.csproj">
-      <Project>{85526C39-79CA-40DB-940A-3C83DF30DF85}</Project>
+      <Project>{8313B5D9-A1BE-4E62-90E7-FA002548D650}</Project>
       <Name>System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -306,3 +309,4 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+

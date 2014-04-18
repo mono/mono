@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F311EB21-B217-44F5-B4CB-96A7A4692C2E}</ProjectGuid>
+    <ProjectGuid>{44334A58-369B-4605-957E-8CAB1C843377}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,672,219,67,169,612</NoWarn>
     <OutputPath>bin\Debug\System-tests-net_2_0</OutputPath>
@@ -385,6 +385,7 @@
     <Compile Include="Test\System.Net.Sockets\TcpClientTest.cs" />
     <Compile Include="Test\System.Net.Sockets\TcpListenerTest.cs" />
     <Compile Include="Test\System.Net.Sockets\UdpClientTest.cs" />
+    <Compile Include="Test\System.Net.WebSockets\ClientWebSocketTest.cs" />
     <Compile Include="Test\System.Net\CookieCollectionTest.cs" />
     <Compile Include="Test\System.Net\CookieContainerTest.cs" />
     <Compile Include="Test\System.Net\CookieParserTest.cs" />
@@ -556,18 +557,21 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <Reference Include="System.Drawing.dll">
@@ -576,7 +580,7 @@
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="..\Mono.Security\Mono.Security-net_2_0.csproj">
-      <Project>{6785B2B5-3B06-48F3-9E6C-99B23B9AAC4F}</Project>
+      <Project>{57CFE851-81AC-4269-B24A-965A53D87248}</Project>
       <Name>Mono.Security\Mono.Security-net_2_0</Name>
     </ProjectReference>
     <Reference Include="System.Data">
@@ -585,15 +589,15 @@
       <Private>False</Private>
     </Reference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0.csproj">
-      <Project>{2EB99669-03DF-4DF7-9B20-0B6E6C9DBFEF}</Project>
+      <Project>{E89F34AB-7AE2-41CA-B891-C8D1C9F02EB8}</Project>
       <Name>System.XML\System.Xml-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
-      <Project>{B91370A1-A33A-4F7A-BDF2-1E194AFA0869}</Project>
+      <Project>{FBEC45AD-4493-41EA-9BCC-F3F29A08EB9E}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
-      <Project>{8131BE5D-BE64-4BA5-A62D-FAC4BE0A0B53}</Project>
+      <Project>{2695A2F2-2271-423D-8E0D-553DAB84E917}</Project>
       <Name>System.Configuration\System.Configuration-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -612,3 +616,4 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+

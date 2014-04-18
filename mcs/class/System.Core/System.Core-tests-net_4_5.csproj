@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9837CA8F-8FA7-4CE9-8BE8-BE4D5A236CDE}</ProjectGuid>
+    <ProjectGuid>{A4B33044-86DB-4146-8588-1F9400124B85}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,1720</NoWarn>
     <OutputPath>bin\Debug\System.Core-tests-net_4_5</OutputPath>
@@ -141,26 +141,29 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5.csproj">
-      <Project>{C86FCD4E-6A52-4595-8F9E-5270607D5EA9}</Project>
+      <Project>{FFAC0B73-D997-493B-9C62-27656CD858BB}</Project>
       <Name>System\System-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Posix\Mono.Posix-net_4_5.csproj">
-      <Project>{9FB65E2F-34A9-42FF-AE94-2F101B951E4E}</Project>
+      <Project>{85A9B29B-58FF-4FBE-8998-B0A89AC22880}</Project>
       <Name>Mono.Posix\Mono.Posix-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -168,3 +171,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

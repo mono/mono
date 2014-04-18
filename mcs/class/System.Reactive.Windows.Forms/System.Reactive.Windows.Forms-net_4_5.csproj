@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{A12A96AC-3AAD-417A-90FB-B40573189AC4}</ProjectGuid>
+    <ProjectGuid>{E85DF38F-D4F6-4B04-9962-32B0CCC8AC5E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\System.Reactive.Windows.Forms-net_4_5</OutputPath>
+    <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
@@ -60,37 +60,40 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Reactive.Interfaces\System.Reactive.Interfaces-net_4_5.csproj">
-      <Project>{D80FD091-3F53-4879-B0BB-08897139CF97}</Project>
+      <Project>{EFA38650-CE13-4BF3-993D-70B238DB1C9E}</Project>
       <Name>System.Reactive.Interfaces\System.Reactive.Interfaces-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Reactive.Core\System.Reactive.Core-net_4_5.csproj">
-      <Project>{CC4B4666-F6F2-4E54-8AF9-656A76A3F0DF}</Project>
+      <Project>{4EF3C775-C516-4897-AB1D-DC9F8862A4D9}</Project>
       <Name>System.Reactive.Core\System.Reactive.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Reactive.Linq\System.Reactive.Linq-net_4_5.csproj">
-      <Project>{83E7D015-CA2B-4B3D-A764-DB8C3A9B3EEE}</Project>
+      <Project>{EE831E49-3F84-4A05-9417-A9C8BD36E164}</Project>
       <Name>System.Reactive.Linq\System.Reactive.Linq-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Managed.Windows.Forms\System.Windows.Forms-net_4_5.csproj">
-      <Project>{409FF748-B765-4AB3-BCB1-72199B9E341C}</Project>
+      <Project>{B102F27C-1A07-487F-BA5B-D5155D201112}</Project>
       <Name>Managed.Windows.Forms\System.Windows.Forms-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -98,3 +101,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

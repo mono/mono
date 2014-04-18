@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{D7ADECD6-0DB4-4D9D-A491-1686883B3342}</ProjectGuid>
+    <ProjectGuid>{082EFA10-D1AE-41EA-8CDD-7D881109D97A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>bin\Debug\Mono.Data.Sqlite-tests-net_2_0</OutputPath>
@@ -49,6 +49,7 @@
     <Compile Include="Test\SqliteDataAdapterUnitTests.cs" />
     <Compile Include="Test\SqliteDataReaderTest.cs" />
     <Compile Include="Test\SqliteExceptionUnitTests.cs" />
+    <Compile Include="Test\SqliteFunctionTests.cs" />
     <Compile Include="Test\SqliteParameterUnitTests.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
@@ -61,34 +62,37 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Data.Sqlite\Mono.Data.Sqlite-net_2_0.csproj">
-      <Project>{991C45A8-3B22-45BB-B688-DBF8BA835992}</Project>
+      <Project>{7B3F5668-ED1F-48EB-9897-E6BE6A1C8CB3}</Project>
       <Name>Mono.Data.Sqlite\Mono.Data.Sqlite-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
-      <Project>{49220562-83E1-49A2-971F-5D31C4AB0258}</Project>
+      <Project>{69458D09-40A2-48AD-8C0F-0E437CF5FE6D}</Project>
       <Name>System.Data\System.Data-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Transactions\System.Transactions-net_2_0.csproj">
-      <Project>{DD1B3195-5FEA-46A2-99B5-9839CA60485C}</Project>
+      <Project>{BBC5CD06-50EB-439E-9DBB-2B5D644BE6C3}</Project>
       <Name>System.Transactions\System.Transactions-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
+      <Project>{080698DE-8AF0-496E-9AD7-58B6C605328A}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
   </ItemGroup>
@@ -110,3 +114,4 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+
