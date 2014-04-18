@@ -516,7 +516,8 @@
     <Compile Include="Monodoc\storage\UncompiledDocStorage.cs" />
     <Compile Include="Monodoc\storage\ZipStorage.cs" />
     <Compile Include="Monodoc\Tree.cs" />
-    <Compile Include="Monodoc\TypeUtils.cs" />  </ItemGroup>
+    <Compile Include="Monodoc\TypeUtils.cs" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -589,6 +590,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources/home.html">
       <LogicalName>home.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources/creativecommons.png">
+      <LogicalName>creativecommons.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources/Lminus.gif">
       <LogicalName>Lminus.gif</LogicalName>
@@ -747,5 +751,6 @@
       <LogicalName>treebg.png</LogicalName>
     </EmbeddedResource>
   </ItemGroup>
+</Project>
 </Project>
 

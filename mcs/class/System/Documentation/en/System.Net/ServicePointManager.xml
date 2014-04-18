@@ -92,9 +92,9 @@ instance. </para>
         <ReturnType>System.Net.CipherSuitesCallback</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>You can filter and/or re-order the ciphers suites that will be sent to the SSL/TLS server by providing your own callback.</summary>
+        <summary preserve-mono="true">You can filter and/or re-order the ciphers suites that will be sent to the SSL/TLS server by providing your own callback.</summary>
 	<value>Your custom delegate or null for the default behaviour.</value>
-        <remarks>
+        <remarks preserve-mono="true">
 	  <para>
 	    This mechanism cannot be used to add new ciphers. Undefined ciphers will be ignored. 
 	  </para>
