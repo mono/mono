@@ -1454,6 +1454,10 @@ GC_bool GC_is_tmp_root GC_PROTO((ptr_t p));
 void GC_register_dynamic_libraries GC_PROTO((void));
   		/* Add dynamic library data sections to the root set. */
 
+GC_INNER void GC_cond_register_dynamic_libraries(void);
+		/* Remove and reregister dynamic libraries if we're     */
+		/* configured to do that at each GC.                    */
+
 GC_bool GC_register_main_static_data GC_PROTO((void));
 		/* We need to register the main data segment.  Returns	*/
 		/* TRUE unless this is done implicitly as part of	*/
