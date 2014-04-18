@@ -34,3 +34,12 @@ div.title {
 	font-style: italic;
 }
 
+.attributionlogo { 
+	display:none; 
+	float:right;
+}
+
+div:hover > .attributionlogo,p:hover > .attributionlogo,td:hover > .attributionlogo { 
+	display:inline; 
+	float:right;
+}

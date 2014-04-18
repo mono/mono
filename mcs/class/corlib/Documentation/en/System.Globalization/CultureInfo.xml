@@ -28,7 +28,7 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
+    <summary preserve-mono="true">
       <para>Represents locale information used by all culture dependendent types and methods.</para>
     </summary>
     <remarks>
@@ -244,7 +244,7 @@
         <summary>CultureInfo that represents the culture used by the current thread.</summary>
         <value>
         </value>
-        <remarks>Initial value for each thread is determined using following rules. When <see cref="P:System.Globalization.CultureInfo.DefaultThreadCurrentCulture" /> is set its value is used otherwise the framework uses <see cref="M:System.Globalization.CultureInfo.CreateSpecificCulture" /> method to map system locate to framework culture name. This operation may fail in rare cases when system locale is set to invalid value or to value which cannot be translated to framework culture name. In such case <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> values is used.</remarks>
+        <remarks preserve-mono="true">Initial value for each thread is determined using following rules. When <see cref="P:System.Globalization.CultureInfo.DefaultThreadCurrentCulture" /> is set its value is used otherwise the framework uses <see cref="M:System.Globalization.CultureInfo.CreateSpecificCulture" /> method to map system locate to framework culture name. This operation may fail in rare cases when system locale is set to invalid value or to value which cannot be translated to framework culture name. In such case <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> values is used.</remarks>
       </Docs>
     </Member>
     <Member MemberName="CurrentUICulture">

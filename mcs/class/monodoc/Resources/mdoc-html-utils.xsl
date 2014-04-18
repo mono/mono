@@ -1468,6 +1468,18 @@
 		</p>
 	</xsl:template>
 
+	<xsl:template match="attribution">
+		<a href="http://creativecommons.org/licenses/by/4.0/" class="attributionlogo">
+			<xsl:attribute name="title">
+				<xsl:choose>
+					<xsl:when test="@modified='false'"><xsl:value-of select="concat('This content is licensed Creative Commons By ', @from)" /></xsl:when>
+					<xsl:otherwise><xsl:value-of select="concat('This content has been modified under a Creative Commons license from ', @from)" /></xsl:otherwise>
+				</xsl:choose>
+			</xsl:attribute>
+		<img src="mdocimages/creativecommons.png" /> 
+		</a>
+	</xsl:template>
+
 	<xsl:template match="paramref">
 		<i><xsl:value-of select="@name"/>
 				<xsl:apply-templates/>
