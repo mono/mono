@@ -1,0 +1,42 @@
+<Type Name="MessagePropertyDescriptionCollection" FullName="System.ServiceModel.Description.MessagePropertyDescriptionCollection">
+  <TypeSignature Language="C#" Value="public class MessagePropertyDescriptionCollection : System.Collections.ObjectModel.KeyedCollection&lt;string,System.ServiceModel.Description.MessagePropertyDescription&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessagePropertyDescriptionCollection extends System.Collections.ObjectModel.KeyedCollection`2&lt;string, class System.ServiceModel.Description.MessagePropertyDescription&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Collections.ObjectModel.KeyedCollection&lt;System.String,System.ServiceModel.Description.MessagePropertyDescription&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="!0">System.String</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="!1">System.ServiceModel.Description.MessagePropertyDescription</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="GetKeyForItem">
+      <MemberSignature Language="C#" Value="protected override string GetKeyForItem (System.ServiceModel.Description.MessagePropertyDescription item);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance string GetKeyForItem(class System.ServiceModel.Description.MessagePropertyDescription item) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="item" Type="System.ServiceModel.Description.MessagePropertyDescription" />
+      </Parameters>
+      <Docs>
+        <param name="item">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

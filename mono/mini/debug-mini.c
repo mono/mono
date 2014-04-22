@@ -18,13 +18,8 @@
 
 #define _IN_THE_MONO_DEBUGGER
 #include <mono/metadata/mono-debug-debugger.h>
-#include "debug-mini.h"
 
 #include <mono/utils/valgrind.h>
-
-#ifdef MONO_DEBUGGER_SUPPORTED
-#include <libgc/include/libgc-mono-debugger.h>
-#endif
 
 typedef struct {
 	guint32 index;
@@ -38,64 +33,6 @@ typedef struct
 	guint32 has_line_numbers;
 	guint32 breakpoint_id;
 } MiniDebugMethodInfo;
-
-typedef struct {
-	MonoObject *last_exception;
-	guint32 stopped_on_exception : 1;
-	guint32 stopped_on_unhandled : 1;
-} MonoDebuggerExceptionState;
-
-typedef enum {
-	MONO_DEBUGGER_THREAD_FLAGS_NONE		= 0,
-	MONO_DEBUGGER_THREAD_FLAGS_INTERNAL	= 1,
-	MONO_DEBUGGER_THREAD_FLAGS_THREADPOOL	= 2
-} MonoDebuggerThreadFlags;
-
-typedef enum {
-	MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_NONE		= 0,
-	MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_IN_RUNTIME_INVOKE	= 1,
-	MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_ABORT_REQUESTED	= 2
-} MonoDebuggerInternalThreadFlags;
-
-struct _MonoDebuggerThreadInfo {
-	guint64 tid;
-	guint64 lmf_addr;
-	guint64 end_stack;
-
-	guint64 extended_notifications;
-
-	/* Next pointer. */
-	MonoDebuggerThreadInfo *next;
-
-	/*
-	 * The stack bounds are only used when reading a core file.
-	 */
-	guint64 stack_start;
-	guint64 signal_stack_start;
-	guint32 stack_size;
-	guint32 signal_stack_size;
-
-	guint32 thread_flags;
-
-	/*
-	 * The debugger doesn't access anything beyond this point.
-	 */
-	MonoDebuggerExceptionState exception_state;
-
-	guint32 internal_flags;
-
-	MonoJitTlsData *jit_tls;
-	MonoInternalThread *thread;
-};
-
-typedef struct {
-	gpointer stack_pointer;
-	MonoObject *exception_obj;
-	guint32 stop;
-	guint32 stop_unhandled;
-} MonoDebuggerExceptionInfo;
-
-MonoDebuggerThreadInfo *mono_debugger_thread_table = NULL;
 
 static inline void
 record_line_number (MiniDebugMethodInfo *info, guint32 address, guint32 offset)
@@ -114,7 +51,7 @@ mono_debug_init_method (MonoCompile *cfg, MonoBasicBlock *start_block, guint32 b
 {
 	MiniDebugMethodInfo *info;
 
-	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
+	if (!mono_debug_enabled ())
 		return;
 
 	info = g_new0 (MiniDebugMethodInfo, 1);
@@ -164,8 +101,12 @@ write_variable (MonoInst *inst, MonoDebugVarInfo *var)
 	} else if (inst->opcode == OP_GSHAREDVT_LOCAL) {
 		var->index = inst->inst_imm | MONO_DEBUG_VAR_ADDRESS_MODE_GSHAREDVT_LOCAL;
 	} else if (inst->opcode == OP_VTARG_ADDR) {
-		var->offset = inst->inst_offset;
-		var->index  = inst->inst_basereg | MONO_DEBUG_VAR_ADDRESS_MODE_VTADDR;
+		MonoInst *vtaddr;
+
+		vtaddr = inst->inst_left;
+		g_assert (vtaddr->opcode == OP_REGOFFSET);
+		var->offset = vtaddr->inst_offset;
+		var->index  = vtaddr->inst_basereg | MONO_DEBUG_VAR_ADDRESS_MODE_VTADDR;
 	} else {
 		g_assert_not_reached ();
 	}
@@ -333,8 +274,6 @@ mono_debug_close_method (MonoCompile *cfg)
 	debug_info = mono_debug_add_method (cfg->method_to_register, jit, cfg->domain);
 
 	mono_debug_add_vg_method (method, jit);
-
-	mono_debugger_check_breakpoints (method, debug_info);
 
 	mono_debug_free_method_jit_info (jit);
 	mono_debug_free_method (cfg);
@@ -651,7 +590,7 @@ mono_debug_add_aot_method (MonoDomain *domain, MonoMethod *method, guint8 *code_
 {
 	MonoDebugMethodJitInfo *jit;
 
-	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
+	if (!mono_debug_enabled ())
 		return;
 
 	if ((method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
@@ -671,15 +610,6 @@ mono_debug_add_aot_method (MonoDomain *domain, MonoMethod *method, guint8 *code_
 	mono_debug_add_vg_method (method, jit);
 
 	mono_debug_free_method_jit_info (jit);
-}
-
-void
-mono_debug_add_icall_wrapper (MonoMethod *method, MonoJitICallInfo* callinfo)
-{
-	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
-		return;
-
-	// mono_debug_add_wrapper (method, callinfo->wrapper, callinfo->func);
 }
 
 static void
@@ -729,14 +659,14 @@ mono_debug_print_vars (gpointer ip, gboolean only_arguments)
 	if (!ji)
 		return;
 
-	jit = mono_debug_find_method (mono_jit_info_get_method (ji), domain);
+	jit = mono_debug_find_method (jinfo_get_method (ji), domain);
 	if (!jit)
 		return;
 
 	if (only_arguments) {
 		char **names;
 		names = g_new (char *, jit->num_params);
-		mono_method_get_param_names (mono_jit_info_get_method (ji), (const char **) names);
+		mono_method_get_param_names (jinfo_get_method (ji), (const char **) names);
 		if (jit->this_var)
 			print_var_info (jit->this_var, 0, "this", "Arg");
 		for (i = 0; i < jit->num_params; ++i) {
@@ -761,7 +691,7 @@ mono_debug_print_vars (gpointer ip, gboolean only_arguments)
 
 static GPtrArray *breakpoints = NULL;
 
-int
+static int
 mono_debugger_insert_breakpoint_full (MonoMethodDesc *desc)
 {
 	static int last_breakpoint_id = 0;
@@ -779,29 +709,7 @@ mono_debugger_insert_breakpoint_full (MonoMethodDesc *desc)
 	return info->index;
 }
 
-int
-mono_debugger_remove_breakpoint (int breakpoint_id)
-{
-	int i;
-
-	if (!breakpoints)
-		return 0;
-
-	for (i = 0; i < breakpoints->len; i++) {
-		MiniDebugBreakpointInfo *info = g_ptr_array_index (breakpoints, i);
-
-		if (info->index != breakpoint_id)
-			continue;
-
-		mono_method_desc_free (info->desc);
-		g_ptr_array_remove (breakpoints, info);
-		g_free (info);
-		return 1;
-	}
-
-	return 0;
-}
-
+/*FIXME This is part of the public API by accident, remove it from there when possible. */
 int
 mono_debugger_insert_breakpoint (const gchar *method_name, gboolean include_namespace)
 {
@@ -814,6 +722,7 @@ mono_debugger_insert_breakpoint (const gchar *method_name, gboolean include_name
 	return mono_debugger_insert_breakpoint_full (desc);
 }
 
+/*FIXME This is part of the public API by accident, remove it from there when possible. */
 int
 mono_debugger_method_has_breakpoint (MonoMethod *method)
 {
@@ -833,441 +742,3 @@ mono_debugger_method_has_breakpoint (MonoMethod *method)
 
 	return 0;
 }
-
-void
-mono_debugger_breakpoint_callback (MonoMethod *method, guint32 index)
-{
-	mono_debugger_event (MONO_DEBUGGER_EVENT_JIT_BREAKPOINT, (guint64) (gsize) method, index);
-}
-
-void
-mono_debugger_thread_created (gsize tid, MonoThread *thread, MonoJitTlsData *jit_tls, gpointer func)
-{
-#ifdef MONO_DEBUGGER_SUPPORTED
-	size_t stsize = 0;
-	guint8 *staddr = NULL;
-	MonoDebuggerThreadInfo *info;
-
-	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
-		return;
-
-	mono_debugger_lock ();
-
-	mono_thread_get_stack_bounds (&staddr, &stsize);
-
-	info = g_new0 (MonoDebuggerThreadInfo, 1);
-	info->tid = tid;
-	info->thread = thread->internal_thread;
-	info->stack_start = (guint64) (gsize) staddr;
-	info->signal_stack_start = (guint64) (gsize) jit_tls->signal_stack;
-	info->stack_size = stsize;
-	info->signal_stack_size = jit_tls->signal_stack_size;
-	info->end_stack = (guint64) (gsize) GC_mono_debugger_get_stack_ptr ();
-	info->lmf_addr = (guint64) (gsize) mono_get_lmf_addr ();
-	info->jit_tls = jit_tls;
-
-	if (func)
-		info->thread_flags = MONO_DEBUGGER_THREAD_FLAGS_INTERNAL;
-	if (thread->internal_thread->threadpool_thread)
-		info->thread_flags |= MONO_DEBUGGER_THREAD_FLAGS_THREADPOOL;
-
-	info->next = mono_debugger_thread_table;
-	mono_debugger_thread_table = info;
-
-	mono_debugger_event (MONO_DEBUGGER_EVENT_THREAD_CREATED,
-			     tid, (guint64) (gsize) info);
-
-	mono_debugger_unlock ();
-#endif /* MONO_DEBUGGER_SUPPORTED */
-}
-
-void
-mono_debugger_thread_cleanup (MonoJitTlsData *jit_tls)
-{
-#ifdef MONO_DEBUGGER_SUPPORTED
-	MonoDebuggerThreadInfo **ptr;
-
-	if (mono_debug_format == MONO_DEBUG_FORMAT_NONE)
-		return;
-
-	mono_debugger_lock ();
-
-	for (ptr = &mono_debugger_thread_table; *ptr; ptr = &(*ptr)->next) {
-		MonoDebuggerThreadInfo *info = *ptr;
-
-		if (info->jit_tls != jit_tls)
-			continue;
-
-		mono_debugger_event (MONO_DEBUGGER_EVENT_THREAD_CLEANUP,
-				     info->tid, (guint64) (gsize) info);
-
-		*ptr = info->next;
-		g_free (info);
-		break;
-	}
-
-	mono_debugger_unlock ();
-#endif
-}
-
-void
-mono_debugger_extended_notification (MonoDebuggerEvent event, guint64 data, guint64 arg)
-{
-#ifdef MONO_DEBUGGER_SUPPORTED
-	MonoDebuggerThreadInfo **ptr;
-	MonoInternalThread *thread = mono_thread_internal_current ();
-
-	if (!mono_debug_using_mono_debugger ())
-		return;
-
-	mono_debugger_lock ();
-
-	for (ptr = &mono_debugger_thread_table; *ptr; ptr = &(*ptr)->next) {
-		MonoDebuggerThreadInfo *info = *ptr;
-
-		if (info->thread != thread)
-			continue;
-
-		if ((info->extended_notifications & (int) event) == 0)
-			continue;
-
-		mono_debugger_event (event, data, arg);
-	}
-
-	mono_debugger_unlock ();
-#endif
-}
-
-void
-mono_debugger_trampoline_compiled (const guint8 *trampoline, MonoMethod *method, const guint8 *code)
-{
-#ifdef MONO_DEBUGGER_SUPPORTED
-	struct {
-		const guint8 * trampoline;
-		MonoMethod *method;
-		const guint8 *code;
-	} info = { trampoline, method, code };
-
-	mono_debugger_extended_notification (MONO_DEBUGGER_EVENT_OLD_TRAMPOLINE,
-					     (guint64) (gsize) method, (guint64) (gsize) code);
-	mono_debugger_extended_notification (MONO_DEBUGGER_EVENT_TRAMPOLINE,
-					     (guint64) (gsize) &info, 0);
-#endif
-}
-
-#if MONO_DEBUGGER_SUPPORTED
-static MonoDebuggerThreadInfo *
-find_debugger_thread_info (MonoInternalThread *thread)
-{
-	MonoDebuggerThreadInfo **ptr;
-
-	for (ptr = &mono_debugger_thread_table; *ptr; ptr = &(*ptr)->next) {
-		MonoDebuggerThreadInfo *info = *ptr;
-
-		if (info->thread == thread)
-			return info;
-	}
-
-	return NULL;
-}
-#endif
-
-MonoDebuggerExceptionAction
-_mono_debugger_throw_exception (gpointer addr, gpointer stack, MonoObject *exc)
-{
-#ifdef MONO_DEBUGGER_SUPPORTED
-	MonoDebuggerExceptionInfo exc_info;
-	MonoDebuggerThreadInfo *thread_info;
-
-	if (!mono_debug_using_mono_debugger ())
-		return MONO_DEBUGGER_EXCEPTION_ACTION_NONE;
-
-	mono_debugger_lock ();
-
-	thread_info = find_debugger_thread_info (mono_thread_internal_current ());
-	if (!thread_info) {
-		mono_debugger_unlock ();
-		return MONO_DEBUGGER_EXCEPTION_ACTION_NONE;
-	}
-
-	if ((thread_info->internal_flags & MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_ABORT_REQUESTED) != 0) {
-		mono_debugger_unlock ();
-		return MONO_DEBUGGER_EXCEPTION_ACTION_NONE;
-	}
-
-	if (thread_info->exception_state.stopped_on_exception ||
-	    thread_info->exception_state.stopped_on_unhandled) {
-		thread_info->exception_state.stopped_on_exception = 0;
-		mono_debugger_unlock ();
-		return MONO_DEBUGGER_EXCEPTION_ACTION_NONE;
-	}
-
-	/* Protect the exception object from being garbage collected. */
-
-	thread_info->exception_state.stopped_on_unhandled = 0;
-	thread_info->exception_state.stopped_on_exception = 1;
-	thread_info->exception_state.last_exception = exc;
-
-	/*
-	 * Backwards compatibility:
-	 *
-	 * Older debugger versions only know `exc_info.stop' and older runtime versions check
-	 * `exc_info.stop != 0'.
-	 *
-	 * The debugger must check for `mono_debug_debugger_version >= 5' before accessing the
-	 * `stop_unhandled' field.
-	 */
-
-	exc_info.stack_pointer = stack;
-	exc_info.exception_obj = exc;
-	exc_info.stop = 0;
-	exc_info.stop_unhandled = 0;
-
-	mono_debugger_event (MONO_DEBUGGER_EVENT_THROW_EXCEPTION, (guint64) (gsize) &exc_info,
-			     (guint64) (gsize) addr);
-
-	if (!exc_info.stop) {
-		thread_info->exception_state.stopped_on_exception = 0;
-		thread_info->exception_state.last_exception = NULL;
-	} 
-
-	mono_debugger_unlock ();
-
-	if (exc_info.stop)
-		return MONO_DEBUGGER_EXCEPTION_ACTION_STOP;
-	else if (exc_info.stop_unhandled)
-		return MONO_DEBUGGER_EXCEPTION_ACTION_STOP_UNHANDLED;
-#endif
-
-	return MONO_DEBUGGER_EXCEPTION_ACTION_NONE;
-}
-
-gboolean
-_mono_debugger_unhandled_exception (gpointer addr, gpointer stack, MonoObject *exc)
-{
-#ifdef MONO_DEBUGGER_SUPPORTED
-	MonoDebuggerThreadInfo *thread_info;
-
-	if (!mono_debug_using_mono_debugger ())
-		return FALSE;
-
-	if (exc) {
-		const gchar *name = mono_class_get_name (mono_object_get_class (exc));
-		if (!strcmp (name, "ThreadAbortException"))
-			return FALSE;
-	}
-
-	mono_debugger_lock ();
-
-	thread_info = find_debugger_thread_info (mono_thread_internal_current ());
-	if (!thread_info) {
-		mono_debugger_unlock ();
-		return FALSE;
-	}
-
-	if ((thread_info->internal_flags & MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_ABORT_REQUESTED) != 0) {
-		mono_debugger_unlock ();
-		return FALSE;
-	}
-
-	if (thread_info->exception_state.stopped_on_unhandled) {
-		thread_info->exception_state.stopped_on_unhandled = 0;
-		mono_debugger_unlock ();
-		return FALSE;
-	}
-
-	thread_info->exception_state.stopped_on_unhandled = 1;
-	thread_info->exception_state.last_exception = exc;
-
-	mono_debugger_event (MONO_DEBUGGER_EVENT_UNHANDLED_EXCEPTION,
-			     (guint64) (gsize) exc, (guint64) (gsize) addr);
-
-	return TRUE;
-#else
-	return FALSE;
-#endif
-}
-
-/*
- * mono_debugger_call_exception_handler:
- *
- * Called from mono_handle_exception_internal() to tell the debugger that we're about
- * to invoke an exception handler.
- *
- * The debugger may choose to set a breakpoint at @addr.  This is used if the user is
- * single-stepping from a `try' into a `catch' block, for instance.
- */
-
-void
-mono_debugger_call_exception_handler (gpointer addr, gpointer stack, MonoObject *exc)
-{
-#ifdef MONO_DEBUGGER_SUPPORTED
-	MonoDebuggerThreadInfo *thread_info;
-	MonoDebuggerExceptionInfo exc_info;
-
-	if (!mono_debug_using_mono_debugger ())
-		return;
-
-	mono_debugger_lock ();
-
-	thread_info = find_debugger_thread_info (mono_thread_internal_current ());
-	if (!thread_info) {
-		mono_debugger_unlock ();
-		return;
-	}
-
-	if ((thread_info->internal_flags & MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_ABORT_REQUESTED) != 0) {
-		mono_debugger_unlock ();
-		return;
-	}
-
-	// Prevent the object from being finalized.
-	thread_info->exception_state.last_exception = exc;
-
-	exc_info.stack_pointer = stack;
-	exc_info.exception_obj = exc;
-	exc_info.stop = 0;
-	exc_info.stop_unhandled = 0;
-
-	mono_debugger_event (MONO_DEBUGGER_EVENT_HANDLE_EXCEPTION, (guint64) (gsize) &exc_info,
-			     (guint64) (gsize) addr);
-
-	mono_debugger_unlock ();
-#endif
-}
-
-#ifdef MONO_DEBUGGER_SUPPORTED
-
-static gchar *
-get_exception_message (MonoObject *exc)
-{
-	char *message = NULL;
-	MonoString *str; 
-	MonoMethod *method;
-	MonoClass *klass;
-	gint i;
-
-	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
-		klass = exc->vtable->klass;
-		method = NULL;
-		while (klass && method == NULL) {
-			for (i = 0; i < klass->method.count; ++i) {
-				method = klass->methods [i];
-				if (!strcmp ("ToString", method->name) &&
-				    mono_method_signature (method)->param_count == 0 &&
-				    method->flags & METHOD_ATTRIBUTE_VIRTUAL &&
-				    method->flags & METHOD_ATTRIBUTE_PUBLIC) {
-					break;
-				}
-				method = NULL;
-			}
-			
-			if (method == NULL)
-				klass = klass->parent;
-		}
-
-		g_assert (method);
-
-		str = (MonoString *) mono_runtime_invoke (method, exc, NULL, NULL);
-		if (str)
-			message = mono_string_to_utf8 (str);
-	}
-
-	return message;
-}
-
-MonoObject *
-mono_debugger_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObject **exc)
-{
-	MonoDebuggerThreadInfo *thread_info;
-	MonoDebuggerExceptionState saved_exception_state;
-	MonoObject *retval;
-	gchar *message;
-
-	mono_debugger_lock ();
-
-	thread_info = find_debugger_thread_info (mono_thread_internal_current ());
-	if (!thread_info) {
-		mono_debugger_unlock ();
-		return NULL;
-	}
-
-	saved_exception_state = thread_info->exception_state;
-
-	thread_info->exception_state.last_exception = NULL;
-	thread_info->exception_state.stopped_on_unhandled = 0;
-	thread_info->exception_state.stopped_on_exception = 0;
-
-	thread_info->internal_flags |= MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_IN_RUNTIME_INVOKE;
-
-	mono_debugger_unlock ();
-
-	if (!strcmp (method->name, ".ctor")) {
-		retval = obj = mono_object_new (mono_domain_get (), method->klass);
-
-		mono_runtime_invoke (method, obj, params, exc);
-	} else
-		retval = mono_runtime_invoke (method, obj, params, exc);
-
-	mono_debugger_lock ();
-
-	thread_info->exception_state = saved_exception_state;
-	thread_info->internal_flags &= ~MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_IN_RUNTIME_INVOKE;
-
-	if ((thread_info->internal_flags & MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_ABORT_REQUESTED) != 0) {
-		thread_info->internal_flags &= ~MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_ABORT_REQUESTED;
-		mono_thread_internal_reset_abort (thread_info->thread);
-
-		mono_debugger_unlock ();
-
-		*exc = NULL;
-		return NULL;
-	}
-
-	mono_debugger_unlock ();
-
-	if (!exc || (*exc == NULL))
-		return retval;
-
-	retval = *exc;
-	message = get_exception_message (*exc);
-	if (message) {
-		*exc = (MonoObject *) mono_string_new_wrapper (message);
-		g_free (message);
-	}
-
-	return retval;
-}
-
-gboolean
-mono_debugger_abort_runtime_invoke ()
-{
-	MonoInternalThread *thread = mono_thread_internal_current ();
-	MonoDebuggerThreadInfo *thread_info;
-
-	mono_debugger_lock ();
-
-	thread_info = find_debugger_thread_info (thread);
-	if (!thread_info) {
-		mono_debugger_unlock ();
-		return FALSE;
-	}
-
-	if ((thread_info->internal_flags & MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_IN_RUNTIME_INVOKE) == 0) {
-		mono_debugger_unlock ();
-		return FALSE;
-	}
-
-	if ((thread_info->internal_flags & MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_ABORT_REQUESTED) != 0) {
-		mono_debugger_unlock ();
-		return TRUE;
-	}
-
-	thread_info->internal_flags |= MONO_DEBUGGER_INTERNAL_THREAD_FLAGS_ABORT_REQUESTED;
-	ves_icall_System_Threading_Thread_Abort (thread_info->thread, NULL);
-
-	mono_debugger_unlock ();
-	return TRUE;
-}
-
-#endif

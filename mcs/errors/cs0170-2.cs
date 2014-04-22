@@ -3,8 +3,8 @@
 
 struct A
 {
-	private long b;
-	private float c;
+	public long b;
+	public float c;
 
 	public A (int foo)
 	{

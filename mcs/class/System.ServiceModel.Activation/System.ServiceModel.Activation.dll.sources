@@ -1,0 +1,6 @@
+../../build/common/Consts.cs
+../../build/common/MonoTODOAttribute.cs
+Assembly/AssemblyInfo.cs
+
+../System.ServiceModel/System.ServiceModel/ServiceHostingEnvironment.cs
+../System.ServiceModel/System.ServiceModel.Activation/ServiceHostFactory.cs

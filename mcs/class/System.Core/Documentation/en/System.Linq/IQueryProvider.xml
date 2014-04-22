@@ -1,8 +1,10 @@
 <Type Name="IQueryProvider" FullName="System.Linq.IQueryProvider">
   <TypeSignature Language="C#" Value="public interface IQueryProvider" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IQueryProvider" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
@@ -12,9 +14,11 @@
   <Members>
     <Member MemberName="CreateQuery">
       <MemberSignature Language="C#" Value="public System.Linq.IQueryable CreateQuery (System.Linq.Expressions.Expression expression);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Linq.IQueryable CreateQuery(class System.Linq.Expressions.Expression expression) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable</ReturnType>
@@ -31,13 +35,18 @@
     </Member>
     <Member MemberName="CreateQuery&lt;TElement&gt;">
       <MemberSignature Language="C#" Value="public System.Linq.IQueryable&lt;TElement&gt; CreateQuery&lt;TElement&gt; (System.Linq.Expressions.Expression expression);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Linq.IQueryable`1&lt;!!TElement&gt; CreateQuery&lt;TElement&gt;(class System.Linq.Expressions.Expression expression) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TElement&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TElement" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
       </Parameters>
@@ -48,15 +57,14 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TElement" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Execute">
       <MemberSignature Language="C#" Value="public object Execute (System.Linq.Expressions.Expression expression);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Execute(class System.Linq.Expressions.Expression expression) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -73,13 +81,18 @@
     </Member>
     <Member MemberName="Execute&lt;TResult&gt;">
       <MemberSignature Language="C#" Value="public TResult Execute&lt;TResult&gt; (System.Linq.Expressions.Expression expression);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance !!TResult Execute&lt;TResult&gt;(class System.Linq.Expressions.Expression expression) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TResult</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
       </Parameters>
@@ -90,9 +103,6 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
   </Members>
 </Type>

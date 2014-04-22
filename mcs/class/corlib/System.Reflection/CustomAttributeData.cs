@@ -203,13 +203,18 @@ namespace System.Reflection {
 
 		public override int GetHashCode ()
 		{
-			int ret = ctorInfo.GetHashCode () << 16;
+			int ret = ctorInfo == null ? 13 : (ctorInfo.GetHashCode () << 16);
 			// argument order-dependent
-			for (int i = 0; i < ctorArgs.Count; i++)
-				ret += ret ^ 7 + ctorArgs [i].GetHashCode () << (i * 4);
+			if (ctorArgs != null) {
+				for (int i = 0; i < ctorArgs.Count; i++) {
+					ret += ret ^ 7 + ctorArgs [i].GetHashCode () << (i * 4);
+				}
+			}
 			// argument order-independent
-			for (int i = 0; i < namedArgs.Count; i++)
-				ret += (namedArgs [i].GetHashCode () << 5);
+			if (namedArgs != null) {
+				for (int i = 0; i < namedArgs.Count; i++)
+					ret += (namedArgs [i].GetHashCode () << 5);
+			}
 			return ret;
 		}
 	}

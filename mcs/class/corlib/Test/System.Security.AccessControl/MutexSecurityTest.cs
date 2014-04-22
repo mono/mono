@@ -23,7 +23,7 @@ namespace MonoTests.System.Security.AccessControl
 		public void FailsForNonexistantMutex ()
 		{
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			new MutexSecurity (@"Local\NonexistantMutex", AccessControlSections.Access);
@@ -33,7 +33,7 @@ namespace MonoTests.System.Security.AccessControl
 		public void SucceedsForExistingMutex ()
 		{
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			bool createdNew;
@@ -56,7 +56,7 @@ namespace MonoTests.System.Security.AccessControl
 		public void CanSetAndGetMutexSecurity ()
 		{
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			MutexAccessRule rule; SecurityIdentifier sid;
@@ -99,7 +99,7 @@ namespace MonoTests.System.Security.AccessControl
 		public void PermissionsActuallyWork ()
 		{
 			if (PlatformID.Win32NT != Environment.OSVersion.Platform) {
-				Assert.Ignore (); return;
+				Assert.Ignore ();
 			}
 
 			bool createdNew; MutexSecurity security;

@@ -157,6 +157,9 @@ namespace MonoTests.System.Net.Http.Headers
 			NameValueHeaderValue res;
 			Assert.IsFalse (NameValueHeaderValue.TryParse ("", out res), "#1");
 			Assert.IsNull (res, "#2");
+
+			Assert.IsFalse (NameValueHeaderValue.TryParse ("\"a\"=b", out res), "#3");
+			Assert.IsNull (res, "#4");
 		}
 	}
 }

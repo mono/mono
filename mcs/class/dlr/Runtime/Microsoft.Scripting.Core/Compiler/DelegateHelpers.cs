@@ -16,7 +16,9 @@
 using System;
 using System.Dynamic.Utils;
 using System.Reflection;
+#if FEATURE_REFEMIT
 using System.Reflection.Emit;
+#endif
 
 #if !FEATURE_CORE_DLR
 namespace Microsoft.Scripting.Ast.Compiler {

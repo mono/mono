@@ -1,5 +1,6 @@
 <Type Name="Environment+SpecialFolderOption" FullName="System.Environment+SpecialFolderOption">
   <TypeSignature Language="C#" Value="public enum Environment.SpecialFolderOption" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed Environment/SpecialFolderOption extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -14,6 +15,7 @@
   <Members>
     <Member MemberName="Create">
       <MemberSignature Language="C#" Value="Create" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolderOption Create = int32(32768)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -27,6 +29,7 @@
     </Member>
     <Member MemberName="DoNotVerify">
       <MemberSignature Language="C#" Value="DoNotVerify" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolderOption DoNotVerify = int32(16384)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -40,6 +43,7 @@
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Environment/SpecialFolderOption None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

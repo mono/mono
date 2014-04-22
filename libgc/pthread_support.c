@@ -222,10 +222,6 @@ static int GC_setspecific (GC_key_t key, void *value) {
 
 static GC_bool keys_initialized;
 
-#ifdef MONO_DEBUGGER_SUPPORTED
-#include "include/libgc-mono-debugger.h"
-#endif
-
 /* Recover the contents of the freelist array fl into the global one gfl.*/
 /* Note that the indexing scheme differs, in that gfl has finer size	*/
 /* resolution, even if not all entries are used.			*/
@@ -804,10 +800,6 @@ void GC_delete_thread(pthread_t id)
     } else {
         prev -> next = p -> next;
     }
-#ifdef MONO_DEBUGGER_SUPPORTED
-    if (gc_thread_vtable && gc_thread_vtable->thread_exited)
-	gc_thread_vtable->thread_exited (id, &p->stop_info.stack_ptr);
-#endif
 	
 #ifdef GC_DARWIN_THREADS
 	mach_port_deallocate(mach_task_self(), p->stop_info.mach_thread);
@@ -1124,14 +1116,6 @@ void GC_thr_init()
          t -> stop_info.stack_ptr = (ptr_t)(&dummy);
 #     endif
       t -> flags = DETACHED | MAIN_THREAD;
-#ifdef MONO_DEBUGGER_SUPPORTED
-      if (gc_thread_vtable && gc_thread_vtable->thread_created)
-#     ifdef GC_DARWIN_THREADS
-        gc_thread_vtable->thread_created (mach_thread_self (), &t->stop_info.stack_ptr);
-#     else
-         gc_thread_vtable->thread_created (pthread_self (), &t->stop_info.stack_ptr);
-#     endif
-#endif
 		 if (pthread_self () == main_pthread_self) {
 			 t->stack = main_stack;
 			 t->stack_size = main_stack_size;
@@ -1461,14 +1445,6 @@ void * GC_start_routine_head(void * arg, void *base_addr,
       /* This is also < 100% convincing.  We should also read this 	*/
       /* from /proc, but the hook to do so isn't there yet.		*/
 #   endif /* IA64 */
-#ifdef MONO_DEBUGGER_SUPPORTED
-    if (gc_thread_vtable && gc_thread_vtable->thread_created)
-#	ifdef GC_DARWIN_THREADS
-	gc_thread_vtable->thread_created (mach_thread_self(), &me->stop_info.stack_ptr);
-#	else
- 	gc_thread_vtable->thread_created (my_pthread, &me->stop_info.stack_ptr);
-#	endif
-#endif
     UNLOCK();
 
     if (start) *start = si -> start_routine;

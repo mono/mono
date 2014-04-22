@@ -1,6 +1,7 @@
 <Type Name="Encoding" FullName="System.Text.Encoding" FullNameSP="System_Text_Encoding" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract serializable Encoding extends System.Object" />
   <TypeSignature Language="C#" Value="public abstract class Encoding : ICloneable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract serializable beforefieldinit Encoding extends System.Object implements class System.ICloneable" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -18,6 +19,11 @@
       <InterfaceName>System.ICloneable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para> Represents a character
@@ -105,7 +111,13 @@ application can use one of two methods to allocate destination buffers.</para>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="protected Encoding ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
@@ -116,15 +128,16 @@ application can use one of two methods to allocate destination buffers.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected Encoding (int codePage);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(int32 codePage) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="protected Encoding (int codePage);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="codePage" Type="System.Int32" />
       </Parameters>
@@ -133,16 +146,17 @@ application can use one of two methods to allocate destination buffers.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ASCII">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding ASCII { public hidebysig static specialname class System.Text.Encoding get_ASCII() }" />
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding ASCII { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.Encoding ASCII" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ASCII">
-      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding ASCII { public hidebysig static specialname class System.Text.Encoding get_ASCII() }" />
-      <MemberSignature Language="C#" Value="public static System.Text.Encoding ASCII { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -162,16 +176,17 @@ application can use one of two methods to allocate destination buffers.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="BigEndianUnicode">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding BigEndianUnicode { public hidebysig static specialname class System.Text.Encoding get_BigEndianUnicode() }" />
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding BigEndianUnicode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.Encoding BigEndianUnicode" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BigEndianUnicode">
-      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding BigEndianUnicode { public hidebysig static specialname class System.Text.Encoding get_BigEndianUnicode() }" />
-      <MemberSignature Language="C#" Value="public static System.Text.Encoding BigEndianUnicode { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -201,15 +216,16 @@ application can use one of two methods to allocate destination buffers.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="BodyName">
+      <MemberSignature Language="C#" Value="public virtual string BodyName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string BodyName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BodyName">
-      <MemberSignature Language="C#" Value="public virtual string BodyName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -218,15 +234,20 @@ application can use one of two methods to allocate destination buffers.</para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="C#" Value="public virtual object Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Clone() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -237,19 +258,16 @@ application can use one of two methods to allocate destination buffers.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="CodePage">
       <MemberSignature Language="C#" Value="public virtual int CodePage { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 CodePage" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -258,16 +276,17 @@ application can use one of two methods to allocate destination buffers.</para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Convert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Byte[] Convert(class System.Text.Encoding srcEncoding, class System.Text.Encoding dstEncoding, class System.Byte[] bytes)" />
+      <MemberSignature Language="C#" Value="public static byte[] Convert (System.Text.Encoding srcEncoding, System.Text.Encoding dstEncoding, byte[] bytes);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] Convert(class System.Text.Encoding srcEncoding, class System.Text.Encoding dstEncoding, unsigned int8[] bytes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Convert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Byte[] Convert(class System.Text.Encoding srcEncoding, class System.Text.Encoding dstEncoding, class System.Byte[] bytes)" />
-      <MemberSignature Language="C#" Value="public static byte[] Convert (System.Text.Encoding srcEncoding, System.Text.Encoding dstEncoding, byte[] bytes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -294,16 +313,17 @@ application can use one of two methods to allocate destination buffers.</para>
           <paramref name="srcEncoding" />, <paramref name="dstEncoding" /> or <paramref name="bytes" /> is <see langword="null" />. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Convert">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Byte[] Convert(class System.Text.Encoding srcEncoding, class System.Text.Encoding dstEncoding, class System.Byte[] bytes, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public static byte[] Convert (System.Text.Encoding srcEncoding, System.Text.Encoding dstEncoding, byte[] bytes, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig unsigned int8[] Convert(class System.Text.Encoding srcEncoding, class System.Text.Encoding dstEncoding, unsigned int8[] bytes, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Convert">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Byte[] Convert(class System.Text.Encoding srcEncoding, class System.Text.Encoding dstEncoding, class System.Byte[] bytes, int32 index, int32 count)" />
-      <MemberSignature Language="C#" Value="public static byte[] Convert (System.Text.Encoding srcEncoding, System.Text.Encoding dstEncoding, byte[] bytes, int index, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -338,15 +358,15 @@ application can use one of two methods to allocate destination buffers.</para>
           <paramref name="index" /> and <paramref name="count" /> do not denote a valid range in <paramref name="bytes" /> . </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="DecoderFallback">
+      <MemberSignature Language="C#" Value="public System.Text.DecoderFallback DecoderFallback { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.DecoderFallback DecoderFallback" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DecoderFallback">
-      <MemberSignature Language="C#" Value="public System.Text.DecoderFallback DecoderFallback { set; get; }" />
-      <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -361,15 +381,17 @@ application can use one of two methods to allocate destination buffers.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Default">
       <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding Default { public hidebysig static specialname class System.Text.Encoding get_Default() }" />
       <MemberSignature Language="C#" Value="public static System.Text.Encoding Default { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.Encoding Default" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -387,15 +409,15 @@ application can use one of two methods to allocate destination buffers.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="EncoderFallback">
+      <MemberSignature Language="C#" Value="public System.Text.EncoderFallback EncoderFallback { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.EncoderFallback EncoderFallback" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EncoderFallback">
-      <MemberSignature Language="C#" Value="public System.Text.EncoderFallback EncoderFallback { set; get; }" />
-      <MemberType>Property</MemberType>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -410,14 +432,16 @@ application can use one of two methods to allocate destination buffers.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EncodingName">
       <MemberSignature Language="C#" Value="public virtual string EncodingName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string EncodingName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -426,16 +450,17 @@ application can use one of two methods to allocate destination buffers.</para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object value)" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object value)" />
-      <MemberSignature Language="C#" Value="public override bool Equals (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -462,16 +487,17 @@ application can use one of two methods to allocate destination buffers.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetByteCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetByteCount(class System.Char[] chars)" />
+      <MemberSignature Language="C#" Value="public virtual int GetByteCount (char[] chars);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetByteCount(char[] chars) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetByteCount">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetByteCount(class System.Char[] chars)" />
-      <MemberSignature Language="C#" Value="public virtual int GetByteCount (char[] chars);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -520,16 +546,17 @@ application can use one of two methods to allocate destination buffers.</para>
           <paramref name="chars " />is <see langword="null" />. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetByteCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetByteCount(string s)" />
+      <MemberSignature Language="C#" Value="public virtual int GetByteCount (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetByteCount(string s) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetByteCount">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetByteCount(string s)" />
-      <MemberSignature Language="C#" Value="public virtual int GetByteCount (string s);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -574,15 +601,23 @@ application can use one of two methods to allocate destination buffers.</para>
           <paramref name="s " /> is <see langword="null" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetByteCount">
       <MemberSignature Language="C#" Value="public virtual int GetByteCount (char* chars, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetByteCount(char* chars, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -598,23 +633,17 @@ application can use one of two methods to allocate destination buffers.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetByteCount">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetByteCount(class System.Char[] chars, int32 index, int32 count)" />
       <MemberSignature Language="C#" Value="public abstract int GetByteCount (char[] chars, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetByteCount(char[] chars, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -679,16 +708,17 @@ generally executes faster.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetBytes(class System.Char[] chars)" />
+      <MemberSignature Language="C#" Value="public virtual byte[] GetBytes (char[] chars);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] GetBytes(char[] chars) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetBytes(class System.Char[] chars)" />
-      <MemberSignature Language="C#" Value="public virtual byte[] GetBytes (char[] chars);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -720,16 +750,17 @@ array.</para>
           <paramref name="chars" /> is <see langword="null" />. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetBytes(string s)" />
+      <MemberSignature Language="C#" Value="public virtual byte[] GetBytes (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] GetBytes(string s) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetBytes(string s)" />
-      <MemberSignature Language="C#" Value="public virtual byte[] GetBytes (string s);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -762,16 +793,17 @@ array.</para>
           <paramref name="s" /> is <see langword="null" />. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetBytes(class System.Char[] chars, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual byte[] GetBytes (char[] chars, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] GetBytes(char[] chars, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetBytes(class System.Char[] chars, int32 index, int32 count)" />
-      <MemberSignature Language="C#" Value="public virtual byte[] GetBytes (char[] chars, int index, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -811,15 +843,23 @@ array.</para>
           <paramref name="index" /> and <paramref name="count" /> do not denote a valid range in <paramref name="chars" />. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetBytes">
       <MemberSignature Language="C#" Value="public virtual int GetBytes (char* chars, int charCount, byte* bytes, int byteCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetBytes(char* chars, int32 charCount, unsigned int8* bytes, int32 byteCount) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -839,23 +879,17 @@ array.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetBytes">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetBytes(class System.Char[] chars, int32 charIndex, int32 charCount, class System.Byte[] bytes, int32 byteIndex)" />
       <MemberSignature Language="C#" Value="public abstract int GetBytes (char[] chars, int charIndex, int charCount, byte[] bytes, int byteIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetBytes(char[] chars, int32 charIndex, int32 charCount, unsigned int8[] bytes, int32 byteIndex) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -929,16 +963,17 @@ array.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetBytes">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetBytes(string s, int32 charIndex, int32 charCount, class System.Byte[] bytes, int32 byteIndex)" />
+      <MemberSignature Language="C#" Value="public virtual int GetBytes (string s, int charIndex, int charCount, byte[] bytes, int byteIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetBytes(string s, int32 charIndex, int32 charCount, unsigned int8[] bytes, int32 byteIndex) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetBytes">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetBytes(string s, int32 charIndex, int32 charCount, class System.Byte[] bytes, int32 byteIndex)" />
-      <MemberSignature Language="C#" Value="public virtual int GetBytes (string s, int charIndex, int charCount, byte[] bytes, int byteIndex);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1007,16 +1042,17 @@ array.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetCharCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetCharCount(class System.Byte[] bytes)" />
+      <MemberSignature Language="C#" Value="public virtual int GetCharCount (byte[] bytes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetCharCount(unsigned int8[] bytes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetCharCount">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetCharCount(class System.Byte[] bytes)" />
-      <MemberSignature Language="C#" Value="public virtual int GetCharCount (byte[] bytes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1060,15 +1096,23 @@ array.</para>
           <paramref name="bytes" /> is <see langword="null" />. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCharCount">
       <MemberSignature Language="C#" Value="public virtual int GetCharCount (byte* bytes, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetCharCount(unsigned int8* bytes, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1084,23 +1128,17 @@ array.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetCharCount">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetCharCount(class System.Byte[] bytes, int32 index, int32 count)" />
       <MemberSignature Language="C#" Value="public abstract int GetCharCount (byte[] bytes, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetCharCount(unsigned int8[] bytes, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1155,16 +1193,17 @@ faster.</para>
           <paramref name="index " />and <paramref name="count " />do not specify a valid range in <paramref name="bytes" /> (i.e. (<paramref name="index" /> + <paramref name="count" />) &gt; <paramref name="bytes" />.Length).</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetChars">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Char[] GetChars(class System.Byte[] bytes)" />
+      <MemberSignature Language="C#" Value="public virtual char[] GetChars (byte[] bytes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance char[] GetChars(unsigned int8[] bytes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetChars">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Char[] GetChars(class System.Byte[] bytes)" />
-      <MemberSignature Language="C#" Value="public virtual char[] GetChars (byte[] bytes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char[]</ReturnType>
       </ReturnValue>
@@ -1188,16 +1227,17 @@ faster.</para>
           <paramref name="bytes" /> is <see langword="null" />. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetChars">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Char[] GetChars(class System.Byte[] bytes, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual char[] GetChars (byte[] bytes, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance char[] GetChars(unsigned int8[] bytes, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetChars">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Char[] GetChars(class System.Byte[] bytes, int32 index, int32 count)" />
-      <MemberSignature Language="C#" Value="public virtual char[] GetChars (byte[] bytes, int index, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Char[]</ReturnType>
       </ReturnValue>
@@ -1228,15 +1268,23 @@ faster.</para>
           <paramref name="index " />and <paramref name="count " />do not denote a valid range in the byte array. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetChars">
       <MemberSignature Language="C#" Value="public virtual int GetChars (byte* bytes, int byteCount, char* chars, int charCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetChars(unsigned int8* bytes, int32 byteCount, char* chars, int32 charCount) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1256,23 +1304,17 @@ faster.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.CLSCompliant(false)</AttributeName>
-        </Attribute>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="GetChars">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetChars(class System.Byte[] bytes, int32 byteIndex, int32 byteCount, class System.Char[] chars, int32 charIndex)" />
       <MemberSignature Language="C#" Value="public abstract int GetChars (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetChars(unsigned int8[] bytes, int32 byteIndex, int32 byteCount, char[] chars, int32 charIndex) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1341,16 +1383,17 @@ faster.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetDecoder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Text.Decoder GetDecoder()" />
+      <MemberSignature Language="C#" Value="public virtual System.Text.Decoder GetDecoder ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Text.Decoder GetDecoder() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDecoder">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Text.Decoder GetDecoder()" />
-      <MemberSignature Language="C#" Value="public virtual System.Text.Decoder GetDecoder ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Decoder</ReturnType>
       </ReturnValue>
@@ -1392,16 +1435,17 @@ faster.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetEncoder">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Text.Encoder GetEncoder()" />
+      <MemberSignature Language="C#" Value="public virtual System.Text.Encoder GetEncoder ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Text.Encoder GetEncoder() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEncoder">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Text.Encoder GetEncoder()" />
-      <MemberSignature Language="C#" Value="public virtual System.Text.Encoder GetEncoder ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Encoder</ReturnType>
       </ReturnValue>
@@ -1441,15 +1485,16 @@ return an instance of an appropriate <see cref="T:System.Text.Encoder" /> .</blo
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEncoding">
       <MemberSignature Language="C#" Value="public static System.Text.Encoding GetEncoding (int codepage);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Text.Encoding GetEncoding(int32 codepage) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -1462,15 +1507,16 @@ return an instance of an appropriate <see cref="T:System.Text.Encoder" /> .</blo
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEncoding">
       <MemberSignature Language="C#" Value="public static System.Text.Encoding GetEncoding (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Text.Encoding GetEncoding(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -1483,15 +1529,15 @@ return an instance of an appropriate <see cref="T:System.Text.Encoder" /> .</blo
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEncoding">
       <MemberSignature Language="C#" Value="public static System.Text.Encoding GetEncoding (int codepage, System.Text.EncoderFallback encoderFallback, System.Text.DecoderFallback decoderFallback);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Text.Encoding GetEncoding(int32 codepage, class System.Text.EncoderFallback encoderFallback, class System.Text.DecoderFallback decoderFallback) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -1509,14 +1555,15 @@ return an instance of an appropriate <see cref="T:System.Text.Encoder" /> .</blo
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetEncoding">
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding GetEncoding (string name, System.Text.EncoderFallback encoderFallback, System.Text.DecoderFallback decoderFallback);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Text.Encoding GetEncoding(string name, class System.Text.EncoderFallback encoderFallback, class System.Text.DecoderFallback decoderFallback) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEncoding">
-      <MemberSignature Language="C#" Value="public static System.Text.Encoding GetEncoding (string name, System.Text.EncoderFallback encoderFallback, System.Text.DecoderFallback decoderFallback);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -1534,14 +1581,15 @@ return an instance of an appropriate <see cref="T:System.Text.Encoder" /> .</blo
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetEncodings">
+      <MemberSignature Language="C#" Value="public static System.Text.EncodingInfo[] GetEncodings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Text.EncodingInfo[] GetEncodings() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEncodings">
-      <MemberSignature Language="C#" Value="public static System.Text.EncodingInfo[] GetEncodings ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.EncodingInfo[]</ReturnType>
       </ReturnValue>
@@ -1552,15 +1600,17 @@ return an instance of an appropriate <see cref="T:System.Text.Encoder" /> .</blo
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1581,16 +1631,17 @@ return an instance of an appropriate <see cref="T:System.Text.Encoder" /> .</blo
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetMaxByteCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetMaxByteCount(int32 charCount)" />
+      <MemberSignature Language="C#" Value="public abstract int GetMaxByteCount (int charCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMaxByteCount(int32 charCount) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMaxByteCount">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetMaxByteCount(int32 charCount)" />
-      <MemberSignature Language="C#" Value="public abstract int GetMaxByteCount (int charCount);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1631,16 +1682,17 @@ characters.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetMaxCharCount">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetMaxCharCount(int32 byteCount)" />
+      <MemberSignature Language="C#" Value="public abstract int GetMaxCharCount (int byteCount);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance int32 GetMaxCharCount(int32 byteCount) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMaxCharCount">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract int32 GetMaxCharCount(int32 byteCount)" />
-      <MemberSignature Language="C#" Value="public abstract int GetMaxCharCount (int byteCount);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -1680,16 +1732,17 @@ characters.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetPreamble">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetPreamble()" />
+      <MemberSignature Language="C#" Value="public virtual byte[] GetPreamble ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] GetPreamble() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetPreamble">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Byte[] GetPreamble()" />
-      <MemberSignature Language="C#" Value="public virtual byte[] GetPreamble ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -1729,16 +1782,17 @@ array that identifies the encoding used on a stream. </para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string GetString(class System.Byte[] bytes)" />
+      <MemberSignature Language="C#" Value="public virtual string GetString (byte[] bytes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetString(unsigned int8[] bytes) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetString">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string GetString(class System.Byte[] bytes)" />
-      <MemberSignature Language="C#" Value="public virtual string GetString (byte[] bytes);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1768,16 +1822,17 @@ array that identifies the encoding used on a stream. </para>
           <paramref name="bytes" /> is <see langword="null" />. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetString">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string GetString(class System.Byte[] bytes, int32 index, int32 count)" />
+      <MemberSignature Language="C#" Value="public virtual string GetString (byte[] bytes, int index, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string GetString(unsigned int8[] bytes, int32 index, int32 count) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetString">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string GetString(class System.Byte[] bytes, int32 index, int32 count)" />
-      <MemberSignature Language="C#" Value="public virtual string GetString (byte[] bytes, int index, int count);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1814,15 +1869,16 @@ array that identifies the encoding used on a stream. </para>
           <paramref name="index " />and <paramref name="count " />do not denote a valid range in <paramref name="bytes" />. </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="HeaderName">
+      <MemberSignature Language="C#" Value="public virtual string HeaderName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string HeaderName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="HeaderName">
-      <MemberSignature Language="C#" Value="public virtual string HeaderName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1831,15 +1887,20 @@ array that identifies the encoding used on a stream. </para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsAlwaysNormalized">
       <MemberSignature Language="C#" Value="public bool IsAlwaysNormalized ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsAlwaysNormalized() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1850,6 +1911,11 @@ array that identifies the encoding used on a stream. </para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="IsAlwaysNormalized">
+      <MemberSignature Language="C#" Value="public virtual bool IsAlwaysNormalized (System.Text.NormalizationForm form);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsAlwaysNormalized(valuetype System.Text.NormalizationForm form) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1859,10 +1925,6 @@ array that identifies the encoding used on a stream. </para>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="IsAlwaysNormalized">
-      <MemberSignature Language="C#" Value="public virtual bool IsAlwaysNormalized (System.Text.NormalizationForm form);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1876,19 +1938,16 @@ array that identifies the encoding used on a stream. </para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="IsBrowserDisplay">
       <MemberSignature Language="C#" Value="public virtual bool IsBrowserDisplay { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsBrowserDisplay" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1897,15 +1956,16 @@ array that identifies the encoding used on a stream. </para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsBrowserSave">
       <MemberSignature Language="C#" Value="public virtual bool IsBrowserSave { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsBrowserSave" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1914,15 +1974,16 @@ array that identifies the encoding used on a stream. </para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsMailNewsDisplay">
       <MemberSignature Language="C#" Value="public virtual bool IsMailNewsDisplay { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsMailNewsDisplay" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1931,32 +1992,33 @@ array that identifies the encoding used on a stream. </para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsMailNewsSave">
       <MemberSignature Language="C#" Value="public virtual bool IsMailNewsSave { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsMailNewsSave" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Boolean</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <value>To be added.</value>
-        <remarks>To be added.</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
       <MemberSignature Language="C#" Value="public bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -1971,14 +2033,15 @@ array that identifies the encoding used on a stream. </para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSingleByte">
       <MemberSignature Language="C#" Value="public virtual bool IsSingleByte { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSingleByte" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -1993,15 +2056,17 @@ array that identifies the encoding used on a stream. </para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Unicode">
       <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding Unicode { public hidebysig static specialname class System.Text.Encoding get_Unicode() }" />
       <MemberSignature Language="C#" Value="public static System.Text.Encoding Unicode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.Encoding Unicode" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -2032,15 +2097,15 @@ array that identifies the encoding used on a stream. </para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UTF32">
       <MemberSignature Language="C#" Value="public static System.Text.Encoding UTF32 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.Encoding UTF32" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -2050,14 +2115,16 @@ array that identifies the encoding used on a stream. </para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UTF7">
       <MemberSignature Language="C#" Value="public static System.Text.Encoding UTF7 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.Encoding UTF7" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -2066,16 +2133,17 @@ array that identifies the encoding used on a stream. </para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="UTF8">
+      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding UTF8 { public hidebysig static specialname class System.Text.Encoding get_UTF8() }" />
+      <MemberSignature Language="C#" Value="public static System.Text.Encoding UTF8 { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.Encoding UTF8" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UTF8">
-      <MemberSignature Language="ILASM" Value=".property class System.Text.Encoding UTF8 { public hidebysig static specialname class System.Text.Encoding get_UTF8() }" />
-      <MemberSignature Language="C#" Value="public static System.Text.Encoding UTF8 { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
@@ -2096,15 +2164,16 @@ array that identifies the encoding used on a stream. </para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="WebName">
+      <MemberSignature Language="C#" Value="public virtual string WebName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string WebName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WebName">
-      <MemberSignature Language="C#" Value="public virtual string WebName { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -2113,15 +2182,16 @@ array that identifies the encoding used on a stream. </para>
         <value>The name of the encoding in web form.</value>
         <remarks>This is the IANA-compliant name for this encoding.   It is used when working with the HTTP protocol.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="WindowsCodePage">
+      <MemberSignature Language="C#" Value="public virtual int WindowsCodePage { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 WindowsCodePage" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WindowsCodePage">
-      <MemberSignature Language="C#" Value="public virtual int WindowsCodePage { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -2130,17 +2200,7 @@ array that identifies the encoding used on a stream. </para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

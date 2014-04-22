@@ -23,6 +23,10 @@ ifeq (monodroid, $(PROFILE))
 LIB_MCS_FLAGS += -d:FEATURE_DYNAMIC
 endif
 
+ifeq (xammac, $(PROFILE))
+LIB_MCS_FLAGS += -d:FEATURE_DYNAMIC
+endif
+
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
 include ../../build/library.make

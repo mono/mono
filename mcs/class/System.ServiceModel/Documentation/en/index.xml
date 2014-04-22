@@ -1,0 +1,991 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.ServiceModel" Version="4.0.0.0">
+      <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("Mono development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) Various Mono authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.ServiceModel.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.ServiceModel.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("Mono Common Language Infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.ServiceModel.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("4.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.InternalsVisibleTo("System.ServiceModel.Web, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.InternalsVisibleTo("System.ServiceModel.Routing, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.InternalsVisibleTo("System.ServiceModel.Discovery, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComCompatibleVersion(1, 0, 3300, 0)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.SecurityCritical(System.Security.SecurityCriticalScope.Explicit)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Mono.CodeGeneration">
+      <Type Name="CodeAdd" Kind="Class" />
+      <Type Name="CodeAddOne" Kind="Class" />
+      <Type Name="CodeAnd" Kind="Class" />
+      <Type Name="CodeArgument" Kind="Class" />
+      <Type Name="CodeArgumentReference" Kind="Class" />
+      <Type Name="CodeArithmeticOperation" Kind="Class" />
+      <Type Name="CodeArrayItem" Kind="Class" />
+      <Type Name="CodeArrayLength" Kind="Class" />
+      <Type Name="CodeAssignment" Kind="Class" />
+      <Type Name="CodeBinaryComparison" Kind="Class" />
+      <Type Name="CodeBinaryOperation" Kind="Class" />
+      <Type Name="CodeBlock" Kind="Class" />
+      <Type Name="CodeBuilder" Kind="Class" />
+      <Type Name="CodeCast" Kind="Class" />
+      <Type Name="CodeClass" Kind="Class" />
+      <Type Name="CodeConditionExpression" Kind="Class" />
+      <Type Name="CodeCustomAttribute" Kind="Class" />
+      <Type Name="CodeDecrement" Kind="Class" />
+      <Type Name="CodeDiv" Kind="Class" />
+      <Type Name="CodeEquals" Kind="Class" />
+      <Type Name="CodeExpression" Kind="Class" />
+      <Type Name="CodeFieldReference" Kind="Class" />
+      <Type Name="CodeFor" Kind="Class" />
+      <Type Name="CodeForeach" Kind="Class" />
+      <Type Name="CodeGenerationHelper" Kind="Class" />
+      <Type Name="CodeGreaterEqualThan" Kind="Class" />
+      <Type Name="CodeGreaterThan" Kind="Class" />
+      <Type Name="CodeIf" Kind="Class" />
+      <Type Name="CodeIncrement" Kind="Class" />
+      <Type Name="CodeIs" Kind="Class" />
+      <Type Name="CodeItem" Kind="Class" />
+      <Type Name="CodeLessEqualThan" Kind="Class" />
+      <Type Name="CodeLessThan" Kind="Class" />
+      <Type Name="CodeLiteral" Kind="Class" />
+      <Type Name="CodeMethod" Kind="Class" />
+      <Type Name="CodeMethodCall" Kind="Class" />
+      <Type Name="CodeModule" Kind="Class" />
+      <Type Name="CodeMul" Kind="Class" />
+      <Type Name="CodeNeg" Kind="Class" />
+      <Type Name="CodeNew" Kind="Class" />
+      <Type Name="CodeNewArray" Kind="Class" />
+      <Type Name="CodeNot" Kind="Class" />
+      <Type Name="CodeNotEquals" Kind="Class" />
+      <Type Name="CodeOr" Kind="Class" />
+      <Type Name="CodeProperty" Kind="Class" />
+      <Type Name="CodePropertyReference" Kind="Class" />
+      <Type Name="CodeReturn" Kind="Class" />
+      <Type Name="CodeSelect" Kind="Class" />
+      <Type Name="CodeSelfIncrement" Kind="Class" />
+      <Type Name="CodeStatement" Kind="Class" />
+      <Type Name="CodeSub" Kind="Class" />
+      <Type Name="CodeSubstractOne" Kind="Class" />
+      <Type Name="CodeTry" Kind="Class" />
+      <Type Name="CodeValueReference" Kind="Class" />
+      <Type Name="CodeVariableDeclaration" Kind="Class" />
+      <Type Name="CodeVariableReference" Kind="Class" />
+      <Type Name="CodeWhen" Kind="Class" />
+      <Type Name="CodeWhile" Kind="Class" />
+      <Type Name="CodeWriter" Kind="Class" />
+      <Type Name="Exp" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Security.Protocol.Ntlm">
+      <Type Name="ChallengeResponse" Kind="Class" />
+      <Type Name="MessageBase" Kind="Class" />
+      <Type Name="NtlmFlags" Kind="Enumeration" />
+      <Type Name="NtlmTargetInformation" Kind="Class" />
+      <Type Name="NtlmVersion" Kind="Enumeration" />
+      <Type Name="Type1Message" Kind="Class" />
+      <Type Name="Type2Message" Kind="Class" />
+      <Type Name="Type3Message" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Security.Protocol.Tls">
+      <Type Name="CertificateSelectionCallback" Kind="Delegate" />
+      <Type Name="CertificateValidationCallback" Kind="Delegate" />
+      <Type Name="CertificateValidationCallback2" Kind="Delegate" />
+      <Type Name="CipherAlgorithmType" Kind="Enumeration" />
+      <Type Name="ExchangeAlgorithmType" Kind="Enumeration" />
+      <Type Name="HashAlgorithmType" Kind="Enumeration" />
+      <Type Name="PrivateKeySelectionCallback" Kind="Delegate" />
+      <Type Name="SecurityCompressionType" Kind="Enumeration" />
+      <Type Name="SecurityProtocolType" Kind="Enumeration" />
+      <Type Name="SslClientStream" Kind="Class" />
+      <Type Name="SslServerStream" Kind="Class" />
+      <Type Name="SslStreamBase" Kind="Class" />
+      <Type Name="ValidationResult" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System">
+      <Type Name="UriTemplate" Kind="Class" />
+      <Type Name="UriTemplateEquivalenceComparer" Kind="Class" />
+      <Type Name="UriTemplateMatch" Kind="Class" />
+      <Type Name="UriTemplateMatchException" Kind="Class" />
+      <Type Name="UriTemplateTable" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.Collections.Generic">
+      <Type Name="KeyedByTypeCollection`1" DisplayName="KeyedByTypeCollection&lt;TItem&gt;" Kind="Class" />
+      <Type Name="SynchronizedCollection`1" DisplayName="SynchronizedCollection&lt;T&gt;" Kind="Class" />
+      <Type Name="SynchronizedKeyedCollection`2" DisplayName="SynchronizedKeyedCollection&lt;K,T&gt;" Kind="Class" />
+      <Type Name="SynchronizedReadOnlyCollection`1" DisplayName="SynchronizedReadOnlyCollection&lt;T&gt;" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.IO">
+      <Type Name="PipeException" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel">
+      <Type Name="ActionNotSupportedException" Kind="Class" />
+      <Type Name="AddressAccessDeniedException" Kind="Class" />
+      <Type Name="AddressAlreadyInUseException" Kind="Class" />
+      <Type Name="AddressFilterMode" Kind="Enumeration" />
+      <Type Name="AuditLevel" Kind="Enumeration" />
+      <Type Name="AuditLogLocation" Kind="Enumeration" />
+      <Type Name="BasicHttpBinding" Kind="Class" />
+      <Type Name="BasicHttpMessageCredentialType" Kind="Enumeration" />
+      <Type Name="BasicHttpMessageSecurity" Kind="Class" />
+      <Type Name="BasicHttpsBinding" Kind="Class" />
+      <Type Name="BasicHttpSecurity" Kind="Class" />
+      <Type Name="BasicHttpSecurityMode" Kind="Enumeration" />
+      <Type Name="BasicHttpsSecurity" Kind="Class" />
+      <Type Name="BasicHttpsSecurityMode" Kind="Enumeration" />
+      <Type Name="CallbackBehaviorAttribute" Kind="Class" />
+      <Type Name="ChannelFactory" Kind="Class" />
+      <Type Name="ChannelFactory`1" DisplayName="ChannelFactory&lt;TChannel&gt;" Kind="Class" />
+      <Type Name="ChannelTerminatedException" Kind="Class" />
+      <Type Name="ClientBase`1" DisplayName="ClientBase&lt;TChannel&gt;" Kind="Class" />
+      <Type Name="ClientBase`1+BeginOperationDelegate" DisplayName="ClientBase&lt;TChannel&gt;+BeginOperationDelegate" Kind="Delegate" />
+      <Type Name="ClientBase`1+ChannelBase`1" DisplayName="ClientBase&lt;TChannel&gt;+ChannelBase&lt;T&gt;" Kind="Class" />
+      <Type Name="ClientBase`1+EndOperationDelegate" DisplayName="ClientBase&lt;TChannel&gt;+EndOperationDelegate" Kind="Delegate" />
+      <Type Name="ClientBase`1+InvokeAsyncCompletedEventArgs" DisplayName="ClientBase&lt;TChannel&gt;+InvokeAsyncCompletedEventArgs" Kind="Class" />
+      <Type Name="ClientCredentialsSecurityTokenManager" Kind="Class" />
+      <Type Name="CommunicationException" Kind="Class" />
+      <Type Name="CommunicationObjectAbortedException" Kind="Class" />
+      <Type Name="CommunicationObjectFaultedException" Kind="Class" />
+      <Type Name="CommunicationState" Kind="Enumeration" />
+      <Type Name="ConcurrencyMode" Kind="Enumeration" />
+      <Type Name="DataContractFormatAttribute" Kind="Class" />
+      <Type Name="DeadLetterQueue" Kind="Enumeration" />
+      <Type Name="DeliveryRequirementsAttribute" Kind="Class" />
+      <Type Name="DnsEndpointIdentity" Kind="Class" />
+      <Type Name="DuplexChannelFactory`1" DisplayName="DuplexChannelFactory&lt;TChannel&gt;" Kind="Class" />
+      <Type Name="DuplexClientBase`1" DisplayName="DuplexClientBase&lt;TChannel&gt;" Kind="Class" />
+      <Type Name="EndpointAddress" Kind="Class" />
+      <Type Name="EndpointAddress10" Kind="Class" />
+      <Type Name="EndpointAddressAugust2004" Kind="Class" />
+      <Type Name="EndpointAddressBuilder" Kind="Class" />
+      <Type Name="EndpointIdentity" Kind="Class" />
+      <Type Name="EndpointNotFoundException" Kind="Class" />
+      <Type Name="EnvelopeVersion" Kind="Class" />
+      <Type Name="ExceptionDetail" Kind="Class" />
+      <Type Name="ExtensionCollection`1" DisplayName="ExtensionCollection&lt;T&gt;" Kind="Class" />
+      <Type Name="FaultCode" Kind="Class" />
+      <Type Name="FaultContractAttribute" Kind="Class" />
+      <Type Name="FaultException" Kind="Class" />
+      <Type Name="FaultException`1" DisplayName="FaultException&lt;TDetail&gt;" Kind="Class" />
+      <Type Name="FaultReason" Kind="Class" />
+      <Type Name="FaultReasonText" Kind="Class" />
+      <Type Name="FederatedMessageSecurityOverHttp" Kind="Class" />
+      <Type Name="HostNameComparisonMode" Kind="Enumeration" />
+      <Type Name="HttpBindingBase" Kind="Class" />
+      <Type Name="HttpClientCredentialType" Kind="Enumeration" />
+      <Type Name="HttpProxyCredentialType" Kind="Enumeration" />
+      <Type Name="HttpTransportSecurity" Kind="Class" />
+      <Type Name="IClientChannel" Kind="Interface" />
+      <Type Name="ICommunicationObject" Kind="Interface" />
+      <Type Name="IContextChannel" Kind="Interface" />
+      <Type Name="IDefaultCommunicationTimeouts" Kind="Interface" />
+      <Type Name="IDuplexContextChannel" Kind="Interface" />
+      <Type Name="IExtensibleObject`1" DisplayName="IExtensibleObject&lt;T&gt;" Kind="Interface" />
+      <Type Name="IExtension`1" DisplayName="IExtension&lt;T&gt;" Kind="Interface" />
+      <Type Name="IExtensionCollection`1" DisplayName="IExtensionCollection&lt;T&gt;" Kind="Interface" />
+      <Type Name="ImpersonationOption" Kind="Enumeration" />
+      <Type Name="InstanceContext" Kind="Class" />
+      <Type Name="InstanceContextMode" Kind="Enumeration" />
+      <Type Name="InvalidMessageContractException" Kind="Class" />
+      <Type Name="IOnlineStatus" Kind="Interface" />
+      <Type Name="IServiceChannel" Kind="Interface" />
+      <Type Name="MessageBodyMemberAttribute" Kind="Class" />
+      <Type Name="MessageContractAttribute" Kind="Class" />
+      <Type Name="MessageContractMemberAttribute" Kind="Class" />
+      <Type Name="MessageCredentialType" Kind="Enumeration" />
+      <Type Name="MessageHeader`1" DisplayName="MessageHeader&lt;T&gt;" Kind="Class" />
+      <Type Name="MessageHeaderArrayAttribute" Kind="Class" />
+      <Type Name="MessageHeaderAttribute" Kind="Class" />
+      <Type Name="MessageHeaderException" Kind="Class" />
+      <Type Name="MessageParameterAttribute" Kind="Class" />
+      <Type Name="MessagePropertyAttribute" Kind="Class" />
+      <Type Name="MessageSecurityOverHttp" Kind="Class" />
+      <Type Name="MessageSecurityOverMsmq" Kind="Class" />
+      <Type Name="MessageSecurityOverTcp" Kind="Class" />
+      <Type Name="MessageSecurityVersion" Kind="Class" />
+      <Type Name="MsmqAuthenticationMode" Kind="Enumeration" />
+      <Type Name="MsmqBindingBase" Kind="Class" />
+      <Type Name="MsmqEncryptionAlgorithm" Kind="Enumeration" />
+      <Type Name="MsmqException" Kind="Class" />
+      <Type Name="MsmqPoisonMessageException" Kind="Class" />
+      <Type Name="MsmqSecureHashAlgorithm" Kind="Enumeration" />
+      <Type Name="MsmqTransportSecurity" Kind="Class" />
+      <Type Name="NamedPipeTransportSecurity" Kind="Class" />
+      <Type Name="NetHttpBinding" Kind="Class" />
+      <Type Name="NetHttpMessageEncoding" Kind="Enumeration" />
+      <Type Name="NetMsmqBinding" Kind="Class" />
+      <Type Name="NetMsmqSecurity" Kind="Class" />
+      <Type Name="NetMsmqSecurityMode" Kind="Enumeration" />
+      <Type Name="NetNamedPipeBinding" Kind="Class" />
+      <Type Name="NetNamedPipeSecurity" Kind="Class" />
+      <Type Name="NetNamedPipeSecurityMode" Kind="Enumeration" />
+      <Type Name="NetPeerTcpBinding" Kind="Class" />
+      <Type Name="NetTcpBinding" Kind="Class" />
+      <Type Name="NetTcpSecurity" Kind="Class" />
+      <Type Name="NonDualMessageSecurityOverHttp" Kind="Class" />
+      <Type Name="OperationBehaviorAttribute" Kind="Class" />
+      <Type Name="OperationContext" Kind="Class" />
+      <Type Name="OperationContextScope" Kind="Class" />
+      <Type Name="OperationContractAttribute" Kind="Class" />
+      <Type Name="OperationFormatStyle" Kind="Enumeration" />
+      <Type Name="OperationFormatUse" Kind="Enumeration" />
+      <Type Name="OptionalReliableSession" Kind="Class" />
+      <Type Name="PeerHopCountAttribute" Kind="Class" />
+      <Type Name="PeerMessageOrigination" Kind="Enumeration" />
+      <Type Name="PeerMessagePropagation" Kind="Enumeration" />
+      <Type Name="PeerMessagePropagationFilter" Kind="Class" />
+      <Type Name="PeerNode" Kind="Class" />
+      <Type Name="PeerNodeAddress" Kind="Class" />
+      <Type Name="PeerResolver" Kind="Class" />
+      <Type Name="PeerSecuritySettings" Kind="Class" />
+      <Type Name="PeerTransportCredentialType" Kind="Enumeration" />
+      <Type Name="PeerTransportSecuritySettings" Kind="Class" />
+      <Type Name="PoisonMessageException" Kind="Class" />
+      <Type Name="ProtocolException" Kind="Class" />
+      <Type Name="QueuedDeliveryRequirementsMode" Kind="Enumeration" />
+      <Type Name="QueueTransferProtocol" Kind="Enumeration" />
+      <Type Name="QuotaExceededException" Kind="Class" />
+      <Type Name="ReceiveErrorHandling" Kind="Enumeration" />
+      <Type Name="ReleaseInstanceMode" Kind="Enumeration" />
+      <Type Name="ReliableMessagingVersion" Kind="Class" />
+      <Type Name="ReliableSession" Kind="Class" />
+      <Type Name="RsaEndpointIdentity" Kind="Class" />
+      <Type Name="SecurityMode" Kind="Enumeration" />
+      <Type Name="ServerTooBusyException" Kind="Class" />
+      <Type Name="ServiceActivationException" Kind="Class" />
+      <Type Name="ServiceAuthorizationManager" Kind="Class" />
+      <Type Name="ServiceBehaviorAttribute" Kind="Class" />
+      <Type Name="ServiceContractAttribute" Kind="Class" />
+      <Type Name="ServiceHost" Kind="Class" />
+      <Type Name="ServiceHostBase" Kind="Class" />
+      <Type Name="ServiceKnownTypeAttribute" Kind="Class" />
+      <Type Name="ServiceSecurityContext" Kind="Class" />
+      <Type Name="SessionMode" Kind="Enumeration" />
+      <Type Name="SpnEndpointIdentity" Kind="Class" />
+      <Type Name="TcpClientCredentialType" Kind="Enumeration" />
+      <Type Name="TcpTransportSecurity" Kind="Class" />
+      <Type Name="TransactionFlowAttribute" Kind="Class" />
+      <Type Name="TransactionFlowOption" Kind="Enumeration" />
+      <Type Name="TransactionProtocol" Kind="Class" />
+      <Type Name="TransferMode" Kind="Enumeration" />
+      <Type Name="UnknownMessageReceivedEventArgs" Kind="Class" />
+      <Type Name="UpnEndpointIdentity" Kind="Class" />
+      <Type Name="UriSchemeKeyedCollection" Kind="Class" />
+      <Type Name="WS2007FederationHttpBinding" Kind="Class" />
+      <Type Name="WS2007HttpBinding" Kind="Class" />
+      <Type Name="WSDualHttpBinding" Kind="Class" />
+      <Type Name="WSDualHttpSecurity" Kind="Class" />
+      <Type Name="WSDualHttpSecurityMode" Kind="Enumeration" />
+      <Type Name="WSFederationHttpBinding" Kind="Class" />
+      <Type Name="WSFederationHttpSecurity" Kind="Class" />
+      <Type Name="WSFederationHttpSecurityMode" Kind="Enumeration" />
+      <Type Name="WSHttpBinding" Kind="Class" />
+      <Type Name="WSHttpBindingBase" Kind="Class" />
+      <Type Name="WSHttpSecurity" Kind="Class" />
+      <Type Name="WSMessageEncoding" Kind="Enumeration" />
+      <Type Name="X509CertificateEndpointIdentity" Kind="Class" />
+      <Type Name="XmlSerializerFormatAttribute" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.Activation">
+      <Type Name="AspNetCompatibilityRequirementsAttribute" Kind="Class" />
+      <Type Name="AspNetCompatibilityRequirementsMode" Kind="Enumeration" />
+      <Type Name="HostedTransportConfiguration" Kind="Class" />
+      <Type Name="ServiceHostFactoryBase" Kind="Class" />
+      <Type Name="VirtualPathExtension" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.Activation.Configuration">
+      <Type Name="Dummy" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.Channels">
+      <Type Name="AddressHeader" Kind="Class" />
+      <Type Name="AddressHeaderCollection" Kind="Class" />
+      <Type Name="AddressingVersion" Kind="Class" />
+      <Type Name="AsymmetricSecurityBindingElement" Kind="Class" />
+      <Type Name="BinaryMessageEncodingBindingElement" Kind="Class" />
+      <Type Name="Binding" Kind="Class" />
+      <Type Name="BindingContext" Kind="Class" />
+      <Type Name="BindingElement" Kind="Class" />
+      <Type Name="BindingElementCollection" Kind="Class" />
+      <Type Name="BindingParameterCollection" Kind="Class" />
+      <Type Name="BodyWriter" Kind="Class" />
+      <Type Name="BufferManager" Kind="Class" />
+      <Type Name="ChannelBase" Kind="Class" />
+      <Type Name="ChannelFactoryBase" Kind="Class" />
+      <Type Name="ChannelFactoryBase`1" DisplayName="ChannelFactoryBase&lt;TChannel&gt;" Kind="Class" />
+      <Type Name="ChannelListenerBase" Kind="Class" />
+      <Type Name="ChannelListenerBase`1" DisplayName="ChannelListenerBase&lt;TChannel&gt;" Kind="Class" />
+      <Type Name="ChannelManagerBase" Kind="Class" />
+      <Type Name="ChannelParameterCollection" Kind="Class" />
+      <Type Name="ChannelPoolSettings" Kind="Class" />
+      <Type Name="CommunicationObject" Kind="Class" />
+      <Type Name="CompositeDuplexBindingElement" Kind="Class" />
+      <Type Name="CompositeDuplexBindingElementImporter" Kind="Class" />
+      <Type Name="CompressionFormat" Kind="Enumeration" />
+      <Type Name="ConnectionOrientedTransportBindingElement" Kind="Class" />
+      <Type Name="CustomBinding" Kind="Class" />
+      <Type Name="DeliveryFailure" Kind="Enumeration" />
+      <Type Name="DeliveryStatus" Kind="Enumeration" />
+      <Type Name="FaultConverter" Kind="Class" />
+      <Type Name="HttpCookieContainerBindingElement" Kind="Class" />
+      <Type Name="HttpRequestMessageProperty" Kind="Class" />
+      <Type Name="HttpResponseMessageProperty" Kind="Class" />
+      <Type Name="HttpsTransportBindingElement" Kind="Class" />
+      <Type Name="HttpTransportBindingElement" Kind="Class" />
+      <Type Name="IBindingDeliveryCapabilities" Kind="Interface" />
+      <Type Name="IBindingMulticastCapabilities" Kind="Interface" />
+      <Type Name="IBindingRuntimePreferences" Kind="Interface" />
+      <Type Name="IChannel" Kind="Interface" />
+      <Type Name="IChannelFactory" Kind="Interface" />
+      <Type Name="IChannelFactory`1" DisplayName="IChannelFactory&lt;TChannel&gt;" Kind="Interface" />
+      <Type Name="IChannelListener" Kind="Interface" />
+      <Type Name="IChannelListener`1" DisplayName="IChannelListener&lt;TChannel&gt;" Kind="Interface" />
+      <Type Name="IDuplexChannel" Kind="Interface" />
+      <Type Name="IDuplexSession" Kind="Interface" />
+      <Type Name="IDuplexSessionChannel" Kind="Interface" />
+      <Type Name="IHttpCookieContainerManager" Kind="Interface" />
+      <Type Name="IInputChannel" Kind="Interface" />
+      <Type Name="IInputSession" Kind="Interface" />
+      <Type Name="IInputSessionChannel" Kind="Interface" />
+      <Type Name="IMessageProperty" Kind="Interface" />
+      <Type Name="InvalidChannelBindingException" Kind="Class" />
+      <Type Name="IOutputChannel" Kind="Interface" />
+      <Type Name="IOutputSession" Kind="Interface" />
+      <Type Name="IOutputSessionChannel" Kind="Interface" />
+      <Type Name="IReplyChannel" Kind="Interface" />
+      <Type Name="IReplySessionChannel" Kind="Interface" />
+      <Type Name="IRequestChannel" Kind="Interface" />
+      <Type Name="IRequestSessionChannel" Kind="Interface" />
+      <Type Name="ISecurityCapabilities" Kind="Interface" />
+      <Type Name="ISession" Kind="Interface" />
+      <Type Name="ISessionChannel`1" DisplayName="ISessionChannel&lt;TSession&gt;" Kind="Interface" />
+      <Type Name="ITransactedBindingElement" Kind="Interface" />
+      <Type Name="ITransportTokenAssertionProvider" Kind="Interface" />
+      <Type Name="LocalClientSecuritySettings" Kind="Class" />
+      <Type Name="LocalServiceSecuritySettings" Kind="Class" />
+      <Type Name="Message" Kind="Class" />
+      <Type Name="MessageBuffer" Kind="Class" />
+      <Type Name="MessageEncoder" Kind="Class" />
+      <Type Name="MessageEncoderFactory" Kind="Class" />
+      <Type Name="MessageEncodingBindingElement" Kind="Class" />
+      <Type Name="MessageEncodingBindingElementImporter" Kind="Class" />
+      <Type Name="MessageFault" Kind="Class" />
+      <Type Name="MessageHeader" Kind="Class" />
+      <Type Name="MessageHeaderInfo" Kind="Class" />
+      <Type Name="MessageHeaders" Kind="Class" />
+      <Type Name="MessageProperties" Kind="Class" />
+      <Type Name="MessageState" Kind="Enumeration" />
+      <Type Name="MessageVersion" Kind="Class" />
+      <Type Name="MsmqBindingElementBase" Kind="Class" />
+      <Type Name="MsmqMessageProperty" Kind="Class" />
+      <Type Name="MsmqTransportBindingElement" Kind="Class" />
+      <Type Name="MtomMessageEncodingBindingElement" Kind="Class" />
+      <Type Name="NamedPipeConnectionPoolSettings" Kind="Class" />
+      <Type Name="NamedPipeTransportBindingElement" Kind="Class" />
+      <Type Name="OneWayBindingElement" Kind="Class" />
+      <Type Name="OneWayBindingElementImporter" Kind="Class" />
+      <Type Name="PeerCustomResolverBindingElement" Kind="Class" />
+      <Type Name="PeerResolverBindingElement" Kind="Class" />
+      <Type Name="PeerTransportBindingElement" Kind="Class" />
+      <Type Name="PnrpPeerResolverBindingElement" Kind="Class" />
+      <Type Name="PrivacyNoticeBindingElement" Kind="Class" />
+      <Type Name="PrivacyNoticeBindingElementImporter" Kind="Class" />
+      <Type Name="ReliableSessionBindingElement" Kind="Class" />
+      <Type Name="ReliableSessionBindingElementImporter" Kind="Class" />
+      <Type Name="RemoteEndpointMessageProperty" Kind="Class" />
+      <Type Name="RequestContext" Kind="Class" />
+      <Type Name="SecurityBindingElement" Kind="Class" />
+      <Type Name="SecurityBindingElementImporter" Kind="Class" />
+      <Type Name="SecurityHeaderLayout" Kind="Enumeration" />
+      <Type Name="SslStreamSecurityBindingElement" Kind="Class" />
+      <Type Name="StandardBindingImporter" Kind="Class" />
+      <Type Name="StreamSecurityUpgradeAcceptor" Kind="Class" />
+      <Type Name="StreamSecurityUpgradeInitiator" Kind="Class" />
+      <Type Name="StreamSecurityUpgradeProvider" Kind="Class" />
+      <Type Name="StreamUpgradeAcceptor" Kind="Class" />
+      <Type Name="StreamUpgradeBindingElement" Kind="Class" />
+      <Type Name="StreamUpgradeInitiator" Kind="Class" />
+      <Type Name="StreamUpgradeProvider" Kind="Class" />
+      <Type Name="SupportedAddressingMode" Kind="Enumeration" />
+      <Type Name="SymmetricSecurityBindingElement" Kind="Class" />
+      <Type Name="TcpConnectionPoolSettings" Kind="Class" />
+      <Type Name="TcpTransportBindingElement" Kind="Class" />
+      <Type Name="TextMessageEncodingBindingElement" Kind="Class" />
+      <Type Name="TransactionFlowBindingElement" Kind="Class" />
+      <Type Name="TransactionFlowBindingElementImporter" Kind="Class" />
+      <Type Name="TransferSession" Kind="Enumeration" />
+      <Type Name="TransportBindingElement" Kind="Class" />
+      <Type Name="TransportBindingElementImporter" Kind="Class" />
+      <Type Name="TransportSecurityBindingElement" Kind="Class" />
+      <Type Name="UnderstoodHeaders" Kind="Class" />
+      <Type Name="UseManagedPresentationBindingElement" Kind="Class" />
+      <Type Name="UseManagedPresentationBindingElementImporter" Kind="Class" />
+      <Type Name="WebSocketTransportSettings" Kind="Class" />
+      <Type Name="WebSocketTransportUsage" Kind="Enumeration" />
+      <Type Name="WindowsStreamSecurityBindingElement" Kind="Class" />
+      <Type Name="XmlSerializerImportOptions" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.ComIntegration">
+      <Type Name="ComPlusListenerInitializationException" Kind="Class" />
+      <Type Name="DllHostInitializer" Kind="Class" />
+      <Type Name="IChannelCredentials" Kind="Interface" />
+      <Type Name="IMoniker" Kind="Interface" />
+      <Type Name="IServiceSurrogate" Kind="Interface" />
+      <Type Name="ServiceMoniker" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.Configuration">
+      <Type Name="AddressHeaderCollectionElement" Kind="Class" />
+      <Type Name="AllowedAudienceUriElement" Kind="Class" />
+      <Type Name="AllowedAudienceUriElementCollection" Kind="Class" />
+      <Type Name="AuthenticationMode" Kind="Enumeration" />
+      <Type Name="AuthorizationPolicyTypeElement" Kind="Class" />
+      <Type Name="AuthorizationPolicyTypeElementCollection" Kind="Class" />
+      <Type Name="BaseAddressElement" Kind="Class" />
+      <Type Name="BaseAddressElementCollection" Kind="Class" />
+      <Type Name="BaseAddressPrefixFilterElement" Kind="Class" />
+      <Type Name="BaseAddressPrefixFilterElementCollection" Kind="Class" />
+      <Type Name="BasicHttpBindingCollectionElement" Kind="Class" />
+      <Type Name="BasicHttpBindingElement" Kind="Class" />
+      <Type Name="BasicHttpMessageSecurityElement" Kind="Class" />
+      <Type Name="BasicHttpsBindingCollectionElement" Kind="Class" />
+      <Type Name="BasicHttpsBindingElement" Kind="Class" />
+      <Type Name="BasicHttpSecurityElement" Kind="Class" />
+      <Type Name="BasicHttpsSecurityElement" Kind="Class" />
+      <Type Name="BehaviorExtensionElement" Kind="Class" />
+      <Type Name="BehaviorsSection" Kind="Class" />
+      <Type Name="BinaryMessageEncodingElement" Kind="Class" />
+      <Type Name="BindingCollectionElement" Kind="Class" />
+      <Type Name="BindingElementExtensionElement" Kind="Class" />
+      <Type Name="BindingsSection" Kind="Class" />
+      <Type Name="CallbackDebugElement" Kind="Class" />
+      <Type Name="CallbackTimeoutsElement" Kind="Class" />
+      <Type Name="CertificateElement" Kind="Class" />
+      <Type Name="CertificateReferenceElement" Kind="Class" />
+      <Type Name="ChannelEndpointElement" Kind="Class" />
+      <Type Name="ChannelEndpointElementCollection" Kind="Class" />
+      <Type Name="ChannelPoolSettingsElement" Kind="Class" />
+      <Type Name="ClaimTypeElement" Kind="Class" />
+      <Type Name="ClaimTypeElementCollection" Kind="Class" />
+      <Type Name="ClientCredentialsElement" Kind="Class" />
+      <Type Name="ClientSection" Kind="Class" />
+      <Type Name="ClientViaElement" Kind="Class" />
+      <Type Name="ComContractElement" Kind="Class" />
+      <Type Name="ComContractElementCollection" Kind="Class" />
+      <Type Name="ComContractsSection" Kind="Class" />
+      <Type Name="ComMethodElement" Kind="Class" />
+      <Type Name="ComMethodElementCollection" Kind="Class" />
+      <Type Name="CommonBehaviorsSection" Kind="Class" />
+      <Type Name="CommonEndpointBehaviorElement" Kind="Class" />
+      <Type Name="CommonServiceBehaviorElement" Kind="Class" />
+      <Type Name="ComPersistableTypeElement" Kind="Class" />
+      <Type Name="ComPersistableTypeElementCollection" Kind="Class" />
+      <Type Name="CompositeDuplexElement" Kind="Class" />
+      <Type Name="ComUdtElement" Kind="Class" />
+      <Type Name="ComUdtElementCollection" Kind="Class" />
+      <Type Name="ConnectionOrientedTransportElement" Kind="Class" />
+      <Type Name="CustomBindingCollectionElement" Kind="Class" />
+      <Type Name="CustomBindingElement" Kind="Class" />
+      <Type Name="CustomBindingElementCollection" Kind="Class" />
+      <Type Name="DataContractSerializerElement" Kind="Class" />
+      <Type Name="DiagnosticSection" Kind="Class" />
+      <Type Name="DnsElement" Kind="Class" />
+      <Type Name="EndpointAddressElementBase" Kind="Class" />
+      <Type Name="EndpointBehaviorElement" Kind="Class" />
+      <Type Name="EndpointBehaviorElementCollection" Kind="Class" />
+      <Type Name="EndpointCollectionElement" Kind="Class" />
+      <Type Name="EndToEndTracingElement" Kind="Class" />
+      <Type Name="ExtensionElement" Kind="Class" />
+      <Type Name="ExtensionElementCollection" Kind="Class" />
+      <Type Name="ExtensionsSection" Kind="Class" />
+      <Type Name="FederatedMessageSecurityOverHttpElement" Kind="Class" />
+      <Type Name="HostElement" Kind="Class" />
+      <Type Name="HostTimeoutsElement" Kind="Class" />
+      <Type Name="HttpBindingBaseElement" Kind="Class" />
+      <Type Name="HttpDigestClientElement" Kind="Class" />
+      <Type Name="HttpsTransportElement" Kind="Class" />
+      <Type Name="HttpTransportElement" Kind="Class" />
+      <Type Name="HttpTransportSecurityElement" Kind="Class" />
+      <Type Name="IBindingConfigurationElement" Kind="Interface" />
+      <Type Name="IdentityElement" Kind="Class" />
+      <Type Name="IssuedTokenClientBehaviorsElement" Kind="Class" />
+      <Type Name="IssuedTokenClientBehaviorsElementCollection" Kind="Class" />
+      <Type Name="IssuedTokenClientElement" Kind="Class" />
+      <Type Name="IssuedTokenParametersElement" Kind="Class" />
+      <Type Name="IssuedTokenParametersEndpointAddressElement" Kind="Class" />
+      <Type Name="IssuedTokenServiceElement" Kind="Class" />
+      <Type Name="LocalClientSecuritySettingsElement" Kind="Class" />
+      <Type Name="LocalServiceSecuritySettingsElement" Kind="Class" />
+      <Type Name="MessageLoggingElement" Kind="Class" />
+      <Type Name="MessageSecurityOverHttpElement" Kind="Class" />
+      <Type Name="MessageSecurityOverMsmqElement" Kind="Class" />
+      <Type Name="MessageSecurityOverTcpElement" Kind="Class" />
+      <Type Name="MetadataElement" Kind="Class" />
+      <Type Name="MexBindingBindingCollectionElement`2" DisplayName="MexBindingBindingCollectionElement&lt;TStandardBinding,TBindingConfiguration&gt;" Kind="Class" />
+      <Type Name="MexBindingElement`1" DisplayName="MexBindingElement&lt;TStandardBinding&gt;" Kind="Class" />
+      <Type Name="MexHttpBindingCollectionElement" Kind="Class" />
+      <Type Name="MexHttpBindingElement" Kind="Class" />
+      <Type Name="MexHttpsBindingCollectionElement" Kind="Class" />
+      <Type Name="MexHttpsBindingElement" Kind="Class" />
+      <Type Name="MexNamedPipeBindingCollectionElement" Kind="Class" />
+      <Type Name="MexNamedPipeBindingElement" Kind="Class" />
+      <Type Name="MexTcpBindingCollectionElement" Kind="Class" />
+      <Type Name="MexTcpBindingElement" Kind="Class" />
+      <Type Name="MsmqBindingElementBase" Kind="Class" />
+      <Type Name="MsmqElementBase" Kind="Class" />
+      <Type Name="MsmqIntegrationBindingCollectionElement" Kind="Class" />
+      <Type Name="MsmqIntegrationBindingElement" Kind="Class" />
+      <Type Name="MsmqIntegrationElement" Kind="Class" />
+      <Type Name="MsmqIntegrationSecurityElement" Kind="Class" />
+      <Type Name="MsmqTransportElement" Kind="Class" />
+      <Type Name="MsmqTransportSecurityElement" Kind="Class" />
+      <Type Name="MtomMessageEncodingElement" Kind="Class" />
+      <Type Name="NamedPipeConnectionPoolSettingsElement" Kind="Class" />
+      <Type Name="NamedPipeTransportElement" Kind="Class" />
+      <Type Name="NamedPipeTransportSecurityElement" Kind="Class" />
+      <Type Name="NamedServiceModelExtensionCollectionElement`1" DisplayName="NamedServiceModelExtensionCollectionElement&lt;TServiceModelExtensionElement&gt;" Kind="Class" />
+      <Type Name="NetMsmqBindingCollectionElement" Kind="Class" />
+      <Type Name="NetMsmqBindingElement" Kind="Class" />
+      <Type Name="NetMsmqSecurityElement" Kind="Class" />
+      <Type Name="NetNamedPipeBindingCollectionElement" Kind="Class" />
+      <Type Name="NetNamedPipeBindingElement" Kind="Class" />
+      <Type Name="NetNamedPipeSecurityElement" Kind="Class" />
+      <Type Name="NetPeerTcpBindingCollectionElement" Kind="Class" />
+      <Type Name="NetPeerTcpBindingElement" Kind="Class" />
+      <Type Name="NetTcpBindingCollectionElement" Kind="Class" />
+      <Type Name="NetTcpBindingElement" Kind="Class" />
+      <Type Name="NetTcpSecurityElement" Kind="Class" />
+      <Type Name="NonDualMessageSecurityOverHttpElement" Kind="Class" />
+      <Type Name="OneWayElement" Kind="Class" />
+      <Type Name="PeerCredentialElement" Kind="Class" />
+      <Type Name="PeerCustomResolverElement" Kind="Class" />
+      <Type Name="PeerResolverElement" Kind="Class" />
+      <Type Name="PeerSecurityElement" Kind="Class" />
+      <Type Name="PeerTransportElement" Kind="Class" />
+      <Type Name="PeerTransportSecurityElement" Kind="Class" />
+      <Type Name="PnrpPeerResolverElement" Kind="Class" />
+      <Type Name="PolicyImporterElement" Kind="Class" />
+      <Type Name="PolicyImporterElementCollection" Kind="Class" />
+      <Type Name="PrivacyNoticeElement" Kind="Class" />
+      <Type Name="ProtocolMappingElement" Kind="Class" />
+      <Type Name="ProtocolMappingElementCollection" Kind="Class" />
+      <Type Name="ProtocolMappingSection" Kind="Class" />
+      <Type Name="ReliableSessionElement" Kind="Class" />
+      <Type Name="RsaElement" Kind="Class" />
+      <Type Name="SecureConversationServiceElement" Kind="Class" />
+      <Type Name="SecurityElement" Kind="Class" />
+      <Type Name="SecurityElementBase" Kind="Class" />
+      <Type Name="ServiceAuthorizationElement" Kind="Class" />
+      <Type Name="ServiceBehaviorElement" Kind="Class" />
+      <Type Name="ServiceBehaviorElementCollection" Kind="Class" />
+      <Type Name="ServiceCredentialsElement" Kind="Class" />
+      <Type Name="ServiceDebugElement" Kind="Class" />
+      <Type Name="ServiceElement" Kind="Class" />
+      <Type Name="ServiceElementCollection" Kind="Class" />
+      <Type Name="ServiceEndpointElement" Kind="Class" />
+      <Type Name="ServiceEndpointElementCollection" Kind="Class" />
+      <Type Name="ServiceHostingEnvironmentSection" Kind="Class" />
+      <Type Name="ServiceMetadataEndpointCollectionElement" Kind="Class" />
+      <Type Name="ServiceMetadataEndpointElement" Kind="Class" />
+      <Type Name="ServiceMetadataPublishingElement" Kind="Class" />
+      <Type Name="ServiceModelConfigurationElementCollection`1" DisplayName="ServiceModelConfigurationElementCollection&lt;ConfigurationElementType&gt;" Kind="Class" />
+      <Type Name="ServiceModelEnhancedConfigurationElementCollection`1" DisplayName="ServiceModelEnhancedConfigurationElementCollection&lt;TConfigurationElement&gt;" Kind="Class" />
+      <Type Name="ServiceModelExtensionCollectionElement`1" DisplayName="ServiceModelExtensionCollectionElement&lt;TServiceModelExtensionElement&gt;" Kind="Class" />
+      <Type Name="ServiceModelExtensionElement" Kind="Class" />
+      <Type Name="ServiceModelSectionGroup" Kind="Class" />
+      <Type Name="ServicePrincipalNameElement" Kind="Class" />
+      <Type Name="ServiceSecurityAuditElement" Kind="Class" />
+      <Type Name="ServicesSection" Kind="Class" />
+      <Type Name="ServiceThrottlingElement" Kind="Class" />
+      <Type Name="ServiceTimeoutsElement" Kind="Class" />
+      <Type Name="SslStreamSecurityElement" Kind="Class" />
+      <Type Name="StandardBindingCollectionElement`2" DisplayName="StandardBindingCollectionElement&lt;TStandardBinding,TBindingConfiguration&gt;" Kind="Class" />
+      <Type Name="StandardBindingElement" Kind="Class" />
+      <Type Name="StandardBindingElementCollection`1" DisplayName="StandardBindingElementCollection&lt;TBindingConfiguration&gt;" Kind="Class" />
+      <Type Name="StandardBindingOptionalReliableSessionElement" Kind="Class" />
+      <Type Name="StandardBindingReliableSessionElement" Kind="Class" />
+      <Type Name="StandardEndpointCollectionElement`2" DisplayName="StandardEndpointCollectionElement&lt;TStandardEndpoint,TEndpointConfiguration&gt;" Kind="Class" />
+      <Type Name="StandardEndpointElement" Kind="Class" />
+      <Type Name="StandardEndpointElementCollection`1" DisplayName="StandardEndpointElementCollection&lt;TEndpointConfiguration&gt;" Kind="Class" />
+      <Type Name="StandardEndpointsSection" Kind="Class" />
+      <Type Name="SynchronousReceiveElement" Kind="Class" />
+      <Type Name="TcpConnectionPoolSettingsElement" Kind="Class" />
+      <Type Name="TcpTransportElement" Kind="Class" />
+      <Type Name="TcpTransportSecurityElement" Kind="Class" />
+      <Type Name="TextMessageEncodingElement" Kind="Class" />
+      <Type Name="TransactedBatchingElement" Kind="Class" />
+      <Type Name="TransactionFlowElement" Kind="Class" />
+      <Type Name="TransportConfigurationTypeElement" Kind="Class" />
+      <Type Name="TransportConfigurationTypeElementCollection" Kind="Class" />
+      <Type Name="TransportElement" Kind="Class" />
+      <Type Name="UseManagedPresentationElement" Kind="Class" />
+      <Type Name="UserNameServiceElement" Kind="Class" />
+      <Type Name="UserPrincipalNameElement" Kind="Class" />
+      <Type Name="WindowsClientElement" Kind="Class" />
+      <Type Name="WindowsServiceElement" Kind="Class" />
+      <Type Name="WindowsStreamSecurityElement" Kind="Class" />
+      <Type Name="WS2007FederationHttpBindingCollectionElement" Kind="Class" />
+      <Type Name="WS2007FederationHttpBindingElement" Kind="Class" />
+      <Type Name="WS2007HttpBindingCollectionElement" Kind="Class" />
+      <Type Name="WS2007HttpBindingElement" Kind="Class" />
+      <Type Name="WsdlImporterElement" Kind="Class" />
+      <Type Name="WsdlImporterElementCollection" Kind="Class" />
+      <Type Name="WSDualHttpBindingCollectionElement" Kind="Class" />
+      <Type Name="WSDualHttpBindingElement" Kind="Class" />
+      <Type Name="WSDualHttpSecurityElement" Kind="Class" />
+      <Type Name="WSFederationHttpBindingCollectionElement" Kind="Class" />
+      <Type Name="WSFederationHttpBindingElement" Kind="Class" />
+      <Type Name="WSFederationHttpSecurityElement" Kind="Class" />
+      <Type Name="WSHttpBindingBaseElement" Kind="Class" />
+      <Type Name="WSHttpBindingCollectionElement" Kind="Class" />
+      <Type Name="WSHttpBindingElement" Kind="Class" />
+      <Type Name="WSHttpSecurityElement" Kind="Class" />
+      <Type Name="WSHttpTransportSecurityElement" Kind="Class" />
+      <Type Name="X509CertificateTrustedIssuerElement" Kind="Class" />
+      <Type Name="X509CertificateTrustedIssuerElementCollection" Kind="Class" />
+      <Type Name="X509ClientCertificateAuthenticationElement" Kind="Class" />
+      <Type Name="X509ClientCertificateCredentialsElement" Kind="Class" />
+      <Type Name="X509DefaultServiceCertificateElement" Kind="Class" />
+      <Type Name="X509InitiatorCertificateClientElement" Kind="Class" />
+      <Type Name="X509InitiatorCertificateServiceElement" Kind="Class" />
+      <Type Name="X509PeerCertificateAuthenticationElement" Kind="Class" />
+      <Type Name="X509PeerCertificateElement" Kind="Class" />
+      <Type Name="X509RecipientCertificateClientElement" Kind="Class" />
+      <Type Name="X509RecipientCertificateServiceElement" Kind="Class" />
+      <Type Name="X509ScopedServiceCertificateElement" Kind="Class" />
+      <Type Name="X509ScopedServiceCertificateElementCollection" Kind="Class" />
+      <Type Name="X509ServiceCertificateAuthenticationElement" Kind="Class" />
+      <Type Name="XmlDictionaryReaderQuotasElement" Kind="Class" />
+      <Type Name="XmlElementElement" Kind="Class" />
+      <Type Name="XmlElementElementCollection" Kind="Class" />
+      <Type Name="XPathMessageFilterElement" Kind="Class" />
+      <Type Name="XPathMessageFilterElementCollection" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.Description">
+      <Type Name="CallbackDebugBehavior" Kind="Class" />
+      <Type Name="ClientCredentials" Kind="Class" />
+      <Type Name="ClientViaBehavior" Kind="Class" />
+      <Type Name="ContractDescription" Kind="Class" />
+      <Type Name="DataContractSerializerMessageContractImporter" Kind="Class" />
+      <Type Name="DataContractSerializerOperationBehavior" Kind="Class" />
+      <Type Name="FaultDescription" Kind="Class" />
+      <Type Name="FaultDescriptionCollection" Kind="Class" />
+      <Type Name="IContractBehavior" Kind="Interface" />
+      <Type Name="IContractBehaviorAttribute" Kind="Interface" />
+      <Type Name="IEndpointBehavior" Kind="Interface" />
+      <Type Name="IMetadataExchange" Kind="Interface" />
+      <Type Name="IOperationBehavior" Kind="Interface" />
+      <Type Name="IOperationContractGenerationExtension" Kind="Interface" />
+      <Type Name="IPolicyExportExtension" Kind="Interface" />
+      <Type Name="IPolicyImportExtension" Kind="Interface" />
+      <Type Name="IServiceBehavior" Kind="Interface" />
+      <Type Name="IServiceContractGenerationExtension" Kind="Interface" />
+      <Type Name="IWsdlExportExtension" Kind="Interface" />
+      <Type Name="IWsdlImportExtension" Kind="Interface" />
+      <Type Name="ListenUriMode" Kind="Enumeration" />
+      <Type Name="MessageBodyDescription" Kind="Class" />
+      <Type Name="MessageDescription" Kind="Class" />
+      <Type Name="MessageDescriptionCollection" Kind="Class" />
+      <Type Name="MessageDirection" Kind="Enumeration" />
+      <Type Name="MessageHeaderDescription" Kind="Class" />
+      <Type Name="MessageHeaderDescriptionCollection" Kind="Class" />
+      <Type Name="MessagePartDescription" Kind="Class" />
+      <Type Name="MessagePartDescriptionCollection" Kind="Class" />
+      <Type Name="MessagePropertyDescription" Kind="Class" />
+      <Type Name="MessagePropertyDescriptionCollection" Kind="Class" />
+      <Type Name="MetadataConversionError" Kind="Class" />
+      <Type Name="MetadataExchangeBindings" Kind="Class" />
+      <Type Name="MetadataExchangeClient" Kind="Class" />
+      <Type Name="MetadataExchangeClientMode" Kind="Enumeration" />
+      <Type Name="MetadataExporter" Kind="Class" />
+      <Type Name="MetadataImporter" Kind="Class" />
+      <Type Name="MetadataLocation" Kind="Class" />
+      <Type Name="MetadataReference" Kind="Class" />
+      <Type Name="MetadataResolver" Kind="Class" />
+      <Type Name="MetadataSection" Kind="Class" />
+      <Type Name="MetadataSet" Kind="Class" />
+      <Type Name="MustUnderstandBehavior" Kind="Class" />
+      <Type Name="OperationContractGenerationContext" Kind="Class" />
+      <Type Name="OperationDescription" Kind="Class" />
+      <Type Name="OperationDescriptionCollection" Kind="Class" />
+      <Type Name="PolicyAssertionCollection" Kind="Class" />
+      <Type Name="PolicyConversionContext" Kind="Class" />
+      <Type Name="PolicyVersion" Kind="Class" />
+      <Type Name="PrincipalPermissionMode" Kind="Enumeration" />
+      <Type Name="ServiceAuthorizationBehavior" Kind="Class" />
+      <Type Name="ServiceContractGenerationContext" Kind="Class" />
+      <Type Name="ServiceContractGenerationOptions" Kind="Enumeration" />
+      <Type Name="ServiceContractGenerator" Kind="Class" />
+      <Type Name="ServiceCredentials" Kind="Class" />
+      <Type Name="ServiceDebugBehavior" Kind="Class" />
+      <Type Name="ServiceDescription" Kind="Class" />
+      <Type Name="ServiceEndpoint" Kind="Class" />
+      <Type Name="ServiceEndpointCollection" Kind="Class" />
+      <Type Name="ServiceMetadataBehavior" Kind="Class" />
+      <Type Name="ServiceMetadataEndpoint" Kind="Class" />
+      <Type Name="ServiceMetadataExtension" Kind="Class" />
+      <Type Name="ServiceSecurityAuditBehavior" Kind="Class" />
+      <Type Name="ServiceThrottlingBehavior" Kind="Class" />
+      <Type Name="SynchronousReceiveBehavior" Kind="Class" />
+      <Type Name="TransactedBatchingBehavior" Kind="Class" />
+      <Type Name="TypedMessageConverter" Kind="Class" />
+      <Type Name="WsdlContractConversionContext" Kind="Class" />
+      <Type Name="WsdlEndpointConversionContext" Kind="Class" />
+      <Type Name="WsdlExporter" Kind="Class" />
+      <Type Name="WsdlImporter" Kind="Class" />
+      <Type Name="XmlSerializerMessageContractImporter" Kind="Class" />
+      <Type Name="XmlSerializerOperationBehavior" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.Diagnostics">
+      <Type Name="PerformanceCounterScope" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.Dispatcher">
+      <Type Name="ActionMessageFilter" Kind="Class" />
+      <Type Name="ChannelDispatcher" Kind="Class" />
+      <Type Name="ChannelDispatcherBase" Kind="Class" />
+      <Type Name="ChannelDispatcherCollection" Kind="Class" />
+      <Type Name="ClientOperation" Kind="Class" />
+      <Type Name="ClientRuntime" Kind="Class" />
+      <Type Name="DispatchOperation" Kind="Class" />
+      <Type Name="DispatchRuntime" Kind="Class" />
+      <Type Name="EndpointAddressMessageFilter" Kind="Class" />
+      <Type Name="EndpointDispatcher" Kind="Class" />
+      <Type Name="ExceptionHandler" Kind="Class" />
+      <Type Name="FaultContractInfo" Kind="Class" />
+      <Type Name="FilterInvalidBodyAccessException" Kind="Class" />
+      <Type Name="ICallContextInitializer" Kind="Interface" />
+      <Type Name="IChannelInitializer" Kind="Interface" />
+      <Type Name="IClientMessageFormatter" Kind="Interface" />
+      <Type Name="IClientMessageInspector" Kind="Interface" />
+      <Type Name="IClientOperationSelector" Kind="Interface" />
+      <Type Name="IDispatchMessageFormatter" Kind="Interface" />
+      <Type Name="IDispatchMessageInspector" Kind="Interface" />
+      <Type Name="IDispatchOperationSelector" Kind="Interface" />
+      <Type Name="IErrorHandler" Kind="Interface" />
+      <Type Name="IInputSessionShutdown" Kind="Interface" />
+      <Type Name="IInstanceContextInitializer" Kind="Interface" />
+      <Type Name="IInstanceContextProvider" Kind="Interface" />
+      <Type Name="IInstanceProvider" Kind="Interface" />
+      <Type Name="IInteractiveChannelInitializer" Kind="Interface" />
+      <Type Name="IMessageFilterTable`1" DisplayName="IMessageFilterTable&lt;TFilterData&gt;" Kind="Interface" />
+      <Type Name="InstanceContextIdleCallback" Kind="Delegate" />
+      <Type Name="InvalidBodyAccessException" Kind="Class" />
+      <Type Name="IOperationInvoker" Kind="Interface" />
+      <Type Name="IParameterInspector" Kind="Interface" />
+      <Type Name="MatchAllMessageFilter" Kind="Class" />
+      <Type Name="MatchNoneMessageFilter" Kind="Class" />
+      <Type Name="MessageFilter" Kind="Class" />
+      <Type Name="MessageFilterException" Kind="Class" />
+      <Type Name="MessageFilterTable`1" DisplayName="MessageFilterTable&lt;TFilterData&gt;" Kind="Class" />
+      <Type Name="MultipleFilterMatchesException" Kind="Class" />
+      <Type Name="NavigatorInvalidBodyAccessException" Kind="Class" />
+      <Type Name="PrefixEndpointAddressMessageFilter" Kind="Class" />
+      <Type Name="SeekableXPathNavigator" Kind="Class" />
+      <Type Name="ServiceThrottle" Kind="Class" />
+      <Type Name="XPathMessageContext" Kind="Class" />
+      <Type Name="XPathMessageFilter" Kind="Class" />
+      <Type Name="XPathMessageFilterTable`1" DisplayName="XPathMessageFilterTable&lt;TFilterData&gt;" Kind="Class" />
+      <Type Name="XPathNavigatorException" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.MsmqIntegration">
+      <Type Name="MsmqIntegrationBinding" Kind="Class" />
+      <Type Name="MsmqIntegrationBindingElement" Kind="Class" />
+      <Type Name="MsmqIntegrationMessageProperty" Kind="Class" />
+      <Type Name="MsmqIntegrationSecurity" Kind="Class" />
+      <Type Name="MsmqIntegrationSecurityMode" Kind="Enumeration" />
+      <Type Name="MsmqMessage`1" DisplayName="MsmqMessage&lt;T&gt;" Kind="Class" />
+      <Type Name="MsmqMessageSerializationFormat" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.PeerResolvers">
+      <Type Name="CustomPeerResolverService" Kind="Class" />
+      <Type Name="IPeerResolverContract" Kind="Interface" />
+      <Type Name="PeerCustomResolverSettings" Kind="Class" />
+      <Type Name="PeerReferralPolicy" Kind="Enumeration" />
+      <Type Name="PeerResolverMode" Kind="Enumeration" />
+      <Type Name="PeerResolverSettings" Kind="Class" />
+      <Type Name="RefreshInfo" Kind="Class" />
+      <Type Name="RefreshResponseInfo" Kind="Class" />
+      <Type Name="RefreshResult" Kind="Enumeration" />
+      <Type Name="RegisterInfo" Kind="Class" />
+      <Type Name="RegisterResponseInfo" Kind="Class" />
+      <Type Name="ResolveInfo" Kind="Class" />
+      <Type Name="ResolveResponseInfo" Kind="Class" />
+      <Type Name="ServiceSettingsResponseInfo" Kind="Class" />
+      <Type Name="UnregisterInfo" Kind="Class" />
+      <Type Name="UpdateInfo" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.Security">
+      <Type Name="BasicSecurityProfileVersion" Kind="Class" />
+      <Type Name="BinarySecretKeyIdentifierClause" Kind="Class" />
+      <Type Name="ChannelProtectionRequirements" Kind="Class" />
+      <Type Name="DataProtectionSecurityStateEncoder" Kind="Class" />
+      <Type Name="ExpiredSecurityTokenException" Kind="Class" />
+      <Type Name="HttpDigestClientCredential" Kind="Class" />
+      <Type Name="IdentityVerifier" Kind="Class" />
+      <Type Name="IEndpointIdentityProvider" Kind="Interface" />
+      <Type Name="InfocardInteractiveChannelInitializer" Kind="Class" />
+      <Type Name="ISecureConversationSession" Kind="Interface" />
+      <Type Name="ISecuritySession" Kind="Interface" />
+      <Type Name="IssuedTokenClientCredential" Kind="Class" />
+      <Type Name="IssuedTokenServiceCredential" Kind="Class" />
+      <Type Name="KeyNameIdentifierClause" Kind="Class" />
+      <Type Name="MessagePartSpecification" Kind="Class" />
+      <Type Name="MessageProtectionOrder" Kind="Enumeration" />
+      <Type Name="MessageSecurityException" Kind="Class" />
+      <Type Name="PeerCredential" Kind="Class" />
+      <Type Name="ScopedMessagePartSpecification" Kind="Class" />
+      <Type Name="SecureConversationServiceCredential" Kind="Class" />
+      <Type Name="SecureConversationVersion" Kind="Class" />
+      <Type Name="SecurityAccessDeniedException" Kind="Class" />
+      <Type Name="SecurityAlgorithmSuite" Kind="Class" />
+      <Type Name="SecurityContextKeyIdentifierClause" Kind="Class" />
+      <Type Name="SecurityCredentialsManager" Kind="Class" />
+      <Type Name="SecurityKeyEntropyMode" Kind="Enumeration" />
+      <Type Name="SecurityMessageProperty" Kind="Class" />
+      <Type Name="SecurityNegotiationException" Kind="Class" />
+      <Type Name="SecurityPolicyVersion" Kind="Class" />
+      <Type Name="SecurityStateEncoder" Kind="Class" />
+      <Type Name="SecurityTokenAttachmentMode" Kind="Enumeration" />
+      <Type Name="SecurityTokenSpecification" Kind="Class" />
+      <Type Name="SecurityVersion" Kind="Class" />
+      <Type Name="ServiceCredentialsSecurityTokenManager" Kind="Class" />
+      <Type Name="SspiSecurityTokenProvider" Kind="Class" />
+      <Type Name="SupportingTokenSpecification" Kind="Class" />
+      <Type Name="TrustVersion" Kind="Class" />
+      <Type Name="UserNamePasswordClientCredential" Kind="Class" />
+      <Type Name="UserNamePasswordServiceCredential" Kind="Class" />
+      <Type Name="UserNamePasswordValidationMode" Kind="Enumeration" />
+      <Type Name="WindowsClientCredential" Kind="Class" />
+      <Type Name="WindowsServiceCredential" Kind="Class" />
+      <Type Name="WSSecurityTokenSerializer" Kind="Class" />
+      <Type Name="X509CertificateInitiatorClientCredential" Kind="Class" />
+      <Type Name="X509CertificateInitiatorServiceCredential" Kind="Class" />
+      <Type Name="X509CertificateRecipientClientCredential" Kind="Class" />
+      <Type Name="X509CertificateRecipientServiceCredential" Kind="Class" />
+      <Type Name="X509CertificateValidationMode" Kind="Enumeration" />
+      <Type Name="X509ClientCertificateAuthentication" Kind="Class" />
+      <Type Name="X509PeerCertificateAuthentication" Kind="Class" />
+      <Type Name="X509ServiceCertificateAuthentication" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.Security.Tokens">
+      <Type Name="BinarySecretSecurityToken" Kind="Class" />
+      <Type Name="ClaimTypeRequirement" Kind="Class" />
+      <Type Name="IIssuanceSecurityTokenAuthenticator" Kind="Interface" />
+      <Type Name="InitiatorServiceModelSecurityTokenRequirement" Kind="Class" />
+      <Type Name="ISecurityContextSecurityTokenCache" Kind="Interface" />
+      <Type Name="IssuedSecurityTokenHandler" Kind="Delegate" />
+      <Type Name="IssuedSecurityTokenParameters" Kind="Class" />
+      <Type Name="IssuedSecurityTokenProvider" Kind="Class" />
+      <Type Name="KerberosSecurityTokenParameters" Kind="Class" />
+      <Type Name="RecipientServiceModelSecurityTokenRequirement" Kind="Class" />
+      <Type Name="RenewedSecurityTokenHandler" Kind="Delegate" />
+      <Type Name="RsaSecurityTokenParameters" Kind="Class" />
+      <Type Name="SecureConversationSecurityTokenParameters" Kind="Class" />
+      <Type Name="SecurityContextSecurityToken" Kind="Class" />
+      <Type Name="SecurityContextSecurityTokenAuthenticator" Kind="Class" />
+      <Type Name="SecurityContextSecurityTokenResolver" Kind="Class" />
+      <Type Name="SecurityTokenInclusionMode" Kind="Enumeration" />
+      <Type Name="SecurityTokenParameters" Kind="Class" />
+      <Type Name="SecurityTokenReferenceStyle" Kind="Enumeration" />
+      <Type Name="ServiceModelSecurityTokenRequirement" Kind="Class" />
+      <Type Name="ServiceModelSecurityTokenTypes" Kind="Class" />
+      <Type Name="SslSecurityTokenParameters" Kind="Class" />
+      <Type Name="SspiSecurityToken" Kind="Class" />
+      <Type Name="SspiSecurityTokenParameters" Kind="Class" />
+      <Type Name="SupportingTokenParameters" Kind="Class" />
+      <Type Name="UserNameSecurityTokenParameters" Kind="Class" />
+      <Type Name="WrappedKeySecurityToken" Kind="Class" />
+      <Type Name="X509KeyIdentifierClauseType" Kind="Enumeration" />
+      <Type Name="X509SecurityTokenParameters" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ServiceModel.Syndication">
+      <Type Name="Atom10FeedFormatter" Kind="Class" />
+      <Type Name="Atom10FeedFormatter`1" DisplayName="Atom10FeedFormatter&lt;TSyndicationFeed&gt;" Kind="Class" />
+      <Type Name="Atom10ItemFormatter" Kind="Class" />
+      <Type Name="Atom10ItemFormatter`1" DisplayName="Atom10ItemFormatter&lt;TSyndicationItem&gt;" Kind="Class" />
+      <Type Name="AtomPub10CategoriesDocumentFormatter" Kind="Class" />
+      <Type Name="AtomPub10ServiceDocumentFormatter" Kind="Class" />
+      <Type Name="AtomPub10ServiceDocumentFormatter`1" DisplayName="AtomPub10ServiceDocumentFormatter&lt;TServiceDocument&gt;" Kind="Class" />
+      <Type Name="CategoriesDocument" Kind="Class" />
+      <Type Name="CategoriesDocumentFormatter" Kind="Class" />
+      <Type Name="InlineCategoriesDocument" Kind="Class" />
+      <Type Name="ReferencedCategoriesDocument" Kind="Class" />
+      <Type Name="ResourceCollectionInfo" Kind="Class" />
+      <Type Name="Rss20FeedFormatter" Kind="Class" />
+      <Type Name="Rss20FeedFormatter`1" DisplayName="Rss20FeedFormatter&lt;TSyndicationFeed&gt;" Kind="Class" />
+      <Type Name="Rss20ItemFormatter" Kind="Class" />
+      <Type Name="Rss20ItemFormatter`1" DisplayName="Rss20ItemFormatter&lt;TSyndicationItem&gt;" Kind="Class" />
+      <Type Name="ServiceDocument" Kind="Class" />
+      <Type Name="ServiceDocumentFormatter" Kind="Class" />
+      <Type Name="SyndicationCategory" Kind="Class" />
+      <Type Name="SyndicationContent" Kind="Class" />
+      <Type Name="SyndicationElementExtension" Kind="Class" />
+      <Type Name="SyndicationElementExtensionCollection" Kind="Class" />
+      <Type Name="SyndicationFeed" Kind="Class" />
+      <Type Name="SyndicationFeedFormatter" Kind="Class" />
+      <Type Name="SyndicationItem" Kind="Class" />
+      <Type Name="SyndicationItemFormatter" Kind="Class" />
+      <Type Name="SyndicationLink" Kind="Class" />
+      <Type Name="SyndicationPerson" Kind="Class" />
+      <Type Name="SyndicationVersions" Kind="Class" />
+      <Type Name="TextSyndicationContent" Kind="Class" />
+      <Type Name="TextSyndicationContentKind" Kind="Enumeration" />
+      <Type Name="UrlSyndicationContent" Kind="Class" />
+      <Type Name="Workspace" Kind="Class" />
+      <Type Name="XmlSyndicationContent" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>System.ServiceModel</Title>
+</Overview>

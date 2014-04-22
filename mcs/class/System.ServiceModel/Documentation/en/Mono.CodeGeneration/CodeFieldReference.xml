@@ -1,0 +1,128 @@
+<Type Name="CodeFieldReference" FullName="Mono.CodeGeneration.CodeFieldReference">
+  <TypeSignature Language="C#" Value="public class CodeFieldReference : Mono.CodeGeneration.CodeValueReference" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CodeFieldReference extends Mono.CodeGeneration.CodeValueReference" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.CodeGeneration.CodeValueReference</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeFieldReference (System.Reflection.FieldInfo field);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Reflection.FieldInfo field) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="field" Type="System.Reflection.FieldInfo" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeFieldReference (Mono.CodeGeneration.CodeExpression target, System.Reflection.FieldInfo field);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class Mono.CodeGeneration.CodeExpression target, class System.Reflection.FieldInfo field) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="target" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="field" Type="System.Reflection.FieldInfo" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <param name="field">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Generate">
+      <MemberSignature Language="C#" Value="public override void Generate (System.Reflection.Emit.ILGenerator gen);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Generate(class System.Reflection.Emit.ILGenerator gen) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gen" Type="System.Reflection.Emit.ILGenerator" />
+      </Parameters>
+      <Docs>
+        <param name="gen">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GenerateSet">
+      <MemberSignature Language="C#" Value="public override void GenerateSet (System.Reflection.Emit.ILGenerator gen, Mono.CodeGeneration.CodeExpression value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void GenerateSet(class System.Reflection.Emit.ILGenerator gen, class Mono.CodeGeneration.CodeExpression value) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gen" Type="System.Reflection.Emit.ILGenerator" />
+        <Parameter Name="value" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="gen">To be added.</param>
+        <param name="value">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetResultType">
+      <MemberSignature Language="C#" Value="public override Type GetResultType ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Type GetResultType() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrintCode">
+      <MemberSignature Language="C#" Value="public override void PrintCode (Mono.CodeGeneration.CodeWriter cp);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void PrintCode(class Mono.CodeGeneration.CodeWriter cp) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cp" Type="Mono.CodeGeneration.CodeWriter" />
+      </Parameters>
+      <Docs>
+        <param name="cp">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,15 +1,14 @@
 //
 // System.Runtime.Remoting.Messaging.LogicalCallContext.cs
 //
-// Author:
+// Authors:
 //   Dan Lewis (dihlewis@yahoo.co.uk)
 //   Lluis Sanchez Gual (lluis@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // 2002 (C) Copyright. Ximian, Inc.
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -58,11 +57,9 @@ namespace System.Runtime.Remoting.Messaging
 			}
 		}
 
-		public bool HasInfo
-		{
-			get
-			{
-				return (_data != null && _data.Count > 0);
+		public bool HasInfo {
+			get {
+				return _data != null && _data.Count > 0;
 			}
 		}
 
@@ -74,8 +71,7 @@ namespace System.Runtime.Remoting.Messaging
 
 		public object GetData (string name)
 		{
-			if (_data != null) return _data [name];
-			else return null;
+			return _data != null ? _data [name] : null;
 		}
 
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
@@ -90,7 +86,8 @@ namespace System.Runtime.Remoting.Messaging
 
 		public void SetData (string name, object data)
 		{
-			if (_data == null) _data = new Hashtable ();
+			if (_data == null) 
+				_data = new Hashtable ();
 			_data [name] = data;
 		}
 
@@ -99,17 +96,14 @@ namespace System.Runtime.Remoting.Messaging
 			LogicalCallContext nc = new LogicalCallContext ();
 			nc._remotingData = (CallContextRemotingData) _remotingData.Clone ();
 			if (_data != null)
-			{
-				nc._data = new Hashtable ();
-				foreach (DictionaryEntry de in _data)
-					nc._data [de.Key] = de.Value;
-			}
+				nc._data = (Hashtable) _data.Clone ();
+
 			return nc;
 		}
 
-		internal Hashtable Datastore
-		{
+		internal Hashtable Datastore {
 			get { return _data; }
+			set { _data = value; }
 		}
 	}
 

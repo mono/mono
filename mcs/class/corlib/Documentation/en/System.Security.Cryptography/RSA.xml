@@ -1,5 +1,6 @@
 <Type Name="RSA" FullName="System.Security.Cryptography.RSA">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class RSA : System.Security.Cryptography.AsymmetricAlgorithm" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit RSA extends System.Security.Cryptography.AsymmetricAlgorithm" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -13,6 +14,11 @@
   </Base>
   <Interfaces>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>Abtract base class for all implementations of RSA public key algorithm.</summary>
     <remarks>To be added</remarks>
@@ -20,22 +26,29 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected RSA ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RSA Create ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.RSA Create() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RSA Create ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.RSA</ReturnType>
       </ReturnValue>
@@ -45,15 +58,16 @@
         <returns>To be added: an object of type 'RSA'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RSA Create (string algName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.RSA Create(string algName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Create">
-      <MemberSignature Language="C#" Value="public static System.Security.Cryptography.RSA Create (string algName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.RSA</ReturnType>
       </ReturnValue>
@@ -66,15 +80,16 @@
         <returns>To be added: an object of type 'RSA'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="DecryptValue">
+      <MemberSignature Language="C#" Value="public abstract byte[] DecryptValue (byte[] rgb);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] DecryptValue(unsigned int8[] rgb) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DecryptValue">
-      <MemberSignature Language="C#" Value="public abstract byte[] DecryptValue (byte[] rgb);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -87,15 +102,16 @@
         <returns>An array of bytes containing the decrypted data. </returns>
         <remarks>Direct (raw) decryption (i.e. without padding) is discouraged due to high security risks.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="EncryptValue">
+      <MemberSignature Language="C#" Value="public abstract byte[] EncryptValue (byte[] rgb);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] EncryptValue(unsigned int8[] rgb) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EncryptValue">
-      <MemberSignature Language="C#" Value="public abstract byte[] EncryptValue (byte[] rgb);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -108,15 +124,16 @@
         <returns>An array of bytes containing the encrypted data.</returns>
         <remarks>Direct (raw) encryption (i.e. without padding) is discouraged due to high security risks.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ExportParameters">
+      <MemberSignature Language="C#" Value="public abstract System.Security.Cryptography.RSAParameters ExportParameters (bool includePrivateParameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance valuetype System.Security.Cryptography.RSAParameters ExportParameters(bool includePrivateParameters) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ExportParameters">
-      <MemberSignature Language="C#" Value="public abstract System.Security.Cryptography.RSAParameters ExportParameters (bool includePrivateParameters);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.RSAParameters</ReturnType>
       </ReturnValue>
@@ -129,15 +146,16 @@
         <returns>a RSAParameters structure contaning each parameters of the key.</returns>
         <remarks>You are responsable to zeroize the private key (<see cref="T:System.Security.Cryptography.RSAParameters" /> parameters <see cref="M:System.Security.Cryptography.RSAParameters.D" />, <see cref="M:System.Security.Cryptography.RSAParameters.P" />, <see cref="M:System.Security.Cryptography.RSAParameters.Q" />, <see cref="M:System.Security.Cryptography.RSAParameters.DP" />, <see cref="M:System.Security.Cryptography.RSAParameters.DQ" /> and <see cref="M:System.Security.Cryptography.RSAParameters.InverseQ" />) if you export it from the instance.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="FromXmlString">
+      <MemberSignature Language="C#" Value="public override void FromXmlString (string xmlString);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void FromXmlString(string xmlString) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromXmlString">
-      <MemberSignature Language="C#" Value="public override void FromXmlString (string xmlString);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -149,15 +167,16 @@
         <summary>Import the RSA key from the specified XML string.</summary>
         <remarks>The schema definition for RSA keys is detailled in section 4.4.2.2 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ImportParameters">
+      <MemberSignature Language="C#" Value="public abstract void ImportParameters (System.Security.Cryptography.RSAParameters parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void ImportParameters(valuetype System.Security.Cryptography.RSAParameters parameters) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ImportParameters">
-      <MemberSignature Language="C#" Value="public abstract void ImportParameters (System.Security.Cryptography.RSAParameters parameters);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -169,15 +188,16 @@
         <summary>Import the key from the <see cref="T:System.Security.Cryptography.DSAParameters" /> structure into the current instance.</summary>
         <remarks>Parameters D, P and Q are required to import an RSA private key. Parameters DP, DQ and InverseQ will be used for the Chinese Remainder Theorem (CRT) optimization if available.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ToXmlString">
+      <MemberSignature Language="C#" Value="public override string ToXmlString (bool includePrivateParameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToXmlString(bool includePrivateParameters) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToXmlString">
-      <MemberSignature Language="C#" Value="public override string ToXmlString (bool includePrivateParameters);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -190,16 +210,6 @@
         <returns>An XML string containing the representation of the RSA key.</returns>
         <remarks>The schema definition for RSA keys is detailled in section 4.4.2.2 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

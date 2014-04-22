@@ -193,8 +193,7 @@ namespace System.Reflection
 		public virtual IEnumerable<CustomAttributeData> CustomAttributes {
 			get { return GetCustomAttributesData (); }
 		}
-
-		[MonoTODO]
+		
 		public virtual bool HasDefaultValue {
 			get { throw new NotImplementedException (); }
 		}
@@ -263,6 +262,7 @@ namespace System.Reflection
 		}
 #endif
 
+#if !FULL_AOT_RUNTIME
 		internal static ParameterInfo New (ParameterBuilder pb, Type type, MemberInfo member, int position)
 		{
 #if NET_4_0
@@ -271,7 +271,7 @@ namespace System.Reflection
 			return new ParameterInfo (pb, type, member, position);
 #endif
 		}
-
+#endif
 
 		internal static ParameterInfo New (ParameterInfo pinfo, Type type, MemberInfo member, int position)
 		{

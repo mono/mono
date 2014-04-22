@@ -1,10 +1,12 @@
 <Type Name="SoapAttributes" FullName="System.Xml.Serialization.SoapAttributes">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SoapAttributes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SoapAttributes extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -18,21 +20,29 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SoapAttributes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SoapAttributes (System.Reflection.ICustomAttributeProvider provider);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Reflection.ICustomAttributeProvider provider) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="provider" Type="System.Reflection.ICustomAttributeProvider" />
@@ -42,14 +52,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SoapAttribute">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapAttributeAttribute SoapAttribute { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.SoapAttributeAttribute SoapAttribute" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SoapAttribute">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapAttributeAttribute SoapAttribute { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.SoapAttributeAttribute</ReturnType>
       </ReturnValue>
@@ -59,14 +71,16 @@
         <value>To be added: an object of type 'SoapAttributeAttribute'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SoapDefaultValue">
+      <MemberSignature Language="C#" Value="public object SoapDefaultValue { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object SoapDefaultValue" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SoapDefaultValue">
-      <MemberSignature Language="C#" Value="public object SoapDefaultValue { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -76,14 +90,16 @@
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SoapElement">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapElementAttribute SoapElement { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.SoapElementAttribute SoapElement" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SoapElement">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapElementAttribute SoapElement { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.SoapElementAttribute</ReturnType>
       </ReturnValue>
@@ -93,14 +109,16 @@
         <value>To be added: an object of type 'SoapElementAttribute'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SoapEnum">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapEnumAttribute SoapEnum { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.SoapEnumAttribute SoapEnum" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SoapEnum">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapEnumAttribute SoapEnum { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.SoapEnumAttribute</ReturnType>
       </ReturnValue>
@@ -110,14 +128,16 @@
         <value>To be added: an object of type 'SoapEnumAttribute'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SoapIgnore">
+      <MemberSignature Language="C#" Value="public bool SoapIgnore { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SoapIgnore" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SoapIgnore">
-      <MemberSignature Language="C#" Value="public bool SoapIgnore { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -127,14 +147,16 @@
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SoapType">
+      <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapTypeAttribute SoapType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Serialization.SoapTypeAttribute SoapType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SoapType">
-      <MemberSignature Language="C#" Value="public System.Xml.Serialization.SoapTypeAttribute SoapType { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Xml.Serialization.SoapTypeAttribute</ReturnType>
       </ReturnValue>
@@ -144,10 +166,6 @@
         <value>To be added: an object of type 'SoapTypeAttribute'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

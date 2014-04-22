@@ -366,12 +366,12 @@ public class StreamReaderTest
 		m.Close();
 	}
 
-	public void TestCurrentEncoding() {
+	public void TestCurrentEncoding()
+	{
 		Byte[] b = {};
 		MemoryStream m = new MemoryStream(b);
 		StreamReader r = new StreamReader(m);
-		Assert.AreEqual (Encoding.UTF8.GetType (), r.CurrentEncoding.GetType (),
-			"wrong encoding");
+		Assert.AreSame (Encoding.UTF8, r.CurrentEncoding, "wrong encoding");
 	}
 
 	// TODO - Close - annoying spec - won't commit to any exceptions. How to test?
@@ -836,6 +836,13 @@ public class StreamReaderTest
 					Assert.Fail ("Wrong line content");
 			}
 		}
+	}
+
+	[Test]
+	public void NullStream ()
+	{
+		var buffer = new char[2];
+		Assert.AreEqual (0, StreamReader.Null.ReadBlock (buffer, 0, buffer.Length));
 	}
 
 #if NET_4_5

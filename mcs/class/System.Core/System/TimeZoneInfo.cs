@@ -1,3 +1,4 @@
+
 /*
  * System.TimeZoneInfo
  *
@@ -28,6 +29,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
+using System.Threading;
 
 #if !INSIDE_CORLIB && NET_4_0
 
@@ -84,37 +86,48 @@ namespace System
 		static TimeZoneInfo local;
 		public static TimeZoneInfo Local {
 			get { 
-				if (local == null) {
-#if MONODROID
-					local = AndroidTimeZones.Default;
-#elif MONOTOUCH
-					using (Stream stream = GetMonoTouchData (null)) {
-						local = BuildFromStream ("Local", stream);
-					}
-#elif LIBC
-					try {
-						local = FindSystemTimeZoneByFileName ("Local", "/etc/localtime");	
-					} catch {
-						try {
-							local = FindSystemTimeZoneByFileName ("Local", Path.Combine (TimeZoneDirectory, "localtime"));	
-						} catch {
-							throw new TimeZoneNotFoundException ();
-						}
-					}
-#else
-					if (IsWindows && LocalZoneKey != null) {
-						string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
-						name = TrimSpecial (name);
-						if (name != null)
-							local = TimeZoneInfo.FindSystemTimeZoneById (name);
-					}
-					
-					if (local == null)
+				var l = local;
+				if (l == null) {
+					l = CreateLocal ();
+					if (l == null)
 						throw new TimeZoneNotFoundException ();
-#endif
+
+					if (Interlocked.CompareExchange (ref local, l, null) != null)
+						l = local;
 				}
-				return local;
+
+				return l;
 			}
+		}
+
+		static TimeZoneInfo CreateLocal ()
+		{
+#if MONODROID
+			return AndroidTimeZones.Default;
+#elif MONOTOUCH
+			using (Stream stream = GetMonoTouchData (null)) {
+				return BuildFromStream ("Local", stream);
+			}
+#elif LIBC
+			try {
+				return FindSystemTimeZoneByFileName ("Local", "/etc/localtime");	
+			} catch {
+				try {
+					return FindSystemTimeZoneByFileName ("Local", Path.Combine (TimeZoneDirectory, "localtime"));	
+				} catch {
+					return null;
+				}
+			}
+#else
+			if (IsWindows && LocalZoneKey != null) {
+				string name = (string)LocalZoneKey.GetValue ("TimeZoneKeyName");
+				name = TrimSpecial (name);
+				if (name != null)
+					return TimeZoneInfo.FindSystemTimeZoneById (name);
+			}
+
+			return null;
+#endif
 		}
 
 		string standardDisplayName;
@@ -285,10 +298,17 @@ namespace System
 
 			if (this == TimeZoneInfo.Utc)
 				return DateTime.SpecifyKind (dateTime, DateTimeKind.Utc);
-
+			
 			//FIXME: do not rely on DateTime implementation !
-			if (this == TimeZoneInfo.Local)
+			if (this == TimeZoneInfo.Local) 
+			{
+#if NET_4_0
+				return dateTime.ToLocalTime ();
+#else
 				return DateTime.SpecifyKind (dateTime.ToLocalTime (), DateTimeKind.Unspecified);
+#endif
+			}
+
 
 			AdjustmentRule rule = GetApplicableRule (dateTime);
 		

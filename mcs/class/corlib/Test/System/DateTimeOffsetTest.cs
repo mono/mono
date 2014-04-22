@@ -163,7 +163,7 @@ namespace MonoTests.System {
 			Assert.AreEqual (dto.ToString ("r", new CultureInfo ("en-us")), dto.ToString ("R", new CultureInfo ("en-us")));
 			Assert.AreEqual ("2007-10-31T21:00:00", dto.ToString ("s", new CultureInfo ("en-us")));
 			Assert.AreEqual ("2007-11-01 05:00:00Z", dto.ToString ("u", new CultureInfo ("en-us")));
-			Assert.AreEqual ("October, 2007", dto.ToString ("Y", new CultureInfo ("en-us")));
+			Assert.AreEqual ("October 2007", dto.ToString ("Y", new CultureInfo ("en-us")));
 			Assert.AreEqual (dto.ToString ("y", new CultureInfo ("en-us")), dto.ToString ("Y", new CultureInfo ("en-us")));
 		}
 
@@ -176,7 +176,7 @@ namespace MonoTests.System {
 				Assert.AreEqual ("Thursday, Nov 01 2007 09:00:00 -07:00", dto.ToString (format, null as DateTimeFormatInfo), "ts1");
 			Assert.AreEqual ("Thursday, Nov 01 2007 09:00:00 -07:00", dto.ToString (format, CultureInfo.InvariantCulture), "ts2");
 			Assert.AreEqual ("jeudi, nov. 01 2007 09:00:00 -07:00", dto.ToString (format, new CultureInfo ("fr-FR")), "ts3");
-			Assert.AreEqual ("jueves, nov 01 2007 09:00:00 -07:00", dto.ToString (format, new CultureInfo ("es-ES")), "ts4");
+			Assert.AreEqual ("jueves, Nov. 01 2007 09:00:00 -07:00", dto.ToString (format, new CultureInfo ("es-ES")), "ts4");
 		}
 
 		[Test]

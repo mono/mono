@@ -37,6 +37,7 @@ using System.IO;
 using NUnit.Framework;
 using SysConfig = System.Configuration.Configuration;
 using System.Runtime.InteropServices;
+using System.Reflection;
 
 namespace MonoTests.System.Configuration {
 	using Util;
@@ -616,6 +617,11 @@ namespace MonoTests.System.Configuration {
 		[Test]
 		public void TestConnectionStringRetrieval ()
 		{
+			var currentAssembly = Assembly.GetExecutingAssembly().Location;
+			Assert.IsTrue (File.Exists (currentAssembly + ".config"),
+			               String.Format ("This test cannot succeed without the .config file being in the same place as the assembly ({0})",
+			                              currentAssembly));
+
 			var connStringObj = ConfigurationManager.ConnectionStrings ["test-connstring"];
 			Assert.IsNotNull (connStringObj);
 			var connString = connStringObj.ConnectionString;

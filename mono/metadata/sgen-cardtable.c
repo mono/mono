@@ -140,7 +140,7 @@ sgen_card_table_wbarrier_value_copy (gpointer dest, gpointer src, int count, Mon
 	TLAB_ACCESS_INIT;
 	ENTER_CRITICAL_REGION;
 #endif
-	mono_gc_memmove (dest, src, size);
+	mono_gc_memmove_atomic (dest, src, size);
 	sgen_card_table_mark_range ((mword)dest, size);
 #ifdef DISABLE_CRITICAL_REGION
 	UNLOCK_GC;
@@ -160,7 +160,7 @@ sgen_card_table_wbarrier_object_copy (MonoObject* obj, MonoObject *src)
 	TLAB_ACCESS_INIT;
 	ENTER_CRITICAL_REGION;
 #endif
-	mono_gc_memmove ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
+	mono_gc_memmove_aligned ((char*)obj + sizeof (MonoObject), (char*)src + sizeof (MonoObject),
 			size - sizeof (MonoObject));
 	sgen_card_table_mark_range ((mword)obj, size);
 #ifdef DISABLE_CRITICAL_REGION
@@ -287,9 +287,8 @@ sgen_card_table_find_address_with_cards (char *cards_start, guint8 *cards, char 
 }
 
 static void
-update_mod_union (guint8 *dest, gboolean init, guint8 *start_card, guint8 *end_card)
+update_mod_union (guint8 *dest, gboolean init, guint8 *start_card, size_t num_cards)
 {
-	size_t num_cards = end_card - start_card;
 	if (init) {
 		memcpy (dest, start_card, num_cards);
 	} else {
@@ -306,40 +305,50 @@ alloc_mod_union (size_t num_cards)
 }
 
 guint8*
+sgen_card_table_update_mod_union_from_cards (guint8 *dest, guint8 *start_card, size_t num_cards)
+{
+	gboolean init = dest == NULL;
+
+	if (init)
+		dest = alloc_mod_union (num_cards);
+
+	update_mod_union (dest, init, start_card, num_cards);
+
+	return dest;
+}
+
+guint8*
 sgen_card_table_update_mod_union (guint8 *dest, char *obj, mword obj_size, size_t *out_num_cards)
 {
-	guint8 *result = dest;
 	guint8 *start_card = sgen_card_table_get_card_address ((mword)obj);
+#ifndef SGEN_HAVE_OVERLAPPING_CARDS
 	guint8 *end_card = sgen_card_table_get_card_address ((mword)obj + obj_size - 1) + 1;
-	gboolean init = dest == NULL;
+#endif
 	size_t num_cards;
+	guint8 *result = NULL;
 
 #ifdef SGEN_HAVE_OVERLAPPING_CARDS
-	if (end_card < start_card) {
-		guint8 *edge_card = sgen_cardtable + CARD_COUNT_IN_BYTES;
-		size_t num_cards_to_edge = edge_card - start_card;
+	size_t rest;
 
-		num_cards = (end_card + CARD_COUNT_IN_BYTES) - start_card;
-		if (init) {
-			result = dest = alloc_mod_union (num_cards);
-			//g_print ("%d cards for %d bytes: %p\n", num_cards, num_bytes, dest);
-		}
+	rest = num_cards = cards_in_range ((mword) obj, obj_size);
 
-		update_mod_union (dest, init, start_card, edge_card);
-
-		SGEN_ASSERT (0, num_cards == (edge_card - start_card) + (end_card - sgen_cardtable), "wrong number of cards");
-
-		dest += num_cards_to_edge;
+	while (start_card + rest > SGEN_CARDTABLE_END) {
+		size_t count = SGEN_CARDTABLE_END - start_card;
+		dest = sgen_card_table_update_mod_union_from_cards (dest, start_card, count);
+		if (!result)
+			result = dest;
+		dest += count;
+		rest -= count;
 		start_card = sgen_cardtable;
-	} else
-#endif
-	{
-		num_cards = end_card - start_card;
-		if (init)
-			result = dest = alloc_mod_union (num_cards);
 	}
+	num_cards = rest;
+#else
+	num_cards = end_card - start_card;
+#endif
 
-	update_mod_union (dest, init, start_card, end_card);
+	dest = sgen_card_table_update_mod_union_from_cards (dest, start_card, num_cards);
+	if (!result)
+		result = dest;
 
 	if (out_num_cards)
 		*out_num_cards = num_cards;
@@ -356,7 +365,9 @@ move_cards_to_shadow_table (mword start, mword size)
 	guint8 *to = sgen_card_table_get_shadow_card_address (start);
 	size_t bytes = cards_in_range (start, size);
 
-	if (to + bytes > SGEN_SHADOW_CARDTABLE_END) {
+	if (bytes >= CARD_COUNT_IN_BYTES) {
+		memcpy (sgen_shadow_cardtable, sgen_cardtable, CARD_COUNT_IN_BYTES);
+	} else if (to + bytes > SGEN_SHADOW_CARDTABLE_END) {
 		size_t first_chunk = SGEN_SHADOW_CARDTABLE_END - to;
 		size_t second_chunk = MIN (CARD_COUNT_IN_BYTES, bytes) - first_chunk;
 
@@ -373,7 +384,9 @@ clear_cards (mword start, mword size)
 	guint8 *addr = sgen_card_table_get_card_address (start);
 	size_t bytes = cards_in_range (start, size);
 
-	if (addr + bytes > SGEN_CARDTABLE_END) {
+	if (bytes >= CARD_COUNT_IN_BYTES) {
+		memset (sgen_cardtable, 0, CARD_COUNT_IN_BYTES);
+	} else if (addr + bytes > SGEN_CARDTABLE_END) {
 		size_t first_chunk = SGEN_CARDTABLE_END - addr;
 
 		memset (addr, 0, first_chunk);
@@ -629,7 +642,7 @@ LOOP_HEAD:
 			else
 				index = ARRAY_OBJ_INDEX (start, obj, elem_size);
 
-			elem = first_elem = (char*)mono_array_addr_with_size ((MonoArray*)obj, elem_size, index);
+			elem = first_elem = (char*)mono_array_addr_with_size_fast ((MonoArray*)obj, elem_size, index);
 			if (klass->element_class->valuetype) {
 				ScanVTypeFunc scan_vtype_func = sgen_get_current_object_ops ()->scan_vtype;
 
@@ -761,8 +774,8 @@ sgen_card_table_init (SgenRemeberedSet *remset)
 	mono_counters_register ("cardtable large objects", MONO_COUNTER_GC | MONO_COUNTER_LONG, &large_objects);
 	mono_counters_register ("cardtable bloby objects", MONO_COUNTER_GC | MONO_COUNTER_LONG, &bloby_objects);
 #endif
-	mono_counters_register ("cardtable major scan time", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &major_card_scan_time);
-	mono_counters_register ("cardtable los scan time", MONO_COUNTER_GC | MONO_COUNTER_TIME_INTERVAL, &los_card_scan_time);
+	mono_counters_register ("cardtable major scan time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &major_card_scan_time);
+	mono_counters_register ("cardtable los scan time", MONO_COUNTER_GC | MONO_COUNTER_LONG | MONO_COUNTER_TIME, &los_card_scan_time);
 
 
 	remset->wbarrier_set_field = sgen_card_table_wbarrier_set_field;

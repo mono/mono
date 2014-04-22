@@ -1,5 +1,6 @@
 <Type Name="RemotingConfiguration" FullName="System.Runtime.Remoting.RemotingConfiguration">
   <TypeSignature Maintainer="auto" Language="C#" Value="public static class RemotingConfiguration" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit RemotingConfiguration extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,6 +13,11 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>To be added</summary>
     <remarks>To be added</remarks>
@@ -19,7 +25,13 @@
   <Members>
     <Member MemberName="ApplicationId">
       <MemberSignature Language="C#" Value="public static string ApplicationId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string ApplicationId" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -28,15 +40,16 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ApplicationName">
+      <MemberSignature Language="C#" Value="public static string ApplicationName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property string ApplicationName" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ApplicationName">
-      <MemberSignature Language="C#" Value="public static string ApplicationName { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -47,15 +60,21 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Configure">
+      <MemberSignature Language="C#" Value="public static void Configure (string filename);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Configure(string filename) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Configure">
-      <MemberSignature Language="C#" Value="public static void Configure (string filename);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("Use Configure(String,Boolean)")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -67,20 +86,15 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("Use Configure(String,Boolean)")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="Configure">
       <MemberSignature Language="C#" Value="public static void Configure (string filename, bool ensureSecurity);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Configure(string filename, bool ensureSecurity) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -95,14 +109,16 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CustomErrorsEnabled">
       <MemberSignature Language="C#" Value="public static bool CustomErrorsEnabled (bool isLocalRequest);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool CustomErrorsEnabled(bool isLocalRequest) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -115,14 +131,10 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CustomErrorsMode">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.CustomErrorsModes CustomErrorsMode { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.CustomErrorsModes CustomErrorsMode { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property valuetype System.Runtime.Remoting.CustomErrorsModes CustomErrorsMode" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -139,7 +151,13 @@
     </Member>
     <Member MemberName="GetRegisteredActivatedClientTypes">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ActivatedClientTypeEntry[] GetRegisteredActivatedClientTypes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ActivatedClientTypeEntry[] GetRegisteredActivatedClientTypes() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ActivatedClientTypeEntry[]</ReturnType>
       </ReturnValue>
@@ -149,15 +167,16 @@
         <returns>To be added: an object of type 'ActivatedClientTypeEntry []'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetRegisteredActivatedServiceTypes">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ActivatedServiceTypeEntry[] GetRegisteredActivatedServiceTypes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ActivatedServiceTypeEntry[] GetRegisteredActivatedServiceTypes() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRegisteredActivatedServiceTypes">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ActivatedServiceTypeEntry[] GetRegisteredActivatedServiceTypes ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ActivatedServiceTypeEntry[]</ReturnType>
       </ReturnValue>
@@ -167,15 +186,16 @@
         <returns>To be added: an object of type 'ActivatedServiceTypeEntry []'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetRegisteredWellKnownClientTypes">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry[] GetRegisteredWellKnownClientTypes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.WellKnownClientTypeEntry[] GetRegisteredWellKnownClientTypes() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRegisteredWellKnownClientTypes">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry[] GetRegisteredWellKnownClientTypes ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.WellKnownClientTypeEntry[]</ReturnType>
       </ReturnValue>
@@ -185,15 +205,16 @@
         <returns>To be added: an object of type 'WellKnownClientTypeEntry []'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetRegisteredWellKnownServiceTypes">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownServiceTypeEntry[] GetRegisteredWellKnownServiceTypes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.WellKnownServiceTypeEntry[] GetRegisteredWellKnownServiceTypes() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRegisteredWellKnownServiceTypes">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownServiceTypeEntry[] GetRegisteredWellKnownServiceTypes ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.WellKnownServiceTypeEntry[]</ReturnType>
       </ReturnValue>
@@ -203,15 +224,16 @@
         <returns>To be added: an object of type 'WellKnownServiceTypeEntry []'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsActivationAllowed">
+      <MemberSignature Language="C#" Value="public static bool IsActivationAllowed (Type svrType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsActivationAllowed(class System.Type svrType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsActivationAllowed">
-      <MemberSignature Language="C#" Value="public static bool IsActivationAllowed (Type svrType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -224,15 +246,16 @@
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsRemotelyActivatedClientType">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ActivatedClientTypeEntry IsRemotelyActivatedClientType (Type svrType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ActivatedClientTypeEntry IsRemotelyActivatedClientType(class System.Type svrType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ActivatedClientTypeEntry</ReturnType>
       </ReturnValue>
@@ -245,15 +268,16 @@
         <returns>To be added: an object of type 'ActivatedClientTypeEntry'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsRemotelyActivatedClientType">
       <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.ActivatedClientTypeEntry IsRemotelyActivatedClientType (string typeName, string assemblyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.ActivatedClientTypeEntry IsRemotelyActivatedClientType(string typeName, string assemblyName) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.ActivatedClientTypeEntry</ReturnType>
       </ReturnValue>
@@ -268,15 +292,16 @@
         <returns>To be added: an object of type 'ActivatedClientTypeEntry'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsWellKnownClientType">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType (Type svrType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType(class System.Type svrType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsWellKnownClientType">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType (Type svrType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.WellKnownClientTypeEntry</ReturnType>
       </ReturnValue>
@@ -289,15 +314,16 @@
         <returns>To be added: an object of type 'WellKnownClientTypeEntry'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsWellKnownClientType">
+      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType (string typeName, string assemblyName);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType(string typeName, string assemblyName) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsWellKnownClientType">
-      <MemberSignature Language="C#" Value="public static System.Runtime.Remoting.WellKnownClientTypeEntry IsWellKnownClientType (string typeName, string assemblyName);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Remoting.WellKnownClientTypeEntry</ReturnType>
       </ReturnValue>
@@ -312,15 +338,16 @@
         <returns>To be added: an object of type 'WellKnownClientTypeEntry'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ProcessId">
+      <MemberSignature Language="C#" Value="public static string ProcessId { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property string ProcessId" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ProcessId">
-      <MemberSignature Language="C#" Value="public static string ProcessId { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -329,15 +356,16 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterActivatedClientType">
+      <MemberSignature Language="C#" Value="public static void RegisterActivatedClientType (System.Runtime.Remoting.ActivatedClientTypeEntry entry);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterActivatedClientType(class System.Runtime.Remoting.ActivatedClientTypeEntry entry) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterActivatedClientType">
-      <MemberSignature Language="C#" Value="public static void RegisterActivatedClientType (System.Runtime.Remoting.ActivatedClientTypeEntry entry);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -349,15 +377,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterActivatedClientType">
+      <MemberSignature Language="C#" Value="public static void RegisterActivatedClientType (Type type, string appUrl);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterActivatedClientType(class System.Type type, string appUrl) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterActivatedClientType">
-      <MemberSignature Language="C#" Value="public static void RegisterActivatedClientType (Type type, string appUrl);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -371,15 +400,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterActivatedServiceType">
+      <MemberSignature Language="C#" Value="public static void RegisterActivatedServiceType (System.Runtime.Remoting.ActivatedServiceTypeEntry entry);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterActivatedServiceType(class System.Runtime.Remoting.ActivatedServiceTypeEntry entry) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterActivatedServiceType">
-      <MemberSignature Language="C#" Value="public static void RegisterActivatedServiceType (System.Runtime.Remoting.ActivatedServiceTypeEntry entry);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -391,15 +421,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterActivatedServiceType">
+      <MemberSignature Language="C#" Value="public static void RegisterActivatedServiceType (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterActivatedServiceType(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterActivatedServiceType">
-      <MemberSignature Language="C#" Value="public static void RegisterActivatedServiceType (Type type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -411,15 +442,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterWellKnownClientType">
+      <MemberSignature Language="C#" Value="public static void RegisterWellKnownClientType (System.Runtime.Remoting.WellKnownClientTypeEntry entry);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterWellKnownClientType(class System.Runtime.Remoting.WellKnownClientTypeEntry entry) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterWellKnownClientType">
-      <MemberSignature Language="C#" Value="public static void RegisterWellKnownClientType (System.Runtime.Remoting.WellKnownClientTypeEntry entry);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -431,15 +463,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterWellKnownClientType">
+      <MemberSignature Language="C#" Value="public static void RegisterWellKnownClientType (Type type, string objectUrl);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterWellKnownClientType(class System.Type type, string objectUrl) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterWellKnownClientType">
-      <MemberSignature Language="C#" Value="public static void RegisterWellKnownClientType (Type type, string objectUrl);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -453,15 +486,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterWellKnownServiceType">
+      <MemberSignature Language="C#" Value="public static void RegisterWellKnownServiceType (System.Runtime.Remoting.WellKnownServiceTypeEntry entry);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterWellKnownServiceType(class System.Runtime.Remoting.WellKnownServiceTypeEntry entry) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterWellKnownServiceType">
-      <MemberSignature Language="C#" Value="public static void RegisterWellKnownServiceType (System.Runtime.Remoting.WellKnownServiceTypeEntry entry);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -473,15 +507,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RegisterWellKnownServiceType">
+      <MemberSignature Language="C#" Value="public static void RegisterWellKnownServiceType (Type type, string objectUri, System.Runtime.Remoting.WellKnownObjectMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RegisterWellKnownServiceType(class System.Type type, string objectUri, valuetype System.Runtime.Remoting.WellKnownObjectMode mode) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RegisterWellKnownServiceType">
-      <MemberSignature Language="C#" Value="public static void RegisterWellKnownServiceType (Type type, string objectUri, System.Runtime.Remoting.WellKnownObjectMode mode);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -497,16 +532,6 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

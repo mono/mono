@@ -90,6 +90,13 @@ namespace MonoTests.System
 			lb = new Lalala (null, 1);
 			Assert.AreEqual (la.GetHashCode (), lb.GetHashCode (), "#04");
 		}
+
+		struct EmptyStruct {}
+		[Test]
+		public void TestEmptyStructHashCode ()
+		{
+			Assert.AreEqual (new EmptyStruct ().GetHashCode (), new EmptyStruct ().GetHashCode ());
+		}
 	}
 }
 

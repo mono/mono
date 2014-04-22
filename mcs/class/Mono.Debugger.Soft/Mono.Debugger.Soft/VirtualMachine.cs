@@ -137,7 +137,7 @@ namespace Mono.Debugger.Soft
 		public void Detach () {
 			conn.VM_Dispose ();
 			conn.Close ();
-			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null);
+			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null, 0);
 		}
 
 		[Obsolete ("This method was poorly named; use the Detach() method instead")]
@@ -227,10 +227,14 @@ namespace Mono.Debugger.Soft
 		}
 
 		public void EnableEvents (params EventType[] events) {
+			EnableEvents (events, SuspendPolicy.All);
+		}
+
+		public void EnableEvents (EventType[] events, SuspendPolicy suspendPolicy) {
 			foreach (EventType etype in events) {
 				if (etype == EventType.Breakpoint)
 					throw new ArgumentException ("Breakpoint events cannot be requested using EnableEvents", "events");
-				conn.EnableEvent (etype, SuspendPolicy.All, null);
+				conn.EnableEvent (etype, suspendPolicy, null);
 			}
 		}
 
@@ -315,7 +319,7 @@ namespace Mono.Debugger.Soft
 			root_domain = GetDomain (root_domain_id);
 		}
 
-		internal void notify_vm_event (EventType evtype, SuspendPolicy spolicy, int req_id, long thread_id, string vm_uri) {
+		internal void notify_vm_event (EventType evtype, SuspendPolicy spolicy, int req_id, long thread_id, string vm_uri, int exit_code) {
 			//Console.WriteLine ("Event: " + evtype + "(" + vm_uri + ")");
 
 			switch (evtype) {
@@ -327,7 +331,7 @@ namespace Mono.Debugger.Soft
 				queue_event_set (new EventSet (this, spolicy, new Event[] { new VMStartEvent (vm, req_id, thread_id) }));
 				break;
 			case EventType.VMDeath:
-				queue_event_set (new EventSet (this, spolicy, new Event[] { new VMDeathEvent (vm, req_id) }));
+				queue_event_set (new EventSet (this, spolicy, new Event[] { new VMDeathEvent (vm, req_id, exit_code) }));
 				break;
 			case EventType.VMDisconnect:
 				queue_event_set (new EventSet (this, spolicy, new Event[] { new VMDisconnectEvent (vm, req_id) }));
@@ -517,6 +521,24 @@ namespace Mono.Debugger.Soft
 			return GetObject <ThreadMirror> (id);
 		}
 
+		Dictionary <long, FieldInfoMirror> fields;
+		object fields_lock = new object ();
+
+		internal FieldInfoMirror GetField (long id) {
+			lock (fields_lock) {
+				if (fields == null)
+					fields = new Dictionary <long, FieldInfoMirror> ();
+				FieldInfoMirror obj;
+				if (id == 0)
+					return null;
+				if (!fields.TryGetValue (id, out obj)) {
+					obj = new FieldInfoMirror (this, id);
+					fields [id] = obj;
+				}
+				return obj;
+			}
+	    }
+
 		object requests_lock = new object ();
 
 		internal void AddRequest (EventRequest req, int id) {
@@ -620,10 +642,10 @@ namespace Mono.Debugger.Soft
 
 				switch (ei.EventType) {
 				case EventType.VMStart:
-					vm.notify_vm_event (EventType.VMStart, suspend_policy, req_id, thread_id, null);
+					vm.notify_vm_event (EventType.VMStart, suspend_policy, req_id, thread_id, null, 0);
 					break;
 				case EventType.VMDeath:
-					vm.notify_vm_event (EventType.VMDeath, suspend_policy, req_id, thread_id, null);
+					vm.notify_vm_event (EventType.VMDeath, suspend_policy, req_id, thread_id, null, ei.ExitCode);
 					break;
 				case EventType.ThreadStart:
 					l.Add (new ThreadStartEvent (vm, req_id, id));
@@ -677,7 +699,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		public void VMDisconnect (int req_id, long thread_id, string vm_uri) {
-			vm.notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, req_id, thread_id, vm_uri);
+			vm.notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, req_id, thread_id, vm_uri, 0);
         }
     }
 

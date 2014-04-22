@@ -1,8 +1,10 @@
 <Type Name="SourceSwitch" FullName="System.Diagnostics.SourceSwitch">
   <TypeSignature Language="C#" Value="public class SourceSwitch : System.Diagnostics.Switch" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SourceSwitch extends System.Diagnostics.Switch" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Diagnostics.Switch</BaseTypeName>
@@ -15,9 +17,11 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SourceSwitch (string displayName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string displayName) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="displayName" Type="System.String" />
@@ -30,9 +34,11 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SourceSwitch (string displayName, string defaultSwitchValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string displayName, string defaultSwitchValue) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="displayName" Type="System.String" />
@@ -46,10 +52,12 @@
       </Docs>
     </Member>
     <Member MemberName="Level">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SourceLevels Level { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SourceLevels Level { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.SourceLevels Level" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
@@ -62,9 +70,11 @@
     </Member>
     <Member MemberName="OnValueChanged">
       <MemberSignature Language="C#" Value="protected override void OnValueChanged ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void OnValueChanged() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -77,9 +87,11 @@
     </Member>
     <Member MemberName="ShouldTrace">
       <MemberSignature Language="C#" Value="public bool ShouldTrace (System.Diagnostics.TraceEventType eventType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool ShouldTrace(valuetype System.Diagnostics.TraceEventType eventType) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>

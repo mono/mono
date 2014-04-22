@@ -30,6 +30,7 @@
 
 using System;
 using System.Data;
+using System.IO;
 using Mono.Data.Sqlite;
 
 using NUnit.Framework;
@@ -39,7 +40,7 @@ namespace MonoTests.Mono.Data.Sqlite
         [TestFixture]
         public class SqliteConnectionTest
         {
-                readonly static string _uri = "test.db";
+                readonly static string _uri = Path.Combine (Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "test.db");
                 readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
                 SqliteConnection _conn = new SqliteConnection ();
 

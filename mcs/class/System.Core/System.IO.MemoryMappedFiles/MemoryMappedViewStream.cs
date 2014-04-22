@@ -30,6 +30,7 @@
 
 using System;
 using System.IO;
+using Microsoft.Win32.SafeHandles;
 
 namespace System.IO.MemoryMappedFiles
 {
@@ -43,6 +44,12 @@ namespace System.IO.MemoryMappedFiles
 			this.fd = fd;
 			monitor = new Object ();
 			CreateStream (fd, offset, size, access);
+		}
+
+		public SafeMemoryMappedViewHandle SafeMemoryMappedViewHandle { 
+			get {
+				throw new NotImplementedException ();
+			}
 		}
 
 		unsafe void CreateStream (int fd, long offset, long size, MemoryMappedFileAccess access)

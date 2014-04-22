@@ -106,10 +106,9 @@ typedef struct {
 	guint32 size;
 } MonoDebugDelegateTrampolineEntry;
 
-MonoSymbolTable *mono_symbol_table = NULL;
-MonoDebugFormat mono_debug_format = MONO_DEBUG_FORMAT_NONE;
-gint32 mono_debug_debugger_version = 5;
-gint32 _mono_debug_using_mono_debugger = 0;
+static MonoSymbolTable *mono_symbol_table = NULL;
+static MonoDebugFormat mono_debug_format = MONO_DEBUG_FORMAT_NONE;
+static gint32 mono_debug_debugger_version = 5;
 
 static gboolean mono_debug_initialized = FALSE;
 static GHashTable *mono_debug_handles = NULL;
@@ -129,7 +128,6 @@ static MonoDebugHandle     *open_symfile_from_bundle   (MonoImage *image);
 void _mono_debug_init_corlib (MonoDomain *domain);
 
 extern void (*mono_debugger_class_init_func) (MonoClass *klass);
-extern void (*mono_debugger_class_loaded_methods_func) (MonoClass *klass);
 
 static MonoDebugDataTable *
 create_data_table (MonoDomain *domain)
@@ -228,9 +226,9 @@ void
 mono_debug_init (MonoDebugFormat format)
 {
 	g_assert (!mono_debug_initialized);
+	if (format == MONO_DEBUG_FORMAT_DEBUGGER)
+		g_error ("The mdb debugger is no longer supported.");
 
-	if (_mono_debug_using_mono_debugger)
-		format = MONO_DEBUG_FORMAT_DEBUGGER;
 
 	mono_debug_initialized = TRUE;
 	mono_debug_format = format;
@@ -241,7 +239,7 @@ mono_debug_init (MonoDebugFormat format)
 	 */
 	mono_gc_base_init ();
 
-	mono_debugger_initialize (_mono_debug_using_mono_debugger);
+	mono_debugger_initialize ();
 
 	mono_debugger_lock ();
 
@@ -256,8 +254,8 @@ mono_debug_init (MonoDebugFormat format)
 	data_table_hash = g_hash_table_new_full (
 		NULL, NULL, NULL, (GDestroyNotify) free_data_table);
 
+	/* FIXME this is a disgusting hack. Kill it */
 	mono_debugger_class_init_func = mono_debug_add_type;
-	mono_debugger_class_loaded_methods_func = mono_debugger_class_initialized;
 	mono_install_assembly_load_hook (mono_debug_add_assembly, NULL);
 
 	mono_symbol_table->global_data_table = create_data_table (NULL);
@@ -267,6 +265,7 @@ mono_debug_init (MonoDebugFormat format)
 
 /*
  * INTERNAL USE ONLY !
+ * FIXME this can have a decent name and exist in an internal header
  */
 void
 _mono_debug_init_corlib (MonoDomain *domain)
@@ -275,8 +274,6 @@ _mono_debug_init_corlib (MonoDomain *domain)
 		return;
 
 	mono_symbol_table->corlib = mono_debug_open_image (mono_defaults.corlib, NULL, 0);
-	mono_debugger_event (MONO_DEBUGGER_EVENT_INITIALIZE_CORLIB,
-			     (guint64) (gsize) mono_symbol_table->corlib, 0);
 }
 
 void
@@ -286,13 +283,6 @@ mono_debug_open_image_from_memory (MonoImage *image, const guint8 *raw_contents,
 		return;
 
 	mono_debug_open_image (image, raw_contents, size);
-}
-
-
-gboolean
-mono_debug_using_mono_debugger (void)
-{
-	return _mono_debug_using_mono_debugger;
 }
 
 void
@@ -328,9 +318,6 @@ mono_debug_domain_create (MonoDomain *domain)
 
 	table = create_data_table (domain);
 
-	mono_debugger_event (MONO_DEBUGGER_EVENT_DOMAIN_CREATE, (guint64) (gsize) table,
-			     mono_domain_get_id (domain));
-
 	mono_debugger_unlock ();
 }
 
@@ -351,9 +338,6 @@ mono_debug_domain_unload (MonoDomain *domain)
 		mono_debugger_unlock ();
 		return;
 	}
-
-	mono_debugger_event (MONO_DEBUGGER_EVENT_DOMAIN_UNLOAD, (guint64) (gsize) table,
-			     mono_domain_get_id (domain));
 
 	g_hash_table_remove (data_table_hash, domain);
 
@@ -384,9 +368,6 @@ mono_debug_close_image (MonoImage *image)
 		mono_debugger_unlock ();
 		return;
 	}
-
-	mono_debugger_event (MONO_DEBUGGER_EVENT_UNLOAD_MODULE, (guint64) (gsize) handle,
-			     handle->index);
 
 	mono_debug_list_remove (&mono_symbol_table->symbol_files, handle);
 	g_hash_table_remove (mono_debug_handles, image);
@@ -420,15 +401,11 @@ mono_debug_open_image (MonoImage *image, const guint8 *raw_contents, int size)
 	handle->type_table = create_data_table (NULL);
 
 	handle->symfile = mono_debug_open_mono_symbols (
-		handle, raw_contents, size, _mono_debug_using_mono_debugger);
+		handle, raw_contents, size, FALSE);
 
 	mono_debug_list_add (&mono_symbol_table->symbol_files, handle);
 
 	g_hash_table_insert (mono_debug_handles, image, handle);
-
-	if (mono_symbol_table->corlib)
-		mono_debugger_event (MONO_DEBUGGER_EVENT_LOAD_MODULE,
-				     (guint64) (gsize) handle, 0);
 
 	mono_debugger_unlock ();
 
@@ -1300,4 +1277,15 @@ open_symfile_from_bundle (MonoImage *image)
 	}
 
 	return NULL;
+}
+
+/**
+ * mono_debug_enabled:
+ *
+ * Returns true is debug information is enabled. This doesn't relate if a debugger is present or not.
+ */
+mono_bool
+mono_debug_enabled (void)
+{
+	return mono_debug_format != MONO_DEBUG_FORMAT_NONE;
 }

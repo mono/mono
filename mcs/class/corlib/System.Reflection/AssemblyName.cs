@@ -75,7 +75,10 @@ namespace System.Reflection {
 		ProcessorArchitecture processor_architecture = ProcessorArchitecture.None;
 		#endregion
 #pragma warning restore 169		
-		
+
+#if NET_4_5
+		AssemblyContentType contentType;
+#endif		
 		public AssemblyName ()
 		{
 			// defaults
@@ -323,16 +326,16 @@ namespace System.Reflection {
 			return token;
 		}
 
-		[MonoTODO]
 		public static bool ReferenceMatchesDefinition (AssemblyName reference, AssemblyName definition)
 		{
 			if (reference == null)
 				throw new ArgumentNullException ("reference");
 			if (definition == null)
 				throw new ArgumentNullException ("definition");
-			if (reference.Name != definition.Name)
-				return false;
-			throw new NotImplementedException ();
+			
+			// we only compare the simple assembly name to be consistent with MS .NET,
+			// which is the result of a bug in their implementation (see https://connect.microsoft.com/VisualStudio/feedback/details/752902)
+			return string.Equals (reference.Name, definition.Name, StringComparison.OrdinalIgnoreCase);
 		}
 
 		public void SetPublicKey (byte[] publicKey) 
@@ -386,6 +389,7 @@ namespace System.Reflection {
 			an.publicKey = publicKey;
 			an.keyToken = keyToken;
 			an.versioncompat = versioncompat;
+			an.processor_architecture = processor_architecture;
 			return an;
 		}
 
@@ -431,20 +435,20 @@ namespace System.Reflection {
 		public string CultureName {
 			get {
 				if (cultureinfo == null)
-					return string.Empty;
-				else if (cultureinfo.LCID == CultureInfo.InvariantCulture.LCID)
+					return null;
+				if (cultureinfo.LCID == CultureInfo.InvariantCulture.LCID)
 					return "neutral";
-				else
-					return cultureinfo.Name;
+				return cultureinfo.Name;
 			}
 		}
 
 		[ComVisibleAttribute(false)]
 		public AssemblyContentType ContentType {
-			get { return AssemblyContentType.Default; }
+			get {
+				return contentType;
+			}
 			set {
-				if (value != AssemblyContentType.Default)
-					throw new InvalidOperationException ();
+				contentType = value;
 			}
 		}
 #endif

@@ -1,8 +1,10 @@
 <Type Name="IQueryable" FullName="System.Linq.IQueryable">
   <TypeSignature Language="C#" Value="public interface IQueryable : System.Collections.IEnumerable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IQueryable implements class System.Collections.IEnumerable" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
@@ -16,9 +18,11 @@
   <Members>
     <Member MemberName="ElementType">
       <MemberSignature Language="C#" Value="public Type ElementType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type ElementType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
@@ -31,9 +35,11 @@
     </Member>
     <Member MemberName="Expression">
       <MemberSignature Language="C#" Value="public System.Linq.Expressions.Expression Expression { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Linq.Expressions.Expression Expression" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.Expression</ReturnType>
@@ -46,9 +52,11 @@
     </Member>
     <Member MemberName="Provider">
       <MemberSignature Language="C#" Value="public System.Linq.IQueryProvider Provider { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Linq.IQueryProvider Provider" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryProvider</ReturnType>

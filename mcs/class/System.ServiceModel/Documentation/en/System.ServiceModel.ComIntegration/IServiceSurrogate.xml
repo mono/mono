@@ -1,0 +1,14 @@
+<Type Name="IServiceSurrogate" FullName="System.ServiceModel.ComIntegration.IServiceSurrogate">
+  <TypeSignature Language="C#" Value="public interface IServiceSurrogate" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IServiceSurrogate" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>

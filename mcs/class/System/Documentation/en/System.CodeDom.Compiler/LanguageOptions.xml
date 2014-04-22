@@ -1,11 +1,13 @@
 <Type Name="LanguageOptions" FullName="System.CodeDom.Compiler.LanguageOptions">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum LanguageOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed LanguageOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -23,7 +25,13 @@
   <Members>
     <Member MemberName="CaseInsensitive">
       <MemberSignature Language="C#" Value="CaseInsensitive" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.CodeDom.Compiler.LanguageOptions CaseInsensitive = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.LanguageOptions</ReturnType>
       </ReturnValue>
@@ -32,14 +40,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.CodeDom.Compiler.LanguageOptions None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.Compiler.LanguageOptions</ReturnType>
       </ReturnValue>
@@ -48,10 +58,6 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

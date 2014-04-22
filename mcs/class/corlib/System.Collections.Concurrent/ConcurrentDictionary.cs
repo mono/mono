@@ -35,6 +35,7 @@ namespace System.Collections.Concurrent
 {
 	[DebuggerDisplay ("Count={Count}")]
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<,>))]
+	[Serializable]
 	public class ConcurrentDictionary<TKey, TValue> : IDictionary<TKey, TValue>,
 	  ICollection<KeyValuePair<TKey, TValue>>, IEnumerable<KeyValuePair<TKey, TValue>>,
 	  IDictionary, ICollection, IEnumerable
@@ -238,10 +239,10 @@ namespace System.Collections.Concurrent
 		object IDictionary.this [object key]
 		{
 			get {
-				if (!(key is TKey))
-					throw new ArgumentException ("key isn't of correct type", "key");
-
-				return this[(TKey)key];
+				TValue obj;
+				if (key is TKey && TryGetValue ((TKey) key, out obj))
+					return obj;
+				return null;
 			}
 			set {
 				if (!(key is TKey) || !(value is TValue))

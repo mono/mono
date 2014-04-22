@@ -1,11 +1,13 @@
 <Type Name="Match" FullName="System.Text.RegularExpressions.Match">
   <TypeSignature Language="C#" Value="public class Match : System.Text.RegularExpressions.Group" Maintainer="auto" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit Match extends System.Text.RegularExpressions.Group" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.3300.0</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Base>
@@ -19,7 +21,13 @@
   <Members>
     <Member MemberName="Empty">
       <MemberSignature Language="C#" Value="public static System.Text.RegularExpressions.Match Empty { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Text.RegularExpressions.Match Empty" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.Match</ReturnType>
       </ReturnValue>
@@ -28,14 +36,16 @@
         <value>To be added: an object of type 'Match'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Groups">
       <MemberSignature Language="C#" Value="public virtual System.Text.RegularExpressions.GroupCollection Groups { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Text.RegularExpressions.GroupCollection Groups" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.GroupCollection</ReturnType>
       </ReturnValue>
@@ -44,14 +54,16 @@
         <value>To be added: an object of type 'GroupCollection'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NextMatch">
       <MemberSignature Language="C#" Value="public System.Text.RegularExpressions.Match NextMatch ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Text.RegularExpressions.Match NextMatch() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.Match</ReturnType>
       </ReturnValue>
@@ -61,14 +73,16 @@
         <returns>To be added: an object of type 'Match'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Result">
       <MemberSignature Language="C#" Value="public virtual string Result (string replacement);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string Result(string replacement) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -81,14 +95,21 @@
         <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Synchronized">
       <MemberSignature Language="C#" Value="public static System.Text.RegularExpressions.Match Synchronized (System.Text.RegularExpressions.Match inner);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Text.RegularExpressions.Match Synchronized(class System.Text.RegularExpressions.Match inner) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.MonoTODO("not thread-safe")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Text.RegularExpressions.Match</ReturnType>
       </ReturnValue>
@@ -101,10 +122,6 @@
         <returns>To be added: an object of type 'Match'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

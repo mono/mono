@@ -781,22 +781,7 @@ namespace System
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static int BinarySearch (Array array, object value)
 		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-
-			if (value == null)
-				return -1;
-
-			if (array.Rank > 1)
-				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
-
-			if (array.Length == 0)
-				return -1;
-
-			if (!(value is IComparable))
-				throw new ArgumentException (Locale.GetText ("value does not support IComparable."));
-
-			return DoBinarySearch (array, array.GetLowerBound (0), array.GetLength (0), value, null);
+			return BinarySearch (array, value, null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
@@ -811,41 +796,13 @@ namespace System
 			if (array.Length == 0)
 				return -1;
 
-			if ((comparer == null) && (value != null) && !(value is IComparable))
-				throw new ArgumentException (Locale.GetText (
-					"comparer is null and value does not support IComparable."));
-
 			return DoBinarySearch (array, array.GetLowerBound (0), array.GetLength (0), value, comparer);
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public static int BinarySearch (Array array, int index, int length, object value)
 		{
-			if (array == null)
-				throw new ArgumentNullException ("array");
-
-			if (array.Rank > 1)
-				throw new RankException (Locale.GetText ("Only single dimension arrays are supported."));
-
-			if (index < array.GetLowerBound (0))
-				throw new ArgumentOutOfRangeException ("index", Locale.GetText (
-					"index is less than the lower bound of array."));
-			if (length < 0)
-				throw new ArgumentOutOfRangeException ("length", Locale.GetText (
-					"Value has to be >= 0."));
-			// re-ordered to avoid possible integer overflow
-			if (index > array.GetLowerBound (0) + array.GetLength (0) - length)
-				throw new ArgumentException (Locale.GetText (
-					"index and length do not specify a valid range in array."));
-
-			if (array.Length == 0)
-				return -1;
-
-			if ((value != null) && (!(value is IComparable)))
-				throw new ArgumentException (Locale.GetText (
-					"value does not support IComparable"));
-
-			return DoBinarySearch (array, index, length, value, null);
+			return BinarySearch (array, index, length, value, null);
 		}
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.MayFail)]
@@ -870,10 +827,6 @@ namespace System
 
 			if (array.Length == 0)
 				return -1;
-
-			if ((comparer == null) && (value != null) && !(value is IComparable))
-				throw new ArgumentException (Locale.GetText (
-					"comparer is null and value does not support IComparable."));
 
 			return DoBinarySearch (array, index, length, value, comparer);
 		}
@@ -1003,12 +956,13 @@ namespace System
 
 					try {
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
+					} catch (ArgumentException) {
+						throw CreateArrayTypeMismatchException ();
 					} catch {
-						if (src_type.Equals (typeof (Object)))
-							throw new InvalidCastException ();
-						else
-							throw new ArrayTypeMismatchException (String.Format (Locale.GetText (
-								"(Types: source={0};  target={1})"), src_type.FullName, dst_type.FullName));
+						if (CanAssignArrayElement (src_type, dst_type))
+							throw;
+
+						throw CreateArrayTypeMismatchException ();
 					}
 				}
 			}
@@ -1018,15 +972,35 @@ namespace System
 
 					try {
 						destinationArray.SetValueImpl (srcval, dest_pos + i);
+					} catch (ArgumentException) {
+						throw CreateArrayTypeMismatchException ();
 					} catch {
-						if (src_type.Equals (typeof (Object)))
-							throw new InvalidCastException ();
-						else
-							throw new ArrayTypeMismatchException (String.Format (Locale.GetText (
-								"(Types: source={0};  target={1})"), src_type.FullName, dst_type.FullName));
+						if (CanAssignArrayElement (src_type, dst_type))
+							throw;
+
+						throw CreateArrayTypeMismatchException ();
 					}
 				}
 			}
+		}
+
+		static Exception CreateArrayTypeMismatchException ()
+		{
+			return new ArrayTypeMismatchException ();
+		}
+
+		static bool CanAssignArrayElement (Type source, Type target)
+		{
+			if (source.IsValueType)
+				return source.IsAssignableFrom (target);
+
+			if (source.IsInterface)
+				return !target.IsValueType;
+
+			if (target.IsInterface)
+				return !source.IsValueType;
+
+			return source.IsAssignableFrom (target) || target.IsAssignableFrom (source);
 		}
 
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
@@ -1772,7 +1746,7 @@ namespace System
 			//
 			if (comparer == null) {
 				/* Avoid this when using full-aot to prevent the generation of many unused qsort<K,T> instantiations */
-#if FULL_AOT_RUNTIME
+#if !FULL_AOT_RUNTIME
 #if !BOOTSTRAP_BASIC
 				switch (Type.GetTypeCode (typeof (TKey))) {
 				case TypeCode.Int32:
@@ -2583,11 +2557,7 @@ namespace System
 					// switch to insertion sort
 					for (i = low + 1; i <= high; i++) {
 						for (k = i; k > low; k--) {
-							// if keys[k] >= keys[k-1], break
-							if (array[k-1] == null)
-								break;
-							
-							if (array[k] != null && compare (array[k], array[k-1]) >= 0)
+							if (compare (array[k], array[k-1]) >= 0)
 								break;
 							
 							swap<T> (array, k - 1, k);
@@ -2864,32 +2834,54 @@ namespace System
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
+
+			if (match == null)
+				throw new ArgumentNullException ("match");
 			
-			return FindLastIndex<T> (array, 0, array.Length, match);
+			return GetLastIndex (array, 0, array.Length, match);
 		}
 		
 		public static int FindLastIndex<T> (T [] array, int startIndex, Predicate<T> match)
 		{
 			if (array == null)
 				throw new ArgumentNullException ();
+
+			if (startIndex < 0 || (uint) startIndex > (uint) array.Length)
+				throw new ArgumentOutOfRangeException ("startIndex");
+
+			if (match == null)
+				throw new ArgumentNullException ("match");
 			
-			return FindLastIndex<T> (array, startIndex, array.Length - startIndex, match);
+			return GetLastIndex (array, 0, startIndex + 1, match);
 		}
 		
 		public static int FindLastIndex<T> (T [] array, int startIndex, int count, Predicate<T> match)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
+
 			if (match == null)
 				throw new ArgumentNullException ("match");
+
+			if (startIndex < 0 || (uint) startIndex > (uint) array.Length)
+				throw new ArgumentOutOfRangeException ("startIndex");
 			
-			if (startIndex > array.Length || startIndex + count > array.Length)
-				throw new ArgumentOutOfRangeException ();
-			
-			for (int i = startIndex + count - 1; i >= startIndex; i--)
-				if (match (array [i]))
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			if (startIndex - count + 1 < 0)
+				throw new ArgumentOutOfRangeException ("count must refer to a location within the array");
+
+			return GetLastIndex (array, startIndex - count + 1, count, match);
+		}
+
+		internal static int GetLastIndex<T> (T[] array, int startIndex, int count, Predicate<T> match)
+		{
+			// unlike FindLastIndex, takes regular params for search range
+			for (int i = startIndex + count; i != startIndex;)
+				if (match (array [--i]))
 					return i;
-				
+
 			return -1;
 		}
 		
@@ -2897,16 +2889,25 @@ namespace System
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
+
+			if (match == null)
+				throw new ArgumentNullException ("match");
 			
-			return FindIndex<T> (array, 0, array.Length, match);
+			return GetIndex (array, 0, array.Length, match);
 		}
 		
 		public static int FindIndex<T> (T [] array, int startIndex, Predicate<T> match)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
-			
-			return FindIndex<T> (array, startIndex, array.Length - startIndex, match);
+
+			if (startIndex < 0 || (uint) startIndex > (uint) array.Length)
+				throw new ArgumentOutOfRangeException ("startIndex");
+
+			if (match == null)
+				throw new ArgumentNullException ("match");
+
+			return GetIndex (array, startIndex, array.Length - startIndex, match);
 		}
 		
 		public static int FindIndex<T> (T [] array, int startIndex, int count, Predicate<T> match)
@@ -2914,13 +2915,22 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			
-			if (match == null)
-				throw new ArgumentNullException ("match");
+			if (startIndex < 0)
+				throw new ArgumentOutOfRangeException ("startIndex");
 			
-			if (startIndex > array.Length || startIndex + count > array.Length)
-				throw new ArgumentOutOfRangeException ();
-			
-			for (int i = startIndex; i < startIndex + count; i ++)
+			if (count < 0)
+				throw new ArgumentOutOfRangeException ("count");
+
+			if ((uint) startIndex + (uint) count > (uint) array.Length)
+				throw new ArgumentOutOfRangeException ("index and count exceed length of list");
+
+			return GetIndex (array, startIndex, count, match);
+		}
+
+		internal static int GetIndex<T> (T[] array, int startIndex, int count, Predicate<T> match)
+		{
+			int end = startIndex + count;
+			for (int i = startIndex; i < end; i ++)
 				if (match (array [i]))
 					return i;
 				
@@ -3009,7 +3019,7 @@ namespace System
 			return IndexOf<T> (array, value, startIndex, array.Length - startIndex);
 		}
 
-		public static int IndexOf<T> (T [] array, T value, int startIndex, int count)
+		public static int IndexOf<T> (T[] array, T value, int startIndex, int count)
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
@@ -3018,14 +3028,7 @@ namespace System
 			if (count < 0 || startIndex < array.GetLowerBound (0) || startIndex - 1 > array.GetUpperBound (0) - count)
 				throw new ArgumentOutOfRangeException ();
 
-			int max = startIndex + count;
-			EqualityComparer<T> equalityComparer = EqualityComparer<T>.Default;
-			for (int i = startIndex; i < max; i++) {
-				if (equalityComparer.Equals (array [i], value))
-					return i;
-			}
-
-			return -1;
+			return EqualityComparer<T>.Default.IndexOf (array, value, startIndex, startIndex + count);
 		}
 		
 		public static int LastIndexOf<T> (T [] array, T value)
@@ -3144,12 +3147,29 @@ namespace System
 			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length);
 		}
 
+		#region Unsafe array operations
+
+		//
+		// Loads array index with no safety checks (JIT intristics)
+		//
 		internal static T UnsafeLoad<T> (T[] array, int index) {
 			return array [index];
 		}
 
+		//
+		// Stores values at specified array index with no safety checks (JIT intristics)
+		//
 		internal static void UnsafeStore<T> (T[] array, int index, T value) {
 			array [index] = value;
 		}
+
+		//
+		// Moved value from instance into target of different type with no checks (JIT intristics)
+		//
+		internal static R UnsafeMov<S,R> (S instance) {
+			return (R)(object) instance;
+		}
+
+		#endregion
 	}
 }

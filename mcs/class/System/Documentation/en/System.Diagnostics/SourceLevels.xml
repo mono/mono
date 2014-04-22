@@ -1,8 +1,10 @@
 <Type Name="SourceLevels" FullName="System.Diagnostics.SourceLevels">
   <TypeSignature Language="C#" Value="public enum SourceLevels" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SourceLevels extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -19,9 +21,11 @@
   <Members>
     <Member MemberName="ActivityTracing">
       <MemberSignature Language="C#" Value="ActivityTracing" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.SourceLevels ActivityTracing = int32(65280)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
@@ -37,9 +41,11 @@
     </Member>
     <Member MemberName="All">
       <MemberSignature Language="C#" Value="All" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.SourceLevels All = int32(-1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
@@ -50,9 +56,11 @@
     </Member>
     <Member MemberName="Critical">
       <MemberSignature Language="C#" Value="Critical" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.SourceLevels Critical = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
@@ -63,9 +71,11 @@
     </Member>
     <Member MemberName="Error">
       <MemberSignature Language="C#" Value="Error" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.SourceLevels Error = int32(3)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
@@ -76,9 +86,11 @@
     </Member>
     <Member MemberName="Information">
       <MemberSignature Language="C#" Value="Information" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.SourceLevels Information = int32(15)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
@@ -89,9 +101,11 @@
     </Member>
     <Member MemberName="Off">
       <MemberSignature Language="C#" Value="Off" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.SourceLevels Off = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
@@ -102,9 +116,11 @@
     </Member>
     <Member MemberName="Verbose">
       <MemberSignature Language="C#" Value="Verbose" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.SourceLevels Verbose = int32(31)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
@@ -115,9 +131,11 @@
     </Member>
     <Member MemberName="Warning">
       <MemberSignature Language="C#" Value="Warning" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.SourceLevels Warning = int32(7)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>

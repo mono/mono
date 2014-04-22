@@ -106,6 +106,15 @@
 #define AI_ADDRCONFIG 0
 #endif
 
+#ifdef __APPLE__
+/*
+ * We remove this until we have a Darwin implementation
+ * that can walk the result of struct ifconf.  The current
+ * implementation only works for Linux
+ */
+#undef HAVE_SIOCGIFCONF
+#endif
+
 static gint32 convert_family(MonoAddressFamily mono_family)
 {
 	gint32 family=-1;
@@ -1405,19 +1414,13 @@ extern void ves_icall_System_Net_Sockets_Socket_Disconnect_internal(SOCKET sock,
 		 */
 		_wapi_disconnectex = NULL;
 
-		/* Look up the TransmitFile extension function pointer
-		 * instead of calling TransmitFile() directly, because
-		 * apparently "Several of the extension functions have
-		 * been available since WinSock 1.1 and are exported
-		 * from MSWsock.dll, however it's not advisable to
-		 * link directly to this dll as this ties you to the
-		 * Microsoft WinSock provider. A provider neutral way
-		 * of accessing these extension functions is to load
-		 * them dynamically via WSAIoctl using the
-		 * SIO_GET_EXTENSION_FUNCTION_POINTER op code. This
-		 * should, theoretically, allow you to access these
-		 * functions from any provider that supports them..." 
-		 * (http://www.codeproject.com/internet/jbsocketserver3.asp)
+		/*
+		 * Use the SIO_GET_EXTENSION_FUNCTION_POINTER to
+		 * determine the address of the disconnect method without
+		 * taking a hard dependency on a single provider
+		 * 
+		 * For an explanation of why this is done, you can read
+		 * the article at http://www.codeproject.com/internet/jbsocketserver3.asp
 		 */
 		ret = WSAIoctl (sock, SIO_GET_EXTENSION_FUNCTION_POINTER,
 				(void *)&trans_guid, sizeof(GUID),
@@ -1821,8 +1824,8 @@ static MonoObject* int_to_object (MonoDomain *domain, int val)
 
 void ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal(SOCKET sock, gint32 level, gint32 name, MonoObject **obj_val, gint32 *error)
 {
-	int system_level;
-	int system_name;
+	int system_level = 0;
+	int system_name = 0;
 	int ret;
 	int val;
 	socklen_t valsize=sizeof(val);
@@ -1976,8 +1979,8 @@ void ves_icall_System_Net_Sockets_Socket_GetSocketOption_obj_internal(SOCKET soc
 
 void ves_icall_System_Net_Sockets_Socket_GetSocketOption_arr_internal(SOCKET sock, gint32 level, gint32 name, MonoArray **byte_val, gint32 *error)
 {
-	int system_level;
-	int system_name;
+	int system_level = 0;
+	int system_name = 0;
 	int ret;
 	guchar *buf;
 	socklen_t valsize;
@@ -2091,8 +2094,8 @@ get_local_interface_id (int family)
 void ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal(SOCKET sock, gint32 level, gint32 name, MonoObject *obj_val, MonoArray *byte_val, gint32 int_val, gint32 *error)
 {
 	struct linger linger;
-	int system_level;
-	int system_name;
+	int system_level = 0;
+	int system_name = 0;
 	int ret;
 #ifdef AF_INET6
 	int sol_ip;
@@ -2231,12 +2234,15 @@ void ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal(SOCKET sock, g
 				if(address) {
 					mreq.imr_address = ipaddress_to_struct_in_addr (address);
 				}
+
+				field = mono_class_get_field_from_name(obj_val->vtable->klass, "iface_index");
+				mreq.imr_ifindex = *(gint32 *)(((char *)obj_val)+field->offset);
 #else
 				if(address) {
 					mreq.imr_interface = ipaddress_to_struct_in_addr (address);
 				}
 #endif /* HAVE_STRUCT_IP_MREQN */
-			
+
 				ret = _wapi_setsockopt (sock, system_level,
 							system_name, &mreq,
 							sizeof (mreq));
@@ -2274,6 +2280,23 @@ void ves_icall_System_Net_Sockets_Socket_SetSocketOption_internal(SOCKET sock, g
 			linger.l_onoff = !int_val;
 			linger.l_linger = 0;
 			ret = _wapi_setsockopt (sock, system_level, system_name, &linger, sizeof (linger));
+			break;
+		case SocketOptionName_MulticastInterface:
+#ifndef HOST_WIN32
+#ifdef HAVE_STRUCT_IP_MREQN
+			int_val = GUINT32_FROM_BE (int_val);
+			if ((int_val & 0xff000000) == 0) {
+				/* int_val is interface index */
+				struct ip_mreqn mreq = {{0}};
+				mreq.imr_ifindex = int_val;
+				ret = _wapi_setsockopt (sock, system_level, system_name, (char *) &mreq, sizeof (mreq));
+				break;
+			}
+			int_val = GUINT32_TO_BE (int_val);
+#endif /* HAVE_STRUCT_IP_MREQN */
+#endif /* HOST_WIN32 */
+			/* int_val is in_addr */
+			ret = _wapi_setsockopt (sock, system_level, system_name, (char *) &int_val, sizeof (int_val));
 			break;
 		case SocketOptionName_DontFragment:
 #ifdef HAVE_IP_MTU_DISCOVER
@@ -2995,6 +3018,7 @@ MonoBoolean ves_icall_System_Net_Dns_GetHostByName_internal(MonoString *host, Mo
 	hints.ai_flags = AI_CANONNAME;
 
 	if (*hostname && getaddrinfo(hostname, NULL, &hints, &info) == -1) {
+		g_free (hostname);
 		return(FALSE);
 	}
 	
@@ -3083,10 +3107,13 @@ MonoBoolean ves_icall_System_Net_Dns_GetHostByName_internal(MonoString *host, Mo
 #else
 	he = _wapi_gethostbyname (hostname);
 #endif
-	g_free(hostname);
 
-	if (*hostname && he==NULL)
+	if (*hostname && he==NULL) {
+		g_free (hostname);
 		return(FALSE);
+	}
+
+	g_free (hostname);
 
 	return(hostent_to_IPHostEntry(he, h_name, h_aliases, h_addr_list, add_local_ips));
 }

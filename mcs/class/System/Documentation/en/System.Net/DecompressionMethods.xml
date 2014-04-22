@@ -1,8 +1,10 @@
 <Type Name="DecompressionMethods" FullName="System.Net.DecompressionMethods">
   <TypeSignature Language="C#" Value="public enum DecompressionMethods" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DecompressionMethods extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -19,9 +21,11 @@
   <Members>
     <Member MemberName="Deflate">
       <MemberSignature Language="C#" Value="Deflate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.DecompressionMethods Deflate = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.DecompressionMethods</ReturnType>
@@ -32,9 +36,11 @@
     </Member>
     <Member MemberName="GZip">
       <MemberSignature Language="C#" Value="GZip" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.DecompressionMethods GZip = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.DecompressionMethods</ReturnType>
@@ -45,9 +51,11 @@
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.DecompressionMethods None = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.DecompressionMethods</ReturnType>

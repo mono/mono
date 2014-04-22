@@ -1,8 +1,10 @@
 <Type Name="CorrelationManager" FullName="System.Diagnostics.CorrelationManager">
   <TypeSignature Language="C#" Value="public class CorrelationManager" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CorrelationManager extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -14,10 +16,12 @@
   </Docs>
   <Members>
     <Member MemberName="ActivityId">
-      <MemberSignature Language="C#" Value="public Guid ActivityId { set; get; }" />
+      <MemberSignature Language="C#" Value="public Guid ActivityId { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Guid ActivityId" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Guid</ReturnType>
@@ -30,9 +34,11 @@
     </Member>
     <Member MemberName="LogicalOperationStack">
       <MemberSignature Language="C#" Value="public System.Collections.Stack LogicalOperationStack { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.Stack LogicalOperationStack" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.Stack</ReturnType>
@@ -45,9 +51,11 @@
     </Member>
     <Member MemberName="StartLogicalOperation">
       <MemberSignature Language="C#" Value="public void StartLogicalOperation ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void StartLogicalOperation() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -60,9 +68,11 @@
     </Member>
     <Member MemberName="StartLogicalOperation">
       <MemberSignature Language="C#" Value="public void StartLogicalOperation (object operationId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void StartLogicalOperation(object operationId) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -78,9 +88,11 @@
     </Member>
     <Member MemberName="StopLogicalOperation">
       <MemberSignature Language="C#" Value="public void StopLogicalOperation ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void StopLogicalOperation() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>

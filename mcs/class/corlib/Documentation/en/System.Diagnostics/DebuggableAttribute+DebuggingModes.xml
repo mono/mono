@@ -1,5 +1,6 @@
 <Type Name="DebuggableAttribute+DebuggingModes" FullName="System.Diagnostics.DebuggableAttribute+DebuggingModes">
   <TypeSignature Language="C#" Value="public enum DebuggableAttribute.DebuggingModes" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed DebuggableAttribute/DebuggingModes extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -24,7 +25,12 @@
   <Members>
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="Default" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.DebuggableAttribute/DebuggingModes Default = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.DebuggableAttribute+DebuggingModes</ReturnType>
       </ReturnValue>
@@ -32,14 +38,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DisableOptimizations">
       <MemberSignature Language="C#" Value="DisableOptimizations" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.DebuggableAttribute/DebuggingModes DisableOptimizations = int32(256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.DebuggableAttribute+DebuggingModes</ReturnType>
       </ReturnValue>
@@ -47,14 +54,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EnableEditAndContinue">
       <MemberSignature Language="C#" Value="EnableEditAndContinue" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.DebuggableAttribute/DebuggingModes EnableEditAndContinue = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.DebuggableAttribute+DebuggingModes</ReturnType>
       </ReturnValue>
@@ -62,14 +70,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IgnoreSymbolStoreSequencePoints">
       <MemberSignature Language="C#" Value="IgnoreSymbolStoreSequencePoints" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.DebuggableAttribute/DebuggingModes IgnoreSymbolStoreSequencePoints = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.DebuggableAttribute+DebuggingModes</ReturnType>
       </ReturnValue>
@@ -77,14 +86,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Diagnostics.DebuggableAttribute/DebuggingModes None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.DebuggableAttribute+DebuggingModes</ReturnType>
       </ReturnValue>
@@ -92,10 +102,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

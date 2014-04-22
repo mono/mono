@@ -1,8 +1,10 @@
 <Type Name="DVASPECT" FullName="System.Runtime.InteropServices.ComTypes.DVASPECT">
   <TypeSignature Language="C#" Value="public enum DVASPECT" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DVASPECT extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -19,9 +21,11 @@
   <Members>
     <Member MemberName="DVASPECT_CONTENT">
       <MemberSignature Language="C#" Value="DVASPECT_CONTENT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.DVASPECT DVASPECT_CONTENT = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.DVASPECT</ReturnType>
@@ -32,9 +36,11 @@
     </Member>
     <Member MemberName="DVASPECT_DOCPRINT">
       <MemberSignature Language="C#" Value="DVASPECT_DOCPRINT" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.DVASPECT DVASPECT_DOCPRINT = int32(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.DVASPECT</ReturnType>
@@ -45,9 +51,11 @@
     </Member>
     <Member MemberName="DVASPECT_ICON">
       <MemberSignature Language="C#" Value="DVASPECT_ICON" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.DVASPECT DVASPECT_ICON = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.DVASPECT</ReturnType>
@@ -58,9 +66,11 @@
     </Member>
     <Member MemberName="DVASPECT_THUMBNAIL">
       <MemberSignature Language="C#" Value="DVASPECT_THUMBNAIL" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.DVASPECT DVASPECT_THUMBNAIL = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.DVASPECT</ReturnType>

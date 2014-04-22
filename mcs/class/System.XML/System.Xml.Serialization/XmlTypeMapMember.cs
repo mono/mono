@@ -99,6 +99,7 @@ namespace System.Xml.Serialization
 		public void SetValue (object ob, object value)
 		{
 			if (_member == null) InitMember (ob.GetType());
+			_typeData.ConvertForAssignment (ref value);
 			if (_member is PropertyInfo) ((PropertyInfo)_member).SetValue (ob, value, null);
 			else ((FieldInfo)_member).SetValue (ob, value);
 		}

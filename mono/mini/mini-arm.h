@@ -19,10 +19,6 @@
 #define MONO_ARCH_SOFT_FLOAT_FALLBACK 1
 #endif
 
-#ifdef ARM_FPU_VFP_HARD
-#error "hardfp-abi not yet supported."
-#endif
-
 #if defined(__ARM_EABI__)
 #if G_BYTE_ORDER == G_LITTLE_ENDIAN
 #define ARM_ARCHITECTURE "armel"
@@ -56,10 +52,8 @@
 #endif
 
 #define MONO_MAX_IREGS 16
-#define MONO_MAX_FREGS 16
 
 #define MONO_SAVED_GREGS 10 /* r4-r11, ip, lr */
-#define MONO_SAVED_FREGS 8
 
 /* r4-r11, ip, lr: registers saved in the LMF  */
 #define MONO_ARM_REGSAVE_MASK 0x5ff0
@@ -71,9 +65,36 @@
 #define MONO_ARCH_CALLEE_REGS ((1<<ARMREG_R0) | (1<<ARMREG_R1) | (1<<ARMREG_R2) | (1<<ARMREG_R3) | (1<<ARMREG_IP))
 #define MONO_ARCH_CALLEE_SAVED_REGS ((1<<ARMREG_V1) | (1<<ARMREG_V2) | (1<<ARMREG_V3) | (1<<ARMREG_V4) | (1<<ARMREG_V5) | (1<<ARMREG_V6) | (1<<ARMREG_V7))
 
-/* Every double precision vfp register, d0/d1 is reserved for a scratch reg */
+/*
+ * TODO: Make use of VFP v3 registers d16-d31.
+ */
+
+/*
+ * TODO: We can't use registers d8-d15 in hard float mode because the
+ * register allocator doesn't allocate floating point registers globally.
+ */
+
+#if defined(ARM_FPU_VFP_HARD)
+#define MONO_SAVED_FREGS 16
+#define MONO_MAX_FREGS 32
+
+/*
+ * d8-d15 must be preserved across function calls. We use d14-d15 as
+ * scratch registers in the JIT. The rest have no meaning tied to them.
+ */
+#define MONO_ARCH_CALLEE_FREGS 0x00005555
+#define MONO_ARCH_CALLEE_SAVED_FREGS 0x55550000
+#else
+#define MONO_SAVED_FREGS 8
+#define MONO_MAX_FREGS 16
+
+/*
+ * No registers need to be preserved across function calls. We use d0-d1
+ * as scratch registers in the JIT. The rest have no meaning tied to them.
+ */
 #define MONO_ARCH_CALLEE_FREGS 0x55555550
-#define MONO_ARCH_CALLEE_SAVED_FREGS 0
+#define MONO_ARCH_CALLEE_SAVED_FREGS 0x00000000
+#endif
 
 #define MONO_ARCH_USE_FPSTACK FALSE
 #define MONO_ARCH_FPSTACK_SIZE 0
@@ -164,6 +185,10 @@ struct MonoLMF {
 	mgreg_t    sp;
 	mgreg_t    ip;
 	mgreg_t    fp;
+	/* Currently only used in trampolines on armhf to hold d0-d15. We don't really
+	 * need to put d0-d7 in the LMF, but it simplifies the trampoline code.
+	 */
+	double     fregs [16];
 	/* all but sp and pc: matches the PUSH instruction layout in the trampolines
 	 * 0-4 should be considered undefined (execpt in the magic tramp)
 	 * sp is saved at IP.
@@ -177,6 +202,8 @@ typedef struct MonoCompileArch {
 	gpointer seq_point_bp_method_var;
 	gboolean omit_fp, omit_fp_computed;
 	gpointer cinfo;
+	gpointer *vfp_scratch_slots [2];
+	int atomic_tmp_offset;
 } MonoCompileArch;
 
 #define MONO_ARCH_EMULATE_FCONV_TO_I8 1
@@ -231,6 +258,15 @@ typedef struct MonoCompileArch {
 #define MONO_ARCH_GSHAREDVT_SUPPORTED 1
 #define MONO_ARCH_HAVE_GENERAL_RGCTX_LAZY_FETCH_TRAMPOLINE 1
 #define MONO_ARCH_HAVE_OPCODE_NEEDS_EMULATION 1
+#define MONO_ARCH_HAVE_OBJC_GET_SELECTOR 1
+#ifdef __linux__
+#define MONO_ARCH_HAVE_OP_TAIL_CALL 1
+#endif
+#define MONO_ARCH_HAVE_DUMMY_INIT 1
+#define MONO_ARCH_HAVE_OPCODE_SUPPORTED 1
+#define MONO_ARCH_HAVE_ATOMIC_EXCHANGE 1
+#define MONO_ARCH_HAVE_ATOMIC_CAS 1
+#define MONO_ARCH_HAVE_ATOMIC_ADD 1
 
 #if defined(__native_client__)
 #undef MONO_ARCH_SOFT_DEBUG_SUPPORTED
@@ -289,5 +325,8 @@ mono_arm_load_jumptable_entry_addr (guint8 *code, gpointer *jte, ARMReg reg) MON
 guint8*
 mono_arm_load_jumptable_entry (guint8 *code, gpointer *jte, ARMReg reg) MONO_INTERNAL;
 #endif
+
+gboolean
+mono_arm_is_hard_float (void) MONO_INTERNAL;
 
 #endif /* __MONO_MINI_ARM_H__ */

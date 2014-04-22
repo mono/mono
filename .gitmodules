@@ -22,3 +22,6 @@
 [submodule "external/Lucene.Net"]
 	path = external/Lucene.Net
 	url = git://github.com/mono/lucene.net.git
+[submodule "external/ikdasm"]
+	path = external/ikdasm
+	url = git://github.com/mono/ikdasm.git

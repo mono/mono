@@ -362,6 +362,10 @@ namespace Mono.DocTest {
 		/// <returns>A <see cref="T:Mono.DocTest.Widget" /> instance.</returns>
 		public static Widget operator+ (Widget x) {return null;}
 
+		/// <remarks><c>M:Mono.DocTest.Widget.op_Division</c>.</remarks>
+		/// <returns>A <see cref="T:Mono.DocTest.Widget" /> instance.</returns>
+		public static Widget op_Division = null;
+
 		/// <param name="x1">Yet Another <see cref="T:Mono.DocTest.Widget" />.</param>
 		/// <param name="x2">Yay, <see cref="T:Mono.DocTest.Widget" />s.</param>
 		/// <remarks><c>M:Mono.DocTest.Widget.op_Addition(Mono.DocTest.Widget,Mono.DocTest.Widget)</c>.</remarks>

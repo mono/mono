@@ -43,6 +43,10 @@ namespace Microsoft.Build.Tasks {
 
 		protected internal override void AddResponseFileCommands (CommandLineBuilderExtension commandLine)
 		{
+#if !NET_4_0
+			//pre-MSBuild 2 targets don't support multi-targeting, so tell compiler to use 2.0 corlib
+			commandLine.AppendSwitch ("/sdk:2");
+#endif
 			base.AddResponseFileCommands (commandLine);
 
 			if (AdditionalLibPaths != null && AdditionalLibPaths.Length > 0)
@@ -129,7 +133,9 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string GenerateFullPathToTool ()
 		{
-			return Path.Combine (ToolPath, ToolExe);
+			if (!string.IsNullOrEmpty (ToolPath))
+				return Path.Combine (ToolPath, ToolExe);
+			return ToolLocationHelper.GetPathToDotNetFrameworkFile (ToolExe, TargetDotNetFrameworkVersion.VersionLatest);
 		}
 
 		[MonoTODO]
@@ -200,11 +206,7 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string ToolName {
 			get {
-#if NET_4_0
-				return MSBuildUtils.RunningOnWindows ? "dmcs.bat" : "dmcs";
-#else
-				return MSBuildUtils.RunningOnWindows ? "gmcs.bat" : "gmcs";
-#endif
+				return "mcs.exe";
 			}
 		}
 

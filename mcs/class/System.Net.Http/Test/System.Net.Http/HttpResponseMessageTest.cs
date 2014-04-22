@@ -295,6 +295,56 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Headers_MultiValues ()
+		{
+			var message = new HttpResponseMessage ();
+			var headers = message.Headers;
+
+			headers.Add ("Proxy-Authenticate", "x, y, z,i");
+			headers.Add ("Upgrade", "HTTP/2.0, SHTTP/1.3, IRC, RTA/x11");
+			headers.Add ("Via", "1.0 fred, 1.1 nowhere.com (Apache/1.1)");
+			headers.Add ("Warning", "199 Miscellaneous \"w\", 200 a \"b\"");
+
+			Assert.AreEqual (4, headers.ProxyAuthenticate.Count, "#1a");
+			Assert.IsTrue (headers.ProxyAuthenticate.SequenceEqual (
+				new[] {
+					new AuthenticationHeaderValue ("x"),
+
+					new AuthenticationHeaderValue ("y"),
+					new AuthenticationHeaderValue ("z"),
+					new AuthenticationHeaderValue ("i")
+				}
+			), "#1b");
+
+			
+			Assert.AreEqual (4, headers.Upgrade.Count, "#2a");
+			Assert.IsTrue (headers.Upgrade.SequenceEqual (
+				new[] {
+					new ProductHeaderValue ("HTTP", "2.0"),
+					new ProductHeaderValue ("SHTTP", "1.3"),
+					new ProductHeaderValue ("IRC"),
+					new ProductHeaderValue ("RTA", "x11")
+				}
+			), "#2b");
+
+			Assert.AreEqual (2, headers.Via.Count, "#3a");
+			Assert.IsTrue (headers.Via.SequenceEqual (
+				new[] {
+					new ViaHeaderValue ("1.0", "fred"),
+					new ViaHeaderValue ("1.1", "nowhere.com", null, "(Apache/1.1)")
+				}
+			), "#2b");
+
+			Assert.AreEqual (2, headers.Warning.Count, "#4a");
+			Assert.IsTrue (headers.Warning.SequenceEqual (
+				new[] {
+					new WarningHeaderValue (199, "Miscellaneous", "\"w\""),
+					new WarningHeaderValue (200, "a", "\"b\"")
+				}
+			), "#4b");
+		}
+
+		[Test]
 		public void Header_BaseImplementation ()
 		{
 			HttpResponseMessage message = new HttpResponseMessage ();

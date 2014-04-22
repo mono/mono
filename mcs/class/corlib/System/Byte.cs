@@ -51,14 +51,7 @@ namespace System
 			if (!(value is System.Byte))
 				throw new ArgumentException (Locale.GetText ("Value is not a System.Byte."));
 
-			byte xv = (byte) value;
-
-			if (m_value == xv)
-				return 0;
-			if (m_value > xv)
-				return 1;
-			else
-				return -1;
+			return CompareTo ((byte) value);
 		}
 
 		public override bool Equals (object obj)
@@ -76,12 +69,7 @@ namespace System
 
 		public int CompareTo (byte value)
 		{
-			if (m_value == value)
-				return 0;
-			if (m_value > value)
-				return 1;
-			else
-				return -1;
+			return m_value - value;
 		}
 
 		public bool Equals (byte obj)

@@ -52,6 +52,7 @@
     <ClCompile Include="..\mono\metadata\exception.c" />
     <ClCompile Include="..\mono\metadata\file-io.c" />
     <ClCompile Include="..\mono\metadata\filewatcher.c" />
+    <ClCompile Include="..\mono\metadata\gc-memfuncs.c" />
     <ClCompile Include="..\mono\metadata\gc.c" />
     <ClCompile Include="..\mono\metadata\icall.c" />
     <ClCompile Include="..\mono\metadata\image.c" />
@@ -113,7 +114,6 @@
     <ClCompile Include="..\mono\metadata\sgen-toggleref.c" />
     <ClCompile Include="..\mono\metadata\sgen-workers.c" />
     <ClCompile Include="..\mono\metadata\sgen-fin-weak-hash.c" />
-    <ClCompile Include="..\mono\metadata\sgen-bridge.c" />
     <ClCompile Include="..\mono\metadata\sgen-stw.c" />
     <ClCompile Include="..\mono\metadata\socket-io.c" />
     <ClCompile Include="..\mono\metadata\string-icalls.c" />

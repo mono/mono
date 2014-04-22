@@ -1,8 +1,10 @@
 <Type Name="ADVF" FullName="System.Runtime.InteropServices.ComTypes.ADVF">
   <TypeSignature Language="C#" Value="public enum ADVF" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ADVF extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -19,9 +21,11 @@
   <Members>
     <Member MemberName="ADVF_DATAONSTOP">
       <MemberSignature Language="C#" Value="ADVF_DATAONSTOP" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.ADVF ADVF_DATAONSTOP = int32(64)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.ADVF</ReturnType>
@@ -32,9 +36,11 @@
     </Member>
     <Member MemberName="ADVF_NODATA">
       <MemberSignature Language="C#" Value="ADVF_NODATA" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.ADVF ADVF_NODATA = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.ADVF</ReturnType>
@@ -45,9 +51,11 @@
     </Member>
     <Member MemberName="ADVF_ONLYONCE">
       <MemberSignature Language="C#" Value="ADVF_ONLYONCE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.ADVF ADVF_ONLYONCE = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.ADVF</ReturnType>
@@ -58,9 +66,11 @@
     </Member>
     <Member MemberName="ADVF_PRIMEFIRST">
       <MemberSignature Language="C#" Value="ADVF_PRIMEFIRST" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.ADVF ADVF_PRIMEFIRST = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.ADVF</ReturnType>
@@ -71,9 +81,11 @@
     </Member>
     <Member MemberName="ADVFCACHE_FORCEBUILTIN">
       <MemberSignature Language="C#" Value="ADVFCACHE_FORCEBUILTIN" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.ADVF ADVFCACHE_FORCEBUILTIN = int32(16)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.ADVF</ReturnType>
@@ -84,9 +96,11 @@
     </Member>
     <Member MemberName="ADVFCACHE_NOHANDLER">
       <MemberSignature Language="C#" Value="ADVFCACHE_NOHANDLER" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.ADVF ADVFCACHE_NOHANDLER = int32(8)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.ADVF</ReturnType>
@@ -97,9 +111,11 @@
     </Member>
     <Member MemberName="ADVFCACHE_ONSAVE">
       <MemberSignature Language="C#" Value="ADVFCACHE_ONSAVE" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Runtime.InteropServices.ComTypes.ADVF ADVFCACHE_ONSAVE = int32(32)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.ComTypes.ADVF</ReturnType>

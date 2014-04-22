@@ -1,6 +1,7 @@
 <Type Name="IPEndPoint" FullName="System.Net.IPEndPoint" FullNameSP="System_Net_IPEndPoint" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable IPEndPoint extends System.Net.EndPoint" />
   <TypeSignature Language="C#" Value="public class IPEndPoint : System.Net.EndPoint" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit IPEndPoint extends System.Net.EndPoint" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +9,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -29,15 +31,21 @@ class.</para>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int64 address, int32 port)" />
-      <MemberSignature Language="C#" Value="public IPEndPoint (long iaddr, int port);" />
+      <MemberSignature Language="C#" Value="public IPEndPoint (long address, int port);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 address, int32 port) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
-        <Parameter Name="iaddr" Type="System.Int64" />
+        <Parameter Name="address" Type="System.Int64" />
         <Parameter Name="port" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="iaddr">To be added.</param>
+        <param name="address">To be added.</param>
         <param name="port">A <see cref="T:System.Int32" /> containing the port number to use when accessing <paramref name="address" /> . Specify zero to indicate any available port.</param>
         <summary>
           <para>Constructs and initializes a new instance of the <see cref="T:System.Net.IPEndPoint" /> class with the specified address and port number.</para>
@@ -50,15 +58,17 @@ class.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(class System.Net.IPAddress address, int32 port)" />
       <MemberSignature Language="C#" Value="public IPEndPoint (System.Net.IPAddress address, int port);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Net.IPAddress address, int32 port) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="address" Type="System.Net.IPAddress" />
@@ -79,15 +89,17 @@ class.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Address">
       <MemberSignature Language="ILASM" Value=".property class System.Net.IPAddress Address { public hidebysig specialname instance class System.Net.IPAddress get_Address() public hidebysig specialname instance void set_Address(class System.Net.IPAddress value) }" />
-      <MemberSignature Language="C#" Value="public System.Net.IPAddress Address { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.IPAddress Address { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.IPAddress Address" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
@@ -103,15 +115,17 @@ class.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AddressFamily">
       <MemberSignature Language="ILASM" Value=".property valuetype System.Net.Sockets.AddressFamily AddressFamily { public hidebysig virtual specialname valuetype System.Net.Sockets.AddressFamily get_AddressFamily() }" />
       <MemberSignature Language="C#" Value="public override System.Net.Sockets.AddressFamily AddressFamily { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.AddressFamily AddressFamily" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
       </ReturnValue>
@@ -128,23 +142,25 @@ class.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Create">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual class System.Net.EndPoint Create(class System.Net.SocketAddress socketAddress)" />
-      <MemberSignature Language="C#" Value="public override System.Net.EndPoint Create (System.Net.SocketAddress sockaddr);" />
+      <MemberSignature Language="C#" Value="public override System.Net.EndPoint Create (System.Net.SocketAddress socketAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Net.EndPoint Create(class System.Net.SocketAddress socketAddress) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.EndPoint</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="sockaddr" Type="System.Net.SocketAddress" />
+        <Parameter Name="socketAddress" Type="System.Net.SocketAddress" />
       </Parameters>
       <Docs>
-        <param name="sockaddr">A <see cref="T:System.Net.SocketAddress" /> instance that provides the address information for the new <see cref="T:System.Net.IPEndPoint" /> instance.</param>
+        <param name="socketAddress">A <see cref="T:System.Net.SocketAddress" /> instance that provides the address information for the new <see cref="T:System.Net.IPEndPoint" /> instance.</param>
         <summary>
           <para> Returns a new <see cref="T:System.Net.IPEndPoint" /> instance containing the address
    information from the specified <see cref="T:System.Net.SocketAddress" />
@@ -164,23 +180,25 @@ class.</para>
         <exception cref="T:System.ArgumentException">The <see langword="AddressFamily" /> of the specified <see cref="T:System.Net.SocketAddress" /> is not equal to the <see langword="AddressFamily" /> of the current instance. </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object comparand)" />
-      <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object comparand);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object comparand) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="obj" Type="System.Object" />
+        <Parameter Name="comparand" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">The <see langword="Object" /> to compare to the current instance.</param>
+        <param name="comparand">The <see langword="Object" /> to compare to the current instance.</param>
         <summary>
           <para>Determines whether the current instance and the specified 
  <see cref="T:System.Object" /> represent 
@@ -203,15 +221,17 @@ and <see cref="P:System.Net.IPEndPoint.Port" /> properties contain the same valu
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -234,15 +254,17 @@ and <see cref="P:System.Net.IPEndPoint.Port" /> properties contain the same valu
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MaxPort">
       <MemberSignature Language="ILASM" Value=".field public static literal int32 MaxPort = 65535" />
       <MemberSignature Language="C#" Value="public const int MaxPort = 65535;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 MaxPort = (65535)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -258,15 +280,17 @@ property.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MinPort">
       <MemberSignature Language="ILASM" Value=".field public static literal int32 MinPort = 0" />
       <MemberSignature Language="C#" Value="public const int MinPort = 0;" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal int32 MinPort = (0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -282,15 +306,17 @@ property.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Port">
       <MemberSignature Language="ILASM" Value=".property int32 Port { public hidebysig specialname instance int32 get_Port() public hidebysig specialname instance void set_Port(int32 value) }" />
-      <MemberSignature Language="C#" Value="public int Port { set; get; }" />
+      <MemberSignature Language="C#" Value="public int Port { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Port" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -307,17 +333,15 @@ inclusive.</para>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified for a set operation was less than <see cref="F:System.Net.IPEndPoint.MinPort" /> or greater than <see cref="F:System.Net.IPEndPoint.MaxPort" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Serialize">
       <MemberSignature Language="C#" Value="public override System.Net.SocketAddress Serialize ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Net.SocketAddress Serialize() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.SocketAddress</ReturnType>
@@ -332,7 +356,13 @@ inclusive.</para>
     <Member MemberName="ToString">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -353,10 +383,6 @@ specified endpoint, for example, 127.0.0.1:80.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

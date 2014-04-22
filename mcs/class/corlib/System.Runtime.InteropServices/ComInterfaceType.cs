@@ -37,6 +37,9 @@ namespace System.Runtime.InteropServices
 	{
 		InterfaceIsDual = 0,
 		InterfaceIsIUnknown = 1,
-		InterfaceIsIDispatch = 2,		
+		InterfaceIsIDispatch = 2,
+#if NET_4_5
+		InterfaceIsIInspectable = 3
+#endif
 	}
 }

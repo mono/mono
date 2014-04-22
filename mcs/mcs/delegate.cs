@@ -532,7 +532,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			TypeSpec rt = delegate_method.ReturnType;
+			TypeSpec rt = method_group.BestCandidateReturnType;
 			if (rt.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
 				rt = ec.BuiltinTypes.Object;
 
@@ -541,7 +541,7 @@ namespace Mono.CSharp {
 				Error_ConversionFailed (ec, delegate_method, ret_expr);
 			}
 
-			if (delegate_method.IsConditionallyExcluded (ec)) {
+			if (method_group.IsConditionallyExcluded) {
 				ec.Report.SymbolRelatedToPreviousError (delegate_method);
 				MethodOrOperator m = delegate_method.MemberDefinition as MethodOrOperator;
 				if (m != null && m.IsPartialDefinition) {
@@ -579,6 +579,11 @@ namespace Mono.CSharp {
 			}
 
 			ec.Emit (OpCodes.Newobj, constructor_method);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc) {
+			base.FlowAnalysis (fc);
+			method_group.FlowAnalysis (fc);
 		}
 
 		void Error_ConversionFailed (ResolveContext ec, MethodSpec method, Expression return_type)
@@ -679,14 +684,36 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (type.IsNested)
+				return ContainsMethodTypeParameter (type.DeclaringType);
+
 			return false;
+		}
+		
+		bool HasMvar ()
+		{
+			if (ContainsMethodTypeParameter (type))
+				return false;
+
+			var best = method_group.BestCandidate;
+			if (ContainsMethodTypeParameter (best.DeclaringType))
+				return false;
+
+			if (best.TypeArguments != null) {
+				foreach (var ta in best.TypeArguments) {
+					if (ContainsMethodTypeParameter (ta))
+						return false;
+				}
+			}
+
+			return true;
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			var expr = base.DoResolve (ec);
 			if (expr == null)
-				return null;
+				return ErrorExpression.Instance;
 
 			if (ec.IsInProbingMode)
 				return expr;
@@ -700,10 +727,7 @@ namespace Mono.CSharp {
 			//
 			// Cannot easily cache types with MVAR
 			//
-			if (ContainsMethodTypeParameter (type))
-				return expr;
-
-			if (ContainsMethodTypeParameter (method_group.BestCandidate.DeclaringType))
+			if (!HasMvar ())
 				return expr;
 
 			//
@@ -826,6 +850,13 @@ namespace Mono.CSharp {
 				InstanceExpr.CreateExpressionTree (ec));
 
 			return CreateExpressionFactoryCall (ec, "Invoke", args);
+		}
+
+		public override void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			InstanceExpr.FlowAnalysis (fc);
+			if (arguments != null)
+				arguments.FlowAnalysis (fc);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)

@@ -34,9 +34,7 @@ using System.Security.Permissions;
 
 namespace System.Threading
 {
-	[HostProtection (SecurityAction.LinkDemand, Synchronization = true, ExternalThreading = true)]
 	[System.Diagnostics.DebuggerDisplay ("IsValueCreated={IsValueCreated}, Value={ValueForDebugDisplay}")]
-	[System.Diagnostics.DebuggerTypeProxy ("System.Threading.SystemThreading_ThreadLocalDebugView`1")]
 	public class ThreadLocal<T> : IDisposable
 	{
 		struct TlsDatum {
@@ -165,7 +163,7 @@ namespace System.Threading
 
 		public override string ToString ()
 		{
-			return string.Format ("[ThreadLocal: IsValueCreated={0}, Value={1}]", IsValueCreated, Value);
+			return Value.ToString ();
 		}
 		
 	}

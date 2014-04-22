@@ -1,6 +1,7 @@
 <Type Name="IPAddress" FullName="System.Net.IPAddress" FullNameSP="System_Net_IPAddress" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public serializable IPAddress extends System.Object" />
   <TypeSignature Language="C#" Value="public class IPAddress" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit IPAddress extends System.Object" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +9,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -103,7 +105,13 @@ following table.</para>
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public IPAddress (byte[] address);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] address) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="address" Type="System.Byte[]" />
       </Parameters>
@@ -112,21 +120,23 @@ following table.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(int64 newAddress)" />
-      <MemberSignature Language="C#" Value="public IPAddress (long addr);" />
+      <MemberSignature Language="C#" Value="public IPAddress (long newAddress);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(int64 newAddress) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
-        <Parameter Name="addr" Type="System.Int64" />
+        <Parameter Name="newAddress" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="addr">A <see cref="T:System.Int64" /> containing the IP address in host-byte-order. </param>
+        <param name="newAddress">A <see cref="T:System.Int64" /> containing the IP address in host-byte-order. </param>
         <summary>
           <para>Constructs and initializes a new instance of the <see cref="T:System.Net.IPAddress" />
 class.</para>
@@ -136,33 +146,42 @@ class.</para>
           <paramref name="newAddress" /> is less than 0 or greater than 0x00000000FFFFFFFF.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public IPAddress (byte[] address, long scopeid);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(unsigned int8[] address, int64 scopeid) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public IPAddress (byte[] address, long scopeId);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="address" Type="System.Byte[]" />
-        <Parameter Name="scopeId" Type="System.Int64" />
+        <Parameter Name="scopeid" Type="System.Int64" />
       </Parameters>
       <Docs>
         <param name="address">To be added.</param>
-        <param name="scopeId">To be added.</param>
+        <param name="scopeid">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Address">
       <MemberSignature Language="ILASM" Value=".property int64 Address { public hidebysig specialname instance int64 get_Address() public hidebysig specialname instance void set_Address(int64 value) }" />
-      <MemberSignature Language="C#" Value="public long Address { set; get; }" />
+      <MemberSignature Language="C#" Value="public long Address { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Address" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("This property is obsolete. Use GetAddressBytes.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -186,20 +205,17 @@ class.</para>
         <exception cref="T:System.ArgumentOutOfRangeException">The value specified in a set operation is less than 0.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("This property is obsolete. Use GetAddressBytes.")</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="AddressFamily">
       <MemberSignature Language="ILASM" Value=".property valuetype System.Net.Sockets.AddressFamily AddressFamily { public hidebysig specialname instance valuetype System.Net.Sockets.AddressFamily get_AddressFamily() }" />
       <MemberSignature Language="C#" Value="public System.Net.Sockets.AddressFamily AddressFamily { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Net.Sockets.AddressFamily AddressFamily" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Sockets.AddressFamily</ReturnType>
       </ReturnValue>
@@ -218,15 +234,17 @@ class.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Any">
       <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress Any" />
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress Any;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress Any" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
@@ -243,15 +261,17 @@ class.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Broadcast">
       <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress Broadcast" />
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress Broadcast;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress Broadcast" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
@@ -271,23 +291,25 @@ class.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual bool Equals(object comparand)" />
-      <MemberSignature Language="C#" Value="public override bool Equals (object other);" />
+      <MemberSignature Language="C#" Value="public override bool Equals (object comparand);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object comparand) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="other" Type="System.Object" />
+        <Parameter Name="comparand" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="other">A <see cref="T:System.Object" /> to compare to the current instance.</param>
+        <param name="comparand">A <see cref="T:System.Object" /> to compare to the current instance.</param>
         <summary>
           <para>Determines whether the current instance and the
       specified <see cref="T:System.Object" />
@@ -307,14 +329,16 @@ class.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetAddressBytes">
       <MemberSignature Language="C#" Value="public byte[] GetAddressBytes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] GetAddressBytes() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -324,15 +348,17 @@ class.</para>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual int32 GetHashCode()" />
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -354,15 +380,17 @@ containing the hash code for the current instance.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HostToNetworkOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 HostToNetworkOrder(int16 host)" />
       <MemberSignature Language="C#" Value="public static short HostToNetworkOrder (short host);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 HostToNetworkOrder(int16 host) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -385,15 +413,17 @@ in network-byte-order.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HostToNetworkOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 HostToNetworkOrder(int32 host)" />
       <MemberSignature Language="C#" Value="public static int HostToNetworkOrder (int host);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 HostToNetworkOrder(int32 host) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -416,15 +446,17 @@ in network-byte-order.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="HostToNetworkOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 HostToNetworkOrder(int64 host)" />
       <MemberSignature Language="C#" Value="public static long HostToNetworkOrder (long host);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 HostToNetworkOrder(int64 host) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -446,14 +478,16 @@ in network-byte-order.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IPv6Any">
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress IPv6Any;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress IPv6Any" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
@@ -461,14 +495,16 @@ in network-byte-order.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IPv6Loopback">
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress IPv6Loopback;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress IPv6Loopback" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
@@ -476,14 +512,16 @@ in network-byte-order.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IPv6None">
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress IPv6None;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress IPv6None" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
@@ -491,16 +529,14 @@ in network-byte-order.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsIPv6LinkLocal">
       <MemberSignature Language="C#" Value="public bool IsIPv6LinkLocal { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsIPv6LinkLocal" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -513,9 +549,11 @@ in network-byte-order.</para>
     </Member>
     <Member MemberName="IsIPv6Multicast">
       <MemberSignature Language="C#" Value="public bool IsIPv6Multicast { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsIPv6Multicast" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -528,9 +566,27 @@ in network-byte-order.</para>
     </Member>
     <Member MemberName="IsIPv6SiteLocal">
       <MemberSignature Language="C#" Value="public bool IsIPv6SiteLocal { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsIPv6SiteLocal" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsIPv6Teredo">
+      <MemberSignature Language="C#" Value="public bool IsIPv6Teredo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsIPv6Teredo" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -543,16 +599,22 @@ in network-byte-order.</para>
     </Member>
     <Member MemberName="IsLoopback">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static bool IsLoopback(class System.Net.IPAddress address)" />
-      <MemberSignature Language="C#" Value="public static bool IsLoopback (System.Net.IPAddress addr);" />
+      <MemberSignature Language="C#" Value="public static bool IsLoopback (System.Net.IPAddress address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsLoopback(class System.Net.IPAddress address) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="addr" Type="System.Net.IPAddress" />
+        <Parameter Name="address" Type="System.Net.IPAddress" />
       </Parameters>
       <Docs>
-        <param name="addr"> A <see cref="T:System.Net.IPAddress" /> containing the IP address to check.</param>
+        <param name="address"> A <see cref="T:System.Net.IPAddress" /> containing the IP address to check.</param>
         <summary>
           <para> Returns a <see cref="T:System.Boolean" /> that indicates whether the specified IP address is a loopback address.</para>
         </summary>
@@ -570,15 +632,17 @@ in network-byte-order.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Loopback">
       <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress Loopback" />
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress Loopback;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress Loopback" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
@@ -596,15 +660,17 @@ in network-byte-order.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NetworkToHostOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int16 NetworkToHostOrder(int16 network)" />
       <MemberSignature Language="C#" Value="public static short NetworkToHostOrder (short network);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int16 NetworkToHostOrder(int16 network) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
@@ -627,15 +693,17 @@ in host-byte-order.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NetworkToHostOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int32 NetworkToHostOrder(int32 network)" />
       <MemberSignature Language="C#" Value="public static int NetworkToHostOrder (int network);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 NetworkToHostOrder(int32 network) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -657,15 +725,17 @@ in host-byte-order.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NetworkToHostOrder">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static int64 NetworkToHostOrder(int64 network)" />
       <MemberSignature Language="C#" Value="public static long NetworkToHostOrder (long network);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 NetworkToHostOrder(int64 network) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -687,15 +757,17 @@ in host-byte-order.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="ILASM" Value=".field public static initOnly class System.Net.IPAddress None" />
       <MemberSignature Language="C#" Value="public static readonly System.Net.IPAddress None;" />
+      <MemberSignature Language="ILAsm" Value=".field public static initonly class System.Net.IPAddress None" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
@@ -715,15 +787,17 @@ in host-byte-order.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Parse">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.IPAddress Parse(string ipString)" />
       <MemberSignature Language="C#" Value="public static System.Net.IPAddress Parse (string ipString);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.IPAddress Parse(string ipString) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
@@ -749,14 +823,16 @@ in host-byte-order.</para>
           <paramref name="ipString " />is not a valid IP address.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ScopeId">
+      <MemberSignature Language="C#" Value="public long ScopeId { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 ScopeId" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ScopeId">
-      <MemberSignature Language="C#" Value="public long ScopeId { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
@@ -765,15 +841,17 @@ in host-byte-order.</para>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual string ToString()" />
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -798,16 +876,14 @@ in host-byte-order.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="TryParse">
       <MemberSignature Language="C#" Value="public static bool TryParse (string ipString, out System.Net.IPAddress address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool TryParse(string ipString, class System.Net.IPAddress address) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>

@@ -1,5 +1,6 @@
 <Type Name="IsLong" FullName="System.Runtime.CompilerServices.IsLong">
   <TypeSignature Language="C#" Value="public static class IsLong" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit IsLong extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>

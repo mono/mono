@@ -202,7 +202,7 @@ void
 dump_alloc_records (void)
 {
 	int i;
-	qsort (alloc_records, next_record, sizeof (AllocRecord), comp_alloc_record);
+	sgen_qsort (alloc_records, next_record, sizeof (AllocRecord), comp_alloc_record);
 
 	printf ("------------------------------------DUMP RECORDS----------------------------\n");
 	for (i = 0; i < next_record; ++i) {
@@ -220,7 +220,7 @@ verify_alloc_records (void)
 	int max_hole = 0;
 	AllocRecord *prev = NULL;
 
-	qsort (alloc_records, next_record, sizeof (AllocRecord), comp_alloc_record);
+	sgen_qsort (alloc_records, next_record, sizeof (AllocRecord), comp_alloc_record);
 	printf ("------------------------------------DUMP RECORDS- %d %d---------------------------\n", next_record, alloc_count);
 	for (i = 0; i < next_record; ++i) {
 		AllocRecord *rec = alloc_records + i;
@@ -853,6 +853,10 @@ gboolean
 sgen_can_alloc_size (size_t size)
 {
 	SgenFragment *frag;
+
+	if (!SGEN_CAN_ALIGN_UP (size))
+		return FALSE;
+
 	size = SGEN_ALIGN_UP (size);
 
 	for (frag = unmask (mutator_allocator.alloc_head); frag; frag = unmask (frag->next)) {
@@ -865,6 +869,8 @@ sgen_can_alloc_size (size_t size)
 void*
 sgen_nursery_alloc (size_t size)
 {
+	SGEN_ASSERT (1, size >= sizeof (MonoObject) && size <= SGEN_MAX_SMALL_OBJ_SIZE, "Invalid nursery object size");
+
 	SGEN_LOG (4, "Searching nursery for size: %zd", size);
 	size = SGEN_ALIGN_UP (size);
 

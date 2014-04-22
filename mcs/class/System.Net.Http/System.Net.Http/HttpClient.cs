@@ -146,7 +146,7 @@ namespace System.Net.Http
 
 		public Task<HttpResponseMessage> GetAsync (string requestUri, CancellationToken cancellationToken)
 		{
-			return SendAsync (new HttpRequestMessage (HttpMethod.Get, requestUri));
+			return SendAsync (new HttpRequestMessage (HttpMethod.Get, requestUri), cancellationToken);
 		}
 
 		public Task<HttpResponseMessage> GetAsync (string requestUri, HttpCompletionOption completionOption)

@@ -1,6 +1,7 @@
 <Type Name="IEnumerator" FullName="System.Collections.IEnumerator" FullNameSP="System_Collections_IEnumerator" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class interface public abstract IEnumerator" />
   <TypeSignature Language="C#" Value="public interface IEnumerator" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IEnumerator" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -9,6 +10,7 @@
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
+  <Interfaces />
   <Attributes>
     <Attribute>
       <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
@@ -45,7 +47,13 @@
     <Member MemberName="Current">
       <MemberSignature Language="ILASM" Value=".property object Current { public hidebysig virtual abstract specialname object get_Current() }" />
       <MemberSignature Language="C#" Value="public object Current { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Current" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -88,16 +96,17 @@ or after the last element of the collection.</block>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="MoveNext">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool MoveNext()" />
+      <MemberSignature Language="C#" Value="public bool MoveNext ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool MoveNext() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MoveNext">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool MoveNext()" />
-      <MemberSignature Language="C#" Value="public bool MoveNext ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -148,16 +157,17 @@ entire collection.</block>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Reset()" />
+      <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Reset() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Reset">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract void Reset()" />
-      <MemberSignature Language="C#" Value="public void Reset ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -201,13 +211,7 @@ of the collection.</block>
         <exception cref="T:System.InvalidOperationException">The collection was modified after the enumerator was instantiated.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Interfaces />
 </Type>

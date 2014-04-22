@@ -1,6 +1,7 @@
 <Type Name="GlobalProxySelection" FullName="System.Net.GlobalProxySelection" FullNameSP="System_Net_GlobalProxySelection" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public GlobalProxySelection extends System.Object" />
   <TypeSignature Language="C#" Value="public class GlobalProxySelection" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit GlobalProxySelection extends System.Object" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,12 +9,18 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Obsolete("Use WebRequest.DefaultProxy instead")</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para> Contains a global
@@ -34,7 +41,13 @@ if its <see cref="P:System.Net.HttpWebRequest.Proxy" /> property is not set.</pa
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="public GlobalProxySelection ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
@@ -42,15 +55,17 @@ if its <see cref="P:System.Net.HttpWebRequest.Proxy" /> property is not set.</pa
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetEmptyWebProxy">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static class System.Net.IWebProxy GetEmptyWebProxy()" />
       <MemberSignature Language="C#" Value="public static System.Net.IWebProxy GetEmptyWebProxy ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Net.IWebProxy GetEmptyWebProxy() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IWebProxy</ReturnType>
       </ReturnValue>
@@ -68,15 +83,17 @@ instance indicating that no proxy is used to access an Internet resource. </para
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Select">
       <MemberSignature Language="ILASM" Value=".property class System.Net.IWebProxy Select { public hidebysig static specialname class System.Net.IWebProxy get_Select() public hidebysig static specialname void set_Select(class System.Net.IWebProxy value) }" />
-      <MemberSignature Language="C#" Value="public static System.Net.IWebProxy Select { set; get; }" />
+      <MemberSignature Language="C#" Value="public static System.Net.IWebProxy Select { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Net.IWebProxy Select" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.IWebProxy</ReturnType>
       </ReturnValue>
@@ -95,16 +112,7 @@ specified. </para>
         <permission cref="!:System.Security.Permissions.WebPermission">Requires full <see cref="T:System.Net.WebPermission" /> access. See <see cref="F:System.Security.Permissions.PermissionState.Unrestricted" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Obsolete("Use WebRequest.DefaultProxy instead")</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

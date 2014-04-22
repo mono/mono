@@ -1,0 +1,52 @@
+<Type Name="MexHttpsBindingCollectionElement" FullName="System.ServiceModel.Configuration.MexHttpsBindingCollectionElement">
+  <TypeSignature Language="C#" Value="public class MexHttpsBindingCollectionElement : System.ServiceModel.Configuration.MexBindingBindingCollectionElement&lt;System.ServiceModel.WSHttpBinding,System.ServiceModel.Configuration.MexHttpsBindingElement&gt;" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi MexHttpsBindingCollectionElement extends System.ServiceModel.Configuration.MexBindingBindingCollectionElement`2&lt;class System.ServiceModel.WSHttpBinding, class System.ServiceModel.Configuration.MexHttpsBindingElement&gt;" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Configuration.MexBindingBindingCollectionElement&lt;System.ServiceModel.WSHttpBinding,System.ServiceModel.Configuration.MexHttpsBindingElement&gt;</BaseTypeName>
+    <BaseTypeArguments>
+      <BaseTypeArgument TypeParamName="TStandardBinding">System.ServiceModel.WSHttpBinding</BaseTypeArgument>
+      <BaseTypeArgument TypeParamName="TBindingConfiguration">System.ServiceModel.Configuration.MexHttpsBindingElement</BaseTypeArgument>
+    </BaseTypeArguments>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public MexHttpsBindingCollectionElement ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetDefault">
+      <MemberSignature Language="C#" Value="protected override System.ServiceModel.Channels.Binding GetDefault ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig virtual instance class System.ServiceModel.Channels.Binding GetDefault() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Channels.Binding</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

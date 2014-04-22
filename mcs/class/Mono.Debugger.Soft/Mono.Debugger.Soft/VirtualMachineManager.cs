@@ -93,7 +93,8 @@ namespace Mono.Debugger.Soft
 
 			if (options != null && options.Valgrind)
 				info.FileName = "valgrind";
-				
+			info.UseShellExecute = false;
+
 			ITargetProcess p;
 			if (options != null && options.CustomProcessLauncher != null)
 				p = new ProcessWrapper (options.CustomProcessLauncher (info));

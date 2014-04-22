@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug_SGen|Win32">
       <Configuration>Debug_SGen</Configuration>
@@ -36,6 +36,7 @@
   </ItemGroup>
   <Import Project="mono.props" />
   <ItemGroup>
+    <ClCompile Include="..\mono\mini\alias-analysis.c" />
     <ClCompile Include="..\mono\mini\exceptions-amd64.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug_SGen|Win32'">true</ExcludedFromBuild>
@@ -101,7 +102,6 @@
     <ClCompile Include="..\mono\mini\local-propagation.c" />
     <ClCompile Include="..\mono\mini\driver.c" />
     <ClCompile Include="..\mono\mini\debug-mini.c" />
-    <ClInclude Include="..\mono\mini\debug-mini.h" />
     <ClCompile Include="..\mono\mini\linear-scan.c" />
     <ClCompile Include="..\mono\mini\aot-compiler.c" />
     <ClCompile Include="..\mono\mini\aot-runtime.c" />
@@ -141,11 +141,10 @@
     <ClCompile Include="..\mono\mini\mini-gc.c" />
     <ClInclude Include="..\mono\mini\debugger-agent.h " />
     <ClCompile Include="..\mono\mini\debugger-agent.c" />
-    <ClCompile Include="..\mono\mini\debug-debugger.c" />
-    <ClInclude Include="..\mono\mini\debug-debugger.h" />
     <ClCompile Include="..\mono\mini\xdebug.c" />
     <ClInclude Include="..\mono\mini\mini-llvm.h" />
     <ClInclude Include="..\mono\mini\mini-llvm-cpp.h" />
+    <ClCompile Include="..\mono\mini\mini-native-types.c" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{CB0D9E92-293C-439C-9AC7-C5F59B6E0771}</ProjectGuid>

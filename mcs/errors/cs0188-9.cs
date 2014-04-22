@@ -6,7 +6,7 @@ using System;
 public struct S
 {
 	public int A { get; private set;}
-	event EventHandler eh;
+	public event EventHandler eh;
 
 	public S (int a)
 	{

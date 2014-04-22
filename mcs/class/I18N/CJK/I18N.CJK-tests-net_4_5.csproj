@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9F1843D9-A9D4-4D87-8CC9-B4AF53DE0196}</ProjectGuid>
+    <ProjectGuid>{06AF7FA1-1355-4A2F-8627-2AA11C5B2689}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\I18N.CJK-tests-net_4_5</OutputPath>
@@ -56,22 +56,25 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\Common\I18N-net_4_5.csproj">
-      <Project>{8A8D5677-ACBD-40B4-916D-B9B5451F713D}</Project>
+      <Project>{C337A9A4-3797-4339-AD23-493DF062CD76}</Project>
       <Name>Common\I18N-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\CJK\I18N.CJK-net_4_5.csproj">
-      <Project>{0CE11B15-9B31-4AD1-857C-55B69C027130}</Project>
+      <Project>{E1E28FDB-826D-4FEB-B3B9-3FF98BD2E43F}</Project>
       <Name>CJK\I18N.CJK-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -96,3 +99,4 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+

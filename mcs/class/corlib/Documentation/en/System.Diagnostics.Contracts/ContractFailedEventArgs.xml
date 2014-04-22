@@ -1,5 +1,6 @@
 <Type Name="ContractFailedEventArgs" FullName="System.Diagnostics.Contracts.ContractFailedEventArgs">
   <TypeSignature Language="C#" Value="public sealed class ContractFailedEventArgs : EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ContractFailedEventArgs extends System.EventArgs" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -15,13 +16,14 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ContractFailedEventArgs (System.Diagnostics.Contracts.ContractFailureKind failureKind, string message, string condition, Exception originalException);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(valuetype System.Diagnostics.Contracts.ContractFailureKind failureKind, string message, string condition, class System.Exception originalException) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Attributes>
         <Attribute>
-          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <Parameters>
@@ -41,6 +43,7 @@
     </Member>
     <Member MemberName="Condition">
       <MemberSignature Language="C#" Value="public string Condition { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Condition" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -56,6 +59,7 @@
     </Member>
     <Member MemberName="FailureKind">
       <MemberSignature Language="C#" Value="public System.Diagnostics.Contracts.ContractFailureKind FailureKind { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.Contracts.ContractFailureKind FailureKind" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -71,6 +75,7 @@
     </Member>
     <Member MemberName="Handled">
       <MemberSignature Language="C#" Value="public bool Handled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Handled" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -86,6 +91,7 @@
     </Member>
     <Member MemberName="Message">
       <MemberSignature Language="C#" Value="public string Message { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Message" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -101,6 +107,7 @@
     </Member>
     <Member MemberName="OriginalException">
       <MemberSignature Language="C#" Value="public Exception OriginalException { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Exception OriginalException" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -116,6 +123,7 @@
     </Member>
     <Member MemberName="SetHandled">
       <MemberSignature Language="C#" Value="public void SetHandled ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetHandled() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -131,6 +139,7 @@
     </Member>
     <Member MemberName="SetUnwind">
       <MemberSignature Language="C#" Value="public void SetUnwind ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetUnwind() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -147,6 +156,7 @@ Requesting the contract failure unwind the stack suppresses the default contract
     </Member>
     <Member MemberName="Unwind">
       <MemberSignature Language="C#" Value="public bool Unwind { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Unwind" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

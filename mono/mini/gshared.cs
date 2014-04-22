@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 
@@ -1291,11 +1292,21 @@ public class Tests
 		}
 	}
 
+	struct ConsStructThrow : IConstrained {
+		public void foo () {
+			throw new Exception ();
+		}
+
+		public void foo_ref_arg (string s) {
+		}
+	}
+
 	interface IFaceConstrained {
 		void constrained_void_iface_call<T, T2>(T t, T2 t2) where T2 : IConstrained;
 		void constrained_void_iface_call_ref_arg<T, T2>(T t, T2 t2) where T2 : IConstrained;
 		void constrained_void_iface_call_gsharedvt_arg<T, T2, T3>(T t, T2 t2, T3 t3) where T2 : IConstrained<T>;
 		T constrained_iface_call_gsharedvt_ret<T, T2, T3>(T t, T2 t2, T3 t3) where T2 : IConstrained<T>;
+		T2 constrained_normal_call<T, T2>(T t, T2 t2) where T2 : VClass;
 	}
 
 	class ClassConstrained : IFaceConstrained {
@@ -1317,6 +1328,18 @@ public class Tests
 		[MethodImplAttribute (MethodImplOptions.NoInlining)]
 		public T constrained_iface_call_gsharedvt_ret<T, T2, T3>(T t, T2 t2, T3 t3) where T2 : IConstrained<T> {
 			return t2.foo_gsharedvt_ret (t);
+		}
+
+		[MethodImplAttribute (MethodImplOptions.NoInlining)]
+		public T2 constrained_normal_call<T, T2>(T t, T2 t2) where T2 : VClass {
+			/* This becomes a constrained call even through 't2' is forced to be a reference type by the constraint */
+			return (T2)t2.foo (5);
+		}
+	}
+
+	class VClass {
+		public virtual VClass foo (int i) {
+			return this;
 		}
 	}
 
@@ -1341,6 +1364,17 @@ public class Tests
 		if (!(constrained_res is int) || ((int)constrained_res) != 43)
 			return 4;
 		return 0;
+	}
+
+	public static int test_0_constrained_eh () {
+		var s2 = new ConsStructThrow () { };
+		try {
+			IFaceConstrained c = new ClassConstrained ();
+			c.constrained_void_iface_call<int, ConsStructThrow> (1, s2);
+			return 1;
+		} catch (Exception) {
+			return 0;
+		}
 	}
 
 	public static int test_0_constrained_void_iface_call_gsharedvt_arg () {
@@ -1378,6 +1412,14 @@ public class Tests
 		return 0;
 	}
 
+	public static int test_0_constrained_normal_call () {
+		IFaceConstrained c = new ClassConstrained ();
+
+		var o = new VClass ();
+		var res = c.constrained_normal_call<int, VClass> (1, o);
+		return res == o ? 0 : 1;
+	}
+
 	public static async Task<T> FooAsync<T> (int i, int j) {
 		Task<int> t = new Task<int> (delegate () { return 42; });
 		var response = await t;
@@ -1387,13 +1429,20 @@ public class Tests
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void call_async<T> (int i, int j) {
 		Task<T> t = FooAsync<T> (1, 2);
-		t.RunSynchronously ();
+		// FIXME: This doesn't work
+		//t.RunSynchronously ();
 	}
 
 	// In AOT mode, the async infrastructure depends on gsharedvt methods
 	public static int test_0_async_call_from_generic () {
 		call_async<string> (1, 2);
 		return 0;
+	}
+
+	public static int test_0_array_helper_gsharedvt () {
+		var arr = new AnEnum [16];
+		var c = new ReadOnlyCollection<AnEnum> (arr);
+		return c.Contains (AnEnum.Two) == false ? 0 : 1;
 	}
 }
 

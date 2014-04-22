@@ -1,8 +1,10 @@
 <Type Name="MaskedTextProvider" FullName="System.ComponentModel.MaskedTextProvider">
   <TypeSignature Language="C#" Value="public class MaskedTextProvider : ICloneable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi MaskedTextProvider extends System.Object implements class System.ICloneable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -19,9 +21,11 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MaskedTextProvider (string mask);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string mask) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="mask" Type="System.String" />
@@ -34,9 +38,11 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MaskedTextProvider (string mask, bool restrictToAscii);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string mask, bool restrictToAscii) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="mask" Type="System.String" />
@@ -51,9 +57,11 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MaskedTextProvider (string mask, System.Globalization.CultureInfo culture);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string mask, class System.Globalization.CultureInfo culture) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="mask" Type="System.String" />
@@ -68,9 +76,11 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MaskedTextProvider (string mask, char passwordChar, bool allowPromptAsInput);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string mask, char passwordChar, bool allowPromptAsInput) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="mask" Type="System.String" />
@@ -87,9 +97,11 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MaskedTextProvider (string mask, System.Globalization.CultureInfo culture, bool restrictToAscii);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string mask, class System.Globalization.CultureInfo culture, bool restrictToAscii) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="mask" Type="System.String" />
@@ -106,9 +118,11 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MaskedTextProvider (string mask, System.Globalization.CultureInfo culture, char passwordChar, bool allowPromptAsInput);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string mask, class System.Globalization.CultureInfo culture, char passwordChar, bool allowPromptAsInput) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="mask" Type="System.String" />
@@ -127,9 +141,11 @@
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public MaskedTextProvider (string mask, System.Globalization.CultureInfo culture, bool allowPromptAsInput, char promptChar, char passwordChar, bool restrictToAscii);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string mask, class System.Globalization.CultureInfo culture, bool allowPromptAsInput, char promptChar, char passwordChar, bool restrictToAscii) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="mask" Type="System.String" />
@@ -152,9 +168,11 @@
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public bool Add (char input);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Add(char input) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -171,9 +189,11 @@
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public bool Add (string input);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Add(string input) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -190,9 +210,11 @@
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public bool Add (char input, out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Add(char input, int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -213,9 +235,11 @@
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="C#" Value="public bool Add (string input, out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Add(string input, int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -236,9 +260,11 @@
     </Member>
     <Member MemberName="AllowPromptAsInput">
       <MemberSignature Language="C#" Value="public bool AllowPromptAsInput { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AllowPromptAsInput" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -251,9 +277,11 @@
     </Member>
     <Member MemberName="AsciiOnly">
       <MemberSignature Language="C#" Value="public bool AsciiOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool AsciiOnly" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -266,9 +294,11 @@
     </Member>
     <Member MemberName="AssignedEditPositionCount">
       <MemberSignature Language="C#" Value="public int AssignedEditPositionCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 AssignedEditPositionCount" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -281,9 +311,11 @@
     </Member>
     <Member MemberName="AvailableEditPositionCount">
       <MemberSignature Language="C#" Value="public int AvailableEditPositionCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 AvailableEditPositionCount" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -296,9 +328,11 @@
     </Member>
     <Member MemberName="Clear">
       <MemberSignature Language="C#" Value="public void Clear ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Clear() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -311,9 +345,11 @@
     </Member>
     <Member MemberName="Clear">
       <MemberSignature Language="C#" Value="public void Clear (out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Clear(valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
@@ -329,9 +365,11 @@
     </Member>
     <Member MemberName="Clone">
       <MemberSignature Language="C#" Value="public object Clone ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object Clone() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -345,9 +383,11 @@
     </Member>
     <Member MemberName="Culture">
       <MemberSignature Language="C#" Value="public System.Globalization.CultureInfo Culture { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Globalization.CultureInfo Culture" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureInfo</ReturnType>
@@ -360,9 +400,11 @@
     </Member>
     <Member MemberName="DefaultPasswordChar">
       <MemberSignature Language="C#" Value="public static char DefaultPasswordChar { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property char DefaultPasswordChar" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
@@ -375,9 +417,11 @@
     </Member>
     <Member MemberName="EditPositionCount">
       <MemberSignature Language="C#" Value="public int EditPositionCount { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 EditPositionCount" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -390,9 +434,11 @@
     </Member>
     <Member MemberName="EditPositions">
       <MemberSignature Language="C#" Value="public System.Collections.IEnumerator EditPositions { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IEnumerator EditPositions" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
@@ -405,9 +451,11 @@
     </Member>
     <Member MemberName="FindAssignedEditPositionFrom">
       <MemberSignature Language="C#" Value="public int FindAssignedEditPositionFrom (int position, bool direction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 FindAssignedEditPositionFrom(int32 position, bool direction) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -426,9 +474,11 @@
     </Member>
     <Member MemberName="FindAssignedEditPositionInRange">
       <MemberSignature Language="C#" Value="public int FindAssignedEditPositionInRange (int startPosition, int endPosition, bool direction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 FindAssignedEditPositionInRange(int32 startPosition, int32 endPosition, bool direction) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -449,9 +499,11 @@
     </Member>
     <Member MemberName="FindEditPositionFrom">
       <MemberSignature Language="C#" Value="public int FindEditPositionFrom (int position, bool direction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 FindEditPositionFrom(int32 position, bool direction) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -470,9 +522,11 @@
     </Member>
     <Member MemberName="FindEditPositionInRange">
       <MemberSignature Language="C#" Value="public int FindEditPositionInRange (int startPosition, int endPosition, bool direction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 FindEditPositionInRange(int32 startPosition, int32 endPosition, bool direction) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -493,9 +547,11 @@
     </Member>
     <Member MemberName="FindNonEditPositionFrom">
       <MemberSignature Language="C#" Value="public int FindNonEditPositionFrom (int position, bool direction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 FindNonEditPositionFrom(int32 position, bool direction) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -514,9 +570,11 @@
     </Member>
     <Member MemberName="FindNonEditPositionInRange">
       <MemberSignature Language="C#" Value="public int FindNonEditPositionInRange (int startPosition, int endPosition, bool direction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 FindNonEditPositionInRange(int32 startPosition, int32 endPosition, bool direction) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -537,9 +595,11 @@
     </Member>
     <Member MemberName="FindUnassignedEditPositionFrom">
       <MemberSignature Language="C#" Value="public int FindUnassignedEditPositionFrom (int position, bool direction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 FindUnassignedEditPositionFrom(int32 position, bool direction) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -558,9 +618,11 @@
     </Member>
     <Member MemberName="FindUnassignedEditPositionInRange">
       <MemberSignature Language="C#" Value="public int FindUnassignedEditPositionInRange (int startPosition, int endPosition, bool direction);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance int32 FindUnassignedEditPositionInRange(int32 startPosition, int32 endPosition, bool direction) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -581,9 +643,11 @@
     </Member>
     <Member MemberName="GetOperationResultFromHint">
       <MemberSignature Language="C#" Value="public static bool GetOperationResultFromHint (System.ComponentModel.MaskedTextResultHint hint);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool GetOperationResultFromHint(valuetype System.ComponentModel.MaskedTextResultHint hint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -599,10 +663,12 @@
       </Docs>
     </Member>
     <Member MemberName="IncludeLiterals">
-      <MemberSignature Language="C#" Value="public bool IncludeLiterals { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IncludeLiterals { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludeLiterals" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -614,10 +680,12 @@
       </Docs>
     </Member>
     <Member MemberName="IncludePrompt">
-      <MemberSignature Language="C#" Value="public bool IncludePrompt { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IncludePrompt { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IncludePrompt" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -630,9 +698,11 @@
     </Member>
     <Member MemberName="InsertAt">
       <MemberSignature Language="C#" Value="public bool InsertAt (char input, int position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool InsertAt(char input, int32 position) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -651,9 +721,11 @@
     </Member>
     <Member MemberName="InsertAt">
       <MemberSignature Language="C#" Value="public bool InsertAt (string input, int position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool InsertAt(string input, int32 position) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -672,9 +744,11 @@
     </Member>
     <Member MemberName="InsertAt">
       <MemberSignature Language="C#" Value="public bool InsertAt (char input, int position, out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool InsertAt(char input, int32 position, int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -697,9 +771,11 @@
     </Member>
     <Member MemberName="InsertAt">
       <MemberSignature Language="C#" Value="public bool InsertAt (string input, int position, out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool InsertAt(string input, int32 position, int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -722,9 +798,11 @@
     </Member>
     <Member MemberName="InvalidIndex">
       <MemberSignature Language="C#" Value="public static int InvalidIndex { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property int32 InvalidIndex" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -737,9 +815,11 @@
     </Member>
     <Member MemberName="IsAvailablePosition">
       <MemberSignature Language="C#" Value="public bool IsAvailablePosition (int position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsAvailablePosition(int32 position) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -756,9 +836,11 @@
     </Member>
     <Member MemberName="IsEditPosition">
       <MemberSignature Language="C#" Value="public bool IsEditPosition (int position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool IsEditPosition(int32 position) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -774,10 +856,12 @@
       </Docs>
     </Member>
     <Member MemberName="IsPassword">
-      <MemberSignature Language="C#" Value="public bool IsPassword { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool IsPassword { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsPassword" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -790,9 +874,11 @@
     </Member>
     <Member MemberName="IsValidInputChar">
       <MemberSignature Language="C#" Value="public static bool IsValidInputChar (char c);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsValidInputChar(char c) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -809,9 +895,11 @@
     </Member>
     <Member MemberName="IsValidMaskChar">
       <MemberSignature Language="C#" Value="public static bool IsValidMaskChar (char c);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsValidMaskChar(char c) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -828,9 +916,11 @@
     </Member>
     <Member MemberName="IsValidPasswordChar">
       <MemberSignature Language="C#" Value="public static bool IsValidPasswordChar (char c);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool IsValidPasswordChar(char c) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -847,9 +937,11 @@
     </Member>
     <Member MemberName="Item">
       <MemberSignature Language="C#" Value="public char this[int index] { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance char Item(int32)" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
@@ -866,9 +958,11 @@
     </Member>
     <Member MemberName="LastAssignedPosition">
       <MemberSignature Language="C#" Value="public int LastAssignedPosition { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 LastAssignedPosition" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -881,9 +975,11 @@
     </Member>
     <Member MemberName="Length">
       <MemberSignature Language="C#" Value="public int Length { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int32 Length" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -896,9 +992,11 @@
     </Member>
     <Member MemberName="Mask">
       <MemberSignature Language="C#" Value="public string Mask { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Mask" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -911,9 +1009,11 @@
     </Member>
     <Member MemberName="MaskCompleted">
       <MemberSignature Language="C#" Value="public bool MaskCompleted { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool MaskCompleted" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -926,9 +1026,11 @@
     </Member>
     <Member MemberName="MaskFull">
       <MemberSignature Language="C#" Value="public bool MaskFull { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool MaskFull" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -940,10 +1042,12 @@
       </Docs>
     </Member>
     <Member MemberName="PasswordChar">
-      <MemberSignature Language="C#" Value="public char PasswordChar { set; get; }" />
+      <MemberSignature Language="C#" Value="public char PasswordChar { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance char PasswordChar" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
@@ -955,10 +1059,12 @@
       </Docs>
     </Member>
     <Member MemberName="PromptChar">
-      <MemberSignature Language="C#" Value="public char PromptChar { set; get; }" />
+      <MemberSignature Language="C#" Value="public char PromptChar { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance char PromptChar" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Char</ReturnType>
@@ -971,9 +1077,11 @@
     </Member>
     <Member MemberName="Remove">
       <MemberSignature Language="C#" Value="public bool Remove ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Remove() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -987,9 +1095,11 @@
     </Member>
     <Member MemberName="Remove">
       <MemberSignature Language="C#" Value="public bool Remove (out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Remove(int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1008,9 +1118,11 @@
     </Member>
     <Member MemberName="RemoveAt">
       <MemberSignature Language="C#" Value="public bool RemoveAt (int position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveAt(int32 position) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1027,9 +1139,11 @@
     </Member>
     <Member MemberName="RemoveAt">
       <MemberSignature Language="C#" Value="public bool RemoveAt (int startPosition, int endPosition);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveAt(int32 startPosition, int32 endPosition) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1048,9 +1162,11 @@
     </Member>
     <Member MemberName="RemoveAt">
       <MemberSignature Language="C#" Value="public bool RemoveAt (int startPosition, int endPosition, out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool RemoveAt(int32 startPosition, int32 endPosition, int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1073,9 +1189,11 @@
     </Member>
     <Member MemberName="Replace">
       <MemberSignature Language="C#" Value="public bool Replace (char input, int position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Replace(char input, int32 position) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1094,9 +1212,11 @@
     </Member>
     <Member MemberName="Replace">
       <MemberSignature Language="C#" Value="public bool Replace (string input, int position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Replace(string input, int32 position) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1115,9 +1235,11 @@
     </Member>
     <Member MemberName="Replace">
       <MemberSignature Language="C#" Value="public bool Replace (char input, int position, out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Replace(char input, int32 position, int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1140,9 +1262,11 @@
     </Member>
     <Member MemberName="Replace">
       <MemberSignature Language="C#" Value="public bool Replace (string input, int position, out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Replace(string input, int32 position, int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1165,9 +1289,11 @@
     </Member>
     <Member MemberName="Replace">
       <MemberSignature Language="C#" Value="public bool Replace (char input, int startPosition, int endPosition, out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Replace(char input, int32 startPosition, int32 endPosition, int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1192,9 +1318,11 @@
     </Member>
     <Member MemberName="Replace">
       <MemberSignature Language="C#" Value="public bool Replace (string input, int startPosition, int endPosition, out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Replace(string input, int32 startPosition, int32 endPosition, int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1218,10 +1346,12 @@
       </Docs>
     </Member>
     <Member MemberName="ResetOnPrompt">
-      <MemberSignature Language="C#" Value="public bool ResetOnPrompt { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ResetOnPrompt { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ResetOnPrompt" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1233,10 +1363,12 @@
       </Docs>
     </Member>
     <Member MemberName="ResetOnSpace">
-      <MemberSignature Language="C#" Value="public bool ResetOnSpace { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool ResetOnSpace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool ResetOnSpace" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1249,9 +1381,11 @@
     </Member>
     <Member MemberName="Set">
       <MemberSignature Language="C#" Value="public bool Set (string input);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Set(string input) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1268,9 +1402,11 @@
     </Member>
     <Member MemberName="Set">
       <MemberSignature Language="C#" Value="public bool Set (string input, out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool Set(string input, int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1290,10 +1426,12 @@
       </Docs>
     </Member>
     <Member MemberName="SkipLiterals">
-      <MemberSignature Language="C#" Value="public bool SkipLiterals { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool SkipLiterals { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool SkipLiterals" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1306,9 +1444,11 @@
     </Member>
     <Member MemberName="ToDisplayString">
       <MemberSignature Language="C#" Value="public string ToDisplayString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToDisplayString() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1322,9 +1462,11 @@
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1338,9 +1480,11 @@
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public string ToString (bool ignorePasswordChar);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(bool ignorePasswordChar) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1357,9 +1501,11 @@
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public string ToString (bool includePrompt, bool includeLiterals);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(bool includePrompt, bool includeLiterals) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1378,9 +1524,11 @@
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public string ToString (int startPosition, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(int32 startPosition, int32 length) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1399,9 +1547,11 @@
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public string ToString (bool ignorePasswordChar, int startPosition, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(bool ignorePasswordChar, int32 startPosition, int32 length) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1422,9 +1572,11 @@
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public string ToString (bool includePrompt, bool includeLiterals, int startPosition, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(bool includePrompt, bool includeLiterals, int32 startPosition, int32 length) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1447,9 +1599,11 @@
     </Member>
     <Member MemberName="ToString">
       <MemberSignature Language="C#" Value="public string ToString (bool ignorePasswordChar, bool includePrompt, bool includeLiterals, int startPosition, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string ToString(bool ignorePasswordChar, bool includePrompt, bool includeLiterals, int32 startPosition, int32 length) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -1474,9 +1628,11 @@
     </Member>
     <Member MemberName="VerifyChar">
       <MemberSignature Language="C#" Value="public bool VerifyChar (char input, int position, out System.ComponentModel.MaskedTextResultHint hint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool VerifyChar(char input, int32 position, valuetype System.ComponentModel.MaskedTextResultHint hint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1497,9 +1653,11 @@
     </Member>
     <Member MemberName="VerifyEscapeChar">
       <MemberSignature Language="C#" Value="public bool VerifyEscapeChar (char input, int position);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool VerifyEscapeChar(char input, int32 position) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1518,9 +1676,11 @@
     </Member>
     <Member MemberName="VerifyString">
       <MemberSignature Language="C#" Value="public bool VerifyString (string input);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool VerifyString(string input) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
@@ -1537,9 +1697,11 @@
     </Member>
     <Member MemberName="VerifyString">
       <MemberSignature Language="C#" Value="public bool VerifyString (string input, out int testPosition, out System.ComponentModel.MaskedTextResultHint resultHint);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool VerifyString(string input, int32 testPosition, valuetype System.ComponentModel.MaskedTextResultHint resultHint) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>

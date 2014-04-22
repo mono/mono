@@ -35,6 +35,11 @@ namespace System.Transactions
 			ForceRollback (null);
 		}
 
+		internal override void InternalOnDone ()
+		{
+			this.Prepared();			
+		}
+
 		[MonoTODO]
 		public void ForceRollback (Exception ex)
 		{

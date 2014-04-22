@@ -1554,6 +1554,18 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		public void JoinTestNullKeys ()
+		{
+			var l1 = new [] {
+				new { Name = "name1", Nullable = (int?) null },
+				new { Name = "name2", Nullable = (int?) null }
+			};
+
+			var count = l1.Join (l1, i => i.Nullable, i => i.Nullable, (x, y) => x.Name).Count ();
+			Assert.AreEqual (0, count);
+		}
+
+		[Test]
 		public void GroupJoinArgumentNullTest ()
 		{
 			string [] data = { "2", "1", "5", "3", "4" };
@@ -1593,6 +1605,16 @@ namespace MonoTests.System.Linq {
 			// GroupJoin<TOuter,TInner,TKey,TResult> (IEnumerable<TInner>, Func<TOuter, TKey>, Func<TInner, TKey>, Func<TOuter, IEnumerable<TInner>, TResult, IEqualityComparer<TKey>>)
 			AssertAreSame (expected1, dataOuter1.GroupJoin (dataInner1, x => x, x => x, (x, y) => { foreach (var s in y) x += s; return x; }, EqualityComparer<string>.Default));
 			AssertAreSame (expected2, dataOuter2.GroupJoin (dataInner2, x => x, x => x, (x, y) => { foreach (var s in y) x += s; return x; }, EqualityComparer<string>.Default));
+		}
+
+		[Test]
+		public void GroupJoinWithNullKeys ()
+		{
+			string[] l1 = { null };
+			string[] l2 = { null, null };
+			var res = l1.GroupJoin (l2, x => x, y => y, (a, b) => new { Key = a, Count = b.Count () }).ToArray ();
+			Assert.AreEqual (1, res.Length);
+			Assert.AreEqual (0, res [0].Count);
 		}
 
 		[Test]

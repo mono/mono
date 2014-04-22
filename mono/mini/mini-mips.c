@@ -64,7 +64,6 @@ int mono_exc_esp_offset = 0;
 static int tls_mode = TLS_MODE_DETECT;
 static int lmf_pthread_key = -1;
 static int monothread_key = -1;
-static int monodomain_key = -1;
 
 /* Whenever the host is little-endian */
 static int little_endian;
@@ -5756,11 +5755,6 @@ setup_tls_access (void)
 		}
 #endif
 	}
-	if (monodomain_key == -1) {
-		ptk = mono_domain_get_tls_key ();
-		if (ptk < 1024)
-			monodomain_key = ptk;
-	}
 	if (lmf_pthread_key == -1) {
 		ptk = mono_jit_tls_id;
 		if (ptk < 1024) {
@@ -5842,19 +5836,6 @@ gboolean
 mono_arch_print_tree (MonoInst *tree, int arity)
 {
 	return 0;
-}
-
-MonoInst* mono_arch_get_domain_intrinsic (MonoCompile* cfg)
-{
-	MonoInst* ins;
-
-	setup_tls_access ();
-	if (monodomain_key == -1)
-		return NULL;
-	
-	MONO_INST_NEW (cfg, ins, OP_TLS_GET);
-	ins->inst_offset = monodomain_key;
-	return ins;
 }
 
 mgreg_t
@@ -6149,6 +6130,15 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 {
 	NOT_IMPLEMENTED;
 	return NULL;
+}
+
+void
+mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
+{
+	ext->lmf.previous_lmf = prev_lmf;
+	/* Mark that this is a MonoLMFExt */
+	ext->lmf.previous_lmf = (gpointer)(((gssize)ext->lmf.previous_lmf) | 2);
+	ext->lmf.iregs [mips_sp] = (gssize)ext;
 }
 
 #endif /* MONO_ARCH_SOFT_DEBUG_SUPPORTED */

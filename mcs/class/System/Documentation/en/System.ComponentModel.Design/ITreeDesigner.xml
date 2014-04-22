@@ -1,12 +1,17 @@
 <Type Name="ITreeDesigner" FullName="System.ComponentModel.Design.ITreeDesigner">
-  <TypeSignature Language="C#" Value="public interface ITreeDesigner : System.ComponentModel.Design.IDesigner" />
+  <TypeSignature Language="C#" Value="public interface ITreeDesigner : IDisposable, System.ComponentModel.Design.IDesigner" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITreeDesigner implements class System.ComponentModel.Design.IDesigner, class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
     <Interface>
       <InterfaceName>System.ComponentModel.Design.IDesigner</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
     </Interface>
   </Interfaces>
   <Docs>
@@ -16,9 +21,11 @@
   <Members>
     <Member MemberName="Children">
       <MemberSignature Language="C#" Value="public System.Collections.ICollection Children { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.ICollection Children" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>
@@ -31,9 +38,11 @@
     </Member>
     <Member MemberName="Parent">
       <MemberSignature Language="C#" Value="public System.ComponentModel.Design.IDesigner Parent { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ComponentModel.Design.IDesigner Parent" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.ComponentModel.Design.IDesigner</ReturnType>

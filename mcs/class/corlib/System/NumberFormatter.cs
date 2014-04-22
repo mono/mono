@@ -557,9 +557,7 @@ namespace System
 
 		private void Resize (int len)
 		{
-			char[] newBuf = new char [len];
-			Array.Copy (_cbuf, newBuf, _ind);
-			_cbuf = newBuf;
+			Array.Resize (ref _cbuf, len);
 		}
 
 		private void Append (char c)
@@ -777,29 +775,36 @@ namespace System
 		[ThreadStatic]
 		static NumberFormatter threadNumberFormatter;
 
-		private static NumberFormatter GetInstance()
+		[ThreadStatic]
+		static NumberFormatter userFormatProvider;
+
+		private static NumberFormatter GetInstance (IFormatProvider fp)
 		{
+			if (fp != null) {
+				if (userFormatProvider == null) {
+					Interlocked.CompareExchange (ref userFormatProvider, new NumberFormatter (null), null);
+				}
+
+				return userFormatProvider;
+			}
+
 			NumberFormatter res = threadNumberFormatter;
 			threadNumberFormatter = null;
 			if (res == null)
 				return new NumberFormatter (Thread.CurrentThread);
+			res.CurrentCulture = Thread.CurrentThread.CurrentCulture;
 			return res;
 		}
 
 		private void Release()
 		{
-			threadNumberFormatter = this;
-		}
-
-		internal static void SetThreadCurrentCulture (CultureInfo culture)
-		{
-			if (threadNumberFormatter != null)
-				threadNumberFormatter.CurrentCulture = culture;
+			if (this != userFormatProvider)
+				threadNumberFormatter = this;
 		}
 
 		public static string NumberToString (string format, sbyte value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value, Int8DefPrecision);
 			string res = inst.IntegerToString (format, fp);
 			inst.Release();
@@ -808,7 +813,7 @@ namespace System
 
 		public static string NumberToString (string format, byte value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value, UInt8DefPrecision);
 			string res = inst.IntegerToString (format, fp);
 			inst.Release();
@@ -817,7 +822,7 @@ namespace System
 
 		public static string NumberToString (string format, ushort value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value, Int16DefPrecision);
 			string res = inst.IntegerToString (format, fp);
 			inst.Release();
@@ -826,7 +831,7 @@ namespace System
 
 		public static string NumberToString (string format, short value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value, UInt16DefPrecision);
 			string res = inst.IntegerToString (format, fp);
 			inst.Release();
@@ -835,7 +840,7 @@ namespace System
 
 		public static string NumberToString (string format, uint value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value, Int32DefPrecision);
 			string res = inst.IntegerToString (format, fp);
 			inst.Release();
@@ -844,7 +849,7 @@ namespace System
 
 		public static string NumberToString (string format, int value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value, UInt32DefPrecision);
 			string res = inst.IntegerToString (format, fp);
 			inst.Release();
@@ -853,7 +858,7 @@ namespace System
 
 		public static string NumberToString (string format, ulong value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value);
 			string res = inst.IntegerToString (format, fp);
 			inst.Release();
@@ -862,7 +867,7 @@ namespace System
 
 		public static string NumberToString (string format, long value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value);
 			string res = inst.IntegerToString (format, fp);
 			inst.Release();
@@ -871,7 +876,7 @@ namespace System
 
 		public static string NumberToString (string format, float value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value, SingleDefPrecision);
 			NumberFormatInfo nfi = inst.GetNumberFormatInstance (fp);
 			string res;
@@ -892,7 +897,7 @@ namespace System
 
 		public static string NumberToString (string format, double value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value, DoubleDefPrecision);
 			NumberFormatInfo nfi = inst.GetNumberFormatInstance (fp);
 			string res;
@@ -913,7 +918,7 @@ namespace System
 
 		public static string NumberToString (string format, decimal value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (format, value);
 			string res = inst.NumberToString (format, inst.GetNumberFormatInstance (fp));
 			inst.Release();
@@ -925,7 +930,7 @@ namespace System
 			if (value >= HundredMillion)
 				return NumberToString (null, value, fp);
 
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			string res = inst.FastIntegerToString ((int)value, fp);
 			inst.Release();
 			return res;
@@ -936,7 +941,7 @@ namespace System
 			if (value >= HundredMillion || value <= -HundredMillion)
 				return NumberToString (null, value, fp);
 
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			string res = inst.FastIntegerToString (value, fp);
 			inst.Release();
 			return res;
@@ -947,7 +952,7 @@ namespace System
 			if (value >= HundredMillion)
 				return NumberToString (null, value, fp);
 
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			string res = inst.FastIntegerToString ((int)value, fp);
 			inst.Release();
 			return res;
@@ -958,7 +963,7 @@ namespace System
 			if (value >= HundredMillion || value <= -HundredMillion)
 				return NumberToString (null, value, fp);
 
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			string res = inst.FastIntegerToString ((int)value, fp);
 			inst.Release();
 			return res;
@@ -966,7 +971,7 @@ namespace System
 
 		public static string NumberToString (float value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			inst.Init (null, value, SingleDefPrecision);
 			NumberFormatInfo nfi = inst.GetNumberFormatInstance (fp);
 			string res;
@@ -985,7 +990,7 @@ namespace System
 
 		public static string NumberToString (double value, IFormatProvider fp)
 		{
-			NumberFormatter inst = GetInstance();
+			NumberFormatter inst = GetInstance (fp);
 			NumberFormatInfo nfi = inst.GetNumberFormatInstance (fp);
 			inst.Init (null, value, DoubleDefPrecision);
 			string res;

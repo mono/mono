@@ -1,0 +1,166 @@
+<Type Name="IPeerResolverContract" FullName="System.ServiceModel.PeerResolvers.IPeerResolverContract">
+  <TypeSignature Language="C#" Value="public interface IPeerResolverContract" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IPeerResolverContract" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.ServiceModel.ServiceContract(Name="IPeerResolverContract", Namespace="http://schemas.microsoft.com/net/2006/05/peer/resolver", SessionMode=System.ServiceModel.SessionMode.Allowed)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="GetServiceSettings">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.PeerResolvers.ServiceSettingsResponseInfo GetServiceSettings ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.PeerResolvers.ServiceSettingsResponseInfo GetServiceSettings() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ServiceModel.OperationContract(Action="http://schemas.microsoft.com/net/2006/05/peer/resolver/GetServiceSettings", IsOneWay=false, Name="GetServiceInfo", ReplyAction="http://schemas.microsoft.com/net/2006/05/peer/resolver/GetServiceSettingsResponse")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.ServiceSettingsResponseInfo</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Refresh">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.PeerResolvers.RefreshResponseInfo Refresh (System.ServiceModel.PeerResolvers.RefreshInfo refreshInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.PeerResolvers.RefreshResponseInfo Refresh(class System.ServiceModel.PeerResolvers.RefreshInfo refreshInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ServiceModel.OperationContract(Action="http://schemas.microsoft.com/net/2006/05/peer/resolver/Refresh", IsOneWay=false, Name="Refresh", ReplyAction="http://schemas.microsoft.com/net/2006/05/peer/resolver/RefreshResponse")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.RefreshResponseInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="refreshInfo" Type="System.ServiceModel.PeerResolvers.RefreshInfo" />
+      </Parameters>
+      <Docs>
+        <param name="refreshInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Register">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.PeerResolvers.RegisterResponseInfo Register (System.ServiceModel.PeerResolvers.RegisterInfo registerInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.PeerResolvers.RegisterResponseInfo Register(class System.ServiceModel.PeerResolvers.RegisterInfo registerInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ServiceModel.OperationContract(Action="http://schemas.microsoft.com/net/2006/05/peer/resolver/Register", IsOneWay=false, Name="Register", ReplyAction="http://schemas.microsoft.com/net/2006/05/peer/resolver/RegisterResponse")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.RegisterResponseInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="registerInfo" Type="System.ServiceModel.PeerResolvers.RegisterInfo" />
+      </Parameters>
+      <Docs>
+        <param name="registerInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.PeerResolvers.ResolveResponseInfo Resolve (System.ServiceModel.PeerResolvers.ResolveInfo resolveInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.PeerResolvers.ResolveResponseInfo Resolve(class System.ServiceModel.PeerResolvers.ResolveInfo resolveInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ServiceModel.OperationContract(Action="http://schemas.microsoft.com/net/2006/05/peer/resolver/Resolve", IsOneWay=false, Name="Resolve", ReplyAction="http://schemas.microsoft.com/net/2006/05/peer/resolver/ResolveResponse")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.ResolveResponseInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="resolveInfo" Type="System.ServiceModel.PeerResolvers.ResolveInfo" />
+      </Parameters>
+      <Docs>
+        <param name="resolveInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Unregister">
+      <MemberSignature Language="C#" Value="public void Unregister (System.ServiceModel.PeerResolvers.UnregisterInfo unregisterInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Unregister(class System.ServiceModel.PeerResolvers.UnregisterInfo unregisterInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ServiceModel.OperationContract(Action="http://schemas.microsoft.com/net/2006/05/peer/resolver/Unregister", IsOneWay=false, Name="Unregister")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="unregisterInfo" Type="System.ServiceModel.PeerResolvers.UnregisterInfo" />
+      </Parameters>
+      <Docs>
+        <param name="unregisterInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Update">
+      <MemberSignature Language="C#" Value="public System.ServiceModel.PeerResolvers.RegisterResponseInfo Update (System.ServiceModel.PeerResolvers.UpdateInfo updateInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.ServiceModel.PeerResolvers.RegisterResponseInfo Update(class System.ServiceModel.PeerResolvers.UpdateInfo updateInfo) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.ServiceModel.OperationContract(Action="http://schemas.microsoft.com/net/2006/05/peer/resolver/Update", IsOneWay=false, Name="Update", ReplyAction="http://schemas.microsoft.com/net/2006/05/peer/resolver/UpdateResponse")</AttributeName>
+        </Attribute>
+      </Attributes>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.PeerResolvers.RegisterResponseInfo</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="updateInfo" Type="System.ServiceModel.PeerResolvers.UpdateInfo" />
+      </Parameters>
+      <Docs>
+        <param name="updateInfo">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

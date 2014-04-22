@@ -38,6 +38,8 @@ class MakeBundle {
 	static bool compress;
 	static bool nomain;
 	static bool? use_dos2unix = null;
+	static bool skip_scan;
+	static string ctor_func;
 	
 	static int Main (string [] args)
 	{
@@ -146,6 +148,16 @@ class MakeBundle {
 				}
 					
 				break;
+			case "--skip-scan":
+				skip_scan = true;
+				break;
+			case "--static-ctor":
+				if (i+1 == top) {
+					Help ();
+					return 1;
+				}
+				ctor_func = args [++i];
+				break;
 			default:
 				sources.Add (args [i]);
 				break;
@@ -163,28 +175,12 @@ class MakeBundle {
 			Environment.Exit (1);
 		}
 
-		List<Assembly> assemblies = LoadAssemblies (sources);
+		List<string> assemblies = LoadAssemblies (sources);
 		List<string> files = new List<string> ();
-		foreach (Assembly a in assemblies)
-			QueueAssembly (files, a.CodeBase);
+		foreach (string file in assemblies)
+			if (!QueueAssembly (files, file))
+				return 1;
 			
-		// Special casing mscorlib.dll: any specified mscorlib.dll cannot be loaded
-		// by Assembly.ReflectionFromLoadFrom(). Instead the fx assembly which runs
-		// mkbundle.exe is loaded, which is not what we want.
-		// So, replace it with whatever actually specified.
-		foreach (string srcfile in sources) {
-			if (Path.GetFileName (srcfile) == "mscorlib.dll") {
-				foreach (string file in files) {
-					if (Path.GetFileName (new Uri (file).LocalPath) == "mscorlib.dll") {
-						files.Remove (file);
-						files.Add (new Uri (Path.GetFullPath (srcfile)).LocalPath);
-						break;
-					}
-				}
-				break;
-			}
-		}
-
 		GenerateBundles (files);
 		//GenerateJitWrapper ();
 		
@@ -266,7 +262,6 @@ class MakeBundle {
 		try {
 			List<string> c_bundle_names = new List<string> ();
 			List<string[]> config_names = new List<string[]> ();
-			byte [] buffer = new byte [8192];
 
 			using (StreamWriter ts = new StreamWriter (File.Create (temp_s))) {
 			using (StreamWriter tc = new StreamWriter (File.Create (temp_c))) {
@@ -309,10 +304,11 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				long real_size = stream.Length;
 				int n;
 				if (compress) {
+					byte[] cbuffer = new byte [8192];
 					MemoryStream ms = new MemoryStream ();
 					GZipStream deflate = new GZipStream (ms, CompressionMode.Compress, leaveOpen:true);
-					while ((n = stream.Read (buffer, 0, buffer.Length)) != 0){
-						deflate.Write (buffer, 0, n);
+					while ((n = stream.Read (cbuffer, 0, cbuffer.Length)) != 0){
+						deflate.Write (cbuffer, 0, n);
 					}
 					stream.Close ();
 					deflate.Close ();
@@ -335,6 +331,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 #endif
 
 			// The non-parallel part
+			byte [] buffer = new byte [8192];
 			foreach (var url in files) {
 				string fname = new Uri (url).LocalPath;
 				string aname = Path.GetFileName (fname);
@@ -436,6 +433,12 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			tc.WriteLine ("\tNULL\n};\n");
 			tc.WriteLine ("static char *image_name = \"{0}\";", prog);
 
+			if (ctor_func != null) {
+				tc.WriteLine ("\nextern void {0} (void);", ctor_func);
+				tc.WriteLine ("\n__attribute__ ((constructor)) static void mono_mkbundle_ctor (void)");
+				tc.WriteLine ("{{\n\t{0} ();\n}}", ctor_func);
+			}
+
 			tc.WriteLine ("\nstatic void install_dll_config_files (void) {\n");
 			foreach (string[] ass in config_names){
 				tc.WriteLine ("\tmono_register_config_for_assembly (\"{0}\", assembly_config_{1});\n", ass [0], ass [1]);
@@ -517,20 +520,29 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 		}
 	}
 	
-	static List<Assembly> LoadAssemblies (List<string> sources)
+	static List<string> LoadAssemblies (List<string> sources)
 	{
-		List<Assembly> assemblies = new List<Assembly> ();
+		List<string> assemblies = new List<string> ();
 		bool error = false;
 		
 		foreach (string name in sources){
-			Assembly a = LoadAssembly (name);
+			try {
+				Assembly a = LoadAssembly (name);
 
-			if (a == null){
-				error = true;
-				continue;
-			}
+				if (a == null){
+					error = true;
+					continue;
+				}
 			
-			assemblies.Add (a);
+				assemblies.Add (a.CodeBase);
+			} catch (Exception e) {
+				if (skip_scan) {
+					Console.WriteLine ("File will not be scanned: {0}", name);
+					assemblies.Add (new Uri (new FileInfo (name).FullName).ToString ());
+				} else {
+					throw;
+				}
+			}
 		}
 
 		if (error)
@@ -540,22 +552,41 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 	}
 	
 	static readonly Universe universe = new Universe ();
+	static readonly Dictionary<string, string> loaded_assemblies = new Dictionary<string, string> ();
 	
-	static void QueueAssembly (List<string> files, string codebase)
+	static bool QueueAssembly (List<string> files, string codebase)
 	{
+		// Console.WriteLine ("CODE BASE IS {0}", codebase);
 		if (files.Contains (codebase))
-			return;
+			return true;
+
+		var path = new Uri(codebase).LocalPath;
+		var name = Path.GetFileName (path);
+		string found;
+		if (loaded_assemblies.TryGetValue (name, out found)) {
+			Error (string.Format ("Duplicate assembly name `{0}'. Both `{1}' and `{2}' use same assembly name.", name, path, found));
+			return false;
+		}
+
+		loaded_assemblies.Add (name, path);
 
 		files.Add (codebase);
-		Assembly a = universe.LoadFile (new Uri(codebase).LocalPath);
-
 		if (!autodeps)
-			return;
-		
-		foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
-			a = universe.Load (an.Name);
-			QueueAssembly (files, a.CodeBase);
+			return true;
+		try {
+			Assembly a = universe.LoadFile (path);
+
+			foreach (AssemblyName an in a.GetReferencedAssemblies ()) {
+				a = universe.Load (an.FullName);
+				if (!QueueAssembly (files, a.CodeBase))
+					return false;
+			}
+		} catch (Exception e) {
+			if (!skip_scan)
+				throw;
 		}
+
+		return true;
 	}
 
 	static Assembly LoadAssembly (string assembly)
@@ -593,6 +624,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 			Error ("Cannot find assembly `" + assembly + "'" );
 			Console.WriteLine ("Log: \n" + total_log);
 		} catch (IKVM.Reflection.BadImageFormatException f) {
+			if (skip_scan)
+				throw;
 			Error ("Cannot load assembly (bad file format) " + f.Message);
 		} catch (FileLoadException f){
 			Error ("Cannot load assembly " + f.Message);
@@ -604,7 +637,7 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 
 	static void Error (string msg)
 	{
-		Console.Error.WriteLine (msg);
+		Console.Error.WriteLine ("ERROR: " + msg);
 		Environment.Exit (1);
 	}
 
@@ -625,6 +658,8 @@ void          mono_register_config_for_assembly (const char* assembly_name, cons
 				   "    --static            Statically link to mono libs\n" +
 				   "    --nomain            Don't include a main() function, for libraries\n" +
 				   "    -z                  Compress the assemblies before embedding.\n" +
+				   "    --skip-scan         Skip scanning assemblies that could not be loaded (but still embed them).\n" +
+				   "    --static-ctor ctor  Add a constructor call to the supplied function.\n" +
 				   "                        You need zlib development headers and libraries.\n");
 	}
 

@@ -1,8 +1,10 @@
 <Type Name="SwitchAttribute" FullName="System.Diagnostics.SwitchAttribute">
   <TypeSignature Language="C#" Value="public sealed class SwitchAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SwitchAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Attribute</BaseTypeName>
@@ -10,7 +12,10 @@
   <Interfaces />
   <Attributes>
     <Attribute>
-      <AttributeName>System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Class | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Event)</AttributeName>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Assembly | System.AttributeTargets.Class | System.AttributeTargets.Constructor | System.AttributeTargets.Method | System.AttributeTargets.Property | System.AttributeTargets.Event | System.AttributeTargets.All)</AttributeName>
+    </Attribute>
+    <Attribute>
+      <AttributeName>System.MonoLimitation("This attribute is not considered in trace support.")</AttributeName>
     </Attribute>
   </Attributes>
   <Docs>
@@ -20,9 +25,11 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SwitchAttribute (string switchName, Type switchType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string switchName, class System.Type switchType) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
         <Parameter Name="switchName" Type="System.String" />
@@ -37,9 +44,11 @@
     </Member>
     <Member MemberName="GetAll">
       <MemberSignature Language="C#" Value="public static System.Diagnostics.SwitchAttribute[] GetAll (System.Reflection.Assembly assembly);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Diagnostics.SwitchAttribute[] GetAll(class System.Reflection.Assembly assembly) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SwitchAttribute[]</ReturnType>
@@ -55,10 +64,12 @@
       </Docs>
     </Member>
     <Member MemberName="SwitchDescription">
-      <MemberSignature Language="C#" Value="public string SwitchDescription { set; get; }" />
+      <MemberSignature Language="C#" Value="public string SwitchDescription { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SwitchDescription" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -70,10 +81,12 @@
       </Docs>
     </Member>
     <Member MemberName="SwitchName">
-      <MemberSignature Language="C#" Value="public string SwitchName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string SwitchName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string SwitchName" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
@@ -85,10 +98,12 @@
       </Docs>
     </Member>
     <Member MemberName="SwitchType">
-      <MemberSignature Language="C#" Value="public Type SwitchType { set; get; }" />
+      <MemberSignature Language="C#" Value="public Type SwitchType { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type SwitchType" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>

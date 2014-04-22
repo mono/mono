@@ -1,8 +1,10 @@
 <Type Name="IStrongBox" FullName="System.Runtime.CompilerServices.IStrongBox">
   <TypeSignature Language="C#" Value="public interface IStrongBox" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IStrongBox" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
@@ -11,10 +13,12 @@
   </Docs>
   <Members>
     <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="public object Value { set; get; }" />
+      <MemberSignature Language="C#" Value="public object Value { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Value" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>

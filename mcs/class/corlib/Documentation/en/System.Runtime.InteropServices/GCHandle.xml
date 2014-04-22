@@ -1,6 +1,7 @@
 <Type Name="GCHandle" FullName="System.Runtime.InteropServices.GCHandle" FullNameSP="System_Runtime_InteropServices_GCHandle" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sequential sealed GCHandle extends System.ValueType" />
   <TypeSignature Language="C#" Value="public struct GCHandle" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit GCHandle extends System.ValueType" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -14,6 +15,11 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>
       <para> Provides a means for referencing a managed object from
@@ -38,7 +44,13 @@ it.</block>
     <Member MemberName="AddrOfPinnedObject">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance valuetype System.IntPtr AddrOfPinnedObject()" />
       <MemberSignature Language="C#" Value="public IntPtr AddrOfPinnedObject ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance native int AddrOfPinnedObject() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -58,16 +70,17 @@ it.</block>
         </permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Alloc">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Runtime.InteropServices.GCHandle Alloc(object value)" />
+      <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.GCHandle Alloc (object value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Runtime.InteropServices.GCHandle Alloc(object value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Alloc">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Runtime.InteropServices.GCHandle Alloc(object value)" />
-      <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.GCHandle Alloc (object value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandle</ReturnType>
       </ReturnValue>
@@ -97,16 +110,17 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         </permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="Alloc">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Runtime.InteropServices.GCHandle Alloc(object value, valuetype System.Runtime.InteropServices.GCHandleType type)" />
+      <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.GCHandle Alloc (object value, System.Runtime.InteropServices.GCHandleType type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Runtime.InteropServices.GCHandle Alloc(object value, valuetype System.Runtime.InteropServices.GCHandleType type) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Alloc">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static valuetype System.Runtime.InteropServices.GCHandle Alloc(object value, valuetype System.Runtime.InteropServices.GCHandleType type)" />
-      <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.GCHandle Alloc (object value, System.Runtime.InteropServices.GCHandleType type);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandle</ReturnType>
       </ReturnValue>
@@ -136,15 +150,15 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         </permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object o);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object o) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -158,15 +172,17 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Free">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance void Free()" />
       <MemberSignature Language="C#" Value="public void Free ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Free() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -186,15 +202,15 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         </permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FromIntPtr">
       <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.GCHandle FromIntPtr (IntPtr value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Runtime.InteropServices.GCHandle FromIntPtr(native int value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandle</ReturnType>
       </ReturnValue>
@@ -208,14 +224,15 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -226,15 +243,17 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsAllocated">
       <MemberSignature Language="ILASM" Value=".property bool IsAllocated { public hidebysig specialname instance bool get_IsAllocated() }" />
       <MemberSignature Language="C#" Value="public bool IsAllocated { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsAllocated" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -261,15 +280,15 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Equality">
       <MemberSignature Language="C#" Value="public static bool op_Equality (System.Runtime.InteropServices.GCHandle a, System.Runtime.InteropServices.GCHandle b);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(valuetype System.Runtime.InteropServices.GCHandle a, valuetype System.Runtime.InteropServices.GCHandle b) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -285,15 +304,17 @@ returns a valid <see cref="T:System.Runtime.InteropServices.GCHandle" />. <block
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Explicit">
       <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.Runtime.InteropServices.GCHandle op_Explicit(valuetype System.IntPtr value)" />
       <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.GCHandle op_Explicit (IntPtr value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Runtime.InteropServices.GCHandle op_Explicit(native int value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.GCHandle</ReturnType>
       </ReturnValue>
@@ -318,16 +339,17 @@ from its integer representation.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.IntPtr op_Explicit(valuetype System.Runtime.InteropServices.GCHandle value)" />
+      <MemberSignature Language="C#" Value="public static IntPtr op_Explicit (System.Runtime.InteropServices.GCHandle value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname native int op_Explicit(valuetype System.Runtime.InteropServices.GCHandle value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_Explicit">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig static specialname valuetype System.IntPtr op_Explicit(valuetype System.Runtime.InteropServices.GCHandle value)" />
-      <MemberSignature Language="C#" Value="public static IntPtr op_Explicit (System.Runtime.InteropServices.GCHandle value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -351,15 +373,15 @@ from its integer representation.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Inequality">
       <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Runtime.InteropServices.GCHandle a, System.Runtime.InteropServices.GCHandle b);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(valuetype System.Runtime.InteropServices.GCHandle a, valuetype System.Runtime.InteropServices.GCHandle b) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -375,15 +397,17 @@ from its integer representation.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Target">
       <MemberSignature Language="ILASM" Value=".property object Target { public hidebysig specialname instance object get_Target() public hidebysig specialname instance void set_Target(object value) }" />
-      <MemberSignature Language="C#" Value="public object Target { set; get; }" />
+      <MemberSignature Language="C#" Value="public object Target { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance object Target" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -401,15 +425,15 @@ from its integer representation.</para>
         </exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ToIntPtr">
       <MemberSignature Language="C#" Value="public static IntPtr ToIntPtr (System.Runtime.InteropServices.GCHandle value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int ToIntPtr(valuetype System.Runtime.InteropServices.GCHandle value) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
@@ -423,16 +447,7 @@ from its integer representation.</para>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

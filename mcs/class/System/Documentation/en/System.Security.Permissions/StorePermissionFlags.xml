@@ -1,8 +1,10 @@
 <Type Name="StorePermissionFlags" FullName="System.Security.Permissions.StorePermissionFlags">
   <TypeSignature Language="C#" Value="public enum StorePermissionFlags" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed StorePermissionFlags extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -20,7 +22,12 @@
   <Members>
     <Member MemberName="AddToStore">
       <MemberSignature Language="C#" Value="AddToStore" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.StorePermissionFlags AddToStore = int32(32)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.StorePermissionFlags</ReturnType>
       </ReturnValue>
@@ -28,13 +35,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AllFlags">
       <MemberSignature Language="C#" Value="AllFlags" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.StorePermissionFlags AllFlags = int32(247)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.StorePermissionFlags</ReturnType>
       </ReturnValue>
@@ -42,13 +51,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateStore">
       <MemberSignature Language="C#" Value="CreateStore" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.StorePermissionFlags CreateStore = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.StorePermissionFlags</ReturnType>
       </ReturnValue>
@@ -56,13 +67,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DeleteStore">
       <MemberSignature Language="C#" Value="DeleteStore" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.StorePermissionFlags DeleteStore = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.StorePermissionFlags</ReturnType>
       </ReturnValue>
@@ -70,13 +83,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EnumerateCertificates">
       <MemberSignature Language="C#" Value="EnumerateCertificates" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.StorePermissionFlags EnumerateCertificates = int32(128)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.StorePermissionFlags</ReturnType>
       </ReturnValue>
@@ -84,13 +99,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="EnumerateStores">
       <MemberSignature Language="C#" Value="EnumerateStores" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.StorePermissionFlags EnumerateStores = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.StorePermissionFlags</ReturnType>
       </ReturnValue>
@@ -98,13 +115,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NoFlags">
       <MemberSignature Language="C#" Value="NoFlags" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.StorePermissionFlags NoFlags = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.StorePermissionFlags</ReturnType>
       </ReturnValue>
@@ -112,13 +131,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OpenStore">
       <MemberSignature Language="C#" Value="OpenStore" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.StorePermissionFlags OpenStore = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.StorePermissionFlags</ReturnType>
       </ReturnValue>
@@ -126,13 +147,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveFromStore">
       <MemberSignature Language="C#" Value="RemoveFromStore" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Security.Permissions.StorePermissionFlags RemoveFromStore = int32(64)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.StorePermissionFlags</ReturnType>
       </ReturnValue>
@@ -140,9 +163,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -236,5 +236,20 @@ namespace System.Reflection
 				return Type.EmptyTypes;
 			return types;
 		}
+
+#if NET_4_5
+		public override bool HasDefaultValue {
+			get { 
+				object defaultValue = DefaultValue;
+				if (defaultValue == null)
+					return true;
+
+				if (defaultValue.GetType () == typeof(DBNull) || defaultValue.GetType () == typeof(Missing))
+					return false;
+
+				return true;
+			}
+		}
+#endif
 	}
 }

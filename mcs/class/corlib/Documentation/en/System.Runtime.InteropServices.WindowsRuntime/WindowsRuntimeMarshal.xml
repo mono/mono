@@ -1,0 +1,168 @@
+<Type Name="WindowsRuntimeMarshal" FullName="System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeMarshal">
+  <TypeSignature Language="C#" Value="public static class WindowsRuntimeMarshal" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit WindowsRuntimeMarshal extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>mscorlib</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="AddEventHandler&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void AddEventHandler&lt;T&gt; (Func&lt;T,System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt; addMethod, Action&lt;System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt; removeMethod, T handler);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void AddEventHandler&lt;T&gt;(class System.Func`2&lt;!!T, valuetype System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt; addMethod, class System.Action`1&lt;valuetype System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt; removeMethod, !!T handler) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="addMethod" Type="System.Func&lt;T,System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt;" />
+        <Parameter Name="removeMethod" Type="System.Action&lt;System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt;" />
+        <Parameter Name="handler" Type="T" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="addMethod">To be added.</param>
+        <param name="removeMethod">To be added.</param>
+        <param name="handler">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FreeHString">
+      <MemberSignature Language="C#" Value="public static void FreeHString (IntPtr ptr);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void FreeHString(native int ptr) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ptr" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="ptr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetActivationFactory">
+      <MemberSignature Language="C#" Value="public static System.Runtime.InteropServices.WindowsRuntime.IActivationFactory GetActivationFactory (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Runtime.InteropServices.WindowsRuntime.IActivationFactory GetActivationFactory(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Runtime.InteropServices.WindowsRuntime.IActivationFactory</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PtrToStringHString">
+      <MemberSignature Language="C#" Value="public static string PtrToStringHString (IntPtr ptr);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig string PtrToStringHString(native int ptr) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ptr" Type="System.IntPtr" />
+      </Parameters>
+      <Docs>
+        <param name="ptr">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveAllEventHandlers">
+      <MemberSignature Language="C#" Value="public static void RemoveAllEventHandlers (Action&lt;System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt; removeMethod);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RemoveAllEventHandlers(class System.Action`1&lt;valuetype System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt; removeMethod) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="removeMethod" Type="System.Action&lt;System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt;" />
+      </Parameters>
+      <Docs>
+        <param name="removeMethod">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="RemoveEventHandler&lt;T&gt;">
+      <MemberSignature Language="C#" Value="public static void RemoveEventHandler&lt;T&gt; (Action&lt;System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt; removeMethod, T handler);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void RemoveEventHandler&lt;T&gt;(class System.Action`1&lt;valuetype System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt; removeMethod, !!T handler) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="T" />
+      </TypeParameters>
+      <Parameters>
+        <Parameter Name="removeMethod" Type="System.Action&lt;System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt;" />
+        <Parameter Name="handler" Type="T" />
+      </Parameters>
+      <Docs>
+        <typeparam name="T">To be added.</typeparam>
+        <param name="removeMethod">To be added.</param>
+        <param name="handler">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="StringToHString">
+      <MemberSignature Language="C#" Value="public static IntPtr StringToHString (string s);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig native int StringToHString(string s) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IntPtr</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

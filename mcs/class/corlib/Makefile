@@ -106,8 +106,8 @@ $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE): %.resources: %.resx
 
 TEST_RESOURCES = $(TEST_RESX_RESOURCES) $(TEST_RESX_RESOURCES_SATELITE)
 
-satellite_assembly1 = es-ES/$(patsubst %.dll,%.Resources.dll,$(test_lib))
-satellite_assembly2 = nn-NO/$(patsubst %.dll,%.Resources.dll,$(test_lib))
+satellite_assembly1 = es-ES/$(patsubst %.dll,%.resources.dll,$(test_lib))
+satellite_assembly2 = nn-NO/$(patsubst %.dll,%.resources.dll,$(test_lib))
 
 $(test_lib): $(TEST_RESOURCES) $(satellite_assembly1) $(satellite_assembly2) 
 
@@ -140,7 +140,9 @@ $(vtsdir)/$(PROFILE)_TestLib/BinarySerializationOverVersions.exe: $(vtsdir)/Bina
 		$(vtsdir)/BinarySerializationOverVersions.cs -out:$@
 	@cp $(vtsdir)/$(PROFILE)_TestLib/1.0/Address.dll $(vtsdir)/$(PROFILE)_TestLib
 
-# Need to define MONO_PATH to an absolute dir since the test is ran from a subdir
+# Need to define TEST_MONO_PATH to an absolute dir since the test is ran from a subdir
+TEST_MONO_PATH=$(PWD)/../lib/$(PROFILE)
+
 run-test-vts: test-vts
 	@echo Running vts tests...
 	PATH="$(TEST_RUNTIME_WRAPPERS_PATH):$(PATH)" $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(TEST_HARNESS) -noshadow \

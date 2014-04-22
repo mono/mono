@@ -28,6 +28,7 @@
 
 using System.Net.Mail;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace System.Net.Http.Headers
 {
@@ -64,14 +65,7 @@ namespace System.Net.Http.Headers
 				if (s == null)
 					return false;
 
-				if (!Lexer.IsValidToken (s)) {
-					if (s.Length == 0)
-						return false;
-
-					return false;
-				}
-
-				return true;
+				return Lexer.IsValidToken (s);
 			}
 
 			public static void CheckQuotedString (string s)

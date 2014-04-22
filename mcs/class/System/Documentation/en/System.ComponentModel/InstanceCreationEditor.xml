@@ -1,8 +1,10 @@
 <Type Name="InstanceCreationEditor" FullName="System.ComponentModel.InstanceCreationEditor">
   <TypeSignature Language="C#" Value="public abstract class InstanceCreationEditor" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit InstanceCreationEditor extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -15,9 +17,11 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected InstanceCreationEditor ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters />
       <Docs>
@@ -27,9 +31,11 @@
     </Member>
     <Member MemberName="CreateInstance">
       <MemberSignature Language="C#" Value="public abstract object CreateInstance (System.ComponentModel.ITypeDescriptorContext context, Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance object CreateInstance(class System.ComponentModel.ITypeDescriptorContext context, class System.Type type) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
@@ -48,9 +54,11 @@
     </Member>
     <Member MemberName="Text">
       <MemberSignature Language="C#" Value="public virtual string Text { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Text" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>

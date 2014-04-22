@@ -1,5 +1,6 @@
 <Type Name="IsJitIntrinsic" FullName="System.Runtime.CompilerServices.IsJitIntrinsic">
   <TypeSignature Language="C#" Value="public static class IsJitIntrinsic" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit IsJitIntrinsic extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>

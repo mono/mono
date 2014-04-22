@@ -132,6 +132,20 @@ namespace MonoTests.System.Threading
 
 
 		[Test]
+		public void Cancel_Order ()
+		{
+			var cts = new CancellationTokenSource ();
+			var current = 0;
+			Action<object> a = x => { Assert.AreEqual(current, x); current++; };
+
+			cts.Token.Register (a, 2);
+			cts.Token.Register (a, 1);
+			cts.Token.Register (a, 0);
+			cts.Cancel ();
+		}
+
+
+		[Test]
 		public void CancelWithDispose ()
 		{
 			CancellationTokenSource cts = new CancellationTokenSource ();
@@ -190,6 +204,25 @@ namespace MonoTests.System.Threading
 			}
 
 			cts.Cancel ();
+		}
+
+		[Test]
+		public void Cancel_ExceptionOrder ()
+		{
+			var cts = new CancellationTokenSource ();
+
+			cts.Token.Register (() => { throw new ApplicationException ("1"); });
+			cts.Token.Register (() => { throw new ApplicationException ("2"); });
+			cts.Token.Register (() => { throw new ApplicationException ("3"); });
+
+			try {
+				cts.Cancel ();
+			} catch (AggregateException e) {
+				Assert.AreEqual (3, e.InnerExceptions.Count, "#2");
+				Assert.AreEqual ("3", e.InnerExceptions[0].Message, "#3");
+				Assert.AreEqual ("2", e.InnerExceptions[1].Message, "#4");
+				Assert.AreEqual ("1", e.InnerExceptions[2].Message, "#5");
+			}
 		}
 
 		[Test]
@@ -375,10 +408,9 @@ namespace MonoTests.System.Threading
 			var source = new CancellationTokenSource ();
 			var token = source.Token;
 
-			var reg = new CancellationTokenRegistration ();
 			Console.WriteLine ("Test1");
+			var reg = token.Register (() => unregister = true);
 			token.Register (() => reg.Dispose ());
-			reg = token.Register (() => unregister = true);
 			token.Register (() => { Console.WriteLine ("Gnyah"); token.Register (() => register = true); });
 			source.Cancel ();
 
@@ -440,6 +472,21 @@ namespace MonoTests.System.Threading
 				t2.Join (500);
 			}, 500);
 		}
+
+#if NET_4_5
+		[Test]
+		public void DisposeRace ()
+		{
+			for (int i = 0; i < 1000; ++i) {
+				var c1 = new CancellationTokenSource ();
+				using (c1) {
+					var wh = c1.Token.WaitHandle;
+					c1.CancelAfter (1);
+					Thread.Sleep (1);
+				}
+			}
+		}
+#endif
 	}
 }
 

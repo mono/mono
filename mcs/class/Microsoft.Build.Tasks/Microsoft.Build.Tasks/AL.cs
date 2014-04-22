@@ -98,7 +98,9 @@ namespace Microsoft.Build.Tasks {
 
 		protected override string GenerateFullPathToTool ()
 		{
-			return Path.Combine (ToolPath, ToolExe);
+			if (!string.IsNullOrEmpty (ToolPath))
+				return Path.Combine (ToolPath, ToolExe);
+			return ToolLocationHelper.GetPathToDotNetFrameworkFile (ToolExe, TargetDotNetFrameworkVersion.VersionLatest);
 		}
 
 		public string AlgorithmId {
@@ -234,9 +236,7 @@ namespace Microsoft.Build.Tasks {
 		}
 
 		protected override string ToolName {
-			get {
-				return MSBuildUtils.RunningOnWindows ? "al.bat" : "al";
-			}
+			get { return "al.exe"; }
 		}
 
 		public string Trademark {

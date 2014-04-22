@@ -113,7 +113,7 @@ namespace System.Threading.Tasks
 			if (aggregate.InnerExceptions.Count == 0)
 				throw new ArgumentNullException ("exceptions");
 
-			return source.TrySetException (aggregate);
+			return source.TrySetException (aggregate, false, false);
 		}
 		
 		public bool TrySetResult (TResult result)

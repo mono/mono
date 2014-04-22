@@ -69,20 +69,15 @@ namespace System.Runtime.CompilerServices
 		
 		public static AsyncTaskMethodBuilder<TResult> Create ()
 		{
-			var task = new Task<TResult> (TaskActionInvoker.Empty, null, CancellationToken.None, TaskCreationOptions.None, null);
+			var task = new Task<TResult> (TaskActionInvoker.Promise, null, CancellationToken.None, TaskCreationOptions.None, null);
 			task.SetupScheduler (TaskScheduler.Current);
 			return new AsyncTaskMethodBuilder<TResult> (task);
 		}
 
 		public void SetException (Exception exception)
 		{
-			if (exception is OperationCanceledException) {
-				if (Task.TrySetCanceled ())
-					return;
-			} else {
-				if (Task.TrySetException (new AggregateException (exception)))
-					return;
-			}
+			if (Task.TrySetException (new AggregateException (exception), exception is OperationCanceledException, true))
+				return;
 
 			throw new InvalidOperationException ("The task has already completed");
 		}

@@ -1,6 +1,0 @@
-Moonlight.Build.Tasks/GenerateXap.cs
-Moonlight.Build.Tasks/XamlG.cs
-Moonlight.Build.Tasks/GetMoonlightFrameworkPath.cs
-Moonlight.Build.Tasks/GenerateMoonlightManifest.cs
-Moonlight.Build.Tasks/CreateTestPage.cs
-Moonlight.Build.Tasks/Respack.cs

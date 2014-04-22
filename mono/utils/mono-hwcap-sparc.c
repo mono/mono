@@ -30,12 +30,6 @@
 
 gboolean mono_hwcap_sparc_is_v9 = FALSE;
 
-#if defined(MONO_CROSS_COMPILE)
-void
-mono_hwcap_arch_init (void)
-{
-}
-#else
 void
 mono_hwcap_arch_init (void)
 {
@@ -49,14 +43,13 @@ mono_hwcap_arch_init (void)
 	 * in turn means a v9 or better.
 	 */
 	if (getpagesize () == 8192)
-		strcpy (buf, "sparcv9")
+		strcpy (buf, "sparcv9");
 	else
-		strcpy (buf, "sparcv8")
+		strcpy (buf, "sparcv8");
 #endif
 
 	mono_hwcap_sparc_is_v9 = strstr (buf, "sparcv9");
 }
-#endif
 
 void
 mono_hwcap_print (FILE *f)

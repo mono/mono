@@ -68,7 +68,6 @@ static CRITICAL_SECTION mini_arch_mutex;
 int mono_exc_esp_offset = 0;
 static int tls_mode = TLS_MODE_DETECT;
 static int lmf_pthread_key = -1;
-static int monodomain_key = -1;
 
 /*
  * The code generated for sequence points reads from this location, which is
@@ -1255,7 +1254,7 @@ get_call_info (MonoGenericSharingContext *gsctx, MonoMethodSignature *sig)
 }
 
 gboolean
-mono_ppc_tail_call_supported (MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
+mono_arch_tail_call_supported (MonoCompile *cfg, MonoMethodSignature *caller_sig, MonoMethodSignature *callee_sig)
 {
 	CallInfo *c1, *c2;
 	gboolean res;
@@ -4575,6 +4574,7 @@ mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, Mono
 		case MONO_PATCH_INFO_ABS:
 		case MONO_PATCH_INFO_CLASS_INIT:
 		case MONO_PATCH_INFO_RGCTX_FETCH:
+		case MONO_PATCH_INFO_JIT_ICALL_ADDR:
 			is_fd = TRUE;
 			break;
 #endif
@@ -5396,8 +5396,6 @@ try_offset_access (void *value, guint32 idx)
 static void
 setup_tls_access (void)
 {
-	guint32 ptk;
-
 #if defined(__linux__) && defined(_CS_GNU_LIBPTHREAD_VERSION)
 	size_t conf_size = 0;
 	char confbuf[128];
@@ -5447,6 +5445,7 @@ setup_tls_access (void)
 		ppc_blr (code);
 		if (*ins == cmplwi_1023) {
 			int found_lwz_284 = 0;
+			guint32 ptk;
 			for (ptk = 0; ptk < 20; ++ptk) {
 				++ins;
 				if (!*ins || *ins == blr_ins)
@@ -5504,17 +5503,6 @@ setup_tls_access (void)
 		tls_mode = TLS_MODE_FAILED;
 	if (tls_mode == TLS_MODE_FAILED)
 		return;
-	if ((monodomain_key == -1) && (tls_mode == TLS_MODE_NPTL)) {
-		monodomain_key = mono_domain_get_tls_offset();
- 	}
-	/* if not TLS_MODE_NPTL or local dynamic (as indicated by
-	   mono_domain_get_tls_offset returning -1) then use keyed access. */
-	if (monodomain_key == -1) {
-		ptk = mono_domain_get_tls_key ();
-		if (ptk < 1024)
-		    monodomain_key = ptk;
-	}
-
 	if ((lmf_pthread_key == -1) && (tls_mode == TLS_MODE_NPTL)) {
 		lmf_pthread_key = mono_get_lmf_addr_tls_offset();
 	}
@@ -5523,7 +5511,7 @@ setup_tls_access (void)
 	/* if not TLS_MODE_NPTL or local dynamic (as indicated by
 	   mono_get_lmf_addr_tls_offset returning -1) then use keyed access. */
 	if (lmf_pthread_key == -1) {
-		ptk = mono_jit_tls_id;
+		guint32 ptk = mono_jit_tls_id;
 		if (ptk < 1024) {
 			/*g_print ("MonoLMF at: %d\n", ptk);*/
 			/*if (!try_offset_access (mono_get_lmf_addr (), ptk)) {
@@ -5739,19 +5727,6 @@ mono_arch_print_tree (MonoInst *tree, int arity)
 	return 0;
 }
 
-MonoInst* mono_arch_get_domain_intrinsic (MonoCompile* cfg)
-{
-	MonoInst* ins;
-
-	setup_tls_access ();
-	if (monodomain_key == -1)
-		return NULL;
-	
-	MONO_INST_NEW (cfg, ins, OP_TLS_GET);
-	ins->inst_offset = monodomain_key;
-	return ins;
-}
-
 mgreg_t
 mono_arch_context_get_int_reg (MonoContext *ctx, int reg)
 {
@@ -5954,6 +5929,15 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 {
 	NOT_IMPLEMENTED;
 	return NULL;
+}
+
+void
+mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
+{
+	ext->lmf.previous_lmf = prev_lmf;
+	/* Mark that this is a MonoLMFExt */
+	ext->lmf.previous_lmf = (gpointer)(((gssize)ext->lmf.previous_lmf) | 2);
+	ext->lmf.ebp = (gssize)ext;
 }
 
 #endif

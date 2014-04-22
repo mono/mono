@@ -1,5 +1,6 @@
 <Type Name="AppDomainInitializer" FullName="System.AppDomainInitializer">
   <TypeSignature Language="C#" Value="public delegate void AppDomainInitializer(string[] args);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed AppDomainInitializer extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -8,6 +9,11 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="args" Type="System.String[]" />
   </Parameters>
@@ -20,9 +26,4 @@
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
   </Docs>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

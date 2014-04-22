@@ -90,6 +90,20 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
+		class CannotSeekStream : MemoryStream
+		{
+			public CannotSeekStream ()
+				: base (new byte [11])
+			{
+			}
+
+			public override bool CanSeek {
+				get {
+					return false;
+				}
+			}
+		}
+
 		[Test]
 		public void Ctor_Invalid ()
 		{
@@ -309,6 +323,21 @@ namespace MonoTests.System.Net.Http
 		}
 
 		[Test]
+		public void Headers_Multi ()
+		{
+			var sc = new StreamContent (MemoryStream.Null);
+			var headers = sc.Headers;
+
+			headers.Add ("Allow", "");
+			headers.Add ("Allow", "a , b, c");
+
+			Assert.AreEqual (3, headers.Allow.Count, "#1a");
+			Assert.IsTrue (headers.Allow.SequenceEqual (
+				new[] { "a", "b", "c" }
+			), "#1b");
+		}
+
+		[Test]
 		public void LoadIntoBuffer ()
 		{
 			var ms = new MemoryStream ();
@@ -391,6 +420,14 @@ namespace MonoTests.System.Net.Http
 			Assert.IsTrue (stream_read.CanSeek, "#2");
 			Assert.AreEqual (0, stream_read.Position, "#3");	
 			Assert.AreEqual (1, stream_read.Length, "#4");
+		}
+
+		[Test]
+		public void ContentLengthAfterLoad ()
+		{
+			var sc = new StreamContent (new CannotSeekStream ());
+			Assert.IsTrue (sc.LoadIntoBufferAsync ().Wait (3000), "#1");
+			Assert.AreEqual (11, sc.Headers.ContentLength, "#2");
 		}
 	}
 }

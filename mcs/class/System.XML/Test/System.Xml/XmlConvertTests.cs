@@ -193,7 +193,293 @@ namespace MonoTests.System.Xml
 			{
 			}
 		}
-		
+
+		[Test]
+		public void ToDateTimeWithSerializationMode ()
+		{
+            //check resulting datetime depending on serialization mode
+            foreach (XmlDateTimeSerializationMode dateTimeSerializationMode in Enum.GetValues (typeof (XmlDateTimeSerializationMode))) {
+                //dateTime local
+                Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("2003-09-26T13:30:44", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("2003-09-26T13:30:44.0", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("2003-09-26T13:30:44.00", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("2003-09-26T13:30:44.000", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("2003-09-26T13:30:44.0000", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("2003-09-26T13:30:44.00000", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("2003-09-26T13:30:44.000000", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("2003-09-26T13:30:44.0000000", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 123).Ticks, 
+					XmlConvert.ToDateTime ("2003-09-26T13:30:44.123", dateTimeSerializationMode).Ticks);
+
+                //dateTime with zero timezone
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Local) {
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.00Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.00000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.000000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0000000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 123, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.123Z", dateTimeSerializationMode).Ticks);
+                } else {
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.00Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.00000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.000000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0000000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 13, 30, 44, 123, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.123Z", dateTimeSerializationMode).Ticks);
+                }
+
+                //dateTime with timezone
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Utc) {
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.00+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.00000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.000000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0000000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 123, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.123+13:00", dateTimeSerializationMode).Ticks);
+                } else {
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.00+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.00000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.000000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.0000000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 13, 30, 44, 123, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26T13:30:44.123+13:00", dateTimeSerializationMode).Ticks);
+                }
+
+                //time local
+                Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("13:30:44", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("13:30:44.0", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("13:30:44.00", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("13:30:44.000", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("13:30:44.0000", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("13:30:44.00000", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("13:30:44.000000", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000).Ticks, 
+					XmlConvert.ToDateTime ("13:30:44.0000000", dateTimeSerializationMode).Ticks);
+                Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 123).Ticks, 
+					XmlConvert.ToDateTime ("13:30:44.123", dateTimeSerializationMode).Ticks);
+
+                //time with zero timezone
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Local) {
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.00Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.00000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.000000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0000000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 123, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.123Z", dateTimeSerializationMode).Ticks);
+                } else {
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("13:30:44Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.00Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.00000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.000000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0000000Z", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 123, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.123Z", dateTimeSerializationMode).Ticks);
+                }
+
+                //time with timezone
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Utc) {
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.00+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.00000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.000000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0000000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 123, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.123+13:00", dateTimeSerializationMode).Ticks);
+                } else {
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.00+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.00000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.000000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.0000000+13:00", dateTimeSerializationMode).Ticks);
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, 13, 30, 44, 123, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("13:30:44.123+13:00", dateTimeSerializationMode).Ticks);
+                }
+				
+				//date
+                Assert.AreEqual (new DateTime(2003, 09, 26, 00, 00, 00, 000).Ticks, XmlConvert.ToDateTime ("2003-09-26", dateTimeSerializationMode).Ticks);
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Local)
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 00, 00, 00, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26Z", dateTimeSerializationMode).Ticks);
+                else
+                    Assert.AreEqual (new DateTime(2003, 09, 26, 00, 00, 00, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26Z", dateTimeSerializationMode).Ticks);
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Utc)
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 00, 00, 00, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26+13:00", dateTimeSerializationMode).Ticks);
+                else
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 26, 00, 00, 00, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09-26+13:00", dateTimeSerializationMode).Ticks);
+
+                //gYearMonth
+                Assert.AreEqual (new DateTime(2003, 09, 01, 00, 00, 00, 000).Ticks, XmlConvert.ToDateTime ("2003-09", dateTimeSerializationMode).Ticks);
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Local)
+                    Assert.AreEqual (new DateTime(2003, 09, 01, 00, 00, 00, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09Z", dateTimeSerializationMode).Ticks);
+                else
+                    Assert.AreEqual (new DateTime(2003, 09, 01, 00, 00, 00, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003-09Z", dateTimeSerializationMode).Ticks);
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Utc)
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 01, 00, 00, 00, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09+13:00", dateTimeSerializationMode).Ticks);
+                else
+                    Assert.AreEqual (new DateTimeOffset (2003, 09, 01, 00, 00, 00, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003-09+13:00", dateTimeSerializationMode).Ticks);
+
+                //gYear
+                Assert.AreEqual (new DateTime(2003, 01, 01, 00, 00, 00, 000).Ticks, XmlConvert.ToDateTime ("2003", dateTimeSerializationMode).Ticks);
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Local)
+                    Assert.AreEqual (new DateTime(2003, 01, 01, 00, 00, 00, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003Z", dateTimeSerializationMode).Ticks);
+                else
+                    Assert.AreEqual (new DateTime(2003, 01, 01, 00, 00, 00, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("2003Z", dateTimeSerializationMode).Ticks);
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Utc)
+                    Assert.AreEqual (new DateTimeOffset (2003, 01, 01, 00, 00, 00, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003+13:00", dateTimeSerializationMode).Ticks);
+                else
+                    Assert.AreEqual (new DateTimeOffset (2003, 01, 01, 00, 00, 00, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("2003+13:00", dateTimeSerializationMode).Ticks);
+                
+                //gDay
+                Assert.AreEqual (new DateTime(DateTime.Now.Year, 01, 26, 00, 00, 00, 000).Ticks, XmlConvert.ToDateTime ("---26", dateTimeSerializationMode).Ticks);
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Local)
+                    Assert.AreEqual (new DateTime(DateTime.Now.Year, 01, 26, 00, 00, 00, 000, DateTimeKind.Utc).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("---26Z", dateTimeSerializationMode).Ticks);
+                else
+                    Assert.AreEqual (new DateTime(DateTime.Now.Year, 01, 26, 00, 00, 00, 000, DateTimeKind.Local).Ticks, 
+						XmlConvert.ToDateTime ("---26Z", dateTimeSerializationMode).Ticks);
+                if (dateTimeSerializationMode == XmlDateTimeSerializationMode.Utc)
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Now.Year, 01, 26, 00, 00, 00, 000, new TimeSpan (13, 0, 0)).ToUniversalTime ().Ticks, 
+						XmlConvert.ToDateTime ("---26+13:00", dateTimeSerializationMode).Ticks);
+                else
+                    Assert.AreEqual (new DateTimeOffset (DateTime.Now.Year, 01, 26, 00, 00, 00, 000, new TimeSpan (13, 0, 0)).ToLocalTime ().Ticks, 
+						XmlConvert.ToDateTime ("---26+13:00", dateTimeSerializationMode).Ticks);
+
+            }
+
+            //check resulting date kind
+            Assert.AreEqual (DateTimeKind.Local, XmlConvert.ToDateTime ("2003-09-26T13:30:44", XmlDateTimeSerializationMode.Local).Kind);
+            Assert.AreEqual (DateTimeKind.Local, XmlConvert.ToDateTime ("2003-09-26T13:30:44Z", XmlDateTimeSerializationMode.Local).Kind);
+            Assert.AreEqual (DateTimeKind.Local, XmlConvert.ToDateTime ("2003-09-26T13:30:44+13:00", XmlDateTimeSerializationMode.Local).Kind);
+            Assert.AreEqual (DateTimeKind.Utc, XmlConvert.ToDateTime ("2003-09-26T13:30:44", XmlDateTimeSerializationMode.Utc).Kind);
+            Assert.AreEqual (DateTimeKind.Utc, XmlConvert.ToDateTime ("2003-09-26T13:30:44Z", XmlDateTimeSerializationMode.Utc).Kind);
+            Assert.AreEqual (DateTimeKind.Utc, XmlConvert.ToDateTime ("2003-09-26T13:30:44+13:00", XmlDateTimeSerializationMode.Utc).Kind);
+            Assert.AreEqual (DateTimeKind.Unspecified, XmlConvert.ToDateTime ("2003-09-26T13:30:44", XmlDateTimeSerializationMode.Unspecified).Kind);
+            Assert.AreEqual (DateTimeKind.Unspecified, XmlConvert.ToDateTime ("2003-09-26T13:30:44Z", XmlDateTimeSerializationMode.Unspecified).Kind);
+            Assert.AreEqual (DateTimeKind.Unspecified, XmlConvert.ToDateTime ("2003-09-26T13:30:44+13:00", XmlDateTimeSerializationMode.Unspecified).Kind);
+            Assert.AreEqual (DateTimeKind.Unspecified, XmlConvert.ToDateTime ("2003-09-26T13:30:44", XmlDateTimeSerializationMode.RoundtripKind).Kind);
+            Assert.AreEqual (DateTimeKind.Utc, XmlConvert.ToDateTime ("2003-09-26T13:30:44Z", XmlDateTimeSerializationMode.RoundtripKind).Kind);
+            Assert.AreEqual (DateTimeKind.Local, XmlConvert.ToDateTime ("2003-09-26T13:30:44+13:00", XmlDateTimeSerializationMode.RoundtripKind).Kind);
+		}
+
 		[Test]
 		public void ToDecimal ()
 		{
@@ -370,7 +656,7 @@ namespace MonoTests.System.Xml
 		[Test]
         public void TimeSpanToStringShouldNotHaveTimeSuffixIfTimeIsZero()
         {
-            string s = XmlConvert.ToString(new TimeSpan(345, 0, 0, 0));
+            string s = XmlConvert.ToString(new TimeSpan (345, 0, 0, 0));
             Assert.AreEqual("P345D", s);
         }
 

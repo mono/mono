@@ -1,5 +1,6 @@
 <Type Name="StructuralComparisons" FullName="System.Collections.StructuralComparisons">
   <TypeSignature Language="C#" Value="public static class StructuralComparisons" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit StructuralComparisons extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName="StructuralComparer">
       <MemberSignature Language="C#" Value="public static System.Collections.IComparer StructuralComparer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Collections.IComparer StructuralComparer" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -30,6 +32,7 @@
     </Member>
     <Member MemberName="StructuralEqualityComparer">
       <MemberSignature Language="C#" Value="public static System.Collections.IEqualityComparer StructuralEqualityComparer { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Collections.IEqualityComparer StructuralEqualityComparer" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

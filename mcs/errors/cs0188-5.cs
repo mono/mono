@@ -8,5 +8,5 @@ struct Sample
 		text = base.ToString ();
 	}
 
-	string text;
+	internal string text;
 }

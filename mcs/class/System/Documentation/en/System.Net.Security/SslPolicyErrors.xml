@@ -1,8 +1,10 @@
 <Type Name="SslPolicyErrors" FullName="System.Net.Security.SslPolicyErrors">
   <TypeSignature Language="C#" Value="public enum SslPolicyErrors" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SslPolicyErrors extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -20,7 +22,12 @@
   <Members>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Security.SslPolicyErrors None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Security.SslPolicyErrors</ReturnType>
       </ReturnValue>
@@ -28,13 +35,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoteCertificateChainErrors">
       <MemberSignature Language="C#" Value="RemoteCertificateChainErrors" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Security.SslPolicyErrors RemoteCertificateChainErrors = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Security.SslPolicyErrors</ReturnType>
       </ReturnValue>
@@ -42,13 +51,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoteCertificateNameMismatch">
       <MemberSignature Language="C#" Value="RemoteCertificateNameMismatch" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Security.SslPolicyErrors RemoteCertificateNameMismatch = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Security.SslPolicyErrors</ReturnType>
       </ReturnValue>
@@ -56,13 +67,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoteCertificateNotAvailable">
       <MemberSignature Language="C#" Value="RemoteCertificateNotAvailable" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Security.SslPolicyErrors RemoteCertificateNotAvailable = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Security.SslPolicyErrors</ReturnType>
       </ReturnValue>
@@ -70,9 +83,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

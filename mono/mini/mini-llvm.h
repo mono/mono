@@ -17,6 +17,7 @@ typedef void (*MonoLLVMCFGFunc)(MonoCompile *cfg);
 typedef void (*MonoLLVMEmitCallFunc)(MonoCompile *cfg, MonoCallInst *call);
 typedef void (*MonoLLVMCreateAotFunc)(const char *got_symbol);
 typedef void (*MonoLLVMEmitAotFunc)(const char *filename, int got_size);
+typedef void (*MonoLLVMFreeDomainFunc)(MonoDomain *domain);
 
 static MonoLLVMVoidFunc mono_llvm_init_fptr;
 static MonoLLVMVoidFunc mono_llvm_cleanup_fptr;
@@ -25,6 +26,7 @@ static MonoLLVMEmitCallFunc mono_llvm_emit_call_fptr;
 static MonoLLVMCreateAotFunc mono_llvm_create_aot_module_fptr;
 static MonoLLVMEmitAotFunc mono_llvm_emit_aot_module_fptr;
 static MonoLLVMCFGFunc mono_llvm_check_method_supported_fptr;
+static MonoLLVMFreeDomainFunc mono_llvm_free_domain_info_fptr;
 
 void
 mono_llvm_init (void)
@@ -70,68 +72,25 @@ mono_llvm_check_method_supported (MonoCompile *cfg)
 	mono_llvm_check_method_supported_fptr (cfg);
 }
 
-static MonoDl*
-try_llvm_load (char *dir, char **err)
+void
+mono_llvm_free_domain_info (MonoDomain *domain)
 {
-	gpointer iter;
-	MonoDl *llvm_lib;
-	char *path;
-	iter = NULL;
-	*err = NULL;
-	while ((path = mono_dl_build_path (dir, "mono-llvm", &iter))) {
-		g_free (*err);
-		llvm_lib = mono_dl_open (path, MONO_DL_LAZY, err);
-		g_free (path);
-		if (llvm_lib)
-			return llvm_lib;
-	}
-	return NULL;
+	if (mono_llvm_free_domain_info_fptr)
+		mono_llvm_free_domain_info_fptr (domain);
 }
 
 int
 mono_llvm_load (const char* bpath)
 {
-	MonoDl *llvm_lib = NULL;
-	char *err;
-	char buf [4096];
-	int binl;
-	binl = readlink ("/proc/self/exe", buf, sizeof (buf)-1);
-#ifdef __MACH__
-	if (binl == -1) {
-		uint32_t bsize = sizeof (buf);
-		if (_NSGetExecutablePath (buf, &bsize) == 0) {
-			binl = strlen (buf);
-		}
-	}
-#endif
-	if (binl != -1) {
-		char *base;
-		char *resolvedname, *name;
-		buf [binl] = 0;
-		resolvedname = mono_path_resolve_symlinks (buf);
-		base = g_path_get_dirname (resolvedname);
-		name = g_strdup_printf ("%s/.libs", base);
-		err = NULL;
-		llvm_lib = try_llvm_load (name, &err);
-		g_free (name);
-		if (!llvm_lib) {
-			char *newbase = g_path_get_dirname (base);
-			name = g_strdup_printf ("%s/lib", newbase);
-			err = NULL;
-			llvm_lib = try_llvm_load (name, &err);
-			g_free (name);
-		}
-		g_free (base);
-		g_free (resolvedname);
-	}
+	char *err = NULL;
+	MonoDl *llvm_lib = mono_dl_open_runtime_lib ("mono-llvm", MONO_DL_LAZY, &err);
+
 	if (!llvm_lib) {
-		llvm_lib = try_llvm_load (NULL, &err);
-		if (!llvm_lib) {
-			g_warning ("llvm load failed: %s\n", err);
-			g_free (err);
-			return FALSE;
-		}
+		g_warning ("llvm load failed: %s\n", err);
+		g_free (err);
+		return FALSE;
 	}
+
 	err = mono_dl_symbol (llvm_lib, "mono_llvm_init", (void**)&mono_llvm_init_fptr);
 	if (err) goto symbol_error;
 	err = mono_dl_symbol (llvm_lib, "mono_llvm_cleanup", (void**)&mono_llvm_cleanup_fptr);
@@ -145,6 +104,8 @@ mono_llvm_load (const char* bpath)
 	err = mono_dl_symbol (llvm_lib, "mono_llvm_emit_aot_module", (void**)&mono_llvm_emit_aot_module_fptr);
 	if (err) goto symbol_error;
 	err = mono_dl_symbol (llvm_lib, "mono_llvm_check_method_supported", (void**)&mono_llvm_check_method_supported_fptr);
+	if (err) goto symbol_error;
+	err = mono_dl_symbol (llvm_lib, "mono_llvm_free_domain_info", (void**)&mono_llvm_free_domain_info_fptr);
 	if (err) goto symbol_error;
 	return TRUE;
 symbol_error:

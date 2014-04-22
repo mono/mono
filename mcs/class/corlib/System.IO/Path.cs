@@ -289,9 +289,8 @@ namespace System.IO {
 			return fullpath;
 		}
 
-		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		// http://msdn.microsoft.com/en-us/library/windows/desktop/aa364963%28v=vs.85%29.aspx
-		// http://www.codeproject.com/Tips/223321/Win32-API-GetFullPathName
+		[DllImport("Kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
 		private static extern int GetFullPathName(string path, int numBufferChars, StringBuilder buffer, ref IntPtr lpFilePartOrNull); 
 
 		internal static string GetFullPathName(string path)
@@ -742,6 +741,9 @@ namespace System.IO {
 						else
 							return current + ret;
 					}
+				} else {
+					if (root != "" && ret.Length > 0 && ret [0] != '/')
+						ret = root + ret;
 				}
 				return ret;
 			}
@@ -785,13 +787,21 @@ namespace System.IO {
 			var ret = new StringBuilder ();
 			int pathsLen = paths.Length;
 			int slen;
+			need_sep = false;
+
 			foreach (var s in paths) {
-				need_sep = false;
 				if (s == null)
 					throw new ArgumentNullException ("One of the paths contains a null value", "paths");
+				if (s.Length == 0)
+					continue;
 				if (s.IndexOfAny (InvalidPathChars) != -1)
 					throw new ArgumentException ("Illegal characters in path.");
-				
+
+				if (need_sep) {
+					need_sep = false;
+					ret.Append (DirectorySeparatorStr);
+				}
+
 				pathsLen--;
 				if (IsPathRooted (s))
 					ret.Length = 0;
@@ -803,9 +813,6 @@ namespace System.IO {
 					if (p1end != DirectorySeparatorChar && p1end != AltDirectorySeparatorChar && p1end != VolumeSeparatorChar)
 						need_sep = true;
 				}
-				
-				if (need_sep)
-					ret.Append (DirectorySeparatorStr);
 			}
 
 			return ret.ToString ();

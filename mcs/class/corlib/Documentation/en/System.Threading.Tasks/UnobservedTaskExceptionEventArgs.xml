@@ -1,5 +1,6 @@
 <Type Name="UnobservedTaskExceptionEventArgs" FullName="System.Threading.Tasks.UnobservedTaskExceptionEventArgs">
   <TypeSignature Language="C#" Value="public class UnobservedTaskExceptionEventArgs : EventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UnobservedTaskExceptionEventArgs extends System.EventArgs" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public UnobservedTaskExceptionEventArgs (AggregateException exception);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.AggregateException exception) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -30,6 +32,7 @@
     </Member>
     <Member MemberName="Exception">
       <MemberSignature Language="C#" Value="public AggregateException Exception { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.AggregateException Exception" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -45,6 +48,7 @@
     </Member>
     <Member MemberName="Observed">
       <MemberSignature Language="C#" Value="public bool Observed { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool Observed" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -60,6 +64,7 @@
     </Member>
     <Member MemberName="SetObserved">
       <MemberSignature Language="C#" Value="public void SetObserved ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetObserved() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

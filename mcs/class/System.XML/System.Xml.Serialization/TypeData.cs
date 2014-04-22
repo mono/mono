@@ -42,6 +42,30 @@ using System.Xml.Schema;
 
 namespace System.Xml.Serialization
 {
+	[AttributeUsage (AttributeTargets.Class, AllowMultiple = false)]
+	internal class XmlTypeConvertorAttribute : Attribute
+	{
+		/*
+		 * Bug #12571:
+		 * 
+		 * System.Xml.Linq.XElement should be deserializable from an XmlElement.
+		 * 
+		 * Types can now register a custom deserializer by adding this custom attribute.
+		 * Method is the name of a private 'static method (static object)' method that will
+		 * be invoked to construct an instance of the object.
+		 * 
+		 */
+		public string Method {
+			get;
+			private set;
+		}
+
+		public XmlTypeConvertorAttribute (string method)
+		{
+			Method = method;
+		}
+	}
+
 	internal class TypeData
 	{
 		Type type;
@@ -56,6 +80,7 @@ namespace System.Xml.Serialization
 		TypeData listTypeData;
 		TypeData mappedType;
 		XmlSchemaPatternFacet facet;
+		MethodInfo typeConvertor;
 		bool hasPublicConstructor = true;
 		bool nullableOverride;
 
@@ -98,6 +123,8 @@ namespace System.Xml.Serialization
 			if (sType == SchemaTypes.Array || sType == SchemaTypes.Class) {
 				hasPublicConstructor = !type.IsInterface && (type.IsArray || type.GetConstructor (Type.EmptyTypes) != null || type.IsAbstract || type.IsValueType);
 			}
+
+			LookupTypeConvertor ();
 		}
 
 		internal TypeData (string typeName, string fullTypeName, string xmlType, SchemaTypes schemaType, TypeData listItemTypeData)
@@ -108,6 +135,23 @@ namespace System.Xml.Serialization
 			this.listItemTypeData = listItemTypeData;
 			this.sType = schemaType;
 			this.hasPublicConstructor = true;
+		}
+
+		void LookupTypeConvertor ()
+		{
+#if NET_4_5
+			// We only need this for System.Xml.Linq.
+			var convertor = type.GetCustomAttribute<XmlTypeConvertorAttribute> ();
+			if (convertor != null)
+				typeConvertor = type.GetMethod (convertor.Method, BindingFlags.Static | BindingFlags.NonPublic);
+#endif
+		}
+
+		internal void ConvertForAssignment (ref object value)
+		{
+			// Has this object registered a custom type converter?
+			if (typeConvertor != null)
+				value = typeConvertor.Invoke (null, new object[] { value });
 		}
 
 		public string TypeName

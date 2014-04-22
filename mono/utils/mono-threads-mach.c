@@ -25,7 +25,8 @@
 
 void
 mono_threads_init_platform (void)
-{	
+{
+	mono_threads_init_dead_letter ();
 }
 
 void
@@ -105,6 +106,7 @@ void
 mono_threads_platform_register (MonoThreadInfo *info)
 {
 	info->native_handle = mach_thread_self ();
+	mono_threads_install_dead_letter ();
 }
 
 void
@@ -134,6 +136,12 @@ gboolean
 mono_native_thread_create (MonoNativeThreadId *tid, gpointer func, gpointer arg)
 {
 	return pthread_create (tid, NULL, func, arg) == 0;
+}
+
+void
+mono_threads_core_set_name (MonoNativeThreadId tid, const char *name)
+{
+	/* pthread_setnmae_np() on Mac is not documented and doesn't receive thread id. */
 }
 
 #endif

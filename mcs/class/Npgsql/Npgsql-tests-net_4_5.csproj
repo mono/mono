@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{993AE1D3-7F06-482F-A90A-A06FD59B3FF5}</ProjectGuid>
+    <ProjectGuid>{ADFC8485-9BF5-4B3B-8818-11A0E7AE3A4C}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,219,169</NoWarn>
     <OutputPath>bin\Debug\Npgsql-tests-net_4_5</OutputPath>
@@ -60,34 +60,37 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Npgsql\Npgsql-net_4_5.csproj">
-      <Project>{0E57DA52-274B-4E8D-A60D-3B87910B70E0}</Project>
+      <Project>{D9E7C067-EB10-4A7A-BF8E-23F6D8877AE5}</Project>
       <Name>Npgsql\Npgsql-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{4ED6CCE8-8E8A-4D82-8BCA-3EA4D4203AA4}</Project>
+      <Project>{2534ADE0-05E4-490F-933D-1E39310A0CB9}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web\System.Web-net_4_5-1.csproj">
-      <Project>{6CC04C44-1378-4502-B134-FE6D46B1A4B4}</Project>
+      <Project>{85F119B8-8463-4D6F-9852-DAB8C4070BD5}</Project>
       <Name>System.Web\System.Web-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
-      <Project>{663D8C81-B74E-4D44-8C59-2264C6942B30}</Project>
+      <Project>{9A33954F-57A8-4D75-B1D8-0F81808A0DD4}</Project>
       <Name>System.Data\System.Data-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -95,3 +98,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

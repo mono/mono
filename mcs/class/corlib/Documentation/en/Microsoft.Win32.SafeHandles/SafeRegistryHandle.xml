@@ -1,5 +1,6 @@
 <Type Name="SafeRegistryHandle" FullName="Microsoft.Win32.SafeHandles.SafeRegistryHandle">
   <TypeSignature Language="C#" Value="public sealed class SafeRegistryHandle : Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SafeRegistryHandle extends Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public SafeRegistryHandle (IntPtr preexistingHandle, bool ownsHandle);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(native int preexistingHandle, bool ownsHandle) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -32,6 +34,7 @@
     </Member>
     <Member MemberName="ReleaseHandle">
       <MemberSignature Language="C#" Value="protected override bool ReleaseHandle ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance bool ReleaseHandle() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

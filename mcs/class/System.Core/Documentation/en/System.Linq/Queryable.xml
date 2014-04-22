@@ -1,8 +1,10 @@
 <Type Name="Queryable" FullName="System.Linq.Queryable">
   <TypeSignature Language="C#" Value="public static class Queryable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Queryable extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -15,13 +17,18 @@
   <Members>
     <Member MemberName="Aggregate&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource Aggregate&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TSource,TSource&gt;&gt; func);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource Aggregate&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TSource, !!TSource, !!TSource&gt;&gt; func) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="func" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TSource,TSource&gt;&gt;" />
@@ -34,19 +41,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Aggregate&lt;TSource,TAccumulate&gt;">
       <MemberSignature Language="C#" Value="public static TAccumulate Aggregate&lt;TSource,TAccumulate&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, TAccumulate seed, System.Linq.Expressions.Expression&lt;Func&lt;TAccumulate,TSource,TAccumulate&gt;&gt; func);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TAccumulate Aggregate&lt;TSource, TAccumulate&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, !!TAccumulate seed, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TAccumulate, !!TSource, !!TAccumulate&gt;&gt; func) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TAccumulate</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TAccumulate" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="seed" Type="TAccumulate" />
@@ -62,20 +72,23 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TAccumulate" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Aggregate&lt;TSource,TAccumulate,TResult&gt;">
       <MemberSignature Language="C#" Value="public static TResult Aggregate&lt;TSource,TAccumulate,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, TAccumulate seed, System.Linq.Expressions.Expression&lt;Func&lt;TAccumulate,TSource,TAccumulate&gt;&gt; func, System.Linq.Expressions.Expression&lt;Func&lt;TAccumulate,TResult&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TResult Aggregate&lt;TSource, TAccumulate, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, !!TAccumulate seed, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TAccumulate, !!TSource, !!TAccumulate&gt;&gt; func, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TAccumulate, !!TResult&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TResult</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TAccumulate" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="seed" Type="TAccumulate" />
@@ -94,21 +107,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TAccumulate" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="All&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static bool All&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool All&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -121,19 +134,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Any&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static bool Any&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Any&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -144,19 +159,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Any&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static bool Any&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Any&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -169,15 +186,14 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="AsQueryable">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable AsQueryable (this System.Collections.IEnumerable source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable AsQueryable(class System.Collections.IEnumerable source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable</ReturnType>
@@ -194,13 +210,18 @@
     </Member>
     <Member MemberName="AsQueryable&lt;TElement&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TElement&gt; AsQueryable&lt;TElement&gt; (this System.Collections.Generic.IEnumerable&lt;TElement&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TElement&gt; AsQueryable&lt;TElement&gt;(class System.Collections.Generic.IEnumerable`1&lt;!!TElement&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TElement&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TElement" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TElement&gt;" RefType="this" />
       </Parameters>
@@ -211,15 +232,14 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TElement" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Average">
       <MemberSignature Language="C#" Value="public static decimal Average (this System.Linq.IQueryable&lt;decimal&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Average(class System.Linq.IQueryable`1&lt;valuetype System.Decimal&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
@@ -236,9 +256,11 @@
     </Member>
     <Member MemberName="Average">
       <MemberSignature Language="C#" Value="public static double Average (this System.Linq.IQueryable&lt;double&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Average(class System.Linq.IQueryable`1&lt;float64&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
@@ -255,9 +277,11 @@
     </Member>
     <Member MemberName="Average">
       <MemberSignature Language="C#" Value="public static double Average (this System.Linq.IQueryable&lt;int&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Average(class System.Linq.IQueryable`1&lt;int32&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
@@ -274,9 +298,11 @@
     </Member>
     <Member MemberName="Average">
       <MemberSignature Language="C#" Value="public static double Average (this System.Linq.IQueryable&lt;long&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Average(class System.Linq.IQueryable`1&lt;int64&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
@@ -293,9 +319,11 @@
     </Member>
     <Member MemberName="Average">
       <MemberSignature Language="C#" Value="public static Nullable&lt;decimal&gt; Average (this System.Linq.IQueryable&lt;Nullable&lt;decimal&gt;&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;valuetype System.Decimal&gt; Average(class System.Linq.IQueryable`1&lt;valuetype System.Nullable`1&lt;valuetype System.Decimal&gt;&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Decimal&gt;</ReturnType>
@@ -312,9 +340,11 @@
     </Member>
     <Member MemberName="Average">
       <MemberSignature Language="C#" Value="public static Nullable&lt;double&gt; Average (this System.Linq.IQueryable&lt;Nullable&lt;double&gt;&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float64&gt; Average(class System.Linq.IQueryable`1&lt;valuetype System.Nullable`1&lt;float64&gt;&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Double&gt;</ReturnType>
@@ -331,9 +361,11 @@
     </Member>
     <Member MemberName="Average">
       <MemberSignature Language="C#" Value="public static Nullable&lt;double&gt; Average (this System.Linq.IQueryable&lt;Nullable&lt;int&gt;&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float64&gt; Average(class System.Linq.IQueryable`1&lt;valuetype System.Nullable`1&lt;int32&gt;&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Double&gt;</ReturnType>
@@ -350,9 +382,11 @@
     </Member>
     <Member MemberName="Average">
       <MemberSignature Language="C#" Value="public static Nullable&lt;double&gt; Average (this System.Linq.IQueryable&lt;Nullable&lt;long&gt;&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float64&gt; Average(class System.Linq.IQueryable`1&lt;valuetype System.Nullable`1&lt;int64&gt;&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Double&gt;</ReturnType>
@@ -369,9 +403,11 @@
     </Member>
     <Member MemberName="Average">
       <MemberSignature Language="C#" Value="public static Nullable&lt;float&gt; Average (this System.Linq.IQueryable&lt;Nullable&lt;float&gt;&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float32&gt; Average(class System.Linq.IQueryable`1&lt;valuetype System.Nullable`1&lt;float32&gt;&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Single&gt;</ReturnType>
@@ -388,9 +424,11 @@
     </Member>
     <Member MemberName="Average">
       <MemberSignature Language="C#" Value="public static float Average (this System.Linq.IQueryable&lt;float&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float32 Average(class System.Linq.IQueryable`1&lt;float32&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
@@ -407,13 +445,18 @@
     </Member>
     <Member MemberName="Average&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static decimal Average&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,decimal&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Average&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Decimal&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Decimal&gt;&gt;" />
@@ -426,19 +469,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Average&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static double Average&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,double&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Average&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, float64&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Double&gt;&gt;" />
@@ -451,15 +496,14 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Average&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static double Average&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,int&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Average&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, int32&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
@@ -482,9 +526,11 @@
     </Member>
     <Member MemberName="Average&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static double Average&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,long&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Average&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, int64&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
@@ -507,13 +553,18 @@
     </Member>
     <Member MemberName="Average&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static Nullable&lt;decimal&gt; Average&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,Nullable&lt;decimal&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;valuetype System.Decimal&gt; Average&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Nullable`1&lt;valuetype System.Decimal&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Decimal&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Decimal&gt;&gt;&gt;" />
@@ -526,19 +577,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Average&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static Nullable&lt;double&gt; Average&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,Nullable&lt;double&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float64&gt; Average&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Nullable`1&lt;float64&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Double&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Double&gt;&gt;&gt;" />
@@ -551,15 +604,14 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Average&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static Nullable&lt;double&gt; Average&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,Nullable&lt;int&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float64&gt; Average&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Nullable`1&lt;int32&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Double&gt;</ReturnType>
@@ -582,9 +634,11 @@
     </Member>
     <Member MemberName="Average&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static Nullable&lt;double&gt; Average&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,Nullable&lt;long&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float64&gt; Average&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Nullable`1&lt;int64&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Double&gt;</ReturnType>
@@ -607,13 +661,18 @@
     </Member>
     <Member MemberName="Average&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static Nullable&lt;float&gt; Average&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,Nullable&lt;float&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float32&gt; Average&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Nullable`1&lt;float32&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Single&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Single&gt;&gt;&gt;" />
@@ -626,19 +685,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Average&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static float Average&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,float&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float32 Average&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, float32&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Single&gt;&gt;" />
@@ -651,19 +712,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Cast&lt;TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; Cast&lt;TResult&gt; (this System.Linq.IQueryable source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; Cast&lt;TResult&gt;(class System.Linq.IQueryable source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable" RefType="this" />
       </Parameters>
@@ -674,19 +737,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Concat&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Concat&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source1, System.Collections.Generic.IEnumerable&lt;TSource&gt; source2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Concat&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source1, class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source1" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
@@ -699,19 +764,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Contains&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static bool Contains&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, TSource item);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Contains&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, !!TSource item) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="item" Type="TSource" />
@@ -724,19 +791,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Contains&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static bool Contains&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, TSource item, System.Collections.Generic.IEqualityComparer&lt;TSource&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool Contains&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, !!TSource item, class System.Collections.Generic.IEqualityComparer`1&lt;!!TSource&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="item" Type="TSource" />
@@ -751,19 +820,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Count&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static int Count&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Count&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -774,19 +845,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Count&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static int Count&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Count&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -799,15 +872,14 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="DefaultIfEmpty&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; DefaultIfEmpty&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; DefaultIfEmpty&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
@@ -828,9 +900,11 @@
     </Member>
     <Member MemberName="DefaultIfEmpty&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; DefaultIfEmpty&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, TSource defaultValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; DefaultIfEmpty&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, !!TSource defaultValue) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
@@ -853,9 +927,11 @@
     </Member>
     <Member MemberName="Distinct&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Distinct&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Distinct&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
@@ -876,9 +952,11 @@
     </Member>
     <Member MemberName="Distinct&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Distinct&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Collections.Generic.IEqualityComparer&lt;TSource&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Distinct&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Collections.Generic.IEqualityComparer`1&lt;!!TSource&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
@@ -901,13 +979,18 @@
     </Member>
     <Member MemberName="ElementAt&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource ElementAt&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource ElementAt&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, int32 index) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="index" Type="System.Int32" />
@@ -920,19 +1003,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="ElementAtOrDefault&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource ElementAtOrDefault&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, int index);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource ElementAtOrDefault&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, int32 index) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="index" Type="System.Int32" />
@@ -945,19 +1030,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Except&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Except&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source1, System.Collections.Generic.IEnumerable&lt;TSource&gt; source2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Except&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source1, class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source1" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
@@ -970,19 +1057,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Except&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Except&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source1, System.Collections.Generic.IEnumerable&lt;TSource&gt; source2, System.Collections.Generic.IEqualityComparer&lt;TSource&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Except&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source1, class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source2, class System.Collections.Generic.IEqualityComparer`1&lt;!!TSource&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source1" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
@@ -997,19 +1086,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="First&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource First&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource First&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -1020,19 +1111,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="First&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource First&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource First&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -1045,19 +1138,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="FirstOrDefault&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource FirstOrDefault&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource FirstOrDefault&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -1068,19 +1163,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="FirstOrDefault&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource FirstOrDefault&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource FirstOrDefault&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -1093,19 +1190,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="GroupBy&lt;TSource,TKey&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;System.Linq.IGrouping&lt;TKey,TSource&gt;&gt; GroupBy&lt;TSource,TKey&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;class System.Linq.IGrouping`2&lt;!!TKey, !!TSource&gt;&gt; GroupBy&lt;TSource, TKey&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;System.Linq.IGrouping&lt;TKey,TSource&gt;&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TKey" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
@@ -1119,20 +1219,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TKey" />
-      </TypeParameters>
     </Member>
     <Member MemberName="GroupBy&lt;TSource,TKey&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;System.Linq.IGrouping&lt;TKey,TSource&gt;&gt; GroupBy&lt;TSource,TKey&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector, System.Collections.Generic.IEqualityComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;class System.Linq.IGrouping`2&lt;!!TKey, !!TSource&gt;&gt; GroupBy&lt;TSource, TKey&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector, class System.Collections.Generic.IEqualityComparer`1&lt;!!TKey&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;System.Linq.IGrouping&lt;TKey,TSource&gt;&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TKey" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
@@ -1148,16 +1250,14 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TKey" />
-      </TypeParameters>
     </Member>
     <Member MemberName="GroupBy&lt;TSource,TKey,TElement&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;System.Linq.IGrouping&lt;TKey,TElement&gt;&gt; GroupBy&lt;TSource,TKey,TElement&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TElement&gt;&gt; elementSelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;class System.Linq.IGrouping`2&lt;!!TKey, !!TElement&gt;&gt; GroupBy&lt;TSource, TKey, TElement&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TElement&gt;&gt; elementSelector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;System.Linq.IGrouping&lt;TKey,TElement&gt;&gt;</ReturnType>
@@ -1186,13 +1286,20 @@
     </Member>
     <Member MemberName="GroupBy&lt;TSource,TKey,TElement&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;System.Linq.IGrouping&lt;TKey,TElement&gt;&gt; GroupBy&lt;TSource,TKey,TElement&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TElement&gt;&gt; elementSelector, System.Collections.Generic.IEqualityComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;class System.Linq.IGrouping`2&lt;!!TKey, !!TElement&gt;&gt; GroupBy&lt;TSource, TKey, TElement&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TElement&gt;&gt; elementSelector, class System.Collections.Generic.IEqualityComparer`1&lt;!!TKey&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;System.Linq.IGrouping&lt;TKey,TElement&gt;&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TElement" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
@@ -1211,21 +1318,23 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TKey" />
-        <TypeParameter Name="TElement" />
-      </TypeParameters>
     </Member>
     <Member MemberName="GroupBy&lt;TSource,TKey,TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; GroupBy&lt;TSource,TKey,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector, System.Linq.Expressions.Expression&lt;Func&lt;TKey,System.Collections.Generic.IEnumerable&lt;TSource&gt;,TResult&gt;&gt; resultSelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; GroupBy&lt;TSource, TKey, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TKey, class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt;, !!TResult&gt;&gt; resultSelector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
@@ -1242,21 +1351,23 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TKey" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="GroupBy&lt;TSource,TKey,TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; GroupBy&lt;TSource,TKey,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector, System.Linq.Expressions.Expression&lt;Func&lt;TKey,System.Collections.Generic.IEnumerable&lt;TSource&gt;,TResult&gt;&gt; resultSelector, System.Collections.Generic.IEqualityComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; GroupBy&lt;TSource, TKey, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TKey, class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt;, !!TResult&gt;&gt; resultSelector, class System.Collections.Generic.IEqualityComparer`1&lt;!!TKey&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
@@ -1275,21 +1386,24 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TKey" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="GroupBy&lt;TSource,TKey,TElement,TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; GroupBy&lt;TSource,TKey,TElement,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TElement&gt;&gt; elementSelector, System.Linq.Expressions.Expression&lt;Func&lt;TKey,System.Collections.Generic.IEnumerable&lt;TElement&gt;,TResult&gt;&gt; resultSelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; GroupBy&lt;TSource, TKey, TElement, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TElement&gt;&gt; elementSelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TKey, class System.Collections.Generic.IEnumerable`1&lt;!!TElement&gt;, !!TResult&gt;&gt; resultSelector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TElement" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
@@ -1309,22 +1423,24 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TKey" />
-        <TypeParameter Name="TElement" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="GroupBy&lt;TSource,TKey,TElement,TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; GroupBy&lt;TSource,TKey,TElement,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TElement&gt;&gt; elementSelector, System.Linq.Expressions.Expression&lt;Func&lt;TKey,System.Collections.Generic.IEnumerable&lt;TElement&gt;,TResult&gt;&gt; resultSelector, System.Collections.Generic.IEqualityComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; GroupBy&lt;TSource, TKey, TElement, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TElement&gt;&gt; elementSelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TKey, class System.Collections.Generic.IEnumerable`1&lt;!!TElement&gt;, !!TResult&gt;&gt; resultSelector, class System.Collections.Generic.IEqualityComparer`1&lt;!!TKey&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TElement" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
@@ -1346,22 +1462,24 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TKey" />
-        <TypeParameter Name="TElement" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="GroupJoin&lt;TOuter,TInner,TKey,TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; GroupJoin&lt;TOuter,TInner,TKey,TResult&gt; (this System.Linq.IQueryable&lt;TOuter&gt; outer, System.Collections.Generic.IEnumerable&lt;TInner&gt; inner, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,TKey&gt;&gt; outerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TInner,TKey&gt;&gt; innerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,System.Collections.Generic.IEnumerable&lt;TInner&gt;,TResult&gt;&gt; resultSelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; GroupJoin&lt;TOuter, TInner, TKey, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TOuter&gt; outer, class System.Collections.Generic.IEnumerable`1&lt;!!TInner&gt; inner, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TOuter, !!TKey&gt;&gt; outerKeySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TInner, !!TKey&gt;&gt; innerKeySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TOuter, class System.Collections.Generic.IEnumerable`1&lt;!!TInner&gt;, !!TResult&gt;&gt; resultSelector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TOuter" />
+        <TypeParameter Name="TInner" />
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="outer" Type="System.Linq.IQueryable&lt;TOuter&gt;" RefType="this" />
         <Parameter Name="inner" Type="System.Collections.Generic.IEnumerable&lt;TInner&gt;" />
@@ -1383,22 +1501,24 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GroupJoin&lt;TOuter,TInner,TKey,TResult&gt;">
+      <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; GroupJoin&lt;TOuter,TInner,TKey,TResult&gt; (this System.Linq.IQueryable&lt;TOuter&gt; outer, System.Collections.Generic.IEnumerable&lt;TInner&gt; inner, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,TKey&gt;&gt; outerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TInner,TKey&gt;&gt; innerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,System.Collections.Generic.IEnumerable&lt;TInner&gt;,TResult&gt;&gt; resultSelector, System.Collections.Generic.IEqualityComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; GroupJoin&lt;TOuter, TInner, TKey, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TOuter&gt; outer, class System.Collections.Generic.IEnumerable`1&lt;!!TInner&gt; inner, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TOuter, !!TKey&gt;&gt; outerKeySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TInner, !!TKey&gt;&gt; innerKeySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TOuter, class System.Collections.Generic.IEnumerable`1&lt;!!TInner&gt;, !!TResult&gt;&gt; resultSelector, class System.Collections.Generic.IEqualityComparer`1&lt;!!TKey&gt; comparer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
+      </ReturnValue>
       <TypeParameters>
         <TypeParameter Name="TOuter" />
         <TypeParameter Name="TInner" />
         <TypeParameter Name="TKey" />
         <TypeParameter Name="TResult" />
       </TypeParameters>
-    </Member>
-    <Member MemberName="GroupJoin&lt;TOuter,TInner,TKey,TResult&gt;">
-      <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; GroupJoin&lt;TOuter,TInner,TKey,TResult&gt; (this System.Linq.IQueryable&lt;TOuter&gt; outer, System.Collections.Generic.IEnumerable&lt;TInner&gt; inner, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,TKey&gt;&gt; outerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TInner,TKey&gt;&gt; innerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,System.Collections.Generic.IEnumerable&lt;TInner&gt;,TResult&gt;&gt; resultSelector, System.Collections.Generic.IEqualityComparer&lt;TKey&gt; comparer);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>3.5.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
-      </ReturnValue>
       <Parameters>
         <Parameter Name="outer" Type="System.Linq.IQueryable&lt;TOuter&gt;" RefType="this" />
         <Parameter Name="inner" Type="System.Collections.Generic.IEnumerable&lt;TInner&gt;" />
@@ -1422,22 +1542,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TOuter" />
-        <TypeParameter Name="TInner" />
-        <TypeParameter Name="TKey" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Intersect&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Intersect&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source1, System.Collections.Generic.IEnumerable&lt;TSource&gt; source2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Intersect&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source1, class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source1" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
@@ -1450,19 +1569,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Intersect&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Intersect&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source1, System.Collections.Generic.IEnumerable&lt;TSource&gt; source2, System.Collections.Generic.IEqualityComparer&lt;TSource&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Intersect&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source1, class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source2, class System.Collections.Generic.IEqualityComparer`1&lt;!!TSource&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source1" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
@@ -1477,19 +1598,24 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Join&lt;TOuter,TInner,TKey,TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt; (this System.Linq.IQueryable&lt;TOuter&gt; outer, System.Collections.Generic.IEnumerable&lt;TInner&gt; inner, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,TKey&gt;&gt; outerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TInner,TKey&gt;&gt; innerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,TInner,TResult&gt;&gt; resultSelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; Join&lt;TOuter, TInner, TKey, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TOuter&gt; outer, class System.Collections.Generic.IEnumerable`1&lt;!!TInner&gt; inner, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TOuter, !!TKey&gt;&gt; outerKeySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TInner, !!TKey&gt;&gt; innerKeySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TOuter, !!TInner, !!TResult&gt;&gt; resultSelector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TOuter" />
+        <TypeParameter Name="TInner" />
+        <TypeParameter Name="TKey" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="outer" Type="System.Linq.IQueryable&lt;TOuter&gt;" RefType="this" />
         <Parameter Name="inner" Type="System.Collections.Generic.IEnumerable&lt;TInner&gt;" />
@@ -1511,22 +1637,24 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Join&lt;TOuter,TInner,TKey,TResult&gt;">
+      <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt; (this System.Linq.IQueryable&lt;TOuter&gt; outer, System.Collections.Generic.IEnumerable&lt;TInner&gt; inner, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,TKey&gt;&gt; outerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TInner,TKey&gt;&gt; innerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,TInner,TResult&gt;&gt; resultSelector, System.Collections.Generic.IEqualityComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; Join&lt;TOuter, TInner, TKey, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TOuter&gt; outer, class System.Collections.Generic.IEnumerable`1&lt;!!TInner&gt; inner, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TOuter, !!TKey&gt;&gt; outerKeySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TInner, !!TKey&gt;&gt; innerKeySelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TOuter, !!TInner, !!TResult&gt;&gt; resultSelector, class System.Collections.Generic.IEqualityComparer`1&lt;!!TKey&gt; comparer) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
+      </ReturnValue>
       <TypeParameters>
         <TypeParameter Name="TOuter" />
         <TypeParameter Name="TInner" />
         <TypeParameter Name="TKey" />
         <TypeParameter Name="TResult" />
       </TypeParameters>
-    </Member>
-    <Member MemberName="Join&lt;TOuter,TInner,TKey,TResult&gt;">
-      <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; Join&lt;TOuter,TInner,TKey,TResult&gt; (this System.Linq.IQueryable&lt;TOuter&gt; outer, System.Collections.Generic.IEnumerable&lt;TInner&gt; inner, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,TKey&gt;&gt; outerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TInner,TKey&gt;&gt; innerKeySelector, System.Linq.Expressions.Expression&lt;Func&lt;TOuter,TInner,TResult&gt;&gt; resultSelector, System.Collections.Generic.IEqualityComparer&lt;TKey&gt; comparer);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>3.5.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
-      </ReturnValue>
       <Parameters>
         <Parameter Name="outer" Type="System.Linq.IQueryable&lt;TOuter&gt;" RefType="this" />
         <Parameter Name="inner" Type="System.Collections.Generic.IEnumerable&lt;TInner&gt;" />
@@ -1550,22 +1678,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TOuter" />
-        <TypeParameter Name="TInner" />
-        <TypeParameter Name="TKey" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Last&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource Last&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource Last&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -1576,19 +1703,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Last&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource Last&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource Last&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -1601,19 +1730,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="LastOrDefault&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource LastOrDefault&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource LastOrDefault&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -1624,19 +1755,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="LastOrDefault&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource LastOrDefault&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource LastOrDefault&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -1649,19 +1782,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="LongCount&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static long LongCount&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 LongCount&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -1672,19 +1807,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="LongCount&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static long LongCount&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 LongCount&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -1697,19 +1834,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Max&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource Max&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource Max&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -1720,19 +1859,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Max&lt;TSource,TResult&gt;">
       <MemberSignature Language="C#" Value="public static TResult Max&lt;TSource,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TResult&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TResult Max&lt;TSource, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TResult&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TResult</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TResult&gt;&gt;" />
@@ -1746,20 +1888,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Min&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource Min&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource Min&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -1770,19 +1913,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Min&lt;TSource,TResult&gt;">
       <MemberSignature Language="C#" Value="public static TResult Min&lt;TSource,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TResult&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TResult Min&lt;TSource, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TResult&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TResult</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TResult&gt;&gt;" />
@@ -1796,20 +1942,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="OfType&lt;TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; OfType&lt;TResult&gt; (this System.Linq.IQueryable source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; OfType&lt;TResult&gt;(class System.Linq.IQueryable source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable" RefType="this" />
       </Parameters>
@@ -1820,15 +1967,14 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="OrderBy&lt;TSource,TKey&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IOrderedQueryable&lt;TSource&gt; OrderBy&lt;TSource,TKey&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; OrderBy&lt;TSource, TKey&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IOrderedQueryable&lt;TSource&gt;</ReturnType>
@@ -1853,9 +1999,11 @@
     </Member>
     <Member MemberName="OrderBy&lt;TSource,TKey&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IOrderedQueryable&lt;TSource&gt; OrderBy&lt;TSource,TKey&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector, System.Collections.Generic.IComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; OrderBy&lt;TSource, TKey&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector, class System.Collections.Generic.IComparer`1&lt;!!TKey&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IOrderedQueryable&lt;TSource&gt;</ReturnType>
@@ -1882,9 +2030,11 @@
     </Member>
     <Member MemberName="OrderByDescending&lt;TSource,TKey&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IOrderedQueryable&lt;TSource&gt; OrderByDescending&lt;TSource,TKey&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; OrderByDescending&lt;TSource, TKey&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IOrderedQueryable&lt;TSource&gt;</ReturnType>
@@ -1909,9 +2059,11 @@
     </Member>
     <Member MemberName="OrderByDescending&lt;TSource,TKey&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IOrderedQueryable&lt;TSource&gt; OrderByDescending&lt;TSource,TKey&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector, System.Collections.Generic.IComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; OrderByDescending&lt;TSource, TKey&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector, class System.Collections.Generic.IComparer`1&lt;!!TKey&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IOrderedQueryable&lt;TSource&gt;</ReturnType>
@@ -1938,13 +2090,18 @@
     </Member>
     <Member MemberName="Reverse&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Reverse&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Reverse&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -1955,19 +2112,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Select&lt;TSource,TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; Select&lt;TSource,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,int,TResult&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; Select&lt;TSource, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TSource, int32, !!TResult&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32,TResult&gt;&gt;" />
@@ -1981,20 +2141,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Select&lt;TSource,TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; Select&lt;TSource,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TResult&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; Select&lt;TSource, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TResult&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TResult&gt;&gt;" />
@@ -2008,20 +2170,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="SelectMany&lt;TSource,TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; SelectMany&lt;TSource,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,System.Collections.Generic.IEnumerable&lt;TResult&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; SelectMany&lt;TSource, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, class System.Collections.Generic.IEnumerable`1&lt;!!TResult&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Collections.Generic.IEnumerable&lt;TResult&gt;&gt;&gt;" />
@@ -2035,20 +2199,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="SelectMany&lt;TSource,TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; SelectMany&lt;TSource,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,int,System.Collections.Generic.IEnumerable&lt;TResult&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; SelectMany&lt;TSource, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TSource, int32, class System.Collections.Generic.IEnumerable`1&lt;!!TResult&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32,System.Collections.Generic.IEnumerable&lt;TResult&gt;&gt;&gt;" />
@@ -2062,20 +2228,23 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="SelectMany&lt;TSource,TCollection,TResult&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; SelectMany&lt;TSource,TCollection,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,System.Collections.Generic.IEnumerable&lt;TCollection&gt;&gt;&gt; collectionSelector, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TCollection,TResult&gt;&gt; resultSelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; SelectMany&lt;TSource, TCollection, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, class System.Collections.Generic.IEnumerable`1&lt;!!TCollection&gt;&gt;&gt; collectionSelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TSource, !!TCollection, !!TResult&gt;&gt; resultSelector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TCollection" />
+        <TypeParameter Name="TResult" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="collectionSelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Collections.Generic.IEnumerable&lt;TCollection&gt;&gt;&gt;" />
@@ -2092,21 +2261,23 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="SelectMany&lt;TSource,TCollection,TResult&gt;">
+      <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; SelectMany&lt;TSource,TCollection,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,int,System.Collections.Generic.IEnumerable&lt;TCollection&gt;&gt;&gt; collectionSelector, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TCollection,TResult&gt;&gt; resultSelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; SelectMany&lt;TSource, TCollection, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TSource, int32, class System.Collections.Generic.IEnumerable`1&lt;!!TCollection&gt;&gt;&gt; collectionSelector, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TSource, !!TCollection, !!TResult&gt;&gt; resultSelector) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
+      </ReturnValue>
       <TypeParameters>
         <TypeParameter Name="TSource" />
         <TypeParameter Name="TCollection" />
         <TypeParameter Name="TResult" />
       </TypeParameters>
-    </Member>
-    <Member MemberName="SelectMany&lt;TSource,TCollection,TResult&gt;">
-      <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; SelectMany&lt;TSource,TCollection,TResult&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,int,System.Collections.Generic.IEnumerable&lt;TCollection&gt;&gt;&gt; collectionSelector, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TCollection,TResult&gt;&gt; resultSelector);" />
-      <MemberType>Method</MemberType>
-      <AssemblyInfo>
-        <AssemblyVersion>3.5.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <ReturnValue>
-        <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
-      </ReturnValue>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="collectionSelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32,System.Collections.Generic.IEnumerable&lt;TCollection&gt;&gt;&gt;" />
@@ -2123,21 +2294,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TCollection" />
-        <TypeParameter Name="TResult" />
-      </TypeParameters>
     </Member>
     <Member MemberName="SequenceEqual&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static bool SequenceEqual&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source1, System.Collections.Generic.IEnumerable&lt;TSource&gt; source2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool SequenceEqual&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source1, class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source1" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
@@ -2150,19 +2321,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="SequenceEqual&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static bool SequenceEqual&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source1, System.Collections.Generic.IEnumerable&lt;TSource&gt; source2, System.Collections.Generic.IEqualityComparer&lt;TSource&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig bool SequenceEqual&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source1, class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source2, class System.Collections.Generic.IEqualityComparer`1&lt;!!TSource&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source1" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
@@ -2177,19 +2350,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Single&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource Single&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource Single&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -2200,19 +2375,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Single&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource Single&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource Single&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -2225,19 +2402,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="SingleOrDefault&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource SingleOrDefault&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource SingleOrDefault&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
@@ -2248,19 +2427,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="SingleOrDefault&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static TSource SingleOrDefault&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig !!TSource SingleOrDefault&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>TSource</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -2273,19 +2454,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Skip&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Skip&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Skip&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, int32 count) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="count" Type="System.Int32" />
@@ -2298,19 +2481,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="SkipWhile&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; SkipWhile&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; SkipWhile&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -2323,19 +2508,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="SkipWhile&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; SkipWhile&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,int,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; SkipWhile&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TSource, int32, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32,System.Boolean&gt;&gt;" />
@@ -2348,15 +2535,14 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Sum">
       <MemberSignature Language="C#" Value="public static decimal Sum (this System.Linq.IQueryable&lt;decimal&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Sum(class System.Linq.IQueryable`1&lt;valuetype System.Decimal&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
@@ -2373,9 +2559,11 @@
     </Member>
     <Member MemberName="Sum">
       <MemberSignature Language="C#" Value="public static double Sum (this System.Linq.IQueryable&lt;double&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Sum(class System.Linq.IQueryable`1&lt;float64&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
@@ -2392,9 +2580,11 @@
     </Member>
     <Member MemberName="Sum">
       <MemberSignature Language="C#" Value="public static int Sum (this System.Linq.IQueryable&lt;int&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Sum(class System.Linq.IQueryable`1&lt;int32&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
@@ -2411,9 +2601,11 @@
     </Member>
     <Member MemberName="Sum">
       <MemberSignature Language="C#" Value="public static long Sum (this System.Linq.IQueryable&lt;long&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 Sum(class System.Linq.IQueryable`1&lt;int64&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
@@ -2430,9 +2622,11 @@
     </Member>
     <Member MemberName="Sum">
       <MemberSignature Language="C#" Value="public static Nullable&lt;decimal&gt; Sum (this System.Linq.IQueryable&lt;Nullable&lt;decimal&gt;&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;valuetype System.Decimal&gt; Sum(class System.Linq.IQueryable`1&lt;valuetype System.Nullable`1&lt;valuetype System.Decimal&gt;&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Decimal&gt;</ReturnType>
@@ -2449,9 +2643,11 @@
     </Member>
     <Member MemberName="Sum">
       <MemberSignature Language="C#" Value="public static Nullable&lt;double&gt; Sum (this System.Linq.IQueryable&lt;Nullable&lt;double&gt;&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float64&gt; Sum(class System.Linq.IQueryable`1&lt;valuetype System.Nullable`1&lt;float64&gt;&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Double&gt;</ReturnType>
@@ -2468,9 +2664,11 @@
     </Member>
     <Member MemberName="Sum">
       <MemberSignature Language="C#" Value="public static Nullable&lt;int&gt; Sum (this System.Linq.IQueryable&lt;Nullable&lt;int&gt;&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;int32&gt; Sum(class System.Linq.IQueryable`1&lt;valuetype System.Nullable`1&lt;int32&gt;&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Int32&gt;</ReturnType>
@@ -2487,9 +2685,11 @@
     </Member>
     <Member MemberName="Sum">
       <MemberSignature Language="C#" Value="public static Nullable&lt;long&gt; Sum (this System.Linq.IQueryable&lt;Nullable&lt;long&gt;&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;int64&gt; Sum(class System.Linq.IQueryable`1&lt;valuetype System.Nullable`1&lt;int64&gt;&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Int64&gt;</ReturnType>
@@ -2506,9 +2706,11 @@
     </Member>
     <Member MemberName="Sum">
       <MemberSignature Language="C#" Value="public static Nullable&lt;float&gt; Sum (this System.Linq.IQueryable&lt;Nullable&lt;float&gt;&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float32&gt; Sum(class System.Linq.IQueryable`1&lt;valuetype System.Nullable`1&lt;float32&gt;&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Single&gt;</ReturnType>
@@ -2525,9 +2727,11 @@
     </Member>
     <Member MemberName="Sum">
       <MemberSignature Language="C#" Value="public static float Sum (this System.Linq.IQueryable&lt;float&gt; source);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float32 Sum(class System.Linq.IQueryable`1&lt;float32&gt; source) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
@@ -2544,13 +2748,18 @@
     </Member>
     <Member MemberName="Sum&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static decimal Sum&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,decimal&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Decimal Sum&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Decimal&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Decimal&gt;&gt;" />
@@ -2563,19 +2772,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Sum&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static double Sum&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,double&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float64 Sum&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, float64&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Double</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Double&gt;&gt;" />
@@ -2588,19 +2799,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Sum&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static int Sum&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,int&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int32 Sum&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, int32&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32&gt;&gt;" />
@@ -2613,19 +2826,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Sum&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static long Sum&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,long&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig int64 Sum&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, int64&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int64&gt;&gt;" />
@@ -2638,19 +2853,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Sum&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static Nullable&lt;decimal&gt; Sum&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,Nullable&lt;decimal&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;valuetype System.Decimal&gt; Sum&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Nullable`1&lt;valuetype System.Decimal&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Decimal&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Decimal&gt;&gt;&gt;" />
@@ -2663,19 +2880,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Sum&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static Nullable&lt;double&gt; Sum&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,Nullable&lt;double&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float64&gt; Sum&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Nullable`1&lt;float64&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Double&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Double&gt;&gt;&gt;" />
@@ -2688,19 +2907,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Sum&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static Nullable&lt;int&gt; Sum&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,Nullable&lt;int&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;int32&gt; Sum&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Nullable`1&lt;int32&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Int32&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Int32&gt;&gt;&gt;" />
@@ -2713,19 +2934,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Sum&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static Nullable&lt;long&gt; Sum&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,Nullable&lt;long&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;int64&gt; Sum&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Nullable`1&lt;int64&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Int64&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Int64&gt;&gt;&gt;" />
@@ -2738,19 +2961,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Sum&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static Nullable&lt;float&gt; Sum&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,Nullable&lt;float&gt;&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig valuetype System.Nullable`1&lt;float32&gt; Sum&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, valuetype System.Nullable`1&lt;float32&gt;&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;System.Single&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Single&gt;&gt;&gt;" />
@@ -2763,19 +2988,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Sum&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static float Sum&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,float&gt;&gt; selector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig float32 Sum&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, float32&gt;&gt; selector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Single&gt;&gt;" />
@@ -2788,19 +3015,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Take&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Take&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, int count);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Take&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, int32 count) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="count" Type="System.Int32" />
@@ -2813,19 +3042,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="TakeWhile&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; TakeWhile&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; TakeWhile&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -2838,19 +3069,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="TakeWhile&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; TakeWhile&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,int,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; TakeWhile&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TSource, int32, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32,System.Boolean&gt;&gt;" />
@@ -2863,19 +3096,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="ThenBy&lt;TSource,TKey&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IOrderedQueryable&lt;TSource&gt; ThenBy&lt;TSource,TKey&gt; (this System.Linq.IOrderedQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; ThenBy&lt;TSource, TKey&gt;(class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IOrderedQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TKey" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IOrderedQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
@@ -2889,20 +3125,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TKey" />
-      </TypeParameters>
     </Member>
     <Member MemberName="ThenBy&lt;TSource,TKey&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IOrderedQueryable&lt;TSource&gt; ThenBy&lt;TSource,TKey&gt; (this System.Linq.IOrderedQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector, System.Collections.Generic.IComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; ThenBy&lt;TSource, TKey&gt;(class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector, class System.Collections.Generic.IComparer`1&lt;!!TKey&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IOrderedQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TKey" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IOrderedQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
@@ -2918,20 +3156,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TKey" />
-      </TypeParameters>
     </Member>
     <Member MemberName="ThenByDescending&lt;TSource,TKey&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IOrderedQueryable&lt;TSource&gt; ThenByDescending&lt;TSource,TKey&gt; (this System.Linq.IOrderedQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; ThenByDescending&lt;TSource, TKey&gt;(class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IOrderedQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TKey" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IOrderedQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
@@ -2945,20 +3185,22 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TKey" />
-      </TypeParameters>
     </Member>
     <Member MemberName="ThenByDescending&lt;TSource,TKey&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IOrderedQueryable&lt;TSource&gt; ThenByDescending&lt;TSource,TKey&gt; (this System.Linq.IOrderedQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,TKey&gt;&gt; keySelector, System.Collections.Generic.IComparer&lt;TKey&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; ThenByDescending&lt;TSource, TKey&gt;(class System.Linq.IOrderedQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, !!TKey&gt;&gt; keySelector, class System.Collections.Generic.IComparer`1&lt;!!TKey&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IOrderedQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TKey" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IOrderedQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
@@ -2974,16 +3216,14 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-        <TypeParameter Name="TKey" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Union&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Union&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source1, System.Collections.Generic.IEnumerable&lt;TSource&gt; source2);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Union&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source1, class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source2) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
@@ -3006,9 +3246,11 @@
     </Member>
     <Member MemberName="Union&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Union&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source1, System.Collections.Generic.IEnumerable&lt;TSource&gt; source2, System.Collections.Generic.IEqualityComparer&lt;TSource&gt; comparer);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Union&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source1, class System.Collections.Generic.IEnumerable`1&lt;!!TSource&gt; source2, class System.Collections.Generic.IEqualityComparer`1&lt;!!TSource&gt; comparer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
@@ -3033,13 +3275,18 @@
     </Member>
     <Member MemberName="Where&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Where&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Where&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`2&lt;!!TSource, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
@@ -3052,19 +3299,21 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <TypeParameters>
-        <TypeParameter Name="TSource" />
-      </TypeParameters>
     </Member>
     <Member MemberName="Where&lt;TSource&gt;">
       <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TSource&gt; Where&lt;TSource&gt; (this System.Linq.IQueryable&lt;TSource&gt; source, System.Linq.Expressions.Expression&lt;Func&lt;TSource,int,bool&gt;&gt; predicate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TSource&gt; Where&lt;TSource&gt;(class System.Linq.IQueryable`1&lt;!!TSource&gt; source, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TSource, int32, bool&gt;&gt; predicate) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.IQueryable&lt;TSource&gt;</ReturnType>
       </ReturnValue>
+      <TypeParameters>
+        <TypeParameter Name="TSource" />
+      </TypeParameters>
       <Parameters>
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32,System.Boolean&gt;&gt;" />
@@ -3077,9 +3326,38 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Zip&lt;TFirst,TSecond,TResult&gt;">
+      <MemberSignature Language="C#" Value="public static System.Linq.IQueryable&lt;TResult&gt; Zip&lt;TFirst,TSecond,TResult&gt; (this System.Linq.IQueryable&lt;TFirst&gt; source1, System.Collections.Generic.IEnumerable&lt;TSecond&gt; source2, System.Linq.Expressions.Expression&lt;Func&lt;TFirst,TSecond,TResult&gt;&gt; resultSelector);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Linq.IQueryable`1&lt;!!TResult&gt; Zip&lt;TFirst, TSecond, TResult&gt;(class System.Linq.IQueryable`1&lt;!!TFirst&gt; source1, class System.Collections.Generic.IEnumerable`1&lt;!!TSecond&gt; source2, class System.Linq.Expressions.Expression`1&lt;class System.Func`3&lt;!!TFirst, !!TSecond, !!TResult&gt;&gt; resultSelector) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Linq.IQueryable&lt;TResult&gt;</ReturnType>
+      </ReturnValue>
       <TypeParameters>
-        <TypeParameter Name="TSource" />
+        <TypeParameter Name="TFirst" />
+        <TypeParameter Name="TSecond" />
+        <TypeParameter Name="TResult" />
       </TypeParameters>
+      <Parameters>
+        <Parameter Name="source1" Type="System.Linq.IQueryable&lt;TFirst&gt;" RefType="this" />
+        <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSecond&gt;" />
+        <Parameter Name="resultSelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TFirst,TSecond,TResult&gt;&gt;" />
+      </Parameters>
+      <Docs>
+        <typeparam name="TFirst">To be added.</typeparam>
+        <typeparam name="TSecond">To be added.</typeparam>
+        <typeparam name="TResult">To be added.</typeparam>
+        <param name="source1">To be added.</param>
+        <param name="source2">To be added.</param>
+        <param name="resultSelector">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
   </Members>
 </Type>

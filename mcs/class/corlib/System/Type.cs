@@ -1305,8 +1305,6 @@ namespace System {
 			MemberInfo[] result;
 			ArrayList l = new ArrayList ();
 
-			// Console.WriteLine ("FindMembers for {0} (Type: {1}): {2}",
-			// this.FullName, this.GetType().FullName, this.obj_address());
 			if ((memberType & MemberTypes.Method) != 0) {
 				MethodInfo[] c = GetMethods (bindingAttr);
 				if (filter != null) {
@@ -1433,8 +1431,13 @@ namespace System {
 
 		internal static bool ShouldPrintFullName (Type type)
 		{
-			return type.IsGenericType || (type.IsClass && (!type.IsPointer ||
-				(!type.GetElementType ().IsPrimitive && !type.GetElementType ().IsNested)));
+			while (type.HasElementType)
+				type = type.GetElementType ();
+
+			if (type == typeof (void) || type.IsNested)
+				return false;
+
+			return !type.IsPrimitive;
 		}
 
 		internal virtual Type InternalResolve ()

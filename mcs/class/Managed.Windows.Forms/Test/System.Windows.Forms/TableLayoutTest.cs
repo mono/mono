@@ -29,6 +29,8 @@
 #if NET_2_0
 using System;
 using System.Drawing;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Windows.Forms;
 using NUnit.Framework;
 
@@ -1648,6 +1650,26 @@ namespace MonoTests.System.Windows.Forms
 				Assert.Fail ("#2");
 			} catch (ArgumentException ex) {
 				// PASS
+			}
+		}
+
+		[Test] // Novell bug #497562
+		public void TestLayoutSettingsSetter ()
+		{
+			using (var tlp = new TableLayoutPanel ()) {
+				TableLayoutSettings tls;
+
+				using (var ms = new MemoryStream ()) {
+					var formatter = new BinaryFormatter ();
+					formatter.Serialize (ms, tlp.LayoutSettings);
+
+					ms.Position = 0;
+
+					tls = (TableLayoutSettings) formatter.Deserialize (ms);
+				}
+
+				tlp.LayoutSettings = tls;
+				tlp.LayoutSettings = tls; // Should not throw an exception
 			}
 		}
 	}

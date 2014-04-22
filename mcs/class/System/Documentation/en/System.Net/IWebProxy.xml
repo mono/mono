@@ -1,6 +1,7 @@
 <Type Name="IWebProxy" FullName="System.Net.IWebProxy" FullNameSP="System_Net_IWebProxy" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class interface public abstract IWebProxy" />
   <TypeSignature Language="C#" Value="public interface IWebProxy" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IWebProxy" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +9,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
@@ -26,8 +28,14 @@
   <Members>
     <Member MemberName="Credentials">
       <MemberSignature Language="ILASM" Value=".property class System.Net.ICredentials Credentials { public hidebysig virtual abstract specialname class System.Net.ICredentials get_Credentials() public hidebysig virtual abstract specialname void set_Credentials(class System.Net.ICredentials value) }" />
-      <MemberSignature Language="C#" Value="public System.Net.ICredentials Credentials { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Net.ICredentials Credentials { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Net.ICredentials Credentials" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.ICredentials</ReturnType>
       </ReturnValue>
@@ -54,15 +62,17 @@
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetProxy">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Uri GetProxy(class System.Uri destination)" />
       <MemberSignature Language="C#" Value="public Uri GetProxy (Uri destination);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Uri GetProxy(class System.Uri destination) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
@@ -93,15 +103,17 @@
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsBypassed">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract bool IsBypassed(class System.Uri host)" />
       <MemberSignature Language="C#" Value="public bool IsBypassed (Uri host);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsBypassed(class System.Uri host) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -135,10 +147,6 @@ server.</block>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

@@ -370,8 +370,14 @@ namespace Mono.CSharp
 				if (parser == null){
 					return null;
 				}
-				
-				Class parser_result = parser.InteractiveResult;
+
+				Class host = parser.InteractiveResult;
+
+				var base_class_imported = importer.ImportType (base_class);
+				var baseclass_list = new List<FullNamedExpression> (1) {
+					new TypeExpression (base_class_imported, host.Location)
+				};
+				host.SetBaseTypes (baseclass_list);
 
 #if NET_4_0
 				var access = AssemblyBuilderAccess.RunAndCollect;
@@ -383,13 +389,15 @@ namespace Mono.CSharp
 				module.SetDeclaringAssembly (a);
 
 				// Need to setup MemberCache
-				parser_result.CreateContainer ();
+				host.CreateContainer ();
+				// Need to setup base type
+				host.DefineContainer ();
 
-				var method = parser_result.Members[0] as Method;
+				var method = host.Members[0] as Method;
 				BlockContext bc = new BlockContext (method, method.Block, ctx.BuiltinTypes.Void);
 
 				try {
-					method.Block.Resolve (null, bc, method);
+					method.Block.Resolve (bc, method);
 				} catch (CompletionResult cr) {
 					prefix = cr.BaseText;
 					return cr.Result;
@@ -459,7 +467,7 @@ namespace Mono.CSharp
 		//
 		InputKind ToplevelOrStatement (SeekableStreamReader seekable)
 		{
-			Tokenizer tokenizer = new Tokenizer (seekable, source_file, new ParserSession ());
+			Tokenizer tokenizer = new Tokenizer (seekable, source_file, new ParserSession (), ctx.Report);
 			
 			// Prefer contextual block keywords over identifiers
 			tokenizer.parsing_block++;
@@ -1038,9 +1046,7 @@ namespace Mono.CSharp
 		static public string help {
 			get {
 				return "Static methods:\n" +
-#if !NET_2_1
 					"  Describe (object);       - Describes the object's type\n" +
-#endif
 					"  LoadPackage (package);   - Loads the given Package (like -pkg:FILE)\n" +
 					"  LoadAssembly (assembly); - Loads the given assembly (like -r:ASSEMBLY)\n" +
 					"  ShowVars ();             - Shows defined local variables.\n" +
@@ -1216,10 +1222,6 @@ namespace Mono.CSharp
 	public class Undo
 	{
 		List<Action> undo_actions;
-		
-		public Undo ()
-		{
-		}
 
 		public void AddTypeContainer (TypeContainer current_container, TypeDefinition tc)
 		{

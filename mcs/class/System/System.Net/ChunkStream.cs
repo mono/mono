@@ -65,6 +65,7 @@ namespace System.Net
 		internal WebHeaderCollection headers;
 		int chunkSize;
 		int chunkRead;
+		int totalWritten;
 		State state;
 		//byte [] waitBuffer;
 		StringBuilder saved;
@@ -85,12 +86,14 @@ namespace System.Net
 			saved = new StringBuilder ();
 			chunks = new ArrayList ();
 			chunkSize = -1;
+			totalWritten = 0;
 		}
 
 		public void ResetBuffer ()
 		{
 			chunkSize = -1;
 			chunkRead = 0;
+			totalWritten = 0;
 			chunks.Clear ();
 		}
 		
@@ -192,6 +195,10 @@ namespace System.Net
 			}
 		}
 
+		public int TotalDataSize {
+			get { return totalWritten; }
+		}
+
 		public int ChunkLeft {
 			get { return chunkSize - chunkRead; }
 		}
@@ -210,6 +217,7 @@ namespace System.Net
 			chunks.Add (new Chunk (chunk));
 			offset += diff;
 			chunkRead += diff;
+			totalWritten += diff;
 			return (chunkRead == chunkSize) ? State.BodyFinished : State.Body;
 				
 		}

@@ -1,8 +1,10 @@
 <Type Name="LocalCertificateSelectionCallback" FullName="System.Net.Security.LocalCertificateSelectionCallback">
   <TypeSignature Language="C#" Value="public delegate System.Security.Cryptography.X509Certificates.X509Certificate LocalCertificateSelectionCallback(object sender, string targetHost, X509CertificateCollection localCertificates, X509Certificate remoteCertificate, string[] acceptableIssuers);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed LocalCertificateSelectionCallback extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
@@ -24,7 +26,7 @@
     <param name="remoteCertificate">To be added.</param>
     <param name="acceptableIssuers">To be added.</param>
     <summary>To be added.</summary>
-    <value>To be added.</value>
+    <returns>To be added.</returns>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
   </Docs>

@@ -27,8 +27,7 @@
 #include "sgen-protocol.h"
 #include "sgen-memory-governor.h"
 #include "utils/mono-mmap.h"
-
-#ifdef SGEN_BINARY_PROTOCOL
+#include "utils/mono-threads.h"
 
 /* If not null, dump binary protocol to this file */
 static FILE *binary_protocol_file = NULL;
@@ -107,13 +106,8 @@ unlock_recursive (void)
 }
 
 static void
-binary_protocol_flush_buffers_rec (BinaryProtocolBuffer *buffer)
+binary_protocol_flush_buffer (BinaryProtocolBuffer *buffer)
 {
-	if (!buffer)
-		return;
-
-	binary_protocol_flush_buffers_rec (buffer->next);
-
 	g_assert (buffer->index > 0);
 	fwrite (buffer->buffer, 1, buffer->index, binary_protocol_file);
 
@@ -123,14 +117,29 @@ binary_protocol_flush_buffers_rec (BinaryProtocolBuffer *buffer)
 void
 binary_protocol_flush_buffers (gboolean force)
 {
+	int num_buffers = 0, i;
+	BinaryProtocolBuffer *buf;
+	BinaryProtocolBuffer **bufs;
+
 	if (!binary_protocol_file)
 		return;
 
 	if (!force && !try_lock_exclusive ())
 		return;
 
-	binary_protocol_flush_buffers_rec (binary_protocol_buffers);
+	for (buf = binary_protocol_buffers; buf != NULL; buf = buf->next)
+		++num_buffers;
+	bufs = sgen_alloc_internal_dynamic (num_buffers * sizeof (BinaryProtocolBuffer*), INTERNAL_MEM_BINARY_PROTOCOL, TRUE);
+	for (buf = binary_protocol_buffers, i = 0; buf != NULL; buf = buf->next, i++)
+		bufs [i] = buf;
+	SGEN_ASSERT (0, i == num_buffers, "Binary protocol buffer count error");
+
 	binary_protocol_buffers = NULL;
+
+	for (i = num_buffers - 1; i >= 0; --i)
+		binary_protocol_flush_buffer (bufs [i]);
+
+	sgen_free_internal_dynamic (buf, num_buffers * sizeof (BinaryProtocolBuffer*), INTERNAL_MEM_BINARY_PROTOCOL);
 
 	if (!force)
 		unlock_exclusive ();
@@ -169,6 +178,9 @@ protocol_entry (unsigned char type, gpointer data, int size)
 
 	if (!binary_protocol_file)
 		return;
+
+	if (sgen_is_worker_thread (mono_native_thread_id_get ()))
+		type |= 0x80;
 
 	lock_recursive ();
 
@@ -218,6 +230,114 @@ binary_protocol_collection_end (int index, int generation)
 	protocol_entry (SGEN_PROTOCOL_COLLECTION_END, &entry, sizeof (SGenProtocolCollection));
 }
 
+void
+binary_protocol_concurrent_start (void)
+{
+	protocol_entry (SGEN_PROTOCOL_CONCURRENT_START, NULL, 0);
+}
+
+void
+binary_protocol_concurrent_update_finish (void)
+{
+	protocol_entry (SGEN_PROTOCOL_CONCURRENT_UPDATE_FINISH, NULL, 0);
+}
+
+void
+binary_protocol_world_stopping (long long timestamp)
+{
+	SGenProtocolWorldStopping entry = { timestamp };
+	protocol_entry (SGEN_PROTOCOL_WORLD_STOPPING, &entry, sizeof (SGenProtocolWorldStopping));
+}
+
+void
+binary_protocol_world_stopped (long long timestamp, long long total_major_cards,
+		long long marked_major_cards, long long total_los_cards, long long marked_los_cards)
+{
+	SGenProtocolWorldStopped entry = { timestamp, total_major_cards, marked_major_cards, total_los_cards, marked_los_cards };
+	protocol_entry (SGEN_PROTOCOL_WORLD_STOPPED, &entry, sizeof (SGenProtocolWorldStopped));
+}
+
+void
+binary_protocol_world_restarting (int generation, long long timestamp,
+		long long total_major_cards, long long marked_major_cards, long long total_los_cards, long long marked_los_cards)
+{
+	SGenProtocolWorldRestarting entry = { generation, timestamp, total_major_cards, marked_major_cards, total_los_cards, marked_los_cards };
+	protocol_entry (SGEN_PROTOCOL_WORLD_RESTARTING, &entry, sizeof (SGenProtocolWorldRestarting));
+}
+
+void
+binary_protocol_world_restarted (int generation, long long timestamp)
+{
+	SGenProtocolWorldRestarted entry = { generation, timestamp };
+	protocol_entry (SGEN_PROTOCOL_WORLD_RESTARTED, &entry, sizeof (SGenProtocolWorldRestarted));
+}
+
+void
+binary_protocol_thread_suspend (gpointer thread, gpointer stopped_ip)
+{
+	SGenProtocolThreadSuspend entry = { thread, stopped_ip };
+	protocol_entry (SGEN_PROTOCOL_THREAD_SUSPEND, &entry, sizeof (SGenProtocolThreadSuspend));
+}
+
+void
+binary_protocol_thread_restart (gpointer thread)
+{
+	SGenProtocolThreadRestart entry = { thread };
+	protocol_entry (SGEN_PROTOCOL_THREAD_RESTART, &entry, sizeof (SGenProtocolThreadRestart));
+}
+
+void
+binary_protocol_thread_register (gpointer thread)
+{
+	SGenProtocolThreadRegister entry = { thread };
+	protocol_entry (SGEN_PROTOCOL_THREAD_REGISTER, &entry, sizeof (SGenProtocolThreadRegister));
+
+}
+
+void
+binary_protocol_thread_unregister (gpointer thread)
+{
+	SGenProtocolThreadUnregister entry = { thread };
+	protocol_entry (SGEN_PROTOCOL_THREAD_UNREGISTER, &entry, sizeof (SGenProtocolThreadUnregister));
+
+}
+
+void
+binary_protocol_missing_remset (gpointer obj, gpointer obj_vtable, int offset, gpointer value, gpointer value_vtable, int value_pinned)
+{
+	SGenProtocolMissingRemset entry = { obj, obj_vtable, offset, value, value_vtable, value_pinned };
+	protocol_entry (SGEN_PROTOCOL_MISSING_REMSET, &entry, sizeof (SGenProtocolMissingRemset));
+
+}
+
+void
+binary_protocol_cement (gpointer obj, gpointer vtable, int size)
+{
+	SGenProtocolCement entry = { obj, vtable, size };
+	protocol_entry (SGEN_PROTOCOL_CEMENT, &entry, sizeof (SGenProtocolCement));
+}
+
+void
+binary_protocol_cement_reset (void)
+{
+	protocol_entry (SGEN_PROTOCOL_CEMENT_RESET, NULL, 0);
+}
+
+void
+binary_protocol_domain_unload_begin (gpointer domain)
+{
+	SGenProtocolDomainUnload entry = { domain };
+	protocol_entry (SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN, &entry, sizeof (SGenProtocolDomainUnload));
+}
+
+void
+binary_protocol_domain_unload_end (gpointer domain)
+{
+	SGenProtocolDomainUnload entry = { domain };
+	protocol_entry (SGEN_PROTOCOL_DOMAIN_UNLOAD_END, &entry, sizeof (SGenProtocolDomainUnload));
+}
+
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
 void
 binary_protocol_alloc (gpointer obj, gpointer vtable, int size)
 {
@@ -310,61 +430,10 @@ binary_protocol_empty (gpointer start, int size)
 }
 
 void
-binary_protocol_thread_suspend (gpointer thread, gpointer stopped_ip)
-{
-	SGenProtocolThreadSuspend entry = { thread, stopped_ip };
-	protocol_entry (SGEN_PROTOCOL_THREAD_SUSPEND, &entry, sizeof (SGenProtocolThreadSuspend));
-}
-
-void
-binary_protocol_thread_restart (gpointer thread)
-{
-	SGenProtocolThreadRestart entry = { thread };
-	protocol_entry (SGEN_PROTOCOL_THREAD_RESTART, &entry, sizeof (SGenProtocolThreadRestart));
-}
-
-void
-binary_protocol_thread_register (gpointer thread)
-{
-	SGenProtocolThreadRegister entry = { thread };
-	protocol_entry (SGEN_PROTOCOL_THREAD_REGISTER, &entry, sizeof (SGenProtocolThreadRegister));
-
-}
-
-void
-binary_protocol_thread_unregister (gpointer thread)
-{
-	SGenProtocolThreadUnregister entry = { thread };
-	protocol_entry (SGEN_PROTOCOL_THREAD_UNREGISTER, &entry, sizeof (SGenProtocolThreadUnregister));
-
-}
-
-void
-binary_protocol_missing_remset (gpointer obj, gpointer obj_vtable, int offset, gpointer value, gpointer value_vtable, int value_pinned)
-{
-	SGenProtocolMissingRemset entry = { obj, obj_vtable, offset, value, value_vtable, value_pinned };
-	protocol_entry (SGEN_PROTOCOL_MISSING_REMSET, &entry, sizeof (SGenProtocolMissingRemset));
-
-}
-
-void
 binary_protocol_card_scan (gpointer start, int size)
 {
 	SGenProtocolCardScan entry = { start, size };
 	protocol_entry (SGEN_PROTOCOL_CARD_SCAN, &entry, sizeof (SGenProtocolCardScan));
-}
-
-void
-binary_protocol_cement (gpointer obj, gpointer vtable, int size)
-{
-	SGenProtocolCement entry = { obj, vtable, size };
-	protocol_entry (SGEN_PROTOCOL_CEMENT, &entry, sizeof (SGenProtocolCement));
-}
-
-void
-binary_protocol_cement_reset (void)
-{
-	protocol_entry (SGEN_PROTOCOL_CEMENT_RESET, NULL, 0);
 }
 
 void
@@ -387,21 +456,6 @@ binary_protocol_dislink_process_staged (gpointer link, gpointer obj, int index)
 	SGenProtocolDislinkProcessStaged entry = { link, obj, index };
 	protocol_entry (SGEN_PROTOCOL_DISLINK_PROCESS_STAGED, &entry, sizeof (SGenProtocolDislinkProcessStaged));
 }
-
-void
-binary_protocol_domain_unload_begin (gpointer domain)
-{
-	SGenProtocolDomainUnload entry = { domain };
-	protocol_entry (SGEN_PROTOCOL_DOMAIN_UNLOAD_BEGIN, &entry, sizeof (SGenProtocolDomainUnload));
-}
-
-void
-binary_protocol_domain_unload_end (gpointer domain)
-{
-	SGenProtocolDomainUnload entry = { domain };
-	protocol_entry (SGEN_PROTOCOL_DOMAIN_UNLOAD_END, &entry, sizeof (SGenProtocolDomainUnload));
-}
-
 #endif
 
 #endif /* HAVE_SGEN_GC */

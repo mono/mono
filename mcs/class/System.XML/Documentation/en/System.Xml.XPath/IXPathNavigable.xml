@@ -1,10 +1,12 @@
 <Type Name="IXPathNavigable" FullName="System.Xml.XPath.IXPathNavigable">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IXPathNavigable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IXPathNavigable" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Thread safety depends on the implementation.</ThreadSafetyStatement>
   <Interfaces />
@@ -15,7 +17,13 @@
   <Members>
     <Member MemberName="CreateNavigator">
       <MemberSignature Language="C#" Value="public System.Xml.XPath.XPathNavigator CreateNavigator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XPath.XPathNavigator CreateNavigator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
       </ReturnValue>
@@ -25,10 +33,6 @@
         <returns>The <see cref="System.Xml.XPath.XPathNavigator" /> instance created by the implementation of this interface.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

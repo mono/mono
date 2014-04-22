@@ -1858,6 +1858,12 @@ class MDocUpdater : MDocCommand
 	
 	private static bool UpdateAssemblyVersions(XmlElement root, string[] assemblyVersions, bool add)
 	{
+		XmlElement av = (XmlElement) root.SelectSingleNode ("AssemblyVersions");
+		if (av != null) {
+				// AssemblyVersions is not part of the spec
+				root.RemoveChild (av);
+		}
+
 		XmlElement e = (XmlElement) root.SelectSingleNode ("AssemblyInfo");
 		if (e == null) {
 			e = root.OwnerDocument.CreateElement("AssemblyInfo");
@@ -3365,10 +3371,10 @@ public abstract class MemberFormatter {
 		if (type is PointerType) {
 			return AppendPointerTypeName (buf, type, context);
 		}
-		AppendNamespace (buf, type);
 		if (type is GenericParameter) {
 			return AppendTypeName (buf, type, context);
 		}
+		AppendNamespace (buf, type);
 		GenericInstanceType genInst = type as GenericInstanceType;
 		if (type.GenericParameters.Count == 0 &&
 				(genInst == null ? true : genInst.GenericArguments.Count == 0)) {

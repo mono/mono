@@ -18,7 +18,6 @@ namespace MonoTests.System.ComponentModel.DataAnnotations
     [TestFixture]
     public class FilterUIHintAttributeTest {
         [Test]
-        [Description("Simple ctors set expected properties.")]
         public void FilterUIHintAttribute_Simple_Ctors_Set_Properties() {
             var attr = new FilterUIHintAttribute(null, null);
             Assert.IsNull(attr.FilterUIHint);

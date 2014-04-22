@@ -68,14 +68,19 @@ namespace System.Runtime.Serialization
 
 
 				ObjectRecord last = _lastObjectRecord;
-				bool firstCicle = true;
+
+				bool firstCycle = true;
+				bool lastCycle = false;
+				int unresolvedCount = 0; 		// Unresolved objects found in the current cycle
+				int lastUnresolvedCount = 0;	// Unresolved objects before the current cycle
 
 				// Solve al pending fixups of all objects
 
 				ObjectRecord record = _objectRecordChain;
 				while (record != null)
 				{
-					bool ready = !(record.IsUnsolvedObjectReference && firstCicle);
+					// We ignore object references in the first cycle
+					bool ready = !(record.IsUnsolvedObjectReference && firstCycle);
 					if (ready) ready = record.DoFixups (true, this, true);
 					if (ready) ready = record.LoadData(this, _selector, _context);
 
@@ -97,12 +102,14 @@ namespace System.Runtime.Serialization
 						// There must be an unresolved IObjectReference instance.
 						// Chain the record at the end so it is solved later
 
-						if ((record.ObjectInstance is IObjectReference) && !firstCicle)
+						if ((record.ObjectInstance is IObjectReference) && !firstCycle)
 						{
-							if (record.Status == ObjectRecordStatus.ReferenceSolvingDelayed)
+							if (record.IsUnsolvedObjectReference && lastCycle)
+								// No more chances to resolve
 								throw new SerializationException ("The object with ID " + record.ObjectID + " could not be resolved");
-							else
-								record.Status = ObjectRecordStatus.ReferenceSolvingDelayed;
+							else {
+								unresolvedCount++;
+							}
 						}
 
 						if (record != _lastObjectRecord) {
@@ -115,7 +122,17 @@ namespace System.Runtime.Serialization
 							next = record;
 					}
 
-					if (record == last) firstCicle = false;
+					if (record == last) {
+						last = _lastObjectRecord;
+						if (firstCycle)
+							firstCycle = false;
+						else {
+							if (lastUnresolvedCount == unresolvedCount)
+								lastCycle = true;
+						}
+						lastUnresolvedCount = unresolvedCount;
+						unresolvedCount = 0;
+					}
 					record = next;
 				}
 			}
@@ -405,7 +422,7 @@ namespace System.Runtime.Serialization
 
 	// Object Record
 
-	internal enum ObjectRecordStatus: byte { Unregistered, ReferenceUnsolved, ReferenceSolvingDelayed, ReferenceSolved }
+	internal enum ObjectRecordStatus: byte { Unregistered, ReferenceUnsolved, ReferenceSolved }
 
 	internal class ObjectRecord
 	{

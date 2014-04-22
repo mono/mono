@@ -306,28 +306,6 @@ construct_region (MonoRegionInfo *this, const RegionInfoEntry *ri)
 	return TRUE;
 }
 
-static gboolean
-construct_culture_from_specific_name (MonoCultureInfo *ci, gchar *name)
-{
-	const CultureInfoEntry *entry;
-	const CultureInfoNameEntry *ne;
-
-	MONO_ARCH_SAVE_REGS;
-
-	ne = mono_binary_search (name, culture_name_entries, NUM_CULTURE_ENTRIES,
-			sizeof (CultureInfoNameEntry), culture_name_locator);
-
-	if (ne == NULL)
-		return FALSE;
-
-	entry = &culture_entries [ne->culture_entry_index];
-
-	if (entry)
-		return construct_culture (ci, entry);
-	else
-		return FALSE;
-}
-
 static const CultureInfoEntry*
 culture_info_entry_from_lcid (int lcid)
 {
@@ -356,47 +334,18 @@ region_info_entry_from_lcid (int lcid)
 	return entry;
 }
 
-/*
- * The following two methods are modified from the ICU source code. (http://oss.software.ibm.com/icu)
- * Copyright (c) 1995-2003 International Business Machines Corporation and others
- * All rights reserved.
- */
-static gchar*
-get_posix_locale (void)
-{
-	const gchar* posix_locale = NULL;
-
-	posix_locale = g_getenv("LC_ALL");
-	if (posix_locale == 0) {
-		posix_locale = g_getenv("LANG");
-		if (posix_locale == 0) {
-			posix_locale = setlocale(LC_ALL, NULL);
-		}
-	}
-
-	if (posix_locale == NULL)
-		return NULL;
-
-	if ((strcmp ("C", posix_locale) == 0) || (strchr (posix_locale, ' ') != NULL)
-			|| (strchr (posix_locale, '/') != NULL)) {
-		/*
-		 * HPUX returns 'C C C C C C C'
-		 * Solaris can return /en_US/C/C/C/C/C on the second try.
-		 * Maybe we got some garbage.
-		 */
-		return NULL;
-	}
-
-	return g_strdup (posix_locale);
-}
-
 #if defined (__APPLE__)
 static gchar*
 get_darwin_locale (void)
 {
 	static gchar *darwin_locale = NULL;
 	CFLocaleRef locale = NULL;
+	CFStringRef locale_language = NULL;
+	CFStringRef locale_country = NULL;
+	CFStringRef locale_script = NULL;
 	CFStringRef locale_cfstr = NULL;
+	CFIndex bytes_converted;
+	CFIndex bytes_written;
 	CFIndex len;
 	int i;
 
@@ -406,21 +355,51 @@ get_darwin_locale (void)
 	locale = CFLocaleCopyCurrent ();
 
 	if (locale) {
-		locale_cfstr = CFLocaleGetIdentifier (locale);
+		locale_language = CFLocaleGetValue (locale, kCFLocaleLanguageCode);
+		if (locale_language != NULL && CFStringGetBytes(locale_language, CFRangeMake (0, CFStringGetLength (locale_language)), kCFStringEncodingMacRoman, 0, FALSE, NULL, 0, &bytes_converted) > 0) {
+			len = bytes_converted + 1;
 
-		if (locale_cfstr) {
-			len = CFStringGetMaximumSizeForEncoding (CFStringGetLength (locale_cfstr), kCFStringEncodingMacRoman) + 1;
-			darwin_locale = (char *) malloc (len);
-			if (!CFStringGetCString (locale_cfstr, darwin_locale, len, kCFStringEncodingMacRoman)) {
-				free (darwin_locale);
-				CFRelease (locale);
-				darwin_locale = NULL;
-				return NULL;
+			locale_country = CFLocaleGetValue (locale, kCFLocaleCountryCode);
+			if (locale_country != NULL && CFStringGetBytes (locale_country, CFRangeMake (0, CFStringGetLength (locale_country)), kCFStringEncodingMacRoman, 0, FALSE, NULL, 0, &bytes_converted) > 0) {
+				len += bytes_converted + 1;
+
+				locale_script = CFLocaleGetValue (locale, kCFLocaleScriptCode);
+				if (locale_script != NULL && CFStringGetBytes (locale_script, CFRangeMake (0, CFStringGetLength (locale_script)), kCFStringEncodingMacRoman, 0, FALSE, NULL, 0, &bytes_converted) > 0) {
+					len += bytes_converted + 1;
+				}
+
+				darwin_locale = (char *) malloc (len + 1);
+				CFStringGetBytes (locale_language, CFRangeMake (0, CFStringGetLength (locale_language)), kCFStringEncodingMacRoman, 0, FALSE, (UInt8 *) darwin_locale, len, &bytes_converted);
+
+				darwin_locale[bytes_converted] = '-';
+				bytes_written = bytes_converted + 1;
+				if (locale_script != NULL && CFStringGetBytes (locale_script, CFRangeMake (0, CFStringGetLength (locale_script)), kCFStringEncodingMacRoman, 0, FALSE, (UInt8 *) &darwin_locale[bytes_written], len - bytes_written, &bytes_converted) > 0) {
+					darwin_locale[bytes_written + bytes_converted] = '-';
+					bytes_written += bytes_converted + 1;
+				}
+
+				CFStringGetBytes (locale_country, CFRangeMake (0, CFStringGetLength (locale_country)), kCFStringEncodingMacRoman, 0, FALSE, (UInt8 *) &darwin_locale[bytes_written], len - bytes_written, &bytes_converted);
+				darwin_locale[bytes_written + bytes_converted] = '\0';
 			}
+		}
 
-			for (i = 0; i < strlen (darwin_locale); i++)
-				if (darwin_locale [i] == '_')
-					darwin_locale [i] = '-';
+		if (darwin_locale == NULL) {
+			locale_cfstr = CFLocaleGetIdentifier (locale);
+
+			if (locale_cfstr) {
+				len = CFStringGetMaximumSizeForEncoding (CFStringGetLength (locale_cfstr), kCFStringEncodingMacRoman) + 1;
+				darwin_locale = (char *) malloc (len);
+				if (!CFStringGetCString (locale_cfstr, darwin_locale, len, kCFStringEncodingMacRoman)) {
+					free (darwin_locale);
+					CFRelease (locale);
+					darwin_locale = NULL;
+					return NULL;
+				}
+
+				for (i = 0; i < strlen (darwin_locale); i++)
+					if (darwin_locale [i] == '_')
+						darwin_locale [i] = '-';
+			}			
 		}
 
 		CFRelease (locale);
@@ -430,14 +409,34 @@ get_darwin_locale (void)
 }
 #endif
 
-static gchar*
+static char *
+get_posix_locale (void)
+{
+	const char *locale;
+
+	locale = g_getenv ("LC_ALL");
+	if (locale == NULL) {
+		locale = g_getenv ("LANG");
+		if (locale == NULL)
+			locale = setlocale (LC_ALL, NULL);
+	}
+	if (locale == NULL)
+		return NULL;
+
+	/* Skip English-only locale 'C' */
+	if (strcmp (locale, "C") == 0)
+		return NULL;
+
+	return g_strdup (locale);
+}
+
+
+static gchar *
 get_current_locale_name (void)
 {
-	gchar *locale;
-	gchar *corrected = NULL;
-	const gchar *p;
-	gchar *c;
-
+	char *locale;
+	char *p, *ret;
+		
 #ifdef HOST_WIN32
 	locale = g_win32_getlocale ();
 #elif defined (__APPLE__)	
@@ -446,69 +445,43 @@ get_current_locale_name (void)
 		locale = get_posix_locale ();
 #else
 	locale = get_posix_locale ();
-#endif	
+#endif
 
 	if (locale == NULL)
 		return NULL;
 
-	if ((p = strchr (locale, '.')) != NULL) {
-		/* assume new locale can't be larger than old one? */
-		corrected = g_malloc (strlen (locale));
-		strncpy (corrected, locale, p - locale);
-		corrected [p - locale] = 0;
+	p = strchr (locale, '.');
+	if (p != NULL)
+		*p = 0;
+	p = strchr (locale, '@');
+	if (p != NULL)
+		*p = 0;
+	p = strchr (locale, '_');
+	if (p != NULL)
+		*p = '-';
 
-		/* do not copy after the @ */
-		if ((p = strchr (corrected, '@')) != NULL)
-			corrected [p - corrected] = 0;
-	}
+	ret = g_ascii_strdown (locale, -1);
+	g_free (locale);
 
-	/* Note that we scan the *uncorrected* ID. */
-	if ((p = strrchr (locale, '@')) != NULL) {
+	return ret;
+}
 
-		/*
-		 * In Mono we dont handle the '@' modifier because we do
-		 * not have any cultures that use it. We just trim it
-		 * off of the end of the name.
-		 */
-
-		if (corrected == NULL) {
-			corrected = g_malloc (strlen (locale));
-			strncpy (corrected, locale, p - locale);
-			corrected [p - locale] = 0;
-		}
-	}
-
-	if (corrected == NULL)
-		corrected = locale;
-	else
-		g_free (locale);
-
-	if ((c = strchr (corrected, '_')) != NULL)
-		*c = '-';
-
-	c = corrected;
-	corrected = g_ascii_strdown (c, -1);
-	g_free (c);
-
-	return corrected;
-}	 
-
-MonoBoolean
-ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_current_locale (MonoCultureInfo *ci)
+MonoString*
+ves_icall_System_Globalization_CultureInfo_get_current_locale_name (void)
 {
 	gchar *locale;
-	gboolean ret;
+	MonoString* ret;
+	MonoDomain *domain;
 
 	MONO_ARCH_SAVE_REGS;
 
 	locale = get_current_locale_name ();
 	if (locale == NULL)
-		return FALSE;
+		return NULL;
 
-	ret = construct_culture_from_specific_name (ci, locale);
+	domain = mono_domain_get ();
+	ret = mono_string_new (domain, locale);
 	g_free (locale);
-	ci->is_read_only = TRUE;
-	ci->use_user_override = TRUE;
 
 	return ret;
 }
@@ -550,7 +523,7 @@ ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_name (
 
 	return construct_culture (this, &culture_entries [ne->culture_entry_index]);
 }
-
+/*
 MonoBoolean
 ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_specific_name (MonoCultureInfo *ci,
 		MonoString *name)
@@ -566,7 +539,7 @@ ves_icall_System_Globalization_CultureInfo_construct_internal_locale_from_specif
 
 	return ret;
 }
-
+*/
 MonoBoolean
 ves_icall_System_Globalization_RegionInfo_construct_internal_region_from_lcid (MonoRegionInfo *this,
 		gint lcid)

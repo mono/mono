@@ -191,6 +191,50 @@ namespace MonoTests.System.Collections.Concurrent
 
 			Assert.IsTrue (valid, "Aggregate test");
 		}
+
+        [Test]
+        public void BasicRemoveEmptyTest ()
+        {
+            int result;
+            Assert.IsTrue(bag.IsEmpty);
+            Assert.IsFalse(bag.TryTake(out result));
+        }
+
+        [Test]
+        public void BasicRemoveTwiceTest()
+        {
+            bag.Add (1);
+            Assert.IsFalse (bag.IsEmpty);
+            Assert.AreEqual (1, bag.Count);
+
+            int result;
+            Assert.IsTrue (bag.TryTake (out result));
+            Assert.AreEqual (1, result);
+            Assert.IsTrue (bag.IsEmpty);
+            Assert.IsFalse (bag.TryTake (out result));
+            Assert.IsFalse (bag.TryTake (out result));
+        }
+
+        [Test]
+        public void AddRemoveAddTest()
+        {
+            bag.Add (1);
+            Assert.IsFalse (bag.IsEmpty);
+            Assert.AreEqual (1, bag.Count);
+
+            int result;
+            Assert.IsTrue (bag.TryTake (out result));
+            Assert.AreEqual (1, result);
+            Assert.IsTrue (bag.IsEmpty);
+
+            bag.Add (1);
+            Assert.IsFalse (bag.IsEmpty);
+            Assert.AreEqual (1, bag.Count);
+
+            Assert.IsTrue (bag.TryTake (out result));
+            Assert.AreEqual (1, result);
+            Assert.IsTrue (bag.IsEmpty);
+        }
 		
 		[Test]
 		public void AddStressTest ()

@@ -38,12 +38,7 @@ using System.ServiceModel.Configuration;
 
 namespace System.ServiceModel
 {
-	public class WebHttpBinding
-#if NET_2_1
-        : Binding
-#else
-        : Binding, IBindingRuntimePreferences
-#endif
+	public class WebHttpBinding : Binding, IBindingRuntimePreferences
 	{
 		public WebHttpBinding ()
 			: this (String.Empty)
@@ -211,11 +206,9 @@ namespace System.ServiceModel
 			return new BindingElementCollection (new BindingElement [] { msgenc, t.Clone () });
 		}
 
-#if !NET_2_1
 		bool IBindingRuntimePreferences.ReceiveSynchronously {
 			get { return receive_synchronously; }
 		}
-#endif
 
 #if NET_4_0
 		[EditorBrowsable (EditorBrowsableState.Advanced)]

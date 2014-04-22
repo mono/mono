@@ -763,8 +763,18 @@ namespace Mono.AssemblyLinker
 						File.Copy (res.fileName, res.target, true);
 						res.fileName = res.target;
 					}
+					
+					// AddResourceFile must receive a file name and not a path.
+					// Drop directory and give warning if we have a path.
+					var resourceFileName = Path.GetFileName(res.fileName);
+					if (Path.GetDirectoryName (res.fileName) != null || Path.IsPathRooted(res.fileName)) {
+						ReportWarning (99999, 
+							String.Format ("Path '{0}' in the resource name is not supported. Using just file name '{1}'",
+								res.fileName,
+								resourceFileName));
+					}
 
-					ab.AddResourceFile (res.name, res.fileName,
+					ab.AddResourceFile (res.name, resourceFileName,
 							res.isPrivate ? ResourceAttributes.Private : ResourceAttributes.Public);
 				}
 			}

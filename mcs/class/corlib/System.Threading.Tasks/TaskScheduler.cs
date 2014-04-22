@@ -100,6 +100,12 @@ namespace System.Threading.Tasks
 				return id;
 			}
 		}
+
+		internal static bool IsDefault {
+			get {
+				return currentScheduler == null || currentScheduler == defaultScheduler;
+			}
+		}
 		
 		public virtual int MaximumConcurrencyLevel {
 			get {

@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1C1E7C2D-0085-46DA-B17F-13FA75FE1DFB}</ProjectGuid>
+    <ProjectGuid>{F5A01B66-E44D-4901-9607-DB7BF2D6B572}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618</NoWarn>
     <OutputPath>bin\Debug\System.Data.OracleClient-tests-net_2_0</OutputPath>
@@ -176,38 +176,41 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data.OracleClient\System.Data.OracleClient-net_2_0.csproj">
-      <Project>{EB0B8D4B-E8CF-44EA-A8A8-22B5057ABC6D}</Project>
+      <Project>{FB31E958-0E46-4D09-80B2-EF1245FDDB87}</Project>
       <Name>System.Data.OracleClient\System.Data.OracleClient-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
+      <Project>{080698DE-8AF0-496E-9AD7-58B6C605328A}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_2_0.csproj">
-      <Project>{49220562-83E1-49A2-971F-5D31C4AB0258}</Project>
+      <Project>{69458D09-40A2-48AD-8C0F-0E437CF5FE6D}</Project>
       <Name>System.Data\System.Data-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.EnterpriseServices\System.EnterpriseServices-net_2_0.csproj">
-      <Project>{92E7A483-839B-4EFA-A77D-16C68F051941}</Project>
+      <Project>{94E27660-C3DF-43D1-958A-94D68EF3131F}</Project>
       <Name>System.EnterpriseServices\System.EnterpriseServices-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_2_0.csproj">
-      <Project>{CA7E5301-90D2-4C07-87B7-851AA216D4C9}</Project>
+      <Project>{458980DE-3D7C-4BBA-BA18-673EDC030AFE}</Project>
       <Name>System.Drawing\System.Drawing-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -215,3 +218,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

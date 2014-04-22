@@ -97,9 +97,11 @@ monoutils_sources = \
 	mono-threads.c	\
 	mono-threads-posix.c	\
 	mono-threads-mach.c	\
+	mono-threads-mach-helper.c	\
 	mono-threads-windows.c	\
 	mono-threads.h	\
 	mono-tls.h	\
+	mono-tls.c	\
 	linux_magic.h	\
 	mono-memory-model.h	\
 	atomic.h	\
@@ -107,7 +109,8 @@ monoutils_sources = \
 	mono-hwcap.h	\
 	mono-hwcap.c	\
 	bsearch.h	\
-	bsearch.c
+	bsearch.c	\
+	mono-signal-handler.h
 
 arch_sources = 
 

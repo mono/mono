@@ -34,6 +34,7 @@
 #include "metadata/gc-internal.h"
 #include "metadata/sgen-archdep.h"
 #include "metadata/object-internals.h"
+#include "utils/mono-signal-handler.h"
 
 #if defined(__APPLE__) || defined(__OpenBSD__) || defined(__FreeBSD__)
 const static int suspend_signal_num = SIGXFSZ;
@@ -57,17 +58,9 @@ suspend_thread (SgenThreadInfo *info, void *context)
 #endif
 	gpointer stack_start;
 
-	/*
-	 * It's possible that a dying thread is parked via
-	 * sgen_park_current_thread_if_doing_handshake(), and, while parked, STW tries to
-	 * suspend it again.  In that case doing_handshake will not be set anymore, and the
-	 * "nested" suspend must be ignored.
-	 */
-	if (!info->doing_handshake)
-		return;
-
 	info->stopped_domain = mono_domain_get ();
 	info->stopped_ip = context ? (gpointer) ARCH_SIGCTX_IP (context) : NULL;
+	info->signal = 0;
 	stop_count = sgen_global_stop_count;
 	/* duplicate signal */
 	if (0 && info->stop_count == stop_count)
@@ -118,7 +111,7 @@ suspend_thread (SgenThreadInfo *info, void *context)
 	do {
 		info->signal = 0;
 		sigsuspend (&suspend_signal_mask);
-	} while (info->signal != restart_signal_num && info->doing_handshake);
+	} while (info->signal != restart_signal_num);
 
 	/* Unblock the restart signal. */
 	pthread_sigmask (SIG_UNBLOCK, &suspend_ack_signal_mask, NULL);
@@ -129,49 +122,35 @@ suspend_thread (SgenThreadInfo *info, void *context)
 }
 
 /* LOCKING: assumes the GC lock is held (by the stopping thread) */
-static void
-suspend_handler (int sig, siginfo_t *siginfo, void *context)
+MONO_SIGNAL_HANDLER_FUNC (static, suspend_handler, (int sig, siginfo_t *siginfo, void *context))
 {
+	/*
+	 * The suspend signal handler potentially uses syscalls that
+	 * can set errno, and it calls functions that use the hazard
+	 * pointer machinery.  Since we're interrupting other code we
+	 * must restore those to the values they had when we
+	 * interrupted.
+	 */
+
 	SgenThreadInfo *info;
 	int old_errno = errno;
+	int hp_save_index = mono_hazard_pointer_save_for_signal_handler ();
 
 	info = mono_thread_info_current ();
+	suspend_thread (info, context);
 
-	if (info) {
-		suspend_thread (info, context);
-	} else {
-		/* This can happen while a thread is dying */
-		//g_print ("no thread info in suspend\n");
-	}
-
+	mono_hazard_pointer_restore_for_signal_handler (hp_save_index);
 	errno = old_errno;
 }
 
-static void
-restart_handler (int sig)
+MONO_SIGNAL_HANDLER_FUNC (static, restart_handler, (int sig))
 {
 	SgenThreadInfo *info;
 	int old_errno = errno;
 
 	info = mono_thread_info_current ();
-	/*
-	If the thread info is null is means we're currently in the process of cleaning up,
-	the pthread destructor has already kicked in and it has explicitly invoked the suspend handler.
-	
-	This means this thread has been suspended, TLS is dead, so the only option we have is to
-	rely on pthread_self () and seatch over the thread list.
-	*/
-	if (!info)
-		info = (SgenThreadInfo*)mono_thread_info_lookup (pthread_self ());
-
-	/*
-	 * If a thread is dying there might be no thread info.  In
-	 * that case we rely on info->doing_handshake.
-	 */
-	if (info) {
-		info->signal = restart_signal_num;
-		SGEN_LOG (4, "Restart handler in %p %p", info, (gpointer)mono_native_thread_id_get ());
-	}
+	info->signal = restart_signal_num;
+	SGEN_LOG (4, "Restart handler in %p %p", info, (gpointer)mono_native_thread_id_get ());
 	errno = old_errno;
 }
 
@@ -201,16 +180,6 @@ sgen_wait_for_suspend_ack (int count)
 	}
 }
 
-gboolean
-sgen_park_current_thread_if_doing_handshake (SgenThreadInfo *p)
-{
-    if (!p->doing_handshake)
-	    return FALSE;
-
-    suspend_thread (p, NULL);
-    return TRUE;
-}
-
 int
 sgen_thread_handshake (BOOL suspend)
 {
@@ -222,9 +191,6 @@ sgen_thread_handshake (BOOL suspend)
 
 	count = 0;
 	FOREACH_THREAD_SAFE (info) {
-		if (info->joined_stw == suspend)
-			continue;
-		info->joined_stw = suspend;
 		if (mono_native_thread_id_equals (mono_thread_info_get_tid (info), me)) {
 			continue;
 		}
@@ -232,13 +198,6 @@ sgen_thread_handshake (BOOL suspend)
 			continue;
 		/*if (signum == suspend_signal_num && info->stop_count == global_stop_count)
 			continue;*/
-		if (suspend) {
-			g_assert (!info->doing_handshake);
-			info->doing_handshake = TRUE;
-		} else {
-			g_assert (info->doing_handshake);
-			info->doing_handshake = FALSE;
-		}
 		result = mono_threads_pthread_kill (info, signum);
 		if (result == 0) {
 			count++;
@@ -248,6 +207,8 @@ sgen_thread_handshake (BOOL suspend)
 	} END_FOREACH_THREAD_SAFE
 
 	sgen_wait_for_suspend_ack (count);
+
+	SGEN_LOG (4, "%s handshake for %d threads\n", suspend ? "suspend" : "resume", count);
 
 	return count;
 }
@@ -267,7 +228,7 @@ sgen_os_init (void)
 		g_error ("failed sigaction");
 	}
 
-	sinfo.sa_handler = restart_handler;
+	sinfo.sa_handler = (void*) restart_handler;
 	if (sigaction (restart_signal_num, &sinfo, NULL) != 0) {
 		g_error ("failed sigaction");
 	}

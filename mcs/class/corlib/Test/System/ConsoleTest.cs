@@ -337,8 +337,7 @@ public class ConsoleTest
 	public void RedirectedTest ()
 	{
 		if (Console.IsErrorRedirected) {
-			// Assert.Inconclusive ();
-			return;
+			Assert.Ignore ("The error output stream of the console is redirected.");
 		}
 
 		Console.SetError (TextWriter.Null);

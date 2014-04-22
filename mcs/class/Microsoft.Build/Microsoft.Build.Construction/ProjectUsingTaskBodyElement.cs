@@ -68,7 +68,6 @@ namespace Microsoft.Build.Construction
                 }
                 internal override void LoadValue (XmlReader reader)
                 {
-                        reader.MoveToElement ();
                         TaskBody = reader.ReadInnerXml ();
                 }
         }

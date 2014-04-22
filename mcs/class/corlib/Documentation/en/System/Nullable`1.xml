@@ -1,5 +1,6 @@
 <Type Name="Nullable&lt;T&gt;" FullName="System.Nullable&lt;T&gt;">
   <TypeSignature Language="C#" Value="public struct Nullable&lt;T&gt; where T : struct" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit Nullable`1&lt;struct .ctor (class System.ValueType) T&gt; extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -18,6 +19,11 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
     <summary>
@@ -34,7 +40,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public Nullable (T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(!T value) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="value" Type="T" />
       </Parameters>
@@ -50,14 +61,15 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Equals">
+      <MemberSignature Language="C#" Value="public override bool Equals (object other);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object other) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Equals">
-      <MemberSignature Language="C#" Value="public override bool Equals (object other);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -161,14 +173,15 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetHashCode">
+      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetHashCode">
-      <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -189,14 +202,15 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetValueOrDefault">
+      <MemberSignature Language="C#" Value="public T GetValueOrDefault ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !T GetValueOrDefault() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetValueOrDefault">
-      <MemberSignature Language="C#" Value="public T GetValueOrDefault ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>T</ReturnType>
       </ReturnValue>
@@ -217,14 +231,15 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetValueOrDefault">
+      <MemberSignature Language="C#" Value="public T GetValueOrDefault (T defaultValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !T GetValueOrDefault(!T defaultValue) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetValueOrDefault">
-      <MemberSignature Language="C#" Value="public T GetValueOrDefault (T defaultValue);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>T</ReturnType>
       </ReturnValue>
@@ -248,14 +263,15 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="HasValue">
+      <MemberSignature Language="C#" Value="public bool HasValue { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool HasValue" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="HasValue">
-      <MemberSignature Language="C#" Value="public bool HasValue { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -276,14 +292,15 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="op_Explicit">
+      <MemberSignature Language="C#" Value="public static T op_Explicit (Nullable&lt;T&gt; value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname !T op_Explicit(valuetype System.Nullable`1&lt;!T&gt; value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_Explicit">
-      <MemberSignature Language="C#" Value="public static T op_Explicit (Nullable&lt;T&gt; value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>T</ReturnType>
       </ReturnValue>
@@ -305,14 +322,15 @@
         <exception cref="System.InvalidOperationException">
           <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is <see langword="false" />.</exception>
       </Docs>
+    </Member>
+    <Member MemberName="op_Implicit">
+      <MemberSignature Language="C#" Value="public static Nullable&lt;T&gt; op_Implicit (T value);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname valuetype System.Nullable`1&lt;!T&gt; op_Implicit(!T value) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="op_Implicit">
-      <MemberSignature Language="C#" Value="public static Nullable&lt;T&gt; op_Implicit (T value);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Nullable&lt;T&gt;</ReturnType>
       </ReturnValue>
@@ -334,14 +352,15 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance string ToString() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToString">
-      <MemberSignature Language="C#" Value="public override string ToString ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -361,14 +380,15 @@
         </remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Value">
+      <MemberSignature Language="C#" Value="public T Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance !T Value" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Value">
-      <MemberSignature Language="C#" Value="public T Value { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>T</ReturnType>
       </ReturnValue>
@@ -390,10 +410,6 @@
         <exception cref="System.InvalidOperationException">
           <see cref="P:System.Nullable&lt;T&gt;.HasValue" /> is <see langword="false" />.</exception>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

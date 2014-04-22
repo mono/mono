@@ -53,7 +53,7 @@ namespace System.Runtime.CompilerServices
 		public TResult GetResult ()
 		{
 			if (!task.IsCompleted)
-				task.WaitCore (Timeout.Infinite, CancellationToken.None);
+				task.WaitCore (Timeout.Infinite, CancellationToken.None, true);
 
 			if (task.Status != TaskStatus.RanToCompletion)
 				ExceptionDispatchInfo.Capture (TaskAwaiter.HandleUnexpectedTaskResult (task)).Throw ();

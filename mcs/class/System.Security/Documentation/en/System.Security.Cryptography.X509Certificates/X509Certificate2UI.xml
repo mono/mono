@@ -1,8 +1,10 @@
 <Type Name="X509Certificate2UI" FullName="System.Security.Cryptography.X509Certificates.X509Certificate2UI">
-  <TypeSignature Language="C#" Value="public sealed class X509Certificate2UI" />
+  <TypeSignature Language="C#" Value="public static class X509Certificate2UI" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit X509Certificate2UI extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Security</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -16,7 +18,12 @@
   <Members>
     <Member MemberName="DisplayCertificate">
       <MemberSignature Language="C#" Value="public static void DisplayCertificate (System.Security.Cryptography.X509Certificates.X509Certificate2 certificate);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void DisplayCertificate(class System.Security.Cryptography.X509Certificates.X509Certificate2 certificate) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -29,13 +36,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DisplayCertificate">
       <MemberSignature Language="C#" Value="public static void DisplayCertificate (System.Security.Cryptography.X509Certificates.X509Certificate2 certificate, IntPtr hwndParent);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void DisplayCertificate(class System.Security.Cryptography.X509Certificates.X509Certificate2 certificate, native int hwndParent) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -50,13 +59,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SelectFromCollection">
       <MemberSignature Language="C#" Value="public static System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection (System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection(class System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, valuetype System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate2Collection</ReturnType>
       </ReturnValue>
@@ -76,13 +87,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SelectFromCollection">
       <MemberSignature Language="C#" Value="public static System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection (System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag, IntPtr hwndParent);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Cryptography.X509Certificates.X509Certificate2Collection SelectFromCollection(class System.Security.Cryptography.X509Certificates.X509Certificate2Collection certificates, string title, string message, valuetype System.Security.Cryptography.X509Certificates.X509SelectionFlag selectionFlag, native int hwndParent) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate2Collection</ReturnType>
       </ReturnValue>
@@ -104,9 +117,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

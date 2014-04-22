@@ -1,5 +1,6 @@
 <Type Name="CultureTypes" FullName="System.Globalization.CultureTypes">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum CultureTypes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CultureTypes extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -26,7 +27,13 @@
   <Members>
     <Member MemberName="AllCultures">
       <MemberSignature Language="C#" Value="AllCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes AllCultures = int32(7)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
@@ -35,22 +42,11 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FrameworkCultures">
       <MemberSignature Language="C#" Value="FrameworkCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes FrameworkCultures = int32(64)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CultureTypes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -60,10 +56,23 @@
           <AttributeName>System.Obsolete</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CultureTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
     </Member>
     <Member MemberName="InstalledWin32Cultures">
       <MemberSignature Language="C#" Value="InstalledWin32Cultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes InstalledWin32Cultures = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
@@ -72,15 +81,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NeutralCultures">
       <MemberSignature Language="C#" Value="NeutralCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes NeutralCultures = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
@@ -89,15 +99,15 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReplacementCultures">
       <MemberSignature Language="C#" Value="ReplacementCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes ReplacementCultures = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
@@ -105,14 +115,16 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SpecificCultures">
       <MemberSignature Language="C#" Value="SpecificCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes SpecificCultures = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
@@ -121,30 +133,15 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UserCustomCulture">
       <MemberSignature Language="C#" Value="UserCustomCulture" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes UserCustomCulture = int32(8)" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Globalization.CultureTypes</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added.</summary>
-        <since version=".NET 2.0" />
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="WindowsOnlyCultures">
-      <MemberSignature Language="C#" Value="WindowsOnlyCultures" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
@@ -152,6 +149,11 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="WindowsOnlyCultures">
+      <MemberSignature Language="C#" Value="WindowsOnlyCultures" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Globalization.CultureTypes WindowsOnlyCultures = int32(32)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -161,6 +163,13 @@
           <AttributeName>System.Obsolete</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Globalization.CultureTypes</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <since version=".NET 2.0" />
+      </Docs>
     </Member>
   </Members>
 </Type>

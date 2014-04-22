@@ -1,8 +1,10 @@
 <Type Name="SettingChangingEventHandler" FullName="System.Configuration.SettingChangingEventHandler">
   <TypeSignature Language="C#" Value="public delegate void SettingChangingEventHandler(object sender, SettingChangingEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SettingChangingEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

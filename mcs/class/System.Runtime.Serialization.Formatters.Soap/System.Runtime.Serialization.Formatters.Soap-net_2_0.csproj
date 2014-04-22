@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{85526C39-79CA-40DB-940A-3C83DF30DF85}</ProjectGuid>
+    <ProjectGuid>{8313B5D9-A1BE-4E62-90E7-FA002548D650}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\System.Runtime.Serialization.Formatters.Soap-net_2_0</OutputPath>
+    <OutputPath>./../../class/lib/net_2_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
@@ -63,17 +63,20 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
+      <Project>{080698DE-8AF0-496E-9AD7-58B6C605328A}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
   </ItemGroup>
@@ -81,3 +84,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

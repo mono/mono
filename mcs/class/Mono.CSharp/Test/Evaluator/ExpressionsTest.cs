@@ -130,6 +130,22 @@ namespace MonoTests.EvaluatorTest
 			Assert.AreEqual ("1+", sres, "The result should have been the input string, since we have a partial input");
 		}
 
+		[Test]
+		public void GotoWithUnreachableStatement ()
+		{
+			Evaluator.Run ("using System;");
+
+			string code = "var x = new Action(() => {" +
+			"Console.WriteLine(\"beforeGoto\");" +
+			"goto L;" +
+		"L:" +
+			"Console.WriteLine(\"afterGoto\");" +
+			"});";
+
+			Assert.IsTrue (Evaluator.Run (code), "#1");
+			Assert.IsTrue (Evaluator.Run ("x();"), "#2");
+		}
+
 #if NET_4_0
 		[Test]
 		public void DynamicStatement ()

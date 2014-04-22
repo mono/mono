@@ -5,6 +5,7 @@
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
 // Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// Copyright 2014 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +33,7 @@ using System.Globalization;
 using System.Runtime.Serialization;
 using System.ServiceModel.Dispatcher;
 using System.Text;
+using System.Threading;
 using System.Xml;
 using NUnit.Framework;
 
@@ -108,6 +110,19 @@ namespace MonoTests.System.ServiceModel.Description
 		public void ConvertValueToStringValidCast4 ()
 		{
 			Assert.AreEqual ("123.45", c.ConvertValueToString (123.45, typeof (int)));
+		}
+
+		[Test]
+		public void ConvertValueToStringValidCast4_ptBR ()
+		{
+			var ci = CultureInfo.CurrentCulture;
+			try {
+				Thread.CurrentThread.CurrentCulture = new CultureInfo ("pt-BR");
+				Assert.AreEqual ("123.45", c.ConvertValueToString (123.45, typeof (int)));
+			}
+			finally {
+				Thread.CurrentThread.CurrentCulture = ci;
+			}
 		}
 
 		[Test]

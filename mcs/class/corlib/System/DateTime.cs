@@ -1588,7 +1588,7 @@ namespace System
 					// '.FFF....' can be mapped to nothing
 					if (pos + 1 < len && chars[pos + 1] == 'F') {
 						++pos;
-						while (pos < len && chars[pos + 1] == 'F') {
+						while (pos + 1 < len && chars[pos + 1] == 'F') {
 							++pos;
 						}
 
@@ -1706,17 +1706,12 @@ namespace System
 				}
 			}
 			
-			// For anything out of range 
-			// return false
-			if (year < 1 || year > 9999 || 
-				month < 1 || month >12  ||
-				day < 1 || day > DateTime.DaysInMonth(year, month) ||
-				hour < 0 || hour > 23 ||
-				minute < 0 || minute > 59 ||
-				second < 0 || second > 59)
+			try {
+				result = dfi.Calendar.ToDateTime (year, month, day, hour, minute, second, 0);
+			} catch {
 				return false;
+			}
 
-			result = new DateTime (year, month, day, hour, minute, second, 0);
 			result = result.AddSeconds(fractionalSeconds);
 
 			if (dayofweek != -1 && dayofweek != (int) result.DayOfWeek)
@@ -1805,7 +1800,7 @@ namespace System
 			{
 				if ((style & DateTimeStyles.AdjustToUniversal) != 0 || (style & DateTimeStyles.AssumeLocal) != 0 ||
 					 (style & DateTimeStyles.AssumeUniversal) != 0)
-					throw new ArgumentException ("The DateTimeStyles value RoundtripKind cannot be used with the values AssumeLocal, Asersal or AdjustToUniversal.", "style");
+					throw new ArgumentException ("The DateTimeStyles value RoundtripKind cannot be used with the values AssumeLocal, AssumeUniversal or AdjustToUniversal.", "style");
 			}
 			if ((style & DateTimeStyles.AssumeUniversal) != 0 && (style & DateTimeStyles.AssumeLocal) != 0)			
 				throw new ArgumentException ("The DateTimeStyles values AssumeLocal and AssumeUniversal cannot be used together.", "style");

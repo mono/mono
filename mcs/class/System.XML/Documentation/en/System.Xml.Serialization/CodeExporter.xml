@@ -1,8 +1,10 @@
 <Type Name="CodeExporter" FullName="System.Xml.Serialization.CodeExporter">
   <TypeSignature Language="C#" Value="public abstract class CodeExporter" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit CodeExporter extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -16,7 +18,12 @@
   <Members>
     <Member MemberName="IncludeMetadata">
       <MemberSignature Language="C#" Value="public System.CodeDom.CodeAttributeDeclarationCollection IncludeMetadata { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.CodeDom.CodeAttributeDeclarationCollection IncludeMetadata" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.CodeDom.CodeAttributeDeclarationCollection</ReturnType>
       </ReturnValue>
@@ -26,9 +33,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

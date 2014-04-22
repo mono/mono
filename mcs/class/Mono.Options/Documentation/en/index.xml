@@ -10,6 +10,9 @@
           <AttributeName>System.CLSCompliant(true)</AttributeName>
         </Attribute>
         <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
           <AttributeName>System.Reflection.AssemblyDescription("Command Line Parsing Utilities")</AttributeName>
         </Attribute>
         <Attribute>

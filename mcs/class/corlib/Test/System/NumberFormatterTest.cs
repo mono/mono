@@ -10,6 +10,7 @@
 using System;
 using System.Globalization;
 using System.Threading;
+using System.Text;
 
 using NUnit.Framework;
 
@@ -4376,6 +4377,32 @@ namespace MonoTests.System
 			Assert.AreEqual ("p 08.3266'", 8.32663472.ToString (formatString, CultureInfo.InvariantCulture), "#1");
 			Assert.AreEqual ("n 0001.13'", (-1.1345343).ToString (formatString, CultureInfo.InvariantCulture), "#2");
 			Assert.AreEqual ("0'", 0.0.ToString (formatString, CultureInfo.InvariantCulture), "#3");
+		}
+
+		[Test]
+		public void TestInvariantThreading ()
+		{
+			Thread[] th = new Thread[4];
+			bool failed = false;
+
+			for (int i = 0; i < th.Length; i++) {
+				th [i] = new Thread (() => {
+					for (int ii = 0; ii < 100; ++ii) {
+						var headers = new StringBuilder ();
+						headers.AppendFormat (CultureInfo.InvariantCulture, "{0} {1}", 100, "ok");
+						if (headers.ToString () != "100 ok") {
+							failed = true;
+						}
+					}
+				});
+				th [i].Start ();
+			}
+
+			foreach (Thread t in th) {
+				t.Join ();
+			}
+
+			Assert.IsFalse (failed);
 		}
 	}
 }

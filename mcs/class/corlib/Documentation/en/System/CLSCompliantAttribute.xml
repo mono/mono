@@ -1,6 +1,7 @@
 <Type Name="CLSCompliantAttribute" FullName="System.CLSCompliantAttribute" FullNameSP="System_CLSCompliantAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable CLSCompliantAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class CLSCompliantAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit CLSCompliantAttribute extends System.Attribute" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -57,7 +58,13 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(bool isCompliant)" />
       <MemberSignature Language="C#" Value="public CLSCompliantAttribute (bool isCompliant);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(bool isCompliant) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="isCompliant" Type="System.Boolean" />
@@ -72,16 +79,17 @@ class.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="IsCompliant">
+      <MemberSignature Language="ILASM" Value=".property bool IsCompliant { public hidebysig specialname instance bool get_IsCompliant() }" />
+      <MemberSignature Language="C#" Value="public bool IsCompliant { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsCompliant" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsCompliant">
-      <MemberSignature Language="ILASM" Value=".property bool IsCompliant { public hidebysig specialname instance bool get_IsCompliant() }" />
-      <MemberSignature Language="C#" Value="public bool IsCompliant { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -103,11 +111,6 @@ class.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

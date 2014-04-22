@@ -27,6 +27,8 @@
 //
 
 using System.Globalization;
+using System.Collections.Generic;
+
 namespace System.Net.Http.Headers
 {
 	public class StringWithQualityHeaderValue : ICloneable
@@ -82,10 +84,24 @@ namespace System.Net.Http.Headers
 		
 		public static bool TryParse (string input, out StringWithQualityHeaderValue parsedValue)
 		{
-			parsedValue = null;
-
 			var lexer = new Lexer (input);
-			var t = lexer.Scan ();
+			Token token;
+			if (TryParseElement (lexer, out parsedValue, out token) && token == Token.Type.End)
+				return true;
+
+			parsedValue = null;
+			return false;
+		}
+
+		internal static bool TryParse (string input, int minimalCount, out List<StringWithQualityHeaderValue> result)
+		{
+			return CollectionParser.TryParse (input, minimalCount, TryParseElement, out result);
+		}
+
+		static bool TryParseElement (Lexer lexer, out StringWithQualityHeaderValue parsedValue, out Token t)
+		{
+			parsedValue = null;
+			t = lexer.Scan ();
 			if (t != Token.Type.Token)
 				return false;
 
@@ -119,9 +135,6 @@ namespace System.Net.Http.Headers
 
 				t = lexer.Scan ();
 			}
-
-			if (t != Token.Type.End)
-				return false;
 
 			parsedValue = value;
 			return true;

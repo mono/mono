@@ -153,7 +153,7 @@ namespace System.IO
 		{
 			byte[] buffer = new byte [1];
 
-			if (Read (buffer, 0, 1) == 1)
+			if (Read (buffer, 0, 1) > 0)
 				return buffer [0];
 			
 			return -1;
@@ -303,7 +303,7 @@ namespace System.IO
 		async Task CopyToAsync (Stream destination, byte[] buffer, CancellationToken cancellationToken)
 		{
 			int nread;
-			while ((nread = await ReadAsync (buffer, 0, buffer.Length).ConfigureAwait (false)) != 0)
+			while ((nread = await ReadAsync (buffer, 0, buffer.Length, cancellationToken).ConfigureAwait (false)) != 0)
 				await destination.WriteAsync (buffer, 0, nread, cancellationToken).ConfigureAwait (false);
 		}
 

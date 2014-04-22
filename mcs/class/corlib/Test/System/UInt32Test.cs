@@ -188,13 +188,17 @@ public class UInt32Test
 		try {
 			UInt32.Parse("$42", NumberStyles.Integer, Nfi);
 			Assert.Fail("Should raise a System.FormatException");
+		} catch (FormatException e) {
 		}
-		catch (Exception e) {
-			Assert.IsTrue(typeof(FormatException) == e.GetType());
+
+		try {
+			UInt32.Parse ("５", NumberStyles.Any, CultureInfo.InvariantCulture);
+			Assert.Fail ("C#42");
+		} catch (FormatException) {
 		}
+
 		// Pass a DateTimeFormatInfo, it is unable to format
-		// numbers, but we should not crash
-		
+		// numbers, but we should not crash		
 		UInt32.Parse ("123", new DateTimeFormatInfo ());
 
 		Assert.AreEqual (734561, UInt32.Parse ("734561\0"), "C#43");

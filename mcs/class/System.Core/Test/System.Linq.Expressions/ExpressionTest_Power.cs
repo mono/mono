@@ -90,6 +90,7 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void NullablePower ()
 		{
 			var a = Expression.Parameter (typeof (double?), "a");

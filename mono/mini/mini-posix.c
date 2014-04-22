@@ -54,6 +54,7 @@
 #include <mono/utils/mono-logger-internal.h>
 #include <mono/utils/mono-mmap.h>
 #include <mono/utils/dtrace.h>
+#include <mono/utils/mono-signal-handler.h>
 
 #include "mini.h"
 #include <string.h>
@@ -192,8 +193,7 @@ SIG_HANDLER_SIGNATURE (mono_chain_signal)
 	return FALSE;
 }
 
-static void
-SIG_HANDLER_SIGNATURE (sigabrt_signal_handler)
+SIG_HANDLER_FUNC (static, sigabrt_signal_handler)
 {
 	MonoJitInfo *ji = NULL;
 	GET_CONTEXT;
@@ -207,8 +207,7 @@ SIG_HANDLER_SIGNATURE (sigabrt_signal_handler)
 	}
 }
 
-static void
-SIG_HANDLER_SIGNATURE (sigusr1_signal_handler)
+SIG_HANDLER_FUNC (static, sigusr1_signal_handler)
 {
 	gboolean running_managed;
 	MonoException *exc;
@@ -281,6 +280,7 @@ SIG_HANDLER_SIGNATURE (sigusr1_signal_handler)
 	mono_arch_handle_exception (ctx, exc);
 }
 
+
 #if defined(__i386__) || defined(__x86_64__)
 #define FULL_STAT_PROFILER_BACKTRACE 1
 #define CURRENT_FRAME_GET_BASE_POINTER(f) (* (gpointer*)(f))
@@ -298,8 +298,7 @@ SIG_HANDLER_SIGNATURE (sigusr1_signal_handler)
 
 #if defined(__ia64__) || defined(__sparc__) || defined(sparc) || defined(__s390__) || defined(s390)
 
-static void
-SIG_HANDLER_SIGNATURE (sigprof_signal_handler)
+SIG_HANDLER_FUNC (static, sigprof_signal_handler)
 {
 	if (mono_chain_signal (SIG_HANDLER_PARAMS))
 		return;
@@ -309,8 +308,7 @@ SIG_HANDLER_SIGNATURE (sigprof_signal_handler)
 
 #else
 
-static void
-SIG_HANDLER_SIGNATURE (sigprof_signal_handler)
+SIG_HANDLER_FUNC (static, sigprof_signal_handler)
 {
 	int call_chain_depth = mono_profiler_stat_get_call_chain_depth ();
 	MonoProfilerCallChainStrategy call_chain_strategy = mono_profiler_stat_get_call_chain_strategy ();
@@ -388,8 +386,7 @@ SIG_HANDLER_SIGNATURE (sigprof_signal_handler)
 
 #endif
 
-static void
-SIG_HANDLER_SIGNATURE (sigquit_signal_handler)
+SIG_HANDLER_FUNC (static, sigquit_signal_handler)
 {
 	gboolean res;
 
@@ -419,8 +416,7 @@ SIG_HANDLER_SIGNATURE (sigquit_signal_handler)
 	mono_chain_signal (SIG_HANDLER_PARAMS);
 }
 
-static void
-SIG_HANDLER_SIGNATURE (sigusr2_signal_handler)
+SIG_HANDLER_FUNC (static, sigusr2_signal_handler)
 {
 	gboolean enabled = mono_trace_is_enabled ();
 
@@ -672,24 +668,54 @@ void
 mono_gdb_render_native_backtraces (pid_t crashed_pid)
 {
 	const char *argv [9];
+	char template [] = "/tmp/mono-lldb-commands.XXXXXX";
 	char buf1 [128];
+	FILE *commands;
+	gboolean using_lldb = FALSE;
 
 	argv [0] = g_find_program_in_path ("gdb");
 	if (argv [0] == NULL) {
-		return;
+		argv [0] = g_find_program_in_path ("lldb");
+		using_lldb = TRUE;
 	}
 
-	argv [1] = "-ex";
-	sprintf (buf1, "attach %ld", (long) crashed_pid);
-	argv [2] = buf1;
-	argv [3] = "--ex";
-	argv [4] = "info threads";
-	argv [5] = "--ex";
-	argv [6] = "thread apply all bt";
-	argv [7] = "--batch";
-	argv [8] = 0;
+	if (argv [0] == NULL)
+		return;
+
+	if (using_lldb) {
+		if (mkstemp (template) == -1)
+			return;
+
+		commands = fopen (template, "w");
+
+		fprintf (commands, "process attach --pid %ld\n", (long) crashed_pid);
+		fprintf (commands, "script lldb.debugger.HandleCommand (\"thread list\")\n");
+		fprintf (commands, "script lldb.debugger.HandleCommand (\"thread backtrace all\")\n");
+		fprintf (commands, "detach\n");
+		fprintf (commands, "quit\n");
+
+		fflush (commands);
+		fclose (commands);
+
+		argv [1] = "--source";
+		argv [2] = template;
+		argv [3] = 0;
+	} else {
+		argv [1] = "-ex";
+		sprintf (buf1, "attach %ld", (long) crashed_pid);
+		argv [2] = buf1;
+		argv [3] = "--ex";
+		argv [4] = "info threads";
+		argv [5] = "--ex";
+		argv [6] = "thread apply all bt";
+		argv [7] = "--batch";
+		argv [8] = 0;
+	}
 
 	execv (argv [0], (char**)argv);
+
+	if (using_lldb)
+		unlink (template);
 }
 #endif
 #endif /* __native_client__ */

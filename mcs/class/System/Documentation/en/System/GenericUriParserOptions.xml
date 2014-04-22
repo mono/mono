@@ -1,8 +1,10 @@
 <Type Name="GenericUriParserOptions" FullName="System.GenericUriParserOptions">
   <TypeSignature Language="C#" Value="public enum GenericUriParserOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed GenericUriParserOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -20,7 +22,12 @@
   <Members>
     <Member MemberName="AllowEmptyAuthority">
       <MemberSignature Language="C#" Value="AllowEmptyAuthority" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions AllowEmptyAuthority = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.GenericUriParserOptions</ReturnType>
       </ReturnValue>
@@ -28,13 +35,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="Default" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions Default = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.GenericUriParserOptions</ReturnType>
       </ReturnValue>
@@ -42,13 +51,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DontCompressPath">
       <MemberSignature Language="C#" Value="DontCompressPath" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions DontCompressPath = int32(128)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.GenericUriParserOptions</ReturnType>
       </ReturnValue>
@@ -56,13 +67,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DontConvertPathBackslashes">
       <MemberSignature Language="C#" Value="DontConvertPathBackslashes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions DontConvertPathBackslashes = int32(64)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.GenericUriParserOptions</ReturnType>
       </ReturnValue>
@@ -70,13 +83,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DontUnescapePathDotsAndSlashes">
       <MemberSignature Language="C#" Value="DontUnescapePathDotsAndSlashes" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions DontUnescapePathDotsAndSlashes = int32(256)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.GenericUriParserOptions</ReturnType>
       </ReturnValue>
@@ -84,13 +99,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GenericAuthority">
       <MemberSignature Language="C#" Value="GenericAuthority" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions GenericAuthority = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.GenericUriParserOptions</ReturnType>
       </ReturnValue>
@@ -98,13 +115,43 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Idn">
+      <MemberSignature Language="C#" Value="Idn" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions Idn = int32(512)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.GenericUriParserOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="IriParsing">
+      <MemberSignature Language="C#" Value="IriParsing" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions IriParsing = int32(1024)" />
+      <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.GenericUriParserOptions</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+      </Docs>
     </Member>
     <Member MemberName="NoFragment">
       <MemberSignature Language="C#" Value="NoFragment" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions NoFragment = int32(32)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.GenericUriParserOptions</ReturnType>
       </ReturnValue>
@@ -112,13 +159,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NoPort">
       <MemberSignature Language="C#" Value="NoPort" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions NoPort = int32(8)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.GenericUriParserOptions</ReturnType>
       </ReturnValue>
@@ -126,13 +175,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NoQuery">
       <MemberSignature Language="C#" Value="NoQuery" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions NoQuery = int32(16)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.GenericUriParserOptions</ReturnType>
       </ReturnValue>
@@ -140,13 +191,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NoUserInfo">
       <MemberSignature Language="C#" Value="NoUserInfo" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.GenericUriParserOptions NoUserInfo = int32(4)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.GenericUriParserOptions</ReturnType>
       </ReturnValue>
@@ -154,9 +207,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

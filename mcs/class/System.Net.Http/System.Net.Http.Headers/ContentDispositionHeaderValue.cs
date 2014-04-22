@@ -394,7 +394,7 @@ namespace System.Net.Http.Headers
 
 			switch (t.Kind) {
 			case Token.Type.SeparatorSemicolon:
-				if (!NameValueHeaderValue.TryParseParameters (lexer, out parameters))
+				if (!NameValueHeaderValue.TryParseParameters (lexer, out parameters, out t) || t != Token.Type.End)
 					return false;
 				break;
 			case Token.Type.End:

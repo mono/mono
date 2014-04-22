@@ -31,25 +31,39 @@ namespace Microsoft.Build.Utilities
 {
 	// If changing something here then update
 	// ToolLocationHelper.GetPathToDotNetFramework also
-	public enum TargetDotNetFrameworkVersion
+	#if MICROSOFT_BUILD_DLL
+	internal
+	#else
+	public
+	#endif
+	enum TargetDotNetFrameworkVersion
 	{
 		Version11,
 		Version20,
+#if NET_3_5
 		Version30,
 		Version35,
+#endif
 #if NET_4_0
 		Version40,
 #endif
 #if NET_4_5
 		Version45,
 #endif
+#if XBUILD_12
+		Version451,
+#endif
 
-#if NET_4_5
+#if XBUILD_12
+		VersionLatest = Version451
+#elif NET_4_5
 		VersionLatest = Version45
 #elif NET_4_0
 		VersionLatest = Version40
-#else
+#elif NET_3_5
 		VersionLatest = Version35
+#else
+		VersionLatest = Version20
 #endif
 	}
 }

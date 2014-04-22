@@ -43,6 +43,7 @@ namespace Microsoft.Build.BuildEngine {
 		List <BuildProperty>	properties;
 		Dictionary <string, BuildProperty>	propertiesByName;
 		bool evaluated;
+		bool isDynamic;
 
 		public BuildPropertyGroup ()
 			: this (null, null, null, false)
@@ -50,12 +51,18 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		internal BuildPropertyGroup (XmlElement xmlElement, Project project, ImportedProject importedProject, bool readOnly)
+			: this (xmlElement, project, importedProject, readOnly, false)
+		{
+		}
+
+		internal BuildPropertyGroup (XmlElement xmlElement, Project project, ImportedProject importedProject, bool readOnly, bool isDynamic)
 		{
 			this.importedProject = importedProject;
 			this.parentCollection = null;
 			this.parentProject = project;
 			this.propertyGroup = xmlElement;
 			this.read_only = readOnly;
+			this.isDynamic = isDynamic;
 
 			if (FromXml) {
 				this.properties = new List <BuildProperty> ();
@@ -223,7 +230,7 @@ namespace Microsoft.Build.BuildEngine {
 		
 		internal void Evaluate ()
 		{
-			if (evaluated)
+			if (!isDynamic && evaluated)
 				return;
 
 			foreach (BuildProperty bp in properties)
@@ -298,6 +305,17 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal XmlElement XmlElement {
 			get { return propertyGroup; }
+		}
+
+		internal IEnumerable<string> GetAttributes ()
+		{
+			foreach (XmlAttribute attrib in XmlElement.Attributes)
+				yield return attrib.Value;
+
+			foreach (BuildProperty bp in properties) {
+				foreach (string attr in bp.GetAttributes ())
+					yield return attr;
+			}
 		}
 	}
 }

@@ -15,36 +15,60 @@ namespace Mono.Debugger.Soft
 		FieldAttributes attrs;
 		CustomAttributeDataMirror[] cattrs;
 		C.FieldDefinition meta;
+		bool inited;
 
 		public FieldInfoMirror (TypeMirror parent, long id, string name, TypeMirror type, FieldAttributes attrs) : base (parent.VirtualMachine, id) {
 			this.parent = parent;
 			this.name = name;
 			this.type = type;
 			this.attrs = attrs;
+			inited = true;
+		}
+
+		public FieldInfoMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
 
 		public TypeMirror DeclaringType {
 			get {
+				if (!inited)
+					GetInfo ();
 				return parent;
 			}
 		}
 
 		public string Name {
 			get {
+				if (!inited)
+					GetInfo ();
 				return name;
 			}
 		}
 
 		public TypeMirror FieldType {
 			get {
+				if (!inited)
+					GetInfo ();
 				return type;
 			}
 		}
 
 		public FieldAttributes Attributes {
 			get {
+				if (!inited)
+					GetInfo ();
 				return attrs;
 			}
+		}
+
+		void GetInfo () {
+			if (inited)
+				return;
+			var info = vm.conn.Field_GetInfo (id);
+			name = info.Name;
+			parent = vm.GetType (info.Parent);
+			type = vm.GetType (info.TypeId);
+			attrs = (FieldAttributes)info.Attrs;
+			inited = true;
 		}
 
 		public bool IsLiteral

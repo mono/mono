@@ -37,7 +37,6 @@
 #include "mini.h"
 #include "mini-amd64.h"
 #include "tasklets.h"
-#include "debug-mini.h"
 
 #define ALIGN_TO(val,align) (((val) + ((align) - 1)) & ~((align) - 1))
 
@@ -47,13 +46,13 @@ static MonoW32ExceptionHandler ill_handler;
 static MonoW32ExceptionHandler segv_handler;
 
 LPTOP_LEVEL_EXCEPTION_FILTER mono_old_win_toplevel_exception_filter;
-guint64 mono_win_vectored_exception_handle;
+void *mono_win_vectored_exception_handle;
 extern gboolean mono_win_chained_exception_needs_run;
 
 #define W32_SEH_HANDLE_EX(_ex) \
 	if (_ex##_handler) _ex##_handler(0, ep, sctx)
 
-LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
+static LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
 {
 #ifndef MONO_CROSS_COMPILE
 	if (mono_old_win_toplevel_exception_filter) {
@@ -70,7 +69,7 @@ LONG CALLBACK seh_unhandled_exception_filter(EXCEPTION_POINTERS* ep)
  * Unhandled Exception Filter
  * Top-level per-process exception handler.
  */
-LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
+static LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 {
 	EXCEPTION_RECORD* er;
 	CONTEXT* ctx;
@@ -118,7 +117,7 @@ LONG CALLBACK seh_vectored_exception_handler(EXCEPTION_POINTERS* ep)
 		break;
 	}
 
-	if (win32_chained_exception_needs_run) {
+	if (mono_win_chained_exception_needs_run) {
 		/* Don't copy context back if we chained exception
 		* as the handler may have modfied the EXCEPTION_POINTERS
 		* directly. We don't pass sigcontext to chained handlers.
@@ -161,11 +160,9 @@ void win32_seh_init()
 
 void win32_seh_cleanup()
 {
-	if (mono_old_win_toplevel_exception_filter) SetUnhandledExceptionFilter(mono_old_win_toplevel_exception_filter);
-
 	guint32 ret = 0;
-	if (old_win32_toplevel_exception_filter)
-		SetUnhandledExceptionFilter(mono_old_win_toplevel_exception_filter);
+
+	if (mono_old_win_toplevel_exception_filter) SetUnhandledExceptionFilter(mono_old_win_toplevel_exception_filter);
 
 	ret = RemoveVectoredExceptionHandler (mono_win_vectored_exception_handle);
 	g_assert (ret);
@@ -227,16 +224,17 @@ mono_arch_get_restore_context (MonoTrampInfo **info, gboolean aot)
 	amd64_mov_reg_membase (code, AMD64_R15, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, r15), 8);
 #endif
 
-	if (mono_running_on_valgrind ()) {
-		/* Prevent 'Address 0x... is just below the stack ptr.' errors */
-		amd64_mov_reg_membase (code, AMD64_R8, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, rsp), 8);
-		amd64_mov_reg_membase (code, AMD64_R11, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, rip), 8);
-		amd64_mov_reg_reg (code, AMD64_RSP, AMD64_R8, 8);
-	} else {
-		amd64_mov_reg_membase (code, AMD64_RSP, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, rsp), 8);
-		/* get return address */
-		amd64_mov_reg_membase (code, AMD64_R11, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, rip), 8);
-	}
+	/*
+	 * The context resides on the stack, in the stack frame of the
+	 * caller of this function.  The stack pointer that we need to
+	 * restore is potentially many stack frames higher up, so the
+	 * distance between them can easily be more than the red zone
+	 * size.  Hence the stack pointer can be restored only after
+	 * we have finished loading everything from the context.
+	 */
+	amd64_mov_reg_membase (code, AMD64_R8, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, rsp), 8);
+	amd64_mov_reg_membase (code, AMD64_R11, AMD64_R11,  G_STRUCT_OFFSET (MonoContext, rip), 8);
+	amd64_mov_reg_reg (code, AMD64_RSP, AMD64_R8, 8);
 
 	/* jump to the saved IP */
 	amd64_jump_reg (code, AMD64_R11);
@@ -348,11 +346,7 @@ mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guin
 							mgreg_t *regs, mgreg_t rip,
 							MonoObject *exc, gboolean rethrow)
 {
-	static void (*restore_context) (MonoContext *);
 	MonoContext ctx;
-
-	if (!restore_context)
-		restore_context = mono_get_restore_context ();
 
 	ctx.rsp = regs [AMD64_RSP];
 	ctx.rip = rip;
@@ -374,28 +368,11 @@ mono_amd64_throw_exception (guint64 dummy1, guint64 dummy2, guint64 dummy3, guin
 			mono_ex->stack_trace = NULL;
 	}
 
-	if (mono_debug_using_mono_debugger ()) {
-		guint8 buf [16];
-
-		mono_breakpoint_clean_code (NULL, (gpointer)rip, 8, buf, sizeof (buf));
-
-		if (buf [3] == 0xe8) {
-			MonoContext ctx_cp = ctx;
-			ctx_cp.rip = rip - 5;
-
-			if (mono_debugger_handle_exception (&ctx_cp, exc)) {
-				restore_context (&ctx_cp);
-				g_assert_not_reached ();
-			}
-		}
-	}
-
 	/* adjust eip so that it point into the call instruction */
 	ctx.rip -= 1;
 
 	mono_handle_exception (&ctx, exc);
-	restore_context (&ctx);
-
+	mono_restore_context (&ctx);
 	g_assert_not_reached ();
 }
 
@@ -616,13 +593,15 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		frame->type = FRAME_TYPE_MANAGED;
 
-		if (ji->from_aot)
-			unwind_info = mono_aot_get_unwind_info (ji, &unwind_info_len);
-		else
-			unwind_info = mono_get_cached_unwind_info (ji->used_regs, &unwind_info_len);
+		unwind_info = mono_jinfo_get_unwind_info (ji, &unwind_info_len);
 
 		frame->unwind_info = unwind_info;
 		frame->unwind_info_len = unwind_info_len;
+
+		/*
+		printf ("%s %p %p\n", ji->d.method->name, ji->code_start, ip);
+		mono_print_unwind_info (unwind_info, unwind_info_len);
+		*/
  
 		regs [AMD64_RAX] = new_ctx->rax;
 		regs [AMD64_RBX] = new_ctx->rbx;
@@ -665,7 +644,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		if (*lmf && ((*lmf) != jit_tls->first_lmf) && (MONO_CONTEXT_GET_SP (ctx) >= (gpointer)(*lmf)->rsp)) {
 			/* remove any unused lmf */
-			*lmf = (gpointer)(((guint64)(*lmf)->previous_lmf) & ~3);
+			*lmf = (gpointer)(((guint64)(*lmf)->previous_lmf) & ~7);
 		}
 
 #ifndef MONO_AMD64_NO_PUSHES
@@ -689,7 +668,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 			memcpy (new_ctx, &ext->ctx, sizeof (MonoContext));
 
-			*lmf = (gpointer)(((guint64)(*lmf)->previous_lmf) & ~3);
+			*lmf = (gpointer)(((guint64)(*lmf)->previous_lmf) & ~7);
 
 			frame->type = FRAME_TYPE_DEBUGGER_INVOKE;
 
@@ -730,17 +709,36 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 		new_ctx->rbp = (*lmf)->rbp;
 		new_ctx->rsp = (*lmf)->rsp;
 
-		new_ctx->rbx = (*lmf)->rbx;
-		new_ctx->r12 = (*lmf)->r12;
-		new_ctx->r13 = (*lmf)->r13;
-		new_ctx->r14 = (*lmf)->r14;
-		new_ctx->r15 = (*lmf)->r15;
-#ifdef TARGET_WIN32
-		new_ctx->rdi = (*lmf)->rdi;
-		new_ctx->rsi = (*lmf)->rsi;
-#endif
+		if (((guint64)(*lmf)->previous_lmf) & 4) {
+			MonoLMFTramp *ext = (MonoLMFTramp*)(*lmf);
 
-		*lmf = (gpointer)(((guint64)(*lmf)->previous_lmf) & ~3);
+			/* Trampoline frame */
+			new_ctx->rbx = ext->regs [AMD64_RBX];
+			new_ctx->r12 = ext->regs [AMD64_R12];
+			new_ctx->r13 = ext->regs [AMD64_R13];
+			new_ctx->r14 = ext->regs [AMD64_R14];
+			new_ctx->r15 = ext->regs [AMD64_R15];
+#ifdef TARGET_WIN32
+			new_ctx->rdi = ext->regs [AMD64_RDI];
+			new_ctx->rsi = ext->regs [AMD64_RSI];
+#endif
+		} else {
+			/*
+			 * The registers saved in the LMF will be restored using the normal unwind info,
+			 * when the wrapper frame is processed.
+			 */
+			new_ctx->rbx = 0;
+			new_ctx->r12 = 0;
+			new_ctx->r13 = 0;
+			new_ctx->r14 = 0;
+			new_ctx->r15 = 0;
+#ifdef TARGET_WIN32
+			new_ctx->rdi = 0;
+			new_ctx->rsi = 0;
+#endif
+		}
+
+		*lmf = (gpointer)(((guint64)(*lmf)->previous_lmf) & ~7);
 
 		return TRUE;
 	}
@@ -758,19 +756,12 @@ handle_signal_exception (gpointer obj)
 {
 	MonoJitTlsData *jit_tls = mono_native_tls_get_value (mono_jit_tls_id);
 	MonoContext ctx;
-	static void (*restore_context) (MonoContext *);
-
-	if (!restore_context)
-		restore_context = mono_get_restore_context ();
 
 	memcpy (&ctx, &jit_tls->ex_ctx, sizeof (MonoContext));
 
-	if (mono_debugger_handle_exception (&ctx, (MonoObject *)obj))
-		return;
-
 	mono_handle_exception (&ctx, obj);
 
-	restore_context (&ctx);
+	mono_restore_context (&ctx);
 }
 
 void
@@ -785,6 +776,10 @@ mono_arch_setup_async_callback (MonoContext *ctx, void (*async_cb)(void *fun), g
 	/* The stack should be unaligned */
 	if ((sp % 16) == 0)
 		sp -= 8;
+#ifdef __linux__
+	/* Preserve the call chain to prevent crashes in the libgcc unwinder (#15969) */
+	*(guint64*)sp = ctx->rip;
+#endif
 	ctx->rsp = sp;
 	ctx->rip = (guint64)async_cb;
 }
@@ -820,9 +815,6 @@ mono_arch_handle_exception (void *sigctx, gpointer obj)
 	MonoContext mctx;
 
 	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
-
-	if (mono_debugger_handle_exception (&mctx, (MonoObject *)obj))
-		return TRUE;
 
 	mono_handle_exception (&mctx, obj);
 
@@ -886,22 +878,14 @@ prepare_for_guard_pages (MonoContext *mctx)
 static void
 altstack_handle_and_restore (void *sigctx, gpointer obj, gboolean stack_ovf)
 {
-	void (*restore_context) (MonoContext *);
 	MonoContext mctx;
 
-	restore_context = mono_get_restore_context ();
 	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
-
-	if (mono_debugger_handle_exception (&mctx, (MonoObject *)obj)) {
-		if (stack_ovf)
-			prepare_for_guard_pages (&mctx);
-		restore_context (&mctx);
-	}
 
 	mono_handle_exception (&mctx, obj);
 	if (stack_ovf)
 		prepare_for_guard_pages (&mctx);
-	restore_context (&mctx);
+	mono_restore_context (&mctx);
 }
 
 void
@@ -1162,8 +1146,7 @@ mono_arch_exceptions_init (void)
 			MonoTrampInfo *info = l->data;
 
 			mono_register_jit_icall (info->code, g_strdup (info->name), NULL, TRUE);
-			mono_save_trampoline_xdebug_info (info);
-			mono_tramp_info_free (info);
+			mono_tramp_info_register (info);
 		}
 		g_slist_free (tramps);
 	}
@@ -1358,7 +1341,7 @@ mono_arch_unwindinfo_get_size (gpointer monoui)
 		(sizeof (UNWIND_CODE) * (MONO_MAX_UNWIND_CODES - unwindinfo->unwindInfo.CountOfCodes));
 }
 
-PRUNTIME_FUNCTION
+static PRUNTIME_FUNCTION
 MONO_GET_RUNTIME_FUNCTION_CALLBACK ( DWORD64 ControlPc, IN PVOID Context )
 {
 	MonoJitInfo *ji;

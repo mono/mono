@@ -25,7 +25,9 @@
 // 
 
 using System;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System.Net
 {
@@ -606,13 +608,87 @@ namespace System.Net
 		public const string CFNetworkLibrary = "/System/Library/Frameworks/CFNetwork.framework/CFNetwork";
 #endif
 		
-		[DllImport (CFNetworkLibrary)]
-		// CFArrayRef CFNetworkCopyProxiesForAutoConfigurationScript (CFStringRef proxyAutoConfigurationScript, CFURLRef targetURL);
-		extern static IntPtr CFNetworkCopyProxiesForAutoConfigurationScript (IntPtr proxyAutoConfigurationScript, IntPtr targetURL);
-		
+		[DllImport (CFNetworkLibrary, EntryPoint = "CFNetworkCopyProxiesForAutoConfigurationScript")]
+		// CFArrayRef CFNetworkCopyProxiesForAutoConfigurationScript (CFStringRef proxyAutoConfigurationScript, CFURLRef targetURL, CFErrorRef* error);
+		extern static IntPtr CFNetworkCopyProxiesForAutoConfigurationScriptSequential (IntPtr proxyAutoConfigurationScript, IntPtr targetURL, out IntPtr error);
+
+		class GetProxyData : IDisposable {
+			public IntPtr script;
+			public IntPtr targetUri;
+			public IntPtr error;
+			public IntPtr result;
+			public ManualResetEvent evt = new ManualResetEvent (false);
+
+			public void Dispose ()
+			{
+				evt.Close ();
+			}
+		}
+
+		static object lock_obj = new object ();
+		static Queue<GetProxyData> get_proxy_queue;
+		static AutoResetEvent proxy_event;
+
+		static void CFNetworkCopyProxiesForAutoConfigurationScriptThread ()
+		{
+			GetProxyData data;
+			var data_left = true;
+
+			while (true) {
+				proxy_event.WaitOne ();
+
+				do {
+					lock (lock_obj) {
+						if (get_proxy_queue.Count == 0)
+							break;
+						data = get_proxy_queue.Dequeue ();
+						data_left = get_proxy_queue.Count > 0;
+					}
+
+					data.result = CFNetworkCopyProxiesForAutoConfigurationScriptSequential (data.script, data.targetUri, out data.error);
+					data.evt.Set ();
+				} while (data_left);
+			}
+		}
+
+		static IntPtr CFNetworkCopyProxiesForAutoConfigurationScript (IntPtr proxyAutoConfigurationScript, IntPtr targetURL, out IntPtr error)
+		{
+			// This method must only be called on only one thread during an application's life time.
+			// Note that it's not enough to use a lock to make calls sequential across different threads,
+			// it has to be one thread. Also note that that thread can't be the main thread, because the
+			// main thread might be blocking waiting for this network request to finish.
+			// Another possibility would be to use JavaScriptCore to execute this piece of
+			// javascript ourselves, but unfortunately it's not available before iOS7.
+			// See bug #7923 comment #21+.
+
+			using (var data = new GetProxyData ()) {
+				data.script = proxyAutoConfigurationScript;
+				data.targetUri = targetURL;
+
+				lock (lock_obj) {
+					if (get_proxy_queue == null) {
+						get_proxy_queue = new Queue<GetProxyData> ();
+						proxy_event = new AutoResetEvent (false);
+						new Thread (CFNetworkCopyProxiesForAutoConfigurationScriptThread) {
+							IsBackground = true,
+						}.Start ();
+					}
+					get_proxy_queue.Enqueue (data);
+					proxy_event.Set ();
+				}
+
+				data.evt.WaitOne ();
+
+				error = data.error;
+
+				return data.result;
+			}
+		}
+
 		static CFArray CopyProxiesForAutoConfigurationScript (IntPtr proxyAutoConfigurationScript, CFUrl targetURL)
 		{
-			IntPtr native = CFNetworkCopyProxiesForAutoConfigurationScript (proxyAutoConfigurationScript, targetURL.Handle);
+			IntPtr err = IntPtr.Zero;
+			IntPtr native = CFNetworkCopyProxiesForAutoConfigurationScript (proxyAutoConfigurationScript, targetURL.Handle, out err);
 			
 			if (native == IntPtr.Zero)
 				return null;

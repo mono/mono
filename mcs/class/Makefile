@@ -88,10 +88,6 @@ common_dirs := \
 	SystemWebTestShim
 
 net_2_0_dirs := \
-	Microsoft.Build.Framework	\
-	Microsoft.Build.Utilities	\
-	Microsoft.Build.Engine		\
-	Microsoft.Build.Tasks		\
 	System.Xml.Linq			\
 	System.Runtime.Serialization	\
 	System.Data.DataSetExtensions	\
@@ -106,7 +102,6 @@ net_2_0_dirs := \
 	System.Web.Extensions.Design	\
 	System.ComponentModel.DataAnnotations	\
 	System.Web.DynamicData		\
-	System.ServiceModel.Web		\
 	System.Web.Mvc2			\
 	Mono.C5				\
 	Mono.Management			\
@@ -115,7 +110,6 @@ net_2_0_dirs := \
 	Mono.Tasklets       		\
 	System.Dynamic			\
 	Mono.CSharp			\
-	Moonlight.Build.Tasks		\
 	System.Net				\
 	System.Json
 
@@ -124,9 +118,12 @@ net_2_0_only_dirs := \
 	System.Web.Extensions.Design_1.0	\
 	Compat.ICSharpCode.SharpZipLib	\
 	WindowsBase			\
+	System.ServiceModel.Web \
 	System.Data.Services.Client	\
 	System.Data.Services		\
-	System.Web.Mvc			
+	System.Web.Mvc \
+
+pcl_facade_dirs := Facades
 
 mobile_dirs := \
 	corlib	\
@@ -156,7 +153,7 @@ mobile_dirs := \
 	System.Net \
 	System.Windows \
 	System.Xml.Serialization \
-	Facades
+	$(pcl_facade_dirs)
 
 monodroid_dirs := \
 	Mono.CompilerServices.SymbolWriter	\
@@ -164,22 +161,33 @@ monodroid_dirs := \
 	Microsoft.CSharp \
 	System.Net.Http
 
-monotouch_runtime_dirs := \
-	corlib
+xammac_dirs := \
+	Mono.CompilerServices.SymbolWriter	\
+	Mono.CSharp	\
+	Microsoft.CSharp \
+	System.Net.Http
 
-net_3_5_only_dirs := \
-	Microsoft.Build.Framework	\
-	Microsoft.Build.Utilities	\
-	Microsoft.Build.Engine		\
-	Microsoft.Build.Tasks
+monotouch_runtime_dirs := \
+	corlib \
+	System \
+	System.Core \
+	System.XML \
+	Mono.CSharp
+
+monotouch_dirs := \
+	Mono.CSharp	\
+	Microsoft.CSharp \
+	Mono.Dynamic.Interpreter \
+	System.Core
 
 net_4_0_dirs := \
 	System.Numerics		\
 	Microsoft.CSharp	\
-	Microsoft.Build		\
 	System.Windows.Forms.DataVisualization	\
 	System.Xaml \
 	WindowsBase \
+	System.ServiceModel.Activation \
+	System.ServiceModel \
 	System.ServiceModel.Routing \
 	System.ServiceModel.Discovery \
 	System.Runtime.Caching \
@@ -193,10 +201,12 @@ net_4_0_dirs := \
 	System.Reactive.Runtime.Remoting \
 	System.Reactive.Windows.Forms \
 	System.Reactive.Windows.Threading \
+	System.Reactive.Observable.Aliases \
 	System.Reactive.Experimental \
 	System.Reactive.Debugger \
 	Microsoft.Web.Infrastructure \
 	WebMatrix.Data \
+	System.ServiceModel.Web \
 	System.Data.Services.Client	\
 	System.Data.Services \
 	System.Json.Microsoft \
@@ -226,23 +236,36 @@ net_4_5_dirs := \
 	System.IO.Compression.FileSystem \
 	System.Windows \
 	System.Xml.Serialization \
-	Facades
-	
-net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) aot-compiler
+	$(pcl_facade_dirs)
+
+xbuild_2_0_dirs := \
+	Microsoft.Build.Framework	\
+	Microsoft.Build.Utilities	\
+	Microsoft.Build.Engine		\
+	Mono.XBuild.Tasks		\
+	Microsoft.Build.Tasks
+
+xbuild_4_0_dirs := \
+	$(xbuild_2_0_dirs)	\
+	Microsoft.Build
+
+net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(xbuild_2_0_dirs) aot-compiler
 monodroid_SUBDIRS := $(mobile_dirs) $(monodroid_dirs)
-monotouch_SUBDIRS := $(mobile_dirs)
+monotouch_SUBDIRS := $(mobile_dirs) $(monotouch_dirs)
 monotouch_runtime_SUBDIRS := $(monotouch_runtime_dirs)
 mobile_static_SUBDIRS := $(mobile_dirs)
 mobile_SUBDIRS := $(mobile_dirs)
-net_3_5_SUBDIRS := $(net_3_5_only_dirs)
-net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs)
-net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) aot-compiler
+xammac_SUBDIRS := $(mobile_dirs) $(xammac_dirs)
+net_3_5_SUBDIRS := $(xbuild_2_0_dirs)
+net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(xbuild_4_0_dirs)
+net_4_5_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs) $(net_4_5_dirs) $(xbuild_4_0_dirs) aot-compiler
+xbuild_12_SUBDIRS := $(xbuild_4_0_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(net_3_5_only_dirs) $(mobile_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
+SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(mobile_dirs) $(monotouch_dirs) $(net_4_0_dirs) $(net_4_0_only_dirs) $(net_4_5_dirs)
 
-DIST_ONLY_SUBDIRS = dlr aot-compiler
+DIST_ONLY_SUBDIRS = dlr aot-compiler $(xbuild_4_0_dirs)
 
 # No new makefiles for: System.Messaging, System.Web.Mobile,
 # System.ServiceProcess

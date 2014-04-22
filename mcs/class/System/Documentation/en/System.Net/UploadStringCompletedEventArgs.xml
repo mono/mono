@@ -1,8 +1,10 @@
 <Type Name="UploadStringCompletedEventArgs" FullName="System.Net.UploadStringCompletedEventArgs">
   <TypeSignature Language="C#" Value="public class UploadStringCompletedEventArgs : System.ComponentModel.AsyncCompletedEventArgs" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UploadStringCompletedEventArgs extends System.ComponentModel.AsyncCompletedEventArgs" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.ComponentModel.AsyncCompletedEventArgs</BaseTypeName>
@@ -16,7 +18,12 @@
   <Members>
     <Member MemberName="Result">
       <MemberSignature Language="C#" Value="public string Result { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Result" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -26,9 +33,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

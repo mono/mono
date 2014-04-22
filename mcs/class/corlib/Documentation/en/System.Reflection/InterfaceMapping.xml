@@ -1,5 +1,6 @@
 <Type Name="InterfaceMapping" FullName="System.Reflection.InterfaceMapping">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct InterfaceMapping" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit InterfaceMapping extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,6 +13,11 @@
     <BaseTypeName>System.ValueType</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>To be added</summary>
     <remarks>To be added</remarks>
@@ -19,15 +25,8 @@
   <Members>
     <Member MemberName="InterfaceMethods">
       <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo[] InterfaceMethods;" />
+      <MemberSignature Language="ILAsm" Value=".field public class System.Reflection.MethodInfo[] InterfaceMethods" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Reflection.MethodInfo[]</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,18 +37,19 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo[]</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
     </Member>
     <Member MemberName="InterfaceType">
       <MemberSignature Language="C#" Value="public Type InterfaceType;" />
+      <MemberSignature Language="ILAsm" Value=".field public class System.Type InterfaceType" />
       <MemberType>Field</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Type</ReturnType>
-      </ReturnValue>
-      <Parameters />
-      <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +60,29 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added</summary>
+        <remarks>To be added</remarks>
+      </Docs>
     </Member>
     <Member MemberName="TargetMethods">
       <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo[] TargetMethods;" />
+      <MemberSignature Language="ILAsm" Value=".field public class System.Reflection.MethodInfo[] TargetMethods" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo[]</ReturnType>
       </ReturnValue>
@@ -72,6 +91,11 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="TargetType">
+      <MemberSignature Language="C#" Value="public Type TargetType;" />
+      <MemberSignature Language="ILAsm" Value=".field public class System.Type TargetType" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -82,10 +106,6 @@
           <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="TargetType">
-      <MemberSignature Language="C#" Value="public Type TargetType;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -94,21 +114,6 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

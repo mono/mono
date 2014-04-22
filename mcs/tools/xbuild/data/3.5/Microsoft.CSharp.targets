@@ -1,0 +1,99 @@
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<DefaultLanguageSourceExtension>.cs</DefaultLanguageSourceExtension>
+		<Language>C#</Language>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<DebugSymbols Condition=" '$(DebugType)' == 'none' ">false</DebugSymbols>
+		<DebugType    Condition=" '$(DebugType)' == 'none' "></DebugType>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<CreateManifestResourceNamesDependsOn></CreateManifestResourceNamesDependsOn>
+		<CoreCompileDependsOn></CoreCompileDependsOn>
+
+		<MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildToolsPath)\Microsoft.CSharp.targets</MSBuildAllProjects>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<DocFileItem Include="$(DocumentationFile)" Condition="'$(DocumentationFile)' != ''"/>
+	</ItemGroup>
+
+	<Target
+		Name="CoreCompile"
+		Inputs="$(MSBuildAllProjects);@(Compile);@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile);
+			$(KeyOriginatorFile);@(ReferencePath);$(Win32Icon);$(Win32Resource)"
+		Outputs="@(DocFileItem);@(IntermediateAssembly)"
+		DependsOnTargets="$(CoreCompileDependsOn)"
+	>
+		<Csc
+			AdditionalLibPaths="$(AdditionalLibPaths)"
+			AddModules="@(AddModules)"
+			AllowUnsafeBlocks="$(AllowUnsafeBlocks)"
+			BaseAddress="$(BaseAddress)"
+			CheckForOverflowUnderflow="$(CheckForOverflowUnderflow)"
+			CodePage="$(CodePage)"
+			DebugType="$(DebugType)"
+			DefineConstants="$(DefineConstants)"
+			DelaySign="$(DelaySign)"
+			DisabledWarnings="$(NoWarn)"
+			DocumentationFile="@(DocFileItem)"
+			EmitDebugInformation="$(DebugSymbols)"
+			ErrorReport="$(ErrorReport)"
+			FileAlignment="$(FileAlignment)"
+			GenerateFullPaths="$(GenerateFullPaths)"
+			KeyContainer="$(KeyContainerName)"
+			KeyFile="$(KeyOriginatorFile)"
+			LangVersion="$(LangVersion)"
+			MainEntryPoint="$(StartupObject)"
+			ModuleAssemblyName="$(ModuleAssemblyName)"
+			NoConfig="true"
+			NoLogo="$(NoLogo)"
+			NoStandardLib="$(NoStdLib)"
+			Optimize="$(Optimize)"
+			OutputAssembly="@(IntermediateAssembly)"
+			PdbFile="$(PdbFile)"
+			Platform="$(PlatformTarget)"
+			References="@(ReferencePath)"
+			ResponseFiles="$(CompilerResponseFile)"
+			Sources="@(Compile)"
+			TargetType="$(OutputType)"
+			TreatWarningsAsErrors="$(TreatWarningsAsErrors)"
+			UseHostCompilerIfAvailable="$(UseHostCompilerIfAvailable)"
+			Utf8Output="$(Utf8Output)"
+			WarningLevel="$(WarningLevel)"
+			WarningsAsErrors="$(WarningsAsErrors)"
+			WarningsNotAsErrors="$(WarningsNotAsErrors)"
+			Win32Icon="$(Win32Icon)"
+			Win32Resource="$(Win32Resource)"
+			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)"
+			ToolExe="$(CscToolExe)"
+			ToolPath="$(CscToolPath)" />
+
+	</Target>
+
+	<Target Name="CreateManifestResourceNames">
+		<CreateCSharpManifestResourceName Condition="'@(ResxWithNoCulture)' != ''"
+			ResourceFiles="@(ResxWithNoCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestResourceWithNoCultureName" />
+		</CreateCSharpManifestResourceName>
+
+		<CreateCSharpManifestResourceName Condition="'@(NonResxWithNoCulture)' != ''"
+			ResourceFiles="@(NonResxWithNoCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestNonResxWithNoCulture" />
+		</CreateCSharpManifestResourceName>
+
+		<CreateCSharpManifestResourceName Condition="'@(ResxWithCulture)' != ''"
+			ResourceFiles="@(ResxWithCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestResourceWithCultureName" />
+		</CreateCSharpManifestResourceName>
+
+		<CreateCSharpManifestResourceName Condition="'@(NonResxWithCulture)' != ''"
+			ResourceFiles="@(NonResxWithCulture)" RootNamespace="$(RootNamespace)">
+			<Output TaskParameter = "ManifestResourceNames" ItemName = "ManifestNonResxWithCulture" />
+		</CreateCSharpManifestResourceName>
+	</Target>
+
+	<Import Project="Microsoft.Common.targets" />
+</Project>

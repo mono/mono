@@ -1,16 +1,13 @@
 <Type Name="EventHandler&lt;TEventArgs&gt;" FullName="System.EventHandler&lt;TEventArgs&gt;">
-  <TypeSignature Language="C#" Value="public delegate void EventHandler&lt;TEventArgs&gt;(object sender, TEventArgs e) where TEventArgs : EventArgs;" />
+  <TypeSignature Language="C#" Value="public delegate void EventHandler&lt;TEventArgs&gt;(object sender, TEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed EventHandler`1&lt;TEventArgs&gt; extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <TypeParameters>
-    <TypeParameter Name="TEventArgs">
-      <Constraints>
-        <BaseTypeName>System.EventArgs</BaseTypeName>
-      </Constraints>
-    </TypeParameter>
+    <TypeParameter Name="TEventArgs" />
   </TypeParameters>
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>

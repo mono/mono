@@ -57,5 +57,16 @@ namespace System.ComponentModel.DataAnnotations
 			else
 				MemberNames = new string[] {};
 		}
+
+#if NET_4_5
+		public override string ToString ()
+		{
+			// See: http://msdn.microsoft.com/en-us/library/system.componentmodel.dataannotations.validationresult.tostring.aspx
+			if (!string.IsNullOrEmpty (ErrorMessage))
+				return ErrorMessage;
+
+			return base.ToString ();
+		}
+#endif
 	}
 }

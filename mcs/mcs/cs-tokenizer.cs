@@ -188,6 +188,8 @@ namespace Mono.CSharp
 		readonly SeekableStreamReader reader;
 		readonly CompilationSourceFile source_file;
 		readonly CompilerContext context;
+		readonly Report Report;
+
 
 		SourceFile current_source;
 		Location hidden_block_start;
@@ -430,7 +432,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public Tokenizer (SeekableStreamReader input, CompilationSourceFile file, ParserSession session)
+		public Tokenizer (SeekableStreamReader input, CompilationSourceFile file, ParserSession session, Report report)
 		{
 			this.source_file = file;
 			this.context = file.Compiler;
@@ -439,6 +441,7 @@ namespace Mono.CSharp
 			this.id_builder = session.IDBuilder;
 			this.number_builder = session.NumberBuilder;
 			this.ltb = new LocatedTokenBuffer (session.LocatedTokens);
+			this.Report = report;
 
 			reader = input;
 
@@ -1222,7 +1225,7 @@ namespace Mono.CSharp
 		// Tonizes `?' using custom disambiguous rules to return one
 		// of following tokens: INTERR_NULLABLE, OP_COALESCING, INTERR
 		//
-		// Tricky expression look like:
+		// Tricky expression looks like:
 		//
 		// Foo ? a = x ? b : c;
 		//
@@ -1301,17 +1304,26 @@ namespace Mono.CSharp
 					int interrs = 1;
 					int colons = 0;
 					int braces = 0;
+					int parens = 0;
 					//
 					// All shorcuts failed, do it hard way
 					//
 					while ((ntoken = xtoken ()) != Token.EOF) {
-						if (ntoken == Token.OPEN_BRACE) {
+						switch (ntoken) {
+						case Token.OPEN_BRACE:
 							++braces;
 							continue;
-						}
-
-						if (ntoken == Token.CLOSE_BRACE) {
+						case Token.OPEN_PARENS:
+						case Token.OPEN_PARENS_CAST:
+						case Token.OPEN_PARENS_LAMBDA:
+							++parens;
+							continue;
+						case Token.CLOSE_BRACE:
 							--braces;
+							continue;
+						case Token.CLOSE_PARENS:
+							if (parens > 0)
+								--parens;
 							continue;
 						}
 
@@ -1320,6 +1332,9 @@ namespace Mono.CSharp
 
 						if (ntoken == Token.SEMICOLON)
 							break;
+
+						if (parens != 0)
+							continue;
 						
 						if (ntoken == Token.COLON) {
 							if (++colons == interrs)
@@ -2391,7 +2406,7 @@ namespace Mono.CSharp
 		/// <summary>
 		/// Handles #pragma directive
 		/// </summary>
-		void ParsePragmaDirective (string arg)
+		void ParsePragmaDirective ()
 		{
 			int c;
 			int length = TokenizePreprocessorIdentifier (out c);
@@ -2861,7 +2876,7 @@ namespace Mono.CSharp
 					Report.FeatureIsNotAvailable (context, Location, "#pragma");
 				}
 
-				ParsePragmaDirective (arg);
+				ParsePragmaDirective ();
 				return true;
 
 			case PreprocessorDirective.Line:
@@ -3728,10 +3743,6 @@ namespace Mono.CSharp
 				return ret;
 			}
 			return null;
-		}
-
-		Report Report {
-			get { return context.Report; }
 		}
 
 		void reset_doc_comment ()

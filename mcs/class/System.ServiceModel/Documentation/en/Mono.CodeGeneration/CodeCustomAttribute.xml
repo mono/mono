@@ -1,0 +1,172 @@
+<Type Name="CodeCustomAttribute" FullName="Mono.CodeGeneration.CodeCustomAttribute">
+  <TypeSignature Language="C#" Value="public class CodeCustomAttribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CodeCustomAttribute extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeCustomAttribute (System.Reflection.Emit.CustomAttributeBuilder attributeBuilder, Type type, System.Reflection.ConstructorInfo constructor, Mono.CodeGeneration.CodeLiteral[] ctorArgs, System.Reflection.MemberInfo[] namedArgMembers, Mono.CodeGeneration.CodeLiteral[] namedArgValues);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Reflection.Emit.CustomAttributeBuilder attributeBuilder, class System.Type type, class System.Reflection.ConstructorInfo constructor, class Mono.CodeGeneration.CodeLiteral[] ctorArgs, class System.Reflection.MemberInfo[] namedArgMembers, class Mono.CodeGeneration.CodeLiteral[] namedArgValues) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="attributeBuilder" Type="System.Reflection.Emit.CustomAttributeBuilder" />
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="constructor" Type="System.Reflection.ConstructorInfo" />
+        <Parameter Name="ctorArgs" Type="Mono.CodeGeneration.CodeLiteral[]" />
+        <Parameter Name="namedArgMembers" Type="System.Reflection.MemberInfo[]" />
+        <Parameter Name="namedArgValues" Type="Mono.CodeGeneration.CodeLiteral[]" />
+      </Parameters>
+      <Docs>
+        <param name="attributeBuilder">To be added.</param>
+        <param name="type">To be added.</param>
+        <param name="constructor">To be added.</param>
+        <param name="ctorArgs">To be added.</param>
+        <param name="namedArgMembers">To be added.</param>
+        <param name="namedArgValues">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Builder">
+      <MemberSignature Language="C#" Value="public System.Reflection.Emit.CustomAttributeBuilder Builder { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.Emit.CustomAttributeBuilder Builder" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Emit.CustomAttributeBuilder</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static Mono.CodeGeneration.CodeCustomAttribute Create (Type attributeType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.CodeGeneration.CodeCustomAttribute Create(class System.Type attributeType) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeCustomAttribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attributeType" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="attributeType">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static Mono.CodeGeneration.CodeCustomAttribute Create (Type attributeType, Type[] ctorArgTypes, Mono.CodeGeneration.CodeLiteral[] ctorArgs, System.Reflection.MemberInfo[] members, Mono.CodeGeneration.CodeLiteral[] values);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.CodeGeneration.CodeCustomAttribute Create(class System.Type attributeType, class System.Type[] ctorArgTypes, class Mono.CodeGeneration.CodeLiteral[] ctorArgs, class System.Reflection.MemberInfo[] members, class Mono.CodeGeneration.CodeLiteral[] values) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeCustomAttribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="ctorArgTypes" Type="System.Type[]" />
+        <Parameter Name="ctorArgs" Type="Mono.CodeGeneration.CodeLiteral[]" />
+        <Parameter Name="members" Type="System.Reflection.MemberInfo[]" />
+        <Parameter Name="values" Type="Mono.CodeGeneration.CodeLiteral[]" />
+      </Parameters>
+      <Docs>
+        <param name="attributeType">To be added.</param>
+        <param name="ctorArgTypes">To be added.</param>
+        <param name="ctorArgs">To be added.</param>
+        <param name="members">To be added.</param>
+        <param name="values">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public static Mono.CodeGeneration.CodeCustomAttribute Create (Type attributeType, Type[] ctorArgTypes, object[] ctorArgs, string[] namedArgNames, object[] namedArgValues);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class Mono.CodeGeneration.CodeCustomAttribute Create(class System.Type attributeType, class System.Type[] ctorArgTypes, object[] ctorArgs, string[] namedArgNames, object[] namedArgValues) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeCustomAttribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="attributeType" Type="System.Type" />
+        <Parameter Name="ctorArgTypes" Type="System.Type[]" />
+        <Parameter Name="ctorArgs" Type="System.Object[]" />
+        <Parameter Name="namedArgNames" Type="System.String[]" />
+        <Parameter Name="namedArgValues" Type="System.Object[]" />
+      </Parameters>
+      <Docs>
+        <param name="attributeType">To be added.</param>
+        <param name="ctorArgTypes">To be added.</param>
+        <param name="ctorArgs">To be added.</param>
+        <param name="namedArgNames">To be added.</param>
+        <param name="namedArgValues">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrintCode">
+      <MemberSignature Language="C#" Value="public string PrintCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string PrintCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrintCode">
+      <MemberSignature Language="C#" Value="public void PrintCode (Mono.CodeGeneration.CodeWriter cw);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void PrintCode(class Mono.CodeGeneration.CodeWriter cw) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cw" Type="Mono.CodeGeneration.CodeWriter" />
+      </Parameters>
+      <Docs>
+        <param name="cw">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

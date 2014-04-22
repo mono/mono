@@ -1,10 +1,12 @@
 <Type Name="XmlCaseOrder" FullName="System.Xml.XPath.XmlCaseOrder">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum XmlCaseOrder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlCaseOrder extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>This is an enumeration type. It is always thread safe.</ThreadSafetyStatement>
   <Base>
@@ -17,7 +19,13 @@
   <Members>
     <Member MemberName="LowerFirst">
       <MemberSignature Language="C#" Value="LowerFirst" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.XPath.XmlCaseOrder LowerFirst = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XPath.XmlCaseOrder</ReturnType>
       </ReturnValue>
@@ -26,14 +34,16 @@
         <summary>Lower case first.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.XPath.XmlCaseOrder None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XPath.XmlCaseOrder</ReturnType>
       </ReturnValue>
@@ -42,14 +52,16 @@
         <summary>Ignore case when sorting.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UpperFirst">
       <MemberSignature Language="C#" Value="UpperFirst" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Xml.XPath.XmlCaseOrder UpperFirst = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XPath.XmlCaseOrder</ReturnType>
       </ReturnValue>
@@ -58,10 +70,6 @@
         <summary>Upper case first.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

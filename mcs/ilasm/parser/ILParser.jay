@@ -3208,7 +3208,7 @@ exptype_head		: D_CLASS K_EXTERN expt_attr comp_name
 					}
 			;
 
-expt_attr 		: /* EMPTY */
+expt_attr 		: { $$ = 0; } /* EMPTY */
 			| expt_attr K_PRIVATE                   { $$ = (TypeAttr)$1 | TypeAttr.Private; }
 			| expt_attr K_PUBLIC                    { $$ = (TypeAttr)$1 | TypeAttr.Public; }
 			| expt_attr K_NESTED K_PUBLIC           { $$ = (TypeAttr)$1 | TypeAttr.NestedPublic; }

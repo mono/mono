@@ -1,5 +1,6 @@
 <Type Name="IsCopyConstructed" FullName="System.Runtime.CompilerServices.IsCopyConstructed">
   <TypeSignature Language="C#" Value="public static class IsCopyConstructed" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit IsCopyConstructed extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>

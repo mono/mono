@@ -1,6 +1,7 @@
 <Type Name="DllImportAttribute" FullName="System.Runtime.InteropServices.DllImportAttribute" FullNameSP="System_Runtime_InteropServices_DllImportAttribute" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed DllImportAttribute extends System.Attribute" />
   <TypeSignature Language="C#" Value="public sealed class DllImportAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit DllImportAttribute extends System.Attribute" />
   <MemberOfLibrary>RuntimeInfrastructure</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -91,7 +92,13 @@ public class DllImportAttributeTest {
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="public rtspecialname specialname instance void .ctor(string dllName)" />
       <MemberSignature Language="C#" Value="public DllImportAttribute (string dllName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string dllName) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="dllName" Type="System.String" />
@@ -108,15 +115,16 @@ class.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="BestFitMapping">
+      <MemberSignature Language="C#" Value="public bool BestFitMapping;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool BestFitMapping" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="BestFitMapping">
-      <MemberSignature Language="C#" Value="public bool BestFitMapping;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -124,16 +132,17 @@ class.</para>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="CallingConvention">
+      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CallingConvention CallingConvention" />
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CallingConvention CallingConvention;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.CallingConvention CallingConvention" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CallingConvention">
-      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CallingConvention CallingConvention" />
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CallingConvention CallingConvention;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CallingConvention</ReturnType>
       </ReturnValue>
@@ -152,16 +161,17 @@ shared library.</para>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="CharSet">
+      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
+      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
+      <MemberSignature Language="ILAsm" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CharSet">
-      <MemberSignature Language="ILASM" Value=".field public valuetype System.Runtime.InteropServices.CharSet CharSet" />
-      <MemberSignature Language="C#" Value="public System.Runtime.InteropServices.CharSet CharSet;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.InteropServices.CharSet</ReturnType>
       </ReturnValue>
@@ -191,16 +201,17 @@ The name modification is platform specific, and includes
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="EntryPoint">
+      <MemberSignature Language="ILASM" Value=".field public string EntryPoint" />
+      <MemberSignature Language="C#" Value="public string EntryPoint;" />
+      <MemberSignature Language="ILAsm" Value=".field public string EntryPoint" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="EntryPoint">
-      <MemberSignature Language="ILASM" Value=".field public string EntryPoint" />
-      <MemberSignature Language="C#" Value="public string EntryPoint;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -214,16 +225,17 @@ The name modification is platform specific, and includes
         <remarks />
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="ExactSpelling">
+      <MemberSignature Language="ILASM" Value=".field public bool ExactSpelling" />
+      <MemberSignature Language="C#" Value="public bool ExactSpelling;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool ExactSpelling" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ExactSpelling">
-      <MemberSignature Language="ILASM" Value=".field public bool ExactSpelling" />
-      <MemberSignature Language="C#" Value="public bool ExactSpelling;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -238,15 +250,16 @@ the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> f
         <remarks />
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PreserveSig">
       <MemberSignature Language="C#" Value="public bool PreserveSig;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool PreserveSig" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -254,15 +267,16 @@ the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> f
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetLastError">
       <MemberSignature Language="C#" Value="public bool SetLastError;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool SetLastError" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -270,15 +284,16 @@ the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> f
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ThrowOnUnmappableChar">
       <MemberSignature Language="C#" Value="public bool ThrowOnUnmappableChar;" />
+      <MemberSignature Language="ILAsm" Value=".field public bool ThrowOnUnmappableChar" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -286,16 +301,17 @@ the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> f
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Value">
       <MemberSignature Language="ILASM" Value=".property string Value { public hidebysig specialname instance string get_Value() }" />
       <MemberSignature Language="C#" Value="public string Value { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Value" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -313,11 +329,6 @@ the <see cref="F:System.Runtime.InteropServices.DllImportAttribute.CharSet" /> f
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

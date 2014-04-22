@@ -32,6 +32,7 @@ using System.Linq;
 using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
+using System.Xml.Serialization;
 
 using NUnit.Framework;
 
@@ -2072,5 +2073,29 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsNotNull (e.Attribute ("Name"), "#2");
 			Assert.IsNotNull (e.Attribute ("Cluster"), "#3");
 		}
+
+		[XmlType ("Root")]
+		public class SerializableClass
+		{
+			[XmlAnyElement]
+			public XElement Content;
+		}
+
+#if NET_4_5
+		[Test]
+		// Bug #12571
+		public void DeserializeXElement ()
+		{
+			var xmlString = "<Root><Data /></Root>";
+
+			var serializer = new XmlSerializer (typeof (SerializableClass));
+			var res = serializer.Deserialize (new StringReader (xmlString));
+
+			Assert.IsNotNull (res, "#1");
+			Assert.AreEqual (typeof (SerializableClass), res.GetType (), "#2");
+			var xe = (SerializableClass)res;
+			Assert.AreEqual (xe.Content.ToString (), "<Data />", "#3");
+		}
+#endif
 	}
 }

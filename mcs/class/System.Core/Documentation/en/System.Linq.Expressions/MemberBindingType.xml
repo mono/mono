@@ -1,8 +1,10 @@
 <Type Name="MemberBindingType" FullName="System.Linq.Expressions.MemberBindingType">
   <TypeSignature Language="C#" Value="public enum MemberBindingType" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MemberBindingType extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -14,9 +16,11 @@
   <Members>
     <Member MemberName="Assignment">
       <MemberSignature Language="C#" Value="Assignment" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.MemberBindingType Assignment = int32(0)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.MemberBindingType</ReturnType>
@@ -27,9 +31,11 @@
     </Member>
     <Member MemberName="ListBinding">
       <MemberSignature Language="C#" Value="ListBinding" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.MemberBindingType ListBinding = int32(2)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.MemberBindingType</ReturnType>
@@ -40,9 +46,11 @@
     </Member>
     <Member MemberName="MemberBinding">
       <MemberSignature Language="C#" Value="MemberBinding" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Linq.Expressions.MemberBindingType MemberBinding = int32(1)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>3.5.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Linq.Expressions.MemberBindingType</ReturnType>

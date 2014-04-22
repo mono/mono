@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{409FF748-B765-4AB3-BCB1-72199B9E341C}</ProjectGuid>
+    <ProjectGuid>{B102F27C-1A07-487F-BA5B-D5155D201112}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,612,809</NoWarn>
-    <OutputPath>bin\Debug\System.Windows.Forms-net_4_5</OutputPath>
+    <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -964,49 +964,52 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{4ED6CCE8-8E8A-4D82-8BCA-3EA4D4203AA4}</Project>
+      <Project>{2534ADE0-05E4-490F-933D-1E39310A0CB9}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Drawing\System.Drawing-net_4_5.csproj">
-      <Project>{945A4FD5-2184-44CC-9519-13AFC37ED81A}</Project>
+      <Project>{CB1CB976-AA54-4553-B0E7-05665B199EC4}</Project>
       <Name>System.Drawing\System.Drawing-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Accessibility\Accessibility-net_4_5.csproj">
-      <Project>{121E7DB9-FC04-46DF-8CF1-18B5A3FEE1B5}</Project>
+      <Project>{FACE8136-C95A-4788-90B2-DB0ECF7A020A}</Project>
       <Name>Accessibility\Accessibility-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
-      <Project>{663D8C81-B74E-4D44-8C59-2264C6942B30}</Project>
+      <Project>{9A33954F-57A8-4D75-B1D8-0F81808A0DD4}</Project>
       <Name>System.Data\System.Data-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Posix\Mono.Posix-net_4_5.csproj">
-      <Project>{9FB65E2F-34A9-42FF-AE94-2F101B951E4E}</Project>
+      <Project>{85A9B29B-58FF-4FBE-8998-B0A89AC22880}</Project>
       <Name>Mono.Posix\Mono.Posix-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.WebBrowser\Mono.WebBrowser-net_4_5.csproj">
-      <Project>{7D94F9AC-9F7A-4639-9E89-85083D77101D}</Project>
+      <Project>{1D660912-8164-4499-A2D7-A3B2FE742E17}</Project>
       <Name>Mono.WebBrowser\Mono.WebBrowser-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
-      <Project>{CA2CD67B-1308-460D-BDBA-498F63DEAA31}</Project>
+      <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>
       <Name>System.Configuration\System.Configuration-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_4_5.csproj">
-      <Project>{95593889-8509-4FFC-8EDE-C673FDA39FC8}</Project>
+      <Project>{B12AABBC-30D1-4885-BF3F-A53B970F68FB}</Project>
       <Name>System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -1187,3 +1190,4 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+

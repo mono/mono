@@ -103,6 +103,9 @@ namespace Microsoft.Build.BuildEngine {
 		// FIXME imported projects
 		static bool Exists (string file, Project context)
 		{
+			if (string.IsNullOrEmpty (file))
+				return false;
+
 			string directory  = null;
 			
 			if (context.FullFileName != String.Empty)

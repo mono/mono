@@ -48,6 +48,7 @@ typedef struct _SgenThreadInfo SgenThreadInfo;
 #include <mono/metadata/sgen-descriptor.h>
 #include <mono/metadata/sgen-gray.h>
 #include <mono/metadata/sgen-hash-table.h>
+#include <mono/metadata/sgen-bridge.h>
 
 /* The method used to clear the nursery */
 /* Clearing at nursery collections is the safest, but has bad interactions with caches.
@@ -63,8 +64,12 @@ NurseryClearPolicy sgen_get_nursery_clear_policy (void) MONO_INTERNAL;
 
 #define SGEN_TV_DECLARE(name) gint64 name
 #define SGEN_TV_GETTIME(tv) tv = mono_100ns_ticks ()
-#define SGEN_TV_ELAPSED(start,end) (int)((end-start) / 10)
-#define SGEN_TV_ELAPSED_MS(start,end) ((SGEN_TV_ELAPSED((start),(end)) + 500) / 1000)
+#define SGEN_TV_ELAPSED(start,end) (int)((end-start))
+#define SGEN_TV_ELAPSED_MS(start,end) ((SGEN_TV_ELAPSED((start),(end)) + 5000) / 10000)
+
+#if !defined(__MACH__) && !MONO_MACH_ARCH_SUPPORTED && defined(HAVE_PTHREAD_KILL)
+#define SGEN_POSIX_STW 1
+#endif
 
 /* eventually share with MonoThread? */
 /*
@@ -78,32 +83,6 @@ struct _SgenThreadInfo {
 	*/
 	int skip;
 	volatile int in_critical_region;
-
-	/*
-	Since threads can be created concurrently during STW, it's possible to reach a stable
-	state where we find that the world is stopped but there are registered threads that have
-	not been suspended.
-
-	Our hope is that those threads are harmlesly blocked in the GC lock trying to finish registration.
-
-	To handle this scenario we set this field on each thread that have joined the current STW phase.
-	The GC should ignore unjoined threads.
-	*/
-	gboolean joined_stw;
-
-	/*
-	This is set to TRUE by STW when it initiates suspension of a thread.
-	It's used so async suspend can catch the case where a thread is in the middle of unregistering
-	and need to cooperatively suspend itself.
-	*/
-	gboolean doing_handshake;
-
-	/*
-	This is set to TRUE when a thread start to dettach.
-	This gives STW the oportunity to ignore a thread that started to
-	unregister.
-	*/
-	gboolean thread_is_dying;
 
 	/*
 	This is set the argument of mono_gc_set_skip_thread.
@@ -122,11 +101,12 @@ struct _SgenThreadInfo {
 	char **tlab_real_end_addr;
 	gpointer runtime_data;
 
-	/* Only used on POSIX platforms */
+#ifdef SGEN_POSIX_STW
+	/* This is -1 until the first suspend. */
 	int signal;
-	/* Ditto */
 	/* FIXME: kill this, we only use signals on systems that have rt-posix, which doesn't have issues with duplicates. */
 	unsigned int stop_count; /* to catch duplicate signals. */
+#endif
 
 	gpointer stopped_ip;	/* only valid if the thread is stopped */
 	MonoDomain *stopped_domain; /* dsto */
@@ -164,7 +144,7 @@ struct _GCMemSection {
 	/* in major collections indexes in the pin_queue for objects that pin this section */
 	void **pin_queue_start;
 	int pin_queue_num_entries;
-	unsigned short num_scan_start;
+	unsigned int num_scan_start;
 };
 
 /*
@@ -179,10 +159,7 @@ struct _GCMemSection {
 		MONO_GC_LOCKED ();				\
 	} while (0)
 #define TRYLOCK_GC (mono_mutex_trylock (&gc_mutex) == 0)
-#define UNLOCK_GC do {						\
-		mono_mutex_unlock (&gc_mutex);			\
-		MONO_GC_UNLOCKED ();				\
-	} while (0)
+#define UNLOCK_GC do { sgen_gc_unlock (); } while (0)
 
 extern LOCK_DECLARE (sgen_interruption_mutex);
 
@@ -257,6 +234,8 @@ extern int num_ready_finalizers;
 #define SGEN_ALLOC_ALIGN		8
 #define SGEN_ALLOC_ALIGN_BITS	3
 
+/* s must be non-negative */
+#define SGEN_CAN_ALIGN_UP(s)		((s) <= SIZE_MAX - (SGEN_ALLOC_ALIGN - 1))
 #define SGEN_ALIGN_UP(s)		(((s)+(SGEN_ALLOC_ALIGN-1)) & ~(SGEN_ALLOC_ALIGN-1))
 
 /*
@@ -300,19 +279,19 @@ extern int sgen_nursery_bits MONO_INTERNAL;
 extern char *sgen_nursery_start MONO_INTERNAL;
 extern char *sgen_nursery_end MONO_INTERNAL;
 
-static inline gboolean
+static inline MONO_ALWAYS_INLINE gboolean
 sgen_ptr_in_nursery (void *p)
 {
 	return SGEN_PTR_IN_NURSERY ((p), DEFAULT_NURSERY_BITS, sgen_nursery_start, sgen_nursery_end);
 }
 
-static inline char*
+static inline MONO_ALWAYS_INLINE char*
 sgen_get_nursery_start (void)
 {
 	return sgen_nursery_start;
 }
 
-static inline char*
+static inline MONO_ALWAYS_INLINE char*
 sgen_get_nursery_end (void)
 {
 	return sgen_nursery_end;
@@ -413,7 +392,6 @@ int sgen_thread_handshake (BOOL suspend) MONO_INTERNAL;
 gboolean sgen_suspend_thread (SgenThreadInfo *info) MONO_INTERNAL;
 gboolean sgen_resume_thread (SgenThreadInfo *info) MONO_INTERNAL;
 void sgen_wait_for_suspend_ack (int count) MONO_INTERNAL;
-gboolean sgen_park_current_thread_if_doing_handshake (SgenThreadInfo *p) MONO_INTERNAL;
 void sgen_os_init (void) MONO_INTERNAL;
 
 gboolean sgen_is_worker_thread (MonoNativeThreadId thread) MONO_INTERNAL;
@@ -454,6 +432,7 @@ enum {
 	INTERNAL_MEM_JOB_QUEUE_ENTRY,
 	INTERNAL_MEM_TOGGLEREF_DATA,
 	INTERNAL_MEM_CARDTABLE_MOD_UNION,
+	INTERNAL_MEM_BINARY_PROTOCOL,
 	INTERNAL_MEM_MAX
 };
 
@@ -463,7 +442,7 @@ enum {
 	GENERATION_MAX
 };
 
-#ifdef SGEN_BINARY_PROTOCOL
+#ifdef SGEN_HEAVY_BINARY_PROTOCOL
 #define BINARY_PROTOCOL_ARG(x)	,x
 #else
 #define BINARY_PROTOCOL_ARG(x)
@@ -636,6 +615,16 @@ void sgen_split_nursery_init (SgenMinorCollector *collector) MONO_INTERNAL;
 typedef void (*sgen_cardtable_block_callback) (mword start, mword size);
 void sgen_major_collector_iterate_live_block_ranges (sgen_cardtable_block_callback callback) MONO_INTERNAL;
 
+typedef enum {
+	ITERATE_OBJECTS_SWEEP = 1,
+	ITERATE_OBJECTS_NON_PINNED = 2,
+	ITERATE_OBJECTS_PINNED = 4,
+	ITERATE_OBJECTS_ALL = ITERATE_OBJECTS_NON_PINNED | ITERATE_OBJECTS_PINNED,
+	ITERATE_OBJECTS_SWEEP_NON_PINNED = ITERATE_OBJECTS_SWEEP | ITERATE_OBJECTS_NON_PINNED,
+	ITERATE_OBJECTS_SWEEP_PINNED = ITERATE_OBJECTS_SWEEP | ITERATE_OBJECTS_PINNED,
+	ITERATE_OBJECTS_SWEEP_ALL = ITERATE_OBJECTS_SWEEP | ITERATE_OBJECTS_NON_PINNED | ITERATE_OBJECTS_PINNED
+} IterateObjectsFlags;
+
 typedef struct _SgenMajorCollector SgenMajorCollector;
 struct _SgenMajorCollector {
 	size_t section_size;
@@ -667,7 +656,7 @@ struct _SgenMajorCollector {
 	void* (*alloc_object) (MonoVTable *vtable, int size, gboolean has_references);
 	void* (*par_alloc_object) (MonoVTable *vtable, int size, gboolean has_references);
 	void (*free_pinned_object) (char *obj, size_t size);
-	void (*iterate_objects) (gboolean non_pinned, gboolean pinned, IterateObjectCallbackFunc callback, void *data);
+	void (*iterate_objects) (IterateObjectsFlags flags, IterateObjectCallbackFunc callback, void *data);
 	void (*free_non_pinned_object) (char *obj, size_t size);
 	void (*find_pin_queue_start_ends) (SgenGrayQueue *queue);
 	void (*pin_objects) (SgenGrayQueue *queue);
@@ -697,9 +686,10 @@ struct _SgenMajorCollector {
 	void (*init_worker_thread) (void *data);
 	void (*reset_worker_data) (void *data);
 	gboolean (*is_valid_object) (char *object);
-	gboolean (*describe_pointer) (char *pointer);
+	MonoVTable* (*describe_pointer) (char *pointer);
 	guint8* (*get_cardtable_mod_union_for_object) (char *object);
 	long long (*get_and_reset_num_major_objects_marked) (void);
+	void (*count_cards) (long long *num_total_cards, long long *num_marked_cards);
 };
 
 extern SgenMajorCollector major_collector;
@@ -813,12 +803,17 @@ void sgen_bridge_processing_stw_step (void) MONO_INTERNAL;
 void sgen_bridge_processing_finish (int generation) MONO_INTERNAL;
 void sgen_register_test_bridge_callbacks (const char *bridge_class_name) MONO_INTERNAL;
 gboolean sgen_is_bridge_object (MonoObject *obj) MONO_INTERNAL;
-gboolean sgen_is_bridge_class (MonoClass *class) MONO_INTERNAL;
+MonoGCBridgeObjectKind sgen_bridge_class_kind (MonoClass *class) MONO_INTERNAL;
 void sgen_mark_bridge_object (MonoObject *obj) MONO_INTERNAL;
 void sgen_bridge_register_finalized_object (MonoObject *object) MONO_INTERNAL;
+void sgen_bridge_describe_pointer (MonoObject *object) MONO_INTERNAL;
+void sgen_enable_bridge_accounting (void) MONO_INTERNAL;
 
-void sgen_scan_togglerefs (char *start, char *end, ScanCopyContext ctx) MONO_INTERNAL;
+void sgen_mark_togglerefs (char *start, char *end, ScanCopyContext ctx) MONO_INTERNAL;
+void sgen_clear_togglerefs (char *start, char *end, ScanCopyContext ctx) MONO_INTERNAL;
+
 void sgen_process_togglerefs (void) MONO_INTERNAL;
+void sgen_register_test_toggleref_callback (void) MONO_INTERNAL;
 
 typedef mono_bool (*WeakLinkAlivePredicateFunc) (MonoObject*, void*);
 
@@ -871,6 +866,7 @@ typedef struct {
 
 int sgen_stop_world (int generation) MONO_INTERNAL;
 int sgen_restart_world (int generation, GGTimingInfo *timing) MONO_INTERNAL;
+void sgen_init_stw (void) MONO_INTERNAL;
 
 /* LOS */
 
@@ -898,6 +894,7 @@ void sgen_los_iterate_objects (IterateObjectCallbackFunc cb, void *user_data) MO
 void sgen_los_iterate_live_block_ranges (sgen_cardtable_block_callback callback) MONO_INTERNAL;
 void sgen_los_scan_card_table (gboolean mod_union, SgenGrayQueue *queue) MONO_INTERNAL;
 void sgen_los_update_cardtable_mod_union (void) MONO_INTERNAL;
+void sgen_los_count_cards (long long *num_total_cards, long long *num_marked_cards) MONO_INTERNAL;
 void sgen_major_collector_scan_card_table (SgenGrayQueue *queue) MONO_INTERNAL;
 gboolean sgen_los_is_valid_object (char *object) MONO_INTERNAL;
 gboolean mono_sgen_los_describe_pointer (char *ptr) MONO_INTERNAL;
@@ -966,28 +963,24 @@ extern __thread char *stack_end;
 #endif
 
 #ifdef HAVE_KW_THREAD
-#define EMIT_TLS_ACCESS(mb,dummy,offset)	do {	\
+#define EMIT_TLS_ACCESS(mb,member,key)	do {	\
 	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
 	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
-	mono_mb_emit_i4 ((mb), (offset));		\
+	mono_mb_emit_i4 ((mb), (key));		\
 	} while (0)
 #else
 
-/* 
- * CEE_MONO_TLS requires the tls offset, not the key, so the code below only works on darwin,
- * where the two are the same.
- */
 #if defined(__APPLE__) || defined (HOST_WIN32)
-#define EMIT_TLS_ACCESS(mb,member,dummy)	do {	\
+#define EMIT_TLS_ACCESS(mb,member,key)	do {	\
 	mono_mb_emit_byte ((mb), MONO_CUSTOM_PREFIX);	\
 	mono_mb_emit_byte ((mb), CEE_MONO_TLS);		\
-	mono_mb_emit_i4 ((mb), thread_info_key);	\
+	mono_mb_emit_i4 ((mb), TLS_KEY_SGEN_THREAD_INFO);	\
 	mono_mb_emit_icon ((mb), G_STRUCT_OFFSET (SgenThreadInfo, member));	\
 	mono_mb_emit_byte ((mb), CEE_ADD);		\
 	mono_mb_emit_byte ((mb), CEE_LDIND_I);		\
 	} while (0)
 #else
-#define EMIT_TLS_ACCESS(mb,member,dummy)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
+#define EMIT_TLS_ACCESS(mb,member,key)	do { g_error ("sgen is not supported when using --with-tls=pthread.\n"); } while (0)
 #endif
 
 #endif
@@ -1003,6 +996,7 @@ extern int degraded_mode;
 extern int default_nursery_size;
 extern guint32 tlab_size;
 extern NurseryClearPolicy nursery_clear_policy;
+extern gboolean sgen_try_free_some_memory;
 
 extern LOCK_DECLARE (gc_mutex);
 
@@ -1046,6 +1040,10 @@ void sgen_check_whole_heap_stw (void) MONO_INTERNAL;
 void sgen_check_objref (char *obj);
 void sgen_check_major_heap_marked (void) MONO_INTERNAL;
 void sgen_check_nursery_objects_pinned (gboolean pinned) MONO_INTERNAL;
+void sgen_scan_for_registered_roots_in_domain (MonoDomain *domain, int root_type) MONO_INTERNAL;
+void sgen_check_for_xdomain_refs (void) MONO_INTERNAL;
+
+void mono_gc_scan_for_specific_ref (MonoObject *key, gboolean precise) MONO_INTERNAL;
 
 /* Write barrier support */
 
@@ -1073,6 +1071,11 @@ sgen_dummy_use (gpointer v) {
 
 gboolean sgen_parse_environment_string_extract_number (const char *str, glong *out) MONO_INTERNAL;
 void sgen_env_var_error (const char *env_var, const char *fallback, const char *description_format, ...) MONO_INTERNAL;
+
+/* Utilities */
+
+void sgen_qsort (void *base, size_t nel, size_t width, int (*compar) (const void*, const void*)) MONO_INTERNAL;
+gint64 sgen_timestamp (void) MONO_INTERNAL;
 
 #endif /* HAVE_SGEN_GC */
 

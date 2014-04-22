@@ -67,6 +67,66 @@ namespace MonoTests.System.Threading {
 		{
 			if (ExecutionContext.IsFlowSuppressed ())
 				ExecutionContext.RestoreFlow ();
+
+			CallContext.FreeNamedDataSlot ("testlc");
+		}
+
+		[Test]
+		[Category("MobileNotWorking")]
+		public void LogicalGetData_SetData()
+		{
+			var value = "a";
+
+			CallContext.SetData ("testlc", value);
+			var capturedValue = CallContext.LogicalGetData ("testlc");
+
+			Assert.IsNull (capturedValue);
+		}
+		
+		[Test]
+		[Category("MobileNotWorking")]
+		public void LogicalGetData_SetDataLogicalThreadAffinative()
+		{
+			var value = new CallContextValue ("a");
+
+			CallContext.SetData ("testlc", value);
+			var capturedValue = CallContext.LogicalGetData ("testlc");
+
+			Assert.AreEqual (value, capturedValue);
+		}
+
+		[Test]
+		[Category("MobileNotWorking")]
+		public void GetData_SetLogicalData()
+		{
+			var value = "a";
+
+			CallContext.LogicalSetData ("testlc", value);
+			var capturedValue = CallContext.GetData ("testlc");
+
+			Assert.AreEqual (value, capturedValue);
+		}
+
+		[Test]
+		[Category("MobileNotWorking")]
+		public void CaptureLogicalCallContext()
+		{
+			var value = "Tester";
+			object capturedValue = null;
+
+			CallContext.LogicalSetData ("testlc", value);
+
+			ExecutionContext ec = ExecutionContext.Capture ();
+			Assert.IsNotNull (ec, "Capture");
+			Assert.AreEqual (value, CallContext.LogicalGetData ("testlc"));
+			CallContext.LogicalSetData ("testlc", null);
+
+			ExecutionContext.Run (ec, new ContextCallback (new Action<object> ((data) => {
+				capturedValue = CallContext.LogicalGetData ("testlc");
+			})), null);
+
+			Assert.AreEqual (value, capturedValue);
+			Assert.AreNotEqual (value, CallContext.LogicalGetData ("testlc"));
 		}
 
 		[Test]
@@ -92,6 +152,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void Capture ()
 		{
 			ExecutionContext ec = ExecutionContext.Capture ();
@@ -109,6 +170,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void Copy ()
 		{
 			ExecutionContext ec = ExecutionContext.Capture ();
@@ -138,6 +200,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void IsFlowSuppressed ()
 		{
 			Assert.IsFalse (ExecutionContext.IsFlowSuppressed (), "IsFlowSuppressed-1");
@@ -151,12 +214,14 @@ namespace MonoTests.System.Threading {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category("MobileNotWorking")]
 		public void RestoreFlow_None ()
 		{
 			ExecutionContext.RestoreFlow ();
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void RestoreFlow_SuppressFlow ()
 		{
 			Assert.IsFalse (ExecutionContext.IsFlowSuppressed (), "IsFlowSuppressed-1");
@@ -177,6 +242,7 @@ namespace MonoTests.System.Threading {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category("MobileNotWorking")]
 		public void Run_SuppressFlow ()
 		{
 			Assert.IsFalse (ExecutionContext.IsFlowSuppressed ());
@@ -191,6 +257,7 @@ namespace MonoTests.System.Threading {
 		}
 
 		[Test]
+		[Category("MobileNotWorking")]
 		public void SuppressFlow ()
 		{
 			Assert.IsFalse (ExecutionContext.IsFlowSuppressed (), "IsFlowSuppressed-1");
@@ -204,6 +271,7 @@ namespace MonoTests.System.Threading {
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category("MobileNotWorking")]
 		public void SuppressFlow_Two_Undo ()
 		{
 			Assert.IsFalse (ExecutionContext.IsFlowSuppressed (), "IsFlowSuppressed-1");

@@ -1,0 +1,106 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="System.ComponentModel.DataAnnotations" Version="4.0.0.0">
+      <AssemblyPublicKey>[00 24 00 00 04 80 00 00 94 00 00 00 06 02 00 00 00 24 00 00 52 53 41 31 00 04 00 00 01 00 01 00 b5 fc 90 e7 02 7f 67 87 1e 77 3a 8f de 89 38 c8 1d d4 02 ba 65 b9 20 1d 60 59 3e 96 c4 92 65 1e 88 9c c1 3f 14 15 eb b5 3f ac 11 31 ae 0b d3 33 c5 ee 60 21 67 2d 97 18 ea 31 a8 ae bd 0d a0 07 2f 25 d8 7d ba 6f c9 0f fd 59 8e d4 da 35 e4 4c 39 8c 45 43 07 e8 e3 3b 84 26 14 3d ae c9 f5 96 83 6f 97 c8 f7 47 50 e5 97 5c 64 e2 18 9f 45 de f4 6b 2a 2b 12 47 ad c3 65 2b f5 c3 08 05 5d a9 ]</AssemblyPublicKey>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Diagnostics.Debuggable(System.Diagnostics.DebuggableAttribute+DebuggingModes.IgnoreSymbolStoreSequencePoints)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCompany("Mono development team")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(c) Various Mono authors")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDefaultAlias("System.ComponentModel.DataAnnotations.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("System.ComponentModel.DataAnnotations.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyFileVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyInformationalVersion("4.0.30319.17020")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("Mono Common Language Infrastructure")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("System.ComponentModel.DataAnnotations.dll")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.NeutralResourcesLanguage("en-US")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Resources.SatelliteContractVersion("4.0.0.0")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Security.AllowPartiallyTrustedCallers</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="System.ComponentModel.DataAnnotations">
+      <Type Name="AssociatedMetadataTypeTypeDescriptionProvider" Kind="Class" />
+      <Type Name="AssociationAttribute" Kind="Class" />
+      <Type Name="CompareAttribute" Kind="Class" />
+      <Type Name="ConcurrencyCheckAttribute" Kind="Class" />
+      <Type Name="CreditCardAttribute" Kind="Class" />
+      <Type Name="CustomValidationAttribute" Kind="Class" />
+      <Type Name="DataType" Kind="Enumeration" />
+      <Type Name="DataTypeAttribute" Kind="Class" />
+      <Type Name="DisplayAttribute" Kind="Class" />
+      <Type Name="DisplayColumnAttribute" Kind="Class" />
+      <Type Name="DisplayFormatAttribute" Kind="Class" />
+      <Type Name="EditableAttribute" Kind="Class" />
+      <Type Name="EmailAddressAttribute" Kind="Class" />
+      <Type Name="EnumDataTypeAttribute" Kind="Class" />
+      <Type Name="FileExtensionsAttribute" Kind="Class" />
+      <Type Name="FilterUIHintAttribute" Kind="Class" />
+      <Type Name="IValidatableObject" Kind="Interface" />
+      <Type Name="KeyAttribute" Kind="Class" />
+      <Type Name="MaxLengthAttribute" Kind="Class" />
+      <Type Name="MetadataTypeAttribute" Kind="Class" />
+      <Type Name="MinLengthAttribute" Kind="Class" />
+      <Type Name="PhoneAttribute" Kind="Class" />
+      <Type Name="RangeAttribute" Kind="Class" />
+      <Type Name="RegularExpressionAttribute" Kind="Class" />
+      <Type Name="RequiredAttribute" Kind="Class" />
+      <Type Name="ScaffoldColumnAttribute" Kind="Class" />
+      <Type Name="ScaffoldTableAttribute" Kind="Class" />
+      <Type Name="StringLengthAttribute" Kind="Class" />
+      <Type Name="TimestampAttribute" Kind="Class" />
+      <Type Name="UIHintAttribute" Kind="Class" />
+      <Type Name="ValidationAttribute" Kind="Class" />
+      <Type Name="ValidationContext" Kind="Class" />
+      <Type Name="ValidationException" Kind="Class" />
+      <Type Name="ValidationResult" Kind="Class" />
+      <Type Name="Validator" Kind="Class" />
+    </Namespace>
+    <Namespace Name="System.ComponentModel.DataAnnotations.Schema">
+      <Type Name="ColumnAttribute" Kind="Class" />
+      <Type Name="ComplexTypeAttribute" Kind="Class" />
+      <Type Name="DatabaseGeneratedAttribute" Kind="Class" />
+      <Type Name="DatabaseGeneratedOption" Kind="Enumeration" />
+      <Type Name="ForeignKeyAttribute" Kind="Class" />
+      <Type Name="InversePropertyAttribute" Kind="Class" />
+      <Type Name="NotMappedAttribute" Kind="Class" />
+      <Type Name="TableAttribute" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>System.ComponentModel.DataAnnotations</Title>
+</Overview>

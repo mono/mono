@@ -7,8 +7,6 @@
 #include <glib.h>
 #include "mono-counters.h"
 
-typedef struct _MonoCounter MonoCounter;
-
 struct _MonoCounter {
 	MonoCounter *next;
 	const char *name;
@@ -19,6 +17,18 @@ struct _MonoCounter {
 static MonoCounter *counters = NULL;
 static int valid_mask = 0;
 static int set_mask = 0;
+
+static int
+mono_counter_get_variance (MonoCounter *counter)
+{
+	return counter->type & MONO_COUNTER_VARIANCE_MASK;
+}
+
+static int
+mono_counter_get_unit (MonoCounter *counter)
+{
+	return counter->type & MONO_COUNTER_UNIT_MASK;
+}
 
 /**
  * mono_counters_enable:
@@ -73,9 +83,7 @@ mono_counters_register (const char* name, int type, void *addr)
 }
 
 typedef int (*IntFunc) (void);
-typedef guint (*UIntFunc) (void);
 typedef gint64 (*LongFunc) (void);
-typedef guint64 (*ULongFunc) (void);
 typedef gssize (*PtrFunc) (void);
 typedef double (*DoubleFunc) (void);
 typedef char* (*StrFunc) (void);
@@ -84,9 +92,7 @@ typedef char* (*StrFunc) (void);
 static void
 dump_counter (MonoCounter *counter, FILE *outfile) {
 	int intval;
-	guint uintval;
 	gint64 int64val;
-	guint64 uint64val;
 	gssize wordval;
 	double dval;
 	const char *str;
@@ -98,37 +104,22 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 		      intval = *(int*)counter->addr;
 	      fprintf (outfile, ENTRY_FMT "%d\n", counter->name, intval);
 	      break;
-	case MONO_COUNTER_UINT:
-	      if (counter->type & MONO_COUNTER_CALLBACK)
-		      uintval = ((UIntFunc)counter->addr) ();
-	      else
-		      uintval = *(guint*)counter->addr;
-	      fprintf (outfile, ENTRY_FMT "%u\n", counter->name, uintval);
-	      break;
 	case MONO_COUNTER_LONG:
 	      if (counter->type & MONO_COUNTER_CALLBACK)
 		      int64val = ((LongFunc)counter->addr) ();
 	      else
 		      int64val = *(gint64*)counter->addr;
-	      fprintf (outfile, ENTRY_FMT "%lld\n", counter->name, (long long)int64val);
-	      break;
-	case MONO_COUNTER_ULONG:
-	      if (counter->type & MONO_COUNTER_CALLBACK)
-		      uint64val = ((ULongFunc)counter->addr) ();
+	      if (mono_counter_get_unit (counter) == MONO_COUNTER_TIME)
+		      fprintf (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)int64val / 10000.0);
 	      else
-		      uint64val = *(guint64*)counter->addr;
-	      fprintf (outfile, ENTRY_FMT "%llu\n", counter->name, (unsigned long long)uint64val);
+		      fprintf (outfile, ENTRY_FMT "%lld\n", counter->name, (long long)int64val);
 	      break;
 	case MONO_COUNTER_WORD:
 	      if (counter->type & MONO_COUNTER_CALLBACK)
 		      wordval = ((PtrFunc)counter->addr) ();
 	      else
 		      wordval = *(gssize*)counter->addr;
-#if SIZEOF_VOID_P == 8
-	      fprintf (outfile, ENTRY_FMT "%lld\n", counter->name, (gint64)wordval);
-#else
-	      fprintf (outfile, ENTRY_FMT "%d\n", counter->name, (gint)wordval);
-#endif
+	      fprintf (outfile, ENTRY_FMT "%zd\n", counter->name, (gint64)wordval);
 	      break;
 	case MONO_COUNTER_DOUBLE:
 	      if (counter->type & MONO_COUNTER_CALLBACK)
@@ -144,13 +135,17 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 		      str = *(char**)counter->addr;
 	      fprintf (outfile, ENTRY_FMT "%s\n", counter->name, str);
 	      break;
-	case MONO_COUNTER_TIME_INTERVAL:
-	    if (counter->type & MONO_COUNTER_CALLBACK)
-		      int64val = ((LongFunc)counter->addr) ();
-	    else
-		      int64val = *(gint64*)counter->addr;
-	    fprintf (outfile, ENTRY_FMT "%.2f ms\n", counter->name, (double)int64val / 1000.0);
-	    break;
+	}
+}
+
+void
+mono_counters_foreach (CountersEnumCallback cb, gpointer user_data)
+{
+	MonoCounter *counter;
+
+	for (counter = counters; counter; counter = counter->next) {
+		if (!cb (counter, user_data))
+			return;
 	}
 }
 
@@ -160,7 +155,9 @@ section_names [][10] = {
 	"GC",
 	"Metadata",
 	"Generics",
-	"Security"
+	"Security",
+	"Runtime",
+	"System",
 };
 
 static void
@@ -168,7 +165,7 @@ mono_counters_dump_section (int section, FILE *outfile)
 {
 	MonoCounter *counter = counters;
 	while (counter) {
-		if (counter->type & section)
+		if (counter->type & section && mono_counter_get_variance (counter) == MONO_COUNTER_MONOTONIC)
 			dump_counter (counter, outfile);
 		counter = counter->next;
 	}
@@ -207,12 +204,12 @@ void
 mono_counters_cleanup (void)
 {
 	MonoCounter *counter = counters;
+	counters = NULL;
 	while (counter) {
-		MonoCounter *tmp = counters;
+		MonoCounter *tmp = counter;
 		counter = counter->next;
 		free (tmp);
 	}
-	counters = NULL;
 }
 
 static MonoResourceCallback limit_reached = NULL;

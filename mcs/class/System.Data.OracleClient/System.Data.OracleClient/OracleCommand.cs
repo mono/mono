@@ -27,6 +27,7 @@ using System.Data.Common;
 using System.Data.OracleClient.Oci;
 using System.Drawing.Design;
 using System.Text;
+using System.Threading;
 
 namespace System.Data.OracleClient
 {
@@ -705,7 +706,7 @@ namespace System.Data.OracleClient
 
 		private void SafeDisposeHandle (OciStatementHandle h)
 		{
-			if (h != null && h != preparedStatement)
+			if (h != null && h != preparedStatement) 
 				h.Dispose();
 		}
 
@@ -757,6 +758,9 @@ namespace System.Data.OracleClient
 
 		protected override void Dispose (bool disposing)
 		{
+			if (preparedStatement != null) 
+				OciCalls.OCIHandleFree(preparedStatement,
+						       OciHandleType.Statement);
 			if (disposing)
 				if (Parameters.Count > 0)
 					foreach (OracleParameter parm in Parameters)

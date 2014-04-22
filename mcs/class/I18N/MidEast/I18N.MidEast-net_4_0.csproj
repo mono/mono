@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{27BAE37E-41FE-4E31-8A83-F23847E19C86}</ProjectGuid>
+    <ProjectGuid>{BF6B8C9E-ADAA-4682-BA1D-F01EAE06BA6F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\I18N.MidEast-net_4_0</OutputPath>
+    <OutputPath>./../../../class/lib/net_4_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -64,17 +64,20 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
+      <Project>{F42F5509-677F-4C93-A026-047AB6153801}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\Common\I18N-net_4_0.csproj">
-      <Project>{AD318520-607B-4D7A-ABE4-AC064BF21343}</Project>
+      <Project>{1EBB84BA-DA98-4DE8-B0E5-8F476F3A732E}</Project>
       <Name>Common\I18N-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -82,3 +85,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

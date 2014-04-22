@@ -82,7 +82,7 @@ mono_helper_stelem_ref_check (MonoArray *array, MonoObject *val)
 		mono_raise_exception (mono_get_exception_array_type_mismatch ());
 }
 
-#ifndef MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS
+#if !defined(MONO_ARCH_NO_EMULATE_LONG_MUL_OPTS) || defined(MONO_ARCH_EMULATE_LONG_MUL_OVF_OPTS)
 
 gint64 
 mono_llmult (gint64 a, gint64 b)
@@ -996,8 +996,7 @@ mono_helper_compile_generic_method (MonoObject *obj, MonoMethod *method, gpointe
 
 	addr = mono_compile_method (vmethod);
 
-	if (mono_method_needs_static_rgctx_invoke (vmethod, FALSE))
-		addr = mono_create_static_rgctx_trampoline (vmethod, addr);
+	addr = mini_add_method_trampoline (NULL, vmethod, addr, mono_method_needs_static_rgctx_invoke (vmethod, FALSE), FALSE);
 
 	/* Since this is a virtual call, have to unbox vtypes */
 	if (obj->vtable->klass->valuetype)

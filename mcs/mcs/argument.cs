@@ -127,6 +127,29 @@ namespace Mono.CSharp
 			return this;
 		}
 
+		public void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			if (ArgType == AType.Out) {
+				var vr = Expr as VariableReference;
+				if (vr != null) {
+					if (vr.VariableInfo != null)
+						fc.SetVariableAssigned (vr.VariableInfo);
+
+					return;
+				}
+
+				var fe = Expr as FieldExpr;
+				if (fe != null) {
+					fe.SetFieldAssigned (fc);
+					return;
+				}
+
+				return;
+			}
+
+			Expr.FlowAnalysis (fc);
+		}
+
 		public string GetSignatureForError ()
 		{
 			if (Expr.eclass == ExprClass.MethodGroup)
@@ -152,18 +175,16 @@ namespace Mono.CSharp
 
 		public void Resolve (ResolveContext ec)
 		{
-//			using (ec.With (ResolveContext.Options.DoFlowAnalysis, true)) {
-				// Verify that the argument is readable
-				if (ArgType != AType.Out)
-					Expr = Expr.Resolve (ec);
+			// Verify that the argument is readable
+			if (ArgType != AType.Out)
+				Expr = Expr.Resolve (ec);
 
-				// Verify that the argument is writeable
-				if (Expr != null && IsByRef)
-					Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess);
+			// Verify that the argument is writeable
+			if (Expr != null && IsByRef)
+				Expr = Expr.ResolveLValue (ec, EmptyExpression.OutAccess);
 
-				if (Expr == null)
-					Expr = ErrorExpression.Instance;
-//			}
+			if (Expr == null)
+				Expr = ErrorExpression.Instance;
 		}
 	}
 
@@ -474,6 +495,29 @@ namespace Mono.CSharp
 				return new Arguments (dups);
 
 			return null;
+		}
+
+		public void FlowAnalysis (FlowAnalysisContext fc)
+		{
+			bool has_out = false;
+			foreach (var arg in args) {
+				if (arg.ArgType == Argument.AType.Out) {
+					has_out = true;
+					continue;
+				}
+
+				arg.FlowAnalysis (fc);
+			}
+
+			if (!has_out)
+				return;
+
+			foreach (var arg in args) {
+				if (arg.ArgType != Argument.AType.Out)
+					continue;
+
+				arg.FlowAnalysis (fc);
+			}
 		}
 
 		public List<Argument>.Enumerator GetEnumerator ()

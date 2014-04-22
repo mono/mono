@@ -1,5 +1,6 @@
 <Type Name="ApplicationSecurityInfo" FullName="System.Security.Policy.ApplicationSecurityInfo">
   <TypeSignature Language="C#" Value="public sealed class ApplicationSecurityInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ApplicationSecurityInfo extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -22,7 +23,12 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public ApplicationSecurityInfo (ActivationContext activationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ActivationContext activationContext) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="activationContext" Type="System.ActivationContext" />
       </Parameters>
@@ -32,14 +38,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ApplicationEvidence">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.Evidence ApplicationEvidence { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.Evidence ApplicationEvidence" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ApplicationEvidence">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.Evidence ApplicationEvidence { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.Evidence</ReturnType>
       </ReturnValue>
@@ -49,14 +56,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ApplicationId">
+      <MemberSignature Language="C#" Value="public ApplicationId ApplicationId { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ApplicationId ApplicationId" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ApplicationId">
-      <MemberSignature Language="C#" Value="public ApplicationId ApplicationId { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.ApplicationId</ReturnType>
       </ReturnValue>
@@ -66,14 +74,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="DefaultRequestSet">
+      <MemberSignature Language="C#" Value="public System.Security.PermissionSet DefaultRequestSet { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.PermissionSet DefaultRequestSet" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefaultRequestSet">
-      <MemberSignature Language="C#" Value="public System.Security.PermissionSet DefaultRequestSet { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.PermissionSet</ReturnType>
       </ReturnValue>
@@ -83,14 +92,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="DeploymentId">
+      <MemberSignature Language="C#" Value="public ApplicationId DeploymentId { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.ApplicationId DeploymentId" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DeploymentId">
-      <MemberSignature Language="C#" Value="public ApplicationId DeploymentId { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.ApplicationId</ReturnType>
       </ReturnValue>
@@ -100,10 +110,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

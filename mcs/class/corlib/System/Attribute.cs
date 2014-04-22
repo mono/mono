@@ -258,7 +258,7 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			int result = TypeId.GetHashCode ();
+			int result = GetType ().GetHashCode ();
 
 			FieldInfo[] fields = GetType ().GetFields (BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
 			foreach (FieldInfo field in fields) {

@@ -1,5 +1,6 @@
 <Type Name="StringSplitOptions" FullName="System.StringSplitOptions">
   <TypeSignature Language="C#" Value="public enum StringSplitOptions" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed StringSplitOptions extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -24,7 +25,12 @@
   <Members>
     <Member MemberName="None">
       <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.StringSplitOptions None = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.StringSplitOptions</ReturnType>
       </ReturnValue>
@@ -32,14 +38,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="RemoveEmptyEntries">
       <MemberSignature Language="C#" Value="RemoveEmptyEntries" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.StringSplitOptions RemoveEmptyEntries = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.StringSplitOptions</ReturnType>
       </ReturnValue>
@@ -47,10 +54,6 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

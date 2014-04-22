@@ -16,7 +16,7 @@ namespace MonoTests.Mono.Data.Sqlite
 	[TestFixture]
 	public class SqliteCommandUnitTests
 	{
-		readonly static string _uri = "SqliteTest.db";
+		readonly static string _uri = Path.Combine (Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "SqliteTest.db");
 		readonly static string _connectionString = "URI=file://" + _uri + ", version=3";
 		static SqliteConnection _conn = new SqliteConnection (_connectionString);
 		readonly static string stringvalue = "my keyboard is better than yours : äöüß";

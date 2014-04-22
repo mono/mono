@@ -1,10 +1,12 @@
 <Type Name="XmlDocument" FullName="System.Xml.XmlDocument">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlDocument : System.Xml.XmlNode, System.Xml.IHasXmlChildNode" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlDocument extends System.Xml.XmlNode implements class System.Xml.IHasXmlChildNode" />
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>To be added</ThreadSafetyStatement>
   <Base>
@@ -39,7 +41,13 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlDocument ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
@@ -50,14 +58,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected XmlDocument (System.Xml.XmlImplementation imp);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlImplementation imp) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="imp" Type="System.Xml.XmlImplementation" />
       </Parameters>
@@ -66,14 +76,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public XmlDocument (System.Xml.XmlNameTable nt);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Xml.XmlNameTable nt) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="nt" Type="System.Xml.XmlNameTable" />
@@ -90,14 +102,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="BaseURI">
       <MemberSignature Language="C#" Value="public override string BaseURI { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string BaseURI" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -106,14 +120,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CloneNode">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlNode CloneNode (bool deep);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Xml.XmlNode CloneNode(bool deep) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -126,14 +142,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateAttribute">
       <MemberSignature Language="C#" Value="public System.Xml.XmlAttribute CreateAttribute (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlAttribute CreateAttribute(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlAttribute</ReturnType>
       </ReturnValue>
@@ -146,14 +164,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateAttribute">
       <MemberSignature Language="C#" Value="public System.Xml.XmlAttribute CreateAttribute (string qualifiedName, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlAttribute CreateAttribute(string qualifiedName, string namespaceURI) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlAttribute</ReturnType>
       </ReturnValue>
@@ -168,14 +188,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateAttribute">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlAttribute CreateAttribute (string prefix, string localName, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlAttribute CreateAttribute(string prefix, string localName, string namespaceURI) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlAttribute</ReturnType>
       </ReturnValue>
@@ -199,14 +221,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateCDataSection">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlCDataSection CreateCDataSection (string data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlCDataSection CreateCDataSection(string data) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlCDataSection</ReturnType>
       </ReturnValue>
@@ -219,14 +243,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlCDataSection'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateComment">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlComment CreateComment (string data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlComment CreateComment(string data) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlComment</ReturnType>
       </ReturnValue>
@@ -239,14 +265,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlComment'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateDefaultAttribute">
       <MemberSignature Language="C#" Value="protected virtual System.Xml.XmlAttribute CreateDefaultAttribute (string prefix, string localName, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.Xml.XmlAttribute CreateDefaultAttribute(string prefix, string localName, string namespaceURI) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlAttribute</ReturnType>
       </ReturnValue>
@@ -263,14 +291,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateDocumentFragment">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlDocumentFragment CreateDocumentFragment ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlDocumentFragment CreateDocumentFragment() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlDocumentFragment</ReturnType>
       </ReturnValue>
@@ -280,14 +310,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlDocumentFragment'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateDocumentType">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlDocumentType CreateDocumentType (string name, string publicId, string systemId, string internalSubset);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlDocumentType CreateDocumentType(string name, string publicId, string systemId, string internalSubset) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlDocumentType</ReturnType>
       </ReturnValue>
@@ -306,14 +338,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlDocumentType'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateElement">
       <MemberSignature Language="C#" Value="public System.Xml.XmlElement CreateElement (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlElement CreateElement(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
@@ -326,14 +360,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlElement'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateElement">
       <MemberSignature Language="C#" Value="public System.Xml.XmlElement CreateElement (string qualifiedName, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Xml.XmlElement CreateElement(string qualifiedName, string namespaceURI) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
@@ -348,14 +384,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlElement'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateElement">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlElement CreateElement (string prefix, string localName, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlElement CreateElement(string prefix, string localName, string namespaceURI) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
@@ -379,14 +417,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateEntityReference">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlEntityReference CreateEntityReference (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlEntityReference CreateEntityReference(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlEntityReference</ReturnType>
       </ReturnValue>
@@ -399,14 +439,15 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlEntityReference'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateNavigator">
       <MemberSignature Language="C#" Value="public override System.Xml.XPath.XPathNavigator CreateNavigator ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance class System.Xml.XPath.XPathNavigator CreateNavigator() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
       </ReturnValue>
@@ -417,13 +458,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateNavigator">
       <MemberSignature Language="C#" Value="protected virtual System.Xml.XPath.XPathNavigator CreateNavigator (System.Xml.XmlNode node);" />
+      <MemberSignature Language="ILAsm" Value=".method familyorassemblyhidebysig newslot virtual instance class System.Xml.XPath.XPathNavigator CreateNavigator(class System.Xml.XmlNode node) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XPath.XPathNavigator</ReturnType>
       </ReturnValue>
@@ -436,14 +480,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateNode">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode CreateNode (string nodeTypeString, string name, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode CreateNode(string nodeTypeString, string name, string namespaceURI) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -542,14 +588,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
           </list>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateNode">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode CreateNode (System.Xml.XmlNodeType type, string name, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode CreateNode(valuetype System.Xml.XmlNodeType type, string name, string namespaceURI) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -571,14 +619,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateNode">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode CreateNode (System.Xml.XmlNodeType type, string prefix, string name, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode CreateNode(valuetype System.Xml.XmlNodeType type, string prefix, string name, string namespaceURI) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -710,14 +760,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
           </list>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateProcessingInstruction">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlProcessingInstruction CreateProcessingInstruction (string target, string data);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlProcessingInstruction CreateProcessingInstruction(string target, string data) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlProcessingInstruction</ReturnType>
       </ReturnValue>
@@ -732,14 +784,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlProcessingInstruction'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateSignificantWhitespace">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlSignificantWhitespace CreateSignificantWhitespace (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlSignificantWhitespace CreateSignificantWhitespace(string text) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlSignificantWhitespace</ReturnType>
       </ReturnValue>
@@ -752,14 +806,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlSignificantWhitespace'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateTextNode">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlText CreateTextNode (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlText CreateTextNode(string text) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlText</ReturnType>
       </ReturnValue>
@@ -772,14 +828,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlText'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateWhitespace">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlWhitespace CreateWhitespace (string text);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlWhitespace CreateWhitespace(string text) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlWhitespace</ReturnType>
       </ReturnValue>
@@ -792,14 +850,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlWhitespace'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateXmlDeclaration">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlDeclaration CreateXmlDeclaration (string version, string encoding, string standalone);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlDeclaration CreateXmlDeclaration(string version, string encoding, string standalone) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlDeclaration</ReturnType>
       </ReturnValue>
@@ -816,14 +876,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <returns>To be added: an object of type 'XmlDeclaration'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DocumentElement">
       <MemberSignature Language="C#" Value="public System.Xml.XmlElement DocumentElement { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlElement DocumentElement" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
@@ -839,14 +901,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DocumentType">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlDocumentType DocumentType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlDocumentType DocumentType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlDocumentType</ReturnType>
       </ReturnValue>
@@ -866,14 +930,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetElementById">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlElement GetElementById (string elementId);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlElement GetElementById(string elementId) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlElement</ReturnType>
       </ReturnValue>
@@ -893,14 +959,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetElementsByTagName">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNodeList GetElementsByTagName (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNodeList GetElementsByTagName(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeList</ReturnType>
       </ReturnValue>
@@ -924,14 +992,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetElementsByTagName">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNodeList GetElementsByTagName (string localName, string namespaceURI);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNodeList GetElementsByTagName(string localName, string namespaceURI) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeList</ReturnType>
       </ReturnValue>
@@ -957,14 +1027,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Implementation">
       <MemberSignature Language="C#" Value="public System.Xml.XmlImplementation Implementation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlImplementation Implementation" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlImplementation</ReturnType>
       </ReturnValue>
@@ -981,14 +1053,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ImportNode">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode ImportNode (System.Xml.XmlNode node, bool deep);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode ImportNode(class System.Xml.XmlNode node, bool deep) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -1013,14 +1087,14 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
-    <Member MemberName="InnerXml">
-      <MemberSignature Language="C#" Value="public override string InnerXml { set; get; }" />
+    <Member MemberName="InnerText">
+      <MemberSignature Language="C#" Value="public override string InnerText { set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string InnerText" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1029,14 +1103,34 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="InnerXml">
+      <MemberSignature Language="C#" Value="public override string InnerXml { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string InnerXml" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
       <MemberSignature Language="C#" Value="public override bool IsReadOnly { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsReadOnly" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1045,14 +1139,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
       <MemberSignature Language="C#" Value="public virtual void Load (System.IO.Stream inStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Load(class System.IO.Stream inStream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1070,14 +1166,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
       <MemberSignature Language="C#" Value="public virtual void Load (System.IO.TextReader txtReader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Load(class System.IO.TextReader txtReader) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1095,14 +1193,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Load">
       <MemberSignature Language="C#" Value="public virtual void Load (string filename);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Load(string filename) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1121,22 +1221,24 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
           <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Load">
+      <MemberSignature Language="C#" Value="public virtual void Load (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Load(class System.Xml.XmlReader reader) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Load">
-      <MemberSignature Language="C#" Value="public virtual void Load (System.Xml.XmlReader xmlReader);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="xmlReader" Type="System.Xml.XmlReader" />
+        <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="xmlReader">An <see cref="T:System.Xml.XmlReader" /> instance whose contents are being loaded.</param>
+        <param name="reader">An <see cref="T:System.Xml.XmlReader" /> instance whose contents are being loaded.</param>
         <summary>Loads the argument <see cref="T:System.Xml.XmlReader" /> as document content nodes.</summary>
         <remarks>
           <para>Loads the argument <see cref="T:System.Xml.XmlReader" /> as its child. It clears existing child nodes and then internally invokes <see cref="M:System.Xml.XmlDocument.ReadNode(XmlReader)" /> and appends the returned nodes as its child.
@@ -1146,14 +1248,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LoadXml">
       <MemberSignature Language="C#" Value="public virtual void LoadXml (string xml);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void LoadXml(string xml) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1169,14 +1273,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
           <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="LocalName">
       <MemberSignature Language="C#" Value="public override string LocalName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LocalName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1185,14 +1291,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Name">
       <MemberSignature Language="C#" Value="public override string Name { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Name" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -1201,14 +1309,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NameTable">
       <MemberSignature Language="C#" Value="public System.Xml.XmlNameTable NameTable { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNameTable NameTable" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNameTable</ReturnType>
       </ReturnValue>
@@ -1225,14 +1335,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
           <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NodeChanged">
       <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeChanged;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Xml.XmlNodeChangedEventHandler NodeChanged" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
       </ReturnValue>
@@ -1248,14 +1360,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NodeChanging">
       <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeChanging;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Xml.XmlNodeChangedEventHandler NodeChanging" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
       </ReturnValue>
@@ -1271,14 +1385,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NodeInserted">
       <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeInserted;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Xml.XmlNodeChangedEventHandler NodeInserted" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
       </ReturnValue>
@@ -1294,14 +1410,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NodeInserting">
       <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeInserting;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Xml.XmlNodeChangedEventHandler NodeInserting" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
       </ReturnValue>
@@ -1317,14 +1435,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NodeRemoved">
       <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeRemoved;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Xml.XmlNodeChangedEventHandler NodeRemoved" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
       </ReturnValue>
@@ -1340,14 +1460,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NodeRemoving">
       <MemberSignature Language="C#" Value="public event System.Xml.XmlNodeChangedEventHandler NodeRemoving;" />
+      <MemberSignature Language="ILAsm" Value=".event class System.Xml.XmlNodeChangedEventHandler NodeRemoving" />
       <MemberType>Event</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeChangedEventHandler</ReturnType>
       </ReturnValue>
@@ -1363,14 +1485,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NodeType">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlNodeType NodeType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Xml.XmlNodeType NodeType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
@@ -1379,14 +1503,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="OwnerDocument">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlDocument OwnerDocument { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlDocument OwnerDocument" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlDocument</ReturnType>
       </ReturnValue>
@@ -1395,14 +1521,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ParentNode">
       <MemberSignature Language="C#" Value="public override System.Xml.XmlNode ParentNode { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlNode ParentNode" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -1412,14 +1540,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="PreserveWhitespace">
+      <MemberSignature Language="C#" Value="public bool PreserveWhitespace { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool PreserveWhitespace" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="PreserveWhitespace">
-      <MemberSignature Language="C#" Value="public bool PreserveWhitespace { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -1443,14 +1573,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
           <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ReadNode">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlNode ReadNode (System.Xml.XmlReader reader);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Xml.XmlNode ReadNode(class System.Xml.XmlReader reader) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
@@ -1482,14 +1614,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Save">
       <MemberSignature Language="C#" Value="public virtual void Save (System.IO.Stream outStream);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Save(class System.IO.Stream outStream) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1512,14 +1646,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Save">
       <MemberSignature Language="C#" Value="public virtual void Save (System.IO.TextWriter writer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Save(class System.IO.TextWriter writer) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1544,14 +1680,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Save">
       <MemberSignature Language="C#" Value="public virtual void Save (string filename);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Save(string filename) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1573,22 +1711,24 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
           <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
         </remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public virtual void Save (System.Xml.XmlWriter w);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Save(class System.Xml.XmlWriter w) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Save">
-      <MemberSignature Language="C#" Value="public virtual void Save (System.Xml.XmlWriter xmlWriter);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="xmlWriter" Type="System.Xml.XmlWriter" />
+        <Parameter Name="w" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="xmlWriter">An <see cref="T:System.Xml.XmlWriter" /> to save the entire document.</param>
+        <param name="w">An <see cref="T:System.Xml.XmlWriter" /> to save the entire document.</param>
         <summary>Writes the entire document into argument <see cref="T:System.Xml.XmlWriter" />.</summary>
         <remarks>
           <para>
@@ -1605,14 +1745,15 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
 	</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SchemaInfo">
       <MemberSignature Language="C#" Value="public override System.Xml.Schema.IXmlSchemaInfo SchemaInfo { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.IXmlSchemaInfo SchemaInfo" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.IXmlSchemaInfo</ReturnType>
       </ReturnValue>
@@ -1622,13 +1763,15 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Schemas">
-      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet Schemas { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Xml.Schema.XmlSchemaSet Schemas { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.Schema.XmlSchemaSet Schemas" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.Schema.XmlSchemaSet</ReturnType>
       </ReturnValue>
@@ -1638,13 +1781,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="System.Xml.IHasXmlChildNode.LastLinkedChild">
-      <MemberSignature Language="C#" Value="System.Xml.XmlLinkedNode System.Xml.IHasXmlChildNode.LastLinkedChild { set; get; }" />
+      <MemberSignature Language="C#" Value="System.Xml.XmlLinkedNode System.Xml.IHasXmlChildNode.LastLinkedChild { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlLinkedNode System.Xml.IHasXmlChildNode.LastLinkedChild" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlLinkedNode</ReturnType>
       </ReturnValue>
@@ -1653,73 +1799,81 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Validate">
-      <MemberSignature Language="C#" Value="public void Validate (System.Xml.Schema.ValidationEventHandler handler);" />
+      <MemberSignature Language="C#" Value="public void Validate (System.Xml.Schema.ValidationEventHandler validationEventHandler);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Validate(class System.Xml.Schema.ValidationEventHandler validationEventHandler) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="handler" Type="System.Xml.Schema.ValidationEventHandler" />
+        <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added.</param>
+        <param name="validationEventHandler">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Validate">
-      <MemberSignature Language="C#" Value="public void Validate (System.Xml.Schema.ValidationEventHandler handler, System.Xml.XmlNode node);" />
+      <MemberSignature Language="C#" Value="public void Validate (System.Xml.Schema.ValidationEventHandler validationEventHandler, System.Xml.XmlNode nodeToValidate);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Validate(class System.Xml.Schema.ValidationEventHandler validationEventHandler, class System.Xml.XmlNode nodeToValidate) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="handler" Type="System.Xml.Schema.ValidationEventHandler" />
-        <Parameter Name="node" Type="System.Xml.XmlNode" />
+        <Parameter Name="validationEventHandler" Type="System.Xml.Schema.ValidationEventHandler" />
+        <Parameter Name="nodeToValidate" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added.</param>
-        <param name="node">To be added.</param>
+        <param name="validationEventHandler">To be added.</param>
+        <param name="nodeToValidate">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteContentTo">
-      <MemberSignature Language="C#" Value="public override void WriteContentTo (System.Xml.XmlWriter w);" />
+      <MemberSignature Language="C#" Value="public override void WriteContentTo (System.Xml.XmlWriter xw);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteContentTo(class System.Xml.XmlWriter xw) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="w" Type="System.Xml.XmlWriter" />
+        <Parameter Name="xw" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="w">To be added.</param>
+        <param name="xw">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="WriteTo">
       <MemberSignature Language="C#" Value="public override void WriteTo (System.Xml.XmlWriter w);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void WriteTo(class System.Xml.XmlWriter w) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1731,14 +1885,16 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="XmlResolver">
       <MemberSignature Language="C#" Value="public virtual System.Xml.XmlResolver XmlResolver { set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Xml.XmlResolver XmlResolver" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Xml.XmlResolver</ReturnType>
       </ReturnValue>
@@ -1756,10 +1912,6 @@ Note that an XmlDocument is not same as the <see cref="P:System.Xml.XmlDocument.
           <para>Note that there is no corresponding interface member in any of W3C Document Object Model specifications.</para>
         </remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

@@ -346,7 +346,7 @@ namespace System {
 
 			static void Fill (Stream stream, byte[] nbuf, int required)
 			{
-				int read, offset = 0;
+				int read = 0, offset = 0;
 				while (offset < required && (read = stream.Read (nbuf, offset, required - offset)) > 0)
 					offset += read;
 				if (read != required)
@@ -398,6 +398,12 @@ namespace System {
 
 			FileStream GetTimeZoneData (string name, out int start, out int length)
 			{
+				if (name == null) { // Just in case, to avoid NREX as in xambug #4902
+					start = 0;
+					length = 0;
+					return null;
+				}
+				
 				var f = new FileInfo (Path.Combine (zoneRoot, name));
 				if (f.Exists) {
 					start   = 0;
@@ -536,20 +542,34 @@ namespace System {
 					}
 				}
 			}
+			
+			[DllImport ("__Internal")]
+			static extern int monodroid_get_system_property (string name, ref IntPtr value);
 
-			// <sys/system_properties.h>
-			[DllImport ("/system/lib/libc.so")]
-			static extern int __system_property_get (string name, StringBuilder value);
-
-			const int MaxPropertyNameLength   = 32; // <sys/system_properties.h>
-			const int MaxPropertyValueLength  = 92; // <sys/system_properties.h>
-
+			[DllImport ("__Internal")]
+			static extern void monodroid_free (IntPtr ptr);
+			
 			static string GetDefaultTimeZoneName ()
 			{
-				var buf = new StringBuilder (MaxPropertyValueLength + 1);
-				int n = __system_property_get ("persist.sys.timezone", buf);
-				if (n > 0)
-					return buf.ToString ();
+				IntPtr value = IntPtr.Zero;
+				int n = 0;
+				string defaultTimeZone;
+
+				// Used by the tests
+				if (Environment.GetEnvironmentVariable ("__XA_USE_JAVA_DEFAULT_TIMEZONE_ID__") == null)
+					n = monodroid_get_system_property ("persist.sys.timezone", ref value);
+				
+				if (n > 0 && value != IntPtr.Zero) {
+					defaultTimeZone = (Marshal.PtrToStringAnsi (value) ?? String.Empty).Trim ();
+					monodroid_free (value);
+					if (!String.IsNullOrEmpty (defaultTimeZone))
+						return defaultTimeZone;
+				}
+				
+				defaultTimeZone = (AndroidPlatform.GetDefaultTimeZone () ?? String.Empty).Trim ();
+				if (!String.IsNullOrEmpty (defaultTimeZone))
+					return defaultTimeZone;
+
 				return null;
 			}
 

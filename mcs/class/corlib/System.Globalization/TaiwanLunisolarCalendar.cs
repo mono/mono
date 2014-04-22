@@ -80,6 +80,14 @@ public class TaiwanLunisolarCalendar : EastAsianLunisolarCalendar {
 			return TaiwanMax;
 		}
 	}
+
+#if NET_4_5
+	protected override int DaysInYearBeforeMinSupportedYear {
+		get{
+			return 384;
+		}
+	}
+#endif
 }
 
 }

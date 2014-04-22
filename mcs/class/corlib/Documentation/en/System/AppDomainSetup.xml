@@ -1,5 +1,6 @@
 <Type Name="AppDomainSetup" FullName="System.AppDomainSetup">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AppDomainSetup : IAppDomainSetup" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi serializable sealed beforefieldinit AppDomainSetup extends System.Object implements class System.IAppDomainSetup" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -31,22 +32,28 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AppDomainSetup ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AppDomainSetup (ActivationContext activationContext);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.ActivationContext activationContext) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Parameters>
         <Parameter Name="activationContext" Type="System.ActivationContext" />
       </Parameters>
@@ -56,14 +63,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AppDomainSetup (System.Runtime.Hosting.ActivationArguments activationArguments);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Runtime.Hosting.ActivationArguments activationArguments) cil managed" />
+      <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public AppDomainSetup (System.Runtime.Hosting.ActivationArguments activationArguments);" />
-      <MemberType>Constructor</MemberType>
       <Parameters>
         <Parameter Name="activationArguments" Type="System.Runtime.Hosting.ActivationArguments" />
       </Parameters>
@@ -73,14 +81,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ActivationArguments">
+      <MemberSignature Language="C#" Value="public System.Runtime.Hosting.ActivationArguments ActivationArguments { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Runtime.Hosting.ActivationArguments ActivationArguments" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ActivationArguments">
-      <MemberSignature Language="C#" Value="public System.Runtime.Hosting.ActivationArguments ActivationArguments { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Runtime.Hosting.ActivationArguments</ReturnType>
       </ReturnValue>
@@ -90,13 +99,10 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AppDomainInitializer">
-      <MemberSignature Language="C#" Value="public AppDomainInitializer AppDomainInitializer { set; get; }" />
+      <MemberSignature Language="C#" Value="public AppDomainInitializer AppDomainInitializer { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.AppDomainInitializer AppDomainInitializer" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -112,7 +118,8 @@
       </Docs>
     </Member>
     <Member MemberName="AppDomainInitializerArguments">
-      <MemberSignature Language="C#" Value="public string[] AppDomainInitializerArguments { set; get; }" />
+      <MemberSignature Language="C#" Value="public string[] AppDomainInitializerArguments { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string[] AppDomainInitializerArguments" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -128,8 +135,14 @@
       </Docs>
     </Member>
     <Member MemberName="ApplicationBase">
-      <MemberSignature Language="C#" Value="public string ApplicationBase { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ApplicationBase { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ApplicationBase" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -140,15 +153,16 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ApplicationName">
-      <MemberSignature Language="C#" Value="public string ApplicationName { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ApplicationName { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ApplicationName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -159,14 +173,10 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ApplicationTrust">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrust ApplicationTrust { set; get; }" />
+      <MemberSignature Language="C#" Value="public System.Security.Policy.ApplicationTrust ApplicationTrust { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.ApplicationTrust ApplicationTrust" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -182,8 +192,14 @@
       </Docs>
     </Member>
     <Member MemberName="CachePath">
-      <MemberSignature Language="C#" Value="public string CachePath { set; get; }" />
+      <MemberSignature Language="C#" Value="public string CachePath { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string CachePath" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -194,15 +210,16 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ConfigurationFile">
-      <MemberSignature Language="C#" Value="public string ConfigurationFile { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ConfigurationFile { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ConfigurationFile" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -213,14 +230,10 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DisallowApplicationBaseProbing">
-      <MemberSignature Language="C#" Value="public bool DisallowApplicationBaseProbing { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DisallowApplicationBaseProbing { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DisallowApplicationBaseProbing" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -236,8 +249,14 @@
       </Docs>
     </Member>
     <Member MemberName="DisallowBindingRedirects">
-      <MemberSignature Language="C#" Value="public bool DisallowBindingRedirects { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DisallowBindingRedirects { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DisallowBindingRedirects" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -246,15 +265,16 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DisallowCodeDownload">
-      <MemberSignature Language="C#" Value="public bool DisallowCodeDownload { set; get; }" />
+      <MemberSignature Language="C#" Value="public bool DisallowCodeDownload { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DisallowCodeDownload" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -263,15 +283,16 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="DisallowPublisherPolicy">
+      <MemberSignature Language="C#" Value="public bool DisallowPublisherPolicy { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool DisallowPublisherPolicy" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DisallowPublisherPolicy">
-      <MemberSignature Language="C#" Value="public bool DisallowPublisherPolicy { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -282,15 +303,16 @@
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="DynamicBase">
+      <MemberSignature Language="C#" Value="public string DynamicBase { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string DynamicBase" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DynamicBase">
-      <MemberSignature Language="C#" Value="public string DynamicBase { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -301,14 +323,10 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetConfigurationBytes">
       <MemberSignature Language="C#" Value="public byte[] GetConfigurationBytes ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance unsigned int8[] GetConfigurationBytes() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -325,8 +343,14 @@
       </Docs>
     </Member>
     <Member MemberName="LicenseFile">
-      <MemberSignature Language="C#" Value="public string LicenseFile { set; get; }" />
+      <MemberSignature Language="C#" Value="public string LicenseFile { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string LicenseFile" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -337,15 +361,16 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="LoaderOptimization">
+      <MemberSignature Language="C#" Value="public LoaderOptimization LoaderOptimization { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.LoaderOptimization LoaderOptimization" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="LoaderOptimization">
-      <MemberSignature Language="C#" Value="public LoaderOptimization LoaderOptimization { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.LoaderOptimization</ReturnType>
       </ReturnValue>
@@ -356,15 +381,16 @@
         <value>To be added: an object of type 'LoaderOptimization'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PrivateBinPath">
-      <MemberSignature Language="C#" Value="public string PrivateBinPath { set; get; }" />
+      <MemberSignature Language="C#" Value="public string PrivateBinPath { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PrivateBinPath" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -375,15 +401,16 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PrivateBinPathProbe">
-      <MemberSignature Language="C#" Value="public string PrivateBinPathProbe { set; get; }" />
+      <MemberSignature Language="C#" Value="public string PrivateBinPathProbe { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string PrivateBinPathProbe" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -394,14 +421,10 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="SetCompatibilitySwitches">
       <MemberSignature Language="C#" Value="public void SetCompatibilitySwitches (System.Collections.Generic.IEnumerable&lt;string&gt; switches);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetCompatibilitySwitches(class System.Collections.Generic.IEnumerable`1&lt;string&gt; switches) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -420,6 +443,7 @@
     </Member>
     <Member MemberName="SetConfigurationBytes">
       <MemberSignature Language="C#" Value="public void SetConfigurationBytes (byte[] value);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void SetConfigurationBytes(unsigned int8[] value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -438,8 +462,14 @@
       </Docs>
     </Member>
     <Member MemberName="ShadowCopyDirectories">
-      <MemberSignature Language="C#" Value="public string ShadowCopyDirectories { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ShadowCopyDirectories { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ShadowCopyDirectories" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -450,15 +480,16 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="ShadowCopyFiles">
-      <MemberSignature Language="C#" Value="public string ShadowCopyFiles { set; get; }" />
+      <MemberSignature Language="C#" Value="public string ShadowCopyFiles { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string ShadowCopyFiles" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -469,11 +500,6 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

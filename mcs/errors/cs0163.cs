@@ -1,6 +1,5 @@
-// CS0163: Control cannot fall through from one case label to another
-// Line: 17
-
+// CS0163: Control cannot fall through from one case label `case 3:' to another
+// Line: 21
 
 public class Foo
 {

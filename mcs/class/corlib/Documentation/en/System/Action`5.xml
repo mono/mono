@@ -1,5 +1,6 @@
 <Type Name="Action&lt;T1,T2,T3,T4,T5&gt;" FullName="System.Action&lt;T1,T2,T3,T4,T5&gt;">
   <TypeSignature Language="C#" Value="public delegate void Action&lt;in T1,in T2,in T3,in T4,in T5&gt;(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Action`5&lt;- T1, - T2, - T3, - T4, - T5&gt; extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>

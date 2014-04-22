@@ -1,5 +1,6 @@
 <Type Name="RuntimeHelpers+TryCode" FullName="System.Runtime.CompilerServices.RuntimeHelpers+TryCode">
   <TypeSignature Language="C#" Value="public delegate void RuntimeHelpers.TryCode(object userData);" />
+  <TypeSignature Language="ILAsm" Value=".class nested public auto ansi sealed RuntimeHelpers/TryCode extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>

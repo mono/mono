@@ -1,10 +1,15 @@
 <Type Name="IOrderedQueryable" FullName="System.Linq.IOrderedQueryable">
-  <TypeSignature Language="C#" Value="public interface IOrderedQueryable : System.Linq.IQueryable" />
+  <TypeSignature Language="C#" Value="public interface IOrderedQueryable : System.Collections.IEnumerable, System.Linq.IQueryable" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IOrderedQueryable implements class System.Collections.IEnumerable, class System.Linq.IQueryable" />
   <AssemblyInfo>
     <AssemblyName>System.Core</AssemblyName>
     <AssemblyVersion>3.5.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces>
+    <Interface>
+      <InterfaceName>System.Collections.IEnumerable</InterfaceName>
+    </Interface>
     <Interface>
       <InterfaceName>System.Linq.IQueryable</InterfaceName>
     </Interface>

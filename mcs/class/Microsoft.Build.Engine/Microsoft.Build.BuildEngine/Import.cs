@@ -159,12 +159,23 @@ namespace Microsoft.Build.BuildEngine {
 			else
 				base_dir_info = new DirectoryInfo (Directory.GetCurrentDirectory ());
 
-			IEnumerable<string> extn_paths = has_extn_ref ? GetExtensionPaths (project) : new string [] {null};
+			var importPaths = GetImportPathsFromString (project_attribute, project, base_dir_info);
+			var extensionPaths = GetExtensionPaths (project);
+
+			if (!has_extn_ref) {
+				foreach (var importPath in importPaths) {
+					foreach (var extensionPath in extensionPaths) {
+						has_extn_ref = has_extn_ref || importPath.IndexOf (extensionPath) >= 0;
+					}
+				}
+			}
+
+			IEnumerable<string> extn_paths = has_extn_ref ? extensionPaths : new string [] { null };
 			bool import_needed = false;
 			var currentLoadSettings = project.ProjectLoadSettings;
-			
+
 			try {
-				foreach (var settings in new ProjectLoadSettings [] { ProjectLoadSettings.None, currentLoadSettings}) {
+				foreach (var settings in new ProjectLoadSettings [] { ProjectLoadSettings.None, currentLoadSettings }) {
 					foreach (string path in extn_paths) {
 						string extn_msg = null;
 						if (has_extn_ref) {
@@ -183,7 +194,7 @@ namespace Microsoft.Build.BuildEngine {
 						// We stop if atleast one file got imported.
 						// Remaining extension paths are *not* tried
 						bool atleast_one = false;
-						foreach (string importPath in GetImportPathsFromString (project_attribute, project, base_dir_info)) {
+						foreach (string importPath in importPaths) {
 							try {
 								if (func (importPath, extn_msg))
 									atleast_one = true;

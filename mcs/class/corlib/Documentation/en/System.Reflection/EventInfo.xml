@@ -1,6 +1,7 @@
 <Type Name="EventInfo" FullName="System.Reflection.EventInfo" FullNameSP="System_Reflection_EventInfo" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract EventInfo extends System.Reflection.MemberInfo" />
   <TypeSignature Language="C#" Value="public abstract class EventInfo : System.Reflection.MemberInfo, System.Runtime.InteropServices._EventInfo" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential ansi abstract serializable beforefieldinit EventInfo extends System.Reflection.MemberInfo implements class System.Runtime.InteropServices._EventInfo" />
   <MemberOfLibrary>Reflection</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -62,7 +63,13 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family rtspecialname specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="protected EventInfo ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
@@ -73,16 +80,22 @@ class.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AddEventHandler">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void AddEventHandler(object target, class System.Delegate handler)" />
+      <MemberSignature Language="C#" Value="public virtual void AddEventHandler (object target, Delegate handler);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void AddEventHandler(object target, class System.Delegate handler) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="AddEventHandler">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance void AddEventHandler(object target, class System.Delegate handler)" />
-      <MemberSignature Language="C#" Value="public virtual void AddEventHandler (object target, Delegate handler);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -110,21 +123,33 @@ class.</para>
         <exception cref="T:System.Reflection.TargetException">The event reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the event reflected by the current instance.</exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="AddMethod">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodInfo AddMethod { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo AddMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Attributes">
+      <MemberSignature Language="ILASM" Value=".property valuetype System.Reflection.EventAttributes Attributes { public hidebysig virtual abstract specialname valuetype System.Reflection.EventAttributes get_Attributes() }" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.EventAttributes Attributes { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Reflection.EventAttributes Attributes" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="Attributes">
-      <MemberSignature Language="ILASM" Value=".property valuetype System.Reflection.EventAttributes Attributes { public hidebysig virtual abstract specialname valuetype System.Reflection.EventAttributes get_Attributes() }" />
-      <MemberSignature Language="C#" Value="public abstract System.Reflection.EventAttributes Attributes { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.EventAttributes</ReturnType>
       </ReturnValue>
@@ -141,14 +166,10 @@ class.</para>
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Equals">
       <MemberSignature Language="C#" Value="public override bool Equals (object obj);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool Equals(object obj) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -169,7 +190,13 @@ class.</para>
     <Member MemberName="EventHandlerType">
       <MemberSignature Language="ILASM" Value=".property class System.Type EventHandlerType { public hidebysig specialname instance class System.Type get_EventHandlerType() }" />
       <MemberSignature Language="C#" Value="public virtual Type EventHandlerType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Type EventHandlerType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
@@ -193,16 +220,17 @@ class.</para>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetAddMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.MethodInfo GetAddMethod()" />
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetAddMethod ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.MethodInfo GetAddMethod() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAddMethod">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.MethodInfo GetAddMethod()" />
-      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetAddMethod ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
@@ -234,16 +262,17 @@ returns <see langword="null" />
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetAddMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetAddMethod(bool nonPublic)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetAddMethod (bool nonPublic);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.MethodInfo GetAddMethod(bool nonPublic) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetAddMethod">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetAddMethod(bool nonPublic)" />
-      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetAddMethod (bool nonPublic);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
@@ -282,14 +311,10 @@ for the event reflected by the current instance, if found; otherwise, returns
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />. </permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetHashCode">
       <MemberSignature Language="C#" Value="public override int GetHashCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance int32 GetHashCode() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -306,7 +331,12 @@ for the event reflected by the current instance, if found; otherwise, returns
     </Member>
     <Member MemberName="GetOtherMethods">
       <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo[] GetOtherMethods ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Reflection.MethodInfo[] GetOtherMethods() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo[]</ReturnType>
       </ReturnValue>
@@ -317,14 +347,15 @@ for the event reflected by the current instance, if found; otherwise, returns
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetOtherMethods">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodInfo[] GetOtherMethods (bool nonPublic);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.MethodInfo[] GetOtherMethods(bool nonPublic) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetOtherMethods">
-      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodInfo[] GetOtherMethods (bool nonPublic);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo[]</ReturnType>
       </ReturnValue>
@@ -338,15 +369,17 @@ for the event reflected by the current instance, if found; otherwise, returns
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetRaiseMethod">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.MethodInfo GetRaiseMethod()" />
       <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetRaiseMethod ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.MethodInfo GetRaiseMethod() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
@@ -364,16 +397,17 @@ for the event reflected by the current instance, if found; otherwise, returns
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetRaiseMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetRaiseMethod(bool nonPublic)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetRaiseMethod (bool nonPublic);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.MethodInfo GetRaiseMethod(bool nonPublic) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRaiseMethod">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetRaiseMethod(bool nonPublic)" />
-      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetRaiseMethod (bool nonPublic);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
@@ -404,16 +438,17 @@ for the event reflected by the current instance, if found; otherwise, returns
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />. </permission>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetRemoveMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.MethodInfo GetRemoveMethod()" />
+      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetRemoveMethod ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.MethodInfo GetRemoveMethod() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRemoveMethod">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig instance class System.Reflection.MethodInfo GetRemoveMethod()" />
-      <MemberSignature Language="C#" Value="public System.Reflection.MethodInfo GetRemoveMethod ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
@@ -443,16 +478,17 @@ returns <see langword="null" />
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="GetRemoveMethod">
+      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetRemoveMethod(bool nonPublic)" />
+      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetRemoveMethod (bool nonPublic);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Reflection.MethodInfo GetRemoveMethod(bool nonPublic) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetRemoveMethod">
-      <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Reflection.MethodInfo GetRemoveMethod(bool nonPublic)" />
-      <MemberSignature Language="C#" Value="public abstract System.Reflection.MethodInfo GetRemoveMethod (bool nonPublic);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
@@ -490,11 +526,6 @@ the event reflected by the current instance, if found; otherwise, returns
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />. </permission>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetType">
       <MemberSignature Language="C#" Value="public Type GetType ();" />
@@ -514,7 +545,13 @@ the event reflected by the current instance, if found; otherwise, returns
     </Member>
     <Member MemberName="IsMulticast">
       <MemberSignature Language="C#" Value="public virtual bool IsMulticast { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsMulticast" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -523,15 +560,16 @@ the event reflected by the current instance, if found; otherwise, returns
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsSpecialName">
       <MemberSignature Language="C#" Value="public bool IsSpecialName { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool IsSpecialName" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -540,15 +578,16 @@ the event reflected by the current instance, if found; otherwise, returns
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="MemberType">
+      <MemberSignature Language="C#" Value="public override System.Reflection.MemberTypes MemberType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Reflection.MemberTypes MemberType" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="MemberType">
-      <MemberSignature Language="C#" Value="public override System.Reflection.MemberTypes MemberType { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.MemberTypes</ReturnType>
       </ReturnValue>
@@ -558,14 +597,10 @@ the event reflected by the current instance, if found; otherwise, returns
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="op_Equality">
       <MemberSignature Language="C#" Value="public static bool op_Equality (System.Reflection.EventInfo left, System.Reflection.EventInfo right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Equality(class System.Reflection.EventInfo left, class System.Reflection.EventInfo right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -587,6 +622,7 @@ the event reflected by the current instance, if found; otherwise, returns
     </Member>
     <Member MemberName="op_Inequality">
       <MemberSignature Language="C#" Value="public static bool op_Inequality (System.Reflection.EventInfo left, System.Reflection.EventInfo right);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname bool op_Inequality(class System.Reflection.EventInfo left, class System.Reflection.EventInfo right) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -606,10 +642,37 @@ the event reflected by the current instance, if found; otherwise, returns
         <remarks>To be added.</remarks>
       </Docs>
     </Member>
+    <Member MemberName="RaiseMethod">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodInfo RaiseMethod { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo RaiseMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
     <Member MemberName="RemoveEventHandler">
       <MemberSignature Language="ILASM" Value=".method public hidebysig instance void RemoveEventHandler(object target, class System.Delegate handler)" />
       <MemberSignature Language="C#" Value="public virtual void RemoveEventHandler (object target, Delegate handler);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void RemoveEventHandler(object target, class System.Delegate handler) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -638,20 +701,32 @@ the event reflected by the current instance, if found; otherwise, returns
         </exception>
       </Docs>
       <Excluded>0</Excluded>
+    </Member>
+    <Member MemberName="RemoveMethod">
+      <MemberSignature Language="C#" Value="public virtual System.Reflection.MethodInfo RemoveMethod { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Reflection.MethodInfo RemoveMethod" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.MethodInfo</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._EventInfo.GetIDsOfNames">
+      <MemberSignature Language="C#" Value="void _EventInfo.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._EventInfo.GetIDsOfNames(valuetype System.Guid riid, native int rgszNames, unsigned int32 cNames, unsigned int32 lcid, native int rgDispId) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Diagnostics.DebuggerStepThrough</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._EventInfo.GetIDsOfNames">
-      <MemberSignature Language="C#" Value="void _EventInfo.GetIDsOfNames (ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -671,15 +746,33 @@ the event reflected by the current instance, if found; otherwise, returns
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._EventInfo.GetType">
+      <MemberSignature Language="C#" Value="Type _EventInfo.GetType ();" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance class System.Type System.Runtime.InteropServices._EventInfo.GetType() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Type</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._EventInfo.GetTypeInfo">
+      <MemberSignature Language="C#" Value="void _EventInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._EventInfo.GetTypeInfo(unsigned int32 iTInfo, unsigned int32 lcid, native int ppTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._EventInfo.GetTypeInfo">
-      <MemberSignature Language="C#" Value="void _EventInfo.GetTypeInfo (uint iTInfo, uint lcid, IntPtr ppTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -695,15 +788,16 @@ the event reflected by the current instance, if found; otherwise, returns
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._EventInfo.GetTypeInfoCount">
+      <MemberSignature Language="C#" Value="void _EventInfo.GetTypeInfoCount (out uint pcTInfo);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._EventInfo.GetTypeInfoCount(unsigned int32 pcTInfo) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._EventInfo.GetTypeInfoCount">
-      <MemberSignature Language="C#" Value="void _EventInfo.GetTypeInfoCount (out uint pcTInfo);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -715,15 +809,16 @@ the event reflected by the current instance, if found; otherwise, returns
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="System.Runtime.InteropServices._EventInfo.Invoke">
+      <MemberSignature Language="C#" Value="void _EventInfo.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
+      <MemberSignature Language="ILAsm" Value=".method hidebysig newslot virtual instance void System.Runtime.InteropServices._EventInfo.Invoke(unsigned int32 dispIdMember, valuetype System.Guid riid, unsigned int32 lcid, int16 wFlags, native int pDispParams, native int pVarResult, native int pExcepInfo, native int puArgErr) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="System.Runtime.InteropServices._EventInfo.Invoke">
-      <MemberSignature Language="C#" Value="void _EventInfo.Invoke (uint dispIdMember, ref Guid riid, uint lcid, short wFlags, IntPtr pDispParams, IntPtr pVarResult, IntPtr pExcepInfo, IntPtr puArgErr);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -749,11 +844,6 @@ the event reflected by the current instance, if found; otherwise, returns
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

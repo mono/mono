@@ -2305,7 +2305,7 @@ namespace Mono.Unix.Native {
 			// Syscall to getpwnam to retrieve user uid
 			Passwd pw = Syscall.getpwnam (username);
 			if (pw == null)
-				throw new ArgumentException (string.Format ("User {0} does not exists",username), "username");
+				throw new ArgumentException (string.Format ("User {0} does not exist", username), "username");
 			return getgrouplist (pw);
 		}
 

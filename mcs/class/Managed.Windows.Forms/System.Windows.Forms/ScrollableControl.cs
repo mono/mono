@@ -50,6 +50,7 @@ namespace System.Windows.Forms {
 		private Control			old_parent;
 		private HScrollProperties	horizontalScroll;
 		private VScrollProperties	verticalScroll;
+		private bool			autosized_child;
 		#endregion	// Local Variables
 
 		[TypeConverter(typeof(ScrollableControl.DockPaddingEdgesConverter))]
@@ -542,7 +543,8 @@ namespace System.Windows.Forms {
 			// The first time through, we just set the canvas to clientsize
 			// so we could re-layout everything according to the flow.
 			// This time we want to actually calculate the canvas.
-			if (this is FlowLayoutPanel) {
+			// If a child is autosized, we need to rethink scrollbars as well. (Xamarin bug 18874)
+			if (this is FlowLayoutPanel || autosized_child) {
 				CalculateCanvasSize (false);
 				AdjustFormScrollbars (AutoScroll);
 			}
@@ -687,8 +689,11 @@ namespace System.Windows.Forms {
 				extra_height += dock_padding.Bottom;
 			}
 
+			autosized_child = false;
 			for (int i = 0; i < num_of_children; i++) {
 				child = Controls[i];
+				if (child.AutoSize)
+					autosized_child = true;
 				if (child.Dock == DockStyle.Right) {
 					extra_width += child.Width;
 				} else if (child.Dock == DockStyle.Bottom) {

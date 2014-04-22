@@ -124,8 +124,18 @@ public class ConditionalParsing
 		return arg ?? (Helper<int>);
 	}
 
+	void Test_16 ()
+	{
+		bool? b = Test (1, arg:2);
+	}
+
 	static void Helper<T> (T arg)
-	{		
+	{
+	}
+
+	static bool Test (object b, int arg)
+	{
+		return false;
 	}
 
 	public static void Main ()

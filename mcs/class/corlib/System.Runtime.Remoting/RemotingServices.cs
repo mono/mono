@@ -169,7 +169,7 @@ namespace System.Runtime.Remoting
 						returnArgs [n++] = null; 
 				}
 				
-				result = new ReturnMessage (rval, returnArgs, n, CallContext.CreateLogicalCallContext (true), reqMsg);
+				result = new ReturnMessage (rval, returnArgs, n, ExecutionContext.CreateLogicalCallContext (true), reqMsg);
 			} 
 			catch (Exception e) 
 			{
@@ -770,7 +770,7 @@ namespace System.Runtime.Remoting
 		[SecurityPermission (SecurityAction.Assert, SerializationFormatter = true)] // FIXME: to be reviewed
 		internal static byte[] SerializeCallData (object obj)
 		{
-			LogicalCallContext ctx = CallContext.CreateLogicalCallContext (false);
+			LogicalCallContext ctx = ExecutionContext.CreateLogicalCallContext (false);
 			if (ctx != null) {
 				CACD cad = new CACD ();
 				cad.d = obj;
@@ -796,7 +796,7 @@ namespace System.Runtime.Remoting
 			if (obj is CACD) {
 				CACD cad = (CACD) obj;
 				obj = cad.d;
-				CallContext.UpdateCurrentCallContext ((LogicalCallContext) cad.c);
+				CallContext.UpdateCurrentLogicalCallContext ((LogicalCallContext) cad.c);
 			}
 			return obj;
 		}

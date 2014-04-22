@@ -5,6 +5,7 @@
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
 // Copyright (C) 2008 Novell, Inc (http://www.novell.com)
+// Copyright 2014 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -92,10 +93,8 @@ namespace System.ServiceModel.Dispatcher
 				else if (parameter [0] != '"')
 					return parameter;
 				break;
-#if !NET_2_1
 			case TypeCode.Char:
 				return parameter != null ? Char.Parse (parameter): default (char);
-#endif
 			case TypeCode.SByte:
 				return parameter != null ? SByte.Parse (parameter, CultureInfo.InvariantCulture): default (sbyte);
 			case TypeCode.Byte:
@@ -184,7 +183,8 @@ namespace System.ServiceModel.Dispatcher
 					var qname = (XmlQualifiedName) parameter;
 					return String.Concat ("\"", qname.Name, ":", qname.Namespace, "\"");
 				}
-				return parameter.ToString ();
+				var f = (parameter as IFormattable);
+				return (f == null) ? parameter.ToString () : f.ToString (null, CultureInfo.InvariantCulture);
 			}
 		}
 

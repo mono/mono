@@ -265,10 +265,10 @@ namespace System.Runtime.Caching
 
 		public MemoryCacheEntry GetEntry (string key)
 		{
-			bool locked = false;
+			bool readLocked = false;
 			try {
-				cache_lock.EnterReadLock ();
-				locked = true;
+				cache_lock.EnterUpgradeableReadLock ();
+				readLocked = true;
 
 				MemoryCacheEntry entry;
 				if (cache.TryGetValue (key, out entry)) {
@@ -280,8 +280,8 @@ namespace System.Runtime.Caching
 				
 				return null;
 			} finally {
-				if (locked)
-					cache_lock.ExitReadLock ();
+				if (readLocked)
+					cache_lock.ExitUpgradeableReadLock ();
 			}
 		}
 		

@@ -1,12 +1,14 @@
 <Type Name="XmlNameTable" FullName="System.Xml.XmlNameTable" FullNameSP="System_Xml_XmlNameTable" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public abstract XmlNameTable extends System.Object" />
   <TypeSignature Language="C#" Value="public abstract class XmlNameTable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XmlNameTable extends System.Object" />
   <MemberOfLibrary>XML</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System.Xml</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00 ]</AssemblyPublicKey>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadingSafetyStatement>All public static members of this type are safe for multithreaded operations. No instance members are guaranteed to be thread safe.</ThreadingSafetyStatement>
   <Base>
@@ -40,7 +42,13 @@
     <Member MemberName=".ctor">
       <MemberSignature Language="ILASM" Value="family specialname instance void .ctor()" />
       <MemberSignature Language="C#" Value="protected XmlNameTable ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor() cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters />
       <Docs>
@@ -48,23 +56,25 @@
         <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string Add(string array)" />
-      <MemberSignature Language="C#" Value="public abstract string Add (string name);" />
+      <MemberSignature Language="C#" Value="public abstract string Add (string array);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string Add(string array) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="array" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">The <see cref="T:System.String" /> to add.</param>
+        <param name="array">The <see cref="T:System.String" /> to add.</param>
         <summary>
           <para>Adds the specified <see cref="T:System.String" qualify="true" /> to the table if a <see cref="T:System.String" qualify="true" /> instance with the same value does not
    already exist in the table.</para>
@@ -92,25 +102,27 @@
           <paramref name="array" /> is <see langword="null" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Add">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string Add(class System.Char[] array, int32 offset, int32 length)" />
-      <MemberSignature Language="C#" Value="public abstract string Add (char[] buffer, int offset, int length);" />
+      <MemberSignature Language="C#" Value="public abstract string Add (char[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string Add(char[] array, int32 offset, int32 length) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="array" Type="System.Char[]" />
         <Parameter Name="offset" Type="System.Int32" />
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
+        <param name="array">To be added.</param>
         <param name="offset">A <see cref="T:System.Int32" qualify="true" /> specifying the zero-based index into the array of the first character of the string.</param>
         <param name="length">A <see cref="T:System.Int32" qualify="true" /> containing the number of characters in the string.</param>
         <summary>
@@ -153,23 +165,25 @@ equivalent of the specified subset of the <see cref="T:System.Char" qualify="tru
           <paramref name="length" /> &lt; 0.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Get">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string Get(string array)" />
-      <MemberSignature Language="C#" Value="public abstract string Get (string name);" />
+      <MemberSignature Language="C#" Value="public abstract string Get (string array);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string Get(string array) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="array" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">The <see cref="T:System.String" qualify="true" /> to look up.</param>
+        <param name="array">The <see cref="T:System.String" qualify="true" /> to look up.</param>
         <summary>
           <para>Looks up the value of the specified <see cref="T:System.String" qualify="true" /> in the table.</para>
         </summary>
@@ -193,25 +207,27 @@ instance previously stored in the table with a value equal to <paramref name="ar
           <paramref name="array" /> is <see langword="null" />.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Get">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract string Get(class System.Char[] array, int32 offset, int32 length)" />
-      <MemberSignature Language="C#" Value="public abstract string Get (char[] buffer, int offset, int length);" />
+      <MemberSignature Language="C#" Value="public abstract string Get (char[] array, int offset, int length);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance string Get(char[] array, int32 offset, int32 length) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="buffer" Type="System.Char[]" />
+        <Parameter Name="array" Type="System.Char[]" />
         <Parameter Name="offset" Type="System.Int32" />
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
+        <param name="array">To be added.</param>
         <param name="offset">A <see cref="T:System.Int32" qualify="true" /> specifying the zero-based index into the array of the first character of the string.</param>
         <param name="length">A <see cref="T:System.Int32" qualify="true" /> containing the number of characters in the string.</param>
         <summary>
@@ -242,10 +258,6 @@ equivalent of the specified subset of the <see cref="T:System.Char" qualify="tru
           <paramref name="length" /> &lt; 0.</exception>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

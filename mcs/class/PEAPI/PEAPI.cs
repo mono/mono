@@ -753,9 +753,9 @@ namespace PEAPI {
 			return modRef;
 		}
 
-		public ClassRef AddExternClass(string name, TypeAttr attrs, MetaDataElement declRef) 
+		public ClassRef AddExternClass(string ns, string name, TypeAttr attrs, MetaDataElement declRef)
 		{
-			return new ExternClassRef (attrs, null, name, declRef, metaData);
+			return new ExternClassRef (attrs, ns, name, declRef, metaData);
 		}
 		
 		/// <summary>

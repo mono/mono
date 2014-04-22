@@ -225,10 +225,12 @@ namespace System.Globalization {
 					// then don't capitalize it.
 					int saved = i;
 					while (++i < str.Length) {
-						if (Char.IsWhiteSpace (str [i]))
+						var ch = str [i];
+						var category = char.GetUnicodeCategory (ch);
+						if (IsSeparator (category))
 							break;
-						t = ToTitleCase (str [i]);
-						if (t != str [i]) {
+						t = ToTitleCase (ch);
+						if (t != ch) {
 							allTitle = false;
 							break;
 						}
@@ -242,9 +244,11 @@ namespace System.Globalization {
 					// where we don't have to modify
 					// the source word.
 					while (++i < str.Length) {
-						if (Char.IsWhiteSpace (str [i]))
+						var ch = str [i];
+						var category = char.GetUnicodeCategory (ch);
+						if (IsSeparator (category))
 							break;
-						if (ToLower (str [i]) != str [i]) {
+						if (ToLower (ch) != ch) {
 							capitalize = true;
 							i = saved;
 							break;
@@ -259,9 +263,11 @@ namespace System.Globalization {
 					sb.Append (ToTitleCase (str [i]));
 					start = i + 1;
 					while (++i < str.Length) {
-						if (Char.IsWhiteSpace (str [i]))
+						var ch = str [i];
+						var category = char.GetUnicodeCategory (ch);
+						if (IsSeparator (category))
 							break;
-						sb.Append (ToLower (str [i]));
+						sb.Append (ToLower (ch));
 					}
 					start = i;
 				}
@@ -270,6 +276,27 @@ namespace System.Globalization {
 				sb.Append (str, start, str.Length - start);
 
 			return sb != null ? sb.ToString () : str;
+		}
+
+		static bool IsSeparator (UnicodeCategory category)
+		{
+			switch (category) {
+			case UnicodeCategory.SpaceSeparator:
+			case UnicodeCategory.LineSeparator:
+			case UnicodeCategory.ParagraphSeparator:
+			case UnicodeCategory.Control:
+			case UnicodeCategory.Format:
+			case UnicodeCategory.ConnectorPunctuation:
+			case UnicodeCategory.DashPunctuation:
+			case UnicodeCategory.OpenPunctuation:
+			case UnicodeCategory.ClosePunctuation:
+			case UnicodeCategory.InitialQuotePunctuation:
+			case UnicodeCategory.FinalQuotePunctuation:
+			case UnicodeCategory.OtherPunctuation:
+				return true;
+			}
+
+			return false;
 		}
 
 		// Only Azeri and Turkish have their own special cases.

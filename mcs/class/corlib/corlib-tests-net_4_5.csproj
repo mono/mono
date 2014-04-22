@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{93EE601C-8B43-4AE1-B417-7BDCD0FE4C95}</ProjectGuid>
+    <ProjectGuid>{DCF26FDD-81D3-463B-B80D-3111DDFFE2D5}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>612,618,1699,168,219,618,672</NoWarn>
     <OutputPath>bin\Debug\corlib-tests-net_4_5</OutputPath>
@@ -76,6 +76,7 @@
     <Compile Include="Test\System.Collections\ReadOnlyCollectionBaseTest.cs" />
     <Compile Include="Test\System.Collections\SortedListTest.cs" />
     <Compile Include="Test\System.Collections\StackTest.cs" />
+    <Compile Include="Test\System.Collections\StructuralComparisonsTest.cs" />
     <Compile Include="Test\System.Diagnostics.Contracts\ContractAssertTest.cs" />
     <Compile Include="Test\System.Diagnostics.Contracts\ContractAssumeTest.cs" />
     <Compile Include="Test\System.Diagnostics.Contracts\ContractCollectionMethodsTest.cs" />
@@ -85,6 +86,7 @@
     <Compile Include="Test\System.Diagnostics.Contracts\Helpers\RunAgainstReferenceAttribute.cs" />
     <Compile Include="Test\System.Diagnostics.Contracts\Helpers\TestContractBase.cs" />
     <Compile Include="Test\System.Diagnostics\DebuggerDisplayAttributeTest.cs" />
+    <Compile Include="Test\System.Diagnostics\DebuggerTypeProxyAttribute.cs" />
     <Compile Include="Test\System.Diagnostics\StackFrameCas.cs" />
     <Compile Include="Test\System.Diagnostics\StackFrameTest.cs" />
     <Compile Include="Test\System.Diagnostics\StackTraceCas.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="Test\System.Globalization\DaylightTimeTest.cs" />
     <Compile Include="Test\System.Globalization\EastAsianLunisolarCalendarTest.cs" />
     <Compile Include="Test\System.Globalization\IdnMappingTest.cs" />
+    <Compile Include="Test\System.Globalization\NumberFormatInfoTest.cs" />
     <Compile Include="Test\System.Globalization\RegionInfoTest.cs" />
     <Compile Include="Test\System.Globalization\SortKeyTest.cs" />
     <Compile Include="Test\System.Globalization\StringInfoTest.cs" />
@@ -171,6 +174,7 @@
     <Compile Include="Test\System.Reflection\CustomAttributeDataTest.cs" />
     <Compile Include="Test\System.Reflection\EventInfoTest.cs" />
     <Compile Include="Test\System.Reflection\FieldInfoTest.cs" />
+    <Compile Include="Test\System.Reflection\IntrospectionExtensionsTest.cs" />
     <Compile Include="Test\System.Reflection\MethodBaseTest.cs" />
     <Compile Include="Test\System.Reflection\MethodInfoTest.cs" />
     <Compile Include="Test\System.Reflection\ModuleCas.cs" />
@@ -206,6 +210,7 @@
     <Compile Include="Test\System.Runtime.InteropServices\SafeHandleTest.cs" />
     <Compile Include="Test\System.Runtime.Remoting.Channels\ChannelServicesTest.cs" />
     <Compile Include="Test\System.Runtime.Remoting.Contexts\SynchronizationAttributeTest.cs" />
+    <Compile Include="Test\System.Runtime.Remoting.Messaging\CallContextTest.cs" />
     <Compile Include="Test\System.Runtime.Remoting.Metadata.W3cXsd2001\SoapHexBinaryTest.cs" />
     <Compile Include="Test\System.Runtime.Remoting\ContextTest.cs" />
     <Compile Include="Test\System.Runtime.Remoting\SoapServicesTest.cs" />
@@ -511,6 +516,7 @@
     <Compile Include="Test\System\MathTest.cs" />
     <Compile Include="Test\System\ModuleHandleTest.cs" />
     <Compile Include="Test\System\MulticastDelegate.cs" />
+    <Compile Include="Test\System\NullableTest.cs" />
     <Compile Include="Test\System\NumberFormatterTest.cs" />
     <Compile Include="Test\System\ObjectTest.cs" />
     <Compile Include="Test\System\ObsoleteAttributeTest.cs" />
@@ -527,6 +533,7 @@
     <Compile Include="Test\System\StringTest.cs" />
     <Compile Include="Test\System\TimeSpanTest.cs" />
     <Compile Include="Test\System\TimeZoneTest.cs" />
+    <Compile Include="Test\System\TupleTest.cs" />
     <Compile Include="Test\System\TypedReferenceCas.cs" />
     <Compile Include="Test\System\TypeTest.cs" />
     <Compile Include="Test\System\UInt16Test.cs" />
@@ -547,22 +554,25 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Posix\Mono.Posix-net_4_0.csproj">
-      <Project>{7ADB0D4D-F0ED-4C82-BEE3-D261699A390B}</Project>
+      <Project>{E9A655D1-EE99-467A-8F4B-CAC80E0E65BE}</Project>
       <Name>Mono.Posix\Mono.Posix-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
+      <Project>{8B53B0E9-E0CA-4378-8C57-F85D518871D3}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -575,3 +585,4 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+

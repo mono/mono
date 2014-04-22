@@ -237,11 +237,7 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 {
 	MonoContext ctx;
 	int iReg;
-	static void (*restore_context) (MonoContext *);
 
-	if (!restore_context)
-		restore_context = mono_get_restore_context();
-	
 	memset(&ctx, 0, sizeof(ctx));
 
 	setup_context(&ctx);
@@ -267,7 +263,7 @@ throw_exception (MonoObject *exc, unsigned long ip, unsigned long sp,
 	}
 //	mono_arch_handle_exception (&ctx, exc, FALSE);
 	mono_handle_exception (&ctx, exc);
-	restore_context(&ctx);
+	mono_restore_context(&ctx);
 
 	g_assert_not_reached ();
 }
@@ -476,10 +472,7 @@ mono_arch_find_jit_info (MonoDomain *domain, MonoJitTlsData *jit_tls,
 
 		frame->type = FRAME_TYPE_MANAGED;
 
-		if (ji->from_aot)
-			unwind_info = mono_aot_get_unwind_info(ji, &unwind_info_len);
-		else
-			unwind_info = mono_get_cached_unwind_info(ji->used_regs, &unwind_info_len);
+		unwind_info = mono_jinfo_get_unwind_info (ji, &unwind_info_len);
 
 		if (*lmf && ((*lmf) != jit_tls->first_lmf) && 
 		    (MONO_CONTEXT_GET_SP (ctx) >= (gpointer)(*lmf)->ebp)) {

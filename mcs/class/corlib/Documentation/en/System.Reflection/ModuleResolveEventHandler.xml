@@ -1,5 +1,6 @@
 <Type Name="ModuleResolveEventHandler" FullName="System.Reflection.ModuleResolveEventHandler">
   <TypeSignature Maintainer="auto" Language="C#" Value="public delegate System.Reflection.Module ModuleResolveEventHandler(object sender, ResolveEventArgs e);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ModuleResolveEventHandler extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -11,14 +12,11 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
-  <Docs>
-    <param name="sender">To be added.</param>
-    <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <value>To be added.</value>
-    <remarks>To be added</remarks>
-  </Docs>
-  <Members />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Parameters>
     <Parameter Name="sender" Type="System.Object" />
     <Parameter Name="e" Type="System.ResolveEventArgs" />
@@ -26,9 +24,12 @@
   <ReturnValue>
     <ReturnType>System.Reflection.Module</ReturnType>
   </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
+  <Docs>
+    <param name="sender">To be added.</param>
+    <param name="e">To be added.</param>
+    <summary>To be added</summary>
+    <returns>To be added.</returns>
+    <remarks>To be added</remarks>
+  </Docs>
+  <Members />
 </Type>

@@ -87,9 +87,6 @@ namespace System.Threading {
 				if (ar == null)
 					return false;
 			} else {
-				if (!callBack.HasSingleTarget)
-					throw new Exception ("The delegate must have only one target");
-
 				AsyncResult ares = new AsyncResult (callBack, state, true);
 				pool_queue (ares);
 			}
@@ -98,6 +95,12 @@ namespace System.Threading {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern void pool_queue (AsyncResult ares);
+
+		// TODO: It should be interface interface only to avoid extra allocation
+		internal static void QueueWorkItem (WaitCallback callBack, object state)
+		{
+			pool_queue (new AsyncResult (callBack, state, false));
+		}
 
 		public static RegisteredWaitHandle RegisterWaitForSingleObject (WaitHandle waitObject,
 										WaitOrTimerCallback callBack,
@@ -168,11 +171,11 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.Demand, ControlEvidence=true, ControlPolicy=true)]
 		public static bool UnsafeQueueUserWorkItem (WaitCallback callBack, object state)
 		{
+			if (callBack == null)
+				throw new ArgumentNullException ("callBack");
+
 			// no stack propagation here (that's why it's unsafe and requires extra security permissions)
 			if (!callBack.IsTransparentProxy ()) {
-				if (!callBack.HasSingleTarget)
-					throw new Exception ("The delegate must have only one target");
-
 				AsyncResult ares = new AsyncResult (callBack, state, false);
 				pool_queue (ares);
 				return true;

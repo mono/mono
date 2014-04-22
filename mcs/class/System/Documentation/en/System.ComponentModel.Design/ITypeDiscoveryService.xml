@@ -1,8 +1,10 @@
 <Type Name="ITypeDiscoveryService" FullName="System.ComponentModel.Design.ITypeDiscoveryService">
   <TypeSignature Language="C#" Value="public interface ITypeDiscoveryService" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ITypeDiscoveryService" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
@@ -12,9 +14,11 @@
   <Members>
     <Member MemberName="GetTypes">
       <MemberSignature Language="C#" Value="public System.Collections.ICollection GetTypes (Type baseType, bool excludeGlobalTypes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Collections.ICollection GetTypes(class System.Type baseType, bool excludeGlobalTypes) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Collections.ICollection</ReturnType>

@@ -1227,7 +1227,7 @@ handle_enum:
 			mono_method_signature (method)->ret->type);
 	}
 
-	ip = ((gint64) __builtin_return_address (0));
+	ip = ((gint64) __builtin_extract_return_addr (__builtin_return_address (0)));
 	printf (" ip: %p\n", (gpointer) ip);
 }
 
@@ -5716,31 +5716,6 @@ mono_arch_regalloc_cost (MonoCompile *cfg, MonoMethodVar *vmv)
 
 /*------------------------------------------------------------------*/
 /*                                                                  */
-/* Name		- mono_arch_get_domain_intrinsic                    */
-/*                                                                  */
-/* Function	- 						    */
-/*		                               			    */
-/* Returns	-     						    */
-/*                                                                  */
-/*------------------------------------------------------------------*/
-
-MonoInst * 
-mono_arch_get_domain_intrinsic (MonoCompile* cfg)
-{
-	MonoInst *ins;
-
-	if (appdomain_tls_offset == -1)
-		return NULL;
-	
-	MONO_INST_NEW (cfg, ins, OP_TLS_GET);
-	ins->inst_offset = appdomain_tls_offset;
-	return (ins);
-}
-
-/*========================= End of Function ========================*/
-
-/*------------------------------------------------------------------*/
-/*                                                                  */
 /* Name		- mono_arch_flush_register_windows                  */
 /*                                                                  */
 /* Function	- 						    */
@@ -6382,6 +6357,23 @@ mono_arch_get_seq_point_info (MonoDomain *domain, guint8 *code)
 {
 	NOT_IMPLEMENTED;
 	return NULL;
+}
+
+/*------------------------------------------------------------------*/
+/*                                                                  */
+/* Name		- mono_arch_init_lmf_ext.                               */
+/*                                                                  */
+/* Function -                                                       */
+/*                                                                  */
+/*------------------------------------------------------------------*/
+
+void
+mono_arch_init_lmf_ext (MonoLMFExt *ext, gpointer prev_lmf)
+{
+	ext->lmf.previous_lmf = prev_lmf;
+	/* Mark that this is a MonoLMFExt */
+	ext->lmf.previous_lmf = (gpointer)(((gssize)ext->lmf.previous_lmf) | 2);
+	ext->lmf.ebp = (gssize)ext;
 }
 
 /*========================= End of Function ========================*/

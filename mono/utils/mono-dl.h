@@ -8,9 +8,11 @@ typedef struct _MonoDl MonoDl;
 
 MonoDl*     mono_dl_open       (const char *name, int flags, char **error_msg) MONO_LLVM_INTERNAL;
 char*       mono_dl_symbol     (MonoDl *module, const char *name, void **symbol) MONO_LLVM_INTERNAL;
-void        mono_dl_close      (MonoDl *module) MONO_INTERNAL;
+void        mono_dl_close      (MonoDl *module) MONO_LLVM_INTERNAL;
 
 char*       mono_dl_build_path (const char *directory, const char *name, void **iter) MONO_INTERNAL;
+
+MonoDl*     mono_dl_open_runtime_lib (const char *lib_name, int flags, char **error_msg) MONO_INTERNAL;
 
 #endif /* __MONO_UTILS_DL_H__ */
 

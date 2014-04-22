@@ -124,7 +124,7 @@ namespace System.IO.MemoryMappedFiles
 				if (Syscall.stat (path, out buf) == -1)
 					UnixMarshal.ThrowExceptionForLastError ();
 
-				if ((capacity == 0 && buf.st_size == 0) || (capacity > buf.st_size))
+				if (capacity > buf.st_size)
 					throw new ArgumentException ("capacity");
 
 				int fd = Syscall.open (path, ToUnixMode (mode) | ToUnixMode (access), FilePermissions.DEFFILEMODE);
@@ -369,7 +369,7 @@ namespace System.IO.MemoryMappedFiles
 			if (file_size < 0)
 				throw new FileNotFoundException (path);
 
-			if ((capacity == 0 && file_size == 0) || (capacity > file_size))
+			if (capacity > file_size)
 				throw new ArgumentException ("capacity");
 
 			int fd = open (path, ToUnixMode (mode) | ToUnixMode (access), DEFFILEMODE);
@@ -507,7 +507,7 @@ namespace System.IO.MemoryMappedFiles
 				throw new ArgumentNullException ("fileStream");
 			if (mapName != null && mapName.Length == 0)
 				throw new ArgumentException ("mapName");
-			if ((capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length))
+			if ((!MonoUtil.IsUnix && capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length))
 				throw new ArgumentException ("capacity");
 
 			MemoryMapImpl.ConfigureFD (fileStream.Handle, inheritability);

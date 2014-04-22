@@ -1,5 +1,6 @@
 <Type Name="CONNECTDATA" FullName="System.Runtime.InteropServices.CONNECTDATA">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct CONNECTDATA" />
+  <TypeSignature Language="ILAsm" Value=".class public sequential sealed beforefieldinit CONNECTDATA extends System.ValueType" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -24,7 +25,13 @@
   <Members>
     <Member MemberName="dwCookie">
       <MemberSignature Language="C#" Value="public int dwCookie;" />
+      <MemberSignature Language="ILAsm" Value=".field public int32 dwCookie" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
@@ -33,15 +40,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="pUnk">
+      <MemberSignature Language="C#" Value="public object pUnk;" />
+      <MemberSignature Language="ILAsm" Value=".field public object pUnk" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="pUnk">
-      <MemberSignature Language="C#" Value="public object pUnk;" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
@@ -50,11 +58,6 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

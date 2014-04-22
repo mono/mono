@@ -1,5 +1,6 @@
 <Type Name="SafeBuffer" FullName="System.Runtime.InteropServices.SafeBuffer">
   <TypeSignature Language="C#" Value="public abstract class SafeBuffer : Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit SafeBuffer extends Microsoft.Win32.SafeHandles.SafeHandleZeroOrMinusOneIsInvalid implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -15,6 +16,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="protected SafeBuffer (bool ownsHandle);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig specialname rtspecialname instance void .ctor(bool ownsHandle) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -30,6 +32,7 @@
     </Member>
     <Member MemberName="AcquirePointer">
       <MemberSignature Language="C#" Value="public void AcquirePointer (ref byte* pointer);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AcquirePointer(unsigned int8* pointer) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -37,6 +40,9 @@
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -53,6 +59,7 @@
     </Member>
     <Member MemberName="ByteLength">
       <MemberSignature Language="C#" Value="public ulong ByteLength { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int64 ByteLength" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -73,6 +80,7 @@
     </Member>
     <Member MemberName="Initialize">
       <MemberSignature Language="C#" Value="public void Initialize (ulong numBytes);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Initialize(unsigned int64 numBytes) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -96,6 +104,7 @@
     </Member>
     <Member MemberName="Initialize">
       <MemberSignature Language="C#" Value="public void Initialize (uint numElements, uint sizeOfEachElement);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Initialize(unsigned int32 numElements, unsigned int32 sizeOfEachElement) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -121,6 +130,7 @@
     </Member>
     <Member MemberName="Initialize&lt;T&gt;">
       <MemberSignature Language="C#" Value="public void Initialize&lt;T&gt; (uint numElements) where T : struct;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Initialize&lt;struct .ctor (class System.ValueType) T&gt;(unsigned int32 numElements) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -154,6 +164,7 @@
     </Member>
     <Member MemberName="Read&lt;T&gt;">
       <MemberSignature Language="C#" Value="public T Read&lt;T&gt; (ulong byteOffset) where T : struct;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance !!T Read&lt;struct .ctor (class System.ValueType) T&gt;(unsigned int64 byteOffset) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -161,6 +172,9 @@
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -188,6 +202,7 @@
     </Member>
     <Member MemberName="ReadArray&lt;T&gt;">
       <MemberSignature Language="C#" Value="public void ReadArray&lt;T&gt; (ulong byteOffset, T[] array, int index, int count) where T : struct;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ReadArray&lt;struct .ctor (class System.ValueType) T&gt;(unsigned int64 byteOffset, !!T[] array, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -195,6 +210,9 @@
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -227,10 +245,16 @@
     </Member>
     <Member MemberName="ReleasePointer">
       <MemberSignature Language="C#" Value="public void ReleasePointer ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ReleasePointer() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.Success)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -242,6 +266,7 @@
     </Member>
     <Member MemberName="Write&lt;T&gt;">
       <MemberSignature Language="C#" Value="public void Write&lt;T&gt; (ulong byteOffset, T value) where T : struct;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Write&lt;struct .ctor (class System.ValueType) T&gt;(unsigned int64 byteOffset, !!T value) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -249,6 +274,9 @@
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>
@@ -277,6 +305,7 @@
     </Member>
     <Member MemberName="WriteArray&lt;T&gt;">
       <MemberSignature Language="C#" Value="public void WriteArray&lt;T&gt; (ulong byteOffset, T[] array, int index, int count) where T : struct;" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void WriteArray&lt;struct .ctor (class System.ValueType) T&gt;(unsigned int64 byteOffset, !!T[] array, int32 index, int32 count) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -284,6 +313,9 @@
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.ConstrainedExecution.ReliabilityContract(System.Runtime.ConstrainedExecution.Consistency.WillNotCorruptState, System.Runtime.ConstrainedExecution.Cer.MayFail)</AttributeName>
         </Attribute>
       </Attributes>
       <ReturnValue>

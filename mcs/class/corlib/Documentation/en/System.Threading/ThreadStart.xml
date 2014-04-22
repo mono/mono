@@ -1,6 +1,7 @@
 <Type Name="ThreadStart" FullName="System.Threading.ThreadStart" FullNameSP="System_Threading_ThreadStart" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable ThreadStart extends System.Delegate" />
   <TypeSignature Language="C#" Value="public delegate void ThreadStart();" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ThreadStart extends System.MulticastDelegate" />
   <MemberOfLibrary>BCL</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
@@ -12,6 +13,16 @@
   <Base>
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Parameters>
+  </Parameters>
+  <ReturnValue>
+    <ReturnType>System.Void</ReturnType>
+  </ReturnValue>
   <Docs>
     <summary>
       <para> Defines the shape of methods that are called when
@@ -37,14 +48,4 @@
   </Docs>
   <Members />
   <TypeExcluded>0</TypeExcluded>
-  <Parameters>
-  </Parameters>
-  <ReturnValue>
-    <ReturnType>System.Void</ReturnType>
-  </ReturnValue>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

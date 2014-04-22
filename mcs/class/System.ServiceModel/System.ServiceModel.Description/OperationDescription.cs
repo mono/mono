@@ -74,6 +74,19 @@ namespace System.ServiceModel.Description
 			get { return behaviors; }
 		}
 
+#if NET_4_5
+		[MonoTODO]
+		public KeyedCollection<Type,IOperationBehavior> OperationBehaviors {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public MethodInfo TaskMethod {
+			get { throw new NotImplementedException (); }
+			set { throw new NotImplementedException (); }
+		}
+#endif
+
 		public ContractDescription DeclaringContract {
 			get { return contract; }
 			set { contract = value; }

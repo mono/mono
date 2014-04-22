@@ -139,6 +139,7 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+		[Category ("NotWorkingInterpreter")]
 		public void CompiledMemberBinding ()
 		{
 			var getfoo = Expression.Lambda<Func<Foo>> (

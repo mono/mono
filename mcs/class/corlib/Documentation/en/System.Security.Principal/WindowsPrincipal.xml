@@ -1,5 +1,6 @@
 <Type Name="WindowsPrincipal" FullName="System.Security.Principal.WindowsPrincipal">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class WindowsPrincipal : System.Security.Principal.IPrincipal" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit WindowsPrincipal extends System.Object implements class System.Security.Principal.IPrincipal" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,6 +17,11 @@
       <InterfaceName>System.Security.Principal.IPrincipal</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>This class represents the group membership of an operating system user.</summary>
     <remarks>
@@ -92,7 +98,13 @@ class WinPrincipal {
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public WindowsPrincipal (System.Security.Principal.WindowsIdentity ntIdentity);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class System.Security.Principal.WindowsIdentity ntIdentity) cil managed" />
       <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue />
       <Parameters>
         <Parameter Name="ntIdentity" Type="System.Security.Principal.WindowsIdentity" />
@@ -102,15 +114,16 @@ class WinPrincipal {
         <summary>Creates the corresponding principal of a WindowsIdentity instance.</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Identity">
+      <MemberSignature Language="C#" Value="public virtual System.Security.Principal.IIdentity Identity { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Principal.IIdentity Identity" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Identity">
-      <MemberSignature Language="C#" Value="public virtual System.Security.Principal.IIdentity Identity { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Principal.IIdentity</ReturnType>
       </ReturnValue>
@@ -119,15 +132,16 @@ class WinPrincipal {
         <value>The current identity of the principal. </value>
         <remarks>The returned identity will always be a <see cref="T:System.Security.Principal.WindowsIdentity" /> instance.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsInRole">
+      <MemberSignature Language="C#" Value="public virtual bool IsInRole (int rid);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsInRole(int32 rid) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsInRole">
-      <MemberSignature Language="C#" Value="public virtual bool IsInRole (int rid);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -142,15 +156,20 @@ class WinPrincipal {
 
 <list type="table"><listheader><term>Role ID</term><description>Description</description></listheader><item><term>544</term><description>BUILTIN\\Administrators</description></item><item><term>545</term><description>BUILTIN\\Users</description></item><item><term>546</term><description>BUILTIN\\Guests</description></item><item><term>547</term><description>BUILTIN\\Power Users</description></item><item><term>548</term><description>BUILTIN\\Account Operators</description></item><item><term>549</term><description>BUILTIN\\System Operators</description></item><item><term>550</term><description>BUILTIN\\Print Operators</description></item><item><term>551</term><description>BUILTIN\\Backup Operators</description></item><item><term>552</term><description>BUILTIN\\Replicator</description></item></list></remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="IsInRole">
       <MemberSignature Language="C#" Value="public virtual bool IsInRole (System.Security.Principal.SecurityIdentifier sid);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsInRole(class System.Security.Principal.SecurityIdentifier sid) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -164,19 +183,16 @@ class WinPrincipal {
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
-        </Attribute>
-      </Attributes>
     </Member>
     <Member MemberName="IsInRole">
       <MemberSignature Language="C#" Value="public virtual bool IsInRole (System.Security.Principal.WindowsBuiltInRole role);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsInRole(valuetype System.Security.Principal.WindowsBuiltInRole role) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -189,15 +205,16 @@ class WinPrincipal {
         <returns>True if the current identity is a member of the specified role, false otherwise.</returns>
         <remarks>On POSIX compliant systems the <see cref="M:System.Security.Principal.WindowsBuiltInRole.Administrators" /> group is mapped to the "root" group. All other groups will return false.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="IsInRole">
+      <MemberSignature Language="C#" Value="public virtual bool IsInRole (string role);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance bool IsInRole(string role) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="IsInRole">
-      <MemberSignature Language="C#" Value="public virtual bool IsInRole (string role);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -218,16 +235,6 @@ USAGNT\UGR_RBP:x:300:miguel,don,jon,julia
 In this particular example, the users miguel, don, jon and julia belong to the "USAGNT\UGR_RBP" role.
 </para></remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

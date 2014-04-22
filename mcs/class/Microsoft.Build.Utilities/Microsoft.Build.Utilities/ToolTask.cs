@@ -72,7 +72,6 @@ namespace Microsoft.Build.Utilities
 		{
 			this.TaskResources = taskResources;
 			this.HelpKeywordPrefix = helpKeywordPrefix;
-			this.toolPath = MonoLocationHelper.GetBinDir ();
 			this.responseFileEncoding = Encoding.UTF8;
 			this.timeout = Int32.MaxValue;
 		}
@@ -298,6 +297,7 @@ namespace Microsoft.Build.Utilities
 
 			pinfo.WorkingDirectory = GetWorkingDirectory () ?? Environment.CurrentDirectory;
 			pinfo.UseShellExecute = false;
+			pinfo.CreateNoWindow = true;
 			pinfo.RedirectStandardOutput = true;
 			pinfo.RedirectStandardError = true;
 
@@ -439,15 +439,12 @@ namespace Microsoft.Build.Utilities
 		public virtual string ToolExe
 		{
 			get {
-				if (toolExe == null)
+				if (string.IsNullOrEmpty (toolExe))
 					return ToolName;
 				else
 					return toolExe;
 			}
-			set {
-				if (!String.IsNullOrEmpty (value))
-					toolExe = value;
-			}
+			set { toolExe = value; }
 		}
 
 		protected abstract string ToolName
@@ -458,19 +455,28 @@ namespace Microsoft.Build.Utilities
 		public string ToolPath
 		{
 			get { return toolPath; }
-			set {
-				if (!String.IsNullOrEmpty (value))
-					toolPath  = value;
-			}
+			set { toolPath  = value; }
 		}
 
-		// Snatched from our codedom code, with some changes to make it compatible with csc
-		// (the line+column group is optional is csc)
+		// Keep in sync with mcs/class/System/Microsoft.CSharp/CSharpCodeCompiler.cs
+		const string ErrorRegexPattern = @"
+			^
+			(\s*(?<file>[^\(]+)                         # filename (optional)
+			 (\((?<line>\d*)(,(?<column>\d*[\+]*))?\))? # line+column (optional)
+			 :\s+)?
+			(?<level>\w+)                               # error|warning
+			\s+
+			(?<number>[^:]*\d)                          # CS1234
+			:
+			\s*
+			(?<message>.*)$";
+
 		static Regex errorRegex;
 		static Regex CscErrorRegex {
 			get {
 				if (errorRegex == null)
-					errorRegex = new Regex (@"^(\s*(?<file>[^\(]+)(\((?<line>\d*)(,(?<column>\d*[\+]*))?\))?:\s+)*(?<level>\w+)\s+(?<number>.*\d):\s*(?<message>.*)", RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+					errorRegex = new Regex (ErrorRegexPattern,
+							RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
 				return errorRegex;
 			}
 		}

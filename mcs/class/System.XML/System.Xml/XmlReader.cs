@@ -1006,7 +1006,11 @@ namespace System.Xml
 #if NET_4_5
 		public virtual DateTimeOffset ReadContentAsDateTimeOffset ()
 		{
-			return XmlConvert.ToDateTimeOffset (ReadContentString ());
+			try {
+				return XmlConvert.ToDateTimeOffset (ReadContentString ());
+			} catch (Exception e) {
+				throw XmlError ("Typed value is invalid.", e);
+			}
 		}
 #endif
 
@@ -1022,6 +1026,11 @@ namespace System.Xml
 
 		public virtual object ReadElementContentAs (Type returnType, IXmlNamespaceResolver namespaceResolver, string localName, string namespaceURI)
 		{
+			if (localName == null)
+				throw new ArgumentNullException ("localName");
+			if (namespaceURI == null)
+				throw new ArgumentNullException ("namespaceURI");
+
 			bool isEmpty = IsEmptyElement;
 			ReadStartElement (localName, namespaceURI);
 			if (isEmpty)
@@ -1066,16 +1075,28 @@ namespace System.Xml
 				switch (Type.GetTypeCode (type)) {
 				case TypeCode.Boolean:
 					return XQueryConvert.StringToBoolean (text);
+				case TypeCode.Byte:
+					return XmlConvert.ToByte (text);
+				case TypeCode.SByte:
+					return XmlConvert.ToSByte (text);
+				case TypeCode.Int16:
+					return XmlConvert.ToInt16 (text);
+				case TypeCode.UInt16:
+					return XQueryConvert.StringToUnsignedShort (text);
+				case TypeCode.Int32:
+					return XQueryConvert.StringToInt (text);
+				case TypeCode.UInt32:
+					return XQueryConvert.StringToUnsignedInt (text);
+				case TypeCode.Int64:
+					return XQueryConvert.StringToInteger (text);
+				case TypeCode.UInt64:
+					return XQueryConvert.StringToUnsignedLong (text);
 				case TypeCode.DateTime:
 					return XQueryConvert.StringToDateTime (text);
 				case TypeCode.Decimal:
 					return XQueryConvert.StringToDecimal (text);
 				case TypeCode.Double:
 					return XQueryConvert.StringToDouble (text);
-				case TypeCode.Int32:
-					return XQueryConvert.StringToInt (text);
-				case TypeCode.Int64:
-					return XQueryConvert.StringToInteger (text);
 				case TypeCode.Single:
 					return XQueryConvert.StringToFloat (text);
 				case TypeCode.String:
@@ -1084,7 +1105,7 @@ namespace System.Xml
 			} catch (Exception ex) {
 				throw XmlError (String.Format ("Current text value '{0}' is not acceptable for specified type '{1}'. {2}", text, type, ex != null ? ex.Message : String.Empty), ex);
 			}
-			throw new ArgumentException (String.Format ("Specified type '{0}' is not supported.", type));
+			throw new XmlException (String.Format ("Specified type '{0}' is not supported.", type));
 		}
 
 		public virtual bool ReadElementContentAsBoolean ()

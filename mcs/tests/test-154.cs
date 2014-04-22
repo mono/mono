@@ -594,4 +594,48 @@ public class X
 
 		return service;
 	}
+
+	public void test41 ()
+	{
+		int y, x = 3;
+		int z;
+		while (true) {
+			if (x > 3) {
+				y = 3;
+				goto end;
+			} else {
+				z = 3;
+			}
+
+			break;
+		end:
+			z = y;
+		}
+
+		Console.WriteLine (z);
+	}
+	
+	public void test42 (int arg)
+	{
+		bool x;
+		for (; ; ) {
+			x = false;
+			if (arg > 0) {
+				x = true;
+				switch (arg) {
+				case 1:
+				case 2:
+					continue;
+				default:
+					break;
+				}
+				break;
+			} else {
+				x = false;
+				break;
+			}
+		}
+
+		Console.WriteLine (x);
+	}
 }

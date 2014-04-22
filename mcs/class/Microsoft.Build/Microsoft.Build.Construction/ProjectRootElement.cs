@@ -63,8 +63,8 @@ namespace Microsoft.Build.Construction
 
                 string directoryPath;
                 public string DirectoryPath {
-                        get { return directoryPath ?? String.Empty; }
-                        internal set { directoryPath = value; }
+                        get { return directoryPath ?? Directory.GetCurrentDirectory (); }
+                        set { directoryPath = value; }
                 }
 
                 public ICollection<ProjectPropertyElement> Properties {
@@ -170,7 +170,7 @@ namespace Microsoft.Build.Construction
 
                 string toolsVersion;
                 public string ToolsVersion {
-                        get { return toolsVersion ?? "4.0"; }
+                        get { return toolsVersion ?? string.Empty; }
                         set { toolsVersion = value; }
                 }
 
@@ -185,6 +185,7 @@ namespace Microsoft.Build.Construction
 
                 ProjectRootElement (ProjectCollection projectCollection)
                 {
+                        ToolsVersion = "4.0";
                 }
 
                 public static ProjectRootElement Create ()
@@ -216,8 +217,9 @@ namespace Microsoft.Build.Construction
 
                 public static ProjectRootElement Create (XmlReader xmlReader, ProjectCollection projectCollection)
                 {
-                        // yes, this should create en empty project
                         var result = Create (projectCollection);
+                        result.ToolsVersion = null;
+                        result.Load (xmlReader);
                         return result;
                 }
 
@@ -467,6 +469,8 @@ namespace Microsoft.Build.Construction
 
                 public void Save ()
                 {
+                        if (FullPath == null)
+                                throw new InvalidOperationException ("This project was not given the file path to write to.");
                         Save (Encoding);
                 }
 
@@ -518,9 +522,9 @@ namespace Microsoft.Build.Construction
                         }
                 }
 
-                internal override ProjectElement LoadChildElement (string name)
+                internal override ProjectElement LoadChildElement (XmlReader reader)
                 {
-                        switch (name) {
+                        switch (reader.LocalName) {
                         case "PropertyGroup":
                                 var prop = CreatePropertyGroupElement ();
                                 AppendChild (prop);
@@ -538,7 +542,8 @@ namespace Microsoft.Build.Construction
                                 AppendChild (def);
                                 return def;
                         case "UsingTask":
-                                return AddUsingTask (null, null, null);
+                                var ut = AddUsingTask (null, null, null);
+                                return ut;
                         case "Choose":
                                 var choose = CreateChooseElement ();
                                 AppendChild (choose);
@@ -548,8 +553,7 @@ namespace Microsoft.Build.Construction
                                 AppendChild (ext);
                                 return ext;
                         default:
-                                throw new InvalidProjectFileException (string.Format (
-                                        "Child \"{0}\" is not a known node type.", name));
+                                throw CreateError (reader, string.Format ("Child \"{0}\" is not a known node type.", reader.LocalName), -1);
                         }
                 }
 
@@ -573,7 +577,7 @@ namespace Microsoft.Build.Construction
 
                 internal override void Save (XmlWriter writer)
                 {
-                        writer.WriteStartElement (XmlName, "http://schemas.microsoft.com/developer/msbuild/2003");
+                        writer.WriteStartElement (XmlName, MSBuildNamespace);
                         SaveValue (writer);
                         writer.WriteEndElement ();
                 }

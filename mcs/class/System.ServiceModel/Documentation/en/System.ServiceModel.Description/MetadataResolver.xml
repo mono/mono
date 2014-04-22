@@ -1,0 +1,346 @@
+<Type Name="MetadataResolver" FullName="System.ServiceModel.Description.MetadataResolver">
+  <TypeSignature Language="C#" Value="public static class MetadataResolver" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit MetadataResolver extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="BeginResolve">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginResolve (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt; contracts, System.ServiceModel.EndpointAddress address, AsyncCallback callback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginResolve(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.ContractDescription&gt; contracts, class System.ServiceModel.EndpointAddress address, class System.AsyncCallback callback, object asyncState) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contracts" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt;" />
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="asyncState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="contracts">To be added.</param>
+        <param name="address">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="asyncState">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginResolve">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginResolve (Type contract, System.ServiceModel.EndpointAddress address, AsyncCallback callback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginResolve(class System.Type contract, class System.ServiceModel.EndpointAddress address, class System.AsyncCallback callback, object asyncState) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contract" Type="System.Type" />
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="asyncState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="contract">To be added.</param>
+        <param name="address">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="asyncState">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginResolve">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginResolve (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt; contracts, System.ServiceModel.EndpointAddress address, System.ServiceModel.Description.MetadataExchangeClient client, AsyncCallback callback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginResolve(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.ContractDescription&gt; contracts, class System.ServiceModel.EndpointAddress address, class System.ServiceModel.Description.MetadataExchangeClient client, class System.AsyncCallback callback, object asyncState) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contracts" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt;" />
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="client" Type="System.ServiceModel.Description.MetadataExchangeClient" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="asyncState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="contracts">To be added.</param>
+        <param name="address">To be added.</param>
+        <param name="client">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="asyncState">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginResolve">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginResolve (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt; contracts, Uri address, System.ServiceModel.Description.MetadataExchangeClientMode mode, AsyncCallback callback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginResolve(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.ContractDescription&gt; contracts, class System.Uri address, valuetype System.ServiceModel.Description.MetadataExchangeClientMode mode, class System.AsyncCallback callback, object asyncState) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contracts" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt;" />
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="mode" Type="System.ServiceModel.Description.MetadataExchangeClientMode" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="asyncState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="contracts">To be added.</param>
+        <param name="address">To be added.</param>
+        <param name="mode">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="asyncState">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginResolve">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginResolve (Type contract, Uri address, System.ServiceModel.Description.MetadataExchangeClientMode mode, AsyncCallback callback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginResolve(class System.Type contract, class System.Uri address, valuetype System.ServiceModel.Description.MetadataExchangeClientMode mode, class System.AsyncCallback callback, object asyncState) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contract" Type="System.Type" />
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="mode" Type="System.ServiceModel.Description.MetadataExchangeClientMode" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="asyncState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="contract">To be added.</param>
+        <param name="address">To be added.</param>
+        <param name="mode">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="asyncState">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="BeginResolve">
+      <MemberSignature Language="C#" Value="public static IAsyncResult BeginResolve (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt; contracts, Uri address, System.ServiceModel.Description.MetadataExchangeClientMode mode, System.ServiceModel.Description.MetadataExchangeClient client, AsyncCallback callback, object asyncState);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IAsyncResult BeginResolve(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.ContractDescription&gt; contracts, class System.Uri address, valuetype System.ServiceModel.Description.MetadataExchangeClientMode mode, class System.ServiceModel.Description.MetadataExchangeClient client, class System.AsyncCallback callback, object asyncState) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.IAsyncResult</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contracts" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt;" />
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="mode" Type="System.ServiceModel.Description.MetadataExchangeClientMode" />
+        <Parameter Name="client" Type="System.ServiceModel.Description.MetadataExchangeClient" />
+        <Parameter Name="callback" Type="System.AsyncCallback" />
+        <Parameter Name="asyncState" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="contracts">To be added.</param>
+        <param name="address">To be added.</param>
+        <param name="mode">To be added.</param>
+        <param name="client">To be added.</param>
+        <param name="callback">To be added.</param>
+        <param name="asyncState">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndResolve">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.ServiceEndpointCollection EndResolve (IAsyncResult result);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.ServiceEndpointCollection EndResolve(class System.IAsyncResult result) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="result" Type="System.IAsyncResult" />
+      </Parameters>
+      <Docs>
+        <param name="result">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.ServiceEndpointCollection Resolve (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt; contracts, System.ServiceModel.EndpointAddress address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.ServiceEndpointCollection Resolve(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.ContractDescription&gt; contracts, class System.ServiceModel.EndpointAddress address) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contracts" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt;" />
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <param name="contracts">To be added.</param>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.ServiceEndpointCollection Resolve (Type contract, System.ServiceModel.EndpointAddress address);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.ServiceEndpointCollection Resolve(class System.Type contract, class System.ServiceModel.EndpointAddress address) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contract" Type="System.Type" />
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+      </Parameters>
+      <Docs>
+        <param name="contract">To be added.</param>
+        <param name="address">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.ServiceEndpointCollection Resolve (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt; contracts, System.ServiceModel.EndpointAddress address, System.ServiceModel.Description.MetadataExchangeClient client);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.ServiceEndpointCollection Resolve(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.ContractDescription&gt; contracts, class System.ServiceModel.EndpointAddress address, class System.ServiceModel.Description.MetadataExchangeClient client) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contracts" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt;" />
+        <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
+        <Parameter Name="client" Type="System.ServiceModel.Description.MetadataExchangeClient" />
+      </Parameters>
+      <Docs>
+        <param name="contracts">To be added.</param>
+        <param name="address">To be added.</param>
+        <param name="client">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.ServiceEndpointCollection Resolve (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt; contracts, Uri address, System.ServiceModel.Description.MetadataExchangeClientMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.ServiceEndpointCollection Resolve(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.ContractDescription&gt; contracts, class System.Uri address, valuetype System.ServiceModel.Description.MetadataExchangeClientMode mode) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contracts" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt;" />
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="mode" Type="System.ServiceModel.Description.MetadataExchangeClientMode" />
+      </Parameters>
+      <Docs>
+        <param name="contracts">To be added.</param>
+        <param name="address">To be added.</param>
+        <param name="mode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.ServiceEndpointCollection Resolve (Type contract, Uri address, System.ServiceModel.Description.MetadataExchangeClientMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.ServiceEndpointCollection Resolve(class System.Type contract, class System.Uri address, valuetype System.ServiceModel.Description.MetadataExchangeClientMode mode) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contract" Type="System.Type" />
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="mode" Type="System.ServiceModel.Description.MetadataExchangeClientMode" />
+      </Parameters>
+      <Docs>
+        <param name="contract">To be added.</param>
+        <param name="address">To be added.</param>
+        <param name="mode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public static System.ServiceModel.Description.ServiceEndpointCollection Resolve (System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt; contracts, Uri address, System.ServiceModel.Description.MetadataExchangeClientMode mode, System.ServiceModel.Description.MetadataExchangeClient client);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.ServiceModel.Description.ServiceEndpointCollection Resolve(class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Description.ContractDescription&gt; contracts, class System.Uri address, valuetype System.ServiceModel.Description.MetadataExchangeClientMode mode, class System.ServiceModel.Description.MetadataExchangeClient client) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Description.ServiceEndpointCollection</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="contracts" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.ContractDescription&gt;" />
+        <Parameter Name="address" Type="System.Uri" />
+        <Parameter Name="mode" Type="System.ServiceModel.Description.MetadataExchangeClientMode" />
+        <Parameter Name="client" Type="System.ServiceModel.Description.MetadataExchangeClient" />
+      </Parameters>
+      <Docs>
+        <param name="contracts">To be added.</param>
+        <param name="address">To be added.</param>
+        <param name="mode">To be added.</param>
+        <param name="client">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

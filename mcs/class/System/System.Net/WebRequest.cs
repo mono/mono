@@ -152,10 +152,6 @@ namespace System.Net
 			set { throw GetMustImplement (); }
 		}
 		
-		public TokenImpersonationLevel ImpersonationLevel {
-			get { throw GetMustImplement (); }
-			set { throw GetMustImplement (); }
-		}
 
 		public virtual string Method { 
 			get { throw GetMustImplement (); }
@@ -190,7 +186,9 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-		
+
+		public TokenImpersonationLevel ImpersonationLevel { get; set; }
+
 //		volatile static IWebProxy proxy;
 		static readonly object lockobj = new object ();
 		
@@ -289,16 +287,26 @@ namespace System.Net
 			return GetCreator (requestUri.Scheme).Create (requestUri);
 		}
 #if NET_4_0
-		[MonoTODO ("for portable library support")]
+		static HttpWebRequest SharedCreateHttp (Uri uri)
+		{
+			if (uri.Scheme != "http" && uri.Scheme != "https")
+				throw new NotSupportedException	("The uri should start with http or https");
+
+			return new HttpWebRequest (uri);
+		}
+
 		public static HttpWebRequest CreateHttp (string requestUriString)
 		{
-			throw new NotImplementedException ();
+			if (requestUriString == null)
+				throw new ArgumentNullException ("requestUriString");
+			return SharedCreateHttp (new Uri (requestUriString));
 		}
 			
-		[MonoTODO ("for portable library support")]
 		public static HttpWebRequest CreateHttp (Uri requestUri)
 		{
-			throw new NotImplementedException ();
+			if (requestUri == null)
+				throw new ArgumentNullException ("requestUri");
+			return SharedCreateHttp (requestUri);
 		}
 #endif
 		public virtual Stream EndGetRequestStream (IAsyncResult asyncResult)
@@ -327,6 +335,12 @@ namespace System.Net
 #if MONOTOUCH
 			return CFNetwork.GetDefaultProxy ();
 #else
+#if MONODROID
+			// Return the system web proxy.  This only works for ICS+.
+			var androidProxy = AndroidPlatform.GetDefaultProxy ();
+			if (androidProxy != null)
+				return androidProxy;
+#endif
 #if !NET_2_1
 			if (IsWindows ()) {
 				int iProxyEnable = (int)Microsoft.Win32.Registry.GetValue ("HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings", "ProxyEnable", 0);

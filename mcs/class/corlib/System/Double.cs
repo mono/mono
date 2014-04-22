@@ -1,16 +1,15 @@
 //
 // System.Double.cs
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@ximian.com)
 //   Bob Smith       (bob@thestuff.net)
+//   Marek Safar     (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // (C) Bob Smith.    http://www.thestuff.net
-//
-
-//
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2014 Xamarin Inc (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -210,15 +209,16 @@ namespace System {
 			return Parse (s, style, null);
 		}
 
-		// We're intentionally using constants here to avoid some bigger headaches in mcs.
-		// This struct must be compiled before System.Enum so we can't use enums here.
-		private const int State_AllowSign = 1;
-		private const int State_Digits = 2;
-		private const int State_Decimal = 3;
-		private const int State_ExponentSign = 4;
-		private const int State_Exponent = 5;
-		private const int State_ConsumeWhiteSpace = 6;
-		private const int State_Exit = 7;
+		enum ParseState {
+			AllowSign = 1,
+			Digits = 2,
+			Decimal = 3,
+			ExponentSign = 4,
+			Exponent = 5,
+			ConsumeWhiteSpace = 6,
+			TrailingSymbols = 7,
+			Exit = 8
+		};
 		
 		public static double Parse (string s, NumberStyles style, IFormatProvider provider)
 		{
@@ -304,7 +304,7 @@ namespace System {
 			//
 			// Machine state
 			//
-			int state = State_AllowSign;
+			var state = ParseState.AllowSign;
 
 			//
 			// Setup
@@ -329,6 +329,7 @@ namespace System {
 			}
 			string positive = format.PositiveSign;
 			string negative = format.NegativeSign;
+			bool allow_trailing_parenthes = false;
 			
 			for (; sidx < len; sidx++){
 				c = s [sidx];
@@ -339,70 +340,80 @@ namespace System {
 				}
 
 				switch (state){
-				case State_AllowSign:
-					if ((style & NumberStyles.AllowLeadingSign) != 0){
+				case ParseState.AllowSign:
+					if ((style & NumberStyles.AllowLeadingSign) != 0) {
 						if (c == positive [0] &&
-						    s.Substring (sidx, positive.Length) == positive){
-							state = State_Digits;
-							sidx += positive.Length-1;
+						    s.Substring (sidx, positive.Length) == positive) {
+							state = ParseState.Digits;
+							sidx += positive.Length - 1;
 							continue;
 						}
 
 						if (c == negative [0] &&
-						    s.Substring (sidx, negative.Length) == negative){
-							state = State_Digits;
-							b [didx++] = (byte) '-';
-							sidx += negative.Length-1;
+						    s.Substring (sidx, negative.Length) == negative) {
+							state = ParseState.Digits;
+							b [didx++] = (byte)'-';
+							sidx += negative.Length - 1;
 							continue;
 						}
 					}
-					state = State_Digits;
-					goto case State_Digits;
+
+					if ((style & NumberStyles.AllowParentheses) != 0 && c == '(') {
+						b [didx++] = (byte)'-';
+						state = ParseState.Digits;
+						allow_trailing_parenthes = true;
+						continue;
+					}
+
+					state = ParseState.Digits;
+					goto case ParseState.Digits;
 					
-				case State_Digits:
-					if (Char.IsDigit (c)){
-						b [didx++] = (byte) c;
+				case ParseState.Digits:
+					if (Char.IsDigit (c)) {
+						b [didx++] = (byte)c;
 						break;
 					}
+
 					if (c == 'e' || c == 'E')
-						goto case State_Decimal;
-					
+						goto case ParseState.Decimal;
+
+					if (allow_trailing_parenthes && c == ')') {
+						allow_trailing_parenthes = false;
+						state = ParseState.ConsumeWhiteSpace;
+						continue;
+					}
+
 					if (decimal_separator_len > 0 &&
 					    decimal_separator [0] == c) {
 						if (String.CompareOrdinal (s, sidx, decimal_separator, 0, decimal_separator_len) == 0) {
-							b [didx++] = (byte) '.';
-							sidx += decimal_separator_len-1;
-							state = State_Decimal; 
+							b [didx++] = (byte)'.';
+							sidx += decimal_separator_len - 1;
+							state = ParseState.Decimal; 
 							break;
 						}
 					}
 					if (group_separator_len > 0 &&
-					    group_separator [0] == c){
+					    group_separator [0] == c) {
 						if (s.Substring (sidx, group_separator_len) ==
-						    group_separator){
-							sidx += group_separator_len-1;
-							state = State_Digits; 
+						    group_separator) {
+							sidx += group_separator_len - 1;
 							break;
 						}
 					}
 					if (currency_symbol_len > 0 &&
-					    currency_symbol [0] == c){
+						currency_symbol [0] == c) {
 						if (s.Substring (sidx, currency_symbol_len) ==
-						    currency_symbol){
-							sidx += currency_symbol_len-1;
-							state = State_Digits; 
+							currency_symbol) {
+							sidx += currency_symbol_len - 1;
+							currency_symbol_len = 0;
 							break;
 						}
 					}
-					
-					if (Char.IsWhiteSpace (c))
-						goto case State_ConsumeWhiteSpace;
 
-					if (!tryParse)
-						exc = new FormatException ("Unknown char: " + c);
-					return false;
+					state = ParseState.TrailingSymbols;
+					goto case ParseState.TrailingSymbols;
 
-				case State_Decimal:
+				case ParseState.Decimal:
 					if (Char.IsDigit (c)){
 						b [didx++] = (byte) c;
 						break;
@@ -415,61 +426,94 @@ namespace System {
 							return false;
 						}
 						b [didx++] = (byte) c;
-						state = State_ExponentSign;
+						state = ParseState.ExponentSign;
 						break;
 					}
-					
-					if (Char.IsWhiteSpace (c))
-						goto case State_ConsumeWhiteSpace;
-					
-					if (!tryParse)
-						exc = new FormatException ("Unknown char: " + c);
-					return false;
 
-				case State_ExponentSign:
+					state = ParseState.TrailingSymbols;
+					goto case ParseState.TrailingSymbols;
+
+				case ParseState.ExponentSign:
 					if (Char.IsDigit (c)){
-						state = State_Exponent;
-						goto case State_Exponent;
+						state = ParseState.Exponent;
+						goto case ParseState.Exponent;
 					}
 
 					if (c == positive [0] &&
 					    s.Substring (sidx, positive.Length) == positive){
-						state = State_Digits;
+						state = ParseState.Digits;
 						sidx += positive.Length-1;
 						continue;
 					}
 
 					if (c == negative [0] &&
 					    s.Substring (sidx, negative.Length) == negative){
-						state = State_Digits;
+						state = ParseState.Digits;
 						b [didx++] = (byte) '-';
 						sidx += negative.Length-1;
 						continue;
 					}
 
-					if (Char.IsWhiteSpace (c))
-						goto case State_ConsumeWhiteSpace;
-					
-					if (!tryParse)
-						exc = new FormatException ("Unknown char: " + c);
-					return false;
-					
-				case State_Exponent:
+					goto case ParseState.ConsumeWhiteSpace;
+
+				case ParseState.Exponent:
 					if (Char.IsDigit (c)){
 						b [didx++] = (byte) c;
 						break;
 					}
 					
-					if (Char.IsWhiteSpace (c))
-						goto case State_ConsumeWhiteSpace;
-					
-					if (!tryParse)
-						exc = new FormatException ("Unknown char: " + c);
-					return false;
+					state = ParseState.TrailingSymbols;
+					goto case ParseState.TrailingSymbols;
 
-				case State_ConsumeWhiteSpace:
+				case ParseState.TrailingSymbols:
+					if ((style & NumberStyles.AllowTrailingSign) != 0) {
+						if (positive != null && c == positive [0] &&
+							s.Substring (sidx, positive.Length) == positive) {
+							state = ParseState.ConsumeWhiteSpace;
+							sidx += positive.Length - 1;
+							allow_trailing_parenthes = false;
+							positive = null;
+							continue;
+						}
+
+						if (negative != null && c == negative [0] &&
+							s.Substring (sidx, negative.Length) == negative) {
+							state = ParseState.ConsumeWhiteSpace;
+							Array.Copy (b, 0, b, 1, didx); 
+							b [0] = (byte)'-';
+							++didx;
+							sidx += negative.Length - 1;
+							allow_trailing_parenthes = false;
+							negative = null;
+							continue;
+						}
+					}
+
+					if (currency_symbol_len > 0 &&
+						currency_symbol [0] == c) {
+						if (s.Substring (sidx, currency_symbol_len) ==
+							currency_symbol) {
+							sidx += currency_symbol_len - 1;
+							currency_symbol_len = 0;
+							break;
+						}
+					}
+
 					if (allow_trailing_white && Char.IsWhiteSpace (c)) {
-						state = State_ConsumeWhiteSpace;
+						break;
+					}
+
+					goto case ParseState.ConsumeWhiteSpace;
+
+				case ParseState.ConsumeWhiteSpace:
+					if (allow_trailing_parenthes && c == ')') {
+						allow_trailing_parenthes = false;
+						state = ParseState.ConsumeWhiteSpace;
+						break;
+					}
+
+					if (allow_trailing_white && Char.IsWhiteSpace (c)) {
+						state = ParseState.ConsumeWhiteSpace;
 						break;
 					}
 					
@@ -478,7 +522,7 @@ namespace System {
 					return false;
 				}
 
-				if (state == State_Exit)
+				if (state == ParseState.Exit)
 					break;
 			}
 

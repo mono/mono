@@ -1027,6 +1027,14 @@ public abstract class Calendar : ICloneable
 #pragma warning disable 649
 	internal int m_currentEraValue; // Unused, by MS serializes this
 #pragma warning restore 649
+
+#if NET_4_5
+	protected virtual int DaysInYearBeforeMinSupportedYear {
+		get{
+			return 365;
+		}
+	}
+#endif
 }
 	
 }

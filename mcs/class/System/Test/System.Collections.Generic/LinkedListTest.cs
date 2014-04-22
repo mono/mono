@@ -12,6 +12,24 @@ namespace MonoTests.System.Collections.Generic
 	[TestFixture]
 	public class LinkedListTest
 	{
+		class EquatableValue : IEquatable<EquatableValue>
+		{
+			public readonly string Value;
+
+			public EquatableValue (string value)
+			{
+				this.Value = value;
+			}
+
+			public bool Equals (EquatableValue other)
+			{
+				if (other == null)
+					return false;
+
+				return string.Equals (Value, other.Value, StringComparison.OrdinalIgnoreCase);
+			}
+		}
+
 		LinkedList <int> intlist;
 		LinkedList <string> strings;
 
@@ -252,6 +270,16 @@ namespace MonoTests.System.Collections.Generic
 			}
 			Assert.AreEqual(3, i);
 		}
+
+		public void EnumeratorAfterEnd ()
+		{
+			var linkedList = new LinkedList<string> ();
+			linkedList.AddLast ("a");
+			var e = linkedList.GetEnumerator ();
+			Assert.IsTrue (e.MoveNext (), "#1");
+			Assert.IsFalse (e.MoveNext (), "#2");
+			Assert.IsFalse (e.MoveNext (), "#3");
+		}
 		
 		[Test] //bug 481621
 		public void PlayWithNullValues ()
@@ -279,6 +307,36 @@ namespace MonoTests.System.Collections.Generic
 			Assert.AreEqual (2, li.Count);
 			Assert.AreEqual ("efgh", li.Last.Value);
 			Assert.AreEqual ("abcd", li.First.Value);
+		}
+
+		[Test]
+		public void EqualityComparer ()
+		{
+			var list = new LinkedList<EquatableValue> ();
+			var mv  = new EquatableValue ("first");
+			list.AddFirst (mv);
+
+			var test = new EquatableValue ("FIRST");
+			Assert.IsTrue (list.Contains (test), "#1");
+			Assert.AreSame (mv, list.Find (test).Value, "#2");
+			Assert.AreSame (mv, list.FindLast (test).Value, "#3");
+		}
+
+		[Test]
+		public void RemoveFromEmptyList ()
+		{
+			var linkedList = new LinkedList<string> ();
+			try {
+				linkedList.RemoveFirst ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
+
+			try {
+				linkedList.RemoveLast ();
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException) {
+			}
 		}
 	}
 }

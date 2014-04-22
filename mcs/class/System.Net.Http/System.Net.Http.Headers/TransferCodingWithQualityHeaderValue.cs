@@ -26,6 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
+
 namespace System.Net.Http.Headers
 {
 	public sealed class TransferCodingWithQualityHeaderValue : TransferCodingHeaderValue
@@ -65,7 +67,39 @@ namespace System.Net.Http.Headers
 
 		public static bool TryParse (string input, out TransferCodingWithQualityHeaderValue parsedValue)
 		{
-			return TryParse (input, out parsedValue, () => new TransferCodingWithQualityHeaderValue ());
+			var lexer = new Lexer (input);
+			Token token;
+			if (TryParseElement (lexer, out parsedValue, out token) && token == Token.Type.End)
+				return true;
+
+			parsedValue = null;
+			return false;
+		}
+
+		internal static bool TryParse (string input, int minimalCount, out List<TransferCodingWithQualityHeaderValue> result)
+		{
+			return CollectionParser.TryParse (input, minimalCount, TryParseElement, out result);
+		}
+
+		static bool TryParseElement (Lexer lexer, out TransferCodingWithQualityHeaderValue parsedValue, out Token t)
+		{
+			parsedValue = null;
+
+			t = lexer.Scan ();
+			if (t != Token.Type.Token)
+				return false;
+
+			var result = new TransferCodingWithQualityHeaderValue ();
+			result.value = lexer.GetStringValue (t);
+
+			t = lexer.Scan ();
+
+			// Parameters parsing
+			if (t == Token.Type.SeparatorSemicolon && (!NameValueHeaderValue.TryParseParameters (lexer, out result.parameters, out t) || t != Token.Type.End))
+				return false;
+
+			parsedValue = result;
+			return true;
 		}
 	}
 }

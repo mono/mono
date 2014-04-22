@@ -72,7 +72,7 @@ namespace MoonTest.System.Net {
 		[Test]
 		public void Constructor_2 ()
 		{
-			NetworkCredential nc = new NetworkCredential (null, null);
+			NetworkCredential nc = new NetworkCredential ((string)null, (string)null);
 			CheckDefaults (nc);
 
 			nc.UserName = String.Empty;
@@ -88,7 +88,7 @@ namespace MoonTest.System.Net {
 		[Test]
 		public void Constructor_3 ()
 		{
-			NetworkCredential nc = new NetworkCredential (null, null, null);
+			NetworkCredential nc = new NetworkCredential ((string)null, (string)null, (string)null);
 			CheckDefaults (nc);
 
 			nc.UserName = String.Empty;

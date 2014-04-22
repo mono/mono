@@ -2,7 +2,7 @@
 // Line: 13
 
 public struct S<TKey> {
-	private TKey key;
+	internal TKey key;
 
 	public TKey Key {
 		get { return key; }

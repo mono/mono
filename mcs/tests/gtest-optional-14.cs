@@ -1,25 +1,29 @@
-class A
+using System;
+using System.Threading.Tasks;
+
+class C
 {
-	public int GetValues (string[] s, string value = null)
+	static void M (int x, int y = 1)
 	{
-		return 1;
 	}
 
-	public int GetValues (string s, params string [] args)
+	static void M<T> (T x, int y = 2)
 	{
-		return 2;
+		throw new ApplicationException ();
 	}
-}
 
-
-class B
-{
-	public static int Main ()
+	static void M2<T, U> (T u, Func<T, U> c, int y = 1)
 	{
-		var a = new A ();
-		if (a.GetValues (null) != 1)
-			return 1;
-		
-		return 0;
+		throw new ApplicationException ();
+	}
+
+	static void M2<T, U> (T u, Func<T, Task<U>> c, int y = 2)
+	{
+	}
+
+	static void Main ()
+	{ 
+		M (1);
+		M2 (1, s => Task.FromResult (s));
 	}
 }

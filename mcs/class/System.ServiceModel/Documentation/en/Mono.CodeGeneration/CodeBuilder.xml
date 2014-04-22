@@ -1,0 +1,975 @@
+<Type Name="CodeBuilder" FullName="Mono.CodeGeneration.CodeBuilder">
+  <TypeSignature Language="C#" Value="public class CodeBuilder" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CodeBuilder extends System.Object" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public CodeBuilder (Mono.CodeGeneration.CodeClass codeClass);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(class Mono.CodeGeneration.CodeClass codeClass) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="codeClass" Type="Mono.CodeGeneration.CodeClass" />
+      </Parameters>
+      <Docs>
+        <param name="codeClass">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Assign">
+      <MemberSignature Language="C#" Value="public void Assign (Mono.CodeGeneration.CodeValueReference var, Mono.CodeGeneration.CodeExpression val);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Assign(class Mono.CodeGeneration.CodeValueReference var, class Mono.CodeGeneration.CodeExpression val) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="var" Type="Mono.CodeGeneration.CodeValueReference" />
+        <Parameter Name="val" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="var">To be added.</param>
+        <param name="val">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Call">
+      <MemberSignature Language="C#" Value="public void Call (Mono.CodeGeneration.CodeMethod method, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Call(class Mono.CodeGeneration.CodeMethod method, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="Mono.CodeGeneration.CodeMethod" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="method">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Call">
+      <MemberSignature Language="C#" Value="public void Call (System.Reflection.MethodInfo method, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Call(class System.Reflection.MethodInfo method, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.Reflection.MethodInfo" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="method">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Call">
+      <MemberSignature Language="C#" Value="public void Call (Mono.CodeGeneration.CodeExpression target, Mono.CodeGeneration.CodeMethod method, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Call(class Mono.CodeGeneration.CodeExpression target, class Mono.CodeGeneration.CodeMethod method, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="method" Type="Mono.CodeGeneration.CodeMethod" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Call">
+      <MemberSignature Language="C#" Value="public void Call (Mono.CodeGeneration.CodeExpression target, System.Reflection.MethodBase method, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Call(class Mono.CodeGeneration.CodeExpression target, class System.Reflection.MethodBase method, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="method" Type="System.Reflection.MethodBase" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Call">
+      <MemberSignature Language="C#" Value="public void Call (Mono.CodeGeneration.CodeExpression target, string name, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Call(class Mono.CodeGeneration.CodeExpression target, string name, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <param name="name">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Call">
+      <MemberSignature Language="C#" Value="public void Call (Type type, string name, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Call(class System.Type type, string name, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="name">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CallFunc">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeExpression CallFunc (Mono.CodeGeneration.CodeMethod method, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.CodeGeneration.CodeExpression CallFunc(class Mono.CodeGeneration.CodeMethod method, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeExpression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="Mono.CodeGeneration.CodeMethod" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="method">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CallFunc">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeExpression CallFunc (System.Reflection.MethodInfo method, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.CodeGeneration.CodeExpression CallFunc(class System.Reflection.MethodInfo method, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeExpression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="System.Reflection.MethodInfo" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="method">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CallFunc">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeExpression CallFunc (Mono.CodeGeneration.CodeExpression target, Mono.CodeGeneration.CodeMethod method, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.CodeGeneration.CodeExpression CallFunc(class Mono.CodeGeneration.CodeExpression target, class Mono.CodeGeneration.CodeMethod method, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeExpression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="method" Type="Mono.CodeGeneration.CodeMethod" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CallFunc">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeExpression CallFunc (Mono.CodeGeneration.CodeExpression target, System.Reflection.MethodInfo method, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.CodeGeneration.CodeExpression CallFunc(class Mono.CodeGeneration.CodeExpression target, class System.Reflection.MethodInfo method, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeExpression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="method" Type="System.Reflection.MethodInfo" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <param name="method">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CallFunc">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeExpression CallFunc (Mono.CodeGeneration.CodeExpression target, string name, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.CodeGeneration.CodeExpression CallFunc(class Mono.CodeGeneration.CodeExpression target, string name, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeExpression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <param name="name">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CallFunc">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeExpression CallFunc (Type type, string name, Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.CodeGeneration.CodeExpression CallFunc(class System.Type type, string name, class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeExpression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="name">To be added.</param>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Case">
+      <MemberSignature Language="C#" Value="public void Case (Mono.CodeGeneration.CodeExpression condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Case(class Mono.CodeGeneration.CodeExpression condition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="condition">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConsoleWriteLine">
+      <MemberSignature Language="C#" Value="public void ConsoleWriteLine (Mono.CodeGeneration.CodeExpression[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ConsoleWriteLine(class Mono.CodeGeneration.CodeExpression[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameters" Type="Mono.CodeGeneration.CodeExpression[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ConsoleWriteLine">
+      <MemberSignature Language="C#" Value="public void ConsoleWriteLine (object[] parameters);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ConsoleWriteLine(object[] parameters) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="parameters" Type="System.Object[]">
+          <Attributes>
+            <Attribute>
+              <AttributeName>System.ParamArray</AttributeName>
+            </Attribute>
+          </Attributes>
+        </Parameter>
+      </Parameters>
+      <Docs>
+        <param name="parameters">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CurrentBlock">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeBlock CurrentBlock { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.CodeGeneration.CodeBlock CurrentBlock" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeBlock</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Dec">
+      <MemberSignature Language="C#" Value="public void Dec (Mono.CodeGeneration.CodeValueReference val);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Dec(class Mono.CodeGeneration.CodeValueReference val) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val" Type="Mono.CodeGeneration.CodeValueReference" />
+      </Parameters>
+      <Docs>
+        <param name="val">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclareVariable">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeVariableReference DeclareVariable (Mono.CodeGeneration.CodeExpression initValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.CodeGeneration.CodeVariableReference DeclareVariable(class Mono.CodeGeneration.CodeExpression initValue) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeVariableReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="initValue" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="initValue">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclareVariable">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeVariableReference DeclareVariable (Type type);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.CodeGeneration.CodeVariableReference DeclareVariable(class System.Type type) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeVariableReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclareVariable">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeVariableReference DeclareVariable (Type type, Mono.CodeGeneration.CodeExpression initValue);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.CodeGeneration.CodeVariableReference DeclareVariable(class System.Type type, class Mono.CodeGeneration.CodeExpression initValue) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeVariableReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="initValue" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="initValue">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DeclareVariable">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeVariableReference DeclareVariable (Type type, object ob);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.CodeGeneration.CodeVariableReference DeclareVariable(class System.Type type, object ob) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeVariableReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="ob" Type="System.Object" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="ob">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Else">
+      <MemberSignature Language="C#" Value="public void Else ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Else() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ElseIf">
+      <MemberSignature Language="C#" Value="public void ElseIf (Mono.CodeGeneration.CodeExpression condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void ElseIf(class Mono.CodeGeneration.CodeExpression condition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="condition">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndFor">
+      <MemberSignature Language="C#" Value="public void EndFor ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EndFor() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndForeach">
+      <MemberSignature Language="C#" Value="public void EndForeach ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EndForeach() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndIf">
+      <MemberSignature Language="C#" Value="public void EndIf ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EndIf() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndSelect">
+      <MemberSignature Language="C#" Value="public void EndSelect ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EndSelect() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="EndWhile">
+      <MemberSignature Language="C#" Value="public void EndWhile ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void EndWhile() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="For">
+      <MemberSignature Language="C#" Value="public void For (Mono.CodeGeneration.CodeExpression initExp, Mono.CodeGeneration.CodeExpression conditionExp, Mono.CodeGeneration.CodeExpression nextExp);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void For(class Mono.CodeGeneration.CodeExpression initExp, class Mono.CodeGeneration.CodeExpression conditionExp, class Mono.CodeGeneration.CodeExpression nextExp) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="initExp" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="conditionExp" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="nextExp" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="initExp">To be added.</param>
+        <param name="conditionExp">To be added.</param>
+        <param name="nextExp">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Foreach">
+      <MemberSignature Language="C#" Value="public void Foreach (Type type, out Mono.CodeGeneration.CodeExpression item, Mono.CodeGeneration.CodeExpression array);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Foreach(class System.Type type, class Mono.CodeGeneration.CodeExpression item, class Mono.CodeGeneration.CodeExpression array) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="item" Type="Mono.CodeGeneration.CodeExpression&amp;" RefType="out" />
+        <Parameter Name="array" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="item">To be added.</param>
+        <param name="array">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Generate">
+      <MemberSignature Language="C#" Value="public void Generate (System.Reflection.Emit.ILGenerator gen);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Generate(class System.Reflection.Emit.ILGenerator gen) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="gen" Type="System.Reflection.Emit.ILGenerator" />
+      </Parameters>
+      <Docs>
+        <param name="gen">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="If">
+      <MemberSignature Language="C#" Value="public void If (Mono.CodeGeneration.CodeExpression condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void If(class Mono.CodeGeneration.CodeExpression condition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="condition">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Inc">
+      <MemberSignature Language="C#" Value="public void Inc (Mono.CodeGeneration.CodeValueReference val);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Inc(class Mono.CodeGeneration.CodeValueReference val) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="val" Type="Mono.CodeGeneration.CodeValueReference" />
+      </Parameters>
+      <Docs>
+        <param name="val">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="op_Addition">
+      <MemberSignature Language="C#" Value="public static Mono.CodeGeneration.CodeBuilder op_Addition (Mono.CodeGeneration.CodeBuilder cb, Mono.CodeGeneration.CodeItem e);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig specialname class Mono.CodeGeneration.CodeBuilder op_Addition(class Mono.CodeGeneration.CodeBuilder cb, class Mono.CodeGeneration.CodeItem e) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeBuilder</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cb" Type="Mono.CodeGeneration.CodeBuilder" />
+        <Parameter Name="e" Type="Mono.CodeGeneration.CodeItem" />
+      </Parameters>
+      <Docs>
+        <param name="cb">To be added.</param>
+        <param name="e">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="OwnerClass">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeClass OwnerClass { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class Mono.CodeGeneration.CodeClass OwnerClass" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeClass</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrintCode">
+      <MemberSignature Language="C#" Value="public string PrintCode ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string PrintCode() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="PrintCode">
+      <MemberSignature Language="C#" Value="public void PrintCode (Mono.CodeGeneration.CodeWriter cp);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void PrintCode(class Mono.CodeGeneration.CodeWriter cp) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="cp" Type="Mono.CodeGeneration.CodeWriter" />
+      </Parameters>
+      <Docs>
+        <param name="cp">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Return">
+      <MemberSignature Language="C#" Value="public void Return ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Return() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Return">
+      <MemberSignature Language="C#" Value="public void Return (Mono.CodeGeneration.CodeExpression exp);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Return(class Mono.CodeGeneration.CodeExpression exp) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="exp" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="exp">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Select">
+      <MemberSignature Language="C#" Value="public void Select ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Select() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="When">
+      <MemberSignature Language="C#" Value="public Mono.CodeGeneration.CodeExpression When (Mono.CodeGeneration.CodeExpression condition, Mono.CodeGeneration.CodeExpression trueResult, Mono.CodeGeneration.CodeExpression falseResult);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class Mono.CodeGeneration.CodeExpression When(class Mono.CodeGeneration.CodeExpression condition, class Mono.CodeGeneration.CodeExpression trueResult, class Mono.CodeGeneration.CodeExpression falseResult) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.CodeGeneration.CodeExpression</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="trueResult" Type="Mono.CodeGeneration.CodeExpression" />
+        <Parameter Name="falseResult" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="condition">To be added.</param>
+        <param name="trueResult">To be added.</param>
+        <param name="falseResult">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="While">
+      <MemberSignature Language="C#" Value="public void While (Mono.CodeGeneration.CodeExpression condition);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void While(class Mono.CodeGeneration.CodeExpression condition) cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="condition" Type="Mono.CodeGeneration.CodeExpression" />
+      </Parameters>
+      <Docs>
+        <param name="condition">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -5,25 +5,45 @@
 #include <mono/utils/mono-publib.h>
 
 enum {
+	/* Counter type, bits 0-7. */
 	MONO_COUNTER_INT,    /* 32 bit int */
-	MONO_COUNTER_UINT,    /* 32 bit uint */
 	MONO_COUNTER_WORD,   /* pointer-sized int */
 	MONO_COUNTER_LONG,   /* 64 bit int */
-	MONO_COUNTER_ULONG,   /* 64 bit uint */
 	MONO_COUNTER_DOUBLE,
 	MONO_COUNTER_STRING, /* char* */
-	MONO_COUNTER_TIME_INTERVAL, /* 64 bits signed int holding usecs. */
 	MONO_COUNTER_TYPE_MASK = 0xf,
 	MONO_COUNTER_CALLBACK = 128, /* ORed with the other values */
 	MONO_COUNTER_SECTION_MASK = 0xffffff00,
-	/* sections */
+	/* Sections, bits 8-15  */
 	MONO_COUNTER_JIT      = 1 << 8,
 	MONO_COUNTER_GC       = 1 << 9,
 	MONO_COUNTER_METADATA = 1 << 10,
 	MONO_COUNTER_GENERICS = 1 << 11,
 	MONO_COUNTER_SECURITY = 1 << 12,
-	MONO_COUNTER_LAST_SECTION
+	MONO_COUNTER_RUNTIME  = 1 << 13,
+	MONO_COUNTER_SYSTEM   = 1 << 14,
+	MONO_COUNTER_LAST_SECTION,
+
+	/* Unit, bits 16-23 */
+	MONO_COUNTER_UNIT_SHIFT = 16,
+	MONO_COUNTER_UNIT_MASK = 0xFFu << MONO_COUNTER_UNIT_SHIFT,
+	MONO_COUNTER_RAW        = 0 << 16,  /* Raw value */
+	MONO_COUNTER_BYTES      = 1 << 16, /* Quantity of bytes. RSS, active heap, etc */
+	MONO_COUNTER_TIME       = 2 << 16,  /* Time interval in 100ns units. Minor pause, JIT compilation*/
+	MONO_COUNTER_EVENTS     = 3 << 16, /* Number of times the given event happens. Major collections, Compiled methods. */
+	MONO_COUNTER_ITEMS      = 4 << 16, /* Current number of things. Threads, queued jobs.*/
+	MONO_COUNTER_PERCENTAGE = 5 << 16, /* [0-1] Fraction Percentage of something. Load average. */
+
+	/* Monotonicity, bits 24-31 */
+	MONO_COUNTER_VARIANCE_SHIFT = 24,
+	MONO_COUNTER_VARIANCE_MASK = 0xFFu << MONO_COUNTER_VARIANCE_SHIFT,
+	MONO_COUNTER_MONOTONIC      = 0 << 24, /* This counter value always increase/decreases over time. Reported by --stat. */
+	MONO_COUNTER_CONSTANT       = 1 << 24, /* Fixed value. Used by configuration data. */
+	MONO_COUNTER_VARIABLE       = 2 << 24, /* This counter value can be anything on each sampling. Only interesting when sampling. */
 };
+
+typedef struct _MonoCounter MonoCounter;
+
 
 MONO_API void mono_counters_enable (int section_mask);
 
@@ -40,6 +60,10 @@ MONO_API void mono_counters_register (const char* descr, int type, void *addr);
 MONO_API void mono_counters_dump (int section_mask, FILE *outfile);
 
 MONO_API void mono_counters_cleanup (void);
+
+typedef mono_bool (*CountersEnumCallback) (MonoCounter *counter, void *user_data);
+
+MONO_API void mono_counters_foreach (CountersEnumCallback cb, void *user_data);
 
 typedef enum {
 	MONO_RESOURCE_JIT_CODE, /* bytes */

@@ -1,5 +1,6 @@
 <Type Name="IsolatedStorageFile" FullName="System.IO.IsolatedStorage.IsolatedStorageFile">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class IsolatedStorageFile : System.IO.IsolatedStorage.IsolatedStorage, IDisposable" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit IsolatedStorageFile extends System.IO.IsolatedStorage.IsolatedStorage implements class System.IDisposable" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -16,6 +17,11 @@
       <InterfaceName>System.IDisposable</InterfaceName>
     </Interface>
   </Interfaces>
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>To be added</summary>
     <remarks>To be added</remarks>
@@ -23,6 +29,7 @@
   <Members>
     <Member MemberName="AvailableFreeSpace">
       <MemberSignature Language="C#" Value="public override long AvailableFreeSpace { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 AvailableFreeSpace" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -43,7 +50,13 @@
     </Member>
     <Member MemberName="Close">
       <MemberSignature Language="C#" Value="public void Close ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Close() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -52,14 +65,10 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CopyFile">
       <MemberSignature Language="C#" Value="public void CopyFile (string sourceFileName, string destinationFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyFile(string sourceFileName, string destinationFileName) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -85,6 +94,7 @@
     </Member>
     <Member MemberName="CopyFile">
       <MemberSignature Language="C#" Value="public void CopyFile (string sourceFileName, string destinationFileName, bool overwrite);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CopyFile(string sourceFileName, string destinationFileName, bool overwrite) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -112,7 +122,13 @@
     </Member>
     <Member MemberName="CreateDirectory">
       <MemberSignature Language="C#" Value="public void CreateDirectory (string dir);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void CreateDirectory(string dir) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -124,14 +140,10 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CreateFile">
       <MemberSignature Language="C#" Value="public System.IO.IsolatedStorage.IsolatedStorageFileStream CreateFile (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.IsolatedStorage.IsolatedStorageFileStream CreateFile(string path) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -156,7 +168,13 @@
     </Member>
     <Member MemberName="CurrentSize">
       <MemberSignature Language="C#" Value="public override ulong CurrentSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int64 CurrentSize" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -173,15 +191,16 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="DeleteDirectory">
+      <MemberSignature Language="C#" Value="public void DeleteDirectory (string dir);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DeleteDirectory(string dir) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DeleteDirectory">
-      <MemberSignature Language="C#" Value="public void DeleteDirectory (string dir);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -193,15 +212,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="DeleteFile">
+      <MemberSignature Language="C#" Value="public void DeleteFile (string file);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void DeleteFile(string file) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DeleteFile">
-      <MemberSignature Language="C#" Value="public void DeleteFile (string file);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -213,14 +233,10 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="DirectoryExists">
       <MemberSignature Language="C#" Value="public bool DirectoryExists (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool DirectoryExists(string path) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -245,7 +261,13 @@
     </Member>
     <Member MemberName="Dispose">
       <MemberSignature Language="C#" Value="public void Dispose ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance void Dispose() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -254,14 +276,10 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FileExists">
       <MemberSignature Language="C#" Value="public bool FileExists (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance bool FileExists(string path) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -286,7 +304,13 @@
     </Member>
     <Member MemberName="Finalize">
       <MemberSignature Language="C#" Value="~IsolatedStorageFile ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance void Finalize() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -295,14 +319,10 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetCreationTime">
       <MemberSignature Language="C#" Value="public DateTimeOffset GetCreationTime (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.DateTimeOffset GetCreationTime(string path) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -327,6 +347,7 @@
     </Member>
     <Member MemberName="GetDirectoryNames">
       <MemberSignature Language="C#" Value="public string[] GetDirectoryNames ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetDirectoryNames() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -348,7 +369,13 @@
     </Member>
     <Member MemberName="GetDirectoryNames">
       <MemberSignature Language="C#" Value="public string[] GetDirectoryNames (string searchPattern);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetDirectoryNames(string searchPattern) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -361,15 +388,16 @@
         <returns>To be added: an object of type 'string []'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetEnumerator">
+      <MemberSignature Language="C#" Value="public static System.Collections.IEnumerator GetEnumerator (System.IO.IsolatedStorage.IsolatedStorageScope scope);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Collections.IEnumerator GetEnumerator(valuetype System.IO.IsolatedStorage.IsolatedStorageScope scope) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetEnumerator">
-      <MemberSignature Language="C#" Value="public static System.Collections.IEnumerator GetEnumerator (System.IO.IsolatedStorage.IsolatedStorageScope scope);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.IEnumerator</ReturnType>
       </ReturnValue>
@@ -382,14 +410,10 @@
         <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetFileNames">
       <MemberSignature Language="C#" Value="public string[] GetFileNames ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetFileNames() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -411,7 +435,13 @@
     </Member>
     <Member MemberName="GetFileNames">
       <MemberSignature Language="C#" Value="public string[] GetFileNames (string searchPattern);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance string[] GetFileNames(string searchPattern) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
@@ -424,14 +454,10 @@
         <returns>To be added: an object of type 'string []'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetLastAccessTime">
       <MemberSignature Language="C#" Value="public DateTimeOffset GetLastAccessTime (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.DateTimeOffset GetLastAccessTime(string path) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -456,6 +482,7 @@
     </Member>
     <Member MemberName="GetLastWriteTime">
       <MemberSignature Language="C#" Value="public DateTimeOffset GetLastWriteTime (string path);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance valuetype System.DateTimeOffset GetLastWriteTime(string path) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -480,7 +507,12 @@
     </Member>
     <Member MemberName="GetMachineStoreForApplication">
       <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetMachineStoreForApplication ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetMachineStoreForApplication() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageFile</ReturnType>
       </ReturnValue>
@@ -491,14 +523,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetMachineStoreForAssembly">
       <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetMachineStoreForAssembly ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetMachineStoreForAssembly() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageFile</ReturnType>
       </ReturnValue>
@@ -509,14 +542,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetMachineStoreForDomain">
       <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetMachineStoreForDomain ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetMachineStoreForDomain() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageFile</ReturnType>
       </ReturnValue>
@@ -527,14 +561,16 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetPermission">
       <MemberSignature Language="C#" Value="protected override System.Security.Permissions.IsolatedStoragePermission GetPermission (System.Security.PermissionSet ps);" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.Security.Permissions.IsolatedStoragePermission GetPermission(class System.Security.PermissionSet ps) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.Permissions.IsolatedStoragePermission</ReturnType>
       </ReturnValue>
@@ -547,15 +583,15 @@
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetStore">
       <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetStore (System.IO.IsolatedStorage.IsolatedStorageScope scope, object applicationIdentity);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetStore(valuetype System.IO.IsolatedStorage.IsolatedStorageScope scope, object applicationIdentity) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageFile</ReturnType>
       </ReturnValue>
@@ -571,14 +607,15 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="GetStore">
+      <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetStore (System.IO.IsolatedStorage.IsolatedStorageScope scope, Type applicationEvidenceType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetStore(valuetype System.IO.IsolatedStorage.IsolatedStorageScope scope, class System.Type applicationEvidenceType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetStore">
-      <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetStore (System.IO.IsolatedStorage.IsolatedStorageScope scope, Type applicationEvidenceType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageFile</ReturnType>
       </ReturnValue>
@@ -594,14 +631,16 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetStore">
       <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetStore (System.IO.IsolatedStorage.IsolatedStorageScope scope, object domainIdentity, object assemblyIdentity);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetStore(valuetype System.IO.IsolatedStorage.IsolatedStorageScope scope, object domainIdentity, object assemblyIdentity) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageFile</ReturnType>
       </ReturnValue>
@@ -618,15 +657,16 @@
         <returns>To be added: an object of type 'IsolatedStorageFile'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetStore">
+      <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetStore (System.IO.IsolatedStorage.IsolatedStorageScope scope, Type domainEvidenceType, Type assemblyEvidenceType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetStore(valuetype System.IO.IsolatedStorage.IsolatedStorageScope scope, class System.Type domainEvidenceType, class System.Type assemblyEvidenceType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetStore">
-      <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetStore (System.IO.IsolatedStorage.IsolatedStorageScope scope, Type domainEvidenceType, Type assemblyEvidenceType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageFile</ReturnType>
       </ReturnValue>
@@ -643,15 +683,16 @@
         <returns>To be added: an object of type 'IsolatedStorageFile'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetStore">
+      <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetStore (System.IO.IsolatedStorage.IsolatedStorageScope scope, System.Security.Policy.Evidence domainEvidence, Type domainEvidenceType, System.Security.Policy.Evidence assemblyEvidence, Type assemblyEvidenceType);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetStore(valuetype System.IO.IsolatedStorage.IsolatedStorageScope scope, class System.Security.Policy.Evidence domainEvidence, class System.Type domainEvidenceType, class System.Security.Policy.Evidence assemblyEvidence, class System.Type assemblyEvidenceType) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetStore">
-      <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetStore (System.IO.IsolatedStorage.IsolatedStorageScope scope, System.Security.Policy.Evidence domainEvidence, Type domainEvidenceType, System.Security.Policy.Evidence assemblyEvidence, Type assemblyEvidenceType);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageFile</ReturnType>
       </ReturnValue>
@@ -672,15 +713,15 @@
         <returns>To be added: an object of type 'IsolatedStorageFile'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetUserStoreForApplication">
       <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetUserStoreForApplication ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetUserStoreForApplication() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageFile</ReturnType>
       </ReturnValue>
@@ -691,14 +732,16 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetUserStoreForAssembly">
       <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetUserStoreForAssembly ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetUserStoreForAssembly() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageFile</ReturnType>
       </ReturnValue>
@@ -708,15 +751,16 @@
         <returns>To be added: an object of type 'IsolatedStorageFile'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetUserStoreForDomain">
       <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetUserStoreForDomain ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetUserStoreForDomain() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageFile</ReturnType>
       </ReturnValue>
@@ -726,14 +770,10 @@
         <returns>To be added: an object of type 'IsolatedStorageFile'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="GetUserStoreForSite">
       <MemberSignature Language="C#" Value="public static System.IO.IsolatedStorage.IsolatedStorageFile GetUserStoreForSite ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.IO.IsolatedStorage.IsolatedStorageFile GetUserStoreForSite() cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -755,6 +795,7 @@
     </Member>
     <Member MemberName="IncreaseQuotaTo">
       <MemberSignature Language="C#" Value="public override bool IncreaseQuotaTo (long newQuotaSize);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance bool IncreaseQuotaTo(int64 newQuotaSize) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -779,6 +820,7 @@
     </Member>
     <Member MemberName="IsEnabled">
       <MemberSignature Language="C#" Value="public static bool IsEnabled { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property bool IsEnabled" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -799,7 +841,13 @@
     </Member>
     <Member MemberName="MaximumSize">
       <MemberSignature Language="C#" Value="public override ulong MaximumSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance unsigned int64 MaximumSize" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.CLSCompliant(false)</AttributeName>
@@ -816,14 +864,10 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="MoveDirectory">
       <MemberSignature Language="C#" Value="public void MoveDirectory (string sourceDirectoryName, string destinationDirectoryName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void MoveDirectory(string sourceDirectoryName, string destinationDirectoryName) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -849,6 +893,7 @@
     </Member>
     <Member MemberName="MoveFile">
       <MemberSignature Language="C#" Value="public void MoveFile (string sourceFileName, string destinationFileName);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void MoveFile(string sourceFileName, string destinationFileName) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -874,6 +919,7 @@
     </Member>
     <Member MemberName="OpenFile">
       <MemberSignature Language="C#" Value="public System.IO.IsolatedStorage.IsolatedStorageFileStream OpenFile (string path, System.IO.FileMode mode);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.IsolatedStorage.IsolatedStorageFileStream OpenFile(string path, valuetype System.IO.FileMode mode) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -900,6 +946,7 @@
     </Member>
     <Member MemberName="OpenFile">
       <MemberSignature Language="C#" Value="public System.IO.IsolatedStorage.IsolatedStorageFileStream OpenFile (string path, System.IO.FileMode mode, System.IO.FileAccess access);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.IsolatedStorage.IsolatedStorageFileStream OpenFile(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -928,6 +975,7 @@
     </Member>
     <Member MemberName="OpenFile">
       <MemberSignature Language="C#" Value="public System.IO.IsolatedStorage.IsolatedStorageFileStream OpenFile (string path, System.IO.FileMode mode, System.IO.FileAccess access, System.IO.FileShare share);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.IO.IsolatedStorage.IsolatedStorageFileStream OpenFile(string path, valuetype System.IO.FileMode mode, valuetype System.IO.FileAccess access, valuetype System.IO.FileShare share) cil managed" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -958,6 +1006,7 @@
     </Member>
     <Member MemberName="Quota">
       <MemberSignature Language="C#" Value="public override long Quota { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 Quota" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -978,7 +1027,13 @@
     </Member>
     <Member MemberName="Remove">
       <MemberSignature Language="C#" Value="public override void Remove ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig virtual instance void Remove() cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -987,15 +1042,16 @@
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public static void Remove (System.IO.IsolatedStorage.IsolatedStorageScope scope);" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig void Remove(valuetype System.IO.IsolatedStorage.IsolatedStorageScope scope) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Remove">
-      <MemberSignature Language="C#" Value="public static void Remove (System.IO.IsolatedStorage.IsolatedStorageScope scope);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -1007,14 +1063,10 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="UsedSize">
       <MemberSignature Language="C#" Value="public override long UsedSize { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance int64 UsedSize" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -1034,9 +1086,4 @@
       </Docs>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

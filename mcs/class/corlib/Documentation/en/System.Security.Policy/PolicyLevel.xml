@@ -1,5 +1,6 @@
 <Type Name="PolicyLevel" FullName="System.Security.Policy.PolicyLevel">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class PolicyLevel" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit PolicyLevel extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -12,6 +13,11 @@
     <BaseTypeName>System.Object</BaseTypeName>
   </Base>
   <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>To be added</summary>
     <remarks>To be added</remarks>
@@ -19,7 +25,18 @@
   <Members>
     <Member MemberName="AddFullTrustAssembly">
       <MemberSignature Language="C#" Value="public void AddFullTrustAssembly (System.Security.Policy.StrongName sn);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddFullTrustAssembly(class System.Security.Policy.StrongName sn) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -31,6 +48,11 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddFullTrustAssembly">
+      <MemberSignature Language="C#" Value="public void AddFullTrustAssembly (System.Security.Policy.StrongNameMembershipCondition snMC);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddFullTrustAssembly(class System.Security.Policy.StrongNameMembershipCondition snMC) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,10 +63,6 @@
           <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="AddFullTrustAssembly">
-      <MemberSignature Language="C#" Value="public void AddFullTrustAssembly (System.Security.Policy.StrongNameMembershipCondition snMC);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -56,20 +74,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="AddNamedPermissionSet">
+      <MemberSignature Language="C#" Value="public void AddNamedPermissionSet (System.Security.NamedPermissionSet permSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void AddNamedPermissionSet(class System.Security.NamedPermissionSet permSet) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="AddNamedPermissionSet">
-      <MemberSignature Language="C#" Value="public void AddNamedPermissionSet (System.Security.NamedPermissionSet permSet);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -81,15 +95,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ChangeNamedPermissionSet">
+      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet ChangeNamedPermissionSet (string name, System.Security.PermissionSet pSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.NamedPermissionSet ChangeNamedPermissionSet(string name, class System.Security.PermissionSet pSet) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ChangeNamedPermissionSet">
-      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet ChangeNamedPermissionSet (string name, System.Security.PermissionSet pSet);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.NamedPermissionSet</ReturnType>
       </ReturnValue>
@@ -104,15 +119,16 @@
         <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="CreateAppDomainLevel">
+      <MemberSignature Language="C#" Value="public static System.Security.Policy.PolicyLevel CreateAppDomainLevel ();" />
+      <MemberSignature Language="ILAsm" Value=".method public static hidebysig class System.Security.Policy.PolicyLevel CreateAppDomainLevel() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="CreateAppDomainLevel">
-      <MemberSignature Language="C#" Value="public static System.Security.Policy.PolicyLevel CreateAppDomainLevel ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.PolicyLevel</ReturnType>
       </ReturnValue>
@@ -122,15 +138,16 @@
         <returns>To be added: an object of type 'PolicyLevel'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="FromXml">
+      <MemberSignature Language="C#" Value="public void FromXml (System.Security.SecurityElement e);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void FromXml(class System.Security.SecurityElement e) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="FromXml">
-      <MemberSignature Language="C#" Value="public void FromXml (System.Security.SecurityElement e);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -142,23 +159,11 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="FullTrustAssemblies">
       <MemberSignature Language="C#" Value="public System.Collections.IList FullTrustAssemblies { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IList FullTrustAssemblies" />
       <MemberType>Property</MemberType>
-      <ReturnValue>
-        <ReturnType>System.Collections.IList</ReturnType>
-      </ReturnValue>
-      <Docs>
-        <summary>To be added</summary>
-        <value>To be added: an object of type 'Collections.IList'</value>
-        <remarks>To be added</remarks>
-      </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -169,10 +174,24 @@
           <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
         </Attribute>
       </Attributes>
+      <ReturnValue>
+        <ReturnType>System.Collections.IList</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added</summary>
+        <value>To be added: an object of type 'Collections.IList'</value>
+        <remarks>To be added</remarks>
+      </Docs>
     </Member>
     <Member MemberName="GetNamedPermissionSet">
       <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet GetNamedPermissionSet (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.NamedPermissionSet GetNamedPermissionSet(string name) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Security.NamedPermissionSet</ReturnType>
       </ReturnValue>
@@ -185,15 +204,16 @@
         <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Label">
+      <MemberSignature Language="C#" Value="public string Label { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string Label" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Label">
-      <MemberSignature Language="C#" Value="public string Label { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -202,15 +222,16 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="NamedPermissionSets">
+      <MemberSignature Language="C#" Value="public System.Collections.IList NamedPermissionSets { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Collections.IList NamedPermissionSets" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NamedPermissionSets">
-      <MemberSignature Language="C#" Value="public System.Collections.IList NamedPermissionSets { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Collections.IList</ReturnType>
       </ReturnValue>
@@ -219,15 +240,16 @@
         <value>To be added: an object of type 'Collections.IList'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Recover">
+      <MemberSignature Language="C#" Value="public void Recover ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Recover() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Recover">
-      <MemberSignature Language="C#" Value="public void Recover ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -236,15 +258,21 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveFullTrustAssembly">
+      <MemberSignature Language="C#" Value="public void RemoveFullTrustAssembly (System.Security.Policy.StrongName sn);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveFullTrustAssembly(class System.Security.Policy.StrongName sn) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RemoveFullTrustAssembly">
-      <MemberSignature Language="C#" Value="public void RemoveFullTrustAssembly (System.Security.Policy.StrongName sn);" />
-      <MemberType>Method</MemberType>
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
+        </Attribute>
+      </Attributes>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -256,6 +284,11 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveFullTrustAssembly">
+      <MemberSignature Language="C#" Value="public void RemoveFullTrustAssembly (System.Security.Policy.StrongNameMembershipCondition snMC);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void RemoveFullTrustAssembly(class System.Security.Policy.StrongNameMembershipCondition snMC) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -266,10 +299,6 @@
           <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
         </Attribute>
       </Attributes>
-    </Member>
-    <Member MemberName="RemoveFullTrustAssembly">
-      <MemberSignature Language="C#" Value="public void RemoveFullTrustAssembly (System.Security.Policy.StrongNameMembershipCondition snMC);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -281,20 +310,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveNamedPermissionSet">
+      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet RemoveNamedPermissionSet (System.Security.NamedPermissionSet permSet);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.NamedPermissionSet RemoveNamedPermissionSet(class System.Security.NamedPermissionSet permSet) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-      <Attributes>
-        <Attribute>
-          <AttributeName>System.Obsolete("All GACed assemblies are now fully trusted and all permissions now succeed on fully trusted code.")</AttributeName>
-        </Attribute>
-      </Attributes>
-    </Member>
-    <Member MemberName="RemoveNamedPermissionSet">
-      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet RemoveNamedPermissionSet (System.Security.NamedPermissionSet permSet);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.NamedPermissionSet</ReturnType>
       </ReturnValue>
@@ -307,15 +332,16 @@
         <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RemoveNamedPermissionSet">
+      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet RemoveNamedPermissionSet (string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.NamedPermissionSet RemoveNamedPermissionSet(string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RemoveNamedPermissionSet">
-      <MemberSignature Language="C#" Value="public System.Security.NamedPermissionSet RemoveNamedPermissionSet (string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.NamedPermissionSet</ReturnType>
       </ReturnValue>
@@ -328,15 +354,16 @@
         <returns>To be added: an object of type 'Security.NamedPermissionSet'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Reset">
+      <MemberSignature Language="C#" Value="public void Reset ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance void Reset() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Reset">
-      <MemberSignature Language="C#" Value="public void Reset ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
@@ -345,15 +372,16 @@
         <summary>To be added</summary>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.PolicyStatement Resolve (System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.Policy.PolicyStatement Resolve(class System.Security.Policy.Evidence evidence) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Resolve">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.PolicyStatement Resolve (System.Security.Policy.Evidence evidence);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.PolicyStatement</ReturnType>
       </ReturnValue>
@@ -366,15 +394,16 @@
         <returns>To be added: an object of type 'PolicyStatement'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ResolveMatchingCodeGroups">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.CodeGroup ResolveMatchingCodeGroups (System.Security.Policy.Evidence evidence);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.Policy.CodeGroup ResolveMatchingCodeGroups(class System.Security.Policy.Evidence evidence) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ResolveMatchingCodeGroups">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.CodeGroup ResolveMatchingCodeGroups (System.Security.Policy.Evidence evidence);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.CodeGroup</ReturnType>
       </ReturnValue>
@@ -387,15 +416,16 @@
         <returns>To be added: an object of type 'CodeGroup'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="RootCodeGroup">
+      <MemberSignature Language="C#" Value="public System.Security.Policy.CodeGroup RootCodeGroup { get; set; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance class System.Security.Policy.CodeGroup RootCodeGroup" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="RootCodeGroup">
-      <MemberSignature Language="C#" Value="public System.Security.Policy.CodeGroup RootCodeGroup { set; get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.Policy.CodeGroup</ReturnType>
       </ReturnValue>
@@ -404,15 +434,16 @@
         <value>To be added.</value>
         <remarks>To be added.</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="StoreLocation">
+      <MemberSignature Language="C#" Value="public string StoreLocation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string StoreLocation" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="StoreLocation">
-      <MemberSignature Language="C#" Value="public string StoreLocation { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -421,15 +452,16 @@
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="ToXml">
+      <MemberSignature Language="C#" Value="public System.Security.SecurityElement ToXml ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig instance class System.Security.SecurityElement ToXml() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ToXml">
-      <MemberSignature Language="C#" Value="public System.Security.SecurityElement ToXml ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Security.SecurityElement</ReturnType>
       </ReturnValue>
@@ -439,15 +471,15 @@
         <returns>To be added: an object of type 'Security.SecurityElement'</returns>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Type">
       <MemberSignature Language="C#" Value="public System.Security.PolicyLevelType Type { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Security.PolicyLevelType Type" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <Attributes>
         <Attribute>
           <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
@@ -462,15 +494,6 @@
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

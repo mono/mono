@@ -1,8 +1,10 @@
 <Type Name="SystemSounds" FullName="System.Media.SystemSounds">
   <TypeSignature Language="C#" Value="public sealed class SystemSounds" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SystemSounds extends System.Object" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Object</BaseTypeName>
@@ -15,9 +17,11 @@
   <Members>
     <Member MemberName="Asterisk">
       <MemberSignature Language="C#" Value="public static System.Media.SystemSound Asterisk { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Media.SystemSound Asterisk" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Media.SystemSound</ReturnType>
@@ -30,9 +34,11 @@
     </Member>
     <Member MemberName="Beep">
       <MemberSignature Language="C#" Value="public static System.Media.SystemSound Beep { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Media.SystemSound Beep" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Media.SystemSound</ReturnType>
@@ -45,9 +51,11 @@
     </Member>
     <Member MemberName="Exclamation">
       <MemberSignature Language="C#" Value="public static System.Media.SystemSound Exclamation { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Media.SystemSound Exclamation" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Media.SystemSound</ReturnType>
@@ -60,9 +68,11 @@
     </Member>
     <Member MemberName="Hand">
       <MemberSignature Language="C#" Value="public static System.Media.SystemSound Hand { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Media.SystemSound Hand" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Media.SystemSound</ReturnType>
@@ -75,9 +85,11 @@
     </Member>
     <Member MemberName="Question">
       <MemberSignature Language="C#" Value="public static System.Media.SystemSound Question { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property class System.Media.SystemSound Question" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Media.SystemSound</ReturnType>

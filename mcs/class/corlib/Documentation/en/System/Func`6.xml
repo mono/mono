@@ -1,5 +1,6 @@
 <Type Name="Func&lt;T1,T2,T3,T4,T5,TResult&gt;" FullName="System.Func&lt;T1,T2,T3,T4,T5,TResult&gt;">
   <TypeSignature Language="C#" Value="public delegate TResult Func&lt;in T1,in T2,in T3,in T4,in T5,out TResult&gt;(T1 arg1, T2 arg2, T3 arg3, T4 arg4, T5 arg5);" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed Func`6&lt;- T1, - T2, - T3, - T4, - T5, + TResult&gt; extends System.MulticastDelegate" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -62,7 +63,7 @@
     <param name="arg4">To be added.</param>
     <param name="arg5">To be added.</param>
     <summary>To be added.</summary>
-    <value>To be added.</value>
+    <returns>To be added.</returns>
     <remarks>To be added.</remarks>
   </Docs>
 </Type>

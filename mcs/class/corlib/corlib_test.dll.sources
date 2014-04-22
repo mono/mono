@@ -22,9 +22,11 @@ System/CharEnumeratorTest.cs
 System/CharTest.cs
 System/DelegateTest.cs
 System/ModuleHandleTest.cs
+System/NullableTest.cs
 System/ObsoleteAttributeTest.cs
 System/IntegerTryParse.cs
 System/LazyTest.cs
+System/TupleTest.cs
 System.Collections/ArrayListTest.cs
 System.Collections/BitArrayTest.cs
 System.Collections/CaseInsensitiveComparerTest.cs
@@ -56,6 +58,7 @@ System/DecimalFormatterTest.cs
 System/DecimalTest2.cs
 System/DecimalTest.cs
 System.Diagnostics/DebuggerDisplayAttributeTest.cs
+System.Diagnostics/DebuggerTypeProxyAttribute.cs
 System.Diagnostics/StackFrameTest.cs
 System.Diagnostics/StackTraceTest.cs
 System.Diagnostics.Contracts/ContractAssertTest.cs
@@ -79,6 +82,7 @@ System.Globalization/DateTimeFormatInfoTest.cs
 System.Globalization/DaylightTimeTest.cs
 System.Globalization/EastAsianLunisolarCalendarTest.cs
 System.Globalization/IdnMappingTest.cs
+System.Globalization/NumberFormatInfoTest.cs
 System.Globalization/RegionInfoTest.cs
 System.Globalization/SortKeyTest.cs
 System.Globalization/StringInfoTest.cs
@@ -133,6 +137,7 @@ System.Reflection/ConstructorInfoTest.cs
 System.Reflection/CustomAttributeDataTest.cs
 System.Reflection/EventInfoTest.cs
 System.Reflection/FieldInfoTest.cs
+System.Reflection/IntrospectionExtensionsTest.cs
 System.Reflection/MethodBaseTest.cs
 System.Reflection/MethodInfoTest.cs
 System.Reflection/MonoGenericClassTest.cs
@@ -187,6 +192,7 @@ System.Runtime.Remoting/SoapServicesTest.cs
 System.Runtime.Remoting/SynchronizationAttributeTest.cs
 System.Runtime.Remoting.Channels/ChannelServicesTest.cs
 System.Runtime.Remoting.Contexts/SynchronizationAttributeTest.cs
+System.Runtime.Remoting.Messaging/CallContextTest.cs
 System.Runtime.Remoting.Metadata.W3cXsd2001/SoapHexBinaryTest.cs
 System.Runtime.Serialization/FormatterServicesTests.cs
 System.Runtime.Serialization/ObjectIDGeneratorTests.cs

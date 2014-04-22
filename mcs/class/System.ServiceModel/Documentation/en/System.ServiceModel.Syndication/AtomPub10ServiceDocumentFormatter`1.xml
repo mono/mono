@@ -1,0 +1,78 @@
+<Type Name="AtomPub10ServiceDocumentFormatter&lt;TServiceDocument&gt;" FullName="System.ServiceModel.Syndication.AtomPub10ServiceDocumentFormatter&lt;TServiceDocument&gt;">
+  <TypeSignature Language="C#" Value="public class AtomPub10ServiceDocumentFormatter&lt;TServiceDocument&gt; : System.ServiceModel.Syndication.AtomPub10ServiceDocumentFormatter where TServiceDocument : ServiceDocumentnew()" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AtomPub10ServiceDocumentFormatter`1&lt;.ctor (class System.ServiceModel.Syndication.ServiceDocument) TServiceDocument&gt; extends System.ServiceModel.Syndication.AtomPub10ServiceDocumentFormatter" />
+  <AssemblyInfo>
+    <AssemblyName>System.ServiceModel</AssemblyName>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <TypeParameters>
+    <TypeParameter Name="TServiceDocument">
+      <Constraints>
+        <ParameterAttribute>DefaultConstructorConstraint</ParameterAttribute>
+        <BaseTypeName>System.ServiceModel.Syndication.ServiceDocument</BaseTypeName>
+      </Constraints>
+    </TypeParameter>
+  </TypeParameters>
+  <Base>
+    <BaseTypeName>System.ServiceModel.Syndication.AtomPub10ServiceDocumentFormatter</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Xml.Serialization.XmlRoot("service", Namespace="http://www.w3.org/2007/app")</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <typeparam name="TServiceDocument">To be added.</typeparam>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AtomPub10ServiceDocumentFormatter ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor() cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public AtomPub10ServiceDocumentFormatter (TServiceDocument documentToWrite);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(!TServiceDocument documentToWrite) cil managed" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="documentToWrite" Type="TServiceDocument" />
+      </Parameters>
+      <Docs>
+        <param name="documentToWrite">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateDocumentInstance">
+      <MemberSignature Language="C#" Value="protected override System.ServiceModel.Syndication.ServiceDocument CreateDocumentInstance ();" />
+      <MemberSignature Language="ILAsm" Value=".method familyhidebysig virtual instance class System.ServiceModel.Syndication.ServiceDocument CreateDocumentInstance() cil managed" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.ServiceModel.Syndication.ServiceDocument</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

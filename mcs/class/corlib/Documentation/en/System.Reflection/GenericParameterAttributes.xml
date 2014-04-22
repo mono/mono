@@ -1,5 +1,6 @@
 <Type Name="GenericParameterAttributes" FullName="System.Reflection.GenericParameterAttributes">
   <TypeSignature Language="C#" Value="public enum GenericParameterAttributes" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed GenericParameterAttributes extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -23,7 +24,12 @@
   <Members>
     <Member MemberName="Contravariant">
       <MemberSignature Language="C#" Value="Contravariant" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes Contravariant = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
       </ReturnValue>
@@ -33,14 +39,15 @@
         </summary>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="Covariant">
+      <MemberSignature Language="C#" Value="Covariant" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes Covariant = int32(1)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="Covariant">
-      <MemberSignature Language="C#" Value="Covariant" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
       </ReturnValue>
@@ -50,14 +57,15 @@
         </summary>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="DefaultConstructorConstraint">
+      <MemberSignature Language="C#" Value="DefaultConstructorConstraint" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes DefaultConstructorConstraint = int32(16)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="DefaultConstructorConstraint">
-      <MemberSignature Language="C#" Value="DefaultConstructorConstraint" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
       </ReturnValue>
@@ -67,14 +75,15 @@
         </summary>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="None">
+      <MemberSignature Language="C#" Value="None" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes None = int32(0)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="None">
-      <MemberSignature Language="C#" Value="None" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
       </ReturnValue>
@@ -84,14 +93,15 @@
         </summary>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="NotNullableValueTypeConstraint">
+      <MemberSignature Language="C#" Value="NotNullableValueTypeConstraint" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes NotNullableValueTypeConstraint = int32(8)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="NotNullableValueTypeConstraint">
-      <MemberSignature Language="C#" Value="NotNullableValueTypeConstraint" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
       </ReturnValue>
@@ -101,14 +111,15 @@
         </summary>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="ReferenceTypeConstraint">
+      <MemberSignature Language="C#" Value="ReferenceTypeConstraint" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes ReferenceTypeConstraint = int32(4)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="ReferenceTypeConstraint">
-      <MemberSignature Language="C#" Value="ReferenceTypeConstraint" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
       </ReturnValue>
@@ -118,14 +129,15 @@
         </summary>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="SpecialConstraintMask">
+      <MemberSignature Language="C#" Value="SpecialConstraintMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes SpecialConstraintMask = int32(28)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="SpecialConstraintMask">
-      <MemberSignature Language="C#" Value="SpecialConstraintMask" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
       </ReturnValue>
@@ -136,14 +148,15 @@
         </summary>
         <since version=".NET 2.0" />
       </Docs>
+    </Member>
+    <Member MemberName="VarianceMask">
+      <MemberSignature Language="C#" Value="VarianceMask" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Reflection.GenericParameterAttributes VarianceMask = int32(3)" />
+      <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="VarianceMask">
-      <MemberSignature Language="C#" Value="VarianceMask" />
-      <MemberType>Field</MemberType>
       <ReturnValue>
         <ReturnType>System.Reflection.GenericParameterAttributes</ReturnType>
       </ReturnValue>
@@ -154,10 +167,6 @@
         </summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
 </Type>

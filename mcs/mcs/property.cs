@@ -408,7 +408,7 @@ namespace Mono.CSharp
 		PropertyMethod get, set, first;
 		PropertyBuilder PropertyBuilder;
 
-		public PropertyBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, Modifiers allowed_mod, MemberName name, Attributes attrs)
+		protected PropertyBase (TypeDefinition parent, FullNamedExpression type, Modifiers mod_flags, Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, allowed_mod, name, attrs)
 		{
 		}
@@ -1109,8 +1109,8 @@ namespace Mono.CSharp
 				return false;
 
 			if (declarators != null) {
-				if ((mod_flags_src & Modifiers.DEFAULT_ACCESS_MODIFER) != 0)
-					mod_flags_src &= ~(Modifiers.AccessibilityMask | Modifiers.DEFAULT_ACCESS_MODIFER);
+				if ((mod_flags_src & Modifiers.DEFAULT_ACCESS_MODIFIER) != 0)
+					mod_flags_src &= ~(Modifiers.AccessibilityMask | Modifiers.DEFAULT_ACCESS_MODIFIER);
 
 				var t = new TypeExpression (MemberType, TypeExpression.Location);
 				foreach (var d in declarators) {

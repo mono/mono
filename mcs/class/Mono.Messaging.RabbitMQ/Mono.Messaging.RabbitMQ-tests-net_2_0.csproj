@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{B18D6BCC-5C63-490F-92C5-20E10C4D311A}</ProjectGuid>
+    <ProjectGuid>{CC2D1BF7-1070-41B3-B316-85EA0B2E7E9E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,618,618,219,169</NoWarn>
     <OutputPath>bin\Debug\Mono.Messaging.RabbitMQ-tests-net_2_0</OutputPath>
@@ -64,34 +64,37 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Messaging.RabbitMQ\Mono.Messaging.RabbitMQ-net_2_0.csproj">
-      <Project>{74D6BCAB-F3E7-463C-8D99-601FE69F67A6}</Project>
+      <Project>{D7F14FD3-CE00-4000-813C-9D34D42FE887}</Project>
       <Name>Mono.Messaging.RabbitMQ\Mono.Messaging.RabbitMQ-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Messaging\System.Messaging-net_2_0.csproj">
-      <Project>{858BC3D5-8B2D-4B24-8BD9-BDC36A1DAFE4}</Project>
+      <Project>{DB0FD42E-2BF8-4E67-B707-901AC35FCB9A}</Project>
       <Name>System.Messaging\System.Messaging-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.Messaging\Mono.Messaging-net_2_0.csproj">
-      <Project>{A516A3FA-33AA-46AB-9542-49952ED25A0F}</Project>
+      <Project>{2220FC2B-F933-49D2-B1A4-A6241F486B88}</Project>
       <Name>Mono.Messaging\Mono.Messaging-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\RabbitMQ.Client\src\client\RabbitMQ.Client-net_2_0.csproj">
-      <Project>{8AD2E2D6-9C65-4DE7-AD7A-6AAA07754C9C}</Project>
+      <Project>{962E924C-777A-42E1-B7AC-823BFA34D22C}</Project>
       <Name>client\RabbitMQ.Client-net_2_0</Name>
     </ProjectReference>
     <Reference Include="nunit.mocks.dll">
@@ -104,3 +107,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

@@ -1,8 +1,10 @@
 <Type Name="RequestCacheLevel" FullName="System.Net.Cache.RequestCacheLevel">
   <TypeSignature Language="C#" Value="public enum RequestCacheLevel" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed RequestCacheLevel extends System.Enum" />
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
     <BaseTypeName>System.Enum</BaseTypeName>
@@ -15,7 +17,12 @@
   <Members>
     <Member MemberName="BypassCache">
       <MemberSignature Language="C#" Value="BypassCache" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.RequestCacheLevel BypassCache = int32(1)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.RequestCacheLevel</ReturnType>
       </ReturnValue>
@@ -23,13 +30,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CacheIfAvailable">
       <MemberSignature Language="C#" Value="CacheIfAvailable" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.RequestCacheLevel CacheIfAvailable = int32(3)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.RequestCacheLevel</ReturnType>
       </ReturnValue>
@@ -37,13 +46,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CacheOnly">
       <MemberSignature Language="C#" Value="CacheOnly" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.RequestCacheLevel CacheOnly = int32(2)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.RequestCacheLevel</ReturnType>
       </ReturnValue>
@@ -51,13 +62,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Default">
       <MemberSignature Language="C#" Value="Default" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.RequestCacheLevel Default = int32(0)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.RequestCacheLevel</ReturnType>
       </ReturnValue>
@@ -65,13 +78,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="NoCacheNoStore">
       <MemberSignature Language="C#" Value="NoCacheNoStore" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.RequestCacheLevel NoCacheNoStore = int32(6)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.RequestCacheLevel</ReturnType>
       </ReturnValue>
@@ -79,13 +94,15 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Reload">
       <MemberSignature Language="C#" Value="Reload" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.RequestCacheLevel Reload = int32(5)" />
       <MemberType>Field</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.RequestCacheLevel</ReturnType>
       </ReturnValue>
@@ -93,15 +110,14 @@
         <summary>To be added.</summary>
         <since version=".NET 2.0" />
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="Revalidate">
       <MemberSignature Language="C#" Value="Revalidate" />
+      <MemberSignature Language="ILAsm" Value=".field public static literal valuetype System.Net.Cache.RequestCacheLevel Revalidate = int32(4)" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Cache.RequestCacheLevel</ReturnType>

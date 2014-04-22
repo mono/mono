@@ -46,7 +46,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Constructor1 ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 
@@ -162,7 +162,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Constructor2 ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("lanmanworkstation");
 
@@ -217,7 +217,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Constructor2_Name_DisplayName ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("workstation");
 
@@ -247,7 +247,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Constructor2_Name_ServiceName ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("lanmanworkstation");
 
@@ -260,7 +260,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Constructor3 ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("lanmanworkstation",
 				Environment.MachineName);
@@ -367,7 +367,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanPauseAndContinue ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.IsTrue (sc.CanPauseAndContinue, "#1");
@@ -401,7 +401,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanPauseAndContinue_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule",
 				"doesnotexist");
@@ -430,7 +430,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanPauseAndContinue_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("NetDDE", ".");
 			Assert.IsFalse (sc1.CanPauseAndContinue);
@@ -440,7 +440,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanPauseAndContinue_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -468,7 +468,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanPauseAndContinue_Service_OperationNotValid ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("SamSs", ".");
 			Assert.IsFalse (sc1.CanPauseAndContinue);
@@ -478,7 +478,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanPauseAndContinue_Service_Running ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#1");
@@ -489,7 +489,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanPauseAndContinue_Service_Paused ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -526,7 +526,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanPauseAndContinue_Service_Stopped ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -582,7 +582,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanShutdown ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.IsTrue (sc.CanShutdown, "#1");
@@ -616,7 +616,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanShutdown_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule",
 				"doesnotexist");
@@ -645,7 +645,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanShutdown_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("NetDDE", ".");
 			Assert.IsFalse (sc1.CanShutdown);
@@ -655,7 +655,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanShutdown_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -683,7 +683,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanShutdown_Service_OperationNotValid ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("SamSs", ".");
 			Assert.IsFalse (sc1.CanShutdown);
@@ -693,7 +693,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanShutdown_Service_Running ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#1");
@@ -704,7 +704,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanShutdown_Service_Paused ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -741,7 +741,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanShutdown_Service_Stopped ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -797,7 +797,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanStop ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.IsTrue (sc.CanStop, "#1");
@@ -831,7 +831,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanStop_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule",
 				"doesnotexist");
@@ -860,7 +860,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanStop_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("NetDDE", ".");
 			Assert.IsFalse (sc1.CanStop);
@@ -870,7 +870,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanStop_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -898,7 +898,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanStop_Service_OperationNotValid ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("SamSs", ".");
 			Assert.IsFalse (sc1.CanStop);
@@ -908,7 +908,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanStop_Service_Running ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#1");
@@ -919,7 +919,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanStop_Service_Paused ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -956,7 +956,7 @@ namespace MonoTests.System.ServiceProcess
 		public void CanStop_Service_Stopped ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -1012,7 +1012,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Continue ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -1050,7 +1050,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Continue_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule",
 				"doesnotexist");
@@ -1079,7 +1079,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Continue_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("NetDDE", ".");
 			ServiceController sc2 = new ServiceController ("NetDDE", ".");
@@ -1115,7 +1115,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Continue_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -1143,7 +1143,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Continue_Service_OperationNotValid ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("SamSs", ".");
 			ServiceController sc2 = new ServiceController ("SamSs", ".");
@@ -1179,7 +1179,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Continue_Service_Running ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -1197,7 +1197,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Continue_Service_Stopped ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -1265,7 +1265,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DependentServices ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = null;
 			ServiceController [] dependentServices = null;
@@ -1368,7 +1368,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DependentServices_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("dmserver",
 				"doesnotexist");
@@ -1397,7 +1397,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DependentServices_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("NetDDE", ".");
 			ServiceController [] dependentServices = sc.DependentServices;
@@ -1410,7 +1410,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DependentServices_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -1457,7 +1457,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DisplayName ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.DisplayName = "workstation";
@@ -1495,7 +1495,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DisplayName_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("dmserver",
 				"doesnotexist");
@@ -1524,7 +1524,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DisplayName_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("NetDDE", ".");
 			Assert.AreEqual ("Network DDE", sc.DisplayName);
@@ -1534,7 +1534,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DisplayName_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -1562,7 +1562,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DisplayName_ServiceName_Empty ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.DisplayName = "workstation";
@@ -1574,7 +1574,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DisplayName_Value_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.DisplayName = "doesnotexist";
@@ -1605,7 +1605,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DisplayName_Value_Empty ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			Assert.AreEqual (string.Empty, sc.DisplayName, "#A1");
@@ -1626,7 +1626,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DisplayName_Value_Null ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.DisplayName = "Alerter";
@@ -1647,7 +1647,7 @@ namespace MonoTests.System.ServiceProcess
 		public void DisplayName_Value_ServiceName ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.DisplayName = "lanmanworkstation";
@@ -1660,7 +1660,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ExecuteCommand_Device_ControlCodes ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Disk", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#A");
@@ -1956,7 +1956,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ExecuteCommand_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule",
 				"doesnotexist");
@@ -1985,7 +1985,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ExecuteCommand_Parameter_Incorrect ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#A");
@@ -2044,7 +2044,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ExecuteCommand_Service_ContinuePending ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#A");
@@ -2089,7 +2089,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ExecuteCommand_Service_ControlCodes ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#A");
@@ -2385,7 +2385,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ExecuteCommand_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -2413,7 +2413,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ExecuteCommand_Service_Paused ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#A");
@@ -2438,7 +2438,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ExecuteCommand_Service_PausePending ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#A");
@@ -2478,7 +2478,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ExecuteCommand_Service_StartPending ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#A");
@@ -2541,7 +2541,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ExecuteCommand_Service_Stopped ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#A");
@@ -2602,7 +2602,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ExecuteCommand_Service_StopPending ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule", ".");
 			Assert.AreEqual (ServiceControllerStatus.Running, sc.Status, "#A");
@@ -2679,7 +2679,7 @@ namespace MonoTests.System.ServiceProcess
 		public void GetDevices ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController [] devices = null;
 
@@ -2732,7 +2732,7 @@ namespace MonoTests.System.ServiceProcess
 		public void GetDevices_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			try {
 				ServiceController [] devices = ServiceController.GetDevices ("doesnotexist");
@@ -2793,7 +2793,7 @@ namespace MonoTests.System.ServiceProcess
 		public void GetServices ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController [] services = null;
 
@@ -2844,7 +2844,7 @@ namespace MonoTests.System.ServiceProcess
 		public void GetServices_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			try {
 				ServiceController [] services = ServiceController.GetServices ("doesnotexist");
@@ -2905,7 +2905,7 @@ namespace MonoTests.System.ServiceProcess
 		public void MachineName ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.ServiceName = "alerter";
@@ -2933,7 +2933,7 @@ namespace MonoTests.System.ServiceProcess
 		public void MachineName_Empty ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.MachineName = Environment.MachineName;
@@ -2956,7 +2956,7 @@ namespace MonoTests.System.ServiceProcess
 		public void MachineName_Null ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.MachineName = Environment.MachineName;
@@ -2979,7 +2979,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Pause ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -3010,7 +3010,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Pause_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule",
 				"doesnotexist");
@@ -3039,7 +3039,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Pause_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("NetDDE", ".");
 			ServiceController sc2 = new ServiceController ("NetDDE", ".");
@@ -3075,7 +3075,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Pause_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -3103,7 +3103,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Pause_Service_OperationNotValid ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("SamSs", ".");
 			ServiceController sc2 = new ServiceController ("SamSs", ".");
@@ -3139,7 +3139,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Pause_Service_Paused ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -3175,7 +3175,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Pause_Service_Stopped ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -3243,7 +3243,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Refresh ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = null;
 			ServiceController [] dependentServices = null;
@@ -3288,7 +3288,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Refresh_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule",
 				"doesnotexist");
@@ -3299,7 +3299,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Refresh_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			sc.Refresh ();
@@ -3309,7 +3309,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Refresh_Service_Paused ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -3350,7 +3350,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Refresh_Service_Running ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -3402,7 +3402,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Refresh_Service_Stopped ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -3438,7 +3438,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Refresh_ServiceName_Empty ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.Refresh ();
@@ -3448,7 +3448,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceName ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.ServiceName = "lanmanworkstation";
@@ -3486,7 +3486,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceName_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("dmserver",
 				"doesnotexist");
@@ -3515,7 +3515,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceName_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("NetDDE", ".");
 			Assert.AreEqual ("NetDDE", sc.ServiceName);
@@ -3525,7 +3525,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceName_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -3553,7 +3553,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceName_DisplayName_Empty ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.ServiceName = "lanmanworkstation";
@@ -3565,7 +3565,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceName_Value_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.ServiceName = "doesnotexist";
@@ -3595,7 +3595,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceName_Value_Empty ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			Assert.AreEqual (string.Empty, sc.DisplayName, "#A1");
@@ -3625,7 +3625,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceName_Value_Null ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.ServiceName = "lanmanworkstation";
@@ -3647,7 +3647,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceName_Value_DisplayName ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ();
 			sc.ServiceName = "workstation";
@@ -3678,7 +3678,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServicesDependedOn ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = null;
 			ServiceController [] servicesDependedOn = null;
@@ -3789,7 +3789,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServicesDependedOn_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("dmserver",
 				"doesnotexist");
@@ -3818,7 +3818,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServicesDependedOn_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("ClipSrv", ".");
 			ServiceController [] servicesDependedOn = sc.ServicesDependedOn;
@@ -3831,7 +3831,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServicesDependedOn_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -3878,7 +3878,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceTypeTest ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = null;
 			
@@ -3923,7 +3923,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceType_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("dmserver",
 				"doesnotexist");
@@ -3952,7 +3952,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceType_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("NetDDE", ".");
 			Assert.AreEqual (ServiceType.Win32ShareProcess, sc.ServiceType);
@@ -3962,7 +3962,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceType_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -3990,7 +3990,7 @@ namespace MonoTests.System.ServiceProcess
 		public void ServiceType_ServiceName_Empty ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = null;
 
@@ -4021,7 +4021,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Stop ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -4052,7 +4052,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Stop_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule",
 				"doesnotexist");
@@ -4081,7 +4081,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Stop_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("NetDDE", ".");
 			ServiceController sc2 = new ServiceController ("NetDDE", ".");
@@ -4117,7 +4117,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Stop_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -4145,7 +4145,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Stop_Service_OperationNotValid ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("SamSs", ".");
 			ServiceController sc2 = new ServiceController ("SamSs", ".");
@@ -4181,7 +4181,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Stop_Service_Paused ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -4222,7 +4222,7 @@ namespace MonoTests.System.ServiceProcess
 		public void Stop_Service_Stopped ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -4290,7 +4290,7 @@ namespace MonoTests.System.ServiceProcess
 		public void WaitForStatus ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");
@@ -4336,7 +4336,7 @@ namespace MonoTests.System.ServiceProcess
 		public void WaitForStatus_Machine_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("Schedule",
 				"doesnotexist");
@@ -4366,7 +4366,7 @@ namespace MonoTests.System.ServiceProcess
 		public void WaitForStatus_Service_Disabled ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("NetDDE", ".");
 			ServiceController sc2 = new ServiceController ("NetDDE", ".");
@@ -4398,7 +4398,7 @@ namespace MonoTests.System.ServiceProcess
 		public void WaitForStatus_Service_DoesNotExist ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc = new ServiceController ("doesnotexist", ".");
 			try {
@@ -4426,7 +4426,7 @@ namespace MonoTests.System.ServiceProcess
 		public void WaitForStatus_Service_OperationNotValid ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("SamSs", ".");
 			ServiceController sc2 = new ServiceController ("SamSs", ".");
@@ -4478,7 +4478,7 @@ namespace MonoTests.System.ServiceProcess
 		public void WaitForStatus_Timeout ()
 		{
 			if (RunningOnUnix)
-				return;
+				Assert.Ignore ("Running on Unix.");
 
 			ServiceController sc1 = new ServiceController ("Schedule", ".");
 			ServiceController sc2 = new ServiceController ("Schedule", ".");

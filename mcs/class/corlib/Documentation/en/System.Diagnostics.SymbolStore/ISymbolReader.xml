@@ -1,5 +1,6 @@
 <Type Name="ISymbolReader" FullName="System.Diagnostics.SymbolStore.ISymbolReader">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISymbolReader" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISymbolReader" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyPublicKey>[00 00 00 00 00 00 00 00 04 00 00 00 00 00 00 00]</AssemblyPublicKey>
@@ -8,6 +9,12 @@
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
+    </Attribute>
+  </Attributes>
   <Docs>
     <summary>To be added</summary>
     <remarks>To be added</remarks>
@@ -15,7 +22,13 @@
   <Members>
     <Member MemberName="GetDocument">
       <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolDocument GetDocument (string url, Guid language, Guid languageVendor, Guid documentType);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Diagnostics.SymbolStore.ISymbolDocument GetDocument(string url, valuetype System.Guid language, valuetype System.Guid languageVendor, valuetype System.Guid documentType) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolDocument</ReturnType>
       </ReturnValue>
@@ -34,15 +47,16 @@
         <returns>To be added: an object of type 'ISymbolDocument'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetDocuments">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolDocument[] GetDocuments ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Diagnostics.SymbolStore.ISymbolDocument[] GetDocuments() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetDocuments">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolDocument[] GetDocuments ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolDocument[]</ReturnType>
       </ReturnValue>
@@ -52,15 +66,16 @@
         <returns>To be added: an object of type 'ISymbolDocument []'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetGlobalVariables">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolVariable[] GetGlobalVariables ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Diagnostics.SymbolStore.ISymbolVariable[] GetGlobalVariables() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetGlobalVariables">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolVariable[] GetGlobalVariables ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolVariable[]</ReturnType>
       </ReturnValue>
@@ -70,15 +85,16 @@
         <returns>To be added: an object of type 'ISymbolVariable []'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetMethod">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolMethod GetMethod (System.Diagnostics.SymbolStore.SymbolToken method);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Diagnostics.SymbolStore.ISymbolMethod GetMethod(valuetype System.Diagnostics.SymbolStore.SymbolToken method) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMethod">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolMethod GetMethod (System.Diagnostics.SymbolStore.SymbolToken method);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolMethod</ReturnType>
       </ReturnValue>
@@ -91,15 +107,16 @@
         <returns>To be added: an object of type 'ISymbolMethod'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetMethod">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolMethod GetMethod (System.Diagnostics.SymbolStore.SymbolToken method, int version);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Diagnostics.SymbolStore.ISymbolMethod GetMethod(valuetype System.Diagnostics.SymbolStore.SymbolToken method, int32 version) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMethod">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolMethod GetMethod (System.Diagnostics.SymbolStore.SymbolToken method, int version);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolMethod</ReturnType>
       </ReturnValue>
@@ -114,15 +131,16 @@
         <returns>To be added: an object of type 'ISymbolMethod'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetMethodFromDocumentPosition">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolMethod GetMethodFromDocumentPosition (System.Diagnostics.SymbolStore.ISymbolDocument document, int line, int column);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Diagnostics.SymbolStore.ISymbolMethod GetMethodFromDocumentPosition(class System.Diagnostics.SymbolStore.ISymbolDocument document, int32 line, int32 column) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetMethodFromDocumentPosition">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolMethod GetMethodFromDocumentPosition (System.Diagnostics.SymbolStore.ISymbolDocument document, int line, int column);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolMethod</ReturnType>
       </ReturnValue>
@@ -139,15 +157,16 @@
         <returns>To be added: an object of type 'ISymbolMethod'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetNamespaces">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolNamespace[] GetNamespaces ();" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Diagnostics.SymbolStore.ISymbolNamespace[] GetNamespaces() cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetNamespaces">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolNamespace[] GetNamespaces ();" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolNamespace[]</ReturnType>
       </ReturnValue>
@@ -157,15 +176,16 @@
         <returns>To be added: an object of type 'ISymbolNamespace []'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetSymAttribute">
+      <MemberSignature Language="C#" Value="public byte[] GetSymAttribute (System.Diagnostics.SymbolStore.SymbolToken parent, string name);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance unsigned int8[] GetSymAttribute(valuetype System.Diagnostics.SymbolStore.SymbolToken parent, string name) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetSymAttribute">
-      <MemberSignature Language="C#" Value="public byte[] GetSymAttribute (System.Diagnostics.SymbolStore.SymbolToken parent, string name);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Byte[]</ReturnType>
       </ReturnValue>
@@ -180,15 +200,16 @@
         <returns>To be added: an object of type 'byte []'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="GetVariables">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolVariable[] GetVariables (System.Diagnostics.SymbolStore.SymbolToken parent);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Diagnostics.SymbolStore.ISymbolVariable[] GetVariables(valuetype System.Diagnostics.SymbolStore.SymbolToken parent) cil managed" />
+      <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="GetVariables">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.ISymbolVariable[] GetVariables (System.Diagnostics.SymbolStore.SymbolToken parent);" />
-      <MemberType>Method</MemberType>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.ISymbolVariable[]</ReturnType>
       </ReturnValue>
@@ -201,15 +222,16 @@
         <returns>To be added: an object of type 'ISymbolVariable []'</returns>
         <remarks>To be added</remarks>
       </Docs>
+    </Member>
+    <Member MemberName="UserEntryPoint">
+      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.SymbolToken UserEntryPoint { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance valuetype System.Diagnostics.SymbolStore.SymbolToken UserEntryPoint" />
+      <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
       </AssemblyInfo>
-    </Member>
-    <Member MemberName="UserEntryPoint">
-      <MemberSignature Language="C#" Value="public System.Diagnostics.SymbolStore.SymbolToken UserEntryPoint { get; }" />
-      <MemberType>Property</MemberType>
       <ReturnValue>
         <ReturnType>System.Diagnostics.SymbolStore.SymbolToken</ReturnType>
       </ReturnValue>
@@ -218,17 +240,6 @@
         <value>To be added: an object of type 'SymbolToken'</value>
         <remarks>To be added</remarks>
       </Docs>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-        <AssemblyVersion>4.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
-  <Interfaces />
-  <Attributes>
-    <Attribute>
-      <AttributeName>System.Runtime.InteropServices.ComVisible(true)</AttributeName>
-    </Attribute>
-  </Attributes>
 </Type>

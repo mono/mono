@@ -1,6 +1,7 @@
 <Type Name="IAuthenticationModule" FullName="System.Net.IAuthenticationModule" FullNameSP="System_Net_IAuthenticationModule" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class interface public abstract IAuthenticationModule" />
   <TypeSignature Language="C#" Value="public interface IAuthenticationModule" />
+  <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IAuthenticationModule" />
   <MemberOfLibrary>Networking</MemberOfLibrary>
   <AssemblyInfo>
     <AssemblyName>System</AssemblyName>
@@ -8,6 +9,7 @@
     <AssemblyVersion>1.0.x.x</AssemblyVersion>
     <AssemblyVersion>1.0.5000.0</AssemblyVersion>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
   <Docs>
@@ -79,7 +81,13 @@
     <Member MemberName="Authenticate">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Net.Authorization Authenticate(string challenge, class System.Net.WebRequest request, class System.Net.ICredentials credentials)" />
       <MemberSignature Language="C#" Value="public System.Net.Authorization Authenticate (string challenge, System.Net.WebRequest request, System.Net.ICredentials credentials);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Net.Authorization Authenticate(string challenge, class System.Net.WebRequest request, class System.Net.ICredentials credentials) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Authorization</ReturnType>
       </ReturnValue>
@@ -123,15 +131,17 @@ server challenge.</block>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="AuthenticationType">
       <MemberSignature Language="ILASM" Value=".property string AuthenticationType { public hidebysig virtual abstract specialname string get_AuthenticationType() }" />
       <MemberSignature Language="C#" Value="public string AuthenticationType { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string AuthenticationType" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
@@ -187,15 +197,17 @@ method.</block>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="CanPreAuthenticate">
       <MemberSignature Language="ILASM" Value=".property bool CanPreAuthenticate { public hidebysig virtual abstract specialname bool get_CanPreAuthenticate() }" />
       <MemberSignature Language="C#" Value="public bool CanPreAuthenticate { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance bool CanPreAuthenticate" />
       <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
@@ -228,15 +240,17 @@ method.</block>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
     <Member MemberName="PreAuthenticate">
       <MemberSignature Language="ILASM" Value=".method public hidebysig virtual abstract class System.Net.Authorization PreAuthenticate(class System.Net.WebRequest request, class System.Net.ICredentials credentials)" />
       <MemberSignature Language="C#" Value="public System.Net.Authorization PreAuthenticate (System.Net.WebRequest request, System.Net.ICredentials credentials);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig newslot virtual instance class System.Net.Authorization PreAuthenticate(class System.Net.WebRequest request, class System.Net.ICredentials credentials) cil managed" />
       <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
+        <AssemblyVersion>2.0.0.0</AssemblyVersion>
+        <AssemblyVersion>4.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
       <ReturnValue>
         <ReturnType>System.Net.Authorization</ReturnType>
       </ReturnValue>
@@ -279,10 +293,6 @@ method.</block>
         </remarks>
       </Docs>
       <Excluded>0</Excluded>
-      <AssemblyInfo>
-        <AssemblyVersion>1.0.5000.0</AssemblyVersion>
-        <AssemblyVersion>2.0.0.0</AssemblyVersion>
-      </AssemblyInfo>
     </Member>
   </Members>
   <TypeExcluded>0</TypeExcluded>

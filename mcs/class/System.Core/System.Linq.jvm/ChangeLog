@@ -1,9 +1,0 @@
-2008-09-23  Jb Evain  <jbevain@novell.com>
-
-	* ExpressionInterpreter.cs
-	* Interpreter.cs
-	* Conversion.cs
-	* ExpressionValidator.cs
-	* Math.cs:
-		Integrate changes from db4objects, Inc. The interpreter now
-		passes all linq tests.

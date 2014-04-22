@@ -1,5 +1,6 @@
 <Type Name="AssemblyTargetedPatchBandAttribute" FullName="System.Runtime.AssemblyTargetedPatchBandAttribute">
   <TypeSignature Language="C#" Value="public sealed class AssemblyTargetedPatchBandAttribute : Attribute" />
+  <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AssemblyTargetedPatchBandAttribute extends System.Attribute" />
   <AssemblyInfo>
     <AssemblyName>mscorlib</AssemblyName>
     <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -20,6 +21,7 @@
   <Members>
     <Member MemberName=".ctor">
       <MemberSignature Language="C#" Value="public AssemblyTargetedPatchBandAttribute (string targetedPatchBand);" />
+      <MemberSignature Language="ILAsm" Value=".method public hidebysig specialname rtspecialname instance void .ctor(string targetedPatchBand) cil managed" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>
@@ -35,6 +37,7 @@
     </Member>
     <Member MemberName="TargetedPatchBand">
       <MemberSignature Language="C#" Value="public string TargetedPatchBand { get; }" />
+      <MemberSignature Language="ILAsm" Value=".property instance string TargetedPatchBand" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>4.0.0.0</AssemblyVersion>

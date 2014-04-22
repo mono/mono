@@ -1,12 +1,13 @@
 //
 // System.Convert.cs
 //
-// Author:
+// Authors:
 //   Derek Holden (dholden@draper.com)
 //   Duncan Mak (duncan@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
-//
+// Copyright (C) 2013 Xamarin Inc (http://www.xamarin.com)
 //
 // System.Convert class. This was written word for word off the 
 // Library specification for System.Convert in the ECMA TC39 TG2 
@@ -2399,7 +2400,7 @@ namespace System {
 					}
 				}
 
-				result = (fromBase * result + digitValue);
+				result = fromBase * result + digitValue;
 				chars ++;
 			}
 
@@ -2528,6 +2529,7 @@ namespace System {
 			typeof (DateTime), // 16 TypeCode.DateTime
 			null,		    // 17 null.
 			typeof (String),   // 18 TypeCode.String
+			typeof (Enum)
 		};
 
 		// Function to convert an object to another type and return
@@ -2561,67 +2563,69 @@ namespace System {
 			if (value.GetType () == conversionType)
 				return value;
 			
-			if (value is IConvertible) {
-				IConvertible convertValue = (IConvertible) value;
+			IConvertible convertValue = value as IConvertible;
+			if (convertValue != null) {
 
 				if (conversionType == conversionTable[0]) // 0 Empty
 					throw new ArgumentNullException ();
 				
-				else if (conversionType == conversionTable[1]) // 1 TypeCode.Object
-					return (object) value;
+				if (conversionType == conversionTable[1]) // 1 TypeCode.Object
+					return value;
 					
-				else if (conversionType == conversionTable[2]) // 2 TypeCode.DBNull
+				if (conversionType == conversionTable[2]) // 2 TypeCode.DBNull
 					throw new InvalidCastException (
 						"Cannot cast to DBNull, it's not IConvertible");
 		  
-				else if (conversionType == conversionTable[3]) // 3 TypeCode.Boolean
-					return (object) convertValue.ToBoolean (provider);
+				if (conversionType == conversionTable[3]) // 3 TypeCode.Boolean
+					return convertValue.ToBoolean (provider);
 					
-				else if (conversionType == conversionTable[4]) // 4 TypeCode.Char
-					return (object) convertValue.ToChar (provider);
+				if (conversionType == conversionTable[4]) // 4 TypeCode.Char
+					return convertValue.ToChar (provider);
 		  
-				else if (conversionType == conversionTable[5]) // 5 TypeCode.SByte
-					return (object) convertValue.ToSByte (provider);
+				if (conversionType == conversionTable[5]) // 5 TypeCode.SByte
+					return convertValue.ToSByte (provider);
 
-				else if (conversionType == conversionTable[6]) // 6 TypeCode.Byte
-					return (object) convertValue.ToByte (provider);
+				if (conversionType == conversionTable[6]) // 6 TypeCode.Byte
+					return convertValue.ToByte (provider);
 				
-				else if (conversionType == conversionTable[7]) // 7 TypeCode.Int16
-					return (object) convertValue.ToInt16 (provider);
+				if (conversionType == conversionTable[7]) // 7 TypeCode.Int16
+					return convertValue.ToInt16 (provider);
 					
-				else if (conversionType == conversionTable[8]) // 8 TypeCode.UInt16
-					return (object) convertValue.ToUInt16 (provider);
+				if (conversionType == conversionTable[8]) // 8 TypeCode.UInt16
+					return convertValue.ToUInt16 (provider);
 		  
-				else if (conversionType == conversionTable[9]) // 9 TypeCode.Int32
-					return (object) convertValue.ToInt32 (provider);
+				if (conversionType == conversionTable[9]) // 9 TypeCode.Int32
+					return convertValue.ToInt32 (provider);
 			
-				else if (conversionType == conversionTable[10]) // 10 TypeCode.UInt32
-					return (object) convertValue.ToUInt32 (provider);
+				if (conversionType == conversionTable[10]) // 10 TypeCode.UInt32
+					return convertValue.ToUInt32 (provider);
 		  
-				else if (conversionType == conversionTable[11]) // 11 TypeCode.Int64
-					return (object) convertValue.ToInt64 (provider);
+				if (conversionType == conversionTable[11]) // 11 TypeCode.Int64
+					return convertValue.ToInt64 (provider);
 		  
-				else if (conversionType == conversionTable[12]) // 12 TypeCode.UInt64
-					return (object) convertValue.ToUInt64 (provider);
+				if (conversionType == conversionTable[12]) // 12 TypeCode.UInt64
+					return convertValue.ToUInt64 (provider);
 		  
-				else if (conversionType == conversionTable[13]) // 13 TypeCode.Single
-					return (object) convertValue.ToSingle (provider);
+				if (conversionType == conversionTable[13]) // 13 TypeCode.Single
+					return convertValue.ToSingle (provider);
 		  
-				else if (conversionType == conversionTable[14]) // 14 TypeCode.Double
-					return (object) convertValue.ToDouble (provider);
+				if (conversionType == conversionTable[14]) // 14 TypeCode.Double
+					return convertValue.ToDouble (provider);
 
-				else if (conversionType == conversionTable[15]) // 15 TypeCode.Decimal
-					return (object) convertValue.ToDecimal (provider);
+				if (conversionType == conversionTable[15]) // 15 TypeCode.Decimal
+					return convertValue.ToDecimal (provider);
 
-				else if (conversionType == conversionTable[16]) // 16 TypeCode.DateTime
-					return (object) convertValue.ToDateTime (provider);
+				if (conversionType == conversionTable[16]) // 16 TypeCode.DateTime
+					return convertValue.ToDateTime (provider);
 				
-				else if (conversionType == conversionTable[18]) // 18 TypeCode.String
-					return (object) convertValue.ToString (provider);
-				else {
-					if (try_target_to_type)
-						return convertValue.ToType (conversionType, provider);
-				}
+				if (conversionType == conversionTable[18]) // 18 TypeCode.String
+					return convertValue.ToString (provider);
+
+				if (conversionType == conversionTable[19] && value is Enum) // System.Enum
+					return value;
+
+				if (try_target_to_type)
+					return convertValue.ToType (conversionType, provider);
 			} 
 			// Not in the conversion table
 			throw new InvalidCastException ((Locale.GetText (

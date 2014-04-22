@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{71444193-6B64-4C1B-A87D-580CCB548952}</ProjectGuid>
+    <ProjectGuid>{DA9F2EEC-4127-4B98-852E-78A0ED7A4A60}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,649,169</NoWarn>
-    <OutputPath>bin\Debug\System.Web.Services-net_2_0</OutputPath>
+    <OutputPath>./../../class/lib/net_2_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
@@ -278,33 +278,36 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_2_0-2.csproj">
-      <Project>{79F25FD7-0D76-4526-AF39-1A648649A827}</Project>
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
       <Name>System\System-net_2_0-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.EnterpriseServices\System.EnterpriseServices-net_2_0.csproj">
-      <Project>{92E7A483-839B-4EFA-A77D-16C68F051941}</Project>
+      <Project>{94E27660-C3DF-43D1-958A-94D68EF3131F}</Project>
       <Name>System.EnterpriseServices\System.EnterpriseServices-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
-      <Project>{D9776E38-7673-45F6-BF19-7B77830DF9CA}</Project>
+      <Project>{080698DE-8AF0-496E-9AD7-58B6C605328A}</Project>
       <Name>System.XML\System.Xml-net_2_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web\System.Web-net_2_0.csproj">
-      <Project>{4796A339-E32F-476E-9D7D-69C771CD618C}</Project>
+      <Project>{3AE1BF46-F9C5-4EC2-B95D-C9D9F21F4E08}</Project>
       <Name>System.Web\System.Web-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_2_0.csproj">
-      <Project>{8131BE5D-BE64-4BA5-A62D-FAC4BE0A0B53}</Project>
+      <Project>{2695A2F2-2271-423D-8E0D-553DAB84E917}</Project>
       <Name>System.Configuration\System.Configuration-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -323,3 +326,4 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+

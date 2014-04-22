@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F8880326-2172-49A6-A8BD-F82914E1A11B}</ProjectGuid>
+    <ProjectGuid>{54BD833F-C0CF-4192-9083-56F6CD3814DD}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Mono.Security.Win32-net_4_0</OutputPath>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -69,13 +69,16 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
+      <Project>{F42F5509-677F-4C93-A026-047AB6153801}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -83,3 +86,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

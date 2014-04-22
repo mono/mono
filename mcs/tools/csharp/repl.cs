@@ -8,6 +8,7 @@
 //
 // Copyright 2001, 2002, 2003 Ximian, Inc (http://www.ximian.com)
 // Copyright 2004, 2005, 2006, 2007, 2008 Novell, Inc
+// Copyright 2011-2013 Xamarin Inc
 //
 //
 // TODO:
@@ -34,6 +35,8 @@ namespace Mono {
 	public class Driver {
 		public static string StartupEvalExpression;
 		static int? attach;
+		static string target_host;
+		static int target_port;
 		static string agent;
 		
 		static int Main (string [] args)
@@ -73,15 +76,17 @@ namespace Mono {
 			CSharpShell shell;
 #if !ON_DOTNET
 			if (attach.HasValue) {
-				shell = new ClientCSharpShell (eval, attach.Value);
+				shell = new ClientCSharpShell_v1 (eval, attach.Value);
 			} else if (agent != null) {
 				new CSharpAgent (eval, agent, agent_stderr).Run (startup_files);
 				return 0;
 			} else
 #endif
-			{
+			if (target_host != null) 
+				shell = new ClientCSharpShell  (eval, target_host, target_port);
+			else 
 				shell = new CSharpShell (eval);
-			}
+
 			return shell.Run (startup_files);
 		}
 
@@ -101,6 +106,26 @@ namespace Mono {
 				}
 				break;
 			default:
+				if (args [pos].StartsWith ("--server=")){
+					var hostport = args [pos].Substring (9);
+					int p = hostport.IndexOf (':');
+					if (p == -1){
+						target_host = hostport;
+						target_port = 10000;
+					} else {
+						target_host = hostport.Substring (0,p);
+						if (!int.TryParse (hostport.Substring (p), out target_port)){
+							Console.Error.WriteLine ("Usage is: --server[=host[:port]");
+							Environment.Exit (1);
+						}
+					}
+					return pos + 1;
+				}
+				if (args [pos].StartsWith ("--client")){
+					target_host = "localhost";
+					target_port = 10000;
+					return pos + 1;
+				}
 				if (args [pos].StartsWith ("--agent:")) {
 					agent = args[pos];
 					return pos + 1;
@@ -513,6 +538,162 @@ namespace Mono {
 		
 	}
 
+	//
+	// Stream helper extension methods
+	//
+	public static class StreamHelper {
+		static DataConverter converter = DataConverter.LittleEndian;
+		
+		static void GetBuffer (this Stream stream, byte [] b)
+		{
+			int n, offset = 0;
+			int len = b.Length;
+
+			do {
+				n = stream.Read (b, offset, len);
+				if (n == 0)
+					throw new IOException ("End reached");
+
+				offset += n;
+				len -= n;
+			} while (len > 0);
+		}
+
+		public static int GetInt (this Stream stream)
+		{
+			byte [] b = new byte [4];
+			stream.GetBuffer (b);
+			return converter.GetInt32 (b, 0);
+		}
+
+		public static string GetString (this Stream stream)
+		{
+			int len = stream.GetInt ();
+			if (len == 0)
+				return "";
+
+			byte [] b = new byte [len];
+			stream.GetBuffer (b);
+
+			return Encoding.UTF8.GetString (b);
+		}
+
+		public static void WriteInt (this Stream stream, int n)
+		{
+			byte [] bytes = converter.GetBytes (n);
+			stream.Write (bytes, 0, bytes.Length);
+		}
+	
+		public static void WriteString (this Stream stream, string s)
+		{
+			stream.WriteInt (s.Length);
+			byte [] bytes = Encoding.UTF8.GetBytes (s);
+			stream.Write (bytes, 0, bytes.Length);
+		}
+	}
+	
+	public enum AgentStatus : byte {
+		// Received partial input, complete
+		PARTIAL_INPUT  = 1,
+	
+		// The result was set, expect the string with the result
+		RESULT_SET     = 2,
+	
+		// No result was set, complete
+		RESULT_NOT_SET = 3,
+	
+		// Errors and warnings string follows
+		ERROR          = 4,
+
+		// Stdout
+		STDOUT         = 5,
+	}
+
+	class ClientCSharpShell : CSharpShell {
+		string target_host;
+		int target_port;
+		
+		public ClientCSharpShell (Evaluator evaluator, string target_host, int target_port) : base (evaluator)
+		{
+			this.target_port = target_port;
+			this.target_host = target_host;
+		}
+
+		T ConnectServer<T> (Func<NetworkStream,T> callback, Action<Exception> error)
+		{
+			try {
+				var client = new TcpClient (target_host, target_port);
+				var ns = client.GetStream ();
+				T ret = callback (ns);
+				ns.Flush ();
+				ns.Close ();
+				client.Close ();
+				return ret;
+			} catch (Exception e){
+				error (e);
+				return default(T);
+			}
+		}
+		
+		protected override string Evaluate (string input)
+		{
+			return ConnectServer<string> ((ns)=> {
+				try {
+					ns.WriteString ("EVALTXT");
+					ns.WriteString (input);
+
+					while (true) {
+						AgentStatus s = (AgentStatus) ns.ReadByte ();
+					
+						switch (s){
+						case AgentStatus.PARTIAL_INPUT:
+							return input;
+						
+						case AgentStatus.ERROR:
+							string err = ns.GetString ();
+							Console.Error.WriteLine (err);
+							break;
+
+						case AgentStatus.STDOUT:
+							string stdout = ns.GetString ();
+							Console.WriteLine (stdout);
+							break;
+						
+						case AgentStatus.RESULT_NOT_SET:
+							return null;
+						
+						case AgentStatus.RESULT_SET:
+							string res = ns.GetString ();
+							Console.WriteLine (res);
+							return null;
+						}
+					}
+				} catch (Exception e){
+					Console.Error.WriteLine ("Error evaluating expression, exception: {0}", e);
+				}
+				return null;
+			}, (e) => {
+				Console.Error.WriteLine ("Error communicating with server {0}", e);
+			});
+		}
+		
+		public override int Run (string [] startup_files)
+		{
+			// The difference is that we do not call Evaluator.Init, that is done on the target
+			this.startup_files = startup_files;
+			return ReadEvalPrintLoop ();
+		}
+	
+		protected override void ConsoleInterrupt (object sender, ConsoleCancelEventArgs a)
+		{
+			ConnectServer<int> ((ns)=> {
+				ns.WriteString ("INTERRUPT");
+				return 0;
+			}, (e) => { });
+		}
+			
+	}
+
 #if !ON_DOTNET
 	//
 	// A shell connected to a CSharpAgent running in a remote process.
@@ -520,10 +701,10 @@ namespace Mono {
 	//  - Support Gtk and Winforms main loops if detected, this should
 	//    probably be done as a separate agent in a separate place.
 	//
-	class ClientCSharpShell : CSharpShell {
+	class ClientCSharpShell_v1 : CSharpShell {
 		NetworkStream ns, interrupt_stream;
 		
-		public ClientCSharpShell (Evaluator evaluator, int pid)
+		public ClientCSharpShell_v1 (Evaluator evaluator, int pid)
 			: base (evaluator)
 		{
 			// Create a server socket we listen on whose address is passed to the agent
@@ -548,7 +729,7 @@ namespace Mono {
 	
 			Console.WriteLine ("Connected.");
 		}
-	
+
 		//
 		// A remote version of Evaluate
 		//
@@ -598,57 +779,6 @@ namespace Mono {
 			
 	}
 
-	//
-	// Stream helper extension methods
-	//
-	public static class StreamHelper {
-		static DataConverter converter = DataConverter.LittleEndian;
-		
-		public static int GetInt (this Stream stream)
-		{
-			byte [] b = new byte [4];
-			if (stream.Read (b, 0, 4) != 4)
-				throw new IOException ("End reached");
-			return converter.GetInt32 (b, 0);
-		}
-		
-		public static string GetString (this Stream stream)
-		{
-			int len = stream.GetInt ();
-			byte [] b = new byte [len];
-			if (stream.Read (b, 0, len) != len)
-				throw new IOException ("End reached");
-			return Encoding.UTF8.GetString (b);
-		}
-	
-		public static void WriteInt (this Stream stream, int n)
-		{
-			byte [] bytes = converter.GetBytes (n);
-			stream.Write (bytes, 0, bytes.Length);
-		}
-	
-		public static void WriteString (this Stream stream, string s)
-		{
-			stream.WriteInt (s.Length);
-			byte [] bytes = Encoding.UTF8.GetBytes (s);
-			stream.Write (bytes, 0, bytes.Length);
-		}
-	}
-	
-	public enum AgentStatus : byte {
-		// Received partial input, complete
-		PARTIAL_INPUT  = 1,
-	
-		// The result was set, expect the string with the result
-		RESULT_SET     = 2,
-	
-		// No result was set, complete
-		RESULT_NOT_SET = 3,
-	
-		// Errors and warnings string follows
-		ERROR          = 4, 
-	}
-	
 	//
 	// This is the agent loaded into the target process when using --attach.
 	//
