@@ -104,7 +104,7 @@ namespace Microsoft.Win32
 			}
 
 			for (int i = 1; i < keys.Length; i++){
-				RegistryKey nkey = key.OpenSubKey (keys [i], true);
+				RegistryKey nkey = key.OpenSubKey (keys [i], setting);
 				if (nkey == null){
 					if (!setting)
 						return null;
