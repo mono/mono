@@ -28,6 +28,9 @@ namespace Mono.Debugger.Soft
 		/* Since protocol version 2.26 */
 		/* Methods which have the [DebuggerStepThrough] attribute */
 		DebuggerStepThrough = 4,
+		/* Since protocol version 2.30 */
+		/* Methods which have the [DebuggerNonUserCode] attribute */
+		DebuggerNonUserCode = 8
 	}
 
 	public sealed class StepEventRequest : EventRequest {
