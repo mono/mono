@@ -477,7 +477,7 @@ namespace MonoTests.System
 				TimeZoneInfo.ConvertTime (DateTime.Now, TimeZoneInfo.Utc, null);
 			}
 
-			[Test (Description="Description xambug #17155")]
+			[Test (Description="Fix for xambug https://bugzilla.xamarin.com/show_bug.cgi?id=17155")]
 			public void ConvertTime_AdjustmentRuleAfterNewYears ()
 			{
 				TimeZoneInfo tz;
