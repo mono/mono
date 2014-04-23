@@ -2,7 +2,8 @@
 // ZipArchiveEntry.cs
 //
 // Author:
-//       Martin Baulig <martin.baulig@xamarin.com>
+//	   Joao Matos <joao.matos@xamarin.com>
+//	   Martin Baulig <martin.baulig@xamarin.com>
 //
 // Copyright (c) 2013 Xamarin Inc. (http://www.xamarin.com)
 //
@@ -23,50 +24,101 @@
 // LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
-using System;
 
 namespace System.IO.Compression
 {
-	[MonoTODO]
 	public class ZipArchiveEntry
 	{
+		readonly Ionic.Zip.ZipEntry entry;
+		private Stream openStream;
+		private bool wasDeleted;
+
+		internal ZipArchiveEntry(ZipArchive archive, Ionic.Zip.ZipEntry entry)
+		{
+			if (archive == null)
+				throw new ArgumentNullException("archive");
+
+			if (entry == null)
+				throw new ArgumentNullException("entry");
+
+			this.Archive = archive;
+			this.entry = entry;
+		}
+
 		public ZipArchive Archive {
 			get;
 			private set;
 		}
 
 		public long CompressedLength {
-			get;
-			private set;
+			get {
+				if (Archive.Mode == ZipArchiveMode.Create)
+					throw new InvalidOperationException("Property cannot be retrieved when the mode is set to Create");
+
+				return entry.CompressedSize;
+			}
 		}
 
 		public string FullName {
-			get;
-			private set;
+			get { return entry.FileName; }
 		}
 
 		public DateTimeOffset LastWriteTime {
-			get; set;
+			get { return entry.LastModified; }
+			set { entry.LastModified = value.DateTime; }
 		}
 
 		public long Length {
-			get;
-			private set;
+			get {
+				if (Archive.Mode == ZipArchiveMode.Create)
+					throw new InvalidOperationException("Property cannot be retrieved when the mode is set to Create");
+
+				return entry.UncompressedSize;
+			}
 		}
 
 		public string Name {
-			get;
-			private set;
+			get { return Path.GetFileName(entry.FileName); }
 		}
 
 		public void Delete ()
 		{
-			throw new NotImplementedException ();
+			if (Archive.disposed)
+				throw new ObjectDisposedException("The zip archive for this entry has been disposed.");
+
+			if (Archive.Mode != ZipArchiveMode.Update)
+				throw new NotSupportedException("The zip archive for this entry was opened in a mode other than Update.");
+
+			if (openStream != null)
+			 throw new IOException("The entry is already open for reading or writing.");
+
+			wasDeleted = true;
+			Archive.zipFile.RemoveEntry(entry.FileName);
 		}
 
 		public Stream Open ()
 		{
-			throw new NotImplementedException ();
+			if (Archive.disposed)
+				throw new ObjectDisposedException("The zip archive for this entry has been disposed.");
+
+			if (openStream != null && Archive.Mode == ZipArchiveMode.Update)
+				throw new IOException("The entry is already currently open for writing.");
+
+			if (wasDeleted)
+				throw new IOException("The entry has been deleted from the archive.");
+
+			if (Archive.Mode == ZipArchiveMode.Create && openStream != null)
+				throw new IOException("The archive for this entry was opened with the Create mode, and this entry has already been written to.");
+
+			var memoryStream = new MemoryStream();
+			openStream = memoryStream;
+
+			if (Archive.Mode == ZipArchiveMode.Read || Archive.Mode == ZipArchiveMode.Update)
+				entry.Extract(memoryStream);
+
+			memoryStream.Seek(0, SeekOrigin.Begin);
+
+			return memoryStream;
 		}
 	}
 }
