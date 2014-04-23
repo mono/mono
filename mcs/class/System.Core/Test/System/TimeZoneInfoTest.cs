@@ -412,6 +412,46 @@ namespace MonoTests.System
 
 				TimeZoneInfo.ConvertTime (DateTime.Now, TimeZoneInfo.FindSystemTimeZoneById("Pacific/Auckland"));
 			}
+
+			[Test]
+			[ExpectedException (typeof (ArgumentNullException))]
+			public void ConvertTime_DateTime_TimeZoneInfo_DestinationTimeZoneIsNull ()
+			{
+				TimeZoneInfo.ConvertTime (DateTime.Now, null);
+			}
+
+			[Test]
+			public void ConvertTime_DateTime_TimeZoneInfo_DateTimeKindMatch ()
+			{
+				var sdt = new DateTime (2014, 1, 9, 23, 0, 0, DateTimeKind.Utc);
+				var ddt = TimeZoneInfo.ConvertTime (sdt, TimeZoneInfo.Utc);
+				Assert.AreEqual (ddt.Kind, sdt.Kind, "#1.1");
+				Assert.AreEqual (ddt.Kind, DateTimeKind.Utc, "#1.2");
+				
+				sdt = new DateTime (2014, 1, 9, 23, 0, 0, DateTimeKind.Local);
+				ddt = TimeZoneInfo.ConvertTime (sdt, TimeZoneInfo.Local);
+				Assert.AreEqual (ddt.Kind, sdt.Kind, "#2.1");
+				Assert.AreEqual (ddt.Kind, DateTimeKind.Local, "#2.2");
+
+				sdt = new DateTime (2014, 1, 9, 23, 0, 0);
+				ddt = TimeZoneInfo.ConvertTime (sdt, TimeZoneInfo.Local);
+				Assert.AreEqual (ddt.Kind, sdt.Kind, "#3.1");
+				Assert.AreEqual (ddt.Kind, DateTimeKind.Unspecified, "#3.2");
+			}
+
+			[Test]
+			[ExpectedException (typeof (ArgumentNullException))]
+			public void ConverTime_DateTime_TimeZoneInfo_TimeZoneInfo_SourceTimeZoneIsNull ()
+			{
+				TimeZoneInfo.ConvertTime (DateTime.Now, null, TimeZoneInfo.Local);
+			}
+
+			[Test]
+			[ExpectedException (typeof (ArgumentNullException))]
+			public void ConverTime_DateTime_TimeZoneInfo_TimeZoneInfo_DestinationTimeZoneIsNull ()
+			{
+				TimeZoneInfo.ConvertTime (DateTime.Now, TimeZoneInfo.Utc, null);
+			}
 		}
 		
 		[TestFixture]

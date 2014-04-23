@@ -227,36 +227,38 @@ namespace System
 
 		public static DateTime ConvertTime (DateTime dateTime, TimeZoneInfo destinationTimeZone)
 		{
-			return ConvertTime (dateTime, TimeZoneInfo.Local, destinationTimeZone);
+			return ConvertTime (dateTime, dateTime.Kind == DateTimeKind.Utc ? TimeZoneInfo.Utc : TimeZoneInfo.Local, destinationTimeZone);
 		}
 
 		public static DateTime ConvertTime (DateTime dateTime, TimeZoneInfo sourceTimeZone, TimeZoneInfo destinationTimeZone)
 		{
-			if (dateTime.Kind == DateTimeKind.Local && sourceTimeZone != TimeZoneInfo.Local)
-				throw new ArgumentException ("Kind property of dateTime is Local but the sourceTimeZone does not equal TimeZoneInfo.Local");
-
-			if (dateTime.Kind == DateTimeKind.Utc && sourceTimeZone != TimeZoneInfo.Utc)
-				throw new ArgumentException ("Kind property of dateTime is Utc but the sourceTimeZone does not equal TimeZoneInfo.Utc");
-
-			if (sourceTimeZone.IsInvalidTime (dateTime))
-				throw new ArgumentException ("dateTime parameter is an invalid time");
-
 			if (sourceTimeZone == null)
 				throw new ArgumentNullException ("sourceTimeZone");
 
 			if (destinationTimeZone == null)
 				throw new ArgumentNullException ("destinationTimeZone");
+			
+			if (dateTime.Kind == DateTimeKind.Local && sourceTimeZone != TimeZoneInfo.Local)
+				throw new ArgumentException ("Kind property of dateTime is Local but the sourceTimeZone does not equal TimeZoneInfo.Local");
+
+			if (dateTime.Kind == DateTimeKind.Utc && sourceTimeZone != TimeZoneInfo.Utc)
+				throw new ArgumentException ("Kind property of dateTime is Utc but the sourceTimeZone does not equal TimeZoneInfo.Utc");
+			
+			if (sourceTimeZone.IsInvalidTime (dateTime))
+				throw new ArgumentException ("dateTime parameter is an invalid time");
 
 			if (dateTime.Kind == DateTimeKind.Local && sourceTimeZone == TimeZoneInfo.Local && destinationTimeZone == TimeZoneInfo.Local)
 				return dateTime;
 
 			DateTime utc = ConvertTimeToUtc (dateTime);
 
-			if (destinationTimeZone == TimeZoneInfo.Utc)
-				return utc;
-
-			return ConvertTimeFromUtc (utc, destinationTimeZone);	
-
+			if (destinationTimeZone != TimeZoneInfo.Utc) {
+				utc = ConvertTimeFromUtc (utc, destinationTimeZone);
+				if (dateTime.Kind == DateTimeKind.Unspecified)
+					return DateTime.SpecifyKind (utc, DateTimeKind.Unspecified);
+			}
+			
+			return utc;
 		}
 
 		public static DateTimeOffset ConvertTime(DateTimeOffset dateTimeOffset, TimeZoneInfo destinationTimeZone) 
