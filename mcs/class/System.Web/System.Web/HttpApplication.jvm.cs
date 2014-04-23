@@ -1586,7 +1586,7 @@ yield_19:
 			if (context.Request.QueryString ["aspxerrorpath"] != null)
 				return false;
 
-			if(error_page.IndexOf('?') < 0)
+			if (error_page.IndexOf ('?') < 0)
 				error_page += "?aspxerrorpath=" + Request.Path;
 
 			Response.Redirect (error_page, false);
