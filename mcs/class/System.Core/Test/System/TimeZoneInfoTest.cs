@@ -263,6 +263,30 @@ namespace MonoTests.System
 				}
 			}
 		#endif
+			[Test (Description="Description xambug #17155")]
+			public void AdjustmentRuleAfterNewYears ()
+			{
+				TimeZoneInfo tz;
+				if (Environment.OSVersion.Platform == PlatformID.Unix)
+					tz = TimeZoneInfo.FindSystemTimeZoneById ("Pacific/Auckland"); // *nix
+				else
+					tz = TimeZoneInfo.FindSystemTimeZoneById ("New Zealand Standard Time"); // Windows
+
+				// DST start: 9/29/2013 2:00:00 AM
+				// DST end: 4/6/2014 3:00:00 AM
+				DateTime dt = new DateTime (2014, 1, 9, 23, 0, 0, DateTimeKind.Utc);
+				Assert.IsTrue (tz.IsDaylightSavingTime (dt), "#1.1");
+
+				// DST start: 9/29/2014 2:00:00 AM
+				// DST end: 4/6/2015 3:00:00 AM
+				dt = new DateTime (2014, 6, 9, 23, 0, 0, DateTimeKind.Utc);
+				Assert.IsFalse (tz.IsDaylightSavingTime (dt), "#2.1");
+
+				// DST start: 9/29/2014 2:00:00 AM
+				// DST end: 4/6/2015 3:00:00 AM
+				dt = new DateTime (2014, 10, 9, 23, 0, 0, DateTimeKind.Utc);
+				Assert.IsTrue (tz.IsDaylightSavingTime (dt), "#3.1");
+			}
 		}
 		
 		[TestFixture]
@@ -451,6 +475,49 @@ namespace MonoTests.System
 			public void ConverTime_DateTime_TimeZoneInfo_TimeZoneInfo_DestinationTimeZoneIsNull ()
 			{
 				TimeZoneInfo.ConvertTime (DateTime.Now, TimeZoneInfo.Utc, null);
+			}
+
+			[Test (Description="Description xambug #17155")]
+			public void ConvertTime_AdjustmentRuleAfterNewYears ()
+			{
+				TimeZoneInfo tz;
+				if (Environment.OSVersion.Platform == PlatformID.Unix)
+					tz = TimeZoneInfo.FindSystemTimeZoneById ("Pacific/Auckland"); // *nix
+				else
+					tz = TimeZoneInfo.FindSystemTimeZoneById ("New Zealand Standard Time"); // Windows
+
+				// DST start: 9/29/2013 2:00:00 AM
+				// DST end: 4/6/2014 3:00:00 AM
+				DateTime sdt = new DateTime (2014, 1, 9, 23, 0, 0, DateTimeKind.Utc);
+				DateTime ddt = TimeZoneInfo.ConvertTime (sdt, tz);
+				Assert.AreEqual (10, ddt.Day, "#1.1");
+				Assert.AreEqual (1, ddt.Month, "#1.2");
+				Assert.AreEqual (2014, ddt.Year, "#1.3");
+				Assert.AreEqual (12, ddt.Hour, "#1.4");
+				Assert.AreEqual (0, ddt.Minute, "#1.5");
+				Assert.AreEqual (0, ddt.Second, "#1.6");
+				
+				// DST start: 9/29/2014 2:00:00 AM
+				// DST end: 4/6/2015 3:00:00 AM
+				sdt = new DateTime (2014, 6, 9, 23, 0, 0, DateTimeKind.Utc);
+				ddt = TimeZoneInfo.ConvertTime (sdt, tz);
+				Assert.AreEqual (10, ddt.Day, "#2.1");
+				Assert.AreEqual (6, ddt.Month, "#2.2");
+				Assert.AreEqual (2014, ddt.Year, "#2.3");
+				Assert.AreEqual (11, ddt.Hour, "#2.4");
+				Assert.AreEqual (0, ddt.Minute, "#2.5");
+				Assert.AreEqual (0, ddt.Second, "#2.6");
+				
+				// DST start: 9/29/2014 2:00:00 AM
+				// DST end: 4/6/2015 3:00:00 AM
+				sdt = new DateTime (2014, 10, 9, 23, 0, 0, DateTimeKind.Utc);
+				ddt = TimeZoneInfo.ConvertTime (sdt, tz);
+				Assert.AreEqual (10, ddt.Day, "#3.1");
+				Assert.AreEqual (10, ddt.Month, "#3.2");
+				Assert.AreEqual (2014, ddt.Year, "#3.3");
+				Assert.AreEqual (12, ddt.Hour, "#3.4");
+				Assert.AreEqual (0, ddt.Minute, "#3.5");
+				Assert.AreEqual (0, ddt.Second, "#3.6");
 			}
 		}
 		
