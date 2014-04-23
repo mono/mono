@@ -542,23 +542,6 @@ public class DebuggerTests
 		assert_location (e, "step_through_3");
 		req.Disable ();
 
-		// Check DebuggerNonUserCode support
-		e = run_until ("ss_non_user_code");
-		req = create_step (e);
-		req.Filter = StepFilter.DebuggerNonUserCode;
-		e = step_into ();
-		// Step through non_user_code_1 ()
-		e = step_into ();
-		assert_location (e, "ss_non_user_code");
-		// Step through StepThroughClass.non_user_code_2 ()
-		e = step_into ();
-		assert_location (e, "ss_non_user_code");
-		req.Disable ();
-		req.Filter = StepFilter.None;
-		e = step_into ();
-		assert_location (e, "non_user_code_3");
-		req.Disable ();
-
 		// Check that step-over doesn't stop at inner frames with recursive functions
 		e = run_until ("ss_recursive");
 		req = create_step (e);
