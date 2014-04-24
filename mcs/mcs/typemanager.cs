@@ -237,8 +237,10 @@ namespace Mono.CSharp
 		//
 		// Mono extensions
 		//
-		public readonly PredefinedType AsmUserBinder;
-		public readonly PredefinedType AsmRuntimeBinder;
+		public readonly PredefinedType AsmAmd64;
+		public readonly PredefinedType AsmX86;
+		public readonly PredefinedType AsmArm;
+		public readonly PredefinedType InlineAsm;
 
 		public PredefinedTypes (ModuleContainer module)
 		{
@@ -293,8 +295,10 @@ namespace Mono.CSharp
 			INotifyCompletion = new PredefinedType (module, MemberKind.Interface, "System.Runtime.CompilerServices", "INotifyCompletion");
 			ICriticalNotifyCompletion = new PredefinedType (module, MemberKind.Interface, "System.Runtime.CompilerServices", "ICriticalNotifyCompletion");
 
-			AsmUserBinder = new PredefinedType (module, MemberKind.Class, "Mono.Runtime", "asm");
-			AsmRuntimeBinder = new PredefinedType (module, MemberKind.Class, "Mono.Runtime.CompilerServices", "AssemblerBinder");
+			InlineAsm = new PredefinedType (module, MemberKind.Class, "Mono.Runtime", "InlineAsm");
+			AsmAmd64 = new PredefinedType (module, MemberKind.Enum, "Mono.Runtime", "Amd64Asm");
+			AsmX86 = new PredefinedType (module, MemberKind.Enum, "Mono.Runtime", "X86Asm");
+			AsmArm = new PredefinedType (module, MemberKind.Enum, "Mono.Runtime", "ArmAsm");
 
 			//
 			// Define types which are used for comparison. It does not matter
@@ -330,18 +334,14 @@ namespace Mono.CSharp
 			Task.Define ();
 			if (TaskGeneric.Define ())
 				TaskGeneric.TypeSpec.IsGenericTask = true;
+
+			InlineAsm.Define ();
 		}
 	}
 
 	class PredefinedMembers
 	{
 		public readonly PredefinedMember<MethodSpec> ActivatorCreateInstance;
-		public readonly PredefinedMember<MethodSpec> AsmUserBinderBindParameter;
-		public readonly PredefinedMember<MethodSpec> AsmUserBinderBindParameterUnsafe;
-		public readonly PredefinedMember<MethodSpec> AsmUserBinderBindVariable;
-		public readonly PredefinedMember<MethodSpec> AsmUserBinderBindVariableUnsafe;
-		public readonly PredefinedMember<MethodSpec> AsmRuntimeBinderBindParameter;
-		public readonly PredefinedMember<MethodSpec> AsmRuntimeBinderBindVariable;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderCreate;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderStart;
 		public readonly PredefinedMember<MethodSpec> AsyncTaskMethodBuilderSetResult;
@@ -412,24 +412,6 @@ namespace Mono.CSharp
 
 			ActivatorCreateInstance = new PredefinedMember<MethodSpec> (module, types.Activator,
 				MemberFilter.Method ("CreateInstance", 1, ParametersCompiled.EmptyReadOnlyParameters, null));
-
-			AsmUserBinderBindParameter = new PredefinedMember<MethodSpec> (module, types.AsmUserBinder,
-				MemberFilter.Method ("BindParameter", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, btypes.Object), btypes.Void));
-
-			AsmUserBinderBindParameterUnsafe = new PredefinedMember<MethodSpec> (module, types.AsmUserBinder,
-				MemberFilter.Method ("BindParameter", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, void_star), btypes.Void));
-
-			AsmUserBinderBindVariable = new PredefinedMember<MethodSpec> (module, types.AsmUserBinder,
-				MemberFilter.Method ("BindVariable", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, btypes.Object), btypes.Void));
-
-			AsmUserBinderBindVariableUnsafe = new PredefinedMember<MethodSpec> (module, types.AsmUserBinder,
-				MemberFilter.Method ("BindVariableUnsafe", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, void_star), btypes.Void));
-
-			AsmRuntimeBinderBindParameter = new PredefinedMember<MethodSpec> (module, types.AsmRuntimeBinder,
-				MemberFilter.Method ("BindParameter", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, btypes.Int), btypes.Void));
-
-			AsmRuntimeBinderBindVariable = new PredefinedMember<MethodSpec> (module, types.AsmRuntimeBinder,
-				MemberFilter.Method ("BindVariable", 0, ParametersCompiled.CreateFullyResolved (btypes.Int, btypes.Int), btypes.Void));
 
 			AsyncTaskMethodBuilderCreate = new PredefinedMember<MethodSpec> (module, types.AsyncTaskMethodBuilder,
 				MemberFilter.Method ("Create", 0, ParametersCompiled.EmptyReadOnlyParameters, types.AsyncTaskMethodBuilder.TypeSpec));

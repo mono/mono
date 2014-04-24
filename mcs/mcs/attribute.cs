@@ -1315,32 +1315,23 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public sealed class AttributeEncoder
+	public class BlobEncoder
 	{
-		[Flags]
-		public enum EncodedTypeProperties
-		{
-			None = 0,
-			DynamicType = 1,
-			TypeParameter = 1 << 1
-		}
-
-		public static readonly byte[] Empty;
-
 		byte[] buffer;
 		int pos;
-		const ushort Version = 1;
 
-		static AttributeEncoder ()
-		{
-			Empty = new byte[4];
-			Empty[0] = (byte) Version;
-		}
-
-		public AttributeEncoder ()
+		public BlobEncoder ()
 		{
 			buffer = new byte[32];
-			Encode (Version);
+		}
+
+		public void Add (byte[] data)
+		{
+			if (pos + data.Length > buffer.Length)
+				Grow (data.Length);
+
+			Buffer.BlockCopy (data, 0, buffer, pos, data.Length);
+			pos += data.Length;
 		}
 
 		public void Encode (bool value)
@@ -1353,7 +1344,7 @@ namespace Mono.CSharp {
 			if (pos == buffer.Length)
 				Grow (1);
 
-			buffer [pos++] = value;
+			buffer[pos++] = value;
 		}
 
 		public void Encode (sbyte value)
@@ -1428,7 +1419,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			var buf = Encoding.UTF8.GetBytes(value);
+			var buf = Encoding.UTF8.GetBytes (value);
 			WriteCompressedValue (buf.Length);
 
 			if (pos + buf.Length > buffer.Length)
@@ -1436,6 +1427,62 @@ namespace Mono.CSharp {
 
 			Buffer.BlockCopy (buf, 0, buffer, pos, buf.Length);
 			pos += buf.Length;
+		}
+
+
+		void Grow (int inc)
+		{
+			int size = System.Math.Max (pos * 4, pos + inc + 2);
+			Array.Resize (ref buffer, size);
+		}
+
+		public void WriteCompressedValue (int value)
+		{
+			if (value < 0x80) {
+				Encode ((byte) value);
+				return;
+			}
+
+			if (value < 0x4000) {
+				Encode ((byte) (0x80 | (value >> 8)));
+				Encode ((byte) value);
+				return;
+			}
+
+			Encode (value);
+		}
+
+		public byte[] ToArray ()
+		{
+			byte[] buf = new byte[pos];
+			Array.Copy (buffer, buf, pos);
+			return buf;
+		}
+	}
+
+	public sealed class AttributeEncoder : BlobEncoder
+	{
+		[Flags]
+		public enum EncodedTypeProperties
+		{
+			None = 0,
+			DynamicType = 1,
+			TypeParameter = 1 << 1
+		}
+
+		public static readonly byte[] Empty;
+
+		const ushort Version = 1;
+
+		static AttributeEncoder ()
+		{
+			Empty = new byte[4];
+			Empty[0] = (byte) Version;
+		}
+
+		public AttributeEncoder ()
+		{
+			Encode (Version);
 		}
 
 		public EncodedTypeProperties Encode (TypeSpec type)
@@ -1566,35 +1613,6 @@ namespace Mono.CSharp {
 		public void EncodeEmptyNamedArguments ()
 		{
 			Encode ((ushort) 0);
-		}
-
-		void Grow (int inc)
-		{
-			int size = System.Math.Max (pos * 4, pos + inc + 2);
-			Array.Resize (ref buffer, size);
-		}
-
-		void WriteCompressedValue (int value)
-		{
-			if (value < 0x80) {
-				Encode ((byte) value);
-				return;
-			}
-
-			if (value < 0x4000) {
-				Encode ((byte) (0x80 | (value >> 8)));
-				Encode ((byte) value);
-				return;
-			}
-
-			Encode (value);
-		}
-
-		public byte[] ToArray ()
-		{
-			byte[] buf = new byte[pos];
-			Array.Copy (buffer, buf, pos);
-			return buf;
 		}
 	}
 

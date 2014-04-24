@@ -41,8 +41,8 @@ namespace Mono.CSharp
 			readonly Dictionary<int, Struct> size_types;
 			int fields;
 
-			public StaticDataContainer (ModuleContainer module)
-				: base (module, new MemberName ("<PrivateImplementationDetails>" + module.builder.ModuleVersionId.ToString ("B"), Location.Null),
+			public StaticDataContainer (ModuleContainer module, string containerName = "<PrivateImplementationDetails>")
+				: base (module, new MemberName (containerName + module.builder.ModuleVersionId.ToString ("B"), Location.Null),
 					Modifiers.STATIC | Modifiers.INTERNAL)
 			{
 				size_types = new Dictionary<int, Struct> ();
@@ -87,6 +87,7 @@ namespace Mono.CSharp
 		}
 
 		StaticDataContainer static_data;
+		StaticDataContainer inline_asm_data;
 
 		//
 		// Makes const data field inside internal type container
@@ -102,6 +103,19 @@ namespace Mono.CSharp
 			}
 
 			return static_data.DefineInitializedData (data, loc);
+		}
+
+		public FieldSpec MakeInlineAsmData (byte[] data, Location loc)
+		{
+			if (inline_asm_data == null) {
+				inline_asm_data = new StaticDataContainer (this, "<InlineAsmData>");
+				inline_asm_data.CreateContainer ();
+				inline_asm_data.DefineContainer ();
+
+				AddCompilerGeneratedClass (inline_asm_data);
+			}
+
+			return inline_asm_data.DefineInitializedData (data, loc);
 		}
 #endif
 

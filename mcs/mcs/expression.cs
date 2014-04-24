@@ -6236,21 +6236,13 @@ namespace Mono.CSharp
 					return null;
 			}
 
-			var method = mg.BestCandidate;
-			var pm = ec.Module.PredefinedMembers;
-			if (method == pm.AsmUserBinderBindParameter.Get () || method == pm.AsmUserBinderBindParameterUnsafe.Get ()) {
-				// TODO: reject dynamics
-				arguments[1] = new Argument (ConvertArgumentToBindParameter (ec, arguments[1].Expr));
-				mg.BestCandidate = pm.AsmRuntimeBinderBindParameter.Resolve (Location);
-			} else if (method == pm.AsmUserBinderBindVariable.Get () || method == pm.AsmUserBinderBindVariableUnsafe.Get ()) {
-				// TODO: reject dynamics
-				// TODO: reject method group binding
-				arguments[1] = new Argument (ConvertArgumentToBindVariable (ec, arguments[1].Expr));
-				mg.BestCandidate = pm.AsmRuntimeBinderBindVariable.Resolve (Location);
-			}
-
 			if (dynamic_arg)
 				return DoResolveDynamic (ec, member_expr);
+
+			var method = mg.BestCandidate;
+			if (method.DeclaringType == ec.Module.PredefinedTypes.InlineAsm.TypeSpec) {
+				return new InlineAsmStatement (arguments, mg.BestCandidate).Resolve (ec);
+			}
 
 			type = mg.BestCandidateReturnType;
 		
@@ -6268,44 +6260,6 @@ namespace Mono.CSharp
 			return this;
 		}
 
-		Expression ConvertArgumentToBindParameter (ResolveContext rc, Expression expr)
-		{
-			var cast = expr as TypeCast;
-			if (cast != null)
-				return ConvertArgumentToBindParameter (rc, cast.Child);
-
-			var pr = expr as ParameterReference;
-			if (pr != null) {
-				// TODO: check for hoisted version
-				// TODO: reject out/ref parameters?
-				expr = new IntConstant (rc.BuiltinTypes, pr.Parameter.PositionalIndex, expr.Location);
-				expr.Resolve (rc);
-				return expr;
-			}
-
-			rc.Report.Error (-100, expr.Location, "Parameter binder argument must be parameter reference");
-			return ErrorExpression.Instance;
-		}
-
-		Expression ConvertArgumentToBindVariable (ResolveContext rc, Expression expr)
-		{
-			var cast = expr as TypeCast;
-			if (cast != null)
-				return ConvertArgumentToBindVariable (rc, cast.Child);
-
-			var vr = expr as LocalVariableReference;
-			if (vr != null) {
-				// TODO: check for hoisted version
-				// TODO: check for local constant?
-				// TODO: check for locked foreach/using variable
-				expr = new LocalVariableReferenceIndex (rc.BuiltinTypes, vr.local_info, expr.Location);
-				expr.Resolve (rc);
-				return expr;
-			}
-
-			rc.Report.Error (-100, expr.Location, "Parameter binder argument must be local variable");
-			return ErrorExpression.Instance;
-		}
 		protected virtual Expression DoResolveDynamic (ResolveContext ec, Expression memberExpr)
 		{
 			Arguments args;
@@ -11353,6 +11307,166 @@ namespace Mono.CSharp
 			: base (expr)
 		{
 			this.loc = loc;
+		}
+	}
+
+	class InlineAsmStatement : ExpressionStatement
+	{
+		readonly Arguments arguments;
+		readonly MethodSpec method;
+
+		public InlineAsmStatement (Arguments arguments, MethodSpec method)
+		{
+			this.arguments = arguments;
+			this.method = method;
+		}
+
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			// TODO: Add proper arguments checks
+			var c = arguments[0].Expr as Constant;
+			if (c == null)
+				throw new ArgumentException ();
+
+			c = arguments[1].Expr as Constant;
+			if (c == null)
+				throw new NotImplementedException ();
+
+			if (c.GetValueAsLiteral () == null)
+				throw new NotImplementedException ();
+
+			var args = arguments[2].Expr;
+			var args_array = args as ArrayCreation;
+			if (args_array == null)
+				throw new NotImplementedException ();
+
+			PredefinedType flags_type;
+			switch (method.Name) {
+				case "Arm":
+				flags_type = rc.Module.PredefinedTypes.AsmArm;
+				break;
+				case "X86":
+				flags_type = rc.Module.PredefinedTypes.AsmX86;
+				break;
+				case "Amd64":
+				flags_type = rc.Module.PredefinedTypes.AsmAmd64;
+				break;
+				default:
+				throw new NotImplementedException ();
+			}
+
+			var elements = args_array.Initializers.Elements;
+			for (int i = 0; i < elements.Count / 2; ++i) {
+				var expr = elements[i * 2];
+				expr = ExtractInlineAsmArgument (rc, expr);
+				if (expr == null)
+					break;
+
+				elements[i * 2] = expr;
+
+				c = elements[i * 2 + 1] as Constant;
+				if (c == null)
+					throw new NotImplementedException ();
+			}
+
+			if (elements.Count % 2 != 0)
+				rc.Report.Error (-101, args_array.Location, "Every argument requires associated `{0}' to be specified", flags_type.GetSignatureForError ());
+
+			type = rc.Module.Compiler.BuiltinTypes.Void;
+			eclass = ExprClass.Value;
+			return this;
+		}
+
+		public override void EmitStatement (EmitContext ec)
+		{
+			var enc = new BlobEncoder ();
+			enc.Encode ((byte) 1); // version
+
+			var c = (Constant) arguments[0].Expr;
+			enc.Encode ((int) c.GetValueAsLong ()); // options
+
+			var args_array = (ArrayCreation) arguments[2].Expr;
+
+			var elements = args_array.Initializers.Elements;
+			var count = elements.Count / 2;
+			// TODO: Why byte?
+			enc.Encode ((byte) count); // arguments count
+			for (int i = 0; i < count; ++i) {
+				// argument type
+				EncodeInlineAsmArgument (enc, elements[i * 2]);
+
+				c = (Constant) elements[i * 2 + 1];
+				// argument options
+				enc.Encode ((int) c.GetValueAsLong ());
+			}
+
+			c = (Constant) arguments[1].Expr;
+			var code = c.GetValueAsLiteral ();
+
+			var fb = ec.CurrentTypeDefinition.Module.MakeInlineAsmData (enc.ToArray (), loc);
+			ec.Emit (OpCodes.Ldtoken, fb);
+			ec.Emit (OpCodes.Pop);
+		}
+
+		static Expression ExtractInlineAsmArgument (ResolveContext rc, Expression expr)
+		{
+			var cast = expr as TypeCast;
+			if (cast != null)
+				return ExtractInlineAsmArgument (rc, cast.Child);
+
+			// TODO: check for hoisted version
+			// TODO: reject out/ref parameters?
+			if (expr is ParameterReference)
+				return expr;
+
+			// TODO: check for hoisted version
+			// TODO: check for local constant?
+			// TODO: check for locked foreach/using variable
+			if (expr is LocalVariableReference)
+				return expr;
+
+			rc.Report.Error (-100, expr.Location, "Parameter binder argument must be local variable or parameter reference");
+			return null;
+		}
+
+		static void EncodeInlineAsmArgument (BlobEncoder encoder, Expression expr)
+		{
+			var pr = expr as ParameterReference;
+			if (pr != null) {
+				encoder.Encode ((byte) 0);
+				encoder.WriteCompressedValue (pr.Parameter.PositionalIndex);
+				return;
+			}
+
+			var lv = expr as LocalVariableReference;
+			if (lv != null) {
+				// TODO: check for hoisted version
+				// TODO: check for local constant?
+				// TODO: check for locked foreach/using variable
+				encoder.Encode ((byte) 1);
+				encoder.WriteCompressedValue (lv.local_info.LocalIndex);
+				return;
+			}
+
+			throw new InternalErrorException ();
+		}
+
+		static void EncodeInlineAsmCode (BlobEncoder enc, string code)
+		{
+			// TODO: Get it from external lib
+			byte[] bcode = new byte[] { 1, 2, 3 };
+			enc.WriteCompressedValue (bcode.Length);
+			enc.Add (bcode);
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new NotSupportedException ();
 		}
 	}
 }
