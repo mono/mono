@@ -79,26 +79,26 @@ EXTRA_DISTFILES = \
 System.Xml.XPath/Parser.cs: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
 	(cd System.Xml.XPath; $(topdir)/../jay/jay -ct < $(topdir)/../jay/skeleton.cs Parser.jay >> Parser.cs)
 
-Mono.Xml.Xsl/PatternParser.jay: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
+Mono.Xml.Xsl/$(PROFILE)_PatternParser.jay: System.Xml.XPath/Parser.jay $(topdir)/jay/skeleton.cs
 	sed "s/\%start Expr/\%start Pattern/" $< >$@
 
-Mono.Xml.Xsl/PatternParser.cs: Mono.Xml.Xsl/PatternParser.jay $(topdir)/jay/skeleton.cs
+Mono.Xml.Xsl/$(PROFILE)_PatternParser.cs: Mono.Xml.Xsl/$(PROFILE)_PatternParser.jay $(topdir)/jay/skeleton.cs
 	echo "#define XSLT_PATTERN" > $@
-	(cd Mono.Xml.Xsl; $(topdir)/../jay/jay -ct PatternParser.jay < $(topdir)/../jay/skeleton.cs >> PatternParser.cs)
+	(cd Mono.Xml.Xsl; $(topdir)/../jay/jay -ct $(PROFILE)_PatternParser.jay < $(topdir)/../jay/skeleton.cs >> $(PROFILE)_PatternParser.cs)
 
-Mono.Xml.Xsl/PatternTokenizer.cs: System.Xml.XPath/Tokenizer.cs
+Mono.Xml.Xsl/$(PROFILE)_PatternTokenizer.cs: System.Xml.XPath/Tokenizer.cs
 	echo "#define XSLT_PATTERN" > $@
 	cat $< >>$@
 
 ifneq (moonlight_raw, $(PROFILE))
 BUILT_SOURCES = System.Xml.XPath/Parser.cs \
-	Mono.Xml.Xsl/PatternParser.cs \
-	Mono.Xml.Xsl/PatternTokenizer.cs
+	Mono.Xml.Xsl/$(PROFILE)_PatternParser.cs \
+	Mono.Xml.Xsl/$(PROFILE)_PatternTokenizer.cs
 
 CLEAN_FILES = Test/XmlFiles/xsl/result.xml \
 	System.Xml.XPath/Parser.cs \
-	Mono.Xml.Xsl/PatternParser.cs \
-	Mono.Xml.Xsl/PatternTokenizer.cs
+	Mono.Xml.Xsl/$(PROFILE)_PatternParser.cs \
+	Mono.Xml.Xsl/$(PROFILE)_PatternTokenizer.cs
 endif
 
 include ../../build/library.make
