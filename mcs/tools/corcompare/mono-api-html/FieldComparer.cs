@@ -71,8 +71,12 @@ namespace Xamarin.ApiDiff {
 				string ftype = e.GetTypeName ("fieldtype");
 				sb.Append (ftype).Append (' ');
 				sb.Append (name);
-				if (ftype == "string")
-					sb.Append (" = \"").Append (e.Attribute ("value").Value).Append ('"');
+				if (ftype == "string" && e.Attribute ("value") != null) {
+					if (value == null)
+						sb.Append (" = null");
+					else
+						sb.Append (" = \"").Append (value).Append ('"');
+				}
 				sb.Append (';');
 			}
 
