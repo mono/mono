@@ -40,6 +40,11 @@ namespace System.Reflection.Emit
 			throw new NotSupportedException ();
 		}
 
+		public void BeginExceptFilterBlock ()
+		{
+			throw new NotSupportedException ();
+		}
+
 		public void BeginFinallyBlock ()
 		{
 			throw new NotSupportedException ();
