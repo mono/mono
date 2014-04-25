@@ -122,6 +122,8 @@ namespace Mono.Security.X509 {
 
 		public bool Build (X509Certificate leaf) 
 		{
+			// When finished, _chain should contain the leaf, and optional intermediates, excluding the root.
+
 			_status = X509ChainStatusFlags.NoError;
 			if (_chain == null) {
 				// chain not supplied - we must build it ourselve
