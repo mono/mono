@@ -31,7 +31,7 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH
+#if MONOTOUCH || MONODROID
 using Mono.Security.Protocol.Tls;
 using MSX = Mono.Security.X509;
 using Mono.Security.X509.Extensions;

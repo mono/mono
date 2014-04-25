@@ -28,7 +28,7 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH
+#if MONOTOUCH || MONODROID
 using Mono.Security;
 using MX = Mono.Security.X509;
 #else

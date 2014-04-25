@@ -30,7 +30,7 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH
+#if MONOTOUCH || MONODROID
 using System.Security.Cryptography.X509Certificates;
 #else
 extern alias PrebuiltSystem;
