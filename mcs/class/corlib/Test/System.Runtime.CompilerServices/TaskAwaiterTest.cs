@@ -34,6 +34,7 @@ using System.Threading.Tasks;
 using NUnit.Framework;
 using System.Runtime.CompilerServices;
 using System.Collections.Generic;
+using System.Collections;
 
 namespace MonoTests.System.Runtime.CompilerServices
 {
@@ -70,6 +71,48 @@ namespace MonoTests.System.Runtime.CompilerServices
 				++InlineCalls;
 				return false;
 			}
+		}
+
+		class SingleThreadSynchronizationContext : SynchronizationContext
+		{
+			readonly Queue _queue = new Queue ();
+
+			public void RunOnCurrentThread ()
+			{
+				while (_queue.Count != 0) {
+					var workItem = (KeyValuePair<SendOrPostCallback, object>) _queue.Dequeue ();
+					workItem.Key (workItem.Value);
+				}
+			}
+				
+			public override void Post (SendOrPostCallback d, object state)
+			{
+				if (d == null) {
+					throw new ArgumentNullException ("d");
+				}
+
+				_queue.Enqueue (new KeyValuePair<SendOrPostCallback, object> (d, state));
+			}
+
+			public override void Send (SendOrPostCallback d, object state)
+			{
+				throw new NotSupportedException ("Synchronously sending is not supported.");
+			}
+		}
+
+		string progress;
+		SynchronizationContext sc;
+
+		[SetUp]
+		public void Setup ()
+		{
+			sc = SynchronizationContext.Current;
+		}
+
+		[TearDown]
+		public void TearDown ()
+		{
+			SynchronizationContext.SetSynchronizationContext (sc);
 		}
 
 		[Test]
@@ -182,6 +225,86 @@ namespace MonoTests.System.Runtime.CompilerServices
 			// this will only terminate correctly if the test was not executed from the main thread
 			// e.g. Touch.Unit defaults to run tests on the main thread and this will return false
 			Assert.AreEqual (Thread.CurrentThread.IsBackground, mres2.WaitOne (2000), "#2");;
+		}
+
+		[Test]
+		public void CompletionOnSameCustomSynchronizationContext ()
+		{
+			progress = "";
+			var syncContext = new SingleThreadSynchronizationContext ();
+			SynchronizationContext.SetSynchronizationContext (syncContext);
+
+			syncContext.Post (delegate {
+				Go (syncContext);
+			}, null);
+
+			// Custom message loop
+			var cts = new CancellationTokenSource ();
+			cts.CancelAfter (5000);
+			while (progress.Length != 3 && !cts.IsCancellationRequested) {
+				syncContext.RunOnCurrentThread ();
+				Thread.Sleep (0);
+			}
+
+			Assert.AreEqual ("123", progress);
+		}
+
+		async void Go (SynchronizationContext ctx)
+		{
+			await Wait (ctx);
+
+			progress += "2";
+		}
+
+		async Task Wait (SynchronizationContext ctx)
+		{
+			await Task.Delay (10); // Force block suspend/return
+
+			ctx.Post (l => progress += "3", null);
+
+			progress += "1";
+
+			// Exiting same context - no need to post continuation
+		}
+
+		[Test]
+		public void CompletionOnDifferentCustomSynchronizationContext ()
+		{
+			progress = "";
+			var syncContext = new SingleThreadSynchronizationContext ();
+			SynchronizationContext.SetSynchronizationContext (syncContext);
+
+			syncContext.Post (delegate {
+				Go2 (syncContext);
+			}, null);
+
+			// Custom message loop
+			var cts = new CancellationTokenSource ();
+			cts.CancelAfter (5000);
+			while (progress.Length != 3 && !cts.IsCancellationRequested) {
+				syncContext.RunOnCurrentThread ();
+				Thread.Sleep (0);
+			}
+
+			Assert.AreEqual ("132", progress);
+		}
+
+		async void Go2 (SynchronizationContext ctx)
+		{
+			await Wait2 (ctx);
+
+			progress += "2";
+		}
+
+		async Task Wait2 (SynchronizationContext ctx)
+		{
+			await Task.Delay (10); // Force block suspend/return
+
+			ctx.Post (l => progress += "3", null);
+
+			progress += "1";
+
+			SynchronizationContext.SetSynchronizationContext (null);
 		}
 	}
 }
