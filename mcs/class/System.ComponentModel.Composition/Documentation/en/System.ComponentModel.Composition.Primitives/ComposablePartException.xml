@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComposablePartException" FullName="System.ComponentModel.Composition.Primitives.ComposablePartException">
   <TypeSignature Language="C#" Value="public class ComposablePartException : Exception" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit ComposablePartException extends System.Exception" />
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when an error occurs when calling methods on a <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +35,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -46,9 +53,13 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" /> class with the specified error message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message that describes the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" />, or null to set the <see cref="P:System.Exception.Message" /> property to its default value.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -68,10 +79,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" /> class with the specified serialization data.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that holds the serialized object data for the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains contextual information about the source or destination.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -86,10 +102,15 @@
         <Parameter Name="element" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="element">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" /> class with the specified error message and the composition element that is the cause of the exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message that describes the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" />, or null to set the <see cref="P:System.Exception.Message" /> property to its default value.</param>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The composition element that is the cause of the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" />, or null to set the <see cref="P:System.ComponentModel.Composition.Primitives.ComposablePartException.Element" /> property to null.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -104,10 +125,15 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" /> class with the specified error message and the exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message that describes the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" />, or null to set the <see cref="P:System.Exception.Message" /> property to its default value.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the underlying cause of the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" />, or null to set the <see cref="P:System.Exception.InnerException" /> property to null.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -123,11 +149,17 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="element">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" /> class with the specified error message, and the composition element and exception that are the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message that describes the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" />, or null to set the <see cref="P:System.Exception.Message" /> property to its default value.</param>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />The composition element that is the cause of the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" />, or null to set the <see cref="P:System.ComponentModel.Composition.Primitives.ComposablePartException.Element" /> property to null.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the underlying cause of the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" />, or null to set the <see cref="P:System.Exception.InnerException" /> property to null.</param>
       </Docs>
     </Member>
     <Member MemberName="Element">
@@ -141,9 +173,12 @@
         <ReturnType>System.ComponentModel.Composition.Primitives.ICompositionElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the composition element that is the cause of the exception.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -166,10 +201,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the serialization data for the exception.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />After calling the method, contains serialized object data about the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartException" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />After calling the method, contains contextual information about the source or destination.</param>
       </Docs>
     </Member>
   </Members>

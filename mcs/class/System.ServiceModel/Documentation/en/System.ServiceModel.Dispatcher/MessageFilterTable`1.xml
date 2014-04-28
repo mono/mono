@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MessageFilterTable&lt;TFilterData&gt;" FullName="System.ServiceModel.Dispatcher.MessageFilterTable&lt;TFilterData&gt;">
   <TypeSignature Language="C#" Value="public class MessageFilterTable&lt;TFilterData&gt; : System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;System.ServiceModel.Dispatcher.MessageFilter,TFilterData&gt;&gt;, System.Collections.Generic.IDictionary&lt;System.ServiceModel.Dispatcher.MessageFilter,TFilterData&gt;, System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;System.ServiceModel.Dispatcher.MessageFilter,TFilterData&gt;&gt;, System.ServiceModel.Dispatcher.IMessageFilterTable&lt;TFilterData&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageFilterTable`1&lt;TFilterData&gt; extends System.Object implements class System.Collections.Generic.ICollection`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;class System.ServiceModel.Dispatcher.MessageFilter, !TFilterData&gt;&gt;, class System.Collections.Generic.IDictionary`2&lt;class System.ServiceModel.Dispatcher.MessageFilter, !TFilterData&gt;, class System.Collections.Generic.IEnumerable`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;class System.ServiceModel.Dispatcher.MessageFilter, !TFilterData&gt;&gt;, class System.Collections.IEnumerable, class System.ServiceModel.Dispatcher.IMessageFilterTable`1&lt;!TFilterData&gt;" />
@@ -32,8 +33,16 @@
   </Attributes>
   <Docs>
     <typeparam name="TFilterData">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.ServiceModel.Dispatcher.MessageFilterTable`1" /> accepts filters of any type. It groups them internally into tables that contain all the filters of a given type. When a filter is added, it is put into an internal filter table, if one already exists, which contains filters of its type. If no such table exists, <see cref="M:System.ServiceModel.Dispatcher.MessageFilterTable`1.CreateFilterTable(System.ServiceModel.Dispatcher.MessageFilter)" /> is called to allocate a new filter table of the appropriate type. Its default operation is to call <see cref="M:System.ServiceModel.Dispatcher.MessageFilter.CreateFilterTable``1" />. </para>
+      <para>This default behavior can be overridden to explicitly specify the type of filter table associated with a type of filter. The first time a filter type is added to the table, the filter table type created is permanently associated with the filter type. </para>
+      <para>The priority is an integer value used to group filters into priority buckets and order their processing. The larger the integer assigned to a filter type, the higher its priority for processing. All the filter tables in a priority bucket are evaluated together. Lower priority buckets are only evaluated if higher priority buckets do not provide any matches. A filter table assigns a default priority that can be set to filters being added.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the generic implementation of a filter table.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -45,8 +54,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The larger the integer assigned to a filter table, the higher its priority for use in inspecting messages for a match. The default priority can be specified using <see cref="M:System.ServiceModel.Dispatcher.MessageFilterTable`1.#ctor(System.Int32)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.MessageFilterTable`1" /> class with a default priority of 0.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -61,8 +76,14 @@
       </Parameters>
       <Docs>
         <param name="default_priority">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The larger the integer assigned to a filter table, the higher its priority for use in inspecting messages for a match. The default constructor assigns a <paramref name="defaultPriority" /> of 0.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.MessageFilterTable`1" /> class with the specified initial default priority.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -140,8 +161,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements <see cref="M:System.Collections.Generic.ICollection`1.Clear" />.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all filters and their associated data from the filter table.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -178,10 +205,17 @@
         <Parameter Name="filter" Type="System.ServiceModel.Dispatcher.MessageFilter" />
       </Parameters>
       <Docs>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements the ContainsKey method of <see cref="T:System.Collections.Generic.IDictionary`2" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the filter table contains a specified filter.</para>
+        </summary>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> being tested for.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -216,9 +250,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property implements <see cref="P:System.Collections.Generic.ICollection`1.Count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of filter/<paramref name="FilterData" /> pairs in the filter table.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateFilterTable">
@@ -235,10 +275,14 @@
         <Parameter Name="filter" Type="System.ServiceModel.Dispatcher.MessageFilter" />
       </Parameters>
       <Docs>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instantiates a filter table for a specified type of filter.</para>
+        </summary>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> to be contained in the filter table created.</param>
       </Docs>
     </Member>
     <Member MemberName="DefaultPriority">
@@ -257,9 +301,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default priority is the priority automatically assigned a filter added to the filter table if no priority is explicitly specified. The priority of a filter is an integer value used to group filters into buckets that are used to order their processing. The larger the integer assigned to a filter type, the higher its priority for processing. All the filter tables in a priority bucket are evaluated together. Lower priority buckets are only evaluated if higher priority buckets do not provide any matches.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default priority for the filter table.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -274,9 +324,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements the GetEnumerator method of <see cref="T:System.Collections.IEnumerable" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the filter table.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetMatchingFilter">
@@ -469,10 +525,17 @@
         <Parameter Name="filter" Type="System.ServiceModel.Dispatcher.MessageFilter" />
       </Parameters>
       <Docs>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The priority is an integer value used to group filters into priority buckets and order their processing. The larger the integer assigned to a filter type, the higher its priority for processing. All the filter tables in a priority bucket are evaluated together. Lower priority buckets are only evaluated if higher priority buckets do not provide any matches.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the priority of a given filter in the table.</para>
+        </summary>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> contained in the filter table created.</param>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -486,9 +549,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Dispatcher.MessageFilterTable`1" /> must not be read-only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the filter table is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -522,9 +591,16 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;System.ServiceModel.Dispatcher.MessageFilter&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property implements <see cref="P:System.Collections.Generic.IDictionary`2.Keys" />. The <see cref="T:System.Collections.Generic.IDictionary`2" />&lt;Filter, <paramref name="FilterData" />&gt; that the filter table implements uses the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> as the key and the <paramref name="FilterData" /> as the value of the pair. </para>
+          <para>The order of the filters returned in the collection is unspecified, but it is guaranteed to be the same order as the corresponding <paramref name="FilterData" /> in the collection returned by the <see cref="P:System.ServiceModel.Dispatcher.MessageFilterTable`1.Values" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of all the filters contained in the filter table.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -561,10 +637,17 @@
         <Parameter Name="filter" Type="System.ServiceModel.Dispatcher.MessageFilter" />
       </Parameters>
       <Docs>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements <see cref="M:System.Collections.Generic.SynchronizedReadOnlyCollection`1.System.Collections.Generic.ICollection`1.Remove(`0)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a filter and its associated <paramref name="FilterData" /> from the filter table.</para>
+        </summary>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerable.GetEnumerator">
@@ -579,9 +662,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements <see cref="M:System.Collections.IEnumerable.GetEnumerator" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the filter table.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TryGetValue">
@@ -617,9 +706,16 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;TFilterData&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property implements <see cref="P:System.Collections.Generic.IDictionary`2.Values" />. The <see cref="T:System.Collections.Generic.IDictionary`2" />&lt;Filter, <paramref name="FilterData" />&gt; that the filter table implements uses the <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" /> as the key and the <paramref name="FilterData" /> as the value of the pair.</para>
+          <para>The order of the <paramref name="FilterData" /> returned in the collection is unspecified, but it is guaranteed to be the same order as the corresponding filters in the collection returned by the <see cref="P:System.ServiceModel.Dispatcher.MessageFilterTable`1.Keys" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of all the <paramref name="FilterData" /> contained in the filter table.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

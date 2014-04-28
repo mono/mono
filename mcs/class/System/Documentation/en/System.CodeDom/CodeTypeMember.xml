@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeTypeMember" FullName="System.CodeDom.CodeTypeMember">
   <TypeSignature Language="C#" Value="public class CodeTypeMember : System.CodeDom.CodeObject" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeTypeMember extends System.CodeDom.CodeObject" />
@@ -23,11 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Provides a base class for members in types in the CodeDom.</summary>
-    <remarks>The <see cref="T:System.CodeDom.CodeTypeMember" /> is the base class for members of types in the CodeDom. Some of the classes derives from this that can be used include
-
-
-<list type="bullet"><item><term><see cref="T:System.CodeDom.CodeMemberEvent" /></term></item><item><term><see cref="T:System.CodeDom.CodeMemberField" /></term></item><item><term><see cref="T:System.CodeDom.CodeMemberMethod" /></term></item><item><term><see cref="T:System.CodeDom.CodeMemberProperty" /></term></item></list></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.CodeDom.CodeTypeMember" /> class can be used to represent the declaration for a member of a type. <see cref="T:System.CodeDom.CodeTypeMember" /> is a base class from which more specific types of members are derived, such as <see cref="T:System.CodeDom.CodeMemberField" /> and <see cref="T:System.CodeDom.CodeMemberMethod" />. This class contains properties and methods common to all type members.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for a member of a type. Type members include fields, methods, properties, constructors and nested types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -42,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTypeMember" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Attributes">
@@ -61,9 +68,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'MemberAttributes'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used to specify the attributes of the type member. </para>
+          <para>Member attributes are classified in groups, with a mask for each group. The access group consists of flags containing the terms Public, Private, Family, or Assembly.  The scope group includes flags for <see cref="F:System.CodeDom.MemberAttributes.Abstract" />, <see cref="F:System.CodeDom.MemberAttributes.Final" />, <see cref="F:System.CodeDom.MemberAttributes.Static" />, <see cref="F:System.CodeDom.MemberAttributes.Override" />, and <see cref="F:System.CodeDom.MemberAttributes.Const" />. The <see cref="F:System.CodeDom.MemberAttributes.AccessMask" /> mask identifies the access attributes. The <see cref="F:System.CodeDom.MemberAttributes.ScopeMask" /> mask identifies the scope attributes. The default value for the <see cref="P:System.CodeDom.CodeTypeMember.Attributes" /> property includes flags from both access and scope. To change either access or scope, first mask out the existing flags and then set the new value. For example, the code statement to identify a constructor (named constructor1) as public is constructor1.Attributes = (constructor1.Attributes &amp; ~MemberAttributes.AccessMask) | MemberAttributes.Public;. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the attributes of the member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Comments">
@@ -79,9 +93,15 @@
         <ReturnType>System.CodeDom.CodeCommentStatementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeCommentStatementCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The comments in this collection are written to the generated source file just before the declaration of the member.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of comments for the type member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CustomAttributes">
@@ -99,9 +119,18 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeAttributeDeclarationCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be used to add metadata attributes to the declaration of the member.</para>
+          <block subset="none" type="note">
+            <para>This property is null by default and should be checked for content before being referenced.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the custom attributes of the member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndDirectives">
@@ -116,9 +145,12 @@
         <ReturnType>System.CodeDom.CodeDirectiveCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the end directives for the member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LinePragma">
@@ -136,9 +168,18 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeLinePragma'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates the location of the type member declaration. This property can be used for error reporting and debugging. The location of the type member declaration can be useful when code is generated based on a template file.</para>
+          <block subset="none" type="note">
+            <para>This value is null by default and should be checked for content before being referenced.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the line on which the type member statement occurs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -156,9 +197,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StartDirectives">
@@ -173,9 +217,12 @@
         <ReturnType>System.CodeDom.CodeDirectiveCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the start directives for the member.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

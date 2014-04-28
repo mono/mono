@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpCachePolicyElement" FullName="System.Net.Configuration.HttpCachePolicyElement">
   <TypeSignature Language="C#" Value="public sealed class HttpCachePolicyElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HttpCachePolicyElement extends System.Configuration.ConfigurationElement" />
@@ -11,9 +12,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class corresponds to the <format type="text/html"><a href="2c1247d0-39b0-4c12-919a-a925ce075c79">DefaultHttpCachePolicy Element (Network Settings)</a></format> configuration element.</para>
+      <para>This class is used to specify the HTTP caching configuration that applies to network resources obtained by using the <see cref="T:System.Net.WebRequest" /> and <see cref="T:System.Net.WebClient" /> classes. </para>
+      <para>This class provides programmatic access to information that can be stored in configuration files.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the default HTTP cache policy for network resources. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +35,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor adds the <see cref="P:System.Net.Configuration.HttpCachePolicyElement.MaximumAge" />, <see cref="P:System.Net.Configuration.HttpCachePolicyElement.MaximumStale" />, <see cref="P:System.Net.Configuration.HttpCachePolicyElement.MinimumFresh" />, and <see cref="P:System.Net.Configuration.HttpCachePolicyElement.PolicyLevel" /> properties to the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Configuration.HttpCachePolicyElement" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeserializeElement">
@@ -76,10 +91,16 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the cached copy of the resource is older than the specified time value, the resource must be revalidated by comparing the cached resource to the resource on the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum age permitted for a resource returned from the cache.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaximumStale">
@@ -99,10 +120,16 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the amount of time after content expiration during which the cached copy of the resource is acceptable.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum staleness value permitted for a resource returned from the cache.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MinimumFresh">
@@ -122,10 +149,16 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value specifies the amount of time before content expiration, during which the cached copy of the resource is acceptable.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum freshness permitted for a resource returned from the cache.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PolicyLevel">
@@ -145,10 +178,16 @@
         <ReturnType>System.Net.Cache.HttpRequestCacheLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applications typically use <see cref="F:System.Net.Cache.HttpRequestCacheLevel.Default" /> as their cache policy level. The <see cref="P:System.Net.WebRequest.CachePolicy" /> property, if not null, determines the cache policy in effect for a request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets HTTP caching behavior for the local machine.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -163,10 +202,16 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection contains four elements, which corresponds to the <see cref="P:System.Net.Configuration.HttpCachePolicyElement.MaximumAge" />, <see cref="P:System.Net.Configuration.HttpCachePolicyElement.MaximumStale" />, <see cref="P:System.Net.Configuration.HttpCachePolicyElement.MinimumFresh" />, and <see cref="P:System.Net.Configuration.HttpCachePolicyElement.PolicyLevel" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of properties for the current instance. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reset">

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlRowsCopiedEventArgs" FullName="System.Data.SqlClient.SqlRowsCopiedEventArgs">
   <TypeSignature Language="C#" Value="public class SqlRowsCopiedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the set of arguments passed to the <see cref="T:System.Data.SqlClient.SqlRowsCopiedEventHandler" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +25,17 @@
         <Parameter Name="rowsCopied" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="rowsCopied">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value in the <paramref name="rowsCopied" /> parameter is reset on each call to any one of the SqlBulkCopy.WriteToServer methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Data.SqlClient.SqlRowsCopiedEventArgs" /> object.</para>
+        </summary>
+        <param name="rowsCopied">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Int64" /> that indicates the number of rows copied during the current bulk copy operation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +48,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Data.SqlClient.SqlRowsCopiedEventArgs.Abort" /> property to cancel a bulk copy operation. Set <see cref="P:System.Data.SqlClient.SqlRowsCopiedEventArgs.Abort" /> to true to abort the bulk copy operation.</para>
+          <para>If you call the Close method from <see cref="E:System.Data.SqlClient.SqlBulkCopy.SqlRowsCopied" />, an exception is generated, and the <see cref="T:System.Data.SqlClient.SqlBulkCopy" /> object state does not change.</para>
+          <para>If an application specifically creates a <see cref="T:System.Data.SqlClient.SqlTransaction" /> object in the <see cref="T:System.Data.SqlClient.SqlCommand" /> constructor, the transaction is not rolled back. The application is responsible for determining whether it is required to rollback the operation, and if so, it must call the <see cref="M:System.Data.SqlClient.SqlTransaction.Rollback" /> method. If the application does not create a transaction, the internal transaction corresponding to the current batch is automatically rolled back. However, changes related to previous batches within the bulk copy operation are retained, because the transactions for them already have been committed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the bulk copy operation should be aborted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +72,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value in the <see cref="P:System.Data.SqlClient.SqlRowsCopiedEventArgs.RowsCopied" /> property is reset on each call to any of the SqlBulkCopy.WriteToServer methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that returns the number of rows copied during the current bulk copy operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeGenerationOptions" FullName="System.Xml.Serialization.CodeGenerationOptions">
   <TypeSignature Language="C#" Value="public enum CodeGenerationOptions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CodeGenerationOptions extends System.Enum" />
@@ -15,9 +16,30 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A Web Service Description Language (WSDL) file typically describes a class in XML schema language as an xsd:complex type composed of various primitive xsd:complex and xsd:simple types. When generating a .NET Framework class that represents a given xsd:complex type, you must choose how to represent the various primitive types it contains.</para>
+      <para>By default, each primitive is implemented as a field. If you specify the <see cref="F:System.Xml.Serialization.CodeGenerationOptions.GenerateProperties" /> option, each primitive type is instead implemented as a property.</para>
+      <format type="text/html">
+        <h2>Ordering of Serialization Code</h2>
+      </format>
+      <para>The <see cref="F:System.Xml.Serialization.CodeGenerationOptions.GenerateOrder" /> member instructs the code generator to create the serialization code in a specific order as determined by the Order property of the following attributes:</para>
+      <para>
+        <dynamicLink>
+          <keyword>T:System.Xml.Serialization.XmlAnyElementAttribute </keyword>
+          <keyword>T:System.Xml.Serialization.XmlArrayAttribute  </keyword>
+          <keyword>T:System.Xml.Serialization.XmlElementAttribute </keyword>
+        </dynamicLink>
+      </para>
+      <block subset="none" type="note">
+        <para>Once the Order property has been set on one public property or field in a type, it must be applied to all public properties and fields for that type and all inherited types.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies various options to use when generating .NET Framework types for use with an XML Web Service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EnableDataBinding">
@@ -37,8 +59,11 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables data binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateNewAsync">
@@ -58,8 +83,11 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates events for the asynchronous invocation of Web methods.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateOldAsync">
@@ -79,8 +107,11 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates Begin and End methods for the asynchronous invocation of Web methods.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateOrder">
@@ -100,8 +131,11 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates explicitly ordered serialization code as specified through the Order property of the <see cref="T:System.Xml.Serialization.XmlAnyElementAttribute" />, <see cref="T:System.Xml.Serialization.XmlArrayAttribute" />, and <see cref="T:System.Xml.Serialization.XmlElementAttribute" /> attributes. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenerateProperties">
@@ -121,8 +155,11 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents primitive types by properties.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -142,8 +179,11 @@
         <ReturnType>System.Xml.Serialization.CodeGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents primitive types by fields and primitive types by <see cref="N:System" /> namespace types.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

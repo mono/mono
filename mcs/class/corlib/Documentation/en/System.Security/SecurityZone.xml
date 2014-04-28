@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityZone" FullName="System.Security.SecurityZone">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum SecurityZone" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed SecurityZone extends System.Enum" />
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To configure zones, use the Security tab on the Microsoft Internet Explorer options panel.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the integer values corresponding to security zones used by security policy.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Internet">
@@ -36,8 +43,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Internet zone is used for the Web sites on the Internet that do not belong to another zone.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Intranet">
@@ -54,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The local intranet zone is used for content located on a company's intranet. Because the servers and information would be within a company's firewall, a user or company could assign a higher trust level to the content on the intranet.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MyComputer">
@@ -72,8 +85,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The local computer zone is an implicit zone used for content that exists on the user's computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoZone">
@@ -90,8 +106,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No zone is specified.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Trusted">
@@ -108,8 +127,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The trusted sites zone is used for content located on Web sites considered more reputable or trustworthy than other sites on the Internet. Users can use this zone to assign a higher trust level to these sites to minimize the number of authentication requests. The URLs of these trusted Web sites need to be mapped into this zone by the user.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Untrusted">
@@ -126,8 +148,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The restricted sites zone is used for Web sites with content that could cause, or could have caused, problems when downloaded. The URLs of these untrusted Web sites need to be mapped into this zone by the user.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

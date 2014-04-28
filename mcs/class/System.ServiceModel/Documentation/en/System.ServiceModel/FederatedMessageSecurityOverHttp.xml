@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FederatedMessageSecurityOverHttp" FullName="System.ServiceModel.FederatedMessageSecurityOverHttp">
   <TypeSignature Language="C#" Value="public sealed class FederatedMessageSecurityOverHttp" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit FederatedMessageSecurityOverHttp extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class contains properties that provide control over various aspects of the security configuration between the client and the service, including details related to the issuer from which the service expects the client to retrieve a federated credential.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures the message-level security of the WSFederationHttpBinding binding.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AlgorithmSuite">
@@ -25,9 +32,15 @@
         <ReturnType>System.ServiceModel.Security.SecurityAlgorithmSuite</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Security.SecurityAlgorithmSuite" /> object that is returned contains numerous properties that specify security algorithms to use in specific conditions. It also describes various security capabilities of the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the algorithm suite that specifies the message encryption and key-wrap algorithms.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClaimTypeRequirements">
@@ -41,9 +54,16 @@
         <ReturnType>System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Security.Tokens.ClaimTypeRequirement&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection returned by this property is used by the service to specify any required and optional claims which must be in the issued token the client uses to access the service. The service exposes the required claim types in metadata if WSDL publishing is enabled but WCF does not require the issued token contain the specified claim types.  Services wishing to enforce required claim types are present should do using authorization policy.</para>
+          <para>On federated clients this collection contains the list of required and optional claims which is sent to the security token service in the client’s request for an issued token.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of the <see cref="T:System.ServiceModel.Security.Tokens.ClaimTypeRequirement" /> instances for this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EstablishSecurityContext">
@@ -57,9 +77,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether a security context requires being put into place.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IssuedKeyType">
@@ -73,9 +96,15 @@
         <ReturnType>System.IdentityModel.Tokens.SecurityKeyType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Valid values of <see cref="T:System.IdentityModel.Tokens.SecurityKeyType" /> are <see cref="F:System.IdentityModel.Tokens.SecurityKeyType.SymmetricKey" /> and <see cref="F:System.IdentityModel.Tokens.SecurityKeyType.AsymmetricKey" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the type of key to be issued.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IssuedTokenType">
@@ -89,9 +118,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates the type of token that the service expects and controls which SecurityTokenAuthenticator is created on the service. On the client it controls the type which is sent to the security token service in the client’s request for an issued token. </para>
+          <para>The IssuedTokenType typically takes the form of a URI.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the type of token which should be issued by the security token service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IssuerAddress">
@@ -105,9 +141,16 @@
         <ReturnType>System.ServiceModel.EndpointAddress</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This address is used as the endpoint for the security token service that issues credentials for the service. Services expose the issuer address in metadata if WSDL is enabled but make no other use of it. Clients use the issuer address to communicate with the security token service. If the IssuerAddress is null clients may fall back to using the security token service specified via the LocalIssuerAddress and LocalIssuerBinding properties on IssuedTokenClientCredential.</para>
+          <para>Setting this value to null or the WS-AddressingIdentity anonymous URI on the client causes CardSpace to activate if ClientCredentials.SupportInteractive is true under certain circumstances.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the endpoint address of the security token service that issues credentials for the service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IssuerBinding">
@@ -121,9 +164,16 @@
         <ReturnType>System.ServiceModel.Channels.Binding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used to specify the binding that is used by the client between the client and the security token service when obtaining credentials for the service.</para>
+          <para>Note that this property does not need to be populated on the service, since it is only consumed by the client.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the binding to be used by the client when communicating with the security token service whose endpoint address equals <see cref="P:System.ServiceModel.FederatedMessageSecurityOverHttp.IssuerAddress" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IssuerMetadataAddress">
@@ -137,9 +187,15 @@
         <ReturnType>System.ServiceModel.EndpointAddress</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This address is used as the endpoint for the security token service that issues credentials for the service out of band.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the endpoint address for communicating with the security token service out of band.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NegotiateServiceCredential">
@@ -153,9 +209,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates whether the service certificate is negotiated automatically between the client and the service. If this property is true, then such negotiation occurs. If this property is false, then the service certificate must be specified at the client before communication with the service can occur.</para>
+          <para>Services must always specify a certificate.</para>
+          <para>If this property is true, the message level SSL negotiation for the service certificate occurs before the security token service specified via the IssuerAddress and IssuerBinding properties (or LocalIssuerAddress and LocalIssuerBinding properties) is requested to issue a security token.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether a message level SSL negotiation is done to obtain the service’s certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TokenRequestParameters">
@@ -169,9 +233,15 @@
         <ReturnType>System.Collections.ObjectModel.Collection&lt;System.Xml.XmlElement&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection returned by this property can be used to specify additional XML elements to be sent in the message body to the security token service when requesting a token.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of XML elements to be sent in the message body to the security token service when requesting a token.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

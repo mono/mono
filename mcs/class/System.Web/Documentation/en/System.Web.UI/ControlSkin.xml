@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ControlSkin" FullName="System.Web.UI.ControlSkin">
   <TypeSignature Language="C#" Value="public class ControlSkin" />
   <AssemblyInfo>
@@ -14,9 +15,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Page and control developers do not use the <see cref="T:System.Web.UI.ControlSkinDelegate" />, <see cref="T:System.Web.UI.ControlSkin" />, or <see cref="T:System.Web.UI.PageTheme" /> classes directly. These classes are used internally by the ASP.NET page framework to apply server-side properties and cascading style sheet definitions that are defined in ASP.NET themes and control skin files to specific types of controls.</para>
+      <para>
+        <see cref="T:System.Web.UI.ControlSkin" /> objects represent a named skin or default skin of a <see cref="T:System.Web.UI.Control" /> control at run time and design time. ASP.NET builds <see cref="T:System.Web.UI.PageTheme" />, <see cref="T:System.Web.UI.ControlSkin" /> and <see cref="T:System.Web.UI.ControlSkinDelegate" /> objects to apply the style elements defined in themes and control skin files to ASP.NET Web pages and controls. </para>
+      <para>For more information about themes and control skins, see <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">Introduction to ASP.NET Themes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a control skin, which is a means to define stylistic properties that are applied to an ASP.NET Web server control. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,11 +37,16 @@
         <Parameter Name="themeDelegate" Type="System.Web.UI.ControlSkinDelegate" />
       </Parameters>
       <Docs>
-        <param name="controlType">To be added.</param>
-        <param name="themeDelegate">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.UI.ControlSkin" /> class using the passed <see cref="T:System.Web.UI.Control" /> type and delegate.</para>
+        </summary>
+        <param name="controlType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of <see cref="T:System.Web.UI.Control" /> to which the skin is applied, used to enforce type consistency among named skins. </param>
+        <param name="themeDelegate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.ControlSkinDelegate" /> that applies the style elements defined in a control skin file to the type identified by the <paramref name="controlType" /> parameter. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -47,10 +62,17 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Passes the <see cref="T:System.Web.UI.Control" /> object associated with the <see cref="T:System.Web.UI.ControlSkin" /> class to the <see cref="T:System.Web.UI.ControlSkinDelegate" />, which applies the skin to the <see cref="T:System.Web.UI.Control" /> object. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the skin to the <see cref="T:System.Web.UI.Control" /> control contained by the <see cref="T:System.Web.UI.ControlSkin" /> object.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control to which to apply the skin. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,10 +85,13 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> of the control that the <see cref="T:System.Web.UI.ControlSkin" /> object is associated with.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

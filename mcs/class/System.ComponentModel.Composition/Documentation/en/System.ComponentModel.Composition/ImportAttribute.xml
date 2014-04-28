@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ImportAttribute" FullName="System.ComponentModel.Composition.ImportAttribute">
   <TypeSignature Language="C#" Value="public class ImportAttribute : Attribute, System.ComponentModel.Composition.IAttributedImport" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ImportAttribute extends System.Attribute implements class System.ComponentModel.Composition.IAttributedImport" />
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In the Attributed Programming Model, the <see cref="T:System.ComponentModel.Composition.ImportAttribute" /> is used to declare the imports, or dependencies, of a given part. It can decorate a property, a field, or a method. During composition, a part's imports will be filled by the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionContainer" /> object to which that part belongs, by using the exports provided to that <see cref="T:System.ComponentModel.Composition.Hosting.CompositionContainer" /> object.</para>
+      <para>Whether an import matches a given export is determined primarily by comparing the contract name and the contract type. Ordinarily, you do not have to specify either of these when using the import attribute in code, and they will be automatically inferred from the type of the decorated member. If the import must match an export of a different type (for example, a subclass of the type of the decorated member, or an interface implemented by that member), then the contract type must be explicitly specified. The contract name can also be explicitly specified, for example to distinguish between multiple contracts with the same type, but it is usually better to do this through metadata. For more information about metadata, see <see cref="T:System.ComponentModel.Composition.PartMetadataAttribute" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that a property, field, or parameter value should be provided by the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionContainer" />.object</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +40,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on the property, field, or parameter type that this is marked with this attribute.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.ImportAttribute" /> class, importing the export with the default contract name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -47,9 +62,17 @@
         <Parameter Name="contractName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="contractName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on the property, field, or parameter type that is marked with this attribute.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.ImportAttribute" /> class, importing the export with the specified contract name.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the export to import, or null or an empty string ("") to use the default contract name.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -63,9 +86,18 @@
         <Parameter Name="contractType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="contractType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="contractType" />.</para>
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on the property, field, or parameter type that is marked with this attribute.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.ImportAttribute" /> class, importing the export with the contract name derived from the specified type.</para>
+        </summary>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to derive the contract name of the export from, or null to use the default contract name.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -80,10 +112,15 @@
         <Parameter Name="contractType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="contractName">To be added.</param>
-        <param name="contractType">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.ImportAttribute" /> class, importing the export with the specified contract name and type.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the export to import, or null or an empty string ("") to use the default contract name.</param>
+        <param name="contractType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the export to import.</param>
       </Docs>
     </Member>
     <Member MemberName="AllowDefault">
@@ -97,9 +134,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value of the type of a property, field, or parameter is null for reference types and zero for numeric value types. For other value types, the default value will be each field of the value type initialized to zero if the field is a value type, or null if the field is a reference type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the property, field, or parameter will be set to its type's default value when an export with the contract name is not present in the container.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowRecomposition">
@@ -113,9 +156,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the property or field will be recomposed when exports with a matching contract have changed in the container.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContractName">
@@ -129,9 +175,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the contract name of the export to import.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContractType">
@@ -145,9 +194,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the export to import.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequiredCreationPolicy">
@@ -161,9 +213,12 @@
         <ReturnType>System.ComponentModel.Composition.CreationPolicy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates that the importer requires a specific <see cref="T:System.ComponentModel.Composition.CreationPolicy" /> for the exports used to satisfy this import. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Source">
@@ -177,9 +232,12 @@
         <ReturnType>System.ComponentModel.Composition.ImportSource</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the scopes from which this import may be satisfied.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Composition.IAttributedImport.Cardinality">

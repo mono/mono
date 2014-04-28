@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaUse" FullName="System.Xml.Schema.XmlSchemaUse">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum XmlSchemaUse" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlSchemaUse extends System.Enum" />
@@ -13,8 +14,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Optional.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicator of how the attribute is used.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="None">
@@ -36,8 +43,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute use not specified.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Optional">
@@ -59,8 +69,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute is optional.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Prohibited">
@@ -82,8 +95,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute cannot be used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Required">
@@ -105,8 +121,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attribute must appear once.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

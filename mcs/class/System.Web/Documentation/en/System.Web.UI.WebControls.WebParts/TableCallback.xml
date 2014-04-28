@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TableCallback" FullName="System.Web.UI.WebControls.WebParts.TableCallback">
   <TypeSignature Language="C#" Value="public delegate void TableCallback(ICollection tableData);" />
   <AssemblyInfo>
@@ -15,8 +16,15 @@
   </ReturnValue>
   <Docs>
     <param name="tableData">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a Web Parts control implements the <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartTable" /> interface and serves as a provider in a Web Parts connection, the consumer or transformer must retrieve and process the table data from the provider. The <see cref="T:System.Web.UI.WebControls.WebParts.TableCallback" /> delegate represents the method to call for processing the provider data. </para>
+      <para>The <see cref="M:System.Web.UI.WebControls.WebParts.IWebPartTable.GetTableData(System.Web.UI.WebControls.WebParts.TableCallback)" /> method contains a <see cref="T:System.Web.UI.WebControls.WebParts.TableCallback" /> delegate parameter.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>References the method to call when retrieving table data from a provider.</para>
+    </summary>
   </Docs>
 </Type>

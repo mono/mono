@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SocketFlags" FullName="System.Net.Sockets.SocketFlags" FullNameSP="System_Net_Sockets_SocketFlags" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable SocketFlags extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum SocketFlags" />
@@ -20,10 +21,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Controls the transfer behavior when sending and
-      receiving data on a <see cref="T:System.Net.Sockets.Socket" /> instance.</para>
-    </summary>
     <remarks>
       <para>The following methods use this enumeration:</para>
       <list type="bullet">
@@ -69,6 +66,10 @@
         </item>
       </list>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies socket send and receive behaviors.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Broadcast">
@@ -83,7 +84,10 @@
         <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a broadcast packet.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ControlDataTruncated">
@@ -98,7 +102,10 @@
         <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the control data did not fit into an internal 64-KB buffer and was truncated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DontRoute">
@@ -118,9 +125,8 @@
       <MemberValue>DontRoute</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies not to use routing tables to transmit the data. If there is a router 
- between the local and destination addresses, the data will be lost.
- </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Send without using routing tables.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -139,8 +145,11 @@
       </ReturnValue>
       <MemberValue>MaxIOVectorLength</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a standard value for the number of WSABUF structures that are used to send and receive data. This value is not used or supported on net_v45.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Multicast">
@@ -155,7 +164,10 @@
         <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a multicast packet.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -175,8 +187,8 @@
       <MemberValue>None</MemberValue>
       <Docs>
         <summary>
-          <para> No flags are specified. 
- </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use no flags for this call.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -198,12 +210,8 @@
       <MemberValue>OutOfBand</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies to send or receive out-of-band (OOB) data. OOB
-      data is specially marked data that can be received independently of unmarked data.
-      </para>
-          <block subset="none" type="note">
-            <para>Used only with a connection-oriented protocol. </para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Process out-of-band data.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -225,11 +233,8 @@
       <MemberValue>Partial</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies that a partial message has been received.
-      </para>
-          <block subset="none" type="note">
-            <para>Used only with a message-oriented protocol. </para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Partial send or receive for message.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -251,9 +256,8 @@
       <MemberValue>Peek</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies to peek at the incoming data. This copies data 
- to the input buffer but does not remove it from the input queue.
- </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Peek at the incoming message.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -270,7 +274,10 @@
         <ReturnType>System.Net.Sockets.SocketFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message was too large to fit into the specified buffer and was truncated.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

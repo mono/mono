@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TextBoxRenderer" FullName="System.Windows.Forms.TextBoxRenderer">
   <TypeSignature Language="C#" Value="public sealed class TextBoxRenderer" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.TextBoxRenderer" /> class provides a set of static methods that can be used to render a text box control with the current visual style of the operating system. Rendering a control refers to drawing the user interface of a control. This is useful if you are drawing a custom control that should have the appearance of the current visual style. To draw a text box, use one of the <see cref="Overload:System.Windows.Forms.TextBoxRenderer.DrawTextBox" /> methods. These methods provide a variety of options, such as applying text formatting or specifying text bounds.</para>
+      <para>If visual styles are enabled in the operating system and visual styles are applied to the client area of application windows, <see cref="Overload:System.Windows.Forms.TextBoxRenderer.DrawTextBox" /> will draw the text box with the current visual style. Otherwise, <see cref="Overload:System.Windows.Forms.TextBoxRenderer.DrawTextBox" /> will throw an <see cref="T:System.InvalidOperationException" />. To determine whether the members of this class can be used, you can check the value of the <see cref="P:System.Windows.Forms.TextBoxRenderer.IsSupported" /> property.</para>
+      <para>This class wraps the functionality of a <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> that is set to one of the elements of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.TextBox.TextEdit" /> class. For more information, see <format type="text/html"><a href="a5b178ba-610e-46c4-a6c0-509c0886a744">Rendering Controls with Visual Styles</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods used to render a text box control with visual styles. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DrawTextBox">
@@ -26,12 +35,21 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.TextBoxState" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before calling this method, you should verify that the <see cref="P:System.Windows.Forms.TextBoxRenderer.IsSupported" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a text box control in the specified state and bounds.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the text box.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the text box.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.TextBoxState" /> values that specifies the visual state of the text box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,14 +69,25 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.TextBoxState" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="textBoxText">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before calling this method, you should verify that the <see cref="P:System.Windows.Forms.TextBoxRenderer.IsSupported" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a text box control in the specified state and bounds, and with the specified text.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the text box.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the text box.</param>
+        <param name="textBoxText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to draw in the text box.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to <paramref name="textBoxText" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.TextBoxState" /> values that specifies the visual state of the text box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -79,15 +108,27 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.TextBoxState" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="textBoxText">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="textBounds">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before calling this method, you should verify that the <see cref="P:System.Windows.Forms.TextBoxRenderer.IsSupported" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a text box control in the specified state and bounds, and with the specified text and text bounds.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the text box.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the text box.</param>
+        <param name="textBoxText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to draw in the text box.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to <paramref name="textBoxText" />.</param>
+        <param name="textBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of <paramref name="textBoxText" />.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.TextBoxState" /> values that specifies the visual state of the text box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -108,15 +149,27 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.TextBoxState" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="textBoxText">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="flags">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before calling this method, you should verify that the <see cref="P:System.Windows.Forms.TextBoxRenderer.IsSupported" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a text box control in the specified state and bounds, and with the specified text and text formatting.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the text box.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the text box.</param>
+        <param name="textBoxText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to draw in the text box.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to <paramref name="textBoxText" />.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.TextBoxState" /> values that specifies the visual state of the text box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -138,16 +191,29 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.TextBoxState" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="textBoxText">To be added.</param>
-        <param name="font">To be added.</param>
-        <param name="textBounds">To be added.</param>
-        <param name="flags">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before calling this method, you should verify that the <see cref="P:System.Windows.Forms.TextBoxRenderer.IsSupported" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a text box control in the specified state and bounds, and with the specified text, text bounds, and text formatting.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the text box.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the text box.</param>
+        <param name="textBoxText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to draw in the text box.</param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> to apply to <paramref name="textBoxText" />.</param>
+        <param name="textBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of <paramref name="textBoxText" />.</param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.VisualStyles.TextBoxState" /> values that specifies the visual state of the text box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -160,10 +226,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is false, the <see cref="Overload:System.Windows.Forms.TextBoxRenderer.DrawTextBox" /> method will throw an <see cref="T:System.InvalidOperationException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Windows.Forms.TextBoxRenderer" /> class can be used to draw a text box with visual styles.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

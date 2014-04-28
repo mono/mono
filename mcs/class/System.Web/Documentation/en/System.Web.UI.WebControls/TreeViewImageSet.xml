@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TreeViewImageSet" FullName="System.Web.UI.WebControls.TreeViewImageSet">
   <TypeSignature Language="C#" Value="public enum TreeViewImageSet" />
   <AssemblyInfo>
@@ -8,9 +9,67 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.TreeViewImageSet" /> enumeration is used to represent the different sets of images that can be displayed in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control. You can select from a predefined set of images or create your own custom set by setting the <see cref="P:System.Web.UI.WebControls.TreeView.ImageSet" /> property to the <see cref="F:System.Web.UI.WebControls.TreeViewImageSet.Custom" /> value. When defining a custom set of images, you should specify an image for each of the properties in the following table. Otherwise, the default image for that property is used.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Property </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.TreeView.CollapseImageUrl" />
+            </para>
+          </term>
+          <description>
+            <para>The URL to a custom image for the collapsed node indicator.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.TreeView.ExpandImageUrl" />
+            </para>
+          </term>
+          <description>
+            <para>The URL to a custom image for the expanded node indicator.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.TreeView.LineImagesFolder" />
+            </para>
+          </term>
+          <description>
+            <para>The URL to a folder that contains custom images for lines-connecting nodes.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="P:System.Web.UI.WebControls.TreeView.NoExpandImageUrl" />
+            </para>
+          </term>
+          <description>
+            <para>The URL to a custom image for the non-expanding node indicator.</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an image set to use in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Arrows">
@@ -20,8 +79,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of arrow images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +96,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of diamond-shaped bullet images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +113,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of square-shaped bullet images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +130,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of sectioned, diamond shaped bullet images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +147,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of alternate sectioned, diamond shaped bullet images in sizes that vary by level.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -90,8 +164,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of MSN Messenger–styled images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,8 +181,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A user-defined set of images. This is the default value of the <see cref="P:System.Web.UI.WebControls.TreeView.ImageSet" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -118,8 +198,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of event log–styled images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -132,8 +215,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of FAQ-styled images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,8 +232,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of e-mail–styled images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -160,8 +249,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of Microsoft MSDN developer program–styled images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -174,8 +266,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of newsgroup-styled images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -188,8 +283,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of simple-shaped outline images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -202,8 +300,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of filled simple-shaped images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -216,8 +317,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of Microsoft Windows Help–styled images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -230,8 +334,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeViewImageSet</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A predefined set of Windows Explorer for Microsoft Windows XP–styled images.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

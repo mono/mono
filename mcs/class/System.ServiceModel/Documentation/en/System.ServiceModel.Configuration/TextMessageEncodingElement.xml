@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TextMessageEncodingElement" FullName="System.ServiceModel.Configuration.TextMessageEncodingElement">
   <TypeSignature Language="C#" Value="public sealed class TextMessageEncodingElement : System.ServiceModel.Configuration.BindingElementExtensionElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TextMessageEncodingElement extends System.ServiceModel.Configuration.BindingElementExtensionElement" />
@@ -10,8 +11,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The text encoder creates text-based messages on the wire. Messages produced by this encoder are suitable for WS-* based interoperability.</para>
+      <para>Encoding is the process of transforming a set of Unicode characters into a sequence of bytes. </para>
+      <para>The text encoder specified by this configuration section creates text-based messages on the wire. Messages produced by this encoder are suitable for WS-* based interoperability. Web service or Web service client can generally understand textual XML. However, transmitting large blocks of binary data as text is the least efficient method for encoding XML messages.</para>
+      <para>The <see cref="T:System.ServiceModel.Configuration.BinaryMessageEncodingElement" /> class represents the configuration element that specifies the character encoding and message versioning used for binary-based XML messages. This is most efficient but least interoperable of the encoding options. </para>
+      <para>The <see cref="T:System.ServiceModel.Configuration.MtomMessageEncodingElement" /> class represents the configuration element that specifies the character encoding and message versioning used for a message using a Message Transmission Optimization Mechanism (MTOM) encoding. MTOM is an efficient technology for transmitting binary data in indigo1 messages. The MTOM encoder attempts to strike a balance between efficiency and interoperability. The MTOM encoding transmits most XML in textual form, but optimizes large blocks of binary data by transmitting them as-is, without conversion to text.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that specifies the character encoding and message versioning used for text-based XML messages. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +34,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.TextMessageEncodingElement" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplyConfiguration">
@@ -42,8 +56,11 @@
       </Parameters>
       <Docs>
         <param name="element">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the content of a specified binding element to this binding configuration section.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingElementType">
@@ -57,9 +74,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> of this configuration element. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CopyFrom">
@@ -77,8 +97,11 @@
       </Parameters>
       <Docs>
         <param name="element">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the content of the specified configuration section to this element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateBindingElement">
@@ -136,9 +159,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Larger pool sizes make the system more tolerant to activity spikes at the cost of a larger working set. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the maximum number of messages that can be read simultaneously without allocating new readers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxWritePoolSize">
@@ -160,9 +189,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Larger pool sizes make the system more tolerant to activity spikes at the cost of a larger working set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the maximum number of messages that can be sent simultaneously without allocating new writers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MessageVersion">
@@ -184,9 +219,12 @@
         <ReturnType>System.ServiceModel.Channels.MessageVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the SOAP and WS-Addressing versions that are used to format the text message sent using this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -221,9 +259,15 @@
         <ReturnType>System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complexity constraints include items like a maximum element depth, or a maximum length for string content within the message. The constraints protect against a type of denial of service (DOS) attacks that attempt to use message complexity to tie up endpoint processing resources.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets constraints on the complexity of SOAP messages that can be processed by endpoints configured with this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteEncoding">
@@ -245,9 +289,15 @@
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When specifying a content type such as “utf-16” an XML declaration is required in the message. Alternatively you can specify either “utf-16LE” or “utf-16BE” and an XML declaration is not required.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the character set encoding to be used for emitting messages on the binding.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

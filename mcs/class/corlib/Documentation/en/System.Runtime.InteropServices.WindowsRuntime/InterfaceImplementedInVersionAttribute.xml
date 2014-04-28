@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InterfaceImplementedInVersionAttribute" FullName="System.Runtime.InteropServices.WindowsRuntime.InterfaceImplementedInVersionAttribute">
   <TypeSignature Language="C#" Value="public sealed class InterfaceImplementedInVersionAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit InterfaceImplementedInVersionAttribute extends System.Attribute" />
@@ -15,8 +16,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the version of the target type that first implemented the specified interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,13 +38,21 @@
         <Parameter Name="revisionVersion" Type="System.Byte" />
       </Parameters>
       <Docs>
-        <param name="interfaceType">To be added.</param>
-        <param name="majorVersion">To be added.</param>
-        <param name="minorVersion">To be added.</param>
-        <param name="buildVersion">To be added.</param>
-        <param name="revisionVersion">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.InterfaceImplementedInVersionAttribute" /> class, specifying the interface that the target type implements and the version in which that interface was first implemented. </para>
+        </summary>
+        <param name="interfaceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The interface that was first implemented in the specified version of the target type. </param>
+        <param name="majorVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The major component of the version of the target type that first implemented <paramref name="interfaceType" />.</param>
+        <param name="minorVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The minor component of the version of the target type that first implemented <paramref name="interfaceType" />.</param>
+        <param name="buildVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The build component of the version of the target type that first implemented <paramref name="interfaceType" />.</param>
+        <param name="revisionVersion">
+          <attribution license="cc4" from="Microsoft" modified="false" />The revision component of the version of the target type that first implemented <paramref name="interfaceType" />.</param>
       </Docs>
     </Member>
     <Member MemberName="BuildVersion">
@@ -54,9 +66,12 @@
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the build component of the version of the target type that first implemented the interface. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InterfaceType">
@@ -70,9 +85,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the interface that the target type implements. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MajorVersion">
@@ -86,9 +104,12 @@
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the major component of the version of the target type that first implemented the interface. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MinorVersion">
@@ -102,9 +123,12 @@
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the minor component of the version of the target type that first implemented the interface. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RevisionVersion">
@@ -118,9 +142,12 @@
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the revision component of the version of the target type that first implemented the interface. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

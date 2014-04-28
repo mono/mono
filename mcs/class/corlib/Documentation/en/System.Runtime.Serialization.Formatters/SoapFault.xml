@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapFault" FullName="System.Runtime.Serialization.Formatters.SoapFault">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SoapFault : System.Runtime.Serialization.ISerializable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit SoapFault extends System.Object implements class System.Runtime.Serialization.ISerializable" />
@@ -26,8 +27,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Carries error and status information within a SOAP message. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -42,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Formatters.SoapFault" /> class with default values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -63,12 +70,19 @@
         <Parameter Name="serverFault" Type="System.Runtime.Serialization.Formatters.ServerFault" />
       </Parameters>
       <Docs>
-        <param name="faultCode">To be added: an object of type 'string'</param>
-        <param name="faultString">To be added: an object of type 'string'</param>
-        <param name="faultActor">To be added: an object of type 'string'</param>
-        <param name="serverFault">To be added: an object of type 'ServerFault'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Formatters.SoapFault" /> class, setting the properties to specified values.</para>
+        </summary>
+        <param name="faultCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault code for the new instance of <see cref="T:System.Runtime.Serialization.Formatters.SoapFault" />. The fault code identifies the type of the fault that occurred. </param>
+        <param name="faultString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The fault string for the new instance of <see cref="T:System.Runtime.Serialization.Formatters.SoapFault" />. The fault string provides a human readable explanation of the fault. </param>
+        <param name="faultActor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI of the object that generated the fault. </param>
+        <param name="serverFault">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of a common language runtime exception. This information is also present in the <see cref="P:System.Runtime.Serialization.Formatters.SoapFault.Detail" /> property. </param>
       </Docs>
     </Member>
     <Member MemberName="Detail">
@@ -84,9 +98,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The detail element carries application specific error information related to the Body element of a SOAP message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets additional information required for the <see cref="T:System.Runtime.Serialization.Formatters.SoapFault" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FaultActor">
@@ -102,9 +122,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Serialization.Formatters.SoapFault.FaultActor" /> property provides information about the cause of the fault within the message path.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the fault actor for the <see cref="T:System.Runtime.Serialization.Formatters.SoapFault" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FaultCode">
@@ -120,9 +146,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fault code element provides an algorithmic mechanism to identify the fault.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the fault code for the <see cref="T:System.Runtime.Serialization.Formatters.SoapFault" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FaultString">
@@ -138,9 +170,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fault string element provides a human readable explanation of the fault and is not intended for algorithmic processing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the fault message for the <see cref="T:System.Runtime.Serialization.Formatters.SoapFault" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -160,10 +198,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'Runtime.Serialization.SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates the specified <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with the data to serialize the <see cref="T:System.Runtime.Serialization.Formatters.SoapFault" /> object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to populate with data. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination (see <see cref="T:System.Runtime.Serialization.StreamingContext" />) for the current serialization. </param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DBConcurrencyException" FullName="System.Data.DBConcurrencyException">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class DBConcurrencyException : SystemException" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.Common.DataAdapter" /> examines the number of rows affected by the execution of each insert, update, or delete operation, and throws this exception if the number equals zero. This exception is generally caused by a concurrency violation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown by the <see cref="T:System.Data.Common.DataAdapter" /> during an insert, update, or delete operation if the number of rows affected equals zero.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +34,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor initializes any fields to their default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DBConcurrencyException" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,9 +52,13 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DBConcurrencyException" /> class.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text string describing the details of the exception. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -57,10 +74,18 @@
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <param name="inner">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can create a new exception that catches an earlier exception. The code that handles the second exception can use the additional information from the earlier exception, also called an inner exception, to examine the cause of the initial error.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DBConcurrencyException" /> class.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text string describing the details of the exception. </param>
+        <param name="inner">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reference to an inner exception. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,11 +104,17 @@
         <Parameter Name="dataRows" Type="System.Data.DataRow[]" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="inner">To be added.</param>
-        <param name="dataRows">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DBConcurrencyException" /> class.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for this exception.</param>
+        <param name="inner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception, or a null reference (Nothing in Visual Basic) if no inner exception is specified.</param>
+        <param name="dataRows">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array containing the <see cref="T:System.Data.DataRow" /> objects whose update failure generated this exception.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyToRows">
@@ -99,9 +130,16 @@
         <Parameter Name="array" Type="System.Data.DataRow[]" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When performing batch updates with the <see cref="P:System.Data.Common.DataAdapter.ContinueUpdateOnError" /> property of the <see cref="T:System.Data.Common.DataAdapter" /> set to true, this exception is thrown if all row updates fail. In this case, this <see cref="T:System.Data.DBConcurrencyException" /> contains <see cref="T:System.Data.DataRow" /> objects for all rows whose update failed, rather than just the one <see cref="T:System.Data.DataRow" /> object in <see cref="P:System.Data.DBConcurrencyException.Row" />, and the affected <see cref="T:System.Data.DataRow" /> objects can be retrieved by calling <see cref="Overload:System.Data.DBConcurrencyException.CopyToRows" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the <see cref="T:System.Data.DataRow" /> objects whose update failure generated this exception, to the specified array of <see cref="T:System.Data.DataRow" /> objects.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional array of <see cref="T:System.Data.DataRow" /> objects to copy the <see cref="T:System.Data.DataRow" /> objects into.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyToRows">
@@ -118,10 +156,17 @@
         <Parameter Name="ArrayIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added.</param>
         <param name="ArrayIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When performing batch updates with the <see cref="P:System.Data.Common.DataAdapter.ContinueUpdateOnError" /> property of the <see cref="T:System.Data.Common.DataAdapter" /> set to true, this exception is thrown if all row updates fail. In this case, this <see cref="T:System.Data.DBConcurrencyException" /> contains <see cref="T:System.Data.DataRow" /> objects for all rows whose update failed, rather than just the one <see cref="T:System.Data.DataRow" /> object in <see cref="P:System.Data.DBConcurrencyException.Row" />, and the affected <see cref="T:System.Data.DataRow" /> objects can be retrieved by calling <see cref="Overload:System.Data.DBConcurrencyException.CopyToRows" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the <see cref="T:System.Data.DataRow" /> objects whose update failure generated this exception, to the specified array of <see cref="T:System.Data.DataRow" /> objects, starting at the specified destination array index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional array of <see cref="T:System.Data.DataRow" /> objects to copy the <see cref="T:System.Data.DataRow" /> objects into.</param>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -135,10 +180,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="si">To be added.</param>
-        <param name="context">To be added: an object of type 'Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates the aprcified serialization information object with the data needed to serialize the <see cref="T:System.Data.DBConcurrencyException" />.</para>
+        </summary>
+        <param name="si">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized data associated with the <see cref="T:System.Data.DBConcurrencyException" />.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains the source and destination of the serialized stream associated with the <see cref="T:System.Data.DBConcurrencyException" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -154,9 +204,17 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataRow'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use <see cref="P:System.Data.DBConcurrencyException.Row" /> to retrieve the value of the <see cref="T:System.Data.DataRow" /> row that generated the <see cref="T:System.Data.DBConcurrencyException" />. Setting the value of the <see cref="T:System.Data.DataRow" /> has no effect.</para>
+          <para>When performing batch updates with the <see cref="P:System.Data.Common.DataAdapter.ContinueUpdateOnError" /> property of the <see cref="T:System.Data.Common.DataAdapter" /> set to true, this exception is thrown if all row updates fail. In this case, this <see cref="T:System.Data.DBConcurrencyException" /> contains <see cref="T:System.Data.DataRow" /> objects for all rows whose update failed, rather than just the one <see cref="T:System.Data.DataRow" /> object in <see cref="P:System.Data.DBConcurrencyException.Row" />, and the affected <see cref="T:System.Data.DataRow" /> objects can be retrieved by calling <see cref="Overload:System.Data.DBConcurrencyException.CopyToRows" />.</para>
+          <para>Serialization support does not exist for <see cref="T:System.Data.DataRow" /> objects. Therefore, if you serialize a <see cref="T:System.Data.DBConcurrencyException" /> object, the value of the <see cref="P:System.Data.DBConcurrencyException.Row" /> property in the serialized version of the object is set to a null value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the <see cref="T:System.Data.DataRow" /> that generated the <see cref="T:System.Data.DBConcurrencyException" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -173,9 +231,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows whose update failed, generating this exception.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

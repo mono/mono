@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProtocolMappingElement" FullName="System.ServiceModel.Configuration.ProtocolMappingElement">
   <TypeSignature Language="C#" Value="public sealed class ProtocolMappingElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ProtocolMappingElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the functionality to create a protocol mapping element. This class is sealed.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Configuration.ProtocolMappingElement" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -40,11 +47,17 @@
         <Parameter Name="bindingConfiguration" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="schemeType">To be added.</param>
-        <param name="binding">To be added.</param>
-        <param name="bindingConfiguration">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Configuration.ProtocolMappingElement" /> class with a specified scheme type, binding, and binding configuration.</para>
+        </summary>
+        <param name="schemeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A communications protocol scheme.</param>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />A communications protocol message format style.</param>
+        <param name="bindingConfiguration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding settings for the configuration of the protocol mapping element.</param>
       </Docs>
     </Member>
     <Member MemberName="Binding">
@@ -66,9 +79,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the settings for the communications protocol message formatting.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingConfiguration">
@@ -90,9 +106,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the binding settings for the protocol mapping configuration element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -130,9 +149,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the communications protocol type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

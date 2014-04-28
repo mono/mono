@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapEnvelopeProcessingElement" FullName="System.Web.Services.Configuration.SoapEnvelopeProcessingElement">
   <TypeSignature Language="C#" Value="public sealed class SoapEnvelopeProcessingElement : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The timeout value is checked on every call to <see cref="M:System.Xml.XmlReader.Read" /> and <see cref="M:System.Xml.XmlReader.MoveToContent" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures a timeout that helps mitigate denial of service attacks by terminating any request that takes longer than the <see cref="P:System.Web.Services.Configuration.SoapEnvelopeProcessingElement.ReadTimeout" /> property value. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.SoapEnvelopeProcessingElement" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +44,14 @@
         <Parameter Name="readTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="readTimeout">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.SoapEnvelopeProcessingElement" /> class using the provided <see cref="T:System.Int32" /> value. </para>
+        </summary>
+        <param name="readTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the timeout period.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,11 +65,16 @@
         <Parameter Name="strict" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="readTimeout">To be added.</param>
-        <param name="strict">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the timeout period used to determine whether to terminate requests to mitigate against denial of service attacks.</para>
+        </summary>
+        <param name="readTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time to wait before terminating requests to <see cref="M:System.Xml.XmlReader.Read" /> and <see cref="M:System.Xml.XmlReader.MoveToContent" />.</param>
+        <param name="strict">
+          <attribution license="cc4" from="Microsoft" modified="false" />Whether to throw an exception if the serializer encounters elements or attributes that were not in the original schema. For details, see the <see cref="P:System.Web.Services.Configuration.SoapEnvelopeProcessingElement.IsStrict" /> property.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,10 +92,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the <see cref="P:System.Web.Services.Configuration.SoapEnvelopeProcessingElement.IsStrict" /> property to true in order to help debug interoperation scenarios. In general, when the <see cref="T:System.Xml.Serialization.XmlSerializer" /> class meets an element or attribute that it does not expect it raises an <see cref="E:System.Xml.Serialization.XmlSerializer.UnknownNode" /> event and continues processing. (The same is true when the <see cref="P:System.Xml.Serialization.XmlArrayAttribute.Order" />, <see cref="P:System.Xml.Serialization.XmlElementAttribute.Order" />, or <see cref="P:System.Xml.Serialization.XmlAnyElementAttribute.Order" /> properties are used but data is sent out of order.) Setting the <see cref="P:System.Web.Services.Configuration.SoapEnvelopeProcessingElement.IsStrict" /> property to true instructs the Web services run time to handle that event and throw a <see cref="T:System.InvalidOperationException" /> that contains a list of the expected elements and attributes.</para>
+          <block subset="none" type="note">
+            <para>Because exceptions are not thrown for all unexpected elements and attributes, the <see cref="P:System.Web.Services.Configuration.SoapEnvelopeProcessingElement.IsStrict" /> property should not be relied upon except as a debugging aid. For example, unexpected xml:lang and xml:space attributes may not cause an exception. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether to throw an exception if the serializer encounters unexpected elements or attributes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -113,10 +141,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the timeout period used to determine whether to terminate requests to mitigate against denial of service attacks.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

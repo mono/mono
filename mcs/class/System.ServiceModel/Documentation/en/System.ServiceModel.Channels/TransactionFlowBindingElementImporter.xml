@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TransactionFlowBindingElementImporter" FullName="System.ServiceModel.Channels.TransactionFlowBindingElementImporter">
   <TypeSignature Language="C#" Value="public sealed class TransactionFlowBindingElementImporter : System.ServiceModel.Description.IPolicyImportExtension" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TransactionFlowBindingElementImporter extends System.Object implements class System.ServiceModel.Description.IPolicyImportExtension" />
@@ -14,8 +15,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The service endpoint must have enabled transaction flow and its methods must flow transactions. The converted policy assertions all adhere to the WS-PolicyAssertions standard.</para>
+      <para>This class is used mainly by the infrastructure when it builds a proxy for a service that is transaction-flow enabled. Calling the <see cref="M:System.ServiceModel.Channels.TransactionFlowBindingElementImporter.System.ServiceModel.Description.IPolicyImportExtension.ImportPolicy(System.ServiceModel.Description.MetadataImporter,System.ServiceModel.Description.PolicyConversionContext)" /> method adds a <see cref="T:System.ServiceModel.Channels.TransactionFlowBindingElement" /> instance to the <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> collection of binding elements. This also adds <see cref="T:System.ServiceModel.TransactionFlowAttribute" /> instances, as appropriate, on the Operations collection present in the conversion context’s contract.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Imports the transaction policy (WS-Policy assertions) of a service endpoint, adds implementing binding elements to the binding on the client, and transaction flow attributes to the appropriate operations on the service’s proxy. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +35,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.TransactionFlowBindingElementImporter" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExportPolicy">
@@ -95,10 +106,15 @@
         <Parameter Name="context" Type="System.ServiceModel.Description.PolicyConversionContext" />
       </Parameters>
       <Docs>
-        <param name="importer">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports custom policy assertions and adds implementing binding elements. This method cannot be inherited.</para>
+        </summary>
+        <param name="importer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MetadataImporter" /> object to use.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.PolicyConversionContext" /> that contains both the policy assertions that can be imported and the collections of binding elements to which implementing binding elements can be added.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebServiceProtocols" FullName="System.Web.Services.Configuration.WebServiceProtocols">
   <TypeSignature Language="C#" Value="public enum WebServiceProtocols" />
   <AssemblyInfo>
@@ -13,9 +14,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>Using the <see cref="F:System.Web.Services.Configuration.WebServiceProtocols.HttpPostLocalhost" /> value of this enumeration does not prevent access to the test or web service from remote computers. This value checks only the host header of the request; no other validation, authentication, or authorization checks are performed. This check mitigates only browser-based redirection attacks. Authentication and authorization are still required to restrict access to a Web service.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the transmission protocols that are used to decrypt data sent from a client browser in the HTTP request.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AnyHttpSoap">
@@ -25,8 +34,11 @@
         <ReturnType>System.Web.Services.Configuration.WebServiceProtocols</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any version of the HTTP SOAP protocol.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +51,11 @@
         <ReturnType>System.Web.Services.Configuration.WebServiceProtocols</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web Services Documentation protocol.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,8 +68,11 @@
         <ReturnType>System.Web.Services.Configuration.WebServiceProtocols</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTTP GET protocol.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,8 +85,11 @@
         <ReturnType>System.Web.Services.Configuration.WebServiceProtocols</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTTP POST protocol.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,8 +102,17 @@
         <ReturnType>System.Web.Services.Configuration.WebServiceProtocols</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>See the Remarks section. This value only checks the request's host header to mitigate only browser-redirect attacks. Authentication and authorization are still required to restrict access to a Web service.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTTP POST LOCALHOST protocol.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,8 +125,11 @@
         <ReturnType>System.Web.Services.Configuration.WebServiceProtocols</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTTP SOAP protocol.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,8 +142,11 @@
         <ReturnType>System.Web.Services.Configuration.WebServiceProtocols</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTTP SOAP version 1.2 protocol.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -123,8 +159,11 @@
         <ReturnType>System.Web.Services.Configuration.WebServiceProtocols</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unknown protocol.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

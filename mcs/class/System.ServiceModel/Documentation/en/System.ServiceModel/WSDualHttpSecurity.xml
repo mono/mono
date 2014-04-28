@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WSDualHttpSecurity" FullName="System.ServiceModel.WSDualHttpSecurity">
   <TypeSignature Language="C#" Value="public sealed class WSDualHttpSecurity" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit WSDualHttpSecurity extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class specifies the security settings for the wsDualHttpBinding binding.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the security settings for the <see cref="T:System.ServiceModel.WsDualHttpBinding" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Message">
@@ -25,9 +32,15 @@
         <ReturnType>System.ServiceModel.MessageSecurityOverHttp</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object returned specifies detailed message-level security properties for the wsDualHttpBinding binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the message-level security properties for the <see cref="T:System.ServiceModel.WsDualHttpBinding" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Mode">
@@ -41,9 +54,15 @@
         <ReturnType>System.ServiceModel.WSDualHttpSecurityMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property determines whether message-level security is applied to the binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the security mode for the parent <see cref="T:System.ServiceModel.WSDualHttpBinding" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

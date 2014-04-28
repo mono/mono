@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapRpcServiceAttribute" FullName="System.Web.Services.Protocols.SoapRpcServiceAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class SoapRpcServiceAttribute : Attribute" />
   <AssemblyInfo>
@@ -18,8 +19,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Services.Protocols.SoapRpcServiceAttribute" /> allows you to set the default encoding style for XML Web service methods within an XML Web service to RPC method encoding and <see cref="F:System.Web.Services.Description.SoapBindingUse.Encoded" /> parameter encoding.</para>
+      <para>Web Services Description Language (WSDL) defines two styles for how an XML Web service method, or operation, can be encoded in a SOAP request or a SOAP response: RPC and Document. The RPC style refers to encoding the XML Web service method according to section 7 of the SOAP specification for using SOAP for RPC. This style specifies that all parameters are encapsulated within a single element named after the XML Web service method, and that each element within that element represents a parameter named after its respective parameter name.</para>
+      <para>To set the default method level encoding to Document, apply a <see cref="T:System.Web.Services.Protocols.SoapDocumentServiceAttribute" /> to the class implementing the XML Web service.</para>
+      <para>For more details, see <format type="text/html"><a href="1D777288-C0D9-4E6A-B638-F010DA031952">[&lt;topic://cpconCustomizingSOAPInASPNETWebServicesWebServiceClients&gt;]</a></format>.</para>
+      <para>This attribute can be applied to a class implementing an XML Web service.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Sets the default format of SOAP requests and responses sent to and from XML Web service methods within the XML Web service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.SoapRpcServiceAttribute" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +58,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SoapServiceRoutingStyle'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets how SOAP messages are routed to the XML Web service.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -68,9 +85,15 @@
         <ReturnType>System.Web.Services.Description.SoapBindingUse</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value of this property is <see cref="F:System.Web.Services.Description.SoapBindingUse.Default" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the binding used when invoking the Web service's methods.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

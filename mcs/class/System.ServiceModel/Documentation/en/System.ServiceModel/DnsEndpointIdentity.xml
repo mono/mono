@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DnsEndpointIdentity" FullName="System.ServiceModel.DnsEndpointIdentity">
   <TypeSignature Language="C#" Value="public class DnsEndpointIdentity : System.ServiceModel.EndpointIdentity" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DnsEndpointIdentity extends System.ServiceModel.EndpointIdentity" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class specifies the expected identity of the server. This identity is valid for X509 Certificate authentication mode if the server’s certificate contains a DNS with the same value. It is also valid for Windows authentication mode if the SPN has the same value. In this case, a client specifying the  DnsEndpointIdentity “server1.microsoft.com”  for Windows authentication mode is equivalent to specifying the SpnEndpointIdentity “host/server1.microsoft.com” .</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the DNS identity of the server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +32,16 @@
         <Parameter Name="identity" Type="System.IdentityModel.Claims.Claim" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="identity" /> is used to create an endpoint identity by the <see cref="M:System.ServiceModel.EndpointIdentity.Initialize(System.IdentityModel.Claims.Claim)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.DnsEndpointIdentity" /> class from a claim.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IdentityModel.Claims.Claim" />.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,8 +56,14 @@
       </Parameters>
       <Docs>
         <param name="dns">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="dnsName" /> is used to create a DNS claim and an endpoint identity is created by the <see cref="M:System.ServiceModel.EndpointIdentity.Initialize(System.IdentityModel.Claims.Claim)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of this class from a DNS name.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

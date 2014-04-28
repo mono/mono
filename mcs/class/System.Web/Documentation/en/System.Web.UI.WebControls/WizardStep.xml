@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WizardStep" FullName="System.Web.UI.WebControls.WizardStep">
   <TypeSignature Language="C#" Value="public sealed class WizardStep : System.Web.UI.WebControls.WizardStepBase" />
   <AssemblyInfo>
@@ -20,9 +21,22 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Web.UI.WebControls.Wizard" /> control is made up of a collection of <see cref="T:System.Web.UI.WebControls.WizardStep" /> objects that represent single steps of a wizard. The <see cref="T:System.Web.UI.WebControls.Wizard" /> control displays a single <see cref="T:System.Web.UI.WebControls.WizardStep" /> object at a time. You can use a <see cref="T:System.Web.UI.WebControls.Wizard" /> control and its associated <see cref="T:System.Web.UI.WebControls.WizardStep" /> objects to collect related data in a linear or nonlinear fashion.</para>
+      <block subset="none" type="note">
+        <para>If you embed the <see cref="T:System.Web.UI.WebControls.Login" /> control in a <see cref="T:System.Web.UI.WebControls.WizardStep" />, explicitly set the <see cref="P:System.Web.UI.WebControls.Wizard.ActiveStepIndex" /> in a Page_Load event handler if the user is authenticated. The <see cref="T:System.Web.UI.WebControls.Wizard" /> control does not automatically advance to the next <see cref="T:System.Web.UI.WebControls.WizardStep" /> in this scenario.</para>
+      </block>
+      <para>You cannot apply a theme to <see cref="T:System.Web.UI.WebControls.WizardStep" /> but you can apply a theme to <see cref="T:System.Web.UI.WebControls.TemplatedWizardStep" />.</para>
+      <block subset="none" type="note">
+        <para>If you programmatically add a <see cref="T:System.Web.UI.WebControls.WizardStep" /> in the Page_Load event handler, you must add the navigation to that step prior to the page loading.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a basic step that is displayed in a <see cref="T:System.Web.UI.WebControls.Wizard" /> control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +44,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WizardStep" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

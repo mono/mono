@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Volatile" FullName="System.Threading.Volatile">
   <TypeSignature Language="C#" Value="public static class Volatile" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Volatile extends System.Object" />
@@ -10,8 +11,30 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>On a multiprocessor system, a volatile write operation ensures that a value written to a memory location is immediately visible to all processors. A volatile read operation obtains the very latest value written to a memory location by any processor. These operations might require flushing processor caches, which can affect performance. </para>
+      <block subset="none" type="note">
+        <para>On a uniprocessor system, volatile reads and writes ensure that a value is read or written to memory and not cached (for example, in a processor register). Thus, you can use these operations to synchronize access to a field that can be updated by another thread or by hardware.</para>
+      </block>
+      <para>Volatile memory operations are for special cases of synchronization, where normal locking is not an acceptable alternative. Under normal circumstances, the C# lock statement, the Visual Basic SyncLock statement, and the <see cref="T:System.Threading.Monitor" /> class provide the easiest and least error-prone way of synchronizing access to data, and the <see cref="T:System.Lazy`1" /> class provides a simple way to write lazy initialization code without directly using double-checked locking. </para>
+      <para>The <see cref="M:System.Threading.Volatile.Read(System.Byte@)" /> and <see cref="M:System.Threading.Volatile.Write(System.Byte@,System.Byte)" /> methods enable functionality that is not supported in languages. For example:</para>
+      <list type="bullet">
+        <item>
+          <para>Some languages, such as Visual Basic, do not recognize the concept of volatile memory operations. The <see cref="T:System.Threading.Volatile" /> class provides that functionality in such languages.</para>
+          <block subset="none" type="note">
+            <para>Calling one of these methods affects only a single memory access. To provide effective synchronization for a field, all access to the field must use <see cref="M:System.Threading.Volatile.Read(System.Byte@)" /> and <see cref="M:System.Threading.Volatile.Write(System.Byte@,System.Byte)" />. </para>
+          </block>
+        </item>
+        <item>
+          <para>In C#, using the volatile modifier on a field guarantees that every access to that field uses the <see cref="M:System.Threading.Volatile.Read(System.Byte@)" /> and <see cref="M:System.Threading.Volatile.Write(System.Byte@,System.Byte)" /> methods, but the volatile modifier cannot be applied to array elements. The <see cref="M:System.Threading.Volatile.Read(System.Byte@)" /> and <see cref="M:System.Threading.Volatile.Write(System.Byte@,System.Byte)" /> methods can be used on array elements. </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains methods for performing volatile memory operations.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Read">

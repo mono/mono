@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlDsigC14NWithCommentsTransform" FullName="System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform">
   <TypeSignature Language="C#" Value="public class XmlDsigC14NWithCommentsTransform : System.Security.Cryptography.Xml.XmlDsigC14NTransform" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlDsigC14NWithCommentsTransform extends System.Security.Cryptography.Xml.XmlDsigC14NTransform" />
@@ -14,8 +15,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Transformation to canonicalize an XML document (including comments).</summary>
-    <remarks>This transform represents the Canonical XML transformation detailled in section 6.5.1 of the "XML-Signature Syntax and Processing" available at http://www.w3.org/TR/xmldsig-core/</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform" /> class represents the C14N XML canonicalization transform that describes the canonical form of an XML document.  This transform allows a signer to create a digest using the canonical form of an XML document.  A recipient can then verify the digital signature using the same canonical form of the XML document with the same transform.         </para>
+      <para>Use the <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform" /> class when you need to sign an XML document that contains comments.</para>
+      <para>Note that you cannot directly create a new instance of a canonicalization transform class.  To specify a canonicalization transform, pass the Uniform Resource Identifier (URI) that describes the transform to the <see cref="P:System.Security.Cryptography.Xml.SignedInfo.CanonicalizationMethod" /> property, which is accessible from the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property.  To acquire a reference to the canonicalization transform, use the <see cref="P:System.Security.Cryptography.Xml.SignedInfo.CanonicalizationMethodObject" /> property, which is accessible from the <see cref="P:System.Security.Cryptography.Xml.SignedXml.SignedInfo" /> property.  </para>
+      <para>The URI that describes the <see cref="T:System.Security.Cryptography.Xml.XmlDsigExcC14NWithCommentsTransform" /> class is defined by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigExcC14NWithCommentsTransformUrl" /> field.  </para>
+      <para>The URI that describes the <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform" /> class is defined by the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigC14NWithCommentsTransformUrl" /> field and the <see cref="F:System.Security.Cryptography.Xml.SignedXml.XmlDsigCanonicalizationWithCommentsUrl" /> field. </para>
+      <para>For more information about the C14N with comments transform, see Sections 6.5 and 6.6.1 of the XMLDSIG specification, which is available from the World Wide Web Consortium (W3C) at www.w3.org/TR/xmldsig-core/. The canonicalization algorithm is defined in the W3C Canonical XML specification, which is available at www.w3.org/TR/xml-c14n.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the C14N XML canonicalization transform for a digital signature as defined by the World Wide Web Consortium (W3C), with comments.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +42,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.Xml.XmlDsigC14NWithCommentsTransform" /> class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

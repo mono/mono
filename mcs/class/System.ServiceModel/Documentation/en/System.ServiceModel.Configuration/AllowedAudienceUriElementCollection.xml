@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AllowedAudienceUriElementCollection" FullName="System.ServiceModel.Configuration.AllowedAudienceUriElementCollection">
   <TypeSignature Language="C#" Value="public sealed class AllowedAudienceUriElementCollection : System.ServiceModel.Configuration.ServiceModelConfigurationElementCollection&lt;System.ServiceModel.Configuration.AllowedAudienceUriElement&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AllowedAudienceUriElementCollection extends System.ServiceModel.Configuration.ServiceModelConfigurationElementCollection`1&lt;class System.ServiceModel.Configuration.AllowedAudienceUriElement&gt;" />
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information on this element, see <format type="text/html"><a href="0f4dc73d-d95d-4193-9755-7df4cf2b8e1c">&lt;allowedAudienceUris&gt;</a></format></para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of <see cref="System.ServiceModel.Configuration.AllowedAudienceUriElement" /> which is a target URI for which the <see cref="System.IdentityModel.Tokens.SamlSecurityToken" /> security token can be targeted for in order to be considered valid by a <see cref="System.IdentityModel.Selectors.SamlSecurityTokenAuthenticator" /> instance.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +38,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.AllowedAudienceUriElementCollection" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateNewElement">

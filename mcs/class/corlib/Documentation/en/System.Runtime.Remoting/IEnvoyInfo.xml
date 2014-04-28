@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IEnvoyInfo" FullName="System.Runtime.Remoting.IEnvoyInfo">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IEnvoyInfo" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IEnvoyInfo" />
@@ -16,8 +17,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use this interface to provide custom envoy information that is carried along with the <see cref="T:System.Runtime.Remoting.ObjRef" /> objects.</para>
+      <para>Classes that implement the current interface hold a serialized chain of message sinks that is regenerated when a proxy is created to represent the object. Such functionality is used for <see cref="T:System.Runtime.Remoting.Contexts.Context" /> bound object types only, and represents the groups of objects that provide run-time services such as transactions.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides envoy information.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EnvoySinks">
@@ -35,9 +43,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Messaging.IMessageSink'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the list of envoys that were contributed by the server context and object chains when the object was marshaled.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

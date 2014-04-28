@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListViewItemSelectionChangedEventArgs" FullName="System.Windows.Forms.ListViewItemSelectionChangedEventArgs">
   <TypeSignature Language="C#" Value="public class ListViewItemSelectionChangedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.ListView.ItemSelectionChanged" /> event occurs when the selection state of a <see cref="T:System.Windows.Forms.ListViewItem" /> changes from selected to deselected or deselected to selected. The <see cref="E:System.Windows.Forms.ListView.ItemSelectionChanged" /> will not occur if the <see cref="T:System.Windows.Forms.ListView" /> is in virtual mode. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ListView.ItemSelectionChanged" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,12 +30,18 @@
         <Parameter Name="isSelected" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
-        <param name="itemIndex">To be added.</param>
-        <param name="isSelected">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ListViewItemSelectionChangedEventArgs" /> class. </para>
+        </summary>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ListViewItem" /> whose selection state has changed.</param>
+        <param name="itemIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <see cref="T:System.Windows.Forms.ListViewItem" /> whose selection state has changed.</param>
+        <param name="isSelected">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate the item's state has changed to selected; false to indicate the item's state has changed to deselected.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,10 +54,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the item's state has changed to selected. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +73,13 @@
         <ReturnType>System.Windows.Forms.ListViewItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the item whose selection state has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,10 +92,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the item whose selection state has changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

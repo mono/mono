@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NamedPipeTransportElement" FullName="System.ServiceModel.Configuration.NamedPipeTransportElement">
   <TypeSignature Language="C#" Value="public sealed class NamedPipeTransportElement : System.ServiceModel.Configuration.ConnectionOrientedTransportElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit NamedPipeTransportElement extends System.ServiceModel.Configuration.ConnectionOrientedTransportElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that specifies a channel to transfer messages using named pipes when it is included in a custom binding. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.NamedPipeTransportElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplyConfiguration">
@@ -41,9 +48,13 @@
         <Parameter Name="bindingElement" Type="System.ServiceModel.Channels.BindingElement" />
       </Parameters>
       <Docs>
-        <param name="bindingElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the content of the specified configuration element to this configuration element.</para>
+        </summary>
+        <param name="bindingElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />A binding element.</param>
       </Docs>
     </Member>
     <Member MemberName="BindingElementType">
@@ -57,9 +68,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type for this binding element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConnectionPoolSettings">
@@ -78,9 +92,12 @@
         <ReturnType>System.ServiceModel.Configuration.NamedPipeConnectionPoolSettingsElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets additional connection pool settings.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CopyFrom">
@@ -97,9 +114,13 @@
         <Parameter Name="from" Type="System.ServiceModel.Configuration.ServiceModelExtensionElement" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the content of the specified configuration element to this configuration element.</para>
+        </summary>
+        <param name="from">
+          <attribution license="cc4" from="Microsoft" modified="false" />The configuration element to be copied.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateDefaultBindingElement">

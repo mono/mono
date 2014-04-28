@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewColumnSortMode" FullName="System.Windows.Forms.DataGridViewColumnSortMode">
   <TypeSignature Language="C#" Value="public enum DataGridViewColumnSortMode" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each column may have a different sort mode specified by the <see cref="P:System.Windows.Forms.DataGridViewColumn.SortMode" /> property. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines how a <see cref="T:System.Windows.Forms.DataGridView" /> column can be sorted by the user.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Automatic">
@@ -20,8 +27,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewColumnSortMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The user can sort the column by clicking the column header unless the column headers are used for selection. A sorting glyph will be displayed automatically.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewColumnSortMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column can only be sorted programmatically, but it is not intended for sorting, so the column header will not include space for a sorting glyph.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewColumnSortMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column can only be sorted programmatically, and the column header will include space for a sorting glyph. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

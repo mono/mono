@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SessionEndedEventArgs" FullName="Microsoft.Win32.SessionEndedEventArgs">
   <TypeSignature Language="C#" Value="public class SessionEndedEventArgs : EventArgs" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SessionEndedEventArgs extends System.EventArgs" />
@@ -12,8 +13,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="E:Microsoft.Win32.SystemEvents.SessionEnded" /> event is raised when the user logs off or shuts down the system.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:Microsoft.Win32.SystemEvents.SessionEnded" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +36,13 @@
         <Parameter Name="reason" Type="Microsoft.Win32.SessionEndReasons" />
       </Parameters>
       <Docs>
-        <param name="reason">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Win32.SessionEndedEventArgs" /> class.</para>
+        </summary>
+        <param name="reason">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:Microsoft.Win32.SessionEndReasons" /> values indicating how the session ended. </param>
       </Docs>
     </Member>
     <Member MemberName="Reason">
@@ -47,9 +58,12 @@
         <ReturnType>Microsoft.Win32.SessionEndReasons</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an identifier that indicates how the session ended.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

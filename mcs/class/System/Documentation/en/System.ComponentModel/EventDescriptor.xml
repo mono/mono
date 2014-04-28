@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventDescriptor" FullName="System.ComponentModel.EventDescriptor">
   <TypeSignature Language="C#" Value="public abstract class EventDescriptor : System.ComponentModel.MemberDescriptor" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit EventDescriptor extends System.ComponentModel.MemberDescriptor" />
@@ -20,8 +21,39 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.ComponentModel.EventDescriptor" /> consists of a name, its attributes, the component that the event is bound to, the event delegate, the type of delegate, and whether the delegate is multicast.</para>
+      <para>
+        <see cref="T:System.ComponentModel.EventDescriptor" /> provides the following abstract properties and methods: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.ComponentModel.EventDescriptor.ComponentType" /> contains the type of the component this event is declared on.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.ComponentModel.EventDescriptor.EventType" /> contains the type of delegate for the event.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.ComponentModel.EventDescriptor.IsMulticast" /> contains a value indicating whether the event delegate is a multicast delegate.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.ComponentModel.EventDescriptor.AddEventHandler(System.Object,System.Delegate)" /> binds the event to a component.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.ComponentModel.EventDescriptor.RemoveEventHandler(System.Object,System.Delegate)" /> unbinds the delegate from the component so that the delegate no longer receives events from the component.</para>
+        </item>
+      </list>
+      <para>For more information about events, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>. For more information about reflection, see the topics in <format type="text/html"><a href="d1a58e7f-fb39-4d50-bf84-e3b8f9bf9775">Reflection</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides information about an event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +71,11 @@
       </Parameters>
       <Docs>
         <param name="desc">To be added: an object of type 'MemberDescriptor'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.EventDescriptor" /> class with the name and attributes in the specified <see cref="T:System.ComponentModel.MemberDescriptor" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -59,9 +94,16 @@
       </Parameters>
       <Docs>
         <param name="desc">To be added.</param>
-        <param name="attrs">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor appends the attributes in the <see cref="T:System.Attribute" /> array to the attributes in the <see cref="T:System.ComponentModel.MemberDescriptor" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.EventDescriptor" /> class with the name in the specified <see cref="T:System.ComponentModel.MemberDescriptor" /> and the attributes in both the <see cref="T:System.ComponentModel.MemberDescriptor" /> and the <see cref="T:System.Attribute" /> array.</para>
+        </summary>
+        <param name="attrs">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Attribute" /> array with the attributes you want to add to this event description. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -80,9 +122,13 @@
       </Parameters>
       <Docs>
         <param name="str">To be added.</param>
-        <param name="attrs">To be added: an object of type 'Attribute []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.EventDescriptor" /> class with the specified name and attribute array.</para>
+        </summary>
+        <param name="attrs">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Attribute" /> that contains the event attributes. </param>
       </Docs>
     </Member>
     <Member MemberName="AddEventHandler">
@@ -102,10 +148,19 @@
         <Parameter Name="value" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="value">To be added: an object of type 'Delegate'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, this method is implemented through reflection. For more information about reflection, see the topics in <format type="text/html"><a href="d1a58e7f-fb39-4d50-bf84-e3b8f9bf9775">Reflection</a></format>.</para>
+          <para>For more information about delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, binds the event to the component.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />A component that provides events to the delegate. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate that represents the method that handles the event. </param>
       </Docs>
     </Member>
     <Member MemberName="ComponentType">
@@ -121,9 +176,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, this property is implemented through reflection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the type of component this event is bound to.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EventType">
@@ -139,9 +200,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, this property is implemented through reflection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the type of delegate for the event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsMulticast">
@@ -157,9 +224,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, this property is implemented through reflection.</para>
+          <para>A multicast delegate differs from a regular delegate in that it can contain references to more than just one method. Methods in a multicast delegate are executed synchronously when the delegate is invoked, in the order in which they appear. If one of the called methods raises an exception, then the delegate ceases and the exception is propagated to the delegate caller.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets a value indicating whether the event delegate is a multicast delegate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoveEventHandler">
@@ -179,10 +253,19 @@
         <Parameter Name="value" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <param name="component">To be added: an object of type 'object'</param>
-        <param name="value">To be added: an object of type 'Delegate'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically, this method is implemented through reflection. For more information, see the topics in <format type="text/html"><a href="d1a58e7f-fb39-4d50-bf84-e3b8f9bf9775">Reflection</a></format>.</para>
+          <para>For more information about delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, unbinds the delegate from the component so that the delegate will no longer receive events from the component.</para>
+        </summary>
+        <param name="component">
+          <attribution license="cc4" from="Microsoft" modified="false" />The component that the delegate is bound to. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to unbind from the component. </param>
       </Docs>
     </Member>
   </Members>

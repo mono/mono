@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LoginStatus" FullName="System.Web.UI.WebControls.LoginStatus">
   <TypeSignature Language="C#" Value="public class LoginStatus : System.Web.UI.WebControls.CompositeControl" />
   <AssemblyInfo>
@@ -20,9 +21,97 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control has two states, logged in to the Web site and logged out of the Web site, determined by the <see cref="P:System.Web.HttpRequest.IsAuthenticated" /> property of the <see cref="T:System.Web.UI.Page" /> object's <see cref="P:System.Web.UI.Page.Request" /> property.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control displays either a text or an image link, depending on the setting of the <see cref="P:System.Web.UI.WebControls.LoginStatus.LoginImageUrl" /> and <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutImageUrl" /> properties. You can display either text or images for one or both states.</para>
+      <block subset="none" type="note">
+        <para>If you are not familiar with the set of login controls available in ASP.NET, see <format type="text/html"><a href="ac032230-6469-4b03-b68d-03ef2643a24d">ASP.NET Login Controls Overview</a></format> before continuing. For a list of other topics related to login controls and membership, see <format type="text/html"><a href="824c3a24-f0af-427c-a652-0d2d1e9397cd">Managing Users By Using Membership</a></format>.</para>
+      </block>
+      <para>When a user is not logged in to the site, the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control provides a link to the login page defined in the application configuration settings. When the user is logged in to the Web site, the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control provides a link to log out of the Web site. Logging out of the Web site clears the user's authentication status and when using cookies will clear the cookie from the user's client computer. On any subsequent visit to the Web site, the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control will display the prompt to log in.</para>
+      <para>The logout behavior is controlled by the <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutAction" /> property, which specifies whether to refresh the current page, redirect the user to the login page defined in the application configuration settings, or redirect the user to a page specified by the <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutPageUrl" /> property. The default is to refresh the current page.</para>
+      <block subset="none" type="note">
+        <para>When a user uses the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control to log out of a Web site, all data present in view state and all post data is lost.</para>
+      </block>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:LoginStatus
+    AccessKey="string"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+                 Inset|Outset"
+    BorderWidth="size"
+    CssClass="string"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|Medium|
+               Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    Height="size"
+    ID="string"
+    LoginImageUrl="uri"
+    LoginText="string"
+    LogoutAction="<codeFeaturedElement>Refresh</codeFeaturedElement>|Redirect|RedirectToLoginPage"
+    LogoutImageUrl="uri"
+    LogoutPageUrl="uri"
+    LogoutText="string"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnLoggedOut="LoggedOut event handler"
+    OnLoggingOut="LoggingOut event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    ToolTip="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+/&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Detects the user's authentication state and toggles the state of a link to log in to or log out of a Web site.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +119,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -49,8 +141,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is used primarily by control developers when deriving a custom control from the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> class.</para>
+          <para>This method is called by the ASP.NET infrastructure to notify any controls that use composition-based implementation, including controls that derive from <see cref="T:System.Web.UI.WebControls.CompositeDataBoundControl" /> and <see cref="T:System.Web.UI.WebControls.CompositeControl" />, to create any child controls they contain in preparation for postback or rendering. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the child controls that make up the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LoggedOut">
@@ -60,9 +159,17 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggedOut" /> event is raised on the server after the user clicks the logout link and the logout process is complete.</para>
+          <para>When the user clicks the logout link, the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggingOut" /> event is raised, then the logout process is run, and finally the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggedOut" /> event is raised.</para>
+          <para>Use the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggedOut" /> event to provide additional processing such as cleaning up database connections or removing per-user cached data after the user logs out of a Web site. The user's identity is still available while the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggedOut" /> event is executing. If your handler for the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggedOut" /> event redirects the client browser to another page, the authentication cookie will be cleared from the client.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raised after the user clicks the logout link and the logout process is complete.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,9 +182,17 @@
         <ReturnType>System.Web.UI.WebControls.LoginCancelEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggingOut" /> event is raised on the server when the user clicks the logout link. The logout process does not occur until after this event, and user information is still available.</para>
+          <para>The <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggingOut" /> event allows you to cancel the logout process if the user must complete an activity before leaving the Web site, such as purchasing items in a shopping cart or submitting changes to a database. You can cancel the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggingOut" /> event by setting the <see cref="P:System.Web.UI.WebControls.LoginCancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.LoginCancelEventArgs" /> parameter to true.</para>
+          <para>Use the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggingOut" /> event to provide additional processing, such as clearing per-user data, before a user logs out of a site.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raised when the user clicks the logout button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -101,10 +216,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginStatus.LoginImageUrl" /> property contains the location of the image used for the login link. The <see cref="P:System.Web.UI.WebControls.LoginStatus.LoginText" /> property is used as the alternative text for the image.</para>
+          <para>If <see cref="P:System.Web.UI.WebControls.LoginStatus.LoginImageUrl" /> is empty, the <see cref="P:System.Web.UI.WebControls.LoginStatus.LoginText" /> property is rendered as the link.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the image used for the login link.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -122,10 +244,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginStatus.LoginText" /> property is displayed as the link text when the <see cref="P:System.Web.UI.WebControls.LoginStatus.LoginImageUrl" /> property is empty.</para>
+          <para>When the <see cref="P:System.Web.UI.WebControls.LoginStatus.LoginImageUrl" /> property contains a link, the <see cref="P:System.Web.UI.WebControls.LoginStatus.LoginText" /> property is used as the alternative text for the image.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text used for the login link.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,10 +276,58 @@
         <ReturnType>System.Web.UI.WebControls.LogoutAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutAction" /> property determines which page is presented to the user when he or she logs out using the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control.</para>
+          <para>The following table describes the actions taken for each <see cref="T:System.Web.UI.WebControls.LogoutAction" /> value.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>
+                    <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutAction" /> value </para>
+                </term>
+                <description>
+                  <para>Action taken </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.LogoutAction.Redirect" /> </para>
+              </term>
+              <description>
+                <para>Redirects the user to the URL contained in the <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutPageUrl" /> property. If <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutPageUrl" /> is empty, the user is redirected to the login page defined in the application configuration settings. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.LogoutAction.RedirectToLoginPage" /> </para>
+              </term>
+              <description>
+                <para>Redirects the user to the login page defined in the application configuration settings. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.LogoutAction.Refresh" /> </para>
+              </term>
+              <description>
+                <para>Refreshes the current page. </para>
+              </description>
+            </item>
+          </list>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines the action taken when a user logs out of a Web site with the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -173,10 +351,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutImageUrl" /> property contains the location of the image used for the logout link. The <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutText" /> property is used as the alternative text for the image in browsers.</para>
+          <para>If <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutImageUrl" /> is empty, the <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutText" /> property is rendered as the link.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the image used for the logout button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -203,10 +388,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutAction" /> property is set to <see cref="F:System.Web.UI.WebControls.LogoutAction.Redirect" />, the user is redirected to the URL contained in <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutPageUrl" />.</para>
+          <para>If <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutAction" /> is set to any other value, the contents of the <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutPageUrl" /> property are ignored.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the logout page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -224,10 +417,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutText" /> property is displayed when the <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutImageUrl" /> property is empty.</para>
+          <para>When the <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutImageUrl" /> property contains a link, the <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutText" /> property is used as the alternative text for the image in browsers that do not support images.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text used for the logout link.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -243,10 +444,19 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggedOut" /> event to provide additional processing, such as closing database connections or cleaning up per-user cached data, after the user has logged out of a Web site.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>. Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginStatus.OnLoggedOut(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggedOut" /> event after the user clicks the logout link and logout processing is complete.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -262,10 +472,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.LoginCancelEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggingOut" /> event to provide additional processing, such as cleaning up per-user data, before a user logs out of a site. The <see cref="M:System.Web.UI.WebControls.LoginStatus.OnLoggingOut(System.Web.UI.WebControls.LoginCancelEventArgs)" /> event can be canceled, so you can give the user the option of saving data such as a shopping cart or database changes before leaving the Web site.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginStatus.OnLoggingOut(System.Web.UI.WebControls.LoginCancelEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggingOut" /> event when a user clicks the logout link on the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.LoginCancelEventArgs" /> that contains event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -284,9 +503,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginStatus.OnPreRender(System.EventArgs)" /> method determines whether the user is logged in by examining the <see cref="P:System.Web.HttpRequest.IsAuthenticated" /> property of the <see cref="T:System.Web.UI.Page" /> object's <see cref="P:System.Web.UI.Page.Request" /> property. If the user is logged in, the <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutText" /> or <see cref="P:System.Web.UI.WebControls.LoginStatus.LogoutImageUrl" /> property is used to render the control. If the user is not logged in, the <see cref="P:System.Web.UI.WebControls.LoginStatus.LoginText" /> or <see cref="P:System.Web.UI.WebControls.LoginStatus.LoginImageUrl" /> property is used to render the control.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginStatus.OnPreRender(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether a user is logged in, and gets the URL of the login page.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> containing the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="Render">
@@ -302,9 +530,13 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.WebControls.LoginName" /> control to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> control.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> object that represents the output stream that renders HTML content to the client.</param>
       </Docs>
     </Member>
     <Member MemberName="RenderContents">
@@ -320,9 +552,13 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the contents of the control to the specified writer. This method is used primarily by control developers.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.HtmlTextWriter" /> object that represents the output stream that renders HTML content to the client.</param>
       </Docs>
     </Member>
     <Member MemberName="SetDesignModeState">
@@ -335,10 +571,14 @@
         <Parameter Name="data" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the base <see cref="M:System.Web.UI.Control.SetDesignModeState(System.Collections.IDictionary)" /> method. </para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> containing the state of the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -351,10 +591,16 @@
         <ReturnType>System.Web.UI.HtmlTextWriterTag</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginStatus.TagKey" /> property allows the output stream to write the appropriate HTML markup for the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control. The <see cref="P:System.Web.UI.WebControls.LoginStatus.TagKey" /> property is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value for the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

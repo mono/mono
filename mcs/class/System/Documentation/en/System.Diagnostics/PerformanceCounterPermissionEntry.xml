@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PerformanceCounterPermissionEntry" FullName="System.Diagnostics.PerformanceCounterPermissionEntry">
   <TypeSignature Language="C#" Value="public class PerformanceCounterPermissionEntry" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit PerformanceCounterPermissionEntry extends System.Object" />
@@ -15,8 +16,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information on code access security, see <format type="text/html"><a href="859af632-c80d-4736-8d6f-1e01b09ce127">Code Access Security</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the smallest unit of a code access security permission that is set for a <see cref="T:System.Diagnostics.PerformanceCounter" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,11 +42,17 @@
         <Parameter Name="categoryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="permissionAccess">To be added: an object of type 'PerformanceCounterPermissionAccess'</param>
-        <param name="machineName">To be added: an object of type 'string'</param>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.PerformanceCounterPermissionEntry" /> class.</para>
+        </summary>
+        <param name="permissionAccess">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Diagnostics.PerformanceCounterPermissionAccess" /> values. The <see cref="P:System.Diagnostics.PerformanceCounterPermissionEntry.PermissionAccess" /> property is set to this value. </param>
+        <param name="machineName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The server on which the category of the performance counter resides. </param>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter category (performance object) with which this performance counter is associated. </param>
       </Docs>
     </Member>
     <Member MemberName="CategoryName">
@@ -55,9 +68,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the performance counter category (performance object).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MachineName">
@@ -73,9 +89,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the server on which the category of the performance counter resides.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PermissionAccess">
@@ -91,9 +110,12 @@
         <ReturnType>System.Diagnostics.PerformanceCounterPermissionAccess</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PerformanceCounterPermissionAccess'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the permission access level of the entry.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

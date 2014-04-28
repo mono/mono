@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConsumerConnectionPoint" FullName="System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint">
   <TypeSignature Language="C#" Value="public class ConsumerConnectionPoint : System.Web.UI.WebControls.WebParts.ConnectionPoint" />
   <AssemblyInfo>
@@ -9,9 +10,35 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In every Web Parts connection between two server controls, each control must have (among other requirements) an associated connection point object that enables it to connect to the other control and to either provide or consume data, depending on whether the control is designated as the provider or consumer for the connection. A <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> object in general contains the details for how a control can connect to another control and the type of data it can share. For a control acting as the consumer in a connection, its connection point must be a <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> object. For details on Web Parts connections and connection points, read the topics listed in the See Also section below.</para>
+      <para>To create a <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> object, several steps are required:</para>
+      <list type="ordered">
+        <item>
+          <para>Enable a consumer control to reference an interface instance. A <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> or other server control (any type of server control that will be added to a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartZoneBase" /> zone can be used) must be able to consume data from a specific interface instance. The control need not implement the interface; only the provider must implement it. The consumer can either work with the exact interface type served by a provider or, if it does not, a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartTransformer" /> object can be used to transform data from a provider's interface type to a type understood by the consumer. A typical way to enable a consumer is to declare a private field to contain a reference to the desired interface type. </para>
+        </item>
+        <item>
+          <para>Identify a callback method. A method in the consumer must be identified as the callback method to establish a connection with the provider. This method retrieves an instance of the interface that the provider implements, and assigns it to (for example) the private field created in the first step. The Web Parts approach for identifying a callback method in the consumer is to add a ConnectionConsumer metadata attribute (defined by the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionConsumerAttribute" /> class) to the method that receives the interface instance. When the attribute is added, the only required parameter is a display name to use for the consumer connection point. Optional parameters can also be added, such as an ID.</para>
+        </item>
+        <item>
+          <para>Process and output the data from the interface instance. Perform any internal processing as needed on the data, and then typically a consumer control will render the data to the page. A common way of doing this is to override the control's <see cref="M:System.Web.UI.Control.OnPreRender(System.EventArgs)" /> method.</para>
+          <block subset="none" type="note">
+            <para>During a synchronous request, a consumer should request data directly from the provider during or immediately after the <see cref="E:System.Web.UI.Control.PreRender" /> event. During an asynchronous request, if the provider's callback method is not called at any point during rendering, the developer can assume that no data was sent to the consumer.</para>
+          </block>
+        </item>
+      </list>
+      <para>After a control has been equipped to act as a consumer, the control can participate in connections (assuming that a provider control is also equipped and available). To create a static, declarative connection in the markup of a Web page, developers can use the &lt;asp:webpartconnection&gt; element. If the ConnectionConsumer attribute in the consumer source code that identifies the callback method specifies an ID for the connection point, then that value must be assigned to the ConsumerConnectionPointID attribute in the &lt;asp:webpartconnection&gt; element on a page. A reason that a developer might specify an ID for a consumer connection point is if there are multiple connection points defined in the consumer control. If an ID is not specified for the consumer connection point in the consumer control, a value does not have to be assigned to the ConsumerConnectionPointID attribute in the page either, because the connection will be created using a default value obtained from the <see cref="F:System.Web.UI.WebControls.WebParts.ConnectionPoint.DefaultID" /> field. </para>
+      <para>To create a connection in code, developers must create a new <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> object by calling the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.GetConsumerConnectionPoints(System.Web.UI.WebControls.WebParts.WebPart)" /> method and passing to it the ID of the consumer control, along with the ID or index of the defined <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> object in the consumer control. The returned <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> object, along with a reference to the consumer control, a reference to the provider control, and a corresponding <see cref="T:System.Web.UI.WebControls.WebParts.ProviderConnectionPoint" /> object, are all passed to the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.ConnectWebParts(System.Web.UI.WebControls.WebParts.WebPart,System.Web.UI.WebControls.WebParts.ProviderConnectionPoint,System.Web.UI.WebControls.WebParts.WebPart,System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint)" /> method to create a new <see cref="T:System.Web.UI.WebControls.WebParts.WebPartConnection" /> object. </para>
+      <para>Although developers can use consumer connection points as part of establishing connections either declaratively or programmatically, users can also interact with consumer connection points to establish connections through the user interface (UI). If developers declare a <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionsZone" /> control on a Web page, it provides a run-time UI for users to create connections. If users choose the provider control as the starting point for establishing the connection by clicking its connect verb (they could also choose the consumer; there is no difference in the resulting connection), in the UI they will see a drop-down list control with the display names of the available consumer connection point (or points if there are multiple ones) that the provider can send the data to. Users must select a consumer connection point to establish a connection. </para>
+      <para>A <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> object associates directly with a specific consumer control, and stores details about a connection in the properties it inherits from the base <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> class. For example, in the inherited <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.InterfaceType" /> property, a consumer connection point keeps the type of interface it uses. If the provider and consumer in a connection both understand the interface type, the controls are compatible and capable of forming a direct connection. If the provider and consumer cannot work with the same interface type, they are incompatible and must use a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartTransformer" /> object to translate the provider connection point's <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.InterfaceType" /> property into a type that the consumer can work with. Another important inherited property is the <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.DisplayName" /> property, which provides a friendly name to display in the UI for users to choose a consumer connection point when creating connections. The display name is the required parameter when developers add a ConnectionConsumer attribute to the callback method in a consumer control. The inherited <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.ID" /> property is also useful, as indicated above, because it provides a unique identifier for a consumer connection point in the event that a consumer has multiple connection points. A consumer can have multiple <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> objects defined in it, and in this case, when developers add the ConnectionConsumer attribute to a method, they should specify an ID value to distinguish each connection point. One other notable inherited property is the <see cref="P:System.Web.UI.WebControls.WebParts.ConnectionPoint.AllowsMultipleConnections" /> property, which indicates whether a consumer connection point can connect simultaneously to multiple providers. This property value is false by default for consumer connection points (whereas it defaults to true for provider connection points). </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> class adds several unique methods to the members it inherits from the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionPoint" /> class. The <see cref="M:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint.SetObject(System.Web.UI.Control,System.Object)" /> method invokes the consumer's own defined callback method to retrieve the interface instance from the provider. The <see cref="M:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint.SupportsConnection(System.Web.UI.Control,System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection)" /> method returns a Boolean value that indicates whether the connection point is able to establish connections, based on the current state of the associated consumer control. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a connection point object that enables a server control acting as a consumer to form a connection with a provider.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,11 +57,20 @@
         <param name="interFace">To be added.</param>
         <param name="control">To be added.</param>
         <param name="name">To be added.</param>
-        <param name="id">To be added.</param>
         <param name="allowsMultiConnections">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint.#ctor(System.Reflection.MethodInfo,System.Type,System.Type,System.String,System.String,System.Boolean)" /> constructor for the <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> class simply calls the base constructor, passing to it the various parameters and initializing the base class.</para>
+          <para>The base class constructor checks a number of the parameters for a connection point and can throw several exceptions. For a list of possible exceptions, see the Exceptions section. </para>
+          <para>You can call the <see cref="M:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint.#ctor(System.Reflection.MethodInfo,System.Type,System.Type,System.String,System.String,System.Boolean)" /> constructor to create your own instance of the <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> class. However, in cases where you are simply establishing a connection and not extending the class, you should call the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartManager.GetConsumerConnectionPoints(System.Web.UI.WebControls.WebParts.WebPart)" /> method to return a connection point object from a provider.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint" /> class.</para>
+        </summary>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A unique identifier for the consumer connection point.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,11 +87,21 @@
         <Parameter Name="data" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method receives an interface instance from a provider that contains data for the consumer control. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.ConsumerConnectionPoint.SetObject(System.Web.UI.Control,System.Object)" /> method is called by <see cref="T:System.Web.UI.WebControls.WebParts.WebPartConnection" /> objects when a connection is being activated. This is a critical step that is part of initiating a connection and enabling two controls to share data.</para>
+          <para>The consumer control in a connection must be able to work with the same type of interface as the provider. If it does not, the controls are incompatible and a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartTransformer" /> object must be used to establish a connection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes the callback method in a consumer control and retrieves the interface instance from a provider control.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The consumer control associated with a consumer connection point.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The interface instance returned from a provider control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDispatchOperationSelector" FullName="System.ServiceModel.Dispatcher.IDispatchOperationSelector">
   <TypeSignature Language="C#" Value="public interface IDispatchOperationSelector" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDispatchOperationSelector" />
@@ -7,8 +8,14 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement and insert a custom operation selector to customize the selection of the operation to which an incoming message is dispatched in a service application. Assign the <see cref="T:System.ServiceModel.Dispatcher.IDispatchOperationSelector" /> object to the <see cref="P:System.ServiceModel.Dispatcher.DispatchRuntime.OperationSelector" /> property to insert the custom selector. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the contract that associates incoming messages with a local operation to customize service execution behavior.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="SelectOperation">

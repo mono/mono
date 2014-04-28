@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IRevertibleChangeTracking" FullName="System.ComponentModel.IRevertibleChangeTracking">
   <TypeSignature Language="C#" Value="public interface IRevertibleChangeTracking : System.ComponentModel.IChangeTracking" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IRevertibleChangeTracking implements class System.ComponentModel.IChangeTracking" />
@@ -12,9 +13,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.IRevertibleChangeTracking" /> extends <see cref="T:System.ComponentModel.IChangeTracking" /> by adding support for rolling back the changes.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for rolling back the changes</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="RejectChanges">
@@ -30,9 +37,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the object’s state to unchanged by rejecting the modifications.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

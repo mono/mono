@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HelpContextType" FullName="System.ComponentModel.Design.HelpContextType">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum HelpContextType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HelpContextType extends System.Enum" />
@@ -14,8 +15,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.Design.HelpContextType" /> defines identifiers that are used by the Help system to determine the context in which a Help request was initiated.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines identifiers that indicate information about the context in which a request for Help information originated.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Ambient">
@@ -32,8 +40,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A general context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Selection">
@@ -50,8 +61,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A selection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToolWindowSelection">
@@ -68,8 +82,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A tool window selection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Window">
@@ -86,8 +103,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A window.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

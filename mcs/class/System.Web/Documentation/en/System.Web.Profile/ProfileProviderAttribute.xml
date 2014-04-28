@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProfileProviderAttribute" FullName="System.Web.Profile.ProfileProviderAttribute">
   <TypeSignature Language="C#" Value="public sealed class ProfileProviderAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,53 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Profile.ProfileProviderAttribute" /> class is used to identify the profile provider for a property of a custom profile implementation. A custom profile implementation is a class that inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> abstract class and defines properties for the user profile that are not specified in the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. You can specify a custom type for the user profile using the inherits attribute of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element in the Web.config file for an application, as shown in the following example.</para>
+      <code>&lt;configuration&gt;
+  &lt;connectionStrings&gt;
+    &lt;add name="SqlServices" connectionString=
+      "Data Source=localhost;Integrated Security=SSPI;Initial Catalog=aspnetdb;" /&gt;
+  &lt;/connectionStrings&gt;
+
+  &lt;system.web&gt;
+    &lt;authentication mode="Forms" &gt;
+      &lt;forms loginUrl="login.aspx"
+        name=".ASPXFORMSAUTH" /&gt;
+    &lt;/authentication&gt;
+
+    &lt;authorization&gt;
+      &lt;deny users="?" /&gt;
+    &lt;/authorization&gt;
+
+    &lt;profile inherits="Samples.AspNet.Profile.EmployeeProfile"
+      defaultProvider="SqlProvider"&gt;
+      &lt;providers&gt;
+        &lt;clear /&gt;
+        &lt;add
+          name="SqlProvider"
+          type="System.Web.Profile.SqlProfileProvider" 
+          connectionStringName="SqlServices" 
+          description="SQL Profile Provider for Sample"/&gt; 
+        &lt;add
+          name="EmployeeInfoProvider"
+          type="System.Web.Profile.SqlProfileProvider" 
+          connectionStringName="SqlServices" 
+          description="SQL Profile Provider for Employee Info"/&gt; 
+      &lt;/providers&gt;
+
+      &lt;properties&gt;
+        &lt;add name="GarmentSize" /&gt;
+      &lt;/properties&gt;
+    &lt;/profile&gt;
+  &lt;/system.web&gt;
+&lt;/configuration&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the profile provider for a user-profile property.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +71,17 @@
         <Parameter Name="providerName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="providerName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Profile.ProfileProviderAttribute" /> class is used to identify the profile provider for a property of a custom profile implementation. A custom profile implementation is a class that inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> abstract class and defines properties for the user profile that are not specified in the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.Profile.ProfileProviderAttribute" /> class with the specified profile provider name.</para>
+        </summary>
+        <param name="providerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the profile provider for the property.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +94,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the profile provider for the user-profile property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

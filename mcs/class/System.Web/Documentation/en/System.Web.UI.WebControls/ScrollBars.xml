@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ScrollBars" FullName="System.Web.UI.WebControls.ScrollBars">
   <TypeSignature Language="C#" Value="public enum ScrollBars" />
   <AssemblyInfo>
@@ -13,9 +14,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ScrollBars" /> enumeration represents the visibility and position of the scroll bars in a <see cref="T:System.Web.UI.WebControls.Panel" /> control. The <see cref="P:System.Web.UI.WebControls.Panel.ScrollBars" /> property uses these enumeration values to specify the type of scroll bars to display in a <see cref="T:System.Web.UI.WebControls.Panel" /> control. The default value for the <see cref="P:System.Web.UI.WebControls.Panel.ScrollBars" /> property is None, indicating that no scroll bars are shown.</para>
+      <para>If you specify Auto for the <see cref="P:System.Web.UI.WebControls.Panel.ScrollBars" /> property, scroll bars are automatically shown when the size of the content in a <see cref="T:System.Web.UI.WebControls.Panel" /> control exceeds the size of the <see cref="T:System.Web.UI.WebControls.Panel" /> control. For example, if a <see cref="T:System.Web.UI.WebControls.Panel" /> control contains a table, and the panel is not wide enough to display all the rows in the table, a vertical scroll bar is shown. If the size of the table exceeds the height and width of the panel, both vertical and horizontal scroll bars are shown.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the visibility and position of scroll bars in a <see cref="T:System.Web.UI.WebControls.Panel" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Auto">
@@ -25,8 +33,11 @@
         <ReturnType>System.Web.UI.WebControls.ScrollBars</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays, horizontal, vertical, or both scroll bars as necessary. Otherwise, no scroll bars are shown.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +50,11 @@
         <ReturnType>System.Web.UI.WebControls.ScrollBars</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays both a horizontal and a vertical scroll bar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,8 +67,11 @@
         <ReturnType>System.Web.UI.WebControls.ScrollBars</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays only a horizontal scroll bar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,8 +84,11 @@
         <ReturnType>System.Web.UI.WebControls.ScrollBars</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays no scroll bars.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,8 +101,11 @@
         <ReturnType>System.Web.UI.WebControls.ScrollBars</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays only a vertical scroll bar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

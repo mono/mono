@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapSchemaExporter" FullName="System.Xml.Serialization.SoapSchemaExporter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SoapSchemaExporter" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SoapSchemaExporter extends System.Object" />
@@ -14,8 +15,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>SOAP encoding of SOAP Web service messages is described in Section 5 of the SOAP 1.1 specification.</para>
+      <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> class provides a programmatic representation of an XML Schema definition language (XSD) document.</para>
+      <para>You should not use the <see cref="T:System.Xml.Serialization.SoapSchemaExporter" /> class directly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Populates <see cref="T:System.Xml.Schema.XmlSchema" /> objects with XML Schema data type definitions for .NET Framework types that are serialized using SOAP encoding.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,9 +41,16 @@
         <Parameter Name="schemas" Type="System.Xml.Serialization.XmlSchemas" />
       </Parameters>
       <Docs>
-        <param name="schemas">To be added: an object of type 'XmlSchemas'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should not create an instance of the <see cref="T:System.Xml.Serialization.SoapSchemaExporter" /> class directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.SoapSchemaExporter" /> class, which supplies the collection of <see cref="T:System.Xml.Schema.XmlSchema" /> objects to which XML Schema element declarations are to be added.</para>
+        </summary>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.Xml.Schema.XmlSchema" /> objects to which element declarations obtained from type mappings are to be added.</param>
       </Docs>
     </Member>
     <Member MemberName="ExportMembersMapping">
@@ -53,9 +69,16 @@
         <Parameter Name="xmlMembersMapping" Type="System.Xml.Serialization.XmlMembersMapping" />
       </Parameters>
       <Docs>
-        <param name="xmlMembersMapping">To be added: an object of type 'XmlMembersMapping'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should not use the <see cref="T:System.Xml.Serialization.SoapSchemaExporter" /> class directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds to the applicable <see cref="T:System.Xml.Schema.XmlSchema" /> object a data type definition for each of the element parts of a SOAP-encoded message definition.</para>
+        </summary>
+        <param name="xmlMembersMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />Internal .NET Framework type mappings for the element parts of a WSDL message definition.</param>
       </Docs>
     </Member>
     <Member MemberName="ExportMembersMapping">
@@ -75,10 +98,18 @@
         <Parameter Name="exportEnclosingType" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="xmlMembersMapping">To be added: an object of type 'XmlMembersMapping'</param>
-        <param name="exportEnclosingType">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should not use the <see cref="T:System.Xml.Serialization.SoapSchemaExporter" /> class directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds to the applicable <see cref="T:System.Xml.Schema.XmlSchema" /> object a data type definition for each of the element parts of a SOAP-encoded message definition.</para>
+        </summary>
+        <param name="xmlMembersMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />Internal .NET Framework type mappings for the element parts of a WSDL message definition.</param>
+        <param name="exportEnclosingType">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to export a type definition for the parent element of the WSDL parts; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="ExportTypeMapping">
@@ -97,9 +128,16 @@
         <Parameter Name="xmlTypeMapping" Type="System.Xml.Serialization.XmlTypeMapping" />
       </Parameters>
       <Docs>
-        <param name="xmlTypeMapping">To be added: an object of type 'XmlTypeMapping'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You should not use the <see cref="T:System.Xml.Serialization.SoapSchemaExporter" /> class directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds to the applicable <see cref="T:System.Xml.Schema.XmlSchema" /> object a data type definition for a .NET Framework type.</para>
+        </summary>
+        <param name="xmlTypeMapping">
+          <attribution license="cc4" from="Microsoft" modified="false" />An internal mapping between a .NET Framework type and an XML Schema element.</param>
       </Docs>
     </Member>
   </Members>

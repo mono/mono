@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AuthenticationTypes" FullName="System.DirectoryServices.AuthenticationTypes">
   <TypeSignature Language="C#" Value="public sealed enum AuthenticationTypes" />
   <AssemblyInfo>
@@ -92,8 +93,11 @@
       </ReturnValue>
       <MemberValue>Anonymous</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No authentication is performed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Delegation">
@@ -104,8 +108,11 @@
       </ReturnValue>
       <MemberValue>Delegation</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables Active Directory Services Interface (ADSI) to delegate the user's security context, which is necessary for moving objects across domains.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Encryption">
@@ -116,8 +123,11 @@
       </ReturnValue>
       <MemberValue>SecureSocketsLayer</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attaches a cryptographic signature to the message that both identifies the sender and ensures that the message has not been modified in transit.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FastBind">
@@ -128,8 +138,11 @@
       </ReturnValue>
       <MemberValue>FastBind</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that ADSI will not attempt to query the Active Directory Domain Services objectClass property.  Therefore, only the base interfaces that are supported by all ADSI objects will be exposed.  Other interfaces that the object supports will not be available. A user can use this option to boost the performance in a series of object manipulations that involve only methods of the base interfaces. However, ADSI does not verify if any of the request objects actually exist on the server. For more information, see the topic "Fast Binding Option for Batch Write/Modify Operations" in the MSDN Library at <see cref="http://msdn.microsoft.com/library">http://msdn.microsoft.com/library</see>.  For more information about the objectClass property, see the "Object-Class" topic in the MSDN Library at <see cref="http://msdn.microsoft.com/library">http://msdn.microsoft.com/library</see>.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -140,8 +153,11 @@
       </ReturnValue>
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Equates to zero, which means to use basic authentication (simple bind) in the LDAP provider.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadonlyServer">
@@ -152,8 +168,11 @@
       </ReturnValue>
       <MemberValue>ReadonlyServer</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a WinNT provider, ADSI tries to connect to a domain controller. For Active Directory Domain Services, this flag indicates that a writable server is not required for a serverless binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Sealing">
@@ -164,8 +183,11 @@
       </ReturnValue>
       <MemberValue>Sealing</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Encrypts data using Kerberos. The <see cref="F:System.DirectoryServices.AuthenticationTypes.Secure" /> flag must also be set to use sealing.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Secure">
@@ -176,8 +198,11 @@
       </ReturnValue>
       <MemberValue>Secure</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Requests secure authentication. When this flag is set, the WinNT provider uses NTLM to authenticate the client. Active Directory Domain Services uses Kerberos, and possibly NTLM, to authenticate the client. When the user name and password are a null reference (Nothing in Visual Basic), ADSI binds to the object using the security context of the calling thread, which is either the security context of the user account under which the application is running or of the client user account that the calling thread is impersonating.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SecureSocketsLayer">
@@ -188,8 +213,11 @@
       </ReturnValue>
       <MemberValue>SecureSocketsLayer</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Attaches a cryptographic signature to the message that both identifies the sender and ensures that the message has not been modified in transit. Active Directory Domain Services requires the Certificate Server be installed to support Secure Sockets Layer (SSL) encryption.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ServerBind">
@@ -200,8 +228,11 @@
       </ReturnValue>
       <MemberValue>ServerBind</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If your ADsPath includes a server name, specify this flag when using the LDAP provider. Do not use this flag for paths that include a domain name or for serverless paths. Specifying a server name without also specifying this flag results in unnecessary network traffic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Signing">
@@ -212,13 +243,28 @@
       </ReturnValue>
       <MemberValue>Signing</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Verifies data integrity to ensure that the data received is the same as the data sent. The <see cref="F:System.DirectoryServices.AuthenticationTypes.Secure" /> flag must also be set to use signing.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="F:System.DirectoryServices.AuthenticationTypes.Secure" /> flag can be used in combination with other flags such as <see cref="F:System.DirectoryServices.AuthenticationTypes.ReadonlyServer" />, <see cref="F:System.DirectoryServices.AuthenticationTypes.FastBind" />.</para>
+      <para>Serverless binding refers to a process in which a client attempts to bind to an Active Directory Domain Services object without explicitly specifying an Active Directory Domain Services server in the binding string, for example:</para>
+      <code>LDAP://CN=jsmith,DC=fabrikam,DC=Com</code>
+      <para>This is possible because the Lightweight Directory Access Protocol (LDAP) provider relies on the locator services of Windows 2000 to find the best domain controller (DC) for the client. However, the client must have an account on the Active Directory Domain Services domain controller to take advantage of the serverless binding feature, and the domain controller that is used by a serverless bind will always be located in the default domain (the domain associated with the current security context of the thread that's doing the binding).</para>
+      <block subset="none" type="note">
+        <para>None of these options are supported by the Novell Netware Directory Service (NDS) system provider.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.DirectoryServices.AuthenticationTypes" /> enumeration specifies the types of authentication used in <see cref="N:System.DirectoryServices" />. This enumeration has a <see cref="T:System.FlagsAttribute" /> attribute that allows a bitwise combination of its member values.</para>
+    </summary>
   </Docs>
 </Type>

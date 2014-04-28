@@ -11,7 +11,7 @@
   <Interfaces />
   <Docs>
     <summary>An Http Message Handler for HttpClient that is powered by iOS/MacOS CFNetwork stack.</summary>
-    <remarks>
+    <remarks preserve-mono="true">
       <para>
 	This handler allows the HttpClient API to use Apple's
 	CFNetwork as the HTTP transport as opposed to the default
@@ -54,7 +54,7 @@ var client = new HttpClient (new CFNetworkHandler ());
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>Creates an instance of the CFNetwork-based http handler..</summary>
+        <summary preserve-mono="true">Creates an instance of the CFNetwork-based http handler..</summary>
         <remarks></remarks>
       </Docs>
     </Member>
@@ -69,7 +69,7 @@ var client = new HttpClient (new CFNetworkHandler ());
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Determines whether the request handler should follow redirects sent by the server.</summary>
+        <summary preserve-mono="true">Determines whether the request handler should follow redirects sent by the server.</summary>
         <value></value>
         <remarks></remarks>
       </Docs>
@@ -88,7 +88,7 @@ var client = new HttpClient (new CFNetworkHandler ());
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">True if this is being called from Dispose(), false if it is being invoked by the finalizer.</param>
+        <param name="disposing" preserve-mono="true">True if this is being called from Dispose(), false if it is being invoked by the finalizer.</param>
         <summary>Disposes this CFNetworkHandler.</summary>
         <remarks></remarks>
       </Docs>
@@ -116,11 +116,11 @@ var client = new HttpClient (new CFNetworkHandler ());
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="request">The request to send.</param>
-        <param name="cancellationToken">Cancelation token to cancel the operation.</param>
-        <summary>Sends the Http message asynchronously.</summary>
+        <param name="request" preserve-mono="true">The request to send.</param>
+        <param name="cancellationToken" preserve-mono="true">Cancelation token to cancel the operation.</param>
+        <summary preserve-mono="true">Sends the Http message asynchronously.</summary>
         <returns>Task representing the asynchronous operation.</returns>
-        <remarks>
+        <remarks preserve-mono="true">
 	  This method is invoked by the HttpClient, it is non-blocking.
 	</remarks>
       </Docs>

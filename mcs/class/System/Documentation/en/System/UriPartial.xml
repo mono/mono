@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UriPartial" FullName="System.UriPartial" FullNameSP="System_UriPartial" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable UriPartial extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum UriPartial" />
@@ -15,15 +16,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
- Specifies URI components.
-</summary>
     <remarks>
-      <para>
-        <block subset="none" type="note">The <see cref="T:System.UriPartial" /> enumeration defines the values that are passed to the
-<see cref="M:System.Uri.GetLeftPart(System.UriPartial)" qualify="true" /> method.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.UriPartial" /> enumeration defines the values that can be passed to the <see cref="M:System.Uri.GetLeftPart(System.UriPartial)" /> method.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the parts of a URI for the <see cref="M:System.Uri.GetLeftPart(System.UriPartial)" /> method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Authority">
@@ -43,8 +43,9 @@
       <MemberValue>Authority</MemberValue>
       <Docs>
         <summary>
- Specifies the authority component of a URI.
-</summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The scheme and authority segments of the URI.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -65,8 +66,9 @@
       <MemberValue>Path</MemberValue>
       <Docs>
         <summary>
- Specifies the path component of a URI.
-</summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The scheme, authority, and path segments of the URI.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -82,7 +84,10 @@
         <ReturnType>System.UriPartial</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The scheme, authority, path, and query segments of the URI.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Scheme">
@@ -102,7 +107,8 @@
       <MemberValue>Scheme</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the scheme component of a URI.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The scheme segment of the URI.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>

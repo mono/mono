@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlQualifiedName" FullName="System.Xml.XmlQualifiedName">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlQualifiedName" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit XmlQualifiedName extends System.Object" />
@@ -14,8 +15,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An XML qualified name is a namespace qualified local name in the format of namespace:localname.</para>
+      <para>Because prefixes are only required when XML is persisted or read, they are irrelevant for <see cref="T:System.Xml.XmlQualifiedName" /> objects. This class assumes that prefixes are irrelevant. It is the responsibility of the user to ensure the local name does not contain a ":".</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an XML qualified name.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +38,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object created has no name or namespace defined.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlQualifiedName" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -48,9 +62,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object created does not have a namespace defined.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlQualifiedName" /> class with the specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name to use as the name of the <see cref="T:System.Xml.XmlQualifiedName" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -68,10 +89,15 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="ns">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.XmlQualifiedName" /> class with the specified name and namespace.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name to use as the name of the <see cref="T:System.Xml.XmlQualifiedName" /> object. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace for the <see cref="T:System.Xml.XmlQualifiedName" /> object. </param>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -88,8 +114,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides an empty <see cref="T:System.Xml.XmlQualifiedName" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Equals">
@@ -108,10 +137,14 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified <see cref="T:System.Xml.XmlQualifiedName" /> object is equal to the current <see cref="T:System.Xml.XmlQualifiedName" /> object. </para>
+        </summary>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" /> to compare. </param>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -128,9 +161,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the hash code for the <see cref="T:System.Xml.XmlQualifiedName" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsEmpty">
@@ -146,9 +182,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Xml.XmlQualifiedName" /> is empty.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -164,9 +203,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representation of the qualified name of the <see cref="T:System.Xml.XmlQualifiedName" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Namespace">
@@ -182,9 +224,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string representation of the namespace of the <see cref="T:System.Xml.XmlQualifiedName" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -204,11 +249,16 @@
         <Parameter Name="b" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <param name="a">To be added.</param>
-        <param name="b">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Xml.XmlQualifiedName" /> objects.</para>
+        </summary>
+        <param name="a">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> to compare. </param>
+        <param name="b">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> to compare. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -228,11 +278,16 @@
         <Parameter Name="b" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <param name="a">To be added.</param>
-        <param name="b">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares two <see cref="T:System.Xml.XmlQualifiedName" /> objects.</para>
+        </summary>
+        <param name="a">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> to compare. </param>
+        <param name="b">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> to compare. </param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -249,9 +304,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the string value of the <see cref="T:System.Xml.XmlQualifiedName" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -271,11 +329,16 @@
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="ns">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the string value of the <see cref="T:System.Xml.XmlQualifiedName" />.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the object. </param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the object. </param>
       </Docs>
     </Member>
   </Members>

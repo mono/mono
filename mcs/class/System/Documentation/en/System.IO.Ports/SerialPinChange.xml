@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SerialPinChange" FullName="System.IO.Ports.SerialPinChange">
   <TypeSignature Language="C#" Value="public enum SerialPinChange" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SerialPinChange extends System.Enum" />
@@ -10,9 +11,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used with the <see cref="E:System.IO.Ports.SerialPort.PinChanged" /> event.</para>
+      <para>A serial port pin changes state when it is asserted or unasserted.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of change that occurred on the <see cref="T:System.IO.Ports.SerialPort" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Break">
@@ -27,8 +35,11 @@
         <ReturnType>System.IO.Ports.SerialPinChange</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A break was detected on input.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CDChanged">
@@ -43,8 +54,11 @@
         <ReturnType>System.IO.Ports.SerialPinChange</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Carrier Detect (CD) signal changed state. This signal is used to indicate whether a modem is connected to a working phone line and a data carrier signal is detected.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CtsChanged">
@@ -59,8 +73,11 @@
         <ReturnType>System.IO.Ports.SerialPinChange</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Clear to Send (CTS) signal changed state. This signal is used to indicate whether data can be sent over the serial port.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DsrChanged">
@@ -75,8 +92,11 @@
         <ReturnType>System.IO.Ports.SerialPinChange</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Data Set Ready (DSR) signal changed state. This signal is used to indicate whether the device on the serial port is ready to operate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ring">
@@ -91,8 +111,11 @@
         <ReturnType>System.IO.Ports.SerialPinChange</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A ring indicator was detected.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

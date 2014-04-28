@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IChannelDataStore" FullName="System.Runtime.Remoting.Channels.IChannelDataStore">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IChannelDataStore" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IChannelDataStore" />
@@ -16,8 +17,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Channels that want to use the channel sink architecture must implement this interface on their ChannelData object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores channel data for the remoting channels.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ChannelUris">
@@ -33,9 +40,12 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of channel URIs to which the current channel maps.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">

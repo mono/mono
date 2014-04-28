@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509CertificateEndpointIdentity" FullName="System.ServiceModel.X509CertificateEndpointIdentity">
   <TypeSignature Language="C#" Value="public class X509CertificateEndpointIdentity : System.ServiceModel.EndpointIdentity" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit X509CertificateEndpointIdentity extends System.ServiceModel.EndpointIdentity" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a certificate identity for the service endpoint. Clients that attempt to communicate with that service endpoint should authenticate the service based on the certificate provided in the endpoint identity.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,8 +30,14 @@
       </Parameters>
       <Docs>
         <param name="cert">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="certificate" /> is added to a collection of certificates.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of a <see cref="T:System.ServiceModel.X509CertificateEndpointIdentity" /> class using an existing certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,10 +52,18 @@
         <Parameter Name="supportingCertificates" Type="System.Security.Cryptography.X509Certificates.X509Certificate2Collection" />
       </Parameters>
       <Docs>
-        <param name="primaryCertificate">To be added.</param>
-        <param name="supportingCertificates">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="primaryCertificate" /> and <paramref name="supportingCertificates" /> are added to a collection of certificates.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.X509CertificateEndpointIdentity" /> class using the primary (leaf) certificate and certificates that are part of its trust chain.</para>
+        </summary>
+        <param name="primaryCertificate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The primary certificate representing the service's identity.</param>
+        <param name="supportingCertificates">
+          <attribution license="cc4" from="Microsoft" modified="false" />The certificates that are part of the trust chain of the primary certificate.</param>
       </Docs>
     </Member>
     <Member MemberName="Certificates">
@@ -59,9 +77,15 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509Certificate2Collection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This collection contains the <paramref name="primaryCertificate" /> used to create the <see cref="T:System.ServiceModel.X509CertificateEndpointIdentity" /> as well as any <paramref name="supportingCertificates" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of certificates for this identity.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BulletedListEventArgs" FullName="System.Web.UI.WebControls.BulletedListEventArgs">
   <TypeSignature Language="C#" Value="public class BulletedListEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event is raised when a link button in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control is clicked.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> class, see the <see cref="M:System.Web.UI.WebControls.BulletedListEventArgs.#ctor(System.Int32)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event of a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +29,39 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> class.</para>
+          <para>The following table shows the initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.BulletedListEventArgs.Index" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="index" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> class.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the list item in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> that raised the event. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +74,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to programmatically access the index of the list item in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control that raised the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the list item in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control that raised the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

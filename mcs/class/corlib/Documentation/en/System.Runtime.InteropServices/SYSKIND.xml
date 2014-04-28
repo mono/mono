@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SYSKIND" FullName="System.Runtime.InteropServices.SYSKIND">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum SYSKIND" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed SYSKIND extends System.Enum" />
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about the SYSKIND enumeration, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.SYSKIND" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="SYS_MAC">
@@ -36,8 +43,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The target operating system for the type library is Apple Macintosh. By default, all data fields are aligned on even-byte boundaries.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SYS_WIN16">
@@ -54,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The target operating system for the type library is 16-bit Windows systems. By default, data fields are packed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SYS_WIN32">
@@ -72,8 +85,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The target operating system for the type library is 32-bit Windows systems. By default, data fields are naturally aligned (for example, 2-byte integers are aligned on even-byte boundaries; 4-byte integers are aligned on quad-word boundaries, and so on). </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

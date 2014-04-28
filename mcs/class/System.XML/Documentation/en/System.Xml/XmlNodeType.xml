@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlNodeType" FullName="System.Xml.XmlNodeType" FullNameSP="System_Xml_XmlNodeType" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable XmlNodeType extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum XmlNodeType" />
@@ -14,13 +15,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para>Specifies the type of node.</para>
-    </summary>
     <remarks>
       <para>A given set of XML data is modeled as a tree of nodes. 
       This enumeration specifies the different node types.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of node.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Attribute">
@@ -39,19 +41,14 @@
       <Parameters />
       <MemberValue>Attribute</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Attribute node can have the following child node types: Text and EntityReference. The Attribute node does not appear as the child node of any other node type. It is not considered a child node of an Element.</para>
+        </remarks>
         <summary>
-          <para> An
- attribute.
- </para>
-          <para> Example XML: <c>id="123"</c></para>
-          <para> An <see langword="Attribute" /> node can have the
-following child node types: <see langword="Text" /> and
-<see langword="EntityReference" />. The <see langword="Attribute" /> node does not 
-appear as the child node of any other node type. It is not considered a
-child node of an <see langword="Element" />
-.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An attribute (for example, id='123' ).</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -71,18 +68,14 @@ child node of an <see langword="Element" />
       <Parameters />
       <MemberValue>CDATA</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>CDATA sections are used to escape blocks of text that would otherwise be recognized as markup. A CDATA node cannot have any child nodes. It can appear as the child of the DocumentFragment, EntityReference, and Element nodes.</para>
+        </remarks>
         <summary>
-          <para>A CDATA
-      
-      section.</para>
-          <para>Example XML: <c>
-      &lt;![CDATA[escaped text]]&gt;</c></para>
-          <para> CDATA sections are used to escape blocks of text that would otherwise
-   be recognized as markup. A <see langword="CDATA" /> node cannot have any child
-   nodes. It can appear as the child of the <see langword="DocumentFragment" />,
-<see langword="EntityReference" />, and <see langword="Element" /> nodes.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A CDATA section (for example, &lt;![CDATA[my escaped text]]&gt; ).</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -102,17 +95,14 @@ child node of an <see langword="Element" />
       <Parameters />
       <MemberValue>Comment</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Comment node cannot have any child nodes. It can appear as the child of the Document, DocumentFragment, Element, and EntityReference nodes.</para>
+        </remarks>
         <summary>
-          <para> A comment.
-      </para>
-          <para> Example XML: <c> &lt;!-- comment --&gt;</c></para>
-          <para> A <see langword="Comment" /> node cannot have any child
-nodes. It can appear as the child of the <see langword="Document" />,
-<see langword="DocumentFragment" />, <see langword="Element" />, and 
-<see langword="EntityReference" /> 
-nodes.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A comment (for example, &lt;!-- my comment --&gt; ).</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -132,20 +122,14 @@ nodes.</para>
       <Parameters />
       <MemberValue>Document</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Document node can have the following child node types: XmlDeclaration, Element (maximum of one), ProcessingInstruction, Comment, and DocumentType. It cannot appear as the child of any node types.</para>
+        </remarks>
         <summary>
-          <para> A document object that, as the root of the document tree, provides access
- to the entire XML document.
- </para>
-          <para> A <see langword="Document" /> node 
- can have the following child node types:
-<see langword="XmlDeclaration" /> 
-, <see langword="Element" /> (maximum of one),
-<see langword="ProcessingInstruction" />, <see langword="Comment" />, and 
-<see langword="DocumentType" /> 
-. It cannot
-appear as the child of any node types.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A document object that, as the root of the document tree, provides access to the entire XML document.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -165,19 +149,14 @@ appear as the child of any node types.</para>
       <Parameters />
       <MemberValue>DocumentFragment</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DocumentFragment node associates a node or subtree with a document without actually being contained within the document. A DocumentFragment node can have the following child node types: Element, ProcessingInstruction, Comment, Text, CDATA, and EntityReference. It cannot appear as the child of any node types.</para>
+        </remarks>
         <summary>
-          <para> A document fragment.
-      </para>
-          <para> The <see langword="DocumentFragment" /> node associates a
-   node or sub-tree with a document without actually being contained within the
-   document. A <see langword="DocumentFragment" /> node can have the following child
-   node types: <see langword="Element" />, <see langword="ProcessingInstruction" />,
-<see langword="Comment" />, <see langword="Text" />, <see langword="CDATA" />, and 
-<see langword="EntityReference" /> 
-. It
-cannot appear as the child of any node types.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A document fragment.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -197,18 +176,14 @@ cannot appear as the child of any node types.</para>
       <Parameters />
       <MemberValue>DocumentType</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A DocumentType node can have the following child node types: Notation and Entity. It can appear as the child of the Document node.</para>
+        </remarks>
         <summary>
-          <para> The document type declaration, indicated by the following tag.
-      </para>
-          <para> Example XML: <c>&lt;!DOCTYPE ...&gt;</c></para>
-          <para> A <see langword="DocumentType" /> node can have the 
-following child node types: <see langword="Notation" /> and
-<see langword="Entity" />. It can appear as the child of the 
-<see langword="Document" /> 
-node.
-</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The document type declaration, indicated by the following tag (for example, &lt;!DOCTYPE...&gt; ).</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -228,19 +203,14 @@ node.
       <Parameters />
       <MemberValue>Element</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Element node can have the following child node types: Element, Text, Comment, ProcessingInstruction, CDATA, and EntityReference. It can be the child of the Document, DocumentFragment, EntityReference, and Element nodes.</para>
+        </remarks>
         <summary>
-          <para> An element.
-      </para>
-          <para> Example XML: <c>&lt;name&gt;</c></para>
-An <see langword="Element" /> node can have the
-following child node types: <see langword="Element" />, <see langword="Text" />,
-<see langword="Comment" />, <see langword="ProcessingInstruction" />, 
-<see langword="CDATA" />, and <see langword="EntityReference" />. It can be the 
-child of the <see langword="Document" />, <see langword="DocumentFragment" />,
-<see langword="EntityReference" />, and <see langword="Element" />
-nodes.
-</summary>
-        <remarks>To be added.</remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An element (for example, &lt;item&gt; ).</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -260,12 +230,14 @@ nodes.
       <Parameters />
       <MemberValue>EndElement</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>EndElement nodes are returned when <see cref="T:System.Xml.XmlReader" /> gets to the end of an element.</para>
+        </remarks>
         <summary>
-          <para> An end element.</para>
-          <para>Example XML: <c>&lt;/name&gt;</c></para>
-          <para>Returned when <see cref="T:System.Xml.XmlReader" /> gets to the end of an element.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An end element tag (for example, &lt;/item&gt; ).</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -285,12 +257,11 @@ nodes.
       <Parameters />
       <MemberValue>EndEntity</MemberValue>
       <Docs>
-        <summary>
-          <para>Returned when <see cref="T:System.Xml.XmlReader" /> gets to the end of the entity
-   replacement as a result of a call to <see cref="M:System.Xml.XmlReader.ResolveEntity" />
-   .</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returned when XmlReader gets to the end of the entity replacement as a result of a call to <see cref="M:System.Xml.XmlReader.ResolveEntity" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -310,16 +281,14 @@ nodes.
       <Parameters />
       <MemberValue>Entity</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Entity node can have child nodes that represent the expanded entity (for example, Text and EntityReference nodes). It can appear as the child of the DocumentType node.</para>
+        </remarks>
         <summary>
-          <para>An entity declaration.</para>
-          <para>Example XML: <c>&lt;!ENTITY ...&gt;</c></para>
-          <para>An <see langword="Entity" /> node can have child nodes 
-   that represent the expanded entity (for example, <see langword="Text" /> and
-<see langword="EntityReference" /> nodes). It can appear as the child of the 
-<see langword="DocumentType" /> 
-node.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An entity declaration (for example, &lt;!ENTITY...&gt; ).</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -339,20 +308,14 @@ node.</para>
       <Parameters />
       <MemberValue>EntityReference</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An EntityReference node can have the following child node types: Element, ProcessingInstruction, Comment, Text, CDATA, and EntityReference. It can appear as the child of the Attribute, DocumentFragment, Element, and EntityReference nodes.</para>
+        </remarks>
         <summary>
-          <para>A reference to an entity.</para>
-          <para>Example XML: <c>&amp;num;</c></para>
-          <para> An <see langword="EntityReference" /> node can have the 
-   following child node types: <see langword="Element" />,
-<see langword="ProcessingInstruction" />, <see langword="Comment" />, 
-<see langword="Text" />, <see langword="CDATA" />, and 
-<see langword="EntityReference" />. It can appear as the child of the 
-<see langword="Attribute" />, <see langword="DocumentFragment" />, 
-<see langword="Element" />, and <see langword="EntityReference" /> 
-
-nodes.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to an entity (for example, &amp;num; ).</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -372,12 +335,11 @@ nodes.</para>
       <Parameters />
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>
-          <para>This is returned by the <see cref="T:System.Xml.XmlReader" /> if a read 
-   method has not been called or if no more nodes
-   are available to be read.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is returned by the <see cref="T:System.Xml.XmlReader" /> if a Read method has not been called.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -397,16 +359,14 @@ nodes.</para>
       <Parameters />
       <MemberValue>Notation</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Notation node cannot have any child nodes. It can appear as the child of the DocumentType node.</para>
+        </remarks>
         <summary>
-          <para> A notation in the document type declaration.
-      </para>
-          <para> Example XML: <c>&lt;!NOTATION ...&gt;</c></para>
-          <para> A <see langword="Notation" /> node cannot have any child 
-nodes. It can appear as the child of the <see langword="DocumentType" />
-node.
-</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A notation in the document type declaration (for example, &lt;!NOTATION...&gt; ).</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -426,18 +386,14 @@ node.
       <Parameters />
       <MemberValue>ProcessingInstruction</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A ProcessingInstruction node cannot have any child nodes. It can appear as the child of the Document, DocumentFragment, Element, and EntityReference nodes.</para>
+        </remarks>
         <summary>
-          <para> A processing instruction.
-      </para>
-          <para> Example XML: <c>&lt;?pi test?&gt;</c></para>
-          <para> A <see langword="ProcessingInstruction" /> node cannot have 
-any child nodes. It can appear as the child of the <see langword="Document" />,
-<see langword="DocumentFragment" />, <see langword="Element" />, and 
-<see langword="EntityReference" /> 
-nodes.
-</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A processing instruction (for example, &lt;?pi test?&gt; ).</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -457,12 +413,11 @@ nodes.
       <Parameters />
       <MemberValue>SignificantWhitespace</MemberValue>
       <Docs>
-        <summary>
-          <para> White space between markup in a mixed content model or white
-      space within the <c>xml:space="preserve"</c> scope.
-   </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>White space between markup in a mixed content model or white space within the xml:space="preserve" scope.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -482,18 +437,14 @@ nodes.
       <Parameters />
       <MemberValue>Text</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Text node cannot have any child nodes. It can appear as the child node of the Attribute, DocumentFragment, Element, and EntityReference nodes.</para>
+        </remarks>
         <summary>
-          <para> The
-      text content of a node.
-      </para>
-          <para> A <see langword="Text" /> node cannot have any child nodes. 
-   It can appear as the child node of the <see langword="Attribute" />,
-<see langword="DocumentFragment" />, <see langword="Element" />, and 
-<see langword="EntityReference" /> 
-nodes.
-</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text content of a node.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -513,11 +464,11 @@ nodes.
       <Parameters />
       <MemberValue>Whitespace</MemberValue>
       <Docs>
-        <summary>
-          <para> White space between markup.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>White space between markup.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -537,17 +488,14 @@ nodes.
       <Parameters />
       <MemberValue>XmlDeclaration</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlDeclaration node must be the first node in the document. It cannot have children. It is a child of the Document node. It can have attributes that provide version and encoding information.</para>
+        </remarks>
         <summary>
-          <para> The XML declaration.
- </para>
-          <para> Example XML: <c>&lt;?xml version="1.0"?&gt;</c></para>
-          <para> The <see langword="XmlDeclaration" /> 
-node must be the first node in the document. It cannot have children. It is a
-child of the <see langword="Document" />
-node. It can have attributes that provide version
-and encoding information.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML declaration (for example, &lt;?xml version='1.0'?&gt; ).</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

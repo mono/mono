@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TemplateContainerAttribute" FullName="System.Web.UI.TemplateContainerAttribute">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class TemplateContainerAttribute : Attribute" />
   <AssemblyInfo>
@@ -18,8 +19,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Type" /> object that is passed in as a parameter of the <see cref="T:System.Web.UI.TemplateContainerAttribute" /> object is used by the parser as the type of <see cref="T:System.ComponentModel.Container" /> object that is used in data-binding expressions. The control whose property returns an <see cref="T:System.Web.UI.ITemplate" /> interface and is marked with the <see cref="T:System.Web.UI.TemplateContainerAttribute" />, must implement the <see cref="T:System.Web.UI.INamingContainer" /> interface. </para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Declares the base type of the container control of a property that returns an <see cref="T:System.Web.UI.ITemplate" /> interface and is marked with the <see cref="T:System.Web.UI.TemplateContainerAttribute" /> attribute. The control with the <see cref="T:System.Web.UI.ITemplate" /> property must implement the <see cref="T:System.Web.UI.INamingContainer" /> interface. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +38,13 @@
         <Parameter Name="containerType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="containerType">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.TemplateContainerAttribute" /> class using the specified container type.</para>
+        </summary>
+        <param name="containerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> for the container control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,10 +62,14 @@
         <Parameter Name="direction" Type="System.ComponentModel.BindingDirection" />
       </Parameters>
       <Docs>
-        <param name="containerType">To be added.</param>
         <param name="direction">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.TemplateContainerAttribute" /> class using the specified container type and the <see cref="P:System.Web.UI.TemplateContainerAttribute.BindingDirection" /> property.</para>
+        </summary>
+        <param name="containerType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> for the container control.</param>
       </Docs>
     </Member>
     <Member MemberName="BindingDirection">
@@ -66,9 +82,16 @@
         <ReturnType>System.ComponentModel.BindingDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.TemplateContainerAttribute.BindingDirection" /> property can be either the <see cref="F:System.ComponentModel.BindingDirection.OneWay" /> field, where the template can accept only property values or the <see cref="F:System.ComponentModel.BindingDirection.TwoWay" /> field, where the template can accept and expose property values. In the latter scenario, data-bound controls automatically can use the update, delete, and insert operations of a data source using the Bind data-binding syntax. </para>
+          <para>For more information on data binding, see <format type="text/html"><a href="ab7b2846-975b-4057-a948-45527497c742">ASP.NET Data Binding</a></format> and <format type="text/html"><a href="14cdd57d-0f82-4667-b503-73e1a96f136a">Data-Binding Expression Syntax</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the binding direction of the container control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContainerType">
@@ -78,9 +101,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the container control type.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

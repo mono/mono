@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ActivatorLevel" FullName="System.Runtime.Remoting.Activation.ActivatorLevel">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum ActivatorLevel" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ActivatorLevel extends System.Enum" />
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The design of activators allows for more than one activator to participate in the activation process, and additional activators can be added to the chain by using <see cref="P:System.Runtime.Remoting.Activation.IActivator.NextActivator" />. Because each activator is responsible for calling the next one in the chain, an activator can position itself anywhere in the chain. The <see cref="T:System.Runtime.Remoting.Activation.ActivatorLevel" /> enumerator helps activators find the appropriate position in the chain.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the appropriate position for a <see cref="T:System.Activator" /> in the chain of activators.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AppDomain">
@@ -36,8 +43,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds or creates a <see cref="T:System.AppDomain" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Construction">
@@ -54,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Constructs a blank object and runs the constructor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Context">
@@ -72,8 +85,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds or creates a suitable context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Machine">
@@ -90,8 +106,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Finds a suitable computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Process">
@@ -108,8 +127,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Starts a process.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

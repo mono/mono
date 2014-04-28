@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TrackingServices" FullName="System.Runtime.Remoting.Services.TrackingServices">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class TrackingServices" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TrackingServices extends System.Object" />
@@ -19,8 +20,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Tracking handlers are objects that implement the <see cref="T:System.Runtime.Remoting.Services.ITrackingHandler" /> interface, indicating that they must be notified whenever the remoting infrastructure marshals, unmarshals, or disconnects an object or proxy. Every object that is registered with <see cref="T:System.Runtime.Remoting.Services.TrackingServices" /> is called by remoting when an object or proxy in the current <see cref="T:System.AppDomain" /> is marshaled, unmarshaled, or disconnected.</para>
+      <para>All methods in the <see cref="T:System.Runtime.Remoting.Services.TrackingServices" /> class are static and operate on the tracking handlers in the current <see cref="T:System.AppDomain" />.</para>
+      <block subset="none" type="note">
+        <para>This class makes a link demand. A SecurityException is thrown if the immediate caller does not have infrastructure permission. See <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">[&lt;topic://cpconLinkDemands&gt;]</a></format> for more information.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a way to register, unregister, and obtain a list of tracking handlers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Runtime.Remoting.Services.TrackingServices" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RegisteredHandlers">
@@ -52,9 +66,12 @@
         <ReturnType>System.Runtime.Remoting.Services.ITrackingHandler[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ITrackingHandler []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of the tracking handlers that are currently registered with <see cref="T:System.Runtime.Remoting.Services.TrackingServices" /> in the current <see cref="T:System.AppDomain" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RegisterTrackingHandler">
@@ -73,9 +90,13 @@
         <Parameter Name="handler" Type="System.Runtime.Remoting.Services.ITrackingHandler" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added: an object of type 'ITrackingHandler'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Registers a new tracking handler with the <see cref="T:System.Runtime.Remoting.Services.TrackingServices" />.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tracking handler to register. </param>
       </Docs>
     </Member>
     <Member MemberName="UnregisterTrackingHandler">
@@ -94,9 +115,13 @@
         <Parameter Name="handler" Type="System.Runtime.Remoting.Services.ITrackingHandler" />
       </Parameters>
       <Docs>
-        <param name="handler">To be added: an object of type 'ITrackingHandler'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unregisters the specified tracking handler from <see cref="T:System.Runtime.Remoting.Services.TrackingServices" />.</para>
+        </summary>
+        <param name="handler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The handler to unregister. </param>
       </Docs>
     </Member>
   </Members>

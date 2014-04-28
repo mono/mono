@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ClientBuildManagerCallback" FullName="System.Web.Compilation.ClientBuildManagerCallback">
   <TypeSignature Language="C#" Value="public class ClientBuildManagerCallback : MarshalByRefObject" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Web.Compilation.ClientBuildManagerCallback" /> object can be passed to the <see cref="T:System.Web.Compilation.ClientBuildManager" /> object through the <see cref="M:System.Web.Compilation.ClientBuildManager.PrecompileApplication(System.Web.Compilation.ClientBuildManagerCallback)" /> method. When an error is encountered during an application build, the error is passed as an argument to either the <see cref="M:System.Web.Compilation.ClientBuildManagerCallback.ReportCompilerError(System.CodeDom.Compiler.CompilerError)" /> or the <see cref="M:System.Web.Compilation.ClientBuildManagerCallback.ReportParseError(System.Web.ParserError)" /> method, depending on the type of error. When you create a class that derives from the <see cref="T:System.Web.Compilation.ClientBuildManagerCallback" /> class, you can implement these methods and retrieve the error.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Receives status information about a build from the <see cref="T:System.Web.Compilation.ClientBuildManager" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ClientBuildManagerCallback" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +47,14 @@
         <Parameter Name="error" Type="System.CodeDom.Compiler.CompilerError" />
       </Parameters>
       <Docs>
-        <param name="error">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reports compilation errors and warnings that occur during an application build.</para>
+        </summary>
+        <param name="error">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error or warning encountered during compilation. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,10 +70,14 @@
         <Parameter Name="error" Type="System.Web.ParserError" />
       </Parameters>
       <Docs>
-        <param name="error">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reports parsing errors and warnings that occur during an application build.</para>
+        </summary>
+        <param name="error">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error or warning encountered during parsing.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,10 +93,14 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reports the progress of an application build.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the current status of the build.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

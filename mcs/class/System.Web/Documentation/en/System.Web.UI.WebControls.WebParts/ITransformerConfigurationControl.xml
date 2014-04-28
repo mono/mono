@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITransformerConfigurationControl" FullName="System.Web.UI.WebControls.WebParts.ITransformerConfigurationControl">
   <TypeSignature Language="C#" Value="public interface ITransformerConfigurationControl" />
   <AssemblyInfo>
@@ -6,9 +7,16 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A configuration control can be displayed when a transformer requires a user to configure it. The configuration control provides a user interface (UI) that allows the user to select which values will be transformed. It is rendered in a connections zone. The <see cref="M:System.Web.UI.WebControls.WebParts.WebPartTransformer.CreateConfigurationControl" /> method returns a configuration control.</para>
+      <para>You can override the <see cref="M:System.Web.UI.WebControls.WebParts.WebPartTransformer.CreateConfigurationControl" /> method when your transformer requires a customized UI. The configuration control must implement the <see cref="T:System.Web.UI.WebControls.WebParts.ITransformerConfigurationControl" /> interface, which includes the <see cref="E:System.Web.UI.WebControls.WebParts.ITransformerConfigurationControl.Cancelled" /> and <see cref="E:System.Web.UI.WebControls.WebParts.ITransformerConfigurationControl.Succeeded" /> events. These events occur when a transformer control was either not configured or configured successfully, respectively.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the contract a control implements to act as a configuration control for a transformer in a Web Parts connection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Cancelled">
@@ -18,9 +26,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web Parts control that implements <see cref="T:System.Web.UI.WebControls.WebParts.ITransformerConfigurationControl" /> raises this event when a transformer configuration is not completed, either because the user canceled the configuration or because the configuration could not be performed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when transformer configuration is not completed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -33,9 +47,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web Parts control that implements <see cref="T:System.Web.UI.WebControls.WebParts.ITransformerConfigurationControl" /> raises this event when a transformer configuration is successfully completed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when transformer configuration is successfully completed. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

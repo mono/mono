@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RequiredAttributeAttribute" FullName="System.Runtime.CompilerServices.RequiredAttributeAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class RequiredAttributeAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit RequiredAttributeAttribute extends System.Attribute" />
@@ -22,8 +23,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to classes, structures, enumerations, and interfaces.</para>
+      <para>For example, you can use this attribute to mark a C++ class that has a copy constructor. Any compiler that uses such a class must understand every constraint on its use, such as never creating an object of that class in the garbage collected heap, because a relocation does not call its copy constructor.</para>
+      <para>The classes in <see cref="N:System.Runtime.CompilerServices" /> are for compiler writers use only.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that an importing compiler must fully understand the semantics of a type definition, or refuse to use it.  This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +49,13 @@
         <Parameter Name="requiredContract" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="requiredContract">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.RequiredAttributeAttribute" /> class.</para>
+        </summary>
+        <param name="requiredContract">
+          <attribution license="cc4" from="Microsoft" modified="false" />A type that an importing compiler must fully understand.</param>
       </Docs>
     </Member>
     <Member MemberName="RequiredContract">
@@ -58,9 +71,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported in the .NET Framework version 2.0 and later.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a type that an importing compiler must fully understand.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

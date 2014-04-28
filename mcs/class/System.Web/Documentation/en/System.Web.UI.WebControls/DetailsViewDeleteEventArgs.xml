@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DetailsViewDeleteEventArgs" FullName="System.Web.UI.WebControls.DetailsViewDeleteEventArgs">
   <TypeSignature Language="C#" Value="public class DetailsViewDeleteEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,21 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DetailsView" /> control raises the <see cref="E:System.Web.UI.WebControls.DetailsView.ItemDeleting" /> event when a Delete button (a button with its CommandName property set to "Delete") within the control is clicked, but before the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control deletes the record. This allows you to provide an event handler that performs a custom routine, such as verifying a record before deleting it, whenever this event occurs.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.DetailsViewDeletedEventArgs" /> object is passed to the event handler, which allows you to determine the index of the record being deleted and to indicate that the delete operation should be canceled. To determine the index of a record, use the <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.RowIndex" /> property. To cancel the delete operation, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to true. You can also access the key fields and non-key fields by using the <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.Keys" /> and <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.Values" /> properties, respectively. These values are useful if you want to verify the record before deleting it. </para>
+      <block subset="none" type="note">
+        <para>It is possible to modify the key field values in the <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.Keys" /> property. If you change these values, the record that corresponds to the new key field values will be deleted.</para>
+      </block>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.DetailsViewDeleteEventArgs" /> class, see the <see cref="M:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.#ctor(System.Int32)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.DetailsView.ItemDeleting" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +35,41 @@
       </Parameters>
       <Docs>
         <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewDeleteEventArgs" /> class.</para>
+          <para>The following table shows the initial property value for an instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewDeleteEventArgs" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.RowIndex" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="rowIndex" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewDeleteEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +82,24 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.Keys" /> property to access the values of the key field or fields for the record to be deleted. For example, you can use these values to verify the record before deleting it, to change the record to delete, or to keep a log of deleted records.</para>
+          <block subset="none" type="note">
+            <para>This property contains only the key fields. To access the name/value pair values for the non-key fields, use the <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.Values" /> property.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.Keys" /> property returns an object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the key fields. </para>
+          <block subset="none" type="note">
+            <para>As a shortcut, you can also use the indexer of the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> object to access the key field values. The advantage in using the indexer is that it returns key field values directly.</para>
+          </block>
+          <para>This property is read-only; however, you can modify the key field values of the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> object it returns. If you change the key field values, the corresponding record is be deleted from the data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an ordered dictionary of key field name/value pairs that contains the names and values of the key fields of the deleted items.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +112,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.RowIndex" /> property to determine the index of the row being deleted. The row index is often used to retrieve the specified row from the <see cref="P:System.Web.UI.WebControls.DetailsView.Rows" /> collection of the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control, which allows you to access the row's properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the row being deleted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +134,23 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.Values" /> property to access the values of the non-key fields for the record to be deleted. For example, you can use these values to verify the record before deleting it, or to keep a log of deleted records.</para>
+          <block subset="none" type="note">
+            <para>This property does not contain the key field or fields. To access the name/value pair values for the key field or fields, use the <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.Keys" /> property.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.DetailsViewDeleteEventArgs.Values" /> property returns an object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the non-key fields.</para>
+          <block subset="none" type="note">
+            <para>As a shortcut, you can also use the indexer of the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> object to access the field values. The advantage in using the indexer is that it returns field values directly.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary of the non-key field name/value pairs for the item to delete.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripDropDownClosedEventArgs" FullName="System.Windows.Forms.ToolStripDropDownClosedEventArgs">
   <TypeSignature Language="C#" Value="public class ToolStripDropDownClosedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use data from the <see cref="T:System.Windows.Forms.ToolStripDropDownClosedEventArgs" /> method to make decisions about actions to take when a drop-down control closes. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ToolStripDropDown.Closed" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +28,17 @@
         <Parameter Name="reason" Type="System.Windows.Forms.ToolStripDropDownCloseReason" />
       </Parameters>
       <Docs>
-        <param name="reason">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.ToolStripDropDownClosedEventArgs.#ctor(System.Windows.Forms.ToolStripDropDownCloseReason)" /> constructor to make decisions about actions to take when a drop-down control closes for the specified reason.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripDropDownClosedEventArgs" /> class. </para>
+        </summary>
+        <param name="reason">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.ToolStripDropDownCloseReason" /> values.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +51,13 @@
         <ReturnType>System.Windows.Forms.ToolStripDropDownCloseReason</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the reason that the <see cref="T:System.Windows.Forms.ToolStripDropDown" /> closed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

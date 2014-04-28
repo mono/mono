@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaExternal" FullName="System.Xml.Schema.XmlSchemaExternal">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class XmlSchemaExternal : System.Xml.Schema.XmlSchemaObject" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XmlSchemaExternal extends System.Xml.Schema.XmlSchemaObject" />
@@ -14,8 +15,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An abstract class. Provides information about the included schema.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +34,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaExternal" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -53,9 +60,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string id.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Schema">
@@ -77,9 +87,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchema'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XmlSchema for the referenced schema.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SchemaLocation">
@@ -101,9 +114,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imported schemas that do not have this attribute allow the imported schema's namespace to be determined by the XML document that is an instance of the containing schema or the application that is processing the schema.</para>
+          <para>Included schemas use this attribute as the URI reference to the location of a schema document that should be included in the target namespace of the containing schema.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Uniform Resource Identifier (URI) location for the schema, which tells the schema processor where the schema physically resides.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnhandledAttributes">
@@ -125,9 +145,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Xml.XmlAttribute[]'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets and sets the qualified attributes, which do not belong to the schema target namespace.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

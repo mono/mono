@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SendMailErrorEventHandler" FullName="System.Web.UI.WebControls.SendMailErrorEventHandler">
   <TypeSignature Language="C#" Value="public delegate void SendMailErrorEventHandler(object sender, SendMailErrorEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,18 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create a <see cref="T:System.Web.UI.WebControls.SendMailErrorEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with the event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate from the event. For more information about event-handler delegates, see <format type="text/html"><a href="765bfc89-33ee-4d0d-bbe6-3b172c06def9">Server Event Handling in ASP.NET Web Pages</a></format>.</para>
+      <para>Handling the SendMailError event allows your Web application to continue running, even if an exception occurs when trying to send an e-mail message. For example, this is useful if the exception occurs when a user is working through a multi-step wizard. It is preferable to log the error, display an informative message to the user, and allow the user to complete the wizard rather than terminate the application.</para>
+      <para>If you do not create an event handler for the <see cref="E:System.Web.UI.WebControls.ChangePassword.SendMailError" /> event, or if you create an event handler but leave the <see cref="P:System.Web.UI.WebControls.SendMailErrorEventArgs.Handled" /> property set to false, your Web application will stop running if an error occurs when sending an e-mail message, and ASP.NET will display an error message.</para>
+      <para>The <see cref="M:System.Web.UI.WebControls.ChangePassword.OnSendMailError(System.Web.UI.WebControls.SendMailErrorEventArgs)" /> method also allows derived classes to handle the event instead of the <see cref="T:System.Web.UI.WebControls.SendMailErrorEventHandler" />. This is the preferred technique for handling the event in a class that is derived from <see cref="T:System.Web.UI.WebControls.ChangePassword" /> or <see cref="T:System.Web.UI.WebControls.CreateUserWizard" />.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="765bfc89-33ee-4d0d-bbe6-3b172c06def9">Server Event Handling in ASP.NET Web Pages</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the SendMailError event of controls such as the <see cref="T:System.Web.UI.WebControls.ChangePassword" /> control, the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, and the <see cref="T:System.Web.UI.WebControls.PasswordRecovery" /> control.</para>
+    </summary>
   </Docs>
 </Type>

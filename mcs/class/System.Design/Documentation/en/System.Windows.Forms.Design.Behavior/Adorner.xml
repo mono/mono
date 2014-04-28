@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Adorner" FullName="System.Windows.Forms.Design.Behavior.Adorner">
   <TypeSignature Language="C#" Value="public sealed class Adorner" />
   <AssemblyInfo>
@@ -9,8 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each <see cref="T:System.Windows.Forms.Design.Behavior.Adorner" /> can be enabled and disabled. Only enabled <see cref="T:System.Windows.Forms.Design.Behavior.Adorner" /> objects will receive hit test and paint messages from the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" />. An <see cref="T:System.Windows.Forms.Design.Behavior.Adorner" /> can be viewed as a proxy between user-interface related elements, which consist of all <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> objects, and the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" />.</para>
+      <para>For more information, see <format type="text/html"><a href="7c60cc41-4324-46b5-b444-b39eda7cb33f">Behavior Service Overview</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages a collection of user-interface related <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> objects. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +29,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.Design.Behavior.Adorner.#ctor" /> constructor creates a new <see cref="T:System.Windows.Forms.Design.Behavior.GlyphCollection" /> and is enabled, by default.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.Design.Behavior.Adorner" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BehaviorService">
@@ -35,9 +49,15 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.BehaviorService</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When an <see cref="T:System.Windows.Forms.Design.Behavior.Adorner" /> is added to the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorServiceAdornerCollection" /> of the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" />, the collection sets this property so that the <see cref="T:System.Windows.Forms.Design.Behavior.Adorner" /> can call back to the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" /> associated with the <see cref="T:System.Windows.Forms.Design.Behavior.Adorner" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Enabled">
@@ -50,9 +70,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.Design.Behavior.Adorner.Enabled" /> property is true, the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" /> class will send HitTest and Paint messages to the <see cref="T:System.Windows.Forms.Design.Behavior.Adorner" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating if the <see cref="T:System.Windows.Forms.Design.Behavior.Adorner" /> is enabled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Glyphs">
@@ -65,9 +91,12 @@
         <ReturnType>System.Windows.Forms.Design.Behavior.GlyphCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.Design.Behavior.Glyph" /> collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Invalidate">
@@ -81,8 +110,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Forces the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" /> to refresh its adorner window.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Invalidate">
@@ -98,9 +130,13 @@
         <Parameter Name="rectangle" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="rectangle">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Forces the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" /> to refresh its adorner window within the given <see cref="T:System.Drawing.Rectangle" />.</para>
+        </summary>
+        <param name="rectangle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The area to invalidate.</param>
       </Docs>
     </Member>
     <Member MemberName="Invalidate">
@@ -116,9 +152,13 @@
         <Parameter Name="region" Type="System.Drawing.Region" />
       </Parameters>
       <Docs>
-        <param name="region">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Forces the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorService" /> to refresh its adorner window within the given <see cref="T:System.Drawing.Region" />.</para>
+        </summary>
+        <param name="region">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Region" /> to invalidate.</param>
       </Docs>
     </Member>
   </Members>

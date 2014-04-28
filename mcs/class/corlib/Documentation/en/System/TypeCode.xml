@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeCode" FullName="System.TypeCode">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum TypeCode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed TypeCode extends System.Enum" />
@@ -18,8 +19,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary> Specifies what type an object is of.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Call the <see cref="M:System.IConvertible.GetTypeCode" /> method on classes that implement the <see cref="T:System.IConvertible" /> interface to obtain the type code for an instance of that class.</para>
+      <para>Otherwise, call an object's <see cref="M:System.Object.GetType" /> method to obtain its <see cref="T:System.Type" /> object, then call the Type object's <see cref="M:System.Type.GetTypeCode(System.Type)" /> method to obtain the object's type code.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of an object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Boolean">
@@ -36,8 +44,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A simple type representing Boolean values of true or false.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Byte">
@@ -54,8 +65,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integral type representing unsigned 8-bit integers with values between 0 and 255.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Char">
@@ -72,8 +86,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integral type representing unsigned 16-bit integers with values between 0 and 65535. The set of possible values for the <see cref="F:System.TypeCode.Char" /> type corresponds to the Unicode character set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DateTime">
@@ -90,8 +107,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A type representing a date and time value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DBNull">
@@ -108,8 +128,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A database null (column) value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Decimal">
@@ -126,8 +149,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A simple type representing values ranging from 1.0 x 10 <superscript>-28</superscript> to approximately 7.9 x 10 <superscript>28</superscript> with 28-29 significant digits.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Double">
@@ -144,8 +170,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A floating point type representing values ranging from approximately 5.0 x 10 <superscript>-324</superscript> to 1.7 x 10 <superscript>308</superscript> with a precision of 15-16 digits.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Empty">
@@ -162,8 +191,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>A null reference.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A null reference.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Int16">
@@ -180,8 +212,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integral type representing signed 16-bit integers with values between -32768 and 32767.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Int32">
@@ -198,8 +233,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integral type representing signed 32-bit integers with values between -2147483648 and 2147483647.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Int64">
@@ -216,8 +254,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integral type representing signed 64-bit integers with values between -9223372036854775808 and 9223372036854775807.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Object">
@@ -234,8 +275,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Anything that isn't another <see cref="T:System.TypeCode" />.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A general type representing any reference or value type not explicitly represented by another TypeCode.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SByte">
@@ -252,8 +296,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integral type representing signed 8-bit integers with values between -128 and 127.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Single">
@@ -270,8 +317,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A floating point type representing values ranging from approximately 1.5 x 10 <superscript>-45</superscript> to 3.4 x 10 <superscript>38</superscript> with a precision of 7 digits.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="String">
@@ -288,8 +338,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sealed class type representing Unicode character strings.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UInt16">
@@ -306,8 +359,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integral type representing unsigned 16-bit integers with values between 0 and 65535.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UInt32">
@@ -324,8 +380,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integral type representing unsigned 32-bit integers with values between 0 and 4294967295.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UInt64">
@@ -342,8 +401,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integral type representing unsigned 64-bit integers with values between 0 and 18446744073709551615.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

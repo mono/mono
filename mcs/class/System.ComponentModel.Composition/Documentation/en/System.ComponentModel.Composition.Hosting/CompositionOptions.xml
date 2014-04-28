@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompositionOptions" FullName="System.ComponentModel.Composition.Hosting.CompositionOptions">
   <TypeSignature Language="C#" Value="public enum CompositionOptions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CompositionOptions extends System.Enum" />
@@ -14,8 +15,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines options for export providers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Default">
@@ -29,7 +33,10 @@
         <ReturnType>System.ComponentModel.Composition.Hosting.CompositionOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No options are defined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DisableSilentRejection">
@@ -43,7 +50,10 @@
         <ReturnType>System.ComponentModel.Composition.Hosting.CompositionOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Silent rejection is disabled, so all rejections will result in errors.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExportCompositionService">
@@ -57,7 +67,10 @@
         <ReturnType>System.ComponentModel.Composition.Hosting.CompositionOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This provider is an export composition service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsThreadSafe">
@@ -71,7 +84,10 @@
         <ReturnType>System.ComponentModel.Composition.Hosting.CompositionOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This provider should be thread-safe.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IBindingConfigurationElement" FullName="System.ServiceModel.Configuration.IBindingConfigurationElement">
   <TypeSignature Language="C#" Value="public interface IBindingConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IBindingConfigurationElement" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the basic configuration settings for a binding element. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ApplyConfiguration">
@@ -25,9 +29,13 @@
         <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the content of the specified binding to this binding configuration section.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />A binding.</param>
       </Docs>
     </Member>
     <Member MemberName="CloseTimeout">
@@ -41,9 +49,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time provided for a close operation to complete.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -57,9 +68,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OpenTimeout">
@@ -73,9 +87,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time provided for an open operation to complete.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceiveTimeout">
@@ -89,9 +106,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time provided for a receive operation to complete.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SendTimeout">
@@ -105,9 +125,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the interval of time provided for a send operation to complete.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OpCodeType" FullName="System.Reflection.Emit.OpCodeType">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum OpCodeType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed OpCodeType extends System.Enum" />
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the types of the Microsoft intermediate language (MSIL) instructions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Annotation">
@@ -41,8 +45,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This enumerator value is reserved and should not be used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Macro">
@@ -59,8 +66,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>These are Microsoft intermediate language (MSIL) instructions that are used as a synonym for other MSIL instructions. For example, ldarg.0 represents the ldarg instruction with an argument of 0.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Nternal">
@@ -77,8 +87,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Describes a reserved Microsoft intermediate language (MSIL) instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Objmodel">
@@ -95,8 +108,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Describes a Microsoft intermediate language (MSIL) instruction that applies to objects.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Prefix">
@@ -113,8 +129,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Describes a prefix instruction that modifies the behavior of the following instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Primitive">
@@ -131,8 +150,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Describes a built-in instruction.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

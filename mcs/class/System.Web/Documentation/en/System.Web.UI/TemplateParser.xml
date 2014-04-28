@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TemplateParser" FullName="System.Web.UI.TemplateParser">
   <TypeSignature Language="C#" Value="public abstract class TemplateParser : System.Web.UI.BaseParser" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.TemplateParser" /> class provides the common functionality for parser classes. Because the <see cref="T:System.Web.UI.TemplateParser" /> class is abstract, an instance of this class is not created directly. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serves as the abstract base class for ASP.NET file parsers. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CompileIntoType">

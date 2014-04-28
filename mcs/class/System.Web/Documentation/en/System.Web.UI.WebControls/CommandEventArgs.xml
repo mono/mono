@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CommandEventArgs" FullName="System.Web.UI.WebControls.CommandEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class CommandEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -13,8 +14,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The Command event is raised when a <see cref="T:System.Web.UI.WebControls.Button" /> or <see cref="T:System.Web.UI.WebControls.ImageButton" /> control is clicked.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> object contains data about the Command event that can be accessed in the event handler. Using the properties available in the <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> class, you can determine the name of the command to perform, such as Sort, in addition to an optional argument that supplements the command, such as Ascending.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.CommandEventArgs" />, see the <see cref="Overload:System.Web.UI.WebControls.CommandEventArgs.#ctor" /> constructor.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">[&lt;topic://cpconEventsOverview&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the Command event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +35,45 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.CommandEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'CommandEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> class using the specified <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> object.</para>
+          <para>When an instance of <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> is created by a call to this constructor, the following properties are initialized to the specified values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CommandName </para>
+              </term>
+              <description>
+                <para>The <paramref name="e.CommandName" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CommandArgument </para>
+              </term>
+              <description>
+                <para>The <paramref name="e.CommandArgument" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> class with another <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> object.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -44,9 +90,45 @@
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <param name="argument">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> class using the specified command name and argument.</para>
+          <para>When an instance of <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> is created by a call to this constructor, the following properties are initialized to the specified values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>CommandName </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="commandName" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>CommandArgument </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="argument" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.CommandEventArgs" /> class with the specified command name and argument.</para>
+        </summary>
+        <param name="argument">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Object" /> that contains the arguments for the command. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -60,9 +142,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" /> can contain any string set by the programmer. The <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" /> property complements the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" /> property by allowing you to provide any additional information for the command. For example, you can set the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" /> property to Sort and set the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandArgument" /> property to Ascending to specify a command to sort in ascending order.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the argument for the command.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,9 +164,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" /> property to determine the command to perform. The <see cref="P:System.Web.UI.WebControls.CommandEventArgs.CommandName" /> property can contain any string set by the programmer. The programmer can then identify the command name in code and perform the appropriate tasks.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the command.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

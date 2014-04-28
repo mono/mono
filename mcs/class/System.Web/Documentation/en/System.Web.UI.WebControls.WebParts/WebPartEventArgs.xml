@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebPartEventArgs" FullName="System.Web.UI.WebControls.WebParts.WebPartEventArgs">
   <TypeSignature Language="C#" Value="public class WebPartEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartEventArgs" /> class contains information for several different Web Parts events. These events include the <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartAdded" />, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartDeleted" />, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartClosed" />, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartMoved" />, and <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.SelectedWebPartChanged" /> events. The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartEventArgs" /> class provides access to the Web Parts control involved in the event. The Web Parts control is accessed through the <see cref="P:System.Web.UI.WebControls.WebParts.WebPartEventArgs.WebPart" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartAdded" />, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartDeleted" />, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartClosed" />, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartMoved" />, and <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.SelectedWebPartChanged" /> events. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +29,12 @@
       </Parameters>
       <Docs>
         <param name="part">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartEventArgs" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +47,13 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.WebPart</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Web Parts control involved in the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

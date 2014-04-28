@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IAssemblyPostProcessor" FullName="System.Web.Compilation.IAssemblyPostProcessor">
   <TypeSignature Language="C#" Value="public interface IAssemblyPostProcessor : IDisposable" />
   <AssemblyInfo>
@@ -10,9 +11,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A class implementing this interface can access an assembly after it has been compiled. The <see cref="T:System.Web.Compilation.AssemblyBuilder" /> class compiles assemblies and then checks to see whether an <see cref="T:System.Web.Compilation.IAssemblyPostProcessor" /> interface has been registered in the Web configuration file. If so, the <see cref="T:System.Web.Compilation.AssemblyBuilder" /> instance calls the <see cref="M:System.Web.Compilation.IAssemblyPostProcessor.PostProcessAssembly(System.String)" /> method for the <see cref="T:System.Web.Compilation.IAssemblyPostProcessor" /> interface to perform any action after the compilation and before loading the assembly. For example, a profiler tool could implement this interface to establish probes in the assembly. </para>
+      <para>When an <see cref="T:System.Web.Compilation.IAssemblyPostProcessor" /> interface is registered, the ASP.NET application and its assemblies will always be compiled in debug mode.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the method a class implements to process an assembly after the assembly has been built.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="PostProcessAssembly">
@@ -25,10 +33,17 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Compilation.AssemblyBuilder" /> class calls this method after the assembly has been compiled. Any actions to be taken before loading the assembly should be included in this method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called before the assembly is loaded to allow the implementing class to modify the assembly.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the assembly.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

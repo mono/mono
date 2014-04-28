@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ViewEvent" FullName="System.Web.UI.Design.ViewEvent">
   <TypeSignature Language="C#" Value="public sealed class ViewEvent" />
   <AssemblyInfo>
@@ -9,8 +10,39 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Web.UI.Design.ViewEvent" /> object is provided to the designer component by the design host, for example vsprvslong, when raising an event caused by certain user actions on the design-time view of a control. The <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event is handled by a <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate method, which takes a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object as a parameter. The <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" /> property of the <see cref="T:System.Web.UI.Design.ViewEventArgs" /> class is a <see cref="T:System.Web.UI.Design.ViewEvent" /> object. The <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate method compares the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" /> property to the static <see cref="T:System.Web.UI.Design.ViewEvent" /> fields to determine which type of action raised the event. For example, an event is raised under the following circumstances:</para>
+      <list type="bullet">
+        <item>
+          <para>You click a region on the design surface.</para>
+        </item>
+        <item>
+          <para>The designer draws a control on the design surface.</para>
+        </item>
+        <item>
+          <para>You enter or exit template editing mode for a control.</para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Web.UI.Design.ControlDesigner" /> class supplies a default delegate to handle the <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event. Custom control designers override the <see cref="M:System.Web.UI.Design.ControlDesigner.OnClick(System.Web.UI.Design.DesignerRegionMouseEventArgs)" />, <see cref="M:System.Web.UI.Design.ControlDesigner.OnPaint(System.Windows.Forms.PaintEventArgs)" />, and <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.OnTemplateModeChanged" /> methods to process those events for the control on the design surface.</para>
+      <para>The designer host initializes a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object for the type of action on the design surface, and then passes the object to the <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate. The <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" /> property of the <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object indicates which type of action: </para>
+      <list type="bullet">
+        <item>
+          <para>A <see cref="F:System.Web.UI.Design.ViewEvent.Click" /> event.</para>
+        </item>
+        <item>
+          <para>A <see cref="F:System.Web.UI.Design.ViewEvent.Paint" /> event.</para>
+        </item>
+        <item>
+          <para>A <see cref="F:System.Web.UI.Design.ViewEvent.TemplateModeChanged" /> event. </para>
+        </item>
+      </list>
+      <para>The <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" /> property supplies the event arguments that are specific to the type of action. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the kind of event that has occurred on a view of a control at design time. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Click">
@@ -23,8 +55,15 @@
         <ReturnType>System.Web.UI.Design.ViewEvent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate method compares the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" /> property to the static <see cref="T:System.Web.UI.Design.ViewEvent" /> fields to determine which type of action raised the event. A <see cref="T:System.Web.UI.Design.ViewEvent" /> object is equal to <see cref="F:System.Web.UI.Design.ViewEvent.Click" /> to indicate that you clicked a region on the design surface.</para>
+          <para>The <see cref="T:System.Web.UI.Design.ControlDesigner" /> class supplies a default <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate. If the event type is <see cref="F:System.Web.UI.Design.ViewEvent.Click" />, the delegate calls the <see cref="M:System.Web.UI.Design.ControlDesigner.OnClick(System.Web.UI.Design.DesignerRegionMouseEventArgs)" /> method. Classes deriving from the <see cref="T:System.Web.UI.Design.ControlDesigner" /> class override the <see cref="M:System.Web.UI.Design.ControlDesigner.OnClick(System.Web.UI.Design.DesignerRegionMouseEventArgs)" /> method to handle click events on a region at design time. The event arguments indicate which designer region was clicked, if any.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a view event was raised for a click on a designer region.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Paint">
@@ -37,8 +76,15 @@
         <ReturnType>System.Web.UI.Design.ViewEvent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate method compares the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" /> property to the static <see cref="T:System.Web.UI.Design.ViewEvent" /> fields to determine which type of action raised the event. A <see cref="T:System.Web.UI.Design.ViewEvent" /> object is equal to <see cref="F:System.Web.UI.Design.ViewEvent.Paint" /> to indicate a paint event on the control on the design surface.</para>
+          <para>The <see cref="T:System.Web.UI.Design.ControlDesigner" /> class supplies a default <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate. If the event type is <see cref="F:System.Web.UI.Design.ViewEvent.Paint" />, the delegate calls the <see cref="M:System.Web.UI.Design.ControlDesigner.OnPaint(System.Windows.Forms.PaintEventArgs)" /> method. Classes deriving from the <see cref="T:System.Web.UI.Design.ControlDesigner" /> class override the <see cref="M:System.Web.UI.Design.ControlDesigner.OnPaint(System.Windows.Forms.PaintEventArgs)" /> method to handle click events on a region at design time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a view event was raised for drawing a control on the design surface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TemplateModeChanged">
@@ -51,8 +97,16 @@
         <ReturnType>System.Web.UI.Design.ViewEvent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate method compares the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" /> property to the static <see cref="T:System.Web.UI.Design.ViewEvent" /> fields to determine which type of action raised the event. A <see cref="T:System.Web.UI.Design.ViewEvent" /> object is equal to <see cref="F:System.Web.UI.Design.ViewEvent.TemplateModeChanged" /> to indicate that the template editing mode changed for a control on the design surface.</para>
+          <para>The <see cref="T:System.Web.UI.Design.ControlDesigner" /> class supplies a default <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate. If the event type is <see cref="F:System.Web.UI.Design.ViewEvent.TemplateModeChanged" />, the delegate sets the value for the <see cref="P:System.Web.UI.Design.ControlDesigner.InTemplateMode" /> property.</para>
+          <para>Custom designers that are derived from the <see cref="T:System.Web.UI.Design.TemplatedControlDesigner" /> class can override the <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.OnTemplateModeChanged" /> method to perform additional processing when the template editing mode changes for a control on the design surface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a view event was raised for changing the template mode of a control designer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

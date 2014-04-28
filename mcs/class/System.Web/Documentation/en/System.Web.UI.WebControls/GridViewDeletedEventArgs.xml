@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GridViewDeletedEventArgs" FullName="System.Web.UI.WebControls.GridViewDeletedEventArgs">
   <TypeSignature Language="C#" Value="public class GridViewDeletedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,21 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.GridView" /> control raises the <see cref="E:System.Web.UI.WebControls.GridView.RowDeleted" /> event when a Delete button (a button with its CommandName property set to "Delete") within the control is clicked, but after the <see cref="T:System.Web.UI.WebControls.GridView" /> control deletes the record. This allows you to provide an event-handling method that performs a custom routine, such as checking the results of a delete operation, whenever this event occurs.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.GridViewDeletedEventArgs" /> object is passed to the event-handling method, which allows you to determine the number of records affected and any exceptions that might have occurred. To determine the number of records affected by the delete operation, use the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.AffectedRows" /> property. Use the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Exception" /> property to determine whether any exceptions occurred. You can also indicate whether the exception was handled in the event-handling method by setting the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.ExceptionHandled" /> property.</para>
+      <block subset="none" type="note">
+        <para>If an exception occurs during the delete operation and the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.ExceptionHandled" /> property is set to false, the <see cref="T:System.Web.UI.WebControls.GridView" /> control re-throws the exception.</para>
+      </block>
+      <para>If you want to access the name/value pairs of the key fields and non-key fields of the deleted record, use the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Keys" /> and <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Values" /> properties, respectively.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.GridView.RowDeleted" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +35,65 @@
         <Parameter Name="e" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="affectedRows">To be added.</param>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewDeletedEventArgs" /> class.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Web.UI.WebControls.GridViewDeletedEventArgs" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.AffectedRows" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="affectedRows" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Exception" />
+                </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Exception" /> object contained in the <paramref name="e" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.ExceptionHandled" />
+                </para>
+              </term>
+              <description>
+                <para>Initialized to false.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewDeletedEventArgs" /> class.</para>
+        </summary>
+        <param name="affectedRows">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of rows affected by the delete operation.</param>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Exception" /> that represents the exception raised when the delete operation was performed. If no exception is raised, use null for this parameter.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +106,27 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.AffectedRows" /> property to determine the number of records affected by the delete operation. This property is commonly used to verify that the correct number of records was deleted in the following situations:</para>
+          <list type="bullet">
+            <item>
+              <para>Verify that only a single record was deleted. Sometimes an improperly written delete statement can delete multiple records.</para>
+            </item>
+            <item>
+              <para>Verify that a record was deleted when an error occurs during the delete operation that does not raise an exception.</para>
+            </item>
+            <item>
+              <para>Verify that a record was deleted when a data source control that supports optimistic concurrency (such as the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> and <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> controls) has its <see cref="P:System.Web.UI.WebControls.SqlDataSource.ConflictDetection" /> property set to the ConflictOptions.CompareAllValues enumeration value. Under this setting, a record that has been modified by another user concurrently might not be deleted.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of rows affected by the delete operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +139,19 @@
         <ReturnType>System.Exception</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Exception" /> property to determine the exception that was raised during the delete operation. If no exceptions were raised, this property returns null.</para>
+          <block subset="none" type="note">
+            <para>If an exception was raised and you decide to handle the exception in the event handler, be sure to set the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.ExceptionHandled" /> property to true; otherwise, the <see cref="T:System.Web.UI.WebControls.GridView" /> control re-throws the exception.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exception (if any) that was raised during the delete operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,10 +164,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When an exception is raised during the delete operation, use the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.ExceptionHandled" /> property to indicate whether the exception was handled in the event handler. When this property is set to true, the exception is considered handled and is not re-thrown. If this property is set to false, the <see cref="T:System.Web.UI.WebControls.GridView" /> control re-throws the exception. To determine which exception was raised, use the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Exception" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether an exception that was raised during the delete operation was handled in the event handler.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -87,10 +186,20 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Keys" /> property to access the values of the key fields (as specified by the <see cref="P:System.Web.UI.WebControls.GridView.DataKeyNames" /> property) for a deleted record. For example, you can use these values to keep a log of deleted records.</para>
+          <block subset="none" type="note">
+            <para>This property contains only the key fields. To access the non-key fields, use the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Values" /> property.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Keys" /> property returns an object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the key fields of the deleted record.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an ordered dictionary of key field name/value pairs for the deleted record.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -103,10 +212,23 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Values" /> property to access the values of the non-key fields for a deleted record. For example, you can use these values to keep a log of deleted records.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Values" /> property is populated only when two-way binding expressions are used in the item template. For more information on two-way binding expressions, see <format type="text/html"><a href="ab7b2846-975b-4057-a948-45527497c742">ASP.NET Data Binding</a></format>.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Values" /> property returns an object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the non-key fields of the deleted record.</para>
+          <block subset="none" type="note">
+            <para>This property does not contain the key fields (as specified by the <see cref="P:System.Web.UI.WebControls.GridView.DataKeyNames" /> property) for the deleted record. To access the key fields, use the <see cref="P:System.Web.UI.WebControls.GridViewDeletedEventArgs.Keys" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary of the non-key field name/value pairs for the deleted record.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NetNamedPipeSecurityElement" FullName="System.ServiceModel.Configuration.NetNamedPipeSecurityElement">
   <TypeSignature Language="C#" Value="public sealed class NetNamedPipeSecurityElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed NetNamedPipeSecurityElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that specifies security settings for a named pipe binding. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.NetNamedPipeSecurityElement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Mode">
@@ -43,9 +50,12 @@
         <ReturnType>System.ServiceModel.NetNamedPipeSecurityMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of security that is applied to this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -80,9 +90,12 @@
         <ReturnType>System.ServiceModel.Configuration.NamedPipeTransportSecurityElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the security settings for the transport.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

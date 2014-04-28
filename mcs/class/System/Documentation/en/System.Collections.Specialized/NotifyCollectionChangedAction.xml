@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NotifyCollectionChangedAction" FullName="System.Collections.Specialized.NotifyCollectionChangedAction">
   <TypeSignature Language="C#" Value="public enum NotifyCollectionChangedAction" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed NotifyCollectionChangedAction extends System.Enum" />
@@ -14,8 +15,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the action that caused a <see cref="E:System.Collections.Specialized.INotifyCollectionChanged.CollectionChanged" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -29,7 +33,10 @@
         <ReturnType>System.Collections.Specialized.NotifyCollectionChangedAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One or more items were added to the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Move">
@@ -43,7 +50,10 @@
         <ReturnType>System.Collections.Specialized.NotifyCollectionChangedAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One or more items were moved within the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -57,7 +67,10 @@
         <ReturnType>System.Collections.Specialized.NotifyCollectionChangedAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One or more items were removed from the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Replace">
@@ -71,7 +84,10 @@
         <ReturnType>System.Collections.Specialized.NotifyCollectionChangedAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One or more items were replaced in the collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reset">
@@ -85,7 +101,10 @@
         <ReturnType>System.Collections.Specialized.NotifyCollectionChangedAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content of the collection changed dramatically.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WSDualHttpBindingElement" FullName="System.ServiceModel.Configuration.WSDualHttpBindingElement">
   <TypeSignature Language="C#" Value="public class WSDualHttpBindingElement : System.ServiceModel.Configuration.StandardBindingElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi WSDualHttpBindingElement extends System.ServiceModel.Configuration.StandardBindingElement implements class System.ServiceModel.Configuration.IBindingConfigurationElement" />
@@ -10,8 +11,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The wsDualHttpBinding is a secure, reliable, interoperable binding suitable for duplex service contracts. By default, it generates a run-time stack with WS-ReliableMessaging for reliability, WS-Security for message security and authentication, HTTP for message delivery, and a Text/XML message encoding. </para>
+      <para>This binding requires that the client has a public URI. It can be used to communicate reliably through one or more SOAP intermediaries.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the configuration element for a secure and interoperable binding that is suitable for duplex service contracts or communication through SOAP intermediaries.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.WSDualHttpBindingElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingElementType">
@@ -38,9 +49,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of this binding element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BypassProxyOnLocal">
@@ -59,9 +73,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a boolean value that specifies whether to bypass the proxy server for local addresses.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClientBaseAddress">
@@ -80,9 +97,15 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property has a value, this address (plus a GUID for each channel) is used for listening. Otherwise, the client base address is generated in a transport-specific manner. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a URI that specifies the base address the client listens to for response messages from the service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HostNameComparisonMode">
@@ -101,9 +124,12 @@
         <ReturnType>System.ServiceModel.HostNameComparisonMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the HTTP hostname comparison mode used to parse URIs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxBufferPoolSize">
@@ -125,9 +151,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum amount of memory, in bytes, that can be allocated for the message buffer manager, which receives messages at the endpoints configured with this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxReceivedMessageSize">
@@ -149,9 +178,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size of the messages that can be received on the wire by services using the <see cref="T:System.ServiceModel.WsDualHttpBinding" /> class is bounded by the amount of memory allocated for each message. This bound on message size is intended to limit exposure to DoS-style attacks. </para>
+          <para>Note that the settings for <see cref="P:System.ServiceModel.Configuration.WSDualHttpBindingElement.MaxBufferPoolSize" /> and <see cref="P:System.ServiceModel.Configuration.WSDualHttpBindingElement.MaxReceivedMessageSize" />, are local behavioral settings. This means that they are not transmitted to other endpoints in metadata. If you generate a proxy to a service with a maximum message size of 2GB from metadata, the proxy still has a default value 64K. This leaves control of the appropriate bounds for message and message buffer size in the scope of local administrators.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size, in bytes, for a message that can be received on a channel configured with this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MessageEncoding">
@@ -170,9 +206,12 @@
         <ReturnType>System.ServiceModel.WSMessageEncoding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the encoder used to encode the message. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnApplyConfiguration">
@@ -189,9 +228,13 @@
         <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the content of a specified binding collection is applied to this binding configuration element.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding to be applied.</param>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -205,9 +248,12 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Configuration.ConfigurationPropertyCollection" /> instance that contains a collection of <see cref="T:System.Configuration.ConfigurationProperty" /> objects that can be attributes or <see cref="T:System.Configuration.ConfigurationElement" /> objects of this configuration element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProxyAddress">
@@ -226,9 +272,15 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.ServiceModel.WSDualHttpBinding.UseDefaultWebProxy" /> property is set to true, the value of this property is ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or set a URI that specifies the address of the HTTP proxy.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReaderQuotas">
@@ -247,9 +299,15 @@
         <ReturnType>System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The complexity constraints include items such as a maximum element depth, or a maximum length for string content within the message. The constraints protect against a type of denial of service (DOS) attacks that attempt to use message complexity to tie up endpoint processing resources. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets constraints on the complexity of SOAP messages that can be processed by endpoints configured with this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReliableSession">
@@ -268,9 +326,15 @@
         <ReturnType>System.ServiceModel.Configuration.StandardBindingReliableSessionElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reliable session is required for services configured with wsDualHttpBinding binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a configuration element that specifies whether reliable sessions are enabled for the endpoint configured with this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Security">
@@ -289,9 +353,12 @@
         <ReturnType>System.ServiceModel.Configuration.WSDualHttpSecurityElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of security to be used with this binding. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextEncoding">
@@ -313,9 +380,12 @@
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the character set encoding to be used for emitting messages on the binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransactionFlow">
@@ -334,9 +404,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value specifies that clients do not flow transactions and services reject messages with a flowed transaction message header.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a boolean value that specifies whether the binding supports flowing WS-Transactions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseDefaultWebProxy">
@@ -355,9 +431,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a boolean value that specifies whether the system’s auto-configured HTTP proxy is used.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

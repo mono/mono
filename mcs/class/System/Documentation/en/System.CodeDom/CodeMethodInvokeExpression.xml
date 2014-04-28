@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeMethodInvokeExpression" FullName="System.CodeDom.CodeMethodInvokeExpression">
   <TypeSignature Language="C#" Value="public class CodeMethodInvokeExpression : System.CodeDom.CodeExpression" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeMethodInvokeExpression extends System.CodeDom.CodeExpression" />
@@ -23,8 +24,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeMethodInvokeExpression" /> can be used to represent an expression that invokes a method.</para>
+      <para>The <see cref="P:System.CodeDom.CodeMethodInvokeExpression.Method" /> property specifies the method to invoke. The <see cref="P:System.CodeDom.CodeMethodInvokeExpression.Parameters" /> property indicates the parameters to pass to the method. Use a <see cref="T:System.CodeDom.CodeDirectionExpression" /> to specify the field direction of a parameter.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an expression that invokes a method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +48,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeMethodInvokeExpression" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -64,10 +76,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="method">To be added: an object of type 'CodeMethodReferenceExpression'</param>
-        <param name="parameters">To be added: an object of type 'CodeExpression []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeMethodInvokeExpression" /> class using the specified method and parameters.</para>
+        </summary>
+        <param name="method">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeMethodReferenceExpression" /> that indicates the method to invoke. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeExpression" /> objects that indicate the parameters with which to invoke the method. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -92,11 +109,17 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="targetObject">To be added: an object of type 'CodeExpression'</param>
-        <param name="methodName">To be added: an object of type 'string'</param>
-        <param name="parameters">To be added: an object of type 'CodeExpression []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeMethodInvokeExpression" /> class using the specified target object, method name, and parameters.</para>
+        </summary>
+        <param name="targetObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the target object with the method to invoke. </param>
+        <param name="methodName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method to invoke. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeExpression" /> objects that indicate the parameters to call the method with. </param>
       </Docs>
     </Member>
     <Member MemberName="Method">
@@ -114,9 +137,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeMethodReferenceExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the method to invoke.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parameters">
@@ -132,9 +158,15 @@
         <ReturnType>System.CodeDom.CodeExpressionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpressionCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use a <see cref="T:System.CodeDom.CodeDirectionExpression" /> to specify a field direction for the parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parameters to invoke the method with.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

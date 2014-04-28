@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ViewEventArgs" FullName="System.Web.UI.Design.ViewEventArgs">
   <TypeSignature Language="C#" Value="public class ViewEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,8 +10,41 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event is raised by the designer host for certain actions on a control on the design surface. The <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> is handled by a <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate method, which takes a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object as a parameter. </para>
+      <para>The <see cref="T:System.Web.UI.Design.ControlDesigner" /> class supplies a default delegate to handle the <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" />. Custom control designers override the <see cref="M:System.Web.UI.Design.ControlDesigner.OnClick(System.Web.UI.Design.DesignerRegionMouseEventArgs)" />, <see cref="M:System.Web.UI.Design.ControlDesigner.OnPaint(System.Windows.Forms.PaintEventArgs)" />, and <see cref="M:System.Web.UI.Design.TemplatedControlDesigner.OnTemplateModeChanged" /> methods to process those events for the control on the design surface.</para>
+      <para>The designer host initializes a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object for the type of action on the design surface, and then passes the object to the <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate. The <see cref="P:System.Web.UI.Design.ViewEventArgs.Region" /> property represents the control designer region that the event applies to. The <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" /> property of the <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object indicates which type of action: </para>
+      <list type="bullet">
+        <item>
+          <para>A <see cref="F:System.Web.UI.Design.ViewEvent.Click" /> event.</para>
+        </item>
+        <item>
+          <para>A <see cref="F:System.Web.UI.Design.ViewEvent.Paint" /> event.</para>
+        </item>
+        <item>
+          <para>A <see cref="F:System.Web.UI.Design.ViewEvent.TemplateModeChanged" /> event. </para>
+        </item>
+      </list>
+      <para>The <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" /> property supplies the event arguments that are specific to the type of action. </para>
+      <para>For example, the designer host initializes <see cref="T:System.Web.UI.Design.ViewEventArgs" /> objects as follows: </para>
+      <list type="bullet">
+        <item>
+          <para>A <see cref="T:System.Web.UI.Design.DesignerRegionMouseEventArgs" /> object when you click a region.</para>
+        </item>
+        <item>
+          <para>A <see cref="T:System.Windows.Forms.PaintEventArgs" /> object when a control is drawn on the design surface.</para>
+        </item>
+        <item>
+          <para>A <see cref="T:System.Web.UI.Design.TemplateModeChangedEventArgs" /> object when the template editing mode changes for the control on the design surface.</para>
+        </item>
+      </list>
+      <para>For more information about events and delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,11 +59,21 @@
         <Parameter Name="eventArgs" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="eventType">To be added.</param>
-        <param name="region">To be added.</param>
-        <param name="eventArgs">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.ViewEventArgs.#ctor(System.Web.UI.Design.ViewEvent,System.Web.UI.Design.DesignerRegion,System.EventArgs)" /> constructor is used by the designer host to initialize a <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object for the <see cref="E:System.Web.UI.Design.IControlDesignerView.ViewEvent" /> event. The designer host passes the initialized <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object to the <see cref="T:System.Web.UI.Design.ViewEventHandler" /> delegate.</para>
+          <para>Typically, <paramref name="region" /> is set for <see cref="F:System.Web.UI.Design.ViewEvent.Click" /> events, and null (Nothing in Visual Basic) for <see cref="F:System.Web.UI.Design.ViewEvent.Paint" /> and <see cref="F:System.Web.UI.Design.ViewEvent.TemplateModeChanged" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.ViewEventArgs" /> class for the type of view event on the design surface. </para>
+        </summary>
+        <param name="eventType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of action that raised the event; used to initialize the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" />.</param>
+        <param name="region">
+          <attribution license="cc4" from="Microsoft" modified="false" />The designer region that the action applies to; used to initialize the <see cref="P:System.Web.UI.Design.ViewEventArgs.Region" />.</param>
+        <param name="eventArgs">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event arguments associated with <paramref name="eventType" />; used to initialize the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" />.</param>
       </Docs>
     </Member>
     <Member MemberName="EventArgs">
@@ -42,9 +86,18 @@
         <ReturnType>System.EventArgs</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" /> property supplies the event arguments that are specific to the type of action that is specified in the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" /> property. </para>
+          <para>For example, when you click a region, the designer host initializes the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" /> as a <see cref="F:System.Web.UI.Design.ViewEvent.Click" /> event, and then initializes the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" /> property as a <see cref="T:System.Web.UI.Design.DesignerRegionMouseEventArgs" /> object.</para>
+          <para>Similarly, the designer host initializes the <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" /> property with a <see cref="T:System.Windows.Forms.PaintEventArgs" /> object for a <see cref="F:System.Web.UI.Design.ViewEvent.Paint" /> event, or a <see cref="T:System.Web.UI.Design.TemplateModeChangedEventArgs" /> object for a <see cref="F:System.Web.UI.Design.ViewEvent.TemplateModeChanged" /> event.</para>
+          <para>The <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" /> property is initialized by the <see cref="M:System.Web.UI.Design.ViewEventArgs.#ctor(System.Web.UI.Design.ViewEvent,System.Web.UI.Design.DesignerRegion,System.EventArgs)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the event arguments that are associated with the action that raised the event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EventType">
@@ -57,9 +110,28 @@
         <ReturnType>System.Web.UI.Design.ViewEvent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" /> property of the <see cref="T:System.Web.UI.Design.ViewEventArgs" /> object indicates which type of action raised the event: </para>
+          <list type="bullet">
+            <item>
+              <para>A <see cref="F:System.Web.UI.Design.ViewEvent.Click" /> event.</para>
+            </item>
+            <item>
+              <para>A <see cref="F:System.Web.UI.Design.ViewEvent.Paint" /> event.</para>
+            </item>
+            <item>
+              <para>A <see cref="F:System.Web.UI.Design.ViewEvent.TemplateModeChanged" /> event.</para>
+            </item>
+          </list>
+          <para>The <see cref="P:System.Web.UI.Design.ViewEventArgs.EventArgs" /> property supplies the event arguments that are specific to the type of action.</para>
+          <para>The <see cref="P:System.Web.UI.Design.ViewEventArgs.EventType" /> property is initialized by the <see cref="M:System.Web.UI.Design.ViewEventArgs.#ctor(System.Web.UI.Design.ViewEvent,System.Web.UI.Design.DesignerRegion,System.EventArgs)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of action that raised the event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Region">
@@ -72,9 +144,16 @@
         <ReturnType>System.Web.UI.Design.DesignerRegion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.ViewEventArgs.Region" /> property represents the control designer region that the event applies to. Typically, the <see cref="P:System.Web.UI.Design.ViewEventArgs.Region" /> property is set for <see cref="F:System.Web.UI.Design.ViewEvent.Click" /> events, and null (Nothing in Visual Basic) for <see cref="F:System.Web.UI.Design.ViewEvent.Paint" /> and <see cref="F:System.Web.UI.Design.ViewEvent.TemplateModeChanged" /> events.</para>
+          <para>The <see cref="P:System.Web.UI.Design.ViewEventArgs.Region" /> property is initialized by the <see cref="M:System.Web.UI.Design.ViewEventArgs.#ctor(System.Web.UI.Design.ViewEvent,System.Web.UI.Design.DesignerRegion,System.EventArgs)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the designer region that the event applies to.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

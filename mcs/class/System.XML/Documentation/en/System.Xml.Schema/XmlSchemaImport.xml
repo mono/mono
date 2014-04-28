@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaImport" FullName="System.Xml.Schema.XmlSchemaImport">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaImport : System.Xml.Schema.XmlSchemaExternal" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaImport extends System.Xml.Schema.XmlSchemaExternal" />
@@ -14,8 +15,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>XmlSchemaImport allows references to schema components from other schemas with different target namespaces.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the import element from XML Schema as specified by the <format type="text/html"><a href="">World Wide Web Consortium (W3C)</a></format>. This class is used to import schema components from other schemas.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +37,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaImport" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Annotation">
@@ -53,9 +63,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaAnnotation'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the annotation property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Namespace">
@@ -77,9 +90,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace attribute indicates that the containing schema document may contain qualified references to schema components in that namespace through one or more prefixes that are declared with xmlns attributes. If this attribute is absent, the containing schema can contain unqualified references to components in the imported namespace.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the target namespace for the imported schema as a Uniform Resource Identifier (URI) reference.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

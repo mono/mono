@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDynamicProperty" FullName="System.Runtime.Remoting.Contexts.IDynamicProperty">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IDynamicProperty" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDynamicProperty" />
@@ -16,8 +17,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Dynamic properties must also expose the <see cref="T:System.Runtime.Remoting.Contexts.IContributeDynamicSink" /> interface if they want to provide dynamic sinks.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the implementing property should be registered at runtime through the <see cref="M:System.Runtime.Remoting.Contexts.Context.RegisterDynamicProperty(System.Runtime.Remoting.Contexts.IDynamicProperty,System.ContextBoundObject,System.Runtime.Remoting.Contexts.Context)" /> method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Name">
@@ -33,9 +40,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the dynamic property.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Parallel" FullName="System.Threading.Tasks.Parallel">
   <TypeSignature Language="C#" Value="public static class Parallel" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Parallel extends System.Object" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Threading.Tasks.Parallel" /> class provides library-based data parallel replacements for common operations such as for loops, for each loops, and execution of a set of statements.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides support for parallel loops and regions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="For">
@@ -954,9 +961,18 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="actions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to execute a set of operations, potentially in parallel. </para>
+          <para> No guarantees are made about the order in which the operations execute or whether they execute in parallel. This method does not return until each of the provided operations has completed, regardless of whether completion occurs due to normal or exceptional termination.</para>
+          <para>For more information, see <format type="text/html"><a href="6b3ecd79-dec9-4ce1-abf4-62e5392a59c6">How to: Use Parallel.Invoke to Execute Parallel Operations</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes each of the provided actions, possibly in parallel.</para>
+        </summary>
+        <param name="actions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Action" /> to execute.</param>
       </Docs>
     </Member>
     <Member MemberName="Invoke">
@@ -980,10 +996,20 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="parallelOptions">To be added.</param>
-        <param name="actions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method can be used to execute a set of operations, potentially in parallel. The cancellation token passed in with the <see cref="T:System.Threading.Tasks.ParallelOptions" /> structure enables the caller to cancel the entire operation. For more information, see <format type="text/html"><a href="eea11fe5-d8b0-4314-bb5d-8a58166fb1c3">Cancellation</a></format>.</para>
+          <para> No guarantees are made about the order in which the operations execute or whether they execute in parallel. This method does not return until each of the provided operations has completed, regardless of whether completion occurs due to normal or exceptional termination.</para>
+          <para>For more information, see <format type="text/html"><a href="6b3ecd79-dec9-4ce1-abf4-62e5392a59c6">How to: Use Parallel.Invoke to Execute Parallel Operations</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Executes each of the provided actions, possibly in parallel, unless the operation is cancelled by the user.</para>
+        </summary>
+        <param name="parallelOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that configures the behavior of this operation.</param>
+        <param name="actions">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of actions to execute.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509KeyStorageFlags" FullName="System.Security.Cryptography.X509Certificates.X509KeyStorageFlags">
   <TypeSignature Language="C#" Value="public enum X509KeyStorageFlags" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed X509KeyStorageFlags extends System.Enum" />
@@ -18,9 +19,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines where and how to import the private key of an X.509 certificate.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DefaultKeySet">
@@ -35,8 +39,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyStorageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default key set is used.  The user key set is usually the default. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Exportable">
@@ -51,8 +58,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyStorageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imported keys are marked as exportable.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MachineKeySet">
@@ -67,8 +77,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyStorageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Private keys are stored in the local computer store rather than the current user store. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PersistKeySet">
@@ -83,8 +96,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyStorageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key associated with a PFX file is persisted when importing a certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UserKeySet">
@@ -99,8 +115,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyStorageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Private keys are stored in the current user store rather than the local computer store. This occurs even if the certificate specifies that the keys should go in the local computer store. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UserProtected">
@@ -115,8 +134,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyStorageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notify the user through a dialog box or other method that the key is accessed.  The Cryptographic Service Provider (CSP) in use defines the precise behavior.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

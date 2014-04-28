@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StackBehaviour" FullName="System.Reflection.Emit.StackBehaviour">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum StackBehaviour" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed StackBehaviour extends System.Enum" />
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes how values are pushed onto a stack or popped off a stack.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Pop0">
@@ -36,8 +40,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No values are popped off the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pop1">
@@ -54,8 +61,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops one value off the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pop1_pop1">
@@ -72,8 +82,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops 1 value off the stack for the first operand, and 1 value of the stack for the second operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popi">
@@ -90,8 +103,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a 32-bit integer off the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popi_pop1">
@@ -108,8 +124,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a 32-bit integer off the stack for the first operand, and a value off the stack for the second operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popi_popi">
@@ -126,8 +145,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a 32-bit integer off the stack for the first operand, and a 32-bit integer off the stack for the second operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popi_popi_popi">
@@ -144,8 +166,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a 32-bit integer off the stack for the first operand, a 32-bit integer off the stack for the second operand, and a 32-bit integer off the stack for the third operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popi_popi8">
@@ -162,8 +187,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a 32-bit integer off the stack for the first operand, and a 64-bit integer off the stack for the second operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popi_popr4">
@@ -180,8 +208,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a 32-bit integer off the stack for the first operand, and a 32-bit floating point number off the stack for the second operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popi_popr8">
@@ -198,8 +229,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a 32-bit integer off the stack for the first operand, and a 64-bit floating point number off the stack for the second operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popref">
@@ -216,8 +250,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a reference off the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popref_pop1">
@@ -234,8 +271,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a reference off the stack for the first operand, and a value off the stack for the second operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popref_popi">
@@ -252,8 +292,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a reference off the stack for the first operand, and a 32-bit integer off the stack for the second operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popref_popi_pop1">
@@ -268,8 +311,11 @@
         <ReturnType>System.Reflection.Emit.StackBehaviour</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a reference off the stack for the first operand, a value off the stack for the second operand, and a 32-bit integer off the stack for the third operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popref_popi_popi">
@@ -286,8 +332,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a reference off the stack for the first operand, a value off the stack for the second operand, and a value off the stack for the third operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popref_popi_popi8">
@@ -304,8 +353,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a reference off the stack for the first operand, a value off the stack for the second operand, and a 64-bit integer off the stack for the third operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popref_popi_popr4">
@@ -322,8 +374,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a reference off the stack for the first operand, a value off the stack for the second operand, and a 32-bit integer off the stack for the third operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popref_popi_popr8">
@@ -340,8 +395,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a reference off the stack for the first operand, a value off the stack for the second operand, and a 64-bit floating point number off the stack for the third operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Popref_popi_popref">
@@ -358,8 +416,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a reference off the stack for the first operand, a value off the stack for the second operand, and a reference off the stack for the third operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Push0">
@@ -376,8 +437,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No values are pushed onto the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Push1">
@@ -394,8 +458,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pushes one value onto the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Push1_push1">
@@ -412,8 +479,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pushes 1 value onto the stack for the first operand, and 1 value onto the stack for the second operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pushi">
@@ -430,8 +500,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pushes a 32-bit integer onto the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pushi8">
@@ -448,8 +521,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pushes a 64-bit integer onto the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pushr4">
@@ -466,8 +542,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pushes a 32-bit floating point number onto the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pushr8">
@@ -484,8 +563,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pushes a 64-bit floating point number onto the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pushref">
@@ -502,8 +584,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pushes a reference onto the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Varpop">
@@ -520,8 +605,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pops a variable off the stack.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Varpush">
@@ -538,8 +626,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Pushes a variable onto the stack.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

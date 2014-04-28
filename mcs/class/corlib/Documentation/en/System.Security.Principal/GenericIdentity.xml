@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GenericIdentity" FullName="System.Security.Principal.GenericIdentity">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class GenericIdentity : System.Security.Principal.IIdentity" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit GenericIdentity extends System.Object implements class System.Security.Principal.IIdentity" />
@@ -23,8 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>A generic purpose IIdentity implementation.</summary>
-    <remarks>The generic identity isn't related to the current operating system user.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An identity object represents the user on whose behalf the code is running.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a generic user.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -41,9 +48,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">A name representing the identity.</param>
-        <summary>Create a generic identity instance with the specified name.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Principal.GenericIdentity" /> class representing the user with the specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the user on whose behalf the code is running. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -61,10 +72,15 @@
         <Parameter Name="type" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">A name representing the identity.</param>
-        <param name="type">The method used to authentify the identity.</param>
-        <summary>Create a generic identity instance with the specified name and authentication method.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Principal.GenericIdentity" /> class representing the user with the specified name and authentication type.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the user on whose behalf the code is running. </param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of authentication used to identify the user. </param>
       </Docs>
     </Member>
     <Member MemberName="AuthenticationType">
@@ -80,9 +96,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The name of the authentication method used to authentify the current identity.</summary>
         <value>The value specified in the constructor or String.Empty if no value was used.</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of authentication used to identify the user.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsAuthenticated">
@@ -98,9 +117,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Returns if the current identity was authenticated.</summary>
         <value>True if Name is different from String.Empty (""), false otherwise.</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the user has been authenticated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -116,9 +138,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Current name of the identity.</summary>
         <value>The value specified in the constructor.</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the user's name.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlParserContext" FullName="System.Xml.XmlParserContext" FullNameSP="System_Xml_XmlParserContext" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public XmlParserContext extends System.Object" />
   <TypeSignature Language="C#" Value="public class XmlParserContext" />
@@ -16,12 +17,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para> Provides all the context information required by instances of
-      the <see cref="T:System.Xml.XmlTextReader" /> class
-      to parse an XML fragment.</para>
-    </summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides all the context information required by the <see cref="T:System.Xml.XmlReader" /> to parse an XML fragment.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -42,15 +42,6 @@
         <Parameter Name="xmlSpace" Type="System.Xml.XmlSpace" />
       </Parameters>
       <Docs>
-        <param name="nt">The <see cref="T:System.Xml.XmlNameTable" /> to use. If <paramref name="nt" /> is <see langword="null" />, this defaults to the <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</param>
-        <param name="nsMgr">The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or <see langword="null" />. </param>
-        <param name="xmlLang">A <see cref="T:System.String" qualify="true" /> specifying the <c>xml:lang</c> scope.</param>
-        <param name="xmlSpace">A <see cref="T:System.Xml.XmlSpace" /> value indicating the <c>xml:space</c> scope. </param>
-        <summary>
-          <para>Constructs and initializes a new instance of the
-   <see cref="T:System.Xml.XmlParserContext" /> class with the specified
-      values.</para>
-        </summary>
         <remarks>
           <para>This method is equivalent to <see cref="T:System.Xml.XmlParserContext" />(<paramref name="nt" />, <paramref name="nsMgr" />,
 <see langword="null" />, <see langword="null" />, <see langword="null" />, <see langword="null" />, 
@@ -59,6 +50,18 @@
         </remarks>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="nt" /> is not the same <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the XmlParserContext class with the specified <see cref="T:System.Xml.XmlNameTable" />, <see cref="T:System.Xml.XmlNamespaceManager" />, xml:lang, and xml:space values.</para>
+        </summary>
+        <param name="nt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNameTable" /> to use to atomize strings. If this is null, the name table used to construct the <paramref name="nsMgr" /> is used instead. For more information about atomized strings, see <see cref="T:System.Xml.XmlNameTable" />. </param>
+        <param name="nsMgr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or null. </param>
+        <param name="xmlLang">
+          <attribution license="cc4" from="Microsoft" modified="false" />The xml:lang scope. </param>
+        <param name="xmlSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlSpace" /> value indicating the xml:space scope. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -81,16 +84,6 @@
         <Parameter Name="enc" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="nt">The <see cref="T:System.Xml.XmlNameTable" /> to use. If <paramref name="nt" /> is <see langword="null" />, this defaults to the <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</param>
-        <param name="nsMgr">The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or <see langword="null" />.</param>
-        <param name="xmlLang">A <see cref="T:System.String" qualify="true" /> specifying the <c>xml:lang</c> scope.</param>
-        <param name="xmlSpace">A <see cref="T:System.Xml.XmlSpace" /> value indicating the <c>xml:space</c> scope. </param>
-        <param name="enc">An instance of a class derived from the <see cref="T:System.Text.Encoding" qualify="true" /> class indicating the encoding to use. </param>
-        <summary>
-          <para>Constructs and initializes a new instance of
-      the <see cref="T:System.Xml.XmlParserContext" />
-      class with the specified values.</para>
-        </summary>
         <remarks>
           <para>This method is equivalent to <see cref="T:System.Xml.XmlParserContext" />(<paramref name="nt" />,
 <paramref name="nsMgr" />, <see langword="null" />, <see langword="null" />, <see langword="null" />, 
@@ -99,6 +92,20 @@
         </remarks>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="nt" /> is not the same <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the XmlParserContext class with the specified <see cref="T:System.Xml.XmlNameTable" />, <see cref="T:System.Xml.XmlNamespaceManager" />, xml:lang, xml:space, and encoding.</para>
+        </summary>
+        <param name="nt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNameTable" /> to use to atomize strings. If this is null, the name table used to construct the <paramref name="nsMgr" /> is used instead. For more information on atomized strings, see <see cref="T:System.Xml.XmlNameTable" />. </param>
+        <param name="nsMgr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or null. </param>
+        <param name="xmlLang">
+          <attribution license="cc4" from="Microsoft" modified="false" />The xml:lang scope. </param>
+        <param name="xmlSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlSpace" /> value indicating the xml:space scope. </param>
+        <param name="enc">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Text.Encoding" /> object indicating the encoding setting. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -125,28 +132,35 @@
         <Parameter Name="xmlSpace" Type="System.Xml.XmlSpace" />
       </Parameters>
       <Docs>
-        <param name="nt">The <see cref="T:System.Xml.XmlNameTable" /> to use. If <paramref name="nt" /> is <see langword="null" />, this defaults to the <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</param>
-        <param name="nsMgr">The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or <see langword="null" />.</param>
-        <param name="docTypeName">A <see cref="T:System.String" qualify="true" /> specifying the name of the document type declaration.</param>
-        <param name="pubId">A <see cref="T:System.String" qualify="true" /> specifying the public identifier.</param>
-        <param name="sysId">A <see cref="T:System.String" qualify="true" /> specifying the system identifier.</param>
-        <param name="internalSubset">A <see cref="T:System.String" qualify="true" /> specifying the internal DTD subset.</param>
-        <param name="baseURI">A <see cref="T:System.String" qualify="true" /> specifying the base URI for the XML fragment (the location from which the fragment was loaded).</param>
-        <param name="xmlLang">A <see cref="T:System.String" qualify="true" /> containing the <c>xml:lang</c> scope.</param>
-        <param name="xmlSpace">A <see cref="T:System.Xml.XmlSpace" /> value indicating the <c>xml:space</c> scope. </param>
-        <summary>
-          <para>Constructs and initializes a new instance of
-      the <see cref="T:System.Xml.XmlParserContext" />
-      class with the specified values.</para>
-        </summary>
-        <remarks>
-          <para>This method is equivalent to <see cref="T:System.Xml.XmlParserContext" />(<paramref name="nt" />,
-<paramref name="nsMgr" />, <paramref name="docTypeName" />, <paramref name="pubId" />, 
-<paramref name="sysId" />, <paramref name="internalSubset" />, <paramref name="baseUri" />, <paramref name="xmlLang" />, <paramref name="xmlSpace" />, 
-<see langword="null" />).</para>
-        </remarks>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="nt" /> is not the same <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor supplies all DocumentType information required by <see cref="T:System.Xml.XmlValidatingReader" />. If this XmlParserContext is passed to an <see cref="T:System.Xml.XmlTextReader" />, all DTD information is ignored.</para>
+          <para>If you pass a DTD as the <paramref name="internalSubset" />, the DTD is used for entity resolution, not for document validation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the XmlParserContext class with the specified <see cref="T:System.Xml.XmlNameTable" />, <see cref="T:System.Xml.XmlNamespaceManager" />, base URI, xml:lang, xml:space, and document type values.</para>
+        </summary>
+        <param name="nt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNameTable" /> to use to atomize strings. If this is null, the name table used to construct the <paramref name="nsMgr" /> is used instead. For more information about atomized strings, see <see cref="T:System.Xml.XmlNameTable" />. </param>
+        <param name="nsMgr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or null. </param>
+        <param name="docTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the document type declaration. </param>
+        <param name="pubId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The public identifier. </param>
+        <param name="sysId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The system identifier. </param>
+        <param name="internalSubset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The internal DTD subset. The DTD subset is used for entity resolution, not for document validation.</param>
+        <param name="baseURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base URI for the XML fragment (the location from which the fragment was loaded). </param>
+        <param name="xmlLang">
+          <attribution license="cc4" from="Microsoft" modified="false" />The xml:lang scope. </param>
+        <param name="xmlSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlSpace" /> value indicating the xml:space scope. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -174,21 +188,6 @@
         <Parameter Name="enc" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="nt">The <see cref="T:System.Xml.XmlNameTable" /> to use. If <paramref name="nt" /> is <see langword="null" />, this defaults to the <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</param>
-        <param name="nsMgr">The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or <see langword="null" />.</param>
-        <param name="docTypeName">A <see cref="T:System.String" qualify="true" /> specifying the name of the document type declaration.</param>
-        <param name="pubId">A <see cref="T:System.String" qualify="true" /> specifying the public identifier.</param>
-        <param name="sysId">A <see cref="T:System.String" qualify="true" /> specifying the system identifier.</param>
-        <param name="internalSubset">A <see cref="T:System.String" qualify="true" /> specifying the internal DTD subset.</param>
-        <param name="baseURI">A <see cref="T:System.String" qualify="true" /> specifying the base URI for the XML fragment (the location from which the fragment was loaded).</param>
-        <param name="xmlLang">A <see cref="T:System.String" qualify="true" /> specifying the <c>xml:lang</c> scope.</param>
-        <param name="xmlSpace">A <see cref="T:System.Xml.XmlSpace" /> value indicating the <c>xml:space</c> scope. </param>
-        <param name="enc">The <see cref="T:System.Text.Encoding" qualify="true" /> to use. </param>
-        <summary>
-          <para>Constructs and initializes a new instance of
-      the <see cref="T:System.Xml.XmlParserContext" />
-      class with the specified values.</para>
-        </summary>
         <remarks>
           <para>The constructor sets <see cref="P:System.Xml.XmlParserContext.BaseURI" /> to <paramref name="baseURI" />, <see cref="P:System.Xml.XmlParserContext.DocTypeName" /> to <paramref name="docTypeName" />, <see cref="P:System.Xml.XmlParserContext.InternalSubset" /> to <paramref name="internalSubset" />, <see cref="P:System.Xml.XmlParserContext.PublicId" /> to <paramref name="pubId" />, <see cref="P:System.Xml.XmlParserContext.SystemId" /> to <paramref name="sysId" />, and <see cref="P:System.Xml.XmlParserContext.XmlLang" /> to <paramref name="xmlLang" />. If
 <see langword="null" /> is passed for any of these parameters, the corresponding 
@@ -201,6 +200,30 @@
         </remarks>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="nt" /> is not the same <see cref="T:System.Xml.XmlNameTable" /> used to construct <paramref name="nsMgr" />.</exception>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the XmlParserContext class with the specified <see cref="T:System.Xml.XmlNameTable" />, <see cref="T:System.Xml.XmlNamespaceManager" />, base URI, xml:lang, xml:space, encoding, and document type values.</para>
+        </summary>
+        <param name="nt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNameTable" /> to use to atomize strings. If this is null, the name table used to construct the <paramref name="nsMgr" /> is used instead. For more information about atomized strings, see <see cref="T:System.Xml.XmlNameTable" />. </param>
+        <param name="nsMgr">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNamespaceManager" /> to use for looking up namespace information, or null. </param>
+        <param name="docTypeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the document type declaration. </param>
+        <param name="pubId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The public identifier. </param>
+        <param name="sysId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The system identifier. </param>
+        <param name="internalSubset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The internal DTD subset. The DTD is used for entity resolution, not for document validation.</param>
+        <param name="baseURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base URI for the XML fragment (the location from which the fragment was loaded). </param>
+        <param name="xmlLang">
+          <attribution license="cc4" from="Microsoft" modified="false" />The xml:lang scope. </param>
+        <param name="xmlSpace">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlSpace" /> value indicating the xml:space scope. </param>
+        <param name="enc">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Text.Encoding" /> object indicating the encoding setting. </param>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -219,22 +242,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the base URI.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" qualify="true" /> specifying the base URI to use for resolving the DTD file.</para>
         </value>
         <remarks>
-          <para>If an attempt is made to set this property to <see langword="null" />, it is 
-   set to <see cref="F:System.String.Empty" />. </para>
-          <block subset="none" type="note">
-            <para>A networked XML document is comprised of chunks of data 
-      aggregated using various W3C standard inclusion mechanisms and therefore can
-      contain nodes that come from different places. The <see cref="P:System.Xml.XmlParserContext.BaseURI" /> property shows where these nodes
-      originated.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A networked XML document is comprised of chunks of data aggregated using various W3C standard inclusion mechanisms and therefore may contain nodes that come from different places. BaseURI shows where these nodes originated.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the base URI.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -253,22 +271,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the name of the document type in a document type declaration.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" qualify="true" /> specifying the name of the document type.</para>
         </value>
         <remarks>
-          <para>If an attempt is made to set this property to <see langword="null" />, it is
-   set to <see cref="F:System.String.Empty" />. </para>
-          <block subset="none" type="note">
-            <para>A document type declaration is of the following form: </para>
-            <para>&lt;!DOCTYPE <paramref name="DocTypeName" /> PUBLIC "PublicId"
-   "SystemId" [InternalSubset]&gt;</para>
-            <para>This property, along with <see cref="P:System.Xml.XmlParserContext.InternalSubset" />, <see cref="P:System.Xml.XmlParserContext.PublicId" />, and <see cref="P:System.Xml.XmlParserContext.SystemId" /> properties, provide all the document type declaration information.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property, along with <see cref="P:System.Xml.XmlParserContext.PublicId" />, <see cref="P:System.Xml.XmlParserContext.SystemId" />, and <see cref="P:System.Xml.XmlParserContext.InternalSubset" />, provides all the document type declaration information. It is used to find and load the necessary DTD information so that you get all the default attributes and entities defined in the DTD.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the document type declaration.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -287,14 +300,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the encoding type.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Text.Encoding" qualify="true" /> indicating the encoding
    type.</para>
         </value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the encoding type.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -313,24 +327,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the internal subset in a document type declaration.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" qualify="true" /> 
 specifying
 the internal subset. </para>
         </value>
         <remarks>
-          <para>If an attempt is made to set this property to <see langword="null" />, it is
-   set to <see cref="F:System.String.Empty" />. </para>
-          <block subset="none" type="note">
-            <para>A document type declaration is of the following form: </para>
-            <para>&lt;!DOCTYPE DocTypeName PUBLIC "PublicId" "SystemId"
-      [<paramref name="InternalSubset" />]&gt;</para>
-            <para>This property, along with <see cref="P:System.Xml.XmlParserContext.DocTypeName" />, <see cref="P:System.Xml.XmlParserContext.PublicId" />, and <see cref="P:System.Xml.XmlParserContext.SystemId" /> properties, provide all the document type declaration information.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property, along with <see cref="P:System.Xml.XmlParserContext.DocTypeName" />, <see cref="P:System.Xml.XmlParserContext.PublicId" />, and <see cref="P:System.Xml.XmlParserContext.SystemId" />, provides all the document type declaration information. It is used to find and load the necessary DTD information so that you get all the default attributes and entities defined in the DTD.</para>
+          <para>The DTD is used for entity resolution, not for document validation.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the internal DTD subset.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -349,20 +359,18 @@ the internal subset. </para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the <see cref="T:System.Xml.XmlNamespaceManager" /> used by the current
-   instance.</para>
-        </summary>
         <value>
           <para> The <see cref="T:System.Xml.XmlNamespaceManager" /> used by the current
    instance.</para>
         </value>
         <remarks>
-          <block subset="none" type="note">
-            <para>A <see cref="T:System.Xml.XmlNamespaceManager" /> defines the current namespace scope
-      and provides methods for looking up namespace information.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The NamespaceManager defines the current namespace scope and provides methods for looking up namespace information.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Xml.XmlNamespaceManager" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -381,14 +389,14 @@ the internal subset. </para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the <see cref="T:System.Xml.XmlNameTable" /> used by the current instance to look up prefixes
-   and namespace URIs.</para>
-        </summary>
         <value>
           <para> The <see cref="T:System.Xml.XmlNameTable" /> used by the current instance.</para>
         </value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.XmlNameTable" /> used to atomize strings. For more information on atomized strings, see <see cref="T:System.Xml.XmlNameTable" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -407,23 +415,18 @@ the internal subset. </para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the public identifier in a document type declaration.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" qualify="true" /> 
 specifying the public identifier.</para>
         </value>
         <remarks>
-          <para>If an attempt is made to set this property to <see langword="null" />, it is
-   set to <see cref="F:System.String.Empty" />. </para>
-          <block subset="none" type="note">
-            <para>A document type declaration is of the following form: </para>
-            <para>&lt;!DOCTYPE DocTypeName PUBLIC "<paramref name="PublicId" />"
-   "SystemId" [InternalSubset]&gt;</para>
-            <para>This property, along with <see cref="P:System.Xml.XmlParserContext.DocTypeName" />, <see cref="P:System.Xml.XmlParserContext.InternalSubset" />, and <see cref="P:System.Xml.XmlParserContext.SystemId" /> properties, provide all the document type declaration information.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property, along with <see cref="P:System.Xml.XmlParserContext.DocTypeName" />, <see cref="P:System.Xml.XmlParserContext.SystemId" />, and <see cref="P:System.Xml.XmlParserContext.InternalSubset" />, provides all the document type declaration information. It is used to find and load the required DTD information so that you get all the default attributes and entities defined in the DTD.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the public identifier.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -442,23 +445,18 @@ specifying the public identifier.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the system identifier in a document type declaration.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" qualify="true" /> 
 specifying the system identifier.</para>
         </value>
         <remarks>
-          <para>If an attempt is made to set this property to <see langword="null" />, it is
-   set to <see cref="F:System.String.Empty" />. </para>
-          <block subset="none" type="note">
-            <para>A document type declaration is of the following form: </para>
-            <para>&lt;!DOCTYPE DocTypeName PUBLIC "PublicId"
-      "<paramref name="SystemId" />" [InternalSubset]&gt;</para>
-            <para>This property, along with <see cref="P:System.Xml.XmlParserContext.DocTypeName" />, <see cref="P:System.Xml.XmlParserContext.InternalSubset" />, and <see cref="P:System.Xml.XmlParserContext.PublicId" /> properties, provide all the document type declaration information.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property, along with <see cref="P:System.Xml.XmlParserContext.DocTypeName" />, <see cref="P:System.Xml.XmlParserContext.PublicId" />, and <see cref="P:System.Xml.XmlParserContext.InternalSubset" />, provides all the document type declaration information. It is used to find and load the necessary DTD information so that you get all the default attributes and entities defined in the DTD.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the system identifier.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -477,26 +475,19 @@ specifying the system identifier.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the current <c>xml:lang</c> scope.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" qualify="true" /> specifying the 
    current <c>xml:lang</c>
 scope. If there is no <c>xml:lang</c> in scope, <see cref="F:System.String.Empty" /> is returned.</para>
         </value>
         <remarks>
-          <para>If an attempt is made to set this property to <see langword="null" />, it is
-   set to <see cref="F:System.String.Empty" />. </para>
-          <block subset="none" type="note">
-            <para>The language attribute, <c>xml:lang</c>, specifies the
-   language in which the content and attribute values of the current element are
-   written.</para>
-            <para>For details on valid <c>xml:lang</c> values,
-refer to section 2.12 of the W3C Extensible Markup Language (XML) 1.0
-recommendation.</para>
-          </block>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For details on valid xml:lang values, refer to section 2.12 of the W3C Extensible Markup Language (XML) 1.0 recommendation.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current xml:lang scope.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -515,9 +506,6 @@ recommendation.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets the current <c>xml:space</c> scope.</para>
-        </summary>
         <value>
           <para>One of the members of the <see cref="T:System.Xml.XmlSpace" /> enumeration
    indicating the <c>xml:space</c> scope.</para>
@@ -528,6 +516,10 @@ recommendation.</para>
       the current element.</para>
           </block>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current xml:space scope.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

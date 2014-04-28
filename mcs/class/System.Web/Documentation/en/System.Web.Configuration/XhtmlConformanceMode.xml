@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XhtmlConformanceMode" FullName="System.Web.Configuration.XhtmlConformanceMode">
   <TypeSignature Language="C#" Value="public enum XhtmlConformanceMode" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.XhtmlConformanceMode" /> enumeration applies to the mode attribute in the xhtmlConformance tag. It specifies the XHTML rendering modalities for an ASP.NET application. The mode can assume one of the values listed next. The default is Transitional (XHTML 1.0 Transitional).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the authentication mode to use in a Web application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Legacy">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.Configuration.XhtmlConformanceMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XHTML 1.0 Transitional </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.Configuration.XhtmlConformanceMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>XHTML 1.0 Strict conformance </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Web.Configuration.XhtmlConformanceMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reverts a number of rendering changes made for conformance to the v1.1 rendering behavior. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeMemberEvent" FullName="System.CodeDom.CodeMemberEvent">
   <TypeSignature Language="C#" Value="public class CodeMemberEvent : System.CodeDom.CodeTypeMember" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeMemberEvent extends System.CodeDom.CodeTypeMember" />
@@ -23,8 +24,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Represents an Event in the CodeDom.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeMemberEvent" /> can be used to represent event members of a type. <see cref="T:System.CodeDom.CodeMemberEvent" /> has properties to indicate the data type of the event, whether it privately implements a data type, and what interface types, if any, the member event implements.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a declaration for an event of a type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +47,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeMemberEvent" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImplementationTypes">
@@ -56,9 +67,15 @@
         <ReturnType>System.CodeDom.CodeTypeReferenceCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeTypeReferenceCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The types referenced should consist of interfaces or the base class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data type that the member event implements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrivateImplementationType">
@@ -76,9 +93,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeTypeReference'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The types referenced should consist of interfaces or the base class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the privately implemented data type, if any.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -96,9 +119,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeTypeReference'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data type of the delegate type that handles the event.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

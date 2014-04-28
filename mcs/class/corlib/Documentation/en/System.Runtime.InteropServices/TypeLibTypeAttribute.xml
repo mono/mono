@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeLibTypeAttribute" FullName="System.Runtime.InteropServices.TypeLibTypeAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class TypeLibTypeAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit TypeLibTypeAttribute extends System.Attribute" />
@@ -22,8 +23,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <format type="text/html"><a href="EC0A8D63-11B3-4ACD-B398-DA1E37E97382">[&lt;topic://cpgrftypelibraryImportertlbimpexe&gt;]</a></format> applies this attribute to classes or interfaces.</para>
+      <para>This attribute is applied when a type library is imported and should never be changed. It is only applied when the method's <see cref="T:System.Runtime.InteropServices.TYPEFLAGS" /> evaluate to non-zero. The attribute is designed to be used by tools that need to know how the original <see cref="T:System.Runtime.InteropServices.TYPEFLAGS" /> were set. The common language runtime does not use this attribute.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the <see cref="T:System.Runtime.InteropServices.TYPEFLAGS" /> that were originally imported for this type from the COM type library.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +48,13 @@
         <Parameter Name="flags" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added: an object of type 'short'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the TypeLibTypeAttribute class with the specified <see cref="T:System.Runtime.InteropServices.TypeLibTypeFlags" /> value.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.InteropServices.TypeLibTypeFlags" /> value for the attributed type as found in the type library it was imported from. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -59,9 +71,13 @@
         <Parameter Name="flags" Type="System.Runtime.InteropServices.TypeLibTypeFlags" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added: an object of type 'TypeLibTypeFlags'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the TypeLibTypeAttribute class with the specified <see cref="T:System.Runtime.InteropServices.TypeLibTypeFlags" /> value.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.InteropServices.TypeLibTypeFlags" /> value for the attributed type as found in the type library it was imported from. </param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -77,9 +93,12 @@
         <ReturnType>System.Runtime.InteropServices.TypeLibTypeFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'TypeLibTypeFlags'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Runtime.InteropServices.TypeLibTypeFlags" /> value for this type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripItemTextRenderEventArgs" FullName="System.Windows.Forms.ToolStripItemTextRenderEventArgs">
   <TypeSignature Language="C#" Value="public class ToolStripItemTextRenderEventArgs : System.Windows.Forms.ToolStripItemRenderEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ToolStripRenderer.RenderItemText" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,16 +31,26 @@
         <Parameter Name="textAlign" Type="System.Drawing.ContentAlignment" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="item">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="textRectangle">To be added.</param>
-        <param name="textColor">To be added.</param>
-        <param name="textFont">To be added.</param>
-        <param name="textAlign">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripItemTextRenderEventArgs" /> class with the specified text and text properties. </para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the text.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStripItem" /> on which to draw the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to be drawn.</param>
+        <param name="textRectangle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that represents the bounds to draw the text in.</param>
+        <param name="textColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> used to draw the text.</param>
+        <param name="textFont">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> used to draw the text.</param>
+        <param name="textAlign">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.ContentAlignment" /> that specifies the vertical and horizontal alignment of the text in the bounding area.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,16 +69,26 @@
         <Parameter Name="format" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="item">To be added.</param>
-        <param name="text">To be added.</param>
-        <param name="textRectangle">To be added.</param>
-        <param name="textColor">To be added.</param>
-        <param name="textFont">To be added.</param>
-        <param name="format">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripItemTextRenderEventArgs" /> class with the specified text and text properties format.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the text.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStripItem" /> on which to draw the text.</param>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to be drawn.</param>
+        <param name="textRectangle">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that represents the bounds to draw the text in.</param>
+        <param name="textColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> used to draw the text.</param>
+        <param name="textFont">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> used to draw the text.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The display and layout information for text strings.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,10 +101,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text to be drawn on the <see cref="T:System.Windows.Forms.ToolStripItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,10 +120,13 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the color of the <see cref="T:System.Windows.Forms.ToolStripItem" /> text. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,10 +139,13 @@
         <ReturnType>System.Windows.Forms.ToolStripTextDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the text is drawn vertically or horizontally.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,10 +158,13 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the font of the text drawn on the <see cref="T:System.Windows.Forms.ToolStripItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -141,10 +177,13 @@
         <ReturnType>System.Windows.Forms.TextFormatFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the display and layout information of the text drawn on the <see cref="T:System.Windows.Forms.ToolStripItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -157,10 +196,13 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the rectangle that represents the bounds to draw the text in.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

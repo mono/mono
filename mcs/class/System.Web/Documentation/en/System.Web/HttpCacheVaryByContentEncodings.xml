@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpCacheVaryByContentEncodings" FullName="System.Web.HttpCacheVaryByContentEncodings">
   <TypeSignature Language="C#" Value="public sealed class HttpCacheVaryByContentEncodings" />
   <AssemblyInfo>
@@ -9,8 +10,29 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> property is used to specify whether dynamically compressed responses are cached. Caching dynamically compressed responses means that the cost of compression is incurred only one time, during the first request for the resource (or after an application restart) and when the cache item expires.</para>
+      <para>The <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> property of the <see cref="T:System.Web.HttpCachePolicy" /> class identifies which request header parameters ASP.NET uses to uniquely identify a variation of the response if there are multiple cached responses for a resource. This is useful when a response depends on a set of client inputs, such as headers, parameters, or content encodings. </para>
+      <para>The <see cref="T:System.Web.HttpCacheVaryByContentEncodings" /> class is not directly related to HTTP cache-control headers. However, it helps make sure that a response to a client or a proxy varies by the specified content encoding. Setting the cache to vary by content encoding enables ASP.NET to vary the response by the Accept-Encoding header. When a request is processed, the Accept-Encoding header is checked and the first acceptable encoding is identified and used to take one of the following actions:</para>
+      <list type="bullet">
+        <item>
+          <para>If a matching encoding is also found in the <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> list and a cached response exists, the cached response is sent.</para>
+        </item>
+        <item>
+          <para>If a matching encoding is also found in the <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> list but a cached response does not exist, a response is generated and inserted into the cache.</para>
+        </item>
+        <item>
+          <para>If a matching encoding is not found in the <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> list, the cache is searched for a non-encoded response, also referred to as the identity response. If the identity response is found, it is sent. Otherwise a new non-encoded response is generated and stored in the cache.</para>
+        </item>
+      </list>
+      <para>For more information about the <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> property, see RFC 2616: Hypertext Transfer Protocol -- HTTP/1.1, available on the <see cref="http://go.microsoft.com/fwlink/?linkid=37125">World Wide Web Consortium (W3C) Web site</see>. See section 14, "Header Field Definitions", for complete details.</para>
+      <para>You can set the <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> property by using the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive or by adding a profile to the <format type="text/html"><a href="6df16c27-207d-4b52-9a6e-b3a541222b3d">outputCacheProfile</a></format> element in the Web.config file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a type-safe way to set the <see cref="P:System.Web.HttpCachePolicy.VaryByContentEncodings" /> property of the <see cref="T:System.Web.HttpCachePolicy" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Item">

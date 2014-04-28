@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaContentProcessing" FullName="System.Xml.Schema.XmlSchemaContentProcessing">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum XmlSchemaContentProcessing" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlSchemaContentProcessing extends System.Enum" />
@@ -13,8 +14,11 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides information about the validation mode of any and anyAttribute element replacements.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Lax">
@@ -36,8 +40,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the item is not validated, the XML processor attempts to notify the client through a validation event handler with <see cref="P:System.Xml.Schema.ValidationEventArgs.Severity" /> = XmlSeverityType.Warning. If a validation event handler has not been set up, no information is returned when the warning is produced.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the associated schema is found, the document items will be validated. No errors will be thrown otherwise.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -59,8 +69,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Document items are not validated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Skip">
@@ -82,8 +95,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML processor attempts to notify the client through a validation event handler with <see cref="P:System.Xml.Schema.ValidationEventArgs.Severity" /> = XmlSeverityType.Warning that no validation took place for the given item. If a validation event handler has not been set up, no information is returned when the warning is produced.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Document items must consist of well-formed XML and are not validated by the schema.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Strict">
@@ -105,8 +124,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the processor cannot find a schema, or the items are not valid, the XML processor attempts to notify the client through a validation event handler with <see cref="P:System.Xml.Schema.ValidationEventArgs.Severity" /> = XmlSeverityType.Warning. If a validation error occurs and a validation event handler is not provided, an exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The schema processor must find a schema associated with the indicated namespace to validate the document items.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TemplatedEditableDesignerRegion" FullName="System.Web.UI.Design.TemplatedEditableDesignerRegion">
   <TypeSignature Language="C#" Value="public class TemplatedEditableDesignerRegion : System.Web.UI.Design.EditableDesignerRegion" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an editable region of content within the design-time markup for the associated control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +27,13 @@
         <Parameter Name="templateDefinition" Type="System.Web.UI.Design.TemplateDefinition" />
       </Parameters>
       <Docs>
-        <param name="templateDefinition">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.TemplatedEditableDesignerRegion" /> class using the provided template definition.</para>
+        </summary>
+        <param name="templateDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.Design.TemplateDefinition" /> instance for the template to edit.</param>
       </Docs>
     </Member>
     <Member MemberName="IsSingleInstanceTemplate">
@@ -38,9 +46,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the template occurs only once per instance of the containing control, such as a header template, or can appear many times according to available data, such as an item template.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SupportsDataBinding">
@@ -53,9 +64,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the template can be bound to a data source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TemplateDefinition">
@@ -68,9 +82,12 @@
         <ReturnType>System.Web.UI.Design.TemplateDefinition</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.Design.TemplateDefinition" /> object describing the template that is referenced by the region.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

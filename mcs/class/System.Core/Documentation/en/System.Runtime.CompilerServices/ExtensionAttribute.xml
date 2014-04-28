@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExtensionAttribute" FullName="System.Runtime.CompilerServices.ExtensionAttribute">
   <TypeSignature Language="C#" Value="public sealed class ExtensionAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In Visual Basic, you should use this attribute to create an extension method. For more information, see <format type="text/html"><a href="b8020aae-374d-46a9-bcb7-8cc2390b93b6">Extension Methods (Visual Basic)</a></format>.</para>
+      <para>In C#, you do not need to use this attribute; you should use the <format type="text/html"><a href="d4f827fe-4710-410b-89b8-867dad44b8a3">this (C# Reference)</a></format> modifier for the first parameter to create an extension method. The compiler automatically emits ExtensionAttribute for extension methods. For more information, see <format type="text/html"><a href="175ce3ff-9bbf-4e64-8421-faeb81a0bb51">Extension Methods (C# Programming Guide)</a></format>.</para>
+      <para>If you are writing a compiler that supports extension methods, your compiler should emit this attribute on each extension method and on each class and assembly that contains one or more extension methods.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that a method is an extension method, or that a class or assembly contains extension methods.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,8 +35,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.CompilerServices.ExtensionAttribute" /> class. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

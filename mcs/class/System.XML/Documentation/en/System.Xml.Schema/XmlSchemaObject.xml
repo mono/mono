@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaObject" FullName="System.Xml.Schema.XmlSchemaObject">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class XmlSchemaObject" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XmlSchemaObject extends System.Object" />
@@ -14,8 +15,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the root class for the Xml schema object model hierarchy and serves as a base class for classes such as the <see cref="T:System.Xml.Schema.XmlSchema" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +34,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called by derived class constructors to initialize state in this type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaObject" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LineNumber">
@@ -53,9 +63,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>LineNumber is used to store the line number when a schema is read from a file. This is reported through <see cref="T:System.Xml.Schema.XmlSchemaException" /> for error handling.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the line number in the file to which the schema element refers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LinePosition">
@@ -77,9 +93,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is used to store the line position when a schema is read from a file. This is reported through <see cref="T:System.Xml.Schema.XmlSchemaException" /> for error handling.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the line position in the file to which the schema element refers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Namespaces">
@@ -101,9 +123,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Xml.Serialization.XmlSerializerNamespaces'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This gives the Schema Object Model (SOM) the ability to add xmlns declarations. This is useful when you want to declare a prefix to qualify declarations from an imported schema or use in the xpath attribute of the xs:selector element.</para>
+          <para>You can also use the <see cref="P:System.Xml.Schema.XmlSchemaObject.Namespaces" /> property to change namespace prefixes in a schema. For example, you can change the prefix used by a schema for the W3C XML Schema namespace from xs to xsd as illustrated in the following example.</para>
+          <code>Dim namespaces As XmlSerializerNamespaces = New XmlSerializerNamespaces()
+namespaces.Add("myChangedPrefix", "myImportNamespace");
+s.Namespaces = namespaces;</code>
+          <code>XmlSerializerNamespaces namespaces = new XmlSerializerNamespaces();
+namespaces.Add("myChangedPrefix", "myImportNamespace");
+s.Namespaces = namespaces;</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Xml.Serialization.XmlSerializerNamespaces" /> to use with this schema object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Parent">
@@ -123,10 +158,13 @@
         <ReturnType>System.Xml.Schema.XmlSchemaObject</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the parent of this <see cref="T:System.Xml.Schema.XmlSchemaObject" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SourceUri">
@@ -148,9 +186,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides information for exception handling.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the source location for the file that loaded the schema.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

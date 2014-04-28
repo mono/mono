@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FieldDirection" FullName="System.CodeDom.FieldDirection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum FieldDirection" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FieldDirection extends System.Enum" />
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.FieldDirection" /> allows for passing arguments to functions by reference, or using incoming or outgoing parameters.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines identifiers used to indicate the direction of parameter and argument declarations.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="In">
@@ -37,8 +45,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An incoming field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Out">
@@ -55,8 +66,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An outgoing field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ref">
@@ -73,8 +87,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A field by reference.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

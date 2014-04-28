@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RNGCryptoServiceProvider" FullName="System.Security.Cryptography.RNGCryptoServiceProvider">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class RNGCryptoServiceProvider : System.Security.Cryptography.RandomNumberGenerator" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed RNGCryptoServiceProvider extends System.Security.Cryptography.RandomNumberGenerator" />
@@ -19,7 +20,6 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>The Mono:: runtime pseudo-random number generator (RNG).</summary>
     <remarks>
       <para>
 On Linux, and some UNIX derivate operating systems, the random numbers comes from /dev/random, or if not available, from /dev/urandom.
@@ -28,6 +28,10 @@ On Linux, and some UNIX derivate operating systems, the random numbers comes fro
 On Windows operating systems the random numbers comes directly from CryptoAPI.
 </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements a cryptographic Random Number Generator (RNG) using the implementation provided by the cryptographic service provider (CSP). This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -42,8 +46,11 @@ On Windows operating systems the random numbers comes directly from CryptoAPI.
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Create a new RNGCryptoServiceProvider instance. </summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.RNGCryptoServiceProvider" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -60,9 +67,16 @@ On Windows operating systems the random numbers comes directly from CryptoAPI.
         <Parameter Name="rgb" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="rgb">Seeding data for the random number generator.</param>
-        <summary>Create a new RNGCryptoServiceProvider instance using the array of bytes as a seed.</summary>
-        <remarks>Currently the runtime doesn't support any PRNG that requires seeding - so this contructor will not really seed the PRNG with the supplied data.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not directly initialize the <see cref="T:System.Security.Cryptography.RNGCryptoServiceProvider" /> class.  Calling this method is equivalent to calling the <see cref="M:System.Security.Cryptography.RNGCryptoServiceProvider.#ctor(System.Security.Cryptography.CspParameters)" /> constructor and passing null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.RNGCryptoServiceProvider" /> class.</para>
+        </summary>
+        <param name="rgb">
+          <attribution license="cc4" from="Microsoft" modified="false" />A byte array. This value is ignored.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -79,9 +93,13 @@ On Windows operating systems the random numbers comes directly from CryptoAPI.
         <Parameter Name="cspParams" Type="System.Security.Cryptography.CspParameters" />
       </Parameters>
       <Docs>
-        <param name="cspParams">To be added: an object of type 'CspParameters'</param>
-        <summary>Create a new RNGCryptoServiceProvider instance using the specified Cryptographic Service Provider (CSP).</summary>
         <remarks>Mono doesn't use the CspParameters informations, even on Windows, when creating an instance of this class using this constructor.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.RNGCryptoServiceProvider" /> class with the specified parameters.</para>
+        </summary>
+        <param name="cspParams">
+          <attribution license="cc4" from="Microsoft" modified="false" />The parameters to pass to the cryptographic service provider (CSP). </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -98,9 +116,16 @@ On Windows operating systems the random numbers comes directly from CryptoAPI.
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="str">Seeding data for the random number generator. </param>
-        <summary>Create a new RNGCryptoServiceProvider instance using the specified string as a seed.</summary>
-        <remarks>Currently the runtime doesn't support any PRNG that requires seeding - so this contructor will not really seed the PRNG with the supplied data.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not directly initialize the <see cref="T:System.Security.Cryptography.RNGCryptoServiceProvider" /> class.  Calling this method is equivalent to calling the <see cref="M:System.Security.Cryptography.RNGCryptoServiceProvider.#ctor(System.Security.Cryptography.CspParameters)" /> constructor and passing null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.Cryptography.RNGCryptoServiceProvider" /> class.</para>
+        </summary>
+        <param name="str">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string input. This parameter is ignored.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -156,9 +181,17 @@ On Windows operating systems the random numbers comes directly from CryptoAPI.
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="data">The buffer to be filled with random bytes.</param>
-        <summary>Fill the supplied buffer with random bytes.</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The length of the byte array determines how many cryptographically strong random bytes are produced.</para>
+          <para>This method is thread safe.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Fills an array of bytes with a cryptographically strong sequence of random values.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array to fill with a cryptographically strong sequence of random values. </param>
       </Docs>
     </Member>
     <Member MemberName="GetNonZeroBytes">
@@ -177,9 +210,16 @@ On Windows operating systems the random numbers comes directly from CryptoAPI.
         <Parameter Name="data" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="data">The buffer to be filled with random bytes.</param>
-        <summary>Fill the supplied buffer with random bytes excluding zeros (0x00).</summary>
-        <remarks>Some cryptographic functions requires random that do not contain zeros. However this restriction do not apply to most application code so this method shouldn't be used.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The length of the byte array determines how many cryptographically strong random nonzero bytes are produced.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Fills an array of bytes with a cryptographically strong sequence of random nonzero values.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array to fill with a cryptographically strong sequence of random nonzero values. </param>
       </Docs>
     </Member>
   </Members>

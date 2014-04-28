@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Content" FullName="System.Web.UI.WebControls.Content">
   <TypeSignature Language="C#" Value="public class Content : System.Web.UI.Control, System.Web.UI.INamingContainer" />
   <AssemblyInfo>
@@ -24,9 +25,31 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Web.UI.WebControls.Content" /> control is a container for the content and controls of a content page. A <see cref="T:System.Web.UI.WebControls.Content" /> control is used only with a master page that defines a corresponding <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> control. A <see cref="T:System.Web.UI.WebControls.Content" /> control is not added to the control hierarchy at runtime. Instead, the contents within the <see cref="T:System.Web.UI.WebControls.Content" /> control are directly merged into the corresponding <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> control.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.Content" /> control is associated with a <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> using its <see cref="P:System.Web.UI.WebControls.Content.ContentPlaceHolderID" /> property. Set the <see cref="P:System.Web.UI.WebControls.Content.ContentPlaceHolderID" /> property to the value of the <see cref="P:System.Web.UI.Control.ID" /> property of a <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> control in a master page. When the URL of the content page is called, all text, markup, and server controls that are contained within the <see cref="T:System.Web.UI.WebControls.Content" /> control are rendered to the <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> on the master page, and the address bar of the browser will show the name of the content page.</para>
+      <para>For more information about master pages and content pages, see <format type="text/html"><a href="4e53eedf-8304-4e7a-aed1-691a2623b28b">ASP.NET Master Pages Overview</a></format>.</para>
+      <format type="text/html">
+        <a href="#DeclarativeSyntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:Content
+    ContentPlaceHolderID="string"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ID="string"
+    runat="server"&gt;
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+        &lt;!-- child controls --&gt;
+&lt;/asp:Content&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Holds text, markup, and server controls to render to a <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> control in a master page.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,9 +57,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.Content" /> control typically is created declaratively, not programmatically. For an example, see <see cref="T:System.Web.UI.WebControls.Content" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.CompositeDataBoundControl" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +89,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All content that is encapsulated by the <see cref="T:System.Web.UI.WebControls.Content" /> control renders within the referenced <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> control in a master page. A <see cref="T:System.Web.UI.WebControls.Content" /> control is not added to the control hierarchy at runtime.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ID of the <see cref="T:System.Web.UI.WebControls.ContentPlaceHolder" /> control that is associated with the current content.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -84,9 +120,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Content.DataBinding" /> event is never invoked and does not appear in visual designers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control binds to a data source.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -107,9 +149,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Content.Disposed" /> event is never invoked and does not appear in visual designers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control is released from memory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -130,9 +178,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Content.Init" /> event is never invoked and does not appear in visual designers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the control is initialized.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -153,9 +207,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Content.Load" /> event is never invoked and does not appear in visual designers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the server control is loaded into the <see cref="T:System.Web.UI.Page" /> control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -176,9 +236,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Content.PreRender" /> event is never invoked and does not appear in visual designers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the server control is about to render to its containing <see cref="T:System.Web.UI.Page" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -199,9 +265,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.Content.Unload" /> event is never invoked and does not appear in visual designers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the server control is unloaded from memory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

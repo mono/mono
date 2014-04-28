@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewEditingControlShowingEventArgs" FullName="System.Windows.Forms.DataGridViewEditingControlShowingEventArgs">
   <TypeSignature Language="C#" Value="public class DataGridViewEditingControlShowingEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handle the <see cref="E:System.Windows.Forms.DataGridView.EditingControlShowing" /> event to perform custom initialization of the editing control when a cell enters edit mode. To customize the display characteristics of the control, set the properties of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewEditingControlShowingEventArgs.CellStyle" /> property rather than setting the properties of the control returned by the <see cref="P:System.Windows.Forms.DataGridViewEditingControlShowingEventArgs.Control" /> property.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.DataGridView.EditingControlShowing" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +30,16 @@
         <Parameter Name="cellStyle" Type="System.Windows.Forms.DataGridViewCellStyle" />
       </Parameters>
       <Docs>
-        <param name="control">To be added.</param>
-        <param name="cellStyle">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewEditingControlShowingEventArgs" /> class.</para>
+        </summary>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Control" /> in which the user will edit the selected cell's contents.</param>
+        <param name="cellStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> representing the style of the cell being edited.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +52,16 @@
         <ReturnType>System.Windows.Forms.DataGridViewCellStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To customize the display characteristics of the control, set the properties of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewEditingControlShowingEventArgs.CellStyle" /> property rather than setting the properties of the control returned by the <see cref="P:System.Windows.Forms.DataGridViewEditingControlShowingEventArgs.Control" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the cell style of the edited cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +74,16 @@
         <ReturnType>System.Windows.Forms.Control</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To customize the display characteristics of the control, set the properties of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewEditingControlShowingEventArgs.CellStyle" /> property rather than setting the properties of the control returned by the <see cref="P:System.Windows.Forms.DataGridViewEditingControlShowingEventArgs.Control" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control shown to the user for editing the selected cell's value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

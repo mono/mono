@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CryptoKeyRights" FullName="System.Security.AccessControl.CryptoKeyRights">
   <TypeSignature Language="C#" Value="public enum CryptoKeyRights" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed CryptoKeyRights extends System.Enum" />
@@ -15,9 +16,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the cryptographic key operation for which an authorization rule controls access or auditing.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ChangePermissions">
@@ -32,8 +36,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Change permissions for the key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Delete">
@@ -48,8 +55,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Delete the key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FullControl">
@@ -64,8 +74,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Full control of the key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenericAll">
@@ -80,8 +93,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A combination of <see cref="F:System.Security.AccessControl.CryptoKeyRights.GenericRead" /> and <see cref="F:System.Security.AccessControl.CryptoKeyRights.GenericWrite" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenericExecute">
@@ -96,8 +112,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenericRead">
@@ -112,8 +131,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Read the key data, extended attributes of the key, attributes of the key, and permissions for the key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenericWrite">
@@ -128,8 +150,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write the key data, extended attributes of the key, attributes of the key, and permissions for the key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadAttributes">
@@ -144,8 +169,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Read attributes of the key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadData">
@@ -160,8 +188,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Read the key data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadExtendedAttributes">
@@ -176,8 +207,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Read extended attributes of the key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadPermissions">
@@ -192,8 +226,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Read permissions for the key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Synchronize">
@@ -208,8 +245,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the key for synchronization.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TakeOwnership">
@@ -224,8 +264,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Take ownership of the key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteAttributes">
@@ -240,8 +283,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write attributes of the key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteData">
@@ -256,8 +302,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write key data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteExtendedAttributes">
@@ -272,8 +321,11 @@
         <ReturnType>System.Security.AccessControl.CryptoKeyRights</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write extended attributes of the key.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

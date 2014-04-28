@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataErrorInfo" FullName="System.ComponentModel.IDataErrorInfo">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDataErrorInfo" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDataErrorInfo" />
@@ -12,8 +13,11 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the functionality to offer custom error information that a user interface can bind to.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Error">
@@ -29,9 +33,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an error message indicating what is wrong with this object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">

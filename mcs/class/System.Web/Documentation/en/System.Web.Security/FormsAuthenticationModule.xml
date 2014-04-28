@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormsAuthenticationModule" FullName="System.Web.Security.FormsAuthenticationModule">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class FormsAuthenticationModule : System.Web.IHttpModule" />
   <AssemblyInfo>
@@ -17,8 +18,18 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.FormsAuthenticationModule" /> sets the current <see cref="P:System.Web.HttpContext.User" /> property to an <see cref="T:System.Security.Principal.IPrincipal" /> object that represents the user identity for the current request when the authentication <see cref="P:System.Web.Configuration.AuthenticationSection.Mode" /> is set to <see cref="F:System.Web.Configuration.AuthenticationMode.Forms" /> in the <format type="text/html"><a href="27bc0ba9-f23a-45f3-ae42-dbe7916e3ee2">authentication</a></format> element of the application's configuration file.</para>
+      <para>The <see cref="T:System.Web.Security.FormsAuthenticationModule" /> exposes an <see cref="E:System.Web.Security.FormsAuthenticationModule.Authenticate" /> event that enables you to provide a custom <see cref="T:System.Security.Principal.IPrincipal" /> object for the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" />. The <see cref="E:System.Web.Security.FormsAuthenticationModule.Authenticate" /> event is accessed by specifying a subroutine named <system>FormsAuthentication_OnAuthenticate</system> in the Global.asax file for your ASP.NET application.</para>
+      <block subset="none" type="note">
+        <para>In IIS 7.0, using the <see cref="T:System.Web.Security.WindowsAuthenticationModule" /> with the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> is not supported. For more information about compatibility issues in Integrated modes, see <format type="text/html"><a href="76f9cc78-f978-4837-b1c8-51d642ec4847">Moving an ASP.NET Application from IIS 6.0 to IIS 7.0</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Sets the identity of the user for an ASP.NET application when forms authentication is enabled. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +38,15 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is not intended to be called from application code.</para>
+          <para>ASP.NET calls this constructor to create an instance of the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> class. After calling the constructor, it calls the <see cref="M:System.Web.Security.FormsAuthenticationModule.Init(System.Web.HttpApplication)" /> method to initialize the new <see cref="T:System.Web.Security.FormsAuthenticationModule" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,8 +61,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.Security.FormsAuthenticationModule.Authenticate" /> event is raised during the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event.</para>
+          <para>You can handle the <see cref="E:System.Web.Security.FormsAuthenticationModule.Authenticate" /> event of the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> class by specifying a subroutine named <system>FormsAuthentication_OnAuthenticate</system> in the Global.asax file for your ASP.NET application.</para>
+          <para>You can use the <see cref="T:System.Web.Security.FormsAuthenticationEventArgs" /> <see cref="P:System.Web.Security.FormsAuthenticationEventArgs.User" /> property supplied to the <system>FormsAuthentication_OnAuthenticate</system> event to set the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> to a custom <see cref="T:System.Security.Principal.IPrincipal" /> object. If you do not specify a value for the <see cref="P:System.Web.Security.FormsAuthenticationEventArgs.User" /> property during the <system>FormsAuthentication_OnAuthenticate</system> event, the identity supplied by the forms authentication ticket in the cookie or URL is used.</para>
+          <para>The <system>FormsAuthentication_OnAuthenticate</system> event is only raised when the authentication mode is set to <see cref="F:System.Web.Configuration.AuthenticationMode.Forms" /> in the <format type="text/html"><a href="27bc0ba9-f23a-45f3-ae42-dbe7916e3ee2">authentication</a></format> element of the application's configuration file and the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> is an active HTTP module for the application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the application authenticates the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +86,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources, other than memory, used by the <see cref="T:System.Web.Security.FormsAuthenticationModule" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,9 +110,17 @@
         <Parameter Name="app" Type="System.Web.HttpApplication" />
       </Parameters>
       <Docs>
-        <param name="app">a <see cref="T:System.Web.HttpApplication" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+          <para>The <see cref="M:System.Web.Security.FormsAuthenticationModule.Init(System.Web.HttpApplication)" /> method ensures that the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> is included in the processing of the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> and <see cref="E:System.Web.HttpApplication.EndRequest" /> events.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> object.</para>
+        </summary>
+        <param name="app">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpApplication" /> instance. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

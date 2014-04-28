@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpBindingBaseElement" FullName="System.ServiceModel.Configuration.HttpBindingBaseElement">
   <TypeSignature Language="C#" Value="public abstract class HttpBindingBaseElement : System.ServiceModel.Configuration.StandardBindingElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit HttpBindingBaseElement extends System.ServiceModel.Configuration.StandardBindingElement implements class System.ServiceModel.Configuration.IBindingConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents HttpBindingBaseElement for HttpBindingBase.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,9 +42,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.HttpBindingBaseElement" /> class.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />the name of the binding.</param>
       </Docs>
     </Member>
     <Member MemberName="AllowCookies">
@@ -59,9 +67,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the client accepts cookies.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BypassProxyOnLocal">
@@ -80,9 +91,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether to bypass the proxy server for local addresses.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HostNameComparisonMode">
@@ -101,9 +115,12 @@
         <ReturnType>System.ServiceModel.HostNameComparisonMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the HTTP hostname comparison mode used to parse URIs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitializeFrom">
@@ -120,9 +137,13 @@
         <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes this binding configuration section with the content of the specified binding elements.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of binding elements.</param>
       </Docs>
     </Member>
     <Member MemberName="MaxBufferPoolSize">
@@ -144,9 +165,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size for a buffer pool that is processed by the binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxBufferSize">
@@ -168,9 +192,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size of the buffer to use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxReceivedMessageSize">
@@ -192,9 +219,12 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum size for a message that can be processed by the binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnApplyConfiguration">
@@ -211,9 +241,13 @@
         <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the specified binding to this instance.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The binding to be applied.</param>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -227,9 +261,12 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the properties of the binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProxyAddress">
@@ -248,9 +285,12 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URI address of the HTTP proxy.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReaderQuotas">
@@ -269,9 +309,12 @@
         <ReturnType>System.ServiceModel.Configuration.XmlDictionaryReaderQuotasElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets constraints on the complexity of SOAP messages that can be processed by endpoints configured with this binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextEncoding">
@@ -293,9 +336,12 @@
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the character set encoding to be used for emitting messages on the binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransferMode">
@@ -314,9 +360,12 @@
         <ReturnType>System.ServiceModel.TransferMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the transfer mode.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseDefaultWebProxy">
@@ -335,9 +384,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the system’s auto-configured HTTP proxy is used.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

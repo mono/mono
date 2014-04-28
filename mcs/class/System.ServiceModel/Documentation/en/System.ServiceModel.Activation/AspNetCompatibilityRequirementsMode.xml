@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AspNetCompatibilityRequirementsMode" FullName="System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode">
   <TypeSignature Language="C#" Value="public enum AspNetCompatibilityRequirementsMode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed AspNetCompatibilityRequirementsMode extends System.Enum" />
@@ -9,8 +10,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>vstecasp compatibility mode allows indigo2 services to use ASP features such as identity impersonation. It is enabled at the application level through the Web.config file and cannot be overridden by Web.config files nested in the application. When the <see cref="T:System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode" /> value is not specified for a service, it gets <see cref="F:System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode.Allowed" /> behavior by default. For more information, see <format type="text/html"><a href="4f8a7c4f-e735-4987-979a-b74fcdae2652">serviceHostingEnvironment</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether a indigo1 service runs, or can run, in a mode that is compatible with vstecasp.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Allowed">
@@ -24,7 +31,10 @@
         <ReturnType>System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>indigo2 services can run in an application domain with vstecasp compatibility mode set to true or false.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotAllowed">
@@ -38,7 +48,10 @@
         <ReturnType>System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>indigo2 services must run in an application domain with vstecasp compatibility mode set to false. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Required">
@@ -52,7 +65,10 @@
         <ReturnType>System.ServiceModel.Activation.AspNetCompatibilityRequirementsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>indigo2 services must run in an application domain with vstecasp compatibility mode set to true.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

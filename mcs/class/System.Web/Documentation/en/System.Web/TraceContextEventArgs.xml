@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TraceContextEventArgs" FullName="System.Web.TraceContextEventArgs">
   <TypeSignature Language="C#" Value="public sealed class TraceContextEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.TraceContextEventArgs" /> class is used by the <see cref="T:System.Web.TraceContext" /> class to provide access to trace records after all the tracing information is gathered during HTTP request processing. By adding an event handler delegate to handle the <see cref="E:System.Web.TraceContext.TraceFinished" /> event, you can process the records, record them to your own data store, or provide them as input to a profiling tool. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a collection of trace records to any method that handles the <see cref="E:System.Web.TraceContext.TraceFinished" /> event. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +28,14 @@
         <Parameter Name="records" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="records">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.TraceContextEventArgs" /> class, using the provided collection of trace records.</para>
+        </summary>
+        <param name="records">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.Web.TraceContextRecord" /> objects that represent all the trace records logged for the current request.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +48,17 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Every call to the <see cref="Overload:System.Web.TraceContext.Write" /> and <see cref="Overload:System.Web.TraceContext.Warn" /> methods generates a <see cref="T:System.Web.TraceContextRecord" /> object that is added to the <see cref="P:System.Web.TraceContextEventArgs.TraceRecords" /> messages collection. The <see cref="Overload:System.Web.TraceContext.Warn" /> method call sets the <see cref="P:System.Web.TraceContextRecord.IsWarning" /> property to true, while the other method calls set it to false.</para>
+          <para>You can iterate through the <see cref="P:System.Web.TraceContextEventArgs.TraceRecords" /> messages and examine records with specific categories or messages, and whether they are warnings. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.Web.TraceContextRecord" /> messages that are associated with the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

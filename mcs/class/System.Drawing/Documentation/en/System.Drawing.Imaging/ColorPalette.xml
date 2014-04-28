@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ColorPalette" FullName="System.Drawing.Imaging.ColorPalette">
   <TypeSignature Language="C#" Value="public sealed class ColorPalette" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You are not allowed to construct a <see cref="T:System.Drawing.Imaging.ColorPalette" /> object directly. If you created a <see cref="T:System.Drawing.Imaging.ColorPalette" /> object, you could then manipulate the palette size for a particular image, which is not allowed. Use the <see cref="P:System.Drawing.Image.Palette" /> property to obtain a <see cref="T:System.Drawing.Imaging.ColorPalette" /> object.</para>
+      <para>The colors in the palette are limited to 32-bit ARGB colors. A 32-bit ARGB color has 8 bits each for alpha, red, green, and blue values. The lowest 8 bits make up the blue bit, the next 8 bits are green, the next 8 bits are red, and the most significant 8 bits are alpha. This means each component can vary from 0 to 255. Fully on is 255 and fully off is 0. Alpha is used to make the color value transparent (alpha = 0) or opaque (alpha = 255). The number of intensity levels in the image can be increased without increasing the number of colors used. This process creates what is called a halftone, and it offers increased contrast at a cost of decreased resolution.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines an array of colors that make up a color palette. The colors are 32-bit ARGB colors. Not inheritable.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Entries">
@@ -24,9 +32,12 @@
         <ReturnType>System.Drawing.Color[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing.Color []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an array of <see cref="T:System.Drawing.Color" /> structures.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +51,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies how to interpret the color information in the array of colors.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

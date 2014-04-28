@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeBinaryOperatorType" FullName="System.CodeDom.CodeBinaryOperatorType">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum CodeBinaryOperatorType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CodeBinaryOperatorType extends System.Enum" />
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeBinaryOperatorType" /> defines identifiers for the most common types of binary operators. These operator identifiers are used by <see cref="T:System.CodeDom.CodeBinaryOperatorExpression" /> to indicate the type of operator in each expression.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines identifiers for supported binary operators.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -37,8 +45,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Addition operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Assign">
@@ -55,8 +66,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assignment operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BitwiseAnd">
@@ -73,8 +87,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Bitwise and operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BitwiseOr">
@@ -91,8 +108,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Bitwise or operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BooleanAnd">
@@ -109,8 +129,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Boolean and operator. This represents a short circuiting operator. A short circuiting operator will evaluate only as many expressions as necessary before returning a correct value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BooleanOr">
@@ -127,8 +150,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Boolean or operator. This represents a short circuiting operator. A short circuiting operator will evaluate only as many expressions as necessary before returning a correct value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Divide">
@@ -145,8 +171,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Division operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GreaterThan">
@@ -163,8 +192,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Greater than operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GreaterThanOrEqual">
@@ -181,8 +213,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Greater than or equal operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IdentityEquality">
@@ -199,8 +234,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identity equal operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IdentityInequality">
@@ -217,8 +255,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identity not equal operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LessThan">
@@ -235,8 +276,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Less than operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LessThanOrEqual">
@@ -253,8 +297,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Less than or equal operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Modulus">
@@ -271,8 +318,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Modulus operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Multiply">
@@ -289,8 +339,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multiplication operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Subtract">
@@ -307,8 +360,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subtraction operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ValueEquality">
@@ -325,8 +381,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Value equal operator.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

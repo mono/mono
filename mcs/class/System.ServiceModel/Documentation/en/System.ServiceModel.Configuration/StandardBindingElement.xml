@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StandardBindingElement" FullName="System.ServiceModel.Configuration.StandardBindingElement">
   <TypeSignature Language="C#" Value="public abstract class StandardBindingElement : System.Configuration.ConfigurationElement, System.ServiceModel.Configuration.IBindingConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit StandardBindingElement extends System.Configuration.ConfigurationElement implements class System.ServiceModel.Configuration.IBindingConfigurationElement" />
@@ -14,8 +15,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class defines a binding configuration element that can be used to describe an aspect of how an endpoint communicates with others in the network.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base class for the configuration elements that specify predefined bindings provided by indigo1.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +34,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.StandardBindingElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,9 +52,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.StandardBindingElement" /> class with the specified name. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A name that uniquely identifies this configuration element.</param>
       </Docs>
     </Member>
     <Member MemberName="ApplyConfiguration">
@@ -61,9 +75,16 @@
         <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Name of the standard binding specified in <paramref name="binding" /> is ignored during this operation. This is because the Name attribute of a binding is used in conjunction with the Namespace attribute of the same binding to generate the correct WSDL for a binding. However, the <see cref="P:System.ServiceModel.Configuration.StandardBindingElement.Name" /> property of this type is mainly used as a key to identify this binding element in the binding collection. Therefore, the <see cref="P:System.ServiceModel.Configuration.StandardBindingElement.Name" /> property is not modified during this operation.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the content of the specified binding to this binding configuration element.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />A binding.</param>
       </Docs>
     </Member>
     <Member MemberName="BindingElementType">
@@ -77,9 +98,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, gets the <see cref="T:System.Type" /> object that represents the custom binding element. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloseTimeout">
@@ -101,9 +125,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interval of time provided for a close operation to complete.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitializeFrom">
@@ -120,9 +147,13 @@
         <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes this binding configuration element with the content of the specified binding.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />A binding.</param>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -144,9 +175,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each instance of a binding has a name and namespace that together uniquely identify it in the metadata of the service.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the binding. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnApplyConfiguration">
@@ -163,9 +200,13 @@
         <Parameter Name="binding" Type="System.ServiceModel.Channels.Binding" />
       </Parameters>
       <Docs>
-        <param name="binding">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when the content of a specified binding element is applied to this binding configuration element.</para>
+        </summary>
+        <param name="binding">
+          <attribution license="cc4" from="Microsoft" modified="false" />A binding.</param>
       </Docs>
     </Member>
     <Member MemberName="OpenTimeout">
@@ -187,9 +228,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interval of time provided for an open operation to complete.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -203,9 +247,12 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Configuration.ConfigurationPropertyCollection" /> instance that contains a collection of <see cref="T:System.Configuration.ConfigurationProperty" /> objects that can be attributes or <see cref="T:System.Configuration.ConfigurationElement" /> objects of this configuration element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceiveTimeout">
@@ -227,9 +274,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interval of time provided for a receive operation to complete.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SendTimeout">
@@ -251,9 +301,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interval of time provided for a send operation to complete.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

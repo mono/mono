@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Header" FullName="System.Runtime.Remoting.Messaging.Header">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class Header" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit Header extends System.Object" />
@@ -19,8 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Runtime.Remoting.Messaging.Header" /> objects are used to convey information about a remote function call (for example, transaction ID or a method signature). For more information, see <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" /> and <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the out-of-band data for a call.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,10 +46,15 @@
         <Parameter Name="_Value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="_Name">To be added.</param>
-        <param name="_Value">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Messaging.Header" /> class with the given name and value.</para>
+        </summary>
+        <param name="_Name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Runtime.Remoting.Messaging.Header" />. </param>
+        <param name="_Value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the value for the <see cref="T:System.Runtime.Remoting.Messaging.Header" />. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -60,11 +73,17 @@
         <Parameter Name="_MustUnderstand" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="_Name">To be added.</param>
-        <param name="_Value">To be added.</param>
-        <param name="_MustUnderstand">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Messaging.Header" /> class with the given name, value, and additional configuration information.</para>
+        </summary>
+        <param name="_Name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Runtime.Remoting.Messaging.Header" />. </param>
+        <param name="_Value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the value for the <see cref="T:System.Runtime.Remoting.Messaging.Header" />. </param>
+        <param name="_MustUnderstand">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the receiving end must understand the out-of-band data. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -84,12 +103,19 @@
         <Parameter Name="_HeaderNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="_Name">To be added.</param>
-        <param name="_Value">To be added.</param>
-        <param name="_MustUnderstand">To be added.</param>
-        <param name="_HeaderNamespace">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Messaging.Header" /> class.</para>
+        </summary>
+        <param name="_Name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Runtime.Remoting.Messaging.Header" />. </param>
+        <param name="_Value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that contains the value of the <see cref="T:System.Runtime.Remoting.Messaging.Header" />. </param>
+        <param name="_MustUnderstand">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the receiving end must understand out-of-band data. </param>
+        <param name="_HeaderNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Remoting.Messaging.Header" /> XML namespace. </param>
       </Docs>
     </Member>
     <Member MemberName="HeaderNamespace">
@@ -106,8 +132,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the XML namespace that the current <see cref="T:System.Runtime.Remoting.Messaging.Header" /> belongs to.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MustUnderstand">
@@ -124,8 +153,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the receiving end must understand the out-of-band data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -142,8 +174,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the name of the <see cref="T:System.Runtime.Remoting.Messaging.Header" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -160,8 +195,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the value for the <see cref="T:System.Runtime.Remoting.Messaging.Header" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

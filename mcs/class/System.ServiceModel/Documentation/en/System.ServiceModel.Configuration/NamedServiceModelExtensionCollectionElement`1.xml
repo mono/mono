@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NamedServiceModelExtensionCollectionElement&lt;TServiceModelExtensionElement&gt;" FullName="System.ServiceModel.Configuration.NamedServiceModelExtensionCollectionElement&lt;TServiceModelExtensionElement&gt;">
   <TypeSignature Language="C#" Value="public abstract class NamedServiceModelExtensionCollectionElement&lt;TServiceModelExtensionElement&gt; : System.ServiceModel.Configuration.ServiceModelExtensionCollectionElement&lt;TServiceModelExtensionElement&gt;, System.Collections.Generic.ICollection&lt;TServiceModelExtensionElement&gt;, System.Collections.Generic.IEnumerable&lt;TServiceModelExtensionElement&gt; where TServiceModelExtensionElement : ServiceModelExtensionElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit NamedServiceModelExtensionCollectionElement`1&lt;(class System.ServiceModel.Configuration.ServiceModelExtensionElement) TServiceModelExtensionElement&gt; extends System.ServiceModel.Configuration.ServiceModelExtensionCollectionElement`1&lt;!TServiceModelExtensionElement&gt; implements class System.Collections.Generic.ICollection`1&lt;!TServiceModelExtensionElement&gt;, class System.Collections.Generic.IEnumerable`1&lt;!TServiceModelExtensionElement&gt;, class System.Collections.IEnumerable" />
@@ -28,8 +29,11 @@
   </Interfaces>
   <Docs>
     <typeparam name="TServiceModelExtensionElement">To be added.</typeparam>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a collection of <see cref="T:System.ServiceModel.Configuration.ServiceModelExtensionElement" /> instances.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Name">
@@ -51,9 +55,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of this collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -67,9 +74,12 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Configuration.ConfigurationPropertyCollection" /> instance that contains a collection of <see cref="T:System.Configuration.ConfigurationProperty" /> objects that can be attributes or <see cref="T:System.Configuration.ConfigurationElement" /> objects of this configuration element.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

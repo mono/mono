@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WeakReference&lt;T&gt;" FullName="System.WeakReference&lt;T&gt;">
   <TypeSignature Language="C#" Value="public sealed class WeakReference&lt;T&gt; : System.Runtime.Serialization.ISerializable where T : class" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit WeakReference`1&lt;class T&gt; extends System.Object implements class System.Runtime.Serialization.ISerializable" />
@@ -22,8 +23,14 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A weak reference enables the garbage collector to collect an object while still allowing an application to access the object. If you need the object, you can obtain a strong reference to it and prevent it from being collected.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a typed weak reference, which references an object while still allowing that object to be reclaimed by garbage collection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -72,8 +79,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Discards the reference to the target that is represented by the current <see cref="T:System.WeakReference`1" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -91,10 +101,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Populates a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with all the data necessary to serialize the current <see cref="T:System.WeakReference`1" /> object.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that holds all the data necessary to serialize or deserialize the current <see cref="T:System.WeakReference`1" /> object.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location where serialized data is stored and retrieved.</param>
       </Docs>
     </Member>
     <Member MemberName="SetTarget">

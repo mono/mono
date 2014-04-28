@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ThreadWaitReason" FullName="System.Diagnostics.ThreadWaitReason">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum ThreadWaitReason" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ThreadWaitReason extends System.Enum" />
@@ -14,8 +15,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The thread wait reason is only valid when the <see cref="T:System.Diagnostics.ThreadState" /> is <see cref="F:System.Diagnostics.ThreadState.Wait" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the reason a thread is waiting.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EventPairHigh">
@@ -32,8 +39,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for event pair high.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EventPairLow">
@@ -50,8 +60,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for event pair low.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExecutionDelay">
@@ -68,8 +81,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Thread execution is delayed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Executive">
@@ -86,8 +102,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for the scheduler.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FreePage">
@@ -104,8 +123,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for a free virtual memory page.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LpcReceive">
@@ -122,8 +144,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for a local procedure call to arrive.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LpcReply">
@@ -140,8 +165,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for reply to a local procedure call to arrive.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PageIn">
@@ -158,8 +186,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for a virtual memory page to arrive in memory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PageOut">
@@ -176,8 +207,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for a virtual memory page to be written to disk.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Suspended">
@@ -194,8 +228,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Thread execution is suspended.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SystemAllocation">
@@ -212,8 +249,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for system allocation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unknown">
@@ -230,8 +270,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for an unknown reason.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UserRequest">
@@ -248,8 +291,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for a user request.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VirtualMemory">
@@ -266,8 +312,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The thread is waiting for the system to allocate virtual memory.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

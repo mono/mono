@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectDataSourceFilteringEventArgs" FullName="System.Web.UI.WebControls.ObjectDataSourceFilteringEventArgs">
   <TypeSignature Language="C#" Value="public class ObjectDataSourceFilteringEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceFilteringEventArgs" /> class is used to pass data to the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Filtering" /> event handler of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control. The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceFilteringEventArgs.ParameterValues" /> property provides access to the filter parameter values before the filtering operation is performed. You can cancel the <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Select" /> method by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceFilteringEventArgs" /> to true.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Filtering" /> event of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +28,17 @@
         <Parameter Name="parameterValues" Type="System.Collections.Specialized.IOrderedDictionary" />
       </Parameters>
       <Docs>
-        <param name="parameterValues">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters in the <paramref name="parameterValues" /> collection are associated with any parameters that are specified in the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.FilterExpression" /> property when the <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Select" /> method runs.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceFilteringEventArgs" /> class by using the specified object.</para>
+        </summary>
+        <param name="parameterValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> of <see cref="T:System.Web.UI.WebControls.Parameter" /> objects.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +51,19 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceFilteringEventArgs" /> class is used to pass data to the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Filtering" /> event handler of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> object. The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceFilteringEventArgs.ParameterValues" /> property provides access to the filter parameter values before the filtering operation is performed. </para>
+          <block subset="none" type="note">
+            <para>You should validate any filter parameter value that you receive from the client. The runtime simply substitutes the parameter value into the filter expression and applies it to the <see cref="T:System.Data.DataView" /> object that is returned by the <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Select" /> method. If you are using the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.FilterExpression" /> property as a security measure to limit the number of items that are returned, you must validate the parameter values before the filtering occurs.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Collections.Specialized.IOrderedDictionary" />  interface that provides access to the <see cref="T:System.Web.UI.WebControls.Parameter" /> objects of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

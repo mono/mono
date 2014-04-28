@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompleteWizardStep" FullName="System.Web.UI.WebControls.CompleteWizardStep">
   <TypeSignature Language="C#" Value="public sealed class CompleteWizardStep : System.Web.UI.WebControls.TemplatedWizardStep" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.CompleteWizardStep" /> class is derived from <see cref="T:System.Web.UI.WebControls.TemplatedWizardStep" /> and used by the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. By default the <see cref="T:System.Web.UI.WebControls.CompleteWizardStep" /> step is displayed after the <see cref="T:System.Web.UI.WebControls.CreateUserWizardStep" /> step. The <see cref="T:System.Web.UI.WebControls.CompleteWizardStep" /> step is a required step of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the template of the final step for creating a user account with the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.CompleteWizardStep" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +49,20 @@
         <ReturnType>System.Web.UI.WebControls.WizardStepType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CompleteWizardStep.StepType" /> property specifies the type of navigation UI to display for the final user account creation step (the <see cref="T:System.Web.UI.WebControls.CreateUserWizardStep" /> step) of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.CompleteWizardStep.StepType" /> property overrides the <see cref="P:System.Web.UI.WebControls.WizardStepBase.StepType" /> property to ensure that <see cref="T:System.Web.UI.WebControls.CompleteWizardStep" /> is always set to the <see cref="F:System.Web.UI.WebControls.WizardStepType.Complete" /> value of the <see cref="T:System.Web.UI.WebControls.WizardStepType" /> enumeration. Attempting to set the <see cref="P:System.Web.UI.WebControls.CompleteWizardStep.StepType" /> property to a different value will result in an <see cref="T:System.InvalidOperationException" />.</para>
+          </block>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of user interface (UI) to display for the <see cref="T:System.Web.UI.WebControls.CompleteWizardStep" /> page of a <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +80,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the title to display for the final user account creation step of the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

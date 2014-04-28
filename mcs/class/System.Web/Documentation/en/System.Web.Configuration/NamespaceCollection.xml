@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NamespaceCollection" FullName="System.Web.Configuration.NamespaceCollection">
   <TypeSignature Language="C#" Value="public sealed class NamespaceCollection : System.Configuration.ConfigurationElementCollection" />
   <AssemblyInfo>
@@ -14,9 +15,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.NamespaceCollection" /> contains <see cref="T:System.Web.Configuration.NamespaceInfo" /> objects. Each <see cref="T:System.Web.Configuration.NamespaceInfo" /> object is the same as an Import (&lt;%@ Import %&gt;) directive that applies to all pages and controls in the scope of the configuration file. The Import directive allows you to import a namespace into your ASP.NET page, making all its classes available for use on your page. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a collection of namespace objects. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +31,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.NamespaceCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +52,17 @@
         <Parameter Name="namespaceInformation" Type="System.Web.Configuration.NamespaceInfo" />
       </Parameters>
       <Docs>
-        <param name="namespaceInformation">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection must not already contain a <see cref="T:System.Web.Configuration.NamespaceInfo" /> object with the same <see cref="P:System.Web.Configuration.NamespaceInfo.Namespace" /> property value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Web.Configuration.NamespaceInfo" /> object to the collection.</para>
+        </summary>
+        <param name="namespaceInformation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Configuration.NamespaceInfo" /> object to add to the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,10 +80,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For ASP.NET pages written using Visual Basic the <see cref="N:Microsoft.VisualBasic" /> namespace is automatically imported unless the <see cref="P:System.Web.Configuration.NamespaceCollection.AutoImportVBNamespace" /> property is false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines whether the Visual Basic namespace is imported without having to specify it.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -80,9 +103,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method empties the collection and inserts a clear element into the appropriate section of the configuration file to remove all references to elements defined in higher-level configuration files and in the current configuration file. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all <see cref="T:System.Web.Configuration.NamespaceInfo" /> objects from the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -171,10 +200,17 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the specified element is defined in a higher-level configuration file, this method inserts a remove element into the appropriate section of the configuration file at the level of the current application. If the element is defined in the current configuration file, its entry is removed from the configuration file. The object to remove must exist in the collection; if it does not, a <see cref="T:System.Configuration.ConfigurationException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the <see cref="T:System.Web.Configuration.NamespaceInfo" /> object with the specified key from the collection.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of a <see cref="T:System.Web.Configuration.NamespaceInfo" /> object to remove from the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -190,10 +226,17 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the specified element is defined in a higher-level configuration file, this method inserts a remove element into the appropriate section of the configuration file at the level of the current application. If the element is defined in the current configuration file, its entry is removed from the configuration file. The object to remove must exist in the collection; if it does not, a <see cref="T:System.Configuration.ConfigurationException" /> is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a <see cref="T:System.Web.Configuration.ProfileGroupSettings" /> object from the specified index in the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of a <see cref="T:System.Web.Configuration.NamespaceInfo" /> object to remove from the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

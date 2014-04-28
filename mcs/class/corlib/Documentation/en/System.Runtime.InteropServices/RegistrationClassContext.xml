@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RegistrationClassContext" FullName="System.Runtime.InteropServices.RegistrationClassContext">
   <TypeSignature Language="C#" Value="public enum RegistrationClassContext" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed RegistrationClassContext extends System.Enum" />
@@ -15,9 +16,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The values in the <see cref="T:System.Runtime.InteropServices.RegistrationClassContext" /> enumeration are used in the <paramref name="classContext" /> parameter of the <see cref="M:System.Runtime.InteropServices.RegistrationServices.RegisterTypeForComClients(System.Type,System.Runtime.InteropServices.RegistrationClassContext,System.Runtime.InteropServices.RegistrationConnectionType)" /> method. These values are the same as those defined in the COM CLSCTX enumeration, which is used as the <paramref name="dwClsContext" /> parameter in calls to the COM API CoRegisterClassObject.</para>
+      <para>For more information about CoRegisterClassObject and the CLSCTX enumeration, see the MSDN library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the set of execution contexts in which a class object will be made available for requests to construct instances.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DisableActivateAsActivator">
@@ -32,8 +40,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disables activate-as-activator (AAA) activations for this activation only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnableActivateAsActivator">
@@ -48,8 +59,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables activate-as-activator (AAA) activations for this activation only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnableCodeDownload">
@@ -64,8 +78,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows the downloading of code from the Directory Service or the Internet.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FromDefaultContext">
@@ -80,8 +97,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begin this activation from the default context of the current apartment.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InProcessHandler">
@@ -96,8 +116,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The code that manages objects of this class is an in-process handler.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InProcessHandler16">
@@ -112,8 +135,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InProcessServer">
@@ -128,8 +154,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The code that creates and manages objects of this class is a DLL that runs in the same process as the caller of the function specifying the class context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InProcessServer16">
@@ -144,8 +173,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LocalServer">
@@ -160,8 +192,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The EXE code that creates and manages objects of this class runs on same machine but is loaded in a separate process space.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoCodeDownload">
@@ -176,8 +211,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disallows the downloading of code from the Directory Service or the Internet.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoCustomMarshal">
@@ -192,8 +230,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether activation fails if it uses custom marshaling.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoFailureLog">
@@ -208,8 +249,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides the logging of failures.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RemoteServer">
@@ -224,8 +268,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A remote machine context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reserved1">
@@ -240,8 +287,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reserved2">
@@ -256,8 +306,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reserved3">
@@ -272,8 +325,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reserved4">
@@ -288,8 +344,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reserved5">
@@ -304,8 +363,11 @@
         <ReturnType>System.Runtime.InteropServices.RegistrationClassContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not used.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

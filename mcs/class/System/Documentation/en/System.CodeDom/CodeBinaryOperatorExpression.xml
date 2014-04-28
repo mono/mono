@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeBinaryOperatorExpression" FullName="System.CodeDom.CodeBinaryOperatorExpression">
   <TypeSignature Language="C#" Value="public class CodeBinaryOperatorExpression : System.CodeDom.CodeExpression" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeBinaryOperatorExpression extends System.CodeDom.CodeExpression" />
@@ -23,8 +24,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeBinaryOperatorExpression" /> can be used to represent code expressions that include a binary operator. Some examples of binary operators are equality (==), addition (+), and bitwise (|) operators. The <see cref="T:System.CodeDom.CodeBinaryOperatorType" /> enumeration represents a set of basic, commonly used binary operators that are supported in many languages.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an expression that consists of a binary operation between two expressions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +47,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeBinaryOperatorExpression" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -59,11 +70,17 @@
         <Parameter Name="right" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="left">To be added: an object of type 'CodeExpression'</param>
-        <param name="op">To be added: an object of type 'CodeBinaryOperatorType'</param>
-        <param name="right">To be added: an object of type 'CodeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeBinaryOperatorExpression" /> class using the specified parameters.</para>
+        </summary>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeExpression" /> on the left of the operator. </param>
+        <param name="op">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeBinaryOperatorType" /> indicating the type of operator. </param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeExpression" /> on the right of the operator. </param>
       </Docs>
     </Member>
     <Member MemberName="Left">
@@ -81,9 +98,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the code expression on the left of the operator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Operator">
@@ -101,9 +121,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeBinaryOperatorType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A binary operator performs an evaluation on two operands. Some examples of binary operators are equality (==), addition (+), and bitwise (|) operators. Many commonly used binary operators can be found in the <see cref="T:System.CodeDom.CodeBinaryOperatorType" /> enumeration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the operator in the binary operator expression.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Right">
@@ -121,9 +147,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the code expression on the right of the operator.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

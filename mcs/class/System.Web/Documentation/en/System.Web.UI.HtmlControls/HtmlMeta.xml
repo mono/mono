@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlMeta" FullName="System.Web.UI.HtmlControls.HtmlMeta">
   <TypeSignature Language="C#" Value="public class HtmlMeta : System.Web.UI.HtmlControls.HtmlControl" />
   <AssemblyInfo>
@@ -14,9 +15,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" /> control provides programmatic access to the HTML &lt;meta&gt; element on the server. The HTML &lt;meta&gt; element is a container for data about the rendered page, but not page content itself. The &lt;meta&gt; tag is placed between the opening and closing HTML &lt;head&gt; elements. Each &lt;meta&gt; element describes a metadata property name and its associated value. </para>
+      <para>Use the <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" /> control's <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Name" /> property to specify the metadata property name, and the <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Content" /> property to specify the metadata property value. Use the <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Scheme" /> property to specify additional information to user agents on how to interpret the metadata property. Use the <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.HttpEquiv" /> property in place of the <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Name" /> property when the resulting metadata property will be retrieved using HTTP.</para>
+      <para>You can get a reference to the page &lt;head&gt; element using the <see cref="P:System.Web.UI.Page.Header" /> property of the <see cref="T:System.Web.UI.Page" /> object.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows programmatic access to the HTML &lt;meta&gt; tag on the server. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +33,37 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" /> control. </para>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.HtmlControls.HtmlControl.TagName" /> </para>
+              </term>
+              <description>
+                <para>The "meta" literal string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -47,10 +84,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Content" /> property, together with the <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Name" /> property, defines a metadata property of the page. </para>
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Content" /> property is rendered to the content attribute of the resulting HTML &lt;meta&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the metadata property value defined by the <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,10 +115,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.HttpEquiv" /> property in place of the <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Name" /> property to identify information that should be included in the response headers of an HTTP request. </para>
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.HttpEquiv" /> property is rendered to the http-equiv attribute of the resulting HTML &lt;meta&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" /> control property that is included in the HTTP response header.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,10 +146,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Name" /> property, together with the <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Content" /> property, defines a metadata property of the page.</para>
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Name" /> property is rendered to the name attribute of the resulting HTML &lt;meta&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the metadata property name defined by the <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" /> control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -117,9 +175,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" /> control renders a <see cref="F:System.Web.UI.HtmlTextWriter.SelfClosingTagEnd" /> HTML bracket (/&gt;) on the &lt;meta&gt; element if the client's browser is XHTML compliant. For more information on configuring ASP.NET for non-XHTML rendering, see <format type="text/html"><a href="42483a54-f1ae-44e1-88e6-4370f8690149">How to: Configure ASP.NET Web Sites for Non-XHTML Rendering</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" /> control to the client's browser using the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> used to render the <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" /> control's content on the client's browser.</param>
       </Docs>
     </Member>
     <Member MemberName="Scheme">
@@ -137,10 +202,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Scheme" /> property allows you to specify a scheme attribute of the rendered HTML &lt;meta&gt; element. The scheme attribute can be used to provide user agents, such as client browsers or search engines, additional context for interpreting the metadata property. </para>
+          <para>The <see cref="P:System.Web.UI.HtmlControls.HtmlMeta.Scheme" /> property is rendered to the scheme attribute of the resulting HTML &lt;meta&gt; element.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a scheme attribute used to interpret the metadata property value defined by the <see cref="T:System.Web.UI.HtmlControls.HtmlMeta" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

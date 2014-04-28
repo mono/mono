@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormsAuthenticationEventHandler" FullName="System.Web.Security.FormsAuthenticationEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void FormsAuthenticationEventHandler(object sender, FormsAuthenticationEventArgs e);" />
   <AssemblyInfo>
@@ -14,8 +15,17 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.FormsAuthenticationEventHandler" /> delegate is defined for the <see cref="E:System.Web.Security.FormsAuthenticationModule.Authenticate" /> event of the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> class. You can access the <see cref="E:System.Web.Security.FormsAuthenticationModule.Authenticate" /> event of the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> class by specifying a subroutine named <system>FormsAuthentication_OnAuthenticate</system> in the Global.asax file for your ASP.NET application. The <see cref="E:System.Web.Security.FormsAuthenticationModule.Authenticate" /> event is raised during the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event.</para>
+      <para>The <see cref="T:System.Web.Security.FormsAuthenticationModule" /> constructs a <see cref="T:System.Web.Security.FormsAuthenticationEventArgs" /> object using the current <see cref="T:System.Web.HttpContext" /> and passes it to the <system>FormsAuthentication_OnAuthenticate</system> event.</para>
+      <para>You can use the <see cref="P:System.Web.Security.FormsAuthenticationEventArgs.User" /> property of the <see cref="T:System.Web.Security.FormsAuthenticationEventArgs" /> object supplied to the <system>FormsAuthentication_OnAuthenticate</system> event to set the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> to a custom <see cref="T:System.Security.Principal.IPrincipal" /> object. If you do not specify a value for the <see cref="P:System.Web.Security.FormsAuthenticationEventArgs.User" /> property during the <system>FormsAuthentication_OnAuthenticate</system> event, the identity supplied by the forms authentication ticket in the cookie or URL is used.</para>
+      <para>The <system>FormsAuthentication_OnAuthenticate</system> event is only raised when the authentication <see cref="P:System.Web.Configuration.AuthenticationSection.Mode" /> is set to <see cref="F:System.Web.Configuration.AuthenticationMode.Forms" /> and the <see cref="T:System.Web.Security.FormsAuthenticationModule" /> is an active HTTP module for the application.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the <system>FormsAuthentication_OnAuthenticate</system> event of a <see cref="T:System.Web.Security.FormsAuthenticationModule" />.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IcmpV4Statistics" FullName="System.Net.NetworkInformation.IcmpV4Statistics">
   <TypeSignature Language="C#" Value="public abstract class IcmpV4Statistics" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit IcmpV4Statistics extends System.Object" />
@@ -11,9 +12,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ICMPv4 is a set of error and informational messages for use with Internet Protocol version 4. ICMP version 4 is defined in IETF RFC 792.</para>
+      <para>This class is used by the <see cref="M:System.Net.NetworkInformation.IPGlobalProperties.GetIcmpV4Statistics" /> method to return ICMPv4 traffic information.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides Internet Control Message Protocol for IPv4 (ICMPv4) statistical data for the local computer.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +34,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor can be called only by classes that derive from <see cref="T:System.Net.NetworkInformation.IcmpV4Statistics" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.NetworkInformation.IcmpV4Statistics" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddressMaskRepliesReceived">
@@ -43,10 +57,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Address Mask Request and Reply messages are used to determine the number of bits in the subnet mask for the local subnet.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Address Mask Reply messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddressMaskRepliesSent">
@@ -61,10 +81,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Address Mask Request and Reply messages are used to determine the number of bits in the subnet mask for the local subnet.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Address Mask Reply messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddressMaskRequestsReceived">
@@ -79,10 +105,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Address Mask Request and Reply messages are used to determine the number of bits in the subnet mask for the local subnet.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Address Mask Request messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddressMaskRequestsSent">
@@ -97,10 +129,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Address Mask Request and Reply messages are used to determine the number of bits in the subnet mask for the local subnet.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Address Mask Request messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DestinationUnreachableMessagesReceived">
@@ -115,10 +153,30 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Destination Unreachable message can be sent to the computer that is the source of a packet for any of the following reasons: </para>
+          <list type="bullet">
+            <item>
+              <para>The computer cannot find a route to the destination address.</para>
+            </item>
+            <item>
+              <para>Communication with the destination address is administratively prohibited. For example, a firewall prevents delivery of packets to the destination.</para>
+            </item>
+            <item>
+              <para>The destination address is unreachable.</para>
+            </item>
+            <item>
+              <para>The destination port is unreachable. For example, there is no listener available for the packet's protocol.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) messages that were received because of a packet having an unreachable address in its destination.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DestinationUnreachableMessagesSent">
@@ -133,10 +191,33 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Destination Unreachable message can be sent to the computer that is the source of a packet for any of the following reasons: </para>
+          <list type="bullet">
+            <item>
+              <para>The computer cannot find a route to the destination address.</para>
+            </item>
+            <item>
+              <para>Communication with the destination address is administratively prohibited. For example, a firewall prevents delivery of packets to the destination.</para>
+            </item>
+            <item>
+              <para>The destination address is unreachable.</para>
+            </item>
+            <item>
+              <para>The destination port is unreachable. For example, there is no listener available for the packet's protocol.</para>
+            </item>
+            <item>
+              <para />
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) messages that were sent because of a packet having an unreachable address in its destination.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EchoRepliesReceived">
@@ -151,10 +232,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Echo Request and Echo Reply messages allow a computer to request an ICMP response from a remote computer on a network. This functionality is often used to determine the validity of remote addresses.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Echo Reply messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EchoRepliesSent">
@@ -169,10 +256,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Echo Request and Echo Reply messages allow a computer to request an ICMP response from a remote computer on a network. This functionality is often used to determine the validity of remote addresses.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Echo Reply messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EchoRequestsReceived">
@@ -187,10 +280,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Echo Request and Echo Reply messages allow a computer to request an ICMP response from a remote computer on a network. This functionality is often used to determine the validity of remote addresses.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Echo Request messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EchoRequestsSent">
@@ -205,10 +304,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Echo Request and Echo Reply messages allow a computer to request an ICMP response from a remote computer on a network. This functionality is often used to determine the validity of remote addresses.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Echo Request messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ErrorsReceived">
@@ -223,10 +328,13 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) error messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ErrorsSent">
@@ -241,10 +349,13 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) error messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MessagesReceived">
@@ -259,10 +370,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ICMPv4 messages are sent to communicate errors and information about packets that were sent using the Internet Protocol version 4 (IPv4).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MessagesSent">
@@ -277,10 +394,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ICMPV4 messages are sent to communicate errors and information about packets that were sent using Internet Protocol version 4 (IPv4).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParameterProblemsReceived">
@@ -295,10 +418,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter Problem messages are sent when a host computer or router encounters problems while processing the contents of a packet header, such as encountering an invalid IPv4 option or an invalid Next Header type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Parameter Problem messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParameterProblemsSent">
@@ -313,10 +442,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameter Problem messages are sent when a host computer or router encounters problems while processing the contents of a packet header, such as encountering an invalid IPv4 option or an invalid Next Header type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Parameter Problem messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RedirectsReceived">
@@ -331,10 +466,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Redirect messages are sent by routers to inform a host computer of a better route for a destination address.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Redirect messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RedirectsSent">
@@ -349,10 +490,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Redirect messages are sent by routers to inform a host computer of a better route for a destination address.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Redirect messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SourceQuenchesReceived">
@@ -367,10 +514,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Source Quench messages are sent when a packet was discarded because of insufficient space in the output queue. A destination computer can also send a Source Quench message if packets arrive too quickly to be processed. The source quench message is a request to the host to cut back the rate at which it is sending traffic to the Internet destination.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Source Quench messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SourceQuenchesSent">
@@ -385,10 +538,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Source Quench messages are sent when a packet was discarded because of insufficient space in the output queue. A destination computer can also send a Source Quench message if packets arrive too quickly to be processed. The source quench message is a request to the host to cut back the rate at which it is sending traffic to the Internet destination.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Source Quench messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TimeExceededMessagesReceived">
@@ -403,10 +562,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A packet's Hop Limit determines how many times it can be forwarded before it is discarded. Each time a packet is forwarded, its Hop Limit value is decremented by one. When the Hop Limit reaches zero or when a router receives a packet with its Hop Limit set to zero, the packet is discarded and the source of the packet receives a Time Exceeded message indicating that the initial Hop Limit was too small or that the packet was caught in a routing loop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Time Exceeded messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TimeExceededMessagesSent">
@@ -421,10 +586,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A packet's Hop Limit determines how many times it can be forwarded before it is discarded. Each time a packet is forwarded, its Hop Limit value is decremented by one. When the Hop Limit reaches zero or when a router receives a packet with its Hop Limit set to zero, the packet is discarded and the source of the packet receives a Time Exceeded message indicating that the initial Hop Limit was too small or that the packet was caught in a routing loop.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Time Exceeded messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TimestampRepliesReceived">
@@ -439,10 +610,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Timestamp Request message causes the receiving computer to send a timestamp reply back to the originating computer. These messages are used to measure the transmission speed on a network.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Timestamp Reply messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TimestampRepliesSent">
@@ -457,10 +634,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Timestamp Request message causes the receiving computer to send a timestamp reply back to the originating computer. These messages are used to measure the transmission speed on a network.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Timestamp Reply messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TimestampRequestsReceived">
@@ -475,10 +658,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Timestamp Request message causes the receiving computer to send a timestamp reply back to the originating computer. These messages are used to measure the transmission speed on a network.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Timestamp Request messages that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TimestampRequestsSent">
@@ -493,10 +682,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Timestamp Request message causes the receiving computer to send a timestamp reply back to the originating computer. These messages are used to measure the transmission speed on a network.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Control Message Protocol version 4 (ICMPv4) Timestamp Request messages that were sent.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

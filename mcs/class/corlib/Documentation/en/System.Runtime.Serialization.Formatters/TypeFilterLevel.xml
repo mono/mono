@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeFilterLevel" FullName="System.Runtime.Serialization.Formatters.TypeFilterLevel">
   <TypeSignature Language="C#" Value="public enum TypeFilterLevel" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TypeFilterLevel extends System.Enum" />
@@ -16,8 +17,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>.NET Framework remoting provides two levels of automatic deserialization, <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Low" /> and <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Full" />. The <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Low" /> deserialization level helps protect against deserialization attacks by deserializing only the types associated with the most basic remoting functionality. The <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Full" /> deserialization level supports automatic deserialization of all types that remoting supports in all situations. For a list of the .NET Framework remoting types that <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Low" /> and <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Full" /> support, see <format type="text/html"><a href="313A0E88-5B2B-4A17-8391-0DDF9F7A787B">[&lt;topic://cpconAutomaticDeserializationInNETRemoting&gt;]</a></format>.</para>
+      <para>You can set the members of this enumeration programmatically or by using an application configuration file. For examples, see <format type="text/html"><a href="313A0E88-5B2B-4A17-8391-0DDF9F7A787B">[&lt;topic://cpconAutomaticDeserializationInNETRemoting&gt;]</a></format>.</para>
+      <block subset="none" type="note">
+        <para>Do not assume that controlling deserialization is the only security your application requires. In distributed applications, even a high degree of control over serialization might not prevent malicious clients from intercepting the communication and using it in some way, even if that is merely showing data to others. Therefore, although the <see cref="F:System.Runtime.Serialization.Formatters.TypeFilterLevel.Low" /> deserialization level provides some protection against certain types of attack based upon automatic deserialization, you must still evaluate whether to use authentication and encryption to help protect the confidentiality of your data.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the level of automatic deserialization for .NET Framework remoting.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Full">
@@ -34,8 +45,11 @@
       </ReturnValue>
       <MemberValue>Full</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The full deserialization level for .NET Framework remoting. It supports all types that remoting supports in all situations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Low">
@@ -52,8 +66,11 @@
       </ReturnValue>
       <MemberValue>Low</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The low deserialization level for .NET Framework remoting. It supports types associated with basic remoting functionality.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

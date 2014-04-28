@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormsAuthenticationTicket" FullName="System.Web.Security.FormsAuthenticationTicket">
   <TypeSignature Language="C#" Value="public sealed class FormsAuthenticationTicket" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,15 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary />
     <remarks>
-      <para>
-This class is used together with the FormsAuthentication infrastructure to send information back to a client that needs to be either tamper-proof, or encrypted.
-</para>
-      <para>
-This is usually used with the HTTP Cookie mechanism, you would create a FormsAuthenticationTicket, storing the information that must be either tamper-proof, or secret to the client.   Once this information is created, you would use the <see cref="M:System.Web.Security.FormsAuthentication.Encrypt(System.Web.Security.FormsAuthenticationTicket)" /> method to encrypt the data and send that information back to the client.
-</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> class is used to create an object that represents the authentication ticket that is used by forms authentication to identify an authenticated user. The properties and values of a forms-authentication ticket are converted to and from an encrypted string that is stored in a cookie or in the URL.</para>
+      <para>The <see cref="T:System.Web.Security.FormsAuthentication" /> class provides an <see cref="M:System.Web.Security.FormsAuthentication.Encrypt(System.Web.Security.FormsAuthenticationTicket)" /> method to create a string value that can be stored in a cookie or in the URL from a <see cref="T:System.Web.Security.FormsAuthenticationTicket" />. The <see cref="T:System.Web.Security.FormsAuthentication" /> class also provides a <see cref="M:System.Web.Security.FormsAuthentication.Decrypt(System.String)" /> method to create a <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> object from the encrypted authentication ticket retrieved from the forms-authentication cookie or the URL.</para>
+      <para>The <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> for the current authenticated user can be accessed using the <see cref="P:System.Web.Security.FormsIdentity.Ticket" /> property of the <see cref="T:System.Web.Security.FormsIdentity" /> class. You can access the current <see cref="T:System.Web.Security.FormsIdentity" /> object by casting the <see cref="P:System.Security.Principal.IPrincipal.Identity" /> property of the current <see cref="P:System.Web.HttpContext.User" /> as type <see cref="T:System.Web.Security.FormsIdentity" />.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to properties and values of the ticket used with forms authentication to identify users. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,11 +36,20 @@ This is usually used with the HTTP Cookie mechanism, you would create a FormsAut
         <Parameter Name="timeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="isPersistent">To be added: an object of type 'bool'</param>
-        <param name="timeout">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> object created by this constructor will have a <see cref="P:System.Web.Security.FormsAuthenticationTicket.CookiePath" /> value set to the value of the <see cref="P:System.Web.Security.FormsAuthentication.FormsCookiePath" /> property, a <see cref="P:System.Web.Security.FormsAuthenticationTicket.Version" /> value of 2, an <see cref="P:System.Web.Security.FormsAuthenticationTicket.IssueDate" /> value of the current local date and time, a <see cref="P:System.Web.Security.FormsAuthenticationTicket.UserData" /> value of an empty string (""), and an <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expiration" /> value that is set to the current local date and time plus the value of the <paramref name="timeout" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> class using a cookie name and expiration information.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name associated with the ticket.</param>
+        <param name="isPersistent">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the ticket will be stored in a persistent cookie (saved across browser sessions); otherwise, false. If the ticket is stored in the URL, this value is ignored.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The time, in minutes, for which the authentication ticket is valid.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,14 +69,29 @@ This is usually used with the HTTP Cookie mechanism, you would create a FormsAut
         <Parameter Name="userData" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="version">To be added: an object of type 'int'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="issueDate">To be added: an object of type 'DateTime'</param>
-        <param name="expiration">To be added: an object of type 'DateTime'</param>
-        <param name="isPersistent">To be added: an object of type 'bool'</param>
-        <param name="userData">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> object created by this constructor will have a <see cref="P:System.Web.Security.FormsAuthenticationTicket.CookiePath" /> value set to the value of the <see cref="P:System.Web.Security.FormsAuthentication.FormsCookiePath" />.</para>
+          <block subset="none" type="note">
+            <para>The <paramref name="userData" /> parameter cannot be null.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> class with cookie name, version, expiration date, issue date, persistence, and user-specific data. The cookie path is set to the default value established in the application's configuration file.</para>
+        </summary>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version number of the ticket.</param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name associated with the ticket.</param>
+        <param name="issueDate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local date and time at which the ticket was issued.</param>
+        <param name="expiration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local date and time at which the ticket expires.</param>
+        <param name="isPersistent">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the ticket will be stored in a persistent cookie (saved across browser sessions); otherwise, false. If the ticket is stored in the URL, this value is ignored.</param>
+        <param name="userData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user-specific data to be stored with the ticket.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,15 +112,30 @@ This is usually used with the HTTP Cookie mechanism, you would create a FormsAut
         <Parameter Name="cookiePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="version">To be added: an object of type 'int'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="issueDate">To be added: an object of type 'DateTime'</param>
-        <param name="expiration">To be added: an object of type 'DateTime'</param>
-        <param name="isPersistent">To be added: an object of type 'bool'</param>
-        <param name="userData">To be added: an object of type 'string'</param>
-        <param name="cookiePath">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <paramref name="userData" /> parameter cannot be null. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> class with cookie name, version, directory path, issue date, expiration date, persistence, and user-defined data.</para>
+        </summary>
+        <param name="version">
+          <attribution license="cc4" from="Microsoft" modified="false" />The version number of the ticket. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user name associated with the ticket. </param>
+        <param name="issueDate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local date and time at which the ticket was issued. </param>
+        <param name="expiration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local date and time at which the ticket expires. </param>
+        <param name="isPersistent">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the ticket will be stored in a persistent cookie (saved across browser sessions); otherwise, false. If the ticket is stored in the URL, this value is ignored.</param>
+        <param name="userData">
+          <attribution license="cc4" from="Microsoft" modified="false" />The user-specific data to be stored with the ticket. </param>
+        <param name="cookiePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path for the ticket when stored in a cookie. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -108,9 +149,15 @@ This is usually used with the HTTP Cookie mechanism, you would create a FormsAut
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> is created using a constructor that does not supply a <paramref name="cookiePath" /> parameter, the <see cref="P:System.Web.Security.FormsAuthenticationTicket.CookiePath" /> property returns the value of the <see cref="P:System.Web.Security.FormsAuthentication.FormsCookiePath" /> property; otherwise, the version property returns the value supplied to the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the cookie path for the forms-authentication ticket.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -124,9 +171,16 @@ This is usually used with the HTTP Cookie mechanism, you would create a FormsAut
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DateTime'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> is created using the <see cref="M:System.Web.Security.FormsAuthenticationTicket.#ctor(System.String,System.Boolean,System.Int32)" /> constructor that does not supply a parameter for an expiration date and time, the <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expiration" /> property returns a value based on the current local date and time plus the value of the <paramref name="timeout" /> parameter supplied to the constructor.</para>
+          <para>If the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> was created using a constructor that takes an <paramref name="expiration" /> parameter, the <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expiration" /> property returns the value supplied to the <paramref name="expiration" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local date and time at which the forms-authentication ticket expires.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -140,9 +194,15 @@ This is usually used with the HTTP Cookie mechanism, you would create a FormsAut
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expired" /> property returns true if the <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expiration" /> date and time is less than the current local date and time; otherwise, the <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expired" /> property returns false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the forms-authentication ticket has expired.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -156,9 +216,12 @@ This is usually used with the HTTP Cookie mechanism, you would create a FormsAut
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the cookie that contains the forms-authentication ticket information is persistent.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -172,9 +235,15 @@ This is usually used with the HTTP Cookie mechanism, you would create a FormsAut
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DateTime'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.FormsAuthenticationTicket.IssueDate" /> property represents the local date and time when the forms-authentication ticket was issued. The <see cref="M:System.Web.Security.FormsAuthentication.RenewTicketIfOld(System.Web.Security.FormsAuthenticationTicket)" /> method uses the <see cref="P:System.Web.Security.FormsAuthenticationTicket.IssueDate" /> property value to determine whether the <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expiration" /> date and time of a forms-authentication ticket needs to be renewed and also uses the <see cref="P:System.Web.Security.FormsAuthenticationTicket.IssueDate" /> property value to determine the new <see cref="P:System.Web.Security.FormsAuthenticationTicket.Expiration" /> date and time. When a ticket is renewed, the <see cref="P:System.Web.Security.FormsAuthenticationTicket.IssueDate" /> property is updated to the local date and time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the local date and time at which the forms-authentication ticket was originally issued.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -188,9 +257,12 @@ This is usually used with the HTTP Cookie mechanism, you would create a FormsAut
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the user name associated with the forms-authentication ticket.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -204,9 +276,19 @@ This is usually used with the HTTP Cookie mechanism, you would create a FormsAut
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> is created using a constructor that does not supply a <paramref name="userData" /> parameter, the <see cref="P:System.Web.Security.FormsAuthenticationTicket.UserData" /> property returns an empty string (""); otherwise, the version property returns the value supplied to the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> constructor.</para>
+          <para>You can use the <see cref="P:System.Web.Security.FormsAuthenticationTicket.UserData" /> property to store additional user information with the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> that is not maintained by the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> property values.</para>
+          <block subset="none" type="note">
+            <para>You should limit the amount of data stored in the <see cref="P:System.Web.Security.FormsAuthenticationTicket.UserData" /> property. You must ensure that the size of the <see cref="P:System.Web.Security.FormsAuthenticationTicket.UserData" /> property does not result in an invalid cookie or an excessively long URL.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a user-specific string stored with the ticket.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -220,9 +302,15 @@ This is usually used with the HTTP Cookie mechanism, you would create a FormsAut
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> is created using a constructor that does not supply a <paramref name="version" /> parameter, the <see cref="P:System.Web.Security.FormsAuthenticationTicket.Version" /> property returns 2; otherwise, the version property returns the value supplied to the <see cref="T:System.Web.Security.FormsAuthenticationTicket" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the version number of the ticket.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

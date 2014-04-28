@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeCatalog" FullName="System.ComponentModel.Composition.Hosting.TypeCatalog">
   <TypeSignature Language="C#" Value="public class TypeCatalog : System.ComponentModel.Composition.Primitives.ComposablePartCatalog, System.ComponentModel.Composition.Primitives.ICompositionElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TypeCatalog extends System.ComponentModel.Composition.Primitives.ComposablePartCatalog implements class System.ComponentModel.Composition.Primitives.ICompositionElement" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is thread safe.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Discovers attributed parts from a collection of types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -56,9 +63,13 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="types">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> class with the specified types.</para>
+        </summary>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of attributed <see cref="T:System.Type" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -131,9 +142,13 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> and optionally releases the managed resources. </para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources. </param>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -148,9 +163,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the catalog.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Composition.Primitives.ICompositionElement.DisplayName">
@@ -164,9 +182,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> instance is cast to an <see cref="T:System.ComponentModel.Composition.Primitives.ICompositionElement" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the display name of the type catalog.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.Composition.Primitives.ICompositionElement.Origin">
@@ -180,9 +204,15 @@
         <ReturnType>System.ComponentModel.Composition.Primitives.ICompositionElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.Composition.Hosting.TypeCatalog" /> instance is cast to an <see cref="T:System.ComponentModel.Composition.Primitives.ICompositionElement" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the composition element from which the type catalog originated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -197,9 +227,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of the type catalog.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

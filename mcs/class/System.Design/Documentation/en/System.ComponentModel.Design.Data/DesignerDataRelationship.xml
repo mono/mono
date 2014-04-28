@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerDataRelationship" FullName="System.ComponentModel.Design.Data.DesignerDataRelationship">
   <TypeSignature Language="C#" Value="public sealed class DesignerDataRelationship" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents to the designer a relationship between two tables in the data source accessed through a data connection. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,12 +30,19 @@
         <Parameter Name="childColumns" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="parentColumns">To be added.</param>
-        <param name="childTable">To be added.</param>
-        <param name="childColumns">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Data.DesignerDataRelationship" /> class with the specified name, parent column, and child relationship. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the relationship.</param>
+        <param name="parentColumns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The columns in the parent table that define the relationship.</param>
+        <param name="childTable">
+          <attribution license="cc4" from="Microsoft" modified="false" />The child table in the relationship.</param>
+        <param name="childColumns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The columns in the child table that define the relationship.</param>
       </Docs>
     </Member>
     <Member MemberName="ChildColumns">
@@ -44,9 +55,12 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of columns from the child table that are part of the relationship.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ChildTable">
@@ -59,9 +73,12 @@
         <ReturnType>System.ComponentModel.Design.Data.DesignerDataTable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the child table referenced in the relationship.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -74,9 +91,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the relationship.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParentColumns">
@@ -89,9 +109,12 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of columns from the parent table that are part of the relationship between two tables.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPGlobalStatistics" FullName="System.Net.NetworkInformation.IPGlobalStatistics">
   <TypeSignature Language="C#" Value="public abstract class IPGlobalStatistics" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit IPGlobalStatistics extends System.Object" />
@@ -11,9 +12,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used by the <see cref="M:System.Net.NetworkInformation.IPGlobalProperties.GetIPv4GlobalStatistics" /> and <see cref="M:System.Net.NetworkInformation.IPGlobalProperties.GetIPv6GlobalStatistics" /> methods to return IP traffic information.</para>
+      <para>The Internet protocol is used to move IP packets from a source computer to a destination computer. IP also handles dividing a packet that is too large into multiple packets that are small enough for transport, in a process known as fragmentation.</para>
+      <para>The properties in this class correlate to the Management Information Base objects for IP defined in IETF RFC 2011.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides Internet Protocol (IP) statistical data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +35,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor can be called only by classes that derive from <see cref="T:System.Net.NetworkInformation.IPGlobalStatistics" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.NetworkInformation.IPGlobalStatistics" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultTtl">
@@ -43,10 +58,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The TTL value is reported as the number of routing nodes that can forward a packet before it is discarded. Each node decrements the current TTL value in a packet before forwarding it. If the TTL value reaches zero, the packet is deemed undeliverable and is discarded. Note that when a packet travels from one node to another, this is also known as a "hop".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default time-to-live (TTL) value for Internet Protocol (IP) packets.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ForwardingEnabled">
@@ -61,10 +82,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value determines whether the computer forwards IP datagrams destined for another computer. Typically, routers forward packets and host computers do not.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> value that specifies whether Internet Protocol (IP) packet forwarding is enabled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumberOfInterfaces">
@@ -79,10 +106,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data returned by this property includes loopback interfaces. </para>
+          <para>Network interfaces are also known as network adapters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of network interfaces.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumberOfIPAddresses">
@@ -97,10 +131,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data returned by this property includes addresses of pseudo network interfaces such as tunnels.</para>
+          <para>If this instance was obtained by calling <see cref="M:System.Net.NetworkInformation.IPGlobalProperties.GetIPv4GlobalStatistics" />, this property returns the number of IPv4 addresses assigned to the local computer. Similarly, if this instance was obtained by calling <see cref="M:System.Net.NetworkInformation.IPGlobalProperties.GetIPv6GlobalStatistics" />, this property returns the number of IPv6 addresses assigned to the local computer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) addresses assigned to the local computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumberOfRoutes">
@@ -115,10 +156,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of routes in the Internet Protocol (IP) routing table.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutputPacketRequests">
@@ -133,10 +177,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of outbound packets does not include the number of packets that have been forwarded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of outbound Internet Protocol (IP) packets.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutputPacketRoutingDiscards">
@@ -151,10 +201,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One possible reason for discarding a valid routing table entry could be to free buffer space for other entries.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of routes that have been discarded from the routing table.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutputPacketsDiscarded">
@@ -169,10 +225,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data returned by this property does not include packets discarded because of errors that made the packets undeliverable. Packets included in this data are typically discarded due to network issues, such as insufficient buffer space.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of transmitted Internet Protocol (IP) packets that have been discarded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutputPacketsWithNoRoute">
@@ -187,10 +249,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IP packets that fall into this category are discarded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets for which the local computer could not determine a route to the destination address.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PacketFragmentFailures">
@@ -205,10 +273,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Packets that exceed the maximum size for IP transport are broken into fragments and reassembled at the destination. The value returned by this property indicates the number of packets that needed to be fragmented for IP transport but could not be because the packet header specified that the packet not be fragmented.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets that could not be fragmented.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PacketReassembliesRequired">
@@ -223,10 +297,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Packets that exceed the maximum size for IP transport are broken into fragments and reassembled at the destination.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets that required reassembly.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PacketReassemblyFailures">
@@ -241,10 +321,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Packets that exceed the maximum size for IP transport are broken into fragments and reassembled at the destination. If some fragments are lost or do not arrive within a set time, the reassembly does not succeed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets that were not successfully reassembled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PacketReassemblyTimeout">
@@ -259,10 +345,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Packets that exceed the maximum size for IP transport are broken into fragments and reassembled at the destination. If all fragments that make up a fragmented IP packet do not arrive within the allowed time, the packet is discarded.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum amount of time within which all fragments of an Internet Protocol (IP) packet must arrive.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PacketsFragmented">
@@ -277,10 +369,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Packets that exceed the maximum size for IP transport are broken into fragments and reassembled at the destination.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets fragmented.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PacketsReassembled">
@@ -295,10 +393,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Session layer packets that exceed the maximum size for IP transport are broken into fragments and reassembled at the destination. If some fragments are lost or do not arrive within a set time, the reassembly does not succeed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets reassembled.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceivedPackets">
@@ -313,10 +417,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by this property includes packets received in error.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceivedPacketsDelivered">
@@ -331,10 +441,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by this property includes Internet Control Message Protocol (ICMP) messages.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets delivered.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceivedPacketsDiscarded">
@@ -349,10 +465,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by this property includes only those packets that were discarded even though they did not contain errors that prevented reassembly or delivery. Typically, packets in this category are discarded because of insufficient buffer space.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets that have been received and discarded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceivedPacketsForwarded">
@@ -367,10 +489,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the local computer is not a router, the value returned by this property includes packets that were successfully source-routed via the local computer. Source routing is an IP option whereby the source of the packet can specify the route to the destination address.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets forwarded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceivedPacketsWithAddressErrors">
@@ -385,10 +513,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by this property includes packets discarded for address related issues in the header fields, such as invalid addresses. If packet forwarding is not enabled, the value returned by this property includes packets that were discarded because the destination address was not a local address.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets with address errors that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceivedPacketsWithHeadersErrors">
@@ -403,10 +537,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value returned by this property includes packets discarded for non-address related issues in the header fields, such as bad checksums, time-to-live value exceeded, and incorrect IP options.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets with header errors that were received.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceivedPacketsWithUnknownProtocol">
@@ -421,10 +561,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The protocol field in the IP header indicates the next-level protocol used in the data portion of the IP datagram. If the protocol is not recognized, the data cannot be passed to the correct application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of Internet Protocol (IP) packets received on the local machine with an unknown protocol in the header.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

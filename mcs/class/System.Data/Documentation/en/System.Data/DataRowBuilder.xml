@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataRowBuilder" FullName="System.Data.DataRowBuilder">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class DataRowBuilder" />
   <AssemblyInfo>
@@ -13,8 +14,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The DataRowBuilder type supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

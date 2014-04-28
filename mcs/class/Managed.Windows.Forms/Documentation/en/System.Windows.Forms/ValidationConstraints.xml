@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ValidationConstraints" FullName="System.Windows.Forms.ValidationConstraints">
   <TypeSignature Language="C#" Value="public enum ValidationConstraints" />
   <AssemblyInfo>
@@ -13,9 +14,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>By default, <see cref="M:System.Windows.Forms.ContainerControl.ValidateChildren" /> will validate all enabled controls in a container, such as a form. Use this enumeration to restrict the types of controls whose <see cref="E:System.Windows.Forms.Control.Validating" /> event is raised. </para>
+      <para>You can combine these enumerated values together with a bitwise OR operation. Combining parameters with a bitwise OR operator will result in a logical AND operation. For example, calling ValidateChildren(ValidationConstraints.ImmediateChildren | ValidationConstraints.Enabled) will only raise the <see cref="E:System.Windows.Forms.Control.Validating" /> event on controls that are both immediate children of the container AND are enabled. </para>
+      <para>If you do not specify <see cref="F:System.Windows.Forms.ValidationConstraints.ImmediateChildren" /> when you call <see cref="M:System.Windows.Forms.ContainerControl.ValidateChildren(System.Windows.Forms.ValidationConstraints)" />, the method will require that you validate all child controls in the control hierarchy. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines constants that inform <see cref="M:System.Windows.Forms.ContainerControl.ValidateChildren(System.Windows.Forms.ValidationConstraints)" /> about how it should validate a container's child controls. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Enabled">
@@ -25,8 +34,11 @@
         <ReturnType>System.Windows.Forms.ValidationConstraints</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates child controls whose <see cref="P:System.Windows.Forms.Control.Enabled" /> property is set to true.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +51,11 @@
         <ReturnType>System.Windows.Forms.ValidationConstraints</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates child controls that are directly hosted within the container. Does not validate any of the children of these children. For example, if you have a <see cref="T:System.Windows.Forms.Form" /> that contains a custom <see cref="T:System.Windows.Forms.UserControl" />, and the <see cref="T:System.Windows.Forms.UserControl" /> contains a <see cref="T:System.Windows.Forms.Button" />, using <see cref="F:System.Windows.Forms.ValidationConstraints.ImmediateChildren" /> will cause the <see cref="E:System.Windows.Forms.Control.Validating" /> event of the <see cref="T:System.Windows.Forms.UserControl" /> to occur, but not the <see cref="E:System.Windows.Forms.Control.Validating" /> event of the <see cref="T:System.Windows.Forms.Button" />. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,8 +68,11 @@
         <ReturnType>System.Windows.Forms.ValidationConstraints</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates all child controls, and all children of these child controls, regardless of their property settings. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,8 +85,11 @@
         <ReturnType>System.Windows.Forms.ValidationConstraints</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates child controls that can be selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,8 +102,11 @@
         <ReturnType>System.Windows.Forms.ValidationConstraints</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates child controls that have a <see cref="P:System.Windows.Forms.Control.TabStop" /> value set, which means that the user can navigate to the control using the TAB key. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,8 +119,11 @@
         <ReturnType>System.Windows.Forms.ValidationConstraints</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates child controls whose <see cref="P:System.Windows.Forms.Control.Visible" /> property is set to true.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

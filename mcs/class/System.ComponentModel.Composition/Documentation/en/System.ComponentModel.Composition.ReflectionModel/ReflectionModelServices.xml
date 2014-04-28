@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ReflectionModelServices" FullName="System.ComponentModel.Composition.ReflectionModel.ReflectionModelServices">
   <TypeSignature Language="C#" Value="public static class ReflectionModelServices" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit ReflectionModelServices extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides extension methods to create and retrieve reflection-based parts.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateExportDefinition">
@@ -264,10 +268,14 @@
         <Parameter Name="importDefinition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <param name="importDefinition">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a representation of an import definition as an export factory product.</para>
+        </summary>
+        <param name="importDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The import definition to represent.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExportingMember">
@@ -284,10 +292,14 @@
         <Parameter Name="exportDefinition" Type="System.ComponentModel.Composition.Primitives.ExportDefinition" />
       </Parameters>
       <Docs>
-        <param name="exportDefinition">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exporting member from a specified export definition.</para>
+        </summary>
+        <param name="exportDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The export definition to examine.</param>
       </Docs>
     </Member>
     <Member MemberName="GetImportingMember">
@@ -304,10 +316,14 @@
         <Parameter Name="importDefinition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <param name="importDefinition">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the importing member from a specified import definition.</para>
+        </summary>
+        <param name="importDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The import definition to examine.</param>
       </Docs>
     </Member>
     <Member MemberName="GetImportingParameter">
@@ -324,10 +340,14 @@
         <Parameter Name="importDefinition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <param name="importDefinition">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the importing parameter from a specified import definition.</para>
+        </summary>
+        <param name="importDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The import definition to examine.</param>
       </Docs>
     </Member>
     <Member MemberName="GetPartType">
@@ -344,10 +364,14 @@
         <Parameter Name="partDefinition" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
       </Parameters>
       <Docs>
-        <param name="partDefinition">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of a part from a specified part definition.</para>
+        </summary>
+        <param name="partDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part definition to examine.</param>
       </Docs>
     </Member>
     <Member MemberName="IsDisposalRequired">
@@ -364,10 +388,14 @@
         <Parameter Name="partDefinition" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
       </Parameters>
       <Docs>
-        <param name="partDefinition">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified part requires disposal.</para>
+        </summary>
+        <param name="partDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The part to examine.</param>
       </Docs>
     </Member>
     <Member MemberName="IsExportFactoryImportDefinition">
@@ -384,10 +412,14 @@
         <Parameter Name="importDefinition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <param name="importDefinition">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a specified import definition represents an export factory (<see cref="T:System.ComponentModel.Composition.ExportFactory`1" /> or <see cref="T:System.ComponentModel.Composition.ExportFactory`2" /> object).</para>
+        </summary>
+        <param name="importDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The import definition to check.</param>
       </Docs>
     </Member>
     <Member MemberName="IsImportingParameter">
@@ -404,10 +436,14 @@
         <Parameter Name="importDefinition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <param name="importDefinition">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether an import definition represents a member or a parameter.</para>
+        </summary>
+        <param name="importDefinition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The import definition to examine.</param>
       </Docs>
     </Member>
     <Member MemberName="TryMakeGenericPartDefinition">

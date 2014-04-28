@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SinkProviderData" FullName="System.Runtime.Remoting.Channels.SinkProviderData">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SinkProviderData" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SinkProviderData extends System.Object" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The sink provider data is a tree structure of configuration information stored in the <format type="text/html"><a href="D3E67E16-8CA3-4B7F-B7A4-37E3E1A66364">[&lt;topic://gnconprovidertemplate&gt;]</a></format> configuration nodes. All sink providers must have a constructor that accepts a <see cref="T:System.Collections.IDictionary" /> of properties and a <see cref="T:System.Collections.ICollection" /> of these structures if they want to be used from a configuration file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Stores sink provider data for sink providers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,9 +44,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.SinkProviderData" /> class.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the sink provider that the data in the current <see cref="T:System.Runtime.Remoting.Channels.SinkProviderData" /> object is associated with. </param>
       </Docs>
     </Member>
     <Member MemberName="Children">
@@ -55,9 +66,12 @@
         <ReturnType>System.Collections.IList</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.IList'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of the child <see cref="T:System.Runtime.Remoting.Channels.SinkProviderData" /> nodes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -73,9 +87,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the sink provider that the data in the current <see cref="T:System.Runtime.Remoting.Channels.SinkProviderData" /> object is associated with.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -91,9 +108,12 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.IDictionary'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary through which properties on the sink provider can be accessed.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IButtonControl" FullName="System.Web.UI.WebControls.IButtonControl">
   <TypeSignature Language="C#" Value="public interface IButtonControl" />
   <AssemblyInfo>
@@ -6,9 +7,16 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface defines the properties and events that must be implemented to allow a control to act like a button on a Web page.</para>
+      <para>The members of this interface provide basic button functionality, such as the ability to raise a <see cref="E:System.Web.UI.WebControls.IButtonControl.Click" /> event and a <see cref="E:System.Web.UI.WebControls.IButtonControl.Command" /> event. The <see cref="P:System.Web.UI.WebControls.IButtonControl.PostBackUrl" /> property provides cross-page posting functionality.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines properties and events that must be implemented to allow a control to act like a button on a Web page.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CausesValidation">
@@ -18,10 +26,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A control that implements the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface must implement the <see cref="P:System.Web.UI.WebControls.IButtonControl.CausesValidation" /> property to indicate whether clicking the button causes page validation to occur.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether clicking the button causes page validation to occur.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,9 +48,16 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.IButtonControl.Click" /> event is raised when the button control is clicked.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the button control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -49,9 +70,16 @@
         <ReturnType>System.Web.UI.WebControls.CommandEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.IButtonControl.Command" /> event is raised when the button control is clicked.</para>
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the button control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -64,10 +92,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A control that implements the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface must implement the <see cref="P:System.Web.UI.WebControls.IButtonControl.CommandArgument" /> property and the <see cref="P:System.Web.UI.WebControls.IButtonControl.CommandName" /> property to indicate the argument and command name that are propagated to the <see cref="E:System.Web.UI.WebControls.IButtonControl.Command" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an optional argument that is propagated to the <see cref="E:System.Web.UI.WebControls.IButtonControl.Command" /> event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -80,10 +114,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A control that implements the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface must implement the <see cref="P:System.Web.UI.WebControls.IButtonControl.CommandArgument" /> property and the <see cref="P:System.Web.UI.WebControls.IButtonControl.CommandName" /> property to indicate the argument and command name that are propagated to the <see cref="E:System.Web.UI.WebControls.IButtonControl.Command" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the command name that is propagated to the <see cref="E:System.Web.UI.WebControls.IButtonControl.Command" /> event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -96,10 +136,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Web.UI.WebControls.IButtonControl.PostBackUrl" /> property to perform a cross-page post. If the <see cref="P:System.Web.UI.WebControls.IButtonControl.PostBackUrl" /> property is set to the page that the button is currently on, a normal postback event cycle occurs.</para>
+          <para>A control that implements the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface must implement the <see cref="P:System.Web.UI.WebControls.IButtonControl.PostBackUrl" /> property to indicate the URL of the Web page to post to from the current page when the button control is clicked. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL of the Web page to post to from the current page when the button control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -112,10 +159,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A control that implements the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface must implement the <see cref="P:System.Web.UI.WebControls.IButtonControl.Text" /> property to indicate the text caption displayed for the button.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text caption displayed for the button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -128,10 +181,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A control that implements the <see cref="T:System.Web.UI.WebControls.IButtonControl" /> interface must implement the <see cref="P:System.Web.UI.WebControls.IButtonControl.ValidationGroup" /> property to indicate the name for the group of controls for which the button control causes validation when it posts back to the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name for the group of controls for which the button control causes validation when it posts back to the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

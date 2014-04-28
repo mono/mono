@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MemberAttributes" FullName="System.CodeDom.MemberAttributes">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum MemberAttributes" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed MemberAttributes extends System.Enum" />
@@ -19,8 +20,20 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The identifiers defined in the <see cref="T:System.CodeDom.MemberAttributes" /> enumeration can be used to indicate the scope and access attributes of a class member. </para>
+      <block subset="none" type="note">
+        <para>There is no Virtual member attribute. A member is declared virtual by setting its member access to <see cref="F:System.CodeDom.MemberAttributes.Public" /> (property1.Attributes = MemberAttributes.Public) without specifying it as <see cref="F:System.CodeDom.MemberAttributes.Final" />. The absence of the <see cref="F:System.CodeDom.MemberAttributes.Final" /> flag makes a member virtual in C# (public virtual), overrideable in Visual Basic (Public Overrideable). To avoid declaring the member as virtual or overrideable, set both the <see cref="F:System.CodeDom.MemberAttributes.Public" /> and <see cref="F:System.CodeDom.MemberAttributes.Final" /> flags in the <see cref="P:System.CodeDom.CodeTypeMember.Attributes" /> property. See the <see cref="P:System.CodeDom.CodeTypeMember.Attributes" /> property for more information on setting member attributes.</para>
+      </block>
+      <block subset="none" type="note">
+        <para>The pattern for setting the access flags (flags containing the terms Public, Private, Assembly, or Family) is to mask out all access flags using the <see cref="F:System.CodeDom.MemberAttributes.AccessMask" /> mask and then set the desired access flag. For example, the code statement to identify a constructor (named constructor1) as public is constructor1.Attributes = (constructor1.Attributes &amp; ~MemberAttributes.AccessMask) | MemberAttributes.Public;. Setting the <see cref="P:System.CodeDom.CodeTypeMember.Attributes" /> property directly to an access flag (for example, constructor1.Attributes = MemberAttributes.Public;) erases all other flags that might be set. This pattern should also be used for setting the scope flags (<see cref="F:System.CodeDom.MemberAttributes.Abstract" />, <see cref="F:System.CodeDom.MemberAttributes.Final" />, <see cref="F:System.CodeDom.MemberAttributes.Static" />, <see cref="F:System.CodeDom.MemberAttributes.Override" /> or <see cref="F:System.CodeDom.MemberAttributes.Const" />) using the <see cref="F:System.CodeDom.MemberAttributes.ScopeMask" /> mask.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines member attribute identifiers for class members.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Abstract">
@@ -37,8 +50,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An abstract member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AccessMask">
@@ -55,8 +71,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An access mask.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Assembly">
@@ -73,8 +92,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A member that is accessible to any class within the same assembly.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Const">
@@ -91,8 +113,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Family">
@@ -109,8 +134,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A member that is accessible within the family of its class and derived classes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FamilyAndAssembly">
@@ -127,8 +155,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A member that is accessible within its class, and derived classes in the same assembly.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FamilyOrAssembly">
@@ -145,8 +176,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A member that is accessible within its class, its derived classes in any assembly, and any class in the same assembly.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Final">
@@ -163,8 +197,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A member that cannot be overridden in a derived class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="New">
@@ -181,8 +218,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Overloaded">
@@ -199,8 +239,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An overloaded member. Some languages, such as Visual Basic, require overloaded members to be explicitly indicated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Override">
@@ -217,8 +260,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A member that overrides a base class member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Private">
@@ -235,8 +281,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A private member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Public">
@@ -253,8 +302,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A public member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScopeMask">
@@ -271,8 +323,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A scope mask.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Static">
@@ -289,8 +344,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A static member. In Visual Basic, this is equivalent to the Shared keyword.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VTableMask">
@@ -307,8 +365,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A VTable mask.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

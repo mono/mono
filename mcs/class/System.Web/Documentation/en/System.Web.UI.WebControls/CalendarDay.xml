@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CalendarDay" FullName="System.Web.UI.WebControls.CalendarDay">
   <TypeSignature Language="C#" Value="public class CalendarDay" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Web.UI.WebControls.CalendarDay" /> object represents a date in the <see cref="T:System.Web.UI.WebControls.Calendar" /> control. You can use this class in the <see cref="E:System.Web.UI.WebControls.Calendar.DayRender" /> event handler to programmatically access the properties of a date as it is rendered on the <see cref="T:System.Web.UI.WebControls.Calendar" /> control. This allows you to determine the properties of the day (such as whether the date is selectable, selected, today's date, or a weekend date) and programmatically control the appearance or behavior of the day.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.CalendarDay" />, see the <see cref="M:System.Web.UI.WebControls.CalendarDay.#ctor(System.DateTime,System.Boolean,System.Boolean,System.Boolean,System.Boolean,System.String)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a date in the <see cref="T:System.Web.UI.WebControls.Calendar" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,14 +38,90 @@
         <Parameter Name="dayNumberText" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="date">To be added: an object of type 'DateTime'</param>
-        <param name="isWeekend">To be added: an object of type 'bool'</param>
-        <param name="isToday">To be added: an object of type 'bool'</param>
-        <param name="isSelected">To be added: an object of type 'bool'</param>
-        <param name="isOtherMonth">To be added: an object of type 'bool'</param>
-        <param name="dayNumberText">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.CalendarDay" /> class.</para>
+          <block subset="none" type="note">
+            <para>Although this constructor is available, an instance of the <see cref="T:System.Web.UI.WebControls.CalendarDay" /> class is not typically created dynamically.</para>
+          </block>
+          <para>The following table shows initial property values for an instance of <see cref="T:System.Web.UI.WebControls.CalendarDay" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Date </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="date" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>DayNumberText </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="dayNumberText" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsOtherMonth </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="isOtherMonth" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsSelected </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="isSelected" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsToday </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="isToday" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>IsWeekend </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="isWeekEnd" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.CalendarDay" /> class.</para>
+        </summary>
+        <param name="date">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DateTime" /> object that contains the date represented by an instance of this class. </param>
+        <param name="isWeekend">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the date represented by an instance of this class is either a Saturday or a Sunday; otherwise, false. </param>
+        <param name="isToday">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the date represented by an instance of this class is the current date; otherwise, false. </param>
+        <param name="isSelected">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the date represented by an instance of this class is selected on the <see cref="T:System.Web.UI.WebControls.Calendar" /> control; otherwise, false. </param>
+        <param name="isOtherMonth">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the date represented by an instance of this class is in a month other than the displayed month on the <see cref="T:System.Web.UI.WebControls.Calendar" /> control; otherwise, false. </param>
+        <param name="dayNumberText">
+          <attribution license="cc4" from="Microsoft" modified="false" />The day number for the date represented by this class. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -51,9 +135,15 @@
         <ReturnType>System.DateTime</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DateTime'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CalendarDay.Date" /> property to programmatically determine the date represented by an instance of this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the date represented by an instance of this class. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,9 +157,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CalendarDay.DayNumberText" /> property to determine the string equivalent of the day number for the date represented by an instance of this class. This allows you to programmatically control the appearance or behavior of the day, based on this value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the string equivalent of the day number for the date represented by an instance of the <see cref="T:System.Web.UI.WebControls.CalendarDay" /> class. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -83,9 +179,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CalendarDay.IsOtherMonth" /> property to programmatically determine whether the date represented by an instance of this class is in a month other than the month displayed in the <see cref="T:System.Web.UI.WebControls.Calendar" /> control. This allows you to programmatically control the appearance or behavior of the day based on this value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the date represented by an instance of this class is in a month other than the month displayed in the <see cref="T:System.Web.UI.WebControls.Calendar" /> control. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -100,9 +202,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CalendarDay.IsSelectable" /> property to specify or determine whether the date represented by an instance of this class can be selected in the <see cref="T:System.Web.UI.WebControls.Calendar" /> control. This allows you to programmatically control the appearance behavior of the day, based on this value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the date represented by an instance of this class can be selected in the <see cref="T:System.Web.UI.WebControls.Calendar" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,9 +224,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CalendarDay.IsSelected" /> property to programmatically determine whether the date represented by an instance of this class is selected in the <see cref="T:System.Web.UI.WebControls.Calendar" /> control. This allows you to programmatically control the appearance or behavior of the day, based on this value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the date represented by an instance of this class is selected in the <see cref="T:System.Web.UI.WebControls.Calendar" /> control. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -132,9 +246,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CalendarDay.IsToday" /> property to programmatically determine whether the date represented by an instance of this class is the same date specified by the <see cref="P:System.Web.UI.WebControls.Calendar.TodaysDate" /> property of the <see cref="T:System.Web.UI.WebControls.Calendar" /> control. This allows you to programmatically control the appearance or behavior of the day, based on this value.</para>
+          <block subset="none" type="note">
+            <para>Although the date specified by the <see cref="P:System.Web.UI.WebControls.Calendar.TodaysDate" /> property is usually the system date on the server, it is possible to change it, if necessary.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the date represented by an instance of this class is the same date specified by the <see cref="P:System.Web.UI.WebControls.Calendar.TodaysDate" /> property of the <see cref="T:System.Web.UI.WebControls.Calendar" /> control. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -148,9 +271,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.CalendarDay.IsWeekend" /> property to programmatically determine whether the date represented by an instance of this class is either a Saturday or a Sunday. This allows you to programmatically control the appearance or behavior of the day, based on this value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the date represented by an instance of this class is a either Saturday or Sunday. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

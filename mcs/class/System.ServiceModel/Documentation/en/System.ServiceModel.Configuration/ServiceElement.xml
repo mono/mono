@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceElement" FullName="System.ServiceModel.Configuration.ServiceElement">
   <TypeSignature Language="C#" Value="public sealed class ServiceElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ServiceElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an XML element that contains the settings for a indigo1 service, as well as endpoints that expose the service. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.ServiceElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BehaviorConfiguration">
@@ -46,9 +53,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that contains the behavior name of the behavior to be used to instantiate the service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Endpoints">
@@ -67,9 +77,15 @@
         <ReturnType>System.ServiceModel.Configuration.ServiceEndpointElementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each endpoint has its own address and binding. All bindings used within the configuration file must be defined in the scope of the file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of endpoints exposed by this service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Host">
@@ -88,9 +104,12 @@
         <ReturnType>System.ServiceModel.Configuration.HostElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a configuration element that specifies the host of this service instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -112,9 +131,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the unique name of this service.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">

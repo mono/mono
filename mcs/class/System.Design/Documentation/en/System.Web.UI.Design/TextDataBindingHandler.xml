@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TextDataBindingHandler" FullName="System.Web.UI.Design.TextDataBindingHandler">
   <TypeSignature Language="C#" Value="public class TextDataBindingHandler : System.Web.UI.Design.DataBindingHandler" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.TextDataBindingHandler" /> object is a data-binding handler that can provide data to a data-bound text property at design time. Data-binding handlers are used when there is no designer for the control present that would otherwise provide the data for the data bound property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a data-binding handler for a data-bound control at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +26,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.TextDataBindingHandler" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -38,10 +48,19 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="designerHost">To be added.</param>
-        <param name="control">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.Design.TextDataBindingHandler.DataBindControl(System.ComponentModel.Design.IDesignerHost,System.Web.UI.Control)" /> method of <see cref="T:System.Web.UI.Design.TextDataBindingHandler" /> sets the Text property of the control, if it exists, to a sample data string.</para>
+          <para>This method should be implemented in a derived class to provide functionality to a custom data-binding handler. The logic for the data-binding should be implemented within this method, and can be specific to the type or types that the handler is binding a property or properties on.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data-binds the specified control.</para>
+        </summary>
+        <param name="designerHost">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object implementing <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the document that contains the control. </param>
+        <param name="control">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to data-bind. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

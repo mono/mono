@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProgressBarRenderer" FullName="System.Windows.Forms.ProgressBarRenderer">
   <TypeSignature Language="C#" Value="public sealed class ProgressBarRenderer" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.ProgressBarRenderer" /> class provides a set of static methods that can be used to render a progress bar control with the current visual style of the operating system. Rendering a control refers to drawing the user interface of a control. This is useful if you are drawing a custom control that should have the appearance of the current visual style. To draw a progress bar, use the <see cref="M:System.Windows.Forms.ProgressBarRenderer.DrawHorizontalBar(System.Drawing.Graphics,System.Drawing.Rectangle)" /> or <see cref="M:System.Windows.Forms.ProgressBarRenderer.DrawVerticalBar(System.Drawing.Graphics,System.Drawing.Rectangle)" /> methods to draw the empty bar, and then use the <see cref="M:System.Windows.Forms.ProgressBarRenderer.DrawHorizontalChunks(System.Drawing.Graphics,System.Drawing.Rectangle)" /> or <see cref="M:System.Windows.Forms.ProgressBarRenderer.DrawVerticalChunks(System.Drawing.Graphics,System.Drawing.Rectangle)" /> methods to draw the elements that fill in the bar. </para>
+      <para>If visual styles are enabled in the operating system and visual styles are applied to the client area of application windows, the methods of this class will draw the progress bar with the current visual style. Otherwise, the methods and properties of this class will throw an <see cref="T:System.InvalidOperationException" />. To determine whether the members of this class can be used, you can check the value of the <see cref="P:System.Windows.Forms.ProgressBarRenderer.IsSupported" /> property. </para>
+      <para>This class wraps the functionality of a <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> that is set to one of the elements exposed by the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar.Bar" />, <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar.BarVertical" />, <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar.Chunk" />, and <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.ProgressBar.ChunkVertical" /> classes. For more information, see <format type="text/html"><a href="a5b178ba-610e-46c4-a6c0-509c0886a744">Rendering Controls with Visual Styles</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods used to render a progress bar control with visual styles. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ChunkSpaceThickness">
@@ -21,10 +30,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is determined by the current visual style of the operating system.</para>
+          <para>Before accessing this property, you should verify that the <see cref="P:System.Windows.Forms.ProgressBarRenderer.IsSupported" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the width, in pixels, of the space between each inner piece of the progress bar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +53,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value is determined by the current visual style of the operating system.</para>
+          <para>Before accessing this property, you should verify that the <see cref="P:System.Windows.Forms.ProgressBarRenderer.IsSupported" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the width, in pixels, of a single inner piece of the progress bar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,11 +80,19 @@
         <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before using this method, you should verify that the <see cref="P:System.Windows.Forms.ProgressBarRenderer.IsSupported" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws an empty progress bar control that fills in horizontally.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the progress bar.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the progress bar.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -78,11 +109,20 @@
         <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each progress bar piece drawn by this method spans the height of the <paramref name="bounds" /> parameter. The number of progress bar pieces drawn is determined by the width of <paramref name="bounds" /> and the values returned by the <see cref="P:System.Windows.Forms.ProgressBarRenderer.ChunkSpaceThickness" /> and <see cref="P:System.Windows.Forms.ProgressBarRenderer.ChunkThickness" /> properties. </para>
+          <para>Before using this method, you should verify that the <see cref="P:System.Windows.Forms.ProgressBarRenderer.IsSupported" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a set of progress bar pieces that fill a horizontal progress bar.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the progress bar.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds to be filled by progress bar pieces.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -99,11 +139,19 @@
         <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Before using this method, you should verify that the <see cref="P:System.Windows.Forms.ProgressBarRenderer.IsSupported" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws an empty progress bar control that fills in vertically.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the progress bar.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds of the progress bar.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -120,11 +168,20 @@
         <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each progress bar piece drawn by this method spans the width of the <paramref name="bounds" /> parameter. The number of progress bar pieces drawn is determined by the height of <paramref name="bounds" /> and the values returned by <see cref="P:System.Windows.Forms.ProgressBarRenderer.ChunkSpaceThickness" /> and <see cref="P:System.Windows.Forms.ProgressBarRenderer.ChunkThickness" />.</para>
+          <para>Before using this method, you should verify that the <see cref="P:System.Windows.Forms.ProgressBarRenderer.IsSupported" /> property returns true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a set of progress bar pieces that fill a vertical progress bar.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the progress bar.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> that specifies the bounds to be filled by progress bar pieces.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -137,10 +194,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this property is false, the methods and properties of this class will throw an <see cref="T:System.InvalidOperationException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Windows.Forms.ProgressBarRenderer" /> class can be used to draw a progress bar control with visual styles.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

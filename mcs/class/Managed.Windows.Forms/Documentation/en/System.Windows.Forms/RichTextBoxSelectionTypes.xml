@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RichTextBoxSelectionTypes" FullName="System.Windows.Forms.RichTextBoxSelectionTypes">
   <TypeSignature Language="C#" Value="public enum RichTextBoxSelectionTypes" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the members of this enumeration to determine the value of the <see cref="P:System.Windows.Forms.RichTextBox.SelectionType" /> property of the <see cref="T:System.Windows.Forms.RichTextBox" /> class. The <see cref="P:System.Windows.Forms.RichTextBox.SelectionType" /> property can return any combination of values from this enumeration.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of selection in a <see cref="T:System.Windows.Forms.RichTextBox" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Empty">
@@ -25,7 +32,10 @@
         <ReturnType>System.Windows.Forms.RichTextBoxSelectionTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No text is selected in the current selection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,7 +49,10 @@
         <ReturnType>System.Windows.Forms.RichTextBoxSelectionTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>More than one character is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,7 +66,10 @@
         <ReturnType>System.Windows.Forms.RichTextBoxSelectionTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>More than one Object Linking and Embedding (OLE) object is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,7 +83,10 @@
         <ReturnType>System.Windows.Forms.RichTextBoxSelectionTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>At least one Object Linking and Embedding (OLE) object is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,7 +100,10 @@
         <ReturnType>System.Windows.Forms.RichTextBoxSelectionTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current selection contains only text.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

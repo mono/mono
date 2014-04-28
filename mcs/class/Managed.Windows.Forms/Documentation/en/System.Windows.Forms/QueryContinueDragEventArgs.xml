@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="QueryContinueDragEventArgs" FullName="System.Windows.Forms.QueryContinueDragEventArgs">
   <TypeSignature Language="C#" Value="public class QueryContinueDragEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -15,8 +16,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.Control.QueryContinueDrag" /> event occurs during a drag-and-drop operation and allows the drag source to determine whether the drag-and-drop operation should be canceled. A <see cref="T:System.Windows.Forms.QueryContinueDragEventArgs" /> specifies whether and how the drag-and-drop operation should proceed, whether any modifier keys are pressed, and whether the user has pressed the ESC key.</para>
+      <para>By default, the <see cref="E:System.Windows.Forms.Control.QueryContinueDrag" /> event sets <see cref="P:System.Windows.Forms.QueryContinueDragEventArgs.Action" /> to <see cref="F:System.Windows.Forms.DragAction.Cancel" /> if the ESC key was pressed and sets Action to <see cref="F:System.Windows.Forms.DragAction.Drop" /> if the left, middle, or right mouse button is pressed.</para>
+      <para>For information about the event model, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.Control.QueryContinueDrag" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,11 +37,17 @@
         <Parameter Name="action" Type="System.Windows.Forms.DragAction" />
       </Parameters>
       <Docs>
-        <param name="keyState">To be added.</param>
-        <param name="escapePressed">To be added.</param>
-        <param name="action">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.QueryContinueDragEventArgs" /> class.</para>
+        </summary>
+        <param name="keyState">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current state of the SHIFT, CTRL, and ALT keys. </param>
+        <param name="escapePressed">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the ESC key was pressed; otherwise, false. </param>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DragAction" /> value. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -46,9 +61,15 @@
         <ReturnType>System.Windows.Forms.DragAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="E:System.Windows.Forms.Control.QueryContinueDrag" /> event sets <see cref="P:System.Windows.Forms.QueryContinueDragEventArgs.Action" /> to <see cref="F:System.Windows.Forms.DragAction.Cancel" /> if the ESC key was pressed and sets Action to <see cref="F:System.Windows.Forms.DragAction.Drop" /> if the left, middle, or right mouse button is pressed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the status of a drag-and-drop operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,9 +83,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="E:System.Windows.Forms.Control.QueryContinueDrag" /> event sets <see cref="P:System.Windows.Forms.QueryContinueDragEventArgs.Action" /> to <see cref="F:System.Windows.Forms.DragAction.Cancel" /> if <see cref="P:System.Windows.Forms.QueryContinueDragEventArgs.EscapePressed" /> is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets whether the user pressed the ESC key.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -78,9 +105,77 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bits that are set in the <see cref="P:System.Windows.Forms.QueryContinueDragEventArgs.KeyState" /> property identify the keys or mouse buttons that were pressed during the operation. For example, if the left mouse button is pressed, the first bit in the <see cref="P:System.Windows.Forms.QueryContinueDragEventArgs.KeyState" /> property is set. You can use the bitwise AND operator to test for a given key state.</para>
+          <para>The following table lists the bits that are set for a specified event.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Bit </para>
+                </term>
+                <description>
+                  <para>Key </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>1 </para>
+              </term>
+              <description>
+                <para>The left mouse button. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>2 </para>
+              </term>
+              <description>
+                <para>The right mouse button. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>4 </para>
+              </term>
+              <description>
+                <para>The SHIFT key. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>8 </para>
+              </term>
+              <description>
+                <para>The CTL key. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>16 </para>
+              </term>
+              <description>
+                <para>The middle mouse button. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>32 </para>
+              </term>
+              <description>
+                <para>The ALT key. </para>
+              </description>
+            </item>
+          </list>
+          <para>By default, the <see cref="E:System.Windows.Forms.Control.QueryContinueDrag" /> event sets <see cref="P:System.Windows.Forms.QueryContinueDragEventArgs.Action" /> to <see cref="F:System.Windows.Forms.DragAction.Drop" /> if <see cref="P:System.Windows.Forms.QueryContinueDragEventArgs.KeyState" /> indicates that the left, middle, or right mouse button is pressed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current state of the SHIFT, CTRL, and ALT keys.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

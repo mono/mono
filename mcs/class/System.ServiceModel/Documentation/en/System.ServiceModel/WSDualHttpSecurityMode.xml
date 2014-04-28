@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WSDualHttpSecurityMode" FullName="System.ServiceModel.WSDualHttpSecurityMode">
   <TypeSignature Language="C#" Value="public enum WSDualHttpSecurityMode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WSDualHttpSecurityMode extends System.Enum" />
@@ -9,8 +10,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration defines the security modes that the <see cref="T:System.ServiceModel.WsDualHttpBinding" /> supports.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the different security modes for <see cref="T:System.ServiceModel.WsDualHttpBinding" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Message">
@@ -24,7 +31,10 @@
         <ReturnType>System.ServiceModel.WSDualHttpSecurityMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>SOAP message-level security is used and the settings in the <see cref="P:System.ServiceModel.WsDualHttpSecurity.Message" /> property become effective.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -38,7 +48,10 @@
         <ReturnType>System.ServiceModel.WSDualHttpSecurityMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No security is used.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MessageDescription" FullName="System.ServiceModel.Description.MessageDescription">
   <TypeSignature Language="C#" Value="public class MessageDescription" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit MessageDescription extends System.Object" />
@@ -15,8 +16,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Description.MessageDescription" /> contains the <see cref="P:System.ServiceModel.Description.MessageDescription.Headers" /> and <see cref="P:System.ServiceModel.Description.MessageDescription.Body" /> properties to provide get access to these parts of the message. Whether the message is incoming or outgoing is indicated by the <see cref="P:System.ServiceModel.Description.MessageDescription.Direction" /> property. It also provides an <see cref="P:System.ServiceModel.Description.MessageDescription.Action" /> property where the URI that indicates the intension of the message may be specified.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the description of a message.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,8 +40,11 @@
       <Docs>
         <param name="action">To be added.</param>
         <param name="direction">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MessageDescription" /> class with a specified action and direction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Action">
@@ -48,9 +58,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This optional parameter can be used to specify the URI that identifies the intent of the message. In SOAP 1.2, it serves a similar purpose as the SOAPAction HTTP header field did in SOAP 1.1. </para>
+          <para>The value of the action parameter is an absolute URI reference as defined by RFC 2396. The SOAP 1.2 specification does not require that the URI be resolvable. The URI should be globally unique and stable over time.</para>
+          <para>Servers, such as firewalls, can use the presence and content of the action parameter to filter SOAP messages and to facilitate the dispatch of SOAP messages to internal message handlers. It should not be used as an insecure form of access authorization.</para>
+          <para>Use of the action parameter is optional. SOAP receivers can use it as a hint to optimize processing, but must not require its presence to operate.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the action parameter of the SOAP message that identifies the intent of the message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Body">
@@ -64,9 +83,15 @@
         <ReturnType>System.ServiceModel.Description.MessageBodyDescription</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A SOAP body provides a mechanism for transmitting information to an ultimate SOAP receiver.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the body of the SOAP message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Direction">
@@ -80,9 +105,15 @@
         <ReturnType>System.ServiceModel.Description.MessageDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Incoming means that the message is coming from the client to the server. This is the <see cref="F:System.ServiceModel.Description.MessageDirection.Input" /> direction. Outgoing means the message is coming from the server to the client. This is the <see cref="F:System.ServiceModel.Description.MessageDirection.Output" /> direction. These terms can be confusing from the client perspective where the messages marked as <see cref="F:System.ServiceModel.Description.MessageDirection.Input" /> are actually being sent and the messages marked as <see cref="F:System.ServiceModel.Description.MessageDirection.Output" /> are being received.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the direction that indicates whether the message is incoming or outgoing.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HasProtectionLevel">
@@ -96,9 +127,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the <see cref="P:System.ServiceModel.Description.MessageDescription.ProtectionLevel" /> has been set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -112,9 +146,12 @@
         <ReturnType>System.ServiceModel.Description.MessageHeaderDescriptionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the description of the headers of the SOAP message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MessageType">
@@ -128,9 +165,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message type can be null. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a type that identifies the type of message contract.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -144,9 +187,12 @@
         <ReturnType>System.ServiceModel.Description.MessagePropertyDescriptionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a description of the properties of the SOAP message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProtectionLevel">
@@ -160,9 +206,15 @@
         <ReturnType>System.Net.Security.ProtectionLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security services are used to ensure the confidentiality, integrity, and authentication of the data contained in the message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the security services required for the message. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

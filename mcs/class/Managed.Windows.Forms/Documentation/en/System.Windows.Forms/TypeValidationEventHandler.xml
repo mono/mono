@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeValidationEventHandler" FullName="System.Windows.Forms.TypeValidationEventHandler">
   <TypeSignature Language="C#" Value="public delegate void TypeValidationEventHandler(object sender, TypeValidationEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.MaskedTextBox.TypeValidationCompleted" /> event of the <see cref="T:System.Windows.Forms.MaskedTextBox" /> class is an optional event that is raised only if the <see cref="P:System.Windows.Forms.MaskedTextBox.ValidatingType" /> property is explicitly set to a type other than null. </para>
+      <para>Typically, a handler for the <see cref="E:System.Windows.Forms.MaskedTextBox.TypeValidationCompleted" /> event is implemented to perform mask-specific and type-specific validation processing. In contrast, general validation is typically performed in the standard <see cref="E:System.Windows.Forms.Control.Validating" /> event defined in the <see cref="T:System.Windows.Forms.Control" /> base class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Windows.Forms.MaskedTextBox.TypeValidationCompleted" /> event of the <see cref="T:System.Windows.Forms.MaskedTextBox" /> control.</para>
+    </summary>
   </Docs>
 </Type>

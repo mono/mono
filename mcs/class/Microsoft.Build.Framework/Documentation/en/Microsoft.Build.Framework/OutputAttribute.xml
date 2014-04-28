@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OutputAttribute" FullName="Microsoft.Build.Framework.OutputAttribute">
   <TypeSignature Language="C#" Value="public sealed class OutputAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version="2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The vstecmsbuild engine will only allow task properties marked with this attribute to output data from a task. Project authors can only use properties marked with this attribute in the <unmanagedCodeEntityReference>Output</unmanagedCodeEntityReference> element of a project file. All other task properties are treated as inputs to a task.</para>
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the metadata attribute that task authors use to identify task properties that output data from the task. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +32,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.Framework.OutputAttribute" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
