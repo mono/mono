@@ -39,7 +39,7 @@ div.title {
 	float:right;
 }
 
-div:hover > .attributionlogo,p:hover > .attributionlogo,td:hover > .attributionlogo { 
+div:hover > .attributionlogo,p:hover > .attributionlogo,td:hover > .attributionlogo,blockquote:hover > .attributionlogo { 
 	display:inline; 
 	float:right;
 }
