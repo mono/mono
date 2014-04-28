@@ -66,6 +66,7 @@ namespace Mono.Xml.Xsl.Operations {
 						throw new XsltCompileException ("XSLT value-of element cannot contain any child.", null, c.Input);
 					}
 				} while (c.Input.MoveToNext ());
+				c.Input.MoveToParent ();
 			}
 		}
 		
