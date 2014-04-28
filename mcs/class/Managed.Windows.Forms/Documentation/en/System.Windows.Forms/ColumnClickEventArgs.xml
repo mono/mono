@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ColumnClickEventArgs" FullName="System.Windows.Forms.ColumnClickEventArgs">
   <TypeSignature Language="C#" Value="public class ColumnClickEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.ColumnClickEventArgs" /> class provides the zero-based index within the <see cref="T:System.Windows.Forms.ListView.ColumnHeaderCollection" /> class of the column that is clicked in the <see cref="T:System.Windows.Forms.ListView" /> control. You can use this information in an event handler for the <see cref="E:System.Windows.Forms.ListView.ColumnClick" /> event to determine which column is being clicked to perform tasks on the data within the column.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ListView.ColumnClick" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,9 +28,13 @@
         <Parameter Name="column" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="column">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ColumnClickEventArgs" /> class.</para>
+        </summary>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the column that is clicked. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -37,9 +48,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the information provided by this property in an event handler for the <see cref="E:System.Windows.Forms.ListView.ColumnClick" /> event to determine which column is being clicked to perform tasks on the data within the column.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the zero-based index of the column that is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

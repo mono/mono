@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NamespaceResolveEventArgs" FullName="System.Runtime.InteropServices.WindowsRuntime.NamespaceResolveEventArgs">
   <TypeSignature Language="C#" Value="public class NamespaceResolveEventArgs : EventArgs" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit NamespaceResolveEventArgs extends System.EventArgs" />
@@ -15,8 +16,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeMetadata.ReflectionOnlyNamespaceResolve" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,10 +35,15 @@
         <Parameter Name="requestingAssembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <param name="namespaceName">To be added.</param>
-        <param name="requestingAssembly">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.NamespaceResolveEventArgs" /> class, specifying the namespace to resolve and the assembly whose dependency is being resolved. </para>
+        </summary>
+        <param name="namespaceName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to resolve. </param>
+        <param name="requestingAssembly">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly whose dependency is being resolved. </param>
       </Docs>
     </Member>
     <Member MemberName="NamespaceName">
@@ -48,9 +57,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the namespace to resolve. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequestingAssembly">
@@ -64,9 +76,12 @@
         <ReturnType>System.Reflection.Assembly</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the assembly whose dependency is being resolved. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResolvedAssemblies">
@@ -80,9 +95,15 @@
         <ReturnType>System.Collections.ObjectModel.Collection&lt;System.Reflection.Assembly&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event handler adds to this collection all assemblies that define the namespace that is specified by the <see cref="P:System.Runtime.InteropServices.WindowsRuntime.NamespaceResolveEventArgs.NamespaceName" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of assemblies; when the event handler for the <see cref="E:System.Runtime.InteropServices.WindowsRuntime.WindowsRuntimeMetadata.ReflectionOnlyNamespaceResolve" /> event is invoked, the collection is empty, and the event handler is responsible for adding the necessary assemblies. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

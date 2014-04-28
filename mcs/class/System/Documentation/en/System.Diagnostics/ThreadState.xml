@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ThreadState" FullName="System.Diagnostics.ThreadState">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum ThreadState" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ThreadState extends System.Enum" />
@@ -14,8 +15,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>There are two thread state enumerations, <see cref="T:System.Diagnostics.ThreadState" /> and <see cref="T:System.Threading.ThreadState" />.  The thread state enumerations are only of interest in a few debugging scenarios. Your code should never use thread state to synchronize the activities of threads.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the current execution state of the thread.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Initialized">
@@ -32,8 +41,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A state that indicates the thread has been initialized, but has not yet started.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ready">
@@ -50,8 +62,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A state that indicates the thread is waiting to use a processor because no processor is free. The thread is prepared to run on the next available processor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Running">
@@ -68,8 +83,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A state that indicates the thread is currently using a processor.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Standby">
@@ -86,8 +104,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A state that indicates the thread is about to use a processor. Only one thread can be in this state at a time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Terminated">
@@ -104,8 +125,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A state that indicates the thread has finished executing and has exited.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Transition">
@@ -122,8 +146,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A state that indicates the thread is waiting for a resource, other than the processor, before it can execute. For example, it might be waiting for its execution stack to be paged in from disk.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unknown">
@@ -140,8 +167,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The state of the thread is unknown.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Wait">
@@ -158,8 +188,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A state that indicates the thread is not ready to use the processor because it is waiting for a peripheral operation to complete or a resource to become free. When the thread is ready, it will be rescheduled.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

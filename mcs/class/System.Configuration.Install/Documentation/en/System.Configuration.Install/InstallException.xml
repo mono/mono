@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InstallException" FullName="System.Configuration.Install.InstallException">
   <TypeSignature Language="C#" Value="public class InstallException : SystemException" />
   <AssemblyInfo>
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when an error occurs during the commit, rollback, or uninstall phase of an installation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +23,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallException" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,9 +41,13 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallException" /> class, and specifies the message to display to the user.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to display to the user. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -51,10 +62,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallException" /> class with serialized data.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,10 +85,15 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.Install.InstallException" /> class, and specifies the message to display to the user, and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to display to the user. </param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

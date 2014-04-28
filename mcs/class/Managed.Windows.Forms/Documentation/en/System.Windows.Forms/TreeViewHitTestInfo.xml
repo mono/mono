@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TreeViewHitTestInfo" FullName="System.Windows.Forms.TreeViewHitTestInfo">
   <TypeSignature Language="C#" Value="public class TreeViewHitTestInfo" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.TreeViewHitTestInfo" /> is returned by the <see cref="T:System.Windows.Forms.TreeView" /> class when the <see cref="Overload:System.Windows.Forms.TreeView.HitTest" /> method is called.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains information about an area of a <see cref="T:System.Windows.Forms.TreeView" /> control or a <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,10 +31,18 @@
         <Parameter Name="hitLocation" Type="System.Windows.Forms.TreeViewHitTestLocations" />
       </Parameters>
       <Docs>
-        <param name="hitNode">To be added.</param>
-        <param name="hitLocation">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="hitNode " />parameter can be null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.TreeViewHitTestInfo" /> class. </para>
+        </summary>
+        <param name="hitNode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tree node located at the position indicated by the hit test.</param>
+        <param name="hitLocation">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.TreeViewHitTestLocations" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="Location">
@@ -40,9 +55,12 @@
         <ReturnType>System.Windows.Forms.TreeViewHitTestLocations</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the location of a hit test on a <see cref="T:System.Windows.Forms.TreeView" /> control, in relation to the <see cref="T:System.Windows.Forms.TreeView" /> and the nodes it contains.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Node">
@@ -55,9 +73,15 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the hit test location is not on a <see cref="T:System.Windows.Forms.TreeNode" />, the <see cref="P:System.Windows.Forms.TreeViewHitTestInfo.Node" /> property will be null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.TreeNode" /> at the position indicated by a hit test of a <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

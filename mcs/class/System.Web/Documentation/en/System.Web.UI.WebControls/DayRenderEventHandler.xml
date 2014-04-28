@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DayRenderEventHandler" FullName="System.Web.UI.WebControls.DayRenderEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void DayRenderEventHandler(object sender, DayRenderEventArgs e);" />
   <AssemblyInfo>
@@ -14,8 +15,15 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Although data binding is not supported for the <see cref="T:System.Web.UI.WebControls.Calendar" /> control, it is possible to modify the content and formatting of the individual date cells. Before the <see cref="T:System.Web.UI.WebControls.Calendar" /> control is displayed on a Web page, it creates and assembles the components that make up the control. The <see cref="E:System.Web.UI.WebControls.Calendar.DayRender" /> event is raised when each date cell in the <see cref="T:System.Web.UI.WebControls.Calendar" /> control is created. You can control the contents and formatting of a date cell when it is created by providing code in the event handler for the <see cref="E:System.Web.UI.WebControls.Calendar.DayRender" /> event. For more information on customizing the contents of a date cell, see <see cref="M:System.Web.UI.WebControls.Calendar.OnDayRender(System.Web.UI.WebControls.TableCell,System.Web.UI.WebControls.CalendarDay)" />.</para>
+      <para>When you create a <see cref="T:System.Web.UI.WebControls.DayRenderEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the <see cref="E:System.Web.UI.WebControls.Calendar.DayRender" /> event of the <see cref="T:System.Web.UI.WebControls.Calendar" /> control.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

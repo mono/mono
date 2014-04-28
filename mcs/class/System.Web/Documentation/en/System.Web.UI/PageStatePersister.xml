@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PageStatePersister" FullName="System.Web.UI.PageStatePersister">
   <TypeSignature Language="C#" Value="public abstract class PageStatePersister" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The HTTP requests and responses are inherently stateless. To maintain state information between HTTP requests, ASP.NET server pages can store <see cref="T:System.Web.UI.Page" /> state. This state, called view state, consists of page and control settings and data that make the page and controls appear as if they are the same ones that the user saw and interacted with on their last round trip to the server. Several mechanisms exist to store view state between successive requests to the same page. The abstract <see cref="T:System.Web.UI.PageStatePersister" /> class represents the base class for these state information storage mechanisms. </para>
+      <para>The default view state persistence mechanism in ASP.NET is to maintain the state information as a Base64-encoded string in a hidden HTML element (an element with the type attribute set to "hidden") on the page. An ASP.NET page uses a <see cref="T:System.Web.UI.HiddenFieldPageStatePersister" /> object to perform this work, using an <see cref="T:System.Web.UI.IStateFormatter" /> instance to serialize and deserialize object state information. Alternately, you can store the view state for your pages in the <see cref="P:System.Web.HttpContext.Session" /> object on the server using the <see cref="T:System.Web.UI.SessionPageStatePersister" /> class for mobile clients with limited bandwidth and resources. In some cases, you might disable view state persistence altogether. If you do this, the result is that sometimes pages and controls that rely on state persistence do not behave correctly. For more information about page state management and view state, see <format type="text/html"><a href="0218d965-5d30-445b-b6a6-8870e70e63ce">ASP.NET State Management Overview</a></format>.</para>
+      <para>If you are writing controls, you can store state information for the controls in the <see cref="P:System.Web.UI.Control.ViewState" /> dictionary, which is a <see cref="T:System.Web.UI.StateBag" /> object. A developer would retrieve the control state through the <see cref="P:System.Web.UI.PageStatePersister.ControlState" /> property. You assign keys and values to the <see cref="P:System.Web.UI.Control.ViewState" /> property, and the <see cref="T:System.Web.UI.Page" /> object serializes the state information between requests. To perform custom state handling in your control, override the <see cref="M:System.Web.UI.Control.LoadViewState(System.Object)" /> and <see cref="M:System.Web.UI.Control.SaveViewState" /> methods. Any state information that is stored in this dictionary is lost when view state is disabled by a page developer. To mitigate this, in ASP.NET version 2.0 you can store critical state information in a separate object, called control state. The control state object is not affected when view state is disabled by a page developer. Storing state information in the control state object requires that the control override the <see cref="M:System.Web.UI.Control.LoadControlState(System.Object)" /> and <see cref="M:System.Web.UI.Control.SaveControlState" /> methods and that the control be registered to store state information in control state every time the control is initialized. You can register a control to use control state by overriding the <see cref="M:System.Web.UI.Control.OnInit(System.EventArgs)" /> method and calling the <see cref="M:System.Web.UI.Page.RegisterRequiresControlState(System.Web.UI.Control)" /> method. For more information about using the <see cref="P:System.Web.UI.Control.ViewState" /> property and control state when developing controls, see <format type="text/html"><a href="fbe26c16-cff4-4089-b3dd-877411f0c0ef">Developing Custom ASP.NET Server Controls</a></format>.</para>
+      <para>To maintain view state on clients that cannot support the existing view state persistence mechanisms, you can extend the <see cref="T:System.Web.UI.PageStatePersister" /> class to introduce your own view state persistence methods, and you can use page adapters to configure your ASP.NET application to use different view state persistence mechanisms based on the type of client to which a page is served. Classes that derive from the <see cref="T:System.Web.UI.PageStatePersister" /> class must override the abstract <see cref="M:System.Web.UI.PageStatePersister.Save" /> method to store view state and control state in the persistence medium, and override the <see cref="M:System.Web.UI.PageStatePersister.Load" /> method to extract it. If you need to serialize view state and control state to a string, you can use the <see cref="T:System.Web.UI.IStateFormatter" /> object that is accessed using the <see cref="P:System.Web.UI.PageStatePersister.StateFormatter" /> property. It efficiently serializes and deserializes object state information to a Base64-encoded string. You can also override the <see cref="P:System.Web.UI.PageStatePersister.StateFormatter" /> property to supply your own object state serialization mechanism.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base functionality for ASP.NET view state persistence mechanisms.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +31,14 @@
         <Parameter Name="page" Type="System.Web.UI.Page" />
       </Parameters>
       <Docs>
-        <param name="page">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.PageStatePersister" /> class.</para>
+        </summary>
+        <param name="page">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Page" /> that the view state persistence mechanism is created for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +51,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Control state is an object comprised of critical view state data that Web server controls need to function, and is contained in a separate object from normal view state information. Control state data is not affected when view state is disabled at the <see cref="T:System.Web.UI.Page" /> level, but requires extra implementation steps to use. For more information on using the <see cref="P:System.Web.UI.Control.ViewState" /> property and control state when developing controls, see <format type="text/html"><a href="fbe26c16-cff4-4089-b3dd-877411f0c0ef">Developing Custom ASP.NET Server Controls</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that represents the data that controls contained by the current <see cref="T:System.Web.UI.Page" /> object use to persist across HTTP requests to the Web server. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,9 +74,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Classes that derive from the <see cref="T:System.Web.UI.PageStatePersister" /> class implement the <see cref="M:System.Web.UI.PageStatePersister.Load" /> method to initialize the <see cref="P:System.Web.UI.PageStatePersister.ViewState" /> and <see cref="P:System.Web.UI.PageStatePersister.ControlState" /> properties from some persisted format.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overridden by derived classes to deserialize and load persisted state information when a <see cref="T:System.Web.UI.Page" /> object initializes its control hierarchy.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +95,16 @@
         <ReturnType>System.Web.UI.Page</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Web.UI.PageStatePersister.Page" /> property to access the current <see cref="T:System.Web.HttpContext" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Web.UI.Page" /> object that the view state persistence mechanism is created for.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -86,9 +118,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Classes that derive from the <see cref="T:System.Web.UI.PageStatePersister" /> class implement the <see cref="M:System.Web.UI.PageStatePersister.Save" /> method to persist the contents of the <see cref="P:System.Web.UI.PageStatePersister.ViewState" /> and <see cref="P:System.Web.UI.PageStatePersister.ControlState" /> properties to a persistence medium.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overridden by derived classes to serialize persisted state information when a <see cref="T:System.Web.UI.Page" /> object is unloaded from memory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -101,10 +139,16 @@
         <ReturnType>System.Web.UI.IStateFormatter</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can override the <see cref="P:System.Web.UI.PageStatePersister.StateFormatter" /> property to provide your own view state formatter. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Web.UI.IStateFormatter" /> object that is used to serialize and deserialize the state information contained in the <see cref="P:System.Web.UI.PageStatePersister.ViewState" /> and <see cref="P:System.Web.UI.PageStatePersister.ControlState" /> properties during calls to the <see cref="M:System.Web.UI.PageStatePersister.Save" /> and <see cref="M:System.Web.UI.PageStatePersister.Load" /> methods.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -117,10 +161,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>View state is a dictionary of state data that Web server controls need to function and render themselves. Control developers typically access the view state object using the <see cref="P:System.Web.UI.Control.ViewState" /> property. View state is affected when view state is disabled at the <see cref="T:System.Web.UI.Page" /> level, and as a result controls might not behave correctly in these scenarios. For more information on using <see cref="P:System.Web.UI.Control.ViewState" /> and control state when developing controls, see <format type="text/html"><a href="fbe26c16-cff4-4089-b3dd-877411f0c0ef">Developing Custom ASP.NET Server Controls</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an object that represents the data that controls contained by the current <see cref="T:System.Web.UI.Page" /> object use to persist across HTTP requests to the Web server. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

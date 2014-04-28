@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaGroupRef" FullName="System.Xml.Schema.XmlSchemaGroupRef">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaGroupRef : System.Xml.Schema.XmlSchemaParticle" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaGroupRef extends System.Xml.Schema.XmlSchemaParticle" />
@@ -14,8 +15,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the group element with ref attribute from the XML Schema as specified by the <format type="text/html"><a href="">World Wide Web Consortium (W3C)</a></format>. This class is used within complex types that reference a group defined at the schema level.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +34,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaGroupRef" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Particle">
@@ -52,9 +59,12 @@
         <ReturnType>System.Xml.Schema.XmlSchemaGroupBase</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaGroupBase'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets one of the <see cref="T:System.Xml.Schema.XmlSchemaChoice" />, <see cref="T:System.Xml.Schema.XmlSchemaAll" />, or <see cref="T:System.Xml.Schema.XmlSchemaSequence" /> classes, which holds the post-compilation value of the Particle property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RefName">
@@ -76,9 +86,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Xml.XmlQualifiedName'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RefName value must be a QName. The RefName can include a namespace prefix. To include a group in a complexType element, use the RefName attribute to specify the group to include in this schema.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of a group defined in this schema (or another schema indicated by the specified namespace).</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

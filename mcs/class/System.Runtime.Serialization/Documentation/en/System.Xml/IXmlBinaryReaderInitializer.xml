@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IXmlBinaryReaderInitializer" FullName="System.Xml.IXmlBinaryReaderInitializer">
   <TypeSignature Language="C#" Value="public interface IXmlBinaryReaderInitializer" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IXmlBinaryReaderInitializer" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods for reinitializing a binary reader to read a new document.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="SetInput">
@@ -29,13 +33,22 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="dictionary">To be added.</param>
         <param name="quota">To be added.</param>
-        <param name="session">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reinitializes the binary reader using the given input stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlDictionary" /> to use.</param>
+        <param name="session">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlBinaryReaderSession" /> to use.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />Delegate to call when the reader is closed.</param>
       </Docs>
     </Member>
     <Member MemberName="SetInput">
@@ -58,15 +71,26 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="dictionary">To be added.</param>
         <param name="quota">To be added.</param>
-        <param name="session">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reinitializes the binary reader using the given input buffer.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />Starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />Number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlDictionary" /> to use.</param>
+        <param name="session">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <see cref="T:System.Xml.XmlBinaryReaderSession" /> to use.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />Delegate to call when the reader is closed.</param>
       </Docs>
     </Member>
   </Members>

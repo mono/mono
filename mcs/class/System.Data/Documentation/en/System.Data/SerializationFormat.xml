@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SerializationFormat" FullName="System.Data.SerializationFormat">
   <TypeSignature Language="C#" Value="public enum SerializationFormat" />
   <AssemblyInfo>
@@ -8,9 +9,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Microsoft ADO.NET 2.0 introduces the ability to serialize a <see cref="T:System.Data.Dataset" /> as binary content. Earlier versions of the Microsoft .NET Framework do not support binary serialization.</para>
+      <para>The default format is <see cref="F:System.Data.SerializationFormat.Xml" />. This is backward compatible and will work with all versions of the .NET Framework.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Determines the serialization format for a <see cref="T:System.Data.DataSet" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Binary">
@@ -20,8 +28,11 @@
         <ReturnType>System.Data.SerializationFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize as binary content. Available in ADO.NET 2.0 only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +45,11 @@
         <ReturnType>System.Data.SerializationFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serialize as XML content. The default.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

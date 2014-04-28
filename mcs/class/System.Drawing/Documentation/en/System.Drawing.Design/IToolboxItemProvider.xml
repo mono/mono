@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IToolboxItemProvider" FullName="System.Drawing.Design.IToolboxItemProvider">
   <TypeSignature Language="C#" Value="public interface IToolboxItemProvider" />
   <AssemblyInfo>
@@ -6,9 +7,12 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Exposes a collection of toolbox items.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Items">
@@ -18,10 +22,13 @@
         <ReturnType>System.Drawing.Design.ToolboxItemCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.Drawing.Design.ToolboxItem" /> objects.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

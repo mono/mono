@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlNotificationInfo" FullName="System.Data.SqlClient.SqlNotificationInfo">
   <TypeSignature Language="C#" Value="public enum SqlNotificationInfo" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.SqlClient.SqlNotificationInfo" /> enumeration is referenced by an instance of the <see cref="T:System.Data.SqlClient.SqlNotificationEventArgs" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration provides additional information about the different notifications that can be received by the dependency event handler. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AlreadyChanged">
@@ -20,8 +27,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SqlDependency object already fired, and new commands cannot be added to it.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An underlying server object related to the query was modified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data was changed by a DELETE statement.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +78,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An underlying object related to the query was dropped.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +95,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An internal server error occurred.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,7 +115,10 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SqlDependency object has expired.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -103,8 +128,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data was changed by an INSERT statement.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -117,8 +145,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A statement was provided that cannot be notified (for example, an UPDATE statement).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -131,8 +162,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The statement was executed under an isolation mode that was not valid (for example, Snapshot).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -145,8 +179,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SET options were not set appropriately at subscription time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -162,7 +199,10 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A previous statement has caused query notifications to fire under the current transaction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Query">
@@ -172,8 +212,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A SELECT statement that cannot be notified or was provided.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -189,7 +232,10 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Fires as a result of server resource pressure.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Restart">
@@ -199,8 +245,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server was restarted (notifications are sent during restart.).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -216,7 +265,10 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subscribing query causes the number of templates on one of the target tables to exceed the maximum allowable limit.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Truncate">
@@ -226,8 +278,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One or more tables were truncated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -243,7 +298,10 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used when the info option sent by the server was not recognized by the client.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Update">
@@ -253,8 +311,11 @@
         <ReturnType>System.Data.SqlClient.SqlNotificationInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data was changed by an UPDATE statement.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

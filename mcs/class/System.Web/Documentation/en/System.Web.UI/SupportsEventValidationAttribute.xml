@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SupportsEventValidationAttribute" FullName="System.Web.UI.SupportsEventValidationAttribute">
   <TypeSignature Language="C#" Value="public sealed class SupportsEventValidationAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,9 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Event validation prevents forged postbacks to an ASP.NET Web page and can be enabled through the EnableEventValidation page directive. </para>
+      <para>For more information, see <see cref="P:System.Web.UI.Page.EnableEventValidation" />. For more information about attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the metadata attribute that Web server controls use to indicate support for event validation. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +32,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.SupportsEventValidationAttribute" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

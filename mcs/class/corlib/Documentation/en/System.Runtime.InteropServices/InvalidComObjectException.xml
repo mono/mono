@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InvalidComObjectException" FullName="System.Runtime.InteropServices.InvalidComObjectException">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class InvalidComObjectException : SystemException" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit InvalidComObjectException extends System.SystemException" />
@@ -20,8 +21,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An InvalidComObjectException is thrown when an invalid COM object is used. This happens when the __ComObject type is used directly, without having a backing class factory. For more information, see <see cref="P:System.Type.IsCOMObject" />.</para>
+      <para>InvalidComObjectException uses the HRESULT COR_E_INVALIDCOMOBJECT which has the value 0x80131527.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception thrown when an invalid COM object is used.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +44,44 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>InvalidComObjectException inherits from <see cref="T:System.SystemException" />. This constructor sets the properties of the <see cref="T:System.Exception" /> object as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property Type </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>null. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>A localized error message string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the InvalidComObjectException with default properties.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,9 +98,47 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>InvalidComObjectException inherits from <see cref="T:System.SystemException" />. This constructor sets the properties of the <see cref="T:System.Exception" /> object as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property Type </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>null. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="message" /> </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the InvalidComObjectException with a message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message that indicates the reason for the exception. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -74,10 +156,19 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'Runtime.Serialization.SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called during deserialization to reconstitute the exception object transmitted over a stream. For more information, see <see cref="N:System.Runtime.Serialization" />.</para>
+          <para>InvalidComObjectException inherits from <see cref="T:System.SystemException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the COMException class from serialization data.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that holds the serialized object data. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contextual information about the source or destination. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -95,10 +186,49 @@
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added: an object of type 'string'</param>
-        <param name="inner">To be added: an object of type 'Exception'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or null if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Runtime.InteropServices.InvalidComObjectException" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.InnerException" /> </para>
+              </term>
+              <description>
+                <para>The inner exception reference. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Exception.Message" /> </para>
+              </term>
+              <description>
+                <para>The error message string. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.InvalidComObjectException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception. </param>
+        <param name="inner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="inner" /> parameter is not null, the current exception is raised in a catch block that handles the inner exception. </param>
       </Docs>
     </Member>
   </Members>

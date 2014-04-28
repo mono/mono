@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="INotifyCompletion" FullName="System.Runtime.CompilerServices.INotifyCompletion">
   <TypeSignature Language="C#" Value="public interface INotifyCompletion" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract INotifyCompletion" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an operation that schedules continuations when it completes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="OnCompleted">
@@ -25,9 +29,13 @@
         <Parameter Name="continuation" Type="System.Action" />
       </Parameters>
       <Docs>
-        <param name="continuation">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Schedules the continuation action that's invoked when the instance completes.</para>
+        </summary>
+        <param name="continuation">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action to invoke when the operation completes.</param>
       </Docs>
     </Member>
   </Members>

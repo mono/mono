@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PagerButtons" FullName="System.Web.UI.WebControls.PagerButtons">
   <TypeSignature Language="C#" Value="public enum PagerButtons" />
   <AssemblyInfo>
@@ -8,9 +9,19 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.PagerButtons" /> enumeration represents the types of buttons to display for navigating between pages of content in a paginated control. This enumeration is used by the <see cref="P:System.Web.UI.WebControls.PagerSettings.Mode" /> property to specify the type of navigation buttons to display in controls that use the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> class, such as <see cref="T:System.Web.UI.WebControls.GridView" /> and <see cref="T:System.Web.UI.WebControls.DetailsView" />.</para>
+      <para>PagerButtons.NextPrevious displays <ui>Next</ui> and <ui>Previous</ui> buttons to access the next and previous pages of the paginated control.</para>
+      <para>PagerButtons.NextPreviousFirstLast displays <ui>Next</ui> and <ui>Previous</ui> buttons as well as <ui>First</ui> and <ui>Last</ui> buttons to directly access the first and last pages of the paginated control.</para>
+      <para>PagerButtons.Numeric displays numeric link buttons corresponding to the pages of the paginated control.</para>
+      <para>PagerButtons.NumericFirstLast displays numeric link buttons corresponding to the pages of the paginated control as well as <ui>First</ui> and <ui>Last</ui> buttons to directly access the first and last pages of the paginated control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the types of buttons to display for navigating between pages of content in a paginated control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="NextPrevious">
@@ -20,8 +31,11 @@
         <ReturnType>System.Web.UI.WebControls.PagerButtons</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A set of pagination controls consisting of <ui>Previous</ui> and <ui>Next</ui> buttons.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +48,11 @@
         <ReturnType>System.Web.UI.WebControls.PagerButtons</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A set of pagination controls consisting of <ui>Previous</ui>, <ui>Next</ui>, <ui>First</ui>, and <ui>Last</ui> buttons.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +65,11 @@
         <ReturnType>System.Web.UI.WebControls.PagerButtons</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A set of pagination controls consisting of numbered link buttons to access pages directly.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +82,11 @@
         <ReturnType>System.Web.UI.WebControls.PagerButtons</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A set of pagination controls consisting of numbered and <ui>First</ui> and <ui>Last</ui> link buttons.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

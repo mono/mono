@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AmbientProperties" FullName="System.Windows.Forms.AmbientProperties">
   <TypeSignature Language="C#" Value="public sealed class AmbientProperties" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An ambient property is a property on a control that, if not set, is retrieved from the parent control. If the control does not have a parent and the property is not set, the control tries to find the value of the ambient property through the <see cref="P:System.ComponentModel.Component.Site" /> property. If the control is not sited, the site does not support ambient properties, or the property is not set on the <see cref="T:System.Windows.Forms.AmbientProperties" /> object, the <see cref="T:System.Windows.Forms.Control" /> uses its own default values. Some objects derived from the <see cref="T:System.Windows.Forms.Control" /> class might set the property even if you do not. For example, the <see cref="T:System.Windows.Forms.Form" /> class always sets the <see cref="P:System.Windows.Forms.Control.ForeColor" /> and <see cref="P:System.Windows.Forms.Control.BackColor" /> properties.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides ambient property values to top-level controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,8 +26,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.AmbientProperties" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,9 +44,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there is no ambient background color, the value of the <see cref="P:System.Windows.Forms.Control.BackColor" /> property is set to <see cref="F:System.Drawing.Color.Empty" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ambient background color of an object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -50,9 +66,15 @@
         <ReturnType>System.Windows.Forms.Cursor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there is no ambient cursor, the value of the <see cref="P:System.Windows.Forms.Control.Cursor" /> property is null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ambient cursor of an object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,9 +88,15 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there is no ambient font, the value of the <see cref="P:System.Windows.Forms.Control.Font" /> property is null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ambient font of an object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,9 +110,15 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If there is no ambient foreground color, the value of the <see cref="P:System.Windows.Forms.Control.ForeColor" /> property is set to <see cref="F:System.Drawing.Color.Empty" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the ambient foreground color of an object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

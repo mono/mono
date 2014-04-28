@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebExceptionStatus" FullName="System.Net.WebExceptionStatus" FullNameSP="System_Net_WebExceptionStatus" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable WebExceptionStatus extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum WebExceptionStatus" />
@@ -15,15 +16,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para> Defines status codes for the <see cref="T:System.Net.WebException" /> class.
- </para>
-    </summary>
     <remarks>
-      <para>This enumeration defines the status
- codes assigned to the <see cref="P:System.Net.WebException.Status" />
- property.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.WebExceptionStatus" /> enumeration defines the status codes assigned to the <see cref="P:System.Net.WebException.Status" /> property.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines status codes for the <see cref="T:System.Net.WebException" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CacheEntryNotFound">
@@ -38,7 +38,10 @@
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified cache entry was not found.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConnectFailure">
@@ -58,8 +61,8 @@
       <MemberValue>ConnectFailure</MemberValue>
       <Docs>
         <summary>
-          <para> The remote service point could not be contacted at the transport level.
- </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The remote service point could not be contacted at the transport level.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -81,9 +84,8 @@
       <MemberValue>ConnectionClosed</MemberValue>
       <Docs>
         <summary>
-          <para>
-       The connection was prematurely closed.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The connection was prematurely closed.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -105,8 +107,8 @@
       <MemberValue>KeepAliveFailure</MemberValue>
       <Docs>
         <summary>
-          <para>The connection for a request that specifies the Keep-alive 
-      header was closed unexpectedly.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The connection for a request that specifies the Keep-alive header was closed unexpectedly.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -125,8 +127,11 @@
       </ReturnValue>
       <MemberValue>MessageLengthLimitExceeded</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A message was received that exceeded the specified limit when sending a request or receiving a response from the server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NameResolutionFailure">
@@ -146,9 +151,8 @@
       <MemberValue>NameResolutionFailure</MemberValue>
       <Docs>
         <summary>
-          <para>
-       The name resolver service could not resolve the host name.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name resolver service could not resolve the host name.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -170,7 +174,8 @@
       <MemberValue>Pending</MemberValue>
       <Docs>
         <summary>
-          <para> An internal asynchronous request is pending.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An internal asynchronous request is pending.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -192,8 +197,8 @@
       <MemberValue>PipelineFailure</MemberValue>
       <Docs>
         <summary>
-          <para>The request was submitted as a pipeline request, but the 
-      connection was dropped before the respective response was received.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The request was a piplined request and the connection was closed before the response was received.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -215,14 +220,8 @@
       <MemberValue>ProtocolError</MemberValue>
       <Docs>
         <summary>
-          <para> 
- The response received from the server was complete
- but indicated a protocol-level error.
- </para>
-          <para>
-            <block subset="none" type="note">For example, an HTTP protocol error such 
- as 401 Access Denied would use this status. </block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The response received from the server was complete but indicated a protocol-level error. For example, an HTTP protocol error such as 401 Access Denied would use this status.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -244,6 +243,7 @@
       <MemberValue>ProxyNameResolutionFailure</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The name resolver service could not resolve the proxy host name.</para>
         </summary>
       </Docs>
@@ -266,9 +266,8 @@
       <MemberValue>ReceiveFailure</MemberValue>
       <Docs>
         <summary>
-          <para>
-       A complete response was not received from the remote server.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A complete response was not received from the remote server.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -290,8 +289,8 @@
       <MemberValue>RequestCanceled</MemberValue>
       <Docs>
         <summary>
-          <para> The request was canceled or the <see cref="M:System.Net.WebRequest.Abort" qualify="true" /> method was called.
-   </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The request was canceled, the <see cref="M:System.Net.WebRequest.Abort" /> method was called, or an unclassifiable error occurred. This is the default value for <see cref="P:System.Net.WebException.Status" />.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -308,7 +307,10 @@
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The request was not permitted by the cache policy. In general, this occurs when a request is not cacheable and the effective policy prohibits sending the request to the server. You might receive this status if a request method implies the presence of a request body, a request method requires direct interaction with the server, or a request contains a conditional header.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequestProhibitedByProxy">
@@ -323,7 +325,10 @@
         <ReturnType>System.Net.WebExceptionStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This request was not permitted by the proxy.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SecureChannelFailure">
@@ -343,9 +348,8 @@
       <MemberValue>SecureChannelFailure</MemberValue>
       <Docs>
         <summary>
-          <para>
-       An error occurred in a secure channel link.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An error occurred while establishing a connection using SSL.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -367,9 +371,8 @@
       <MemberValue>SendFailure</MemberValue>
       <Docs>
         <summary>
-          <para>
-       A complete request could not be sent to the remote server.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A complete request could not be sent to the remote server.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -391,6 +394,7 @@
       <MemberValue>ServerProtocolViolation</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The server response was not a valid HTTP response.</para>
         </summary>
       </Docs>
@@ -413,8 +417,8 @@
       <MemberValue>Success</MemberValue>
       <Docs>
         <summary>
-          <para> No error was encountered.
- </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No error was encountered.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -436,7 +440,8 @@
       <MemberValue>Timeout</MemberValue>
       <Docs>
         <summary>
-          <para>No response was received during the timeout period for a request.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No response was received during the time-out period for a request.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -458,9 +463,8 @@
       <MemberValue>TrustFailure</MemberValue>
       <Docs>
         <summary>
-          <para>
-       A server certificate could not be validated.
-    </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A server certificate could not be validated.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -479,14 +483,11 @@
       </ReturnValue>
       <MemberValue>UnknownError</MemberValue>
       <Docs>
-        <summary>
-          <para>An exception of unknown type has occurred.</para>
-          <para>
-            <block subset="none" type="note">This is the default value for
- <see cref="P:System.Net.WebException.Status" /> . </block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception of unknown type has occurred.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

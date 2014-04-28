@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TableRowSection" FullName="System.Web.UI.WebControls.TableRowSection">
   <TypeSignature Language="C#" Value="public enum TableRowSection" />
   <AssemblyInfo>
@@ -8,9 +9,18 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.TableRowSection" /> enumeration specifies whether a <see cref="T:System.Web.UI.WebControls.TableRow" /> object is placed in the body, header, or footer of a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.TableRowSection" /> enumeration represents the possible values for the <see cref="P:System.Web.UI.WebControls.TableRow.TableSection" /> property of the <see cref="T:System.Web.UI.WebControls.TableRow" /> class.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.TableRowSection" /> enumeration enables you to build accessible Web sites using the <see cref="T:System.Web.UI.WebControls.Table" /> control by adding the thead, tbody, and tfoot elements to the HTML that is rendered to the client. If all rows in a table are in the tbody element, the section information is not rendered. At least one row must be in a non-body element.</para>
+      <para>When using the declarative syntax, the sections must be in the following order: header, body, and then footer.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies where a <see cref="T:System.Web.UI.WebControls.TableRow" /> object is placed in a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="TableBody">
@@ -20,8 +30,11 @@
         <ReturnType>System.Web.UI.WebControls.TableRowSection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.TableRow" /> is placed in the body of the <see cref="T:System.Web.UI.WebControls.Table" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +47,11 @@
         <ReturnType>System.Web.UI.WebControls.TableRowSection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.TableRow" /> is placed in the footer of the <see cref="T:System.Web.UI.WebControls.Table" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +64,11 @@
         <ReturnType>System.Web.UI.WebControls.TableRowSection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.TableRow" /> is placed in the header of the <see cref="T:System.Web.UI.WebControls.Table" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

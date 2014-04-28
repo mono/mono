@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataRowVersion" FullName="System.Data.DataRowVersion">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum DataRowVersion" />
   <AssemblyInfo>
@@ -12,8 +13,35 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.DataRowVersion" /> values are used when retrieving the value found in a <see cref="T:System.Data.DataRow" /> using <see cref="P:System.Data.DataRow.Item(System.Int32)" /> or the <see cref="M:System.Data.DataRow.GetChildRows(System.String)" /> of the <see cref="T:System.Data.DataRow" /> object.</para>
+      <para>The <see cref="T:System.Data.DataRowVersion" /> informs you what version of a <see cref="T:System.Data.DataRow" /> exists. Versions change under the following circumstances: </para>
+      <list type="bullet">
+        <item>
+          <para>After calling the <see cref="T:System.Data.DataRow" /> object's <see cref="M:System.Data.DataRow.BeginEdit" /> method, if you change the value, the Current and Proposed values become available.</para>
+        </item>
+        <item>
+          <para>After calling the <see cref="T:System.Data.DataRow" /> object's <see cref="M:System.Data.DataRow.CancelEdit" /> method, the Proposed value is deleted.</para>
+        </item>
+        <item>
+          <para>After calling the <see cref="T:System.Data.DataRow" /> object's <see cref="M:System.Data.DataRow.EndEdit" /> method, the Proposed value becomes the Current value.</para>
+        </item>
+        <item>
+          <para>After calling the <see cref="T:System.Data.DataRow" /> object's <see cref="M:System.Data.DataRow.AcceptChanges" /> method, the Original value becomes identical to the Current value.</para>
+        </item>
+        <item>
+          <para>After calling the <see cref="T:System.Data.DataTable" /> object's <see cref="M:System.Data.DataTable.AcceptChanges" /> method, the Original value becomes identical to the Current value.</para>
+        </item>
+        <item>
+          <para>After calling the <see cref="T:System.Data.DataRow" /> object's <see cref="M:System.Data.DataRow.RejectChanges" /> method, the Proposed value is discarded, and the version becomes Current.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the version of a <see cref="T:System.Data.DataRow" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Current">
@@ -24,8 +52,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row contains current values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,8 +71,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default version of <see cref="T:System.Data.DataRowState" />. For a DataRowState value of Added, Modified or Deleted, the default version is Current. For a <see cref="T:System.Data.DataRowState" /> value of Detached, the version is Proposed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,8 +90,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row contains its original values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -72,8 +109,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row contains a proposed value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

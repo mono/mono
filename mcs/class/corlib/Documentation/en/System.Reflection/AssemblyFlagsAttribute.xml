@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyFlagsAttribute" FullName="System.Reflection.AssemblyFlagsAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AssemblyFlagsAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AssemblyFlagsAttribute extends System.Attribute" />
@@ -22,8 +23,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Reflection.AssemblyNameFlags" /> enumeration describes the assembly characteristics that can be set using this attribute.</para>
+      <para>To access the flags that have been specified for an assembly, use the <see cref="Overload:System.Reflection.Assembly.GetName" /> property to obtain an <see cref="T:System.Reflection.AssemblyName" /> object, then use the <see cref="P:System.Reflection.AssemblyName.Flags" /> property to obtain an <see cref="T:System.Reflection.AssemblyNameFlags" /> value.</para>
+      <para>To specify <see cref="T:System.Reflection.AssemblyNameFlags" /> flags for a dynamic assembly, set the <see cref="P:System.Reflection.AssemblyName.Flags" /> property of the <see cref="T:System.Reflection.AssemblyName" /> object that you pass to the <see cref="Overload:System.AppDomain.DefineDynamicAssembly" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a bitwise combination of <see cref="T:System.Reflection.AssemblyNameFlags" /> flags for an assembly, describing just-in-time (JIT) compiler options, whether the assembly is retargetable, and whether it has a full or tokenized public key. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -44,9 +53,16 @@
         <Parameter Name="assemblyFlags" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="assemblyFlags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This untyped constructor is now obsolete. Do not use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.AssemblyFlagsAttribute" /> class with the specified combination of <see cref="T:System.Reflection.AssemblyNameFlags" /> flags, cast as an integer value.</para>
+        </summary>
+        <param name="assemblyFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.AssemblyNameFlags" /> flags, cast as an integer value, representing just-in-time (JIT) compiler options, longevity, whether an assembly is retargetable, and whether it has a full or tokenized public key.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -61,10 +77,14 @@
         <Parameter Name="assemblyFlags" Type="System.Reflection.AssemblyNameFlags" />
       </Parameters>
       <Docs>
-        <param name="assemblyFlags">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.AssemblyFlagsAttribute" /> class with the specified combination of <see cref="T:System.Reflection.AssemblyNameFlags" /> flags.</para>
+        </summary>
+        <param name="assemblyFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.AssemblyNameFlags" /> flags representing just-in-time (JIT) compiler options, longevity, whether an assembly is retargetable, and whether it has a full or tokenized public key.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -89,9 +109,16 @@
         <Parameter Name="flags" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added: an object of type 'uint'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This untyped constructor is now obsolete. Do not use.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.AssemblyFlagsAttribute" /> class with the specified combination of <see cref="T:System.Reflection.AssemblyNameFlags" /> flags, cast as an unsigned integer value.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.AssemblyNameFlags" /> flags, cast as an unsigned integer value, representing just-in-time (JIT) compiler options, longevity, whether an assembly is retargetable, and whether it has a full or tokenized public key.</param>
       </Docs>
     </Member>
     <Member MemberName="AssemblyFlags">
@@ -107,9 +134,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns an integer for backward compatibility. Cast the value to the <see cref="T:System.Reflection.AssemblyNameFlags" /> type before using it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an integer value representing the combination of <see cref="T:System.Reflection.AssemblyNameFlags" /> flags specified when this attribute instance was created.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Flags">
@@ -133,9 +166,15 @@
         <ReturnType>System.UInt32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'uint'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property returns an integer for backward compatibility. Cast the value to the <see cref="T:System.Reflection.AssemblyNameFlags" /> type before using it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an unsigned integer value representing the combination of <see cref="T:System.Reflection.AssemblyNameFlags" /> flags specified when this attribute instance was created.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

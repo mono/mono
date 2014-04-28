@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="VerificationRule" FullName="System.Web.UI.VerificationRule">
   <TypeSignature Language="C#" Value="public enum VerificationRule" />
   <AssemblyInfo>
@@ -8,9 +9,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When using extending a class, member or indexer with a <see cref="T:System.Web.UI.VerificationAttribute" />, you may define how the conditional expression, defined by the <see cref="P:System.Web.UI.VerificationAttribute.ConditionalProperty" /> and <see cref="P:System.Web.UI.VerificationAttribute.ConditionalValue" /> properties, is used by specifying one of the <see cref="T:System.Web.UI.VerificationRule" /> values. If in the creation of the <see cref="T:System.Web.UI.VerificationAttribute" /> no <see cref="T:System.Web.UI.VerificationRule" /> is specified, the default value of <see cref="F:System.Web.UI.VerificationRule.Required" /> is used.</para>
+      <para>The left side of a verification rule's conditional expression is the <see cref="P:System.Web.UI.VerificationAttribute.ConditionalProperty" /> and the right side is the <see cref="P:System.Web.UI.VerificationAttribute.ConditionalValue" />. The <see cref="T:System.Web.UI.VerificationConditionalOperator" /> specifies how the <see cref="P:System.Web.UI.VerificationAttribute.ConditionalProperty" /> is to be compared to the <see cref="P:System.Web.UI.VerificationAttribute.ConditionalValue" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how conditional expressions defined by an <see cref="T:System.Web.UI.VerificationAttribute" /> instance are used in verification.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="NotEmptyString">
@@ -20,8 +28,11 @@
         <ReturnType>System.Web.UI.VerificationRule</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The conditional expression specified in an <see cref="T:System.Web.UI.VerificationAttribute" /> instance must have a left hand side that is not an empty string ("").</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +45,11 @@
         <ReturnType>System.Web.UI.VerificationRule</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The conditional expression specified in an <see cref="T:System.Web.UI.VerificationAttribute" /> instance is prohibited.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +62,11 @@
         <ReturnType>System.Web.UI.VerificationRule</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The conditional expression specified in an <see cref="T:System.Web.UI.VerificationAttribute" /> instance is required.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

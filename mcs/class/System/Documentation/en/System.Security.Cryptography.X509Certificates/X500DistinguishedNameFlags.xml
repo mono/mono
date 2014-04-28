@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X500DistinguishedNameFlags" FullName="System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags">
   <TypeSignature Language="C#" Value="public enum X500DistinguishedNameFlags" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed X500DistinguishedNameFlags extends System.Enum" />
@@ -15,9 +16,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used with the <see cref="T:System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags" /> class to indicate special characters contained in the distinguished name.</para>
+      <para>Several values are mutually exclusive in this enumeration; use only one of these values to define the special characteristics of an X.500 distinguished name. For example, specify only one of the <see cref="F:System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags.UseCommas" />, <see cref="F:System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags.UseNewLines" /> , and <see cref="F:System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags.UseSemicolons" /> values. You would also specify either <see cref="F:System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags.UseT61Encoding" /> or <see cref="F:System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags.UseUTF8Encoding" /> .</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies characteristics of the X.500 distinguished name.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DoNotUsePlusSign">
@@ -32,8 +40,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distinguished name does not use the plus sign.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DoNotUseQuotes">
@@ -48,8 +59,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distinguished name does not use quotation marks.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ForceUTF8Encoding">
@@ -64,8 +78,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Forces the distinguished name to encode specific X.500 keys as UTF-8 strings rather than printable Unicode strings. For more information and the list of X.500 keys affected, see the <see cref="http://msdn.microsoft.com/en-us/library/windows/desktop/aa379394.aspx">X500NameFlags enumeration</see>.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -80,8 +97,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distinguished name has no special characteristics.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reversed">
@@ -96,8 +116,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distinguished name is reversed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseCommas">
@@ -112,8 +135,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distinguished name uses commas.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseNewLines">
@@ -128,8 +154,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distinguished name uses the new line character.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseSemicolons">
@@ -144,8 +173,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distinguished name uses semicolons.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseT61Encoding">
@@ -160,8 +192,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distinguished name uses T61 encoding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseUTF8Encoding">
@@ -176,8 +211,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X500DistinguishedNameFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distinguished name uses UTF8 encoding instead of Unicode character encoding.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

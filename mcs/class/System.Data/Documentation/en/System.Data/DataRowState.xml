@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataRowState" FullName="System.Data.DataRowState">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum DataRowState" />
   <AssemblyInfo>
@@ -17,8 +18,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.DataRowState" /> enumeration is returned by the <see cref="P:System.Data.DataRow.RowState" /> property of the <see cref="T:System.Data.DataRow" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Gets the state of a <see cref="T:System.Data.DataRow" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Added">
@@ -29,8 +36,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row has been added to a <see cref="T:System.Data.DataRowCollection" />, and <see cref="M:System.Data.DataRow.AcceptChanges" /> has not been called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -45,8 +55,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row was deleted using the <see cref="M:System.Data.DataRow.Delete" /> method of the <see cref="T:System.Data.DataRow" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -61,8 +74,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row has been created but is not part of any <see cref="T:System.Data.DataRowCollection" />. A <see cref="T:System.Data.DataRow" /> is in this state immediately after it has been created and before it is added to a collection, or if it has been removed from a collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,8 +93,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row has been modified and <see cref="M:System.Data.DataRow.AcceptChanges" /> has not been called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -93,8 +112,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row has not changed since <see cref="M:System.Data.DataRow.AcceptChanges" /> was last called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

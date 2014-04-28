@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyBuilderAccess" FullName="System.Reflection.Emit.AssemblyBuilderAccess">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum AssemblyBuilderAccess" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed AssemblyBuilderAccess extends System.Enum" />
@@ -21,8 +22,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the access modes for a dynamic assembly. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ReflectionOnly">
@@ -37,8 +41,11 @@
         <ReturnType>System.Reflection.Emit.AssemblyBuilderAccess</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic assembly is loaded into the reflection-only context, and cannot be executed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Run">
@@ -55,8 +62,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic assembly can be executed, but not saved.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RunAndCollect">
@@ -70,7 +80,10 @@
         <ReturnType>System.Reflection.Emit.AssemblyBuilderAccess</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic assembly can be unloaded and its memory reclaimed, subject to the restrictions described in <format type="text/html"><a href="4c3432e6-0dfd-453a-88a7-533979ec5d2b">Collectible Dynamic Assemblies</a></format>.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RunAndSave">
@@ -87,8 +100,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic assembly can be executed and saved.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Save">
@@ -105,8 +121,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The dynamic assembly can be saved, but not executed.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

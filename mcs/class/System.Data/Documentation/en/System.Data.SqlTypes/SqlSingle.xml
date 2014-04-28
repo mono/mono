@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlSingle" FullName="System.Data.SqlTypes.SqlSingle">
   <TypeSignature Language="C#" Maintainer="auto" Value="public struct SqlSingle : IComparable, System.Data.SqlTypes.INullable, System.Xml.Serialization.IXmlSerializable" />
   <AssemblyInfo>
@@ -23,8 +24,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Maps to the SQL Server real data type. For more information, see <see cref="N:System.Data.SqlTypes" /> or SQL Server Books Online. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a floating point number within the range of -3.40E +38 through 3.40E +38 to be stored in or retrieved from a database.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,9 +42,13 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'double'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure using the supplied double parameter.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A double value which will be used as the <see cref="P:System.Data.SqlTypes.SqlSingle.Value" /> of the new <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -52,9 +63,13 @@
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A floating point number which will be used as the <see cref="P:System.Data.SqlTypes.SqlSingle.Value" /> of the new <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -72,11 +87,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlSingle'</param>
-        <param name="y">To be added: an object of type 'SqlSingle'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlSingle'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the sum of the two specified <see cref="T:System.Data.SqlTypes.SqlSingle" /> structures.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -96,10 +116,14 @@
         <Parameter Name="value" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares this <see cref="T:System.Data.SqlTypes.SqlSingle" /> instance to the supplied <see cref="T:System.Data.SqlTypes.SqlSingle" /> and returns an indication of their relative values.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.SqlTypes.SqlSingle" /> to be compared.</param>
       </Docs>
     </Member>
     <Member MemberName="CompareTo">
@@ -112,10 +136,14 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares this <see cref="T:System.Data.SqlTypes.SqlSingle" /> instance to the supplied <see cref="T:System.Object" /> and returns an indication of their relative values.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to be compared. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -133,11 +161,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlSingle'</param>
-        <param name="y">To be added: an object of type 'SqlSingle'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlSingle'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Divides the first <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure by the second.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -154,10 +187,14 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compares the supplied object parameter to the <see cref="P:System.Data.SqlTypes.SqlSingle.Value" /> property of the <see cref="T:System.Data.SqlTypes.SqlSingle" /> object.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to be compared. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -175,11 +212,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlSingle'</param>
-        <param name="y">To be added: an object of type 'SqlSingle'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of the two <see cref="T:System.Data.SqlTypes.SqlSingle" /> parameters to determine whether they are equal.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -194,9 +236,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the hash code for this instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -216,10 +261,14 @@
         <Parameter Name="schemaSet" Type="System.Xml.Schema.XmlSchemaSet" />
       </Parameters>
       <Docs>
-        <param name="schemaSet">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the XML Schema definition language (XSD) of the specified <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </summary>
+        <param name="schemaSet">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</param>
       </Docs>
     </Member>
     <Member MemberName="GreaterThan">
@@ -233,11 +282,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlSingle'</param>
-        <param name="y">To be added: an object of type 'SqlSingle'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of the two <see cref="T:System.Data.SqlTypes.SqlSingle" /> operands to determine whether the first is greater than the second.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -255,11 +309,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlSingle'</param>
-        <param name="y">To be added: an object of type 'SqlSingle'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of two <see cref="T:System.Data.SqlTypes.SqlSingle" /> structures to determine whether the first is greater than or equal to the second.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -273,9 +332,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <format type="text/html"><a href="f18b288f-b265-4bbe-957f-c6833c0645ef">Handling Null Values (ADO.NET)</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure is null.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -293,11 +358,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlSingle'</param>
-        <param name="y">To be added: an object of type 'SqlSingle'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of the two <see cref="T:System.Data.SqlTypes.SqlSingle" /> parameters to determine whether the first is less than the second.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -315,11 +385,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlSingle'</param>
-        <param name="y">To be added: an object of type 'SqlSingle'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of the two <see cref="T:System.Data.SqlTypes.SqlSingle" /> parameters to determine whether the first is less than or equal to the second.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -334,8 +409,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this constant is 3.40E+38.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the maximum value that can be assigned to the <see cref="P:System.Data.SqlTypes.SqlSingle.Value" /> property of an instance of the <see cref="T:System.Data.SqlTypes.SqlSingle" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -350,8 +431,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this constant is -3.40E+38.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the minimum value that can be assigned to <see cref="P:System.Data.SqlTypes.SqlSingle.Value" /> property of an instance of the <see cref="T:System.Data.SqlTypes.SqlSingle" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -369,11 +456,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlSingle'</param>
-        <param name="y">To be added: an object of type 'SqlSingle'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlSingle'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the product of the two specified <see cref="T:System.Data.SqlTypes.SqlSingle" /> structures.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -391,11 +483,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlSingle'</param>
-        <param name="y">To be added: an object of type 'SqlSingle'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of the two <see cref="T:System.Data.SqlTypes.SqlSingle" /> parameters to determine whether they are not equal.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -410,8 +507,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <format type="text/html"><a href="f18b288f-b265-4bbe-957f-c6833c0645ef">Handling Null Values (ADO.NET)</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a <see cref="T:System.DBNull" /> that can be assigned to this instance of the <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -433,11 +536,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the sum of the two specified <see cref="T:System.Data.SqlTypes.SqlSingle" /> structures.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Division">
@@ -455,11 +563,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Divides the first <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure by the second.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -477,11 +590,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of the two SqlSingle parameters to determine whether they are equal.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Explicit">
@@ -579,11 +697,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of the two <see cref="T:System.Data.SqlTypes.SqlSingle" /> operands to determine whether the first is greater than the second.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="op_GreaterThanOrEqual">
@@ -601,11 +724,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of two <see cref="T:System.Data.SqlTypes.SqlSingle" /> structures to determine whether the first is greater than or equl to the second.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Implicit">
@@ -763,11 +891,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of the two <see cref="T:System.Data.SqlTypes.SqlSingle" /> parameters to determine whether they are not equal.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="op_LessThan">
@@ -785,11 +918,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of the two <see cref="T:System.Data.SqlTypes.SqlSingle" /> parameters to determine whether the first is less than the second.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="op_LessThanOrEqual">
@@ -807,11 +945,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs a logical comparison of the two <see cref="T:System.Data.SqlTypes.SqlSingle" /> parameters to determine whether the first is less than or equal to the second.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Multiply">
@@ -829,11 +972,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Computes the product of the two specified <see cref="T:System.Data.SqlTypes.SqlSingle" /> structures.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="op_Subtraction">
@@ -851,11 +999,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <param name="y">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subtracts the second <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure from the first.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="op_UnaryNegation">
@@ -872,10 +1025,14 @@
         <Parameter Name="x" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Negates the <see cref="P:System.Data.SqlTypes.SqlSingle.Value" /> of the specified <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
     </Member>
     <Member MemberName="Parse">
@@ -888,10 +1045,14 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlSingle'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified <see cref="T:System.String" /> to a <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to be parsed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -909,11 +1070,16 @@
         <Parameter Name="y" Type="System.Data.SqlTypes.SqlSingle" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'SqlSingle'</param>
-        <param name="y">To be added: an object of type 'SqlSingle'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlSingle'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subtracts the second <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure from the first.</para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -931,9 +1097,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.ReadXml">
@@ -949,9 +1118,13 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <param name="reader">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
+        <param name="reader">
+          <attribution license="cc4" from="Microsoft" modified="false" />XmlReader </param>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.WriteXml">
@@ -967,9 +1140,13 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />XmlWriter</param>
       </Docs>
     </Member>
     <Member MemberName="ToSqlBoolean">
@@ -980,9 +1157,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlBoolean'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure to <see cref="T:System.Data.SqlTypes.SqlBoolean" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -997,9 +1177,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlByte'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure to <see cref="T:System.Data.SqlTypes.SqlByte" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1014,9 +1197,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlDecimal'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure to <see cref="T:System.Data.SqlTypes.SqlDecimal" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1031,9 +1217,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlDouble'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure to <see cref="T:System.Data.SqlTypes.SqlDouble" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1048,9 +1237,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlInt16'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure to <see cref="T:System.Data.SqlTypes.SqlInt16" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1065,9 +1257,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlInt32'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure to <see cref="T:System.Data.SqlTypes.SqlInt32" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1082,9 +1277,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlInt64'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure to <see cref="T:System.Data.SqlTypes.SqlInt64" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1099,9 +1297,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlMoney'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure to <see cref="T:System.Data.SqlTypes.SqlMoney" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1116,9 +1317,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'SqlString'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure to <see cref="T:System.Data.SqlTypes.SqlString" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1133,9 +1337,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure to <see cref="T:System.String" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1149,9 +1356,12 @@
         <ReturnType>System.Single</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'float'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of this <see cref="T:System.Data.SqlTypes.SqlSingle" /> structure. This property is read-only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1166,8 +1376,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Zero functions as a constant for the <see cref="T:System.Data.SqlTypes.SqlSingle" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the zero value that can be assigned to the <see cref="P:System.Data.SqlTypes.SqlSingle.Value" /> property of an instance of the <see cref="T:System.Data.SqlTypes.SqlSingle" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

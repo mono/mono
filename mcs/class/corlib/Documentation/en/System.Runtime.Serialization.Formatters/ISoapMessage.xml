@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISoapMessage" FullName="System.Runtime.Serialization.Formatters.ISoapMessage">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface ISoapMessage" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISoapMessage" />
@@ -16,8 +17,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When an object that supports this interface is the root of a serialization graph, SOAP is produced in RPC format. The <see cref="T:System.Runtime.Serialization.Formatters.ISoapMessage" /> interface contains the method call parameter types used during deserialization of a method call.</para>
+      <para>To support SOAP RPC calls that are based on the <see cref="T:System.Runtime.Serialization.Formatters.ISoapMessage" /> interface and do not use the <see cref="T:System.Runtime.Remoting.Messaging.IRemotingFormatter" /> functionality, set the <see cref="P:System.Runtime.Serialization.Formatters.Soap.SoapFormatter.TopObject" /> property to an object that supports this interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for an object that contains the names and types of parameters required during serialization of a SOAP RPC (Remote Procedure Call).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Headers">
@@ -33,9 +41,12 @@
         <ReturnType>System.Runtime.Remoting.Messaging.Header[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the out-of-band data of the method call.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MethodName">
@@ -51,9 +62,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the called method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParamNames">
@@ -69,9 +83,12 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the parameter names of the method call.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParamTypes">
@@ -87,9 +104,12 @@
         <ReturnType>System.Type[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the parameter types of a method call.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParamValues">
@@ -105,9 +125,12 @@
         <ReturnType>System.Object[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the parameter values of a method call.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlNameSpace">
@@ -123,9 +146,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML namespace of the SOAP RPC (Remote Procedure Call) <see cref="P:System.Runtime.Serialization.Formatters.ISoapMessage.MethodName" /> element.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

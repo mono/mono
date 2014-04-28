@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeLibImporterFlags" FullName="System.Runtime.InteropServices.TypeLibImporterFlags">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum TypeLibImporterFlags" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed TypeLibImporterFlags extends System.Enum" />
@@ -21,8 +22,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used with the <see cref="M:System.Runtime.InteropServices.TypeLibConverter.ConvertTypeLibToAssembly(System.Object,System.String,System.Int32,System.Runtime.InteropServices.ITypeLibImporterNotifySink,System.Byte[],System.Reflection.StrongNameKeyPair,System.Boolean)" /> method. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates how an assembly should be produced.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ImportAsAgnostic">
@@ -37,8 +44,11 @@
         <ReturnType>System.Runtime.InteropServices.TypeLibImporterFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports a type library for any platform.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImportAsItanium">
@@ -53,8 +63,11 @@
         <ReturnType>System.Runtime.InteropServices.TypeLibImporterFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports a type library for the Itanium platform.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImportAsX64">
@@ -69,8 +82,11 @@
         <ReturnType>System.Runtime.InteropServices.TypeLibImporterFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports a type library for the x86 64-bit platform.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImportAsX86">
@@ -85,8 +101,11 @@
         <ReturnType>System.Runtime.InteropServices.TypeLibImporterFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports a type library for the x86 platform.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoDefineVersionResource">
@@ -100,7 +119,10 @@
         <ReturnType>System.Runtime.InteropServices.TypeLibImporterFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prevents inclusion of a version resource in the interop assembly. For more information, see the <see cref="M:System.Reflection.Emit.AssemblyBuilder.DefineVersionInfoResource" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -115,8 +137,11 @@
         <ReturnType>System.Runtime.InteropServices.TypeLibImporterFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No special settings. This is the default.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreventClassMembers">
@@ -131,8 +156,11 @@
         <ReturnType>System.Runtime.InteropServices.TypeLibImporterFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrimaryInteropAssembly">
@@ -149,8 +177,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a primary interop assembly. For more information, see the <see cref="T:System.Runtime.InteropServices.PrimaryInteropAssemblyAttribute" /> attribute. A keyfile must be specified.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReflectionOnlyLoading">
@@ -165,8 +196,11 @@
         <ReturnType>System.Runtime.InteropServices.TypeLibImporterFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses reflection-only loading.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SafeArrayAsSystemArray">
@@ -183,8 +217,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports all SAFEARRAY instances as <see cref="T:System.Array" /> instead of typed, single-dimensional, zero-based managed arrays. This option is useful when dealing with multi-dimensional, non-zero-based SAFEARRAY instances, which otherwise cannot be accessed unless you edit the resulting assembly by using the MSIL Disassembler (Ildasm.exe) and MSIL Assembler (Ilasm.exe) tools.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SerializableValueClasses">
@@ -199,8 +236,11 @@
         <ReturnType>System.Runtime.InteropServices.TypeLibImporterFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Uses serializable classes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransformDispRetVals">
@@ -217,8 +257,11 @@
       </ReturnValue>
       <MemberValue>TransformDispRetVals</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transforms [out, retval] parameters of methods on dispatch-only interfaces (<format type="text/html"><a href="e8c18ae5-3d9e-4dff-aa20-b5acc723eacf">dispinterface</a></format>) into return values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UnsafeInterfaces">
@@ -235,8 +278,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Imports all interfaces as interfaces that suppress the common language runtime's stack crawl for <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" /> permission. Be sure you understand the responsibilities associated with suppressing this security check. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

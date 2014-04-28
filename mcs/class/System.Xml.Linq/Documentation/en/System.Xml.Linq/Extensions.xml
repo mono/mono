@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Extensions" FullName="System.Xml.Linq.Extensions">
   <TypeSignature Language="C#" Value="public static class Extensions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Extensions extends System.Object" />
@@ -10,8 +11,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Most of the sqltecxlinq extension methods are axis methods that are used in vbteclinq queries. The methods in this class operate on collections and return collections. These methods enumerate the source collection, call the appropriate axis method on each item in the collection, and concatenate the results.</para>
+      <para>The two <see cref="Overload:System.Xml.Linq.Extensions.Remove" /> extension methods are not axis methods, however. These methods remove attributes or nodes from the XML tree.</para>
+      <para>Note that there is another category of axis methods, implemented in the <see cref="T:System.Xml.Linq.XElement" />, <see cref="T:System.Xml.Linq.XDocument" />, and <see cref="T:System.Xml.Linq.XNode" /> classes. These other axis methods operate on a single object, and return a collection of <see cref="T:System.Xml.Linq.XElement" />, <see cref="T:System.Xml.Linq.XAttribute" />, or <see cref="T:System.Xml.Linq.XNode" /> objects. </para>
+      <para>All of the axis extension methods use deferred execution. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the sqltecxlinq extension methods.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Ancestors&lt;T&gt;">

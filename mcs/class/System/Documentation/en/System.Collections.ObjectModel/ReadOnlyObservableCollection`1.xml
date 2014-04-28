@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ReadOnlyObservableCollection&lt;T&gt;" FullName="System.Collections.ObjectModel.ReadOnlyObservableCollection&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class ReadOnlyObservableCollection&lt;T&gt; : System.Collections.ObjectModel.ReadOnlyCollection&lt;T&gt;, System.Collections.Specialized.INotifyCollectionChanged, System.ComponentModel.INotifyPropertyChanged" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ReadOnlyObservableCollection`1&lt;T&gt; extends System.Collections.ObjectModel.ReadOnlyCollection`1&lt;!T&gt; implements class System.Collections.Specialized.INotifyCollectionChanged, class System.ComponentModel.INotifyPropertyChanged" />
@@ -29,8 +30,14 @@
   </Attributes>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is a read-only wrapper around an <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" />. If changes are made to the underlying collection, the <see cref="T:System.Collections.ObjectModel.ReadOnlyObservableCollection`1" /> reflects those changes. To be notified of the changes to this class, subscribe to the <see cref="E:System.Collections.ObjectModel.ReadOnlyObservableCollection`1.System#Collections#Specialized#INotifyCollectionChanged#CollectionChanged" /> or <see cref="E:System.Collections.ObjectModel.ReadOnlyObservableCollection`1.System#ComponentModel#INotifyPropertyChanged#PropertyChanged" /> event.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a read-only <see cref="T:System.Collections.ObjectModel.ObservableCollection`1" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -60,8 +67,14 @@
         <ReturnType>System.Collections.Specialized.NotifyCollectionChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <see cref="E:System.Collections.Specialized.INotifyCollectionChanged.CollectionChanged" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when an item is added or removed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnCollectionChanged">
@@ -78,9 +91,13 @@
         <Parameter Name="args" Type="System.Collections.Specialized.NotifyCollectionChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Collections.ObjectModel.ReadOnlyObservableCollection`1.CollectionChanged" /> event using the provided arguments.</para>
+        </summary>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />Arguments of the event being raised.</param>
       </Docs>
     </Member>
     <Member MemberName="OnPropertyChanged">
@@ -97,9 +114,13 @@
         <Parameter Name="args" Type="System.ComponentModel.PropertyChangedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Collections.ObjectModel.ReadOnlyObservableCollection`1.PropertyChanged" /> event using the provided arguments.</para>
+        </summary>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />Arguments of the event being raised.</param>
       </Docs>
     </Member>
     <Member MemberName="PropertyChanged">
@@ -113,8 +134,14 @@
         <ReturnType>System.ComponentModel.PropertyChangedEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <see cref="E:System.ComponentModel.INotifyPropertyChanged.PropertyChanged" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a property value changes.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExportProvider" FullName="System.ComponentModel.Composition.Hosting.ExportProvider">
   <TypeSignature Language="C#" Value="public abstract class ExportProvider" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit ExportProvider extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Retrieves exports which match a specified <see cref="T:System.ComponentModel.Composition.Primitives.ImportDefinition" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.ExportProvider" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExportsChanged">
@@ -38,8 +45,11 @@
         <ReturnType>System.EventHandler&lt;System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the exports in the <see cref="T:System.ComponentModel.Composition.Hosting.ExportProvider" /> change.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExportsChanging">
@@ -53,8 +63,11 @@
         <ReturnType>System.EventHandler&lt;System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the provided exports are changing.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetExport&lt;T&gt;">
@@ -73,9 +86,16 @@
       <Parameters />
       <Docs>
         <typeparam name="T">To be added.</typeparam>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the export with the contract name derived from the specified type parameter. If there is not exactly one matching export, an exception is thrown.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetExport&lt;T&gt;">
@@ -96,10 +116,18 @@
       </Parameters>
       <Docs>
         <typeparam name="T">To be added.</typeparam>
-        <param name="contractName">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the export with the specified contract name. If there is not exactly one matching export, an exception is thrown.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.Lazy`1" /> object to return, or null or an empty string ("") to use the default contract name.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExport&lt;T,TMetadataView&gt;">
@@ -120,9 +148,16 @@
       <Docs>
         <typeparam name="T">To be added.</typeparam>
         <typeparam name="TMetadataView">To be added.</typeparam>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the export with the contract name derived from the specified type parameter. If there is not exactly one matching export, an exception is thrown.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetExport&lt;T,TMetadataView&gt;">
@@ -145,10 +180,18 @@
       <Docs>
         <typeparam name="T">To be added.</typeparam>
         <typeparam name="TMetadataView">To be added.</typeparam>
-        <param name="contractName">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the export with the specified contract name. If there is not exactly one matching export, an exception is thrown.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.Lazy`2" /> object to return, or null or an empty string ("") to use the default contract name.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExportedValue&lt;T&gt;">
@@ -167,9 +210,16 @@
       <Parameters />
       <Docs>
         <typeparam name="T">To be added.</typeparam>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the exported object with the contract name derived from the specified type parameter. If there is not exactly one matching exported object, an exception is thrown.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetExportedValue&lt;T&gt;">
@@ -190,10 +240,18 @@
       </Parameters>
       <Docs>
         <typeparam name="T">To be added.</typeparam>
-        <param name="contractName">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the exported object with the specified contract name. If there is not exactly one matching exported object, an exception is thrown.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the exported object to return, or null or an empty string ("") to use the default contract name.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExportedValueOrDefault&lt;T&gt;">
@@ -212,9 +270,17 @@
       <Parameters />
       <Docs>
         <typeparam name="T">To be added.</typeparam>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the exported object is not found, this method returns the appropriate default value for <paramref name="T" />; for example, zero for integer types, false for Boolean types, and null for reference types.</para>
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exported object with the contract name derived from the specified type parameter or the default value for the specified type, or throws an exception if there is more than one matching exported object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetExportedValueOrDefault&lt;T&gt;">
@@ -235,10 +301,19 @@
       </Parameters>
       <Docs>
         <typeparam name="T">To be added.</typeparam>
-        <param name="contractName">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the exported object is not found, this method returns the appropriate default value for <paramref name="T" />; for example, zero for integer types, false for Boolean types, and null for reference types.</para>
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exported object with the specified contract name or the default value for the specified type, or throws an exception if there is more than one matching exported object.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the exported object to return, or null or an empty string ("") to use the default contract name.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExportedValues&lt;T&gt;">
@@ -257,9 +332,16 @@
       <Parameters />
       <Docs>
         <typeparam name="T">To be added.</typeparam>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exported objects with the contract name derived from the specified type parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetExportedValues&lt;T&gt;">
@@ -280,10 +362,18 @@
       </Parameters>
       <Docs>
         <typeparam name="T">To be added.</typeparam>
-        <param name="contractName">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exported objects with the specified contract name.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the exported objects to return; or null or an empty string ("") to use the default contract name.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExports">
@@ -300,10 +390,14 @@
         <Parameter Name="definition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <param name="definition">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all exports that match the conditions of the specified import definition.</para>
+        </summary>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that defines the conditions of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects to get.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExports">
@@ -321,11 +415,16 @@
         <Parameter Name="atomicComposition" Type="System.ComponentModel.Composition.Hosting.AtomicComposition" />
       </Parameters>
       <Docs>
-        <param name="definition">To be added.</param>
-        <param name="atomicComposition">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all exports that match the conditions of the specified import definition and composition.</para>
+        </summary>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that defines the conditions of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects to get.</param>
+        <param name="atomicComposition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The transactional container for the composition.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExports">
@@ -344,12 +443,22 @@
         <Parameter Name="contractName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="metadataViewType">To be added.</param>
-        <param name="contractName">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="type" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports with the specified contract name.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type parameter of the <see cref="T:System.Lazy`2" /> objects to return.</param>
+        <param name="metadataViewType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the metadata view of the <see cref="T:System.Lazy`2" /> objects to return.</param>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.Lazy`2" /> object to return, or null or an empty string ("") to use the default contract name.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExports&lt;T&gt;">
@@ -368,9 +477,16 @@
       <Parameters />
       <Docs>
         <typeparam name="T">To be added.</typeparam>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports with the contract name derived from the specified type parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetExports&lt;T&gt;">
@@ -391,10 +507,18 @@
       </Parameters>
       <Docs>
         <typeparam name="T">To be added.</typeparam>
-        <param name="contractName">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports with the specified contract name.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.Lazy`1" /> objects to return, or null or an empty string ("") to use the default contract name.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExports&lt;T,TMetadataView&gt;">
@@ -415,9 +539,16 @@
       <Docs>
         <typeparam name="T">To be added.</typeparam>
         <typeparam name="TMetadataView">To be added.</typeparam>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports with the contract name derived from the specified type parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetExports&lt;T,TMetadataView&gt;">
@@ -440,10 +571,18 @@
       <Docs>
         <typeparam name="T">To be added.</typeparam>
         <typeparam name="TMetadataView">To be added.</typeparam>
-        <param name="contractName">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default contract name is the result of calling the <see cref="M:System.ComponentModel.Composition.AttributedModelServices.GetContractName(System.Type)" /> method on <paramref name="T" />.</para>
+          <para>The contract name is compared by using the <see cref="P:System.StringComparer.Ordinal" /> property to perform a case-sensitive, non-linguistic comparison.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports with the specified contract name.</para>
+        </summary>
+        <param name="contractName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract name of the <see cref="T:System.Lazy`2" /> objects to return, or null or an empty string ("") to use the default contract name.</param>
       </Docs>
     </Member>
     <Member MemberName="GetExportsCore">
@@ -461,11 +600,19 @@
         <Parameter Name="atomicComposition" Type="System.ComponentModel.Composition.Hosting.AtomicComposition" />
       </Parameters>
       <Docs>
-        <param name="definition">To be added.</param>
-        <param name="atomicComposition">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Overrides of this method should not treat cardinality-related mismatches as errors, and should not throw exceptions in those cases. For example, if <see cref="P:System.ComponentModel.Composition.Primitives.ImportDefinition.Cardinality" /> is <see cref="F:System.ComponentModel.Composition.Primitives.ImportCardinality.ExactlyOne" /> and there are zero <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects that match the conditions of the specified <see cref="T:System.ComponentModel.Composition.Primitives.ImportDefinition" />, an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection should be returned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the exports that match the constraint defined by the specified definition.</para>
+        </summary>
+        <param name="definition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that defines the conditions of the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects to return.</param>
+        <param name="atomicComposition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The transactional container for the composition.</param>
       </Docs>
     </Member>
     <Member MemberName="OnExportsChanged">
@@ -482,9 +629,13 @@
         <Parameter Name="e" Type="System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Composition.Hosting.ExportProvider.ExportsChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnExportsChanging">
@@ -501,9 +652,13 @@
         <Parameter Name="e" Type="System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.ComponentModel.Composition.Hosting.ExportProvider.ExportsChanging" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.Composition.Hosting.ExportsChangeEventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="TryGetExports">

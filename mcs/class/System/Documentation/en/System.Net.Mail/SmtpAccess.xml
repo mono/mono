@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SmtpAccess" FullName="System.Net.Mail.SmtpAccess">
   <TypeSignature Language="C#" Value="public enum SmtpAccess" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SmtpAccess extends System.Enum" />
@@ -10,9 +11,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Mail.SmtpAccess" /> enumeration is used by the <see cref="T:System.Net.Mail.SmtpPermission" /> and <see cref="T:System.Net.Mail.SmtpPermissionAttribute" /> classes to specify a level of access to an SMTP host computer. The <see cref="T:System.Net.Mail.SmtpClient" /> class demands an <see cref="T:System.Net.Mail.SmtpPermission" /> when sending electronic mail to the SMTP host for delivery.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the level of access allowed to a Simple Mail Transport Protocol (SMTP) server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Connect">
@@ -27,8 +34,11 @@
         <ReturnType>System.Net.Mail.SmtpAccess</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Connection to an SMTP host on the default port (port 25).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConnectToUnrestrictedPort">
@@ -43,8 +53,11 @@
         <ReturnType>System.Net.Mail.SmtpAccess</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Connection to an SMTP host on any port.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -59,8 +72,11 @@
         <ReturnType>System.Net.Mail.SmtpAccess</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No access to an SMTP host.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

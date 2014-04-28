@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ChannelEndpointElement" FullName="System.ServiceModel.Configuration.ChannelEndpointElement">
   <TypeSignature Language="C#" Value="public sealed class ChannelEndpointElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ChannelEndpointElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides options for configuring contract, binding, and address properties of the channel endpoint, which are used by clients to connect to service endpoints on the server. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.ChannelEndpointElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Address">
@@ -43,9 +50,12 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the address of the endpoint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BehaviorConfiguration">
@@ -67,9 +77,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the behavior name of the behavior to be used to instantiate the endpoint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Binding">
@@ -91,9 +104,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of binding to use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingConfiguration">
@@ -115,9 +131,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the binding name of the binding to use when the endpoint is instantiated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contract">
@@ -139,9 +158,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the contract that this endpoint is exposing.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndpointConfiguration">
@@ -163,9 +185,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the standard endpoint that is set by the <see cref="P:System.ServiceModel.Configuration.ChannelEndpointElement.Kind" /> property, which references to the additional configuration information of this standard endpoint. The same name must be defined in the <see cref="T:System.ServiceModel.Configuration.StandardEndpointsSection" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -184,9 +209,12 @@
         <ReturnType>System.ServiceModel.Configuration.AddressHeaderCollectionElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of address headers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Identity">
@@ -205,9 +233,12 @@
         <ReturnType>System.ServiceModel.Configuration.IdentityElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an identity that enables the authentication of an endpoint by other endpoints that are exchanging messages with it.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Kind">
@@ -229,9 +260,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of standard endpoint applied. The type must be registered in the &lt;extensions&gt; section or in machine.config. If nothing is specified, a common channel endpoint is created.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -253,9 +287,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The service model allows the user to define multiple clients for a given contract type. Each definition must be differentiated by a unique configuration name. If this property is omitted, the corresponding endpoint is used as the default endpoint associated with the specified contract type. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a unique identifier of an endpoint for a given contract.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">

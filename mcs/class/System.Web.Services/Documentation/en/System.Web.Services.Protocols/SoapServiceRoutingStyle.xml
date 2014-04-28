@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapServiceRoutingStyle" FullName="System.Web.Services.Protocols.SoapServiceRoutingStyle">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum SoapServiceRoutingStyle" />
   <AssemblyInfo>
@@ -12,8 +13,11 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how a SOAP message is routed to the Web server hosting the XML Web service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="RequestElement">
@@ -25,8 +29,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAP Message is routed based on the first child element following the &lt;Body&gt; XML element of the SOAP message.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,8 +49,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAP message is routed based on the SOAPAction HTTP header.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

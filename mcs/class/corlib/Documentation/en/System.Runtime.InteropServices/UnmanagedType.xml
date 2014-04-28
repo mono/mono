@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UnmanagedType" FullName="System.Runtime.InteropServices.UnmanagedType" FullNameSP="System_Runtime_InteropServices_UnmanagedType" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable UnmanagedType extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum UnmanagedType" />
@@ -19,14 +20,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Identifies how parameters or fields are to be marshaled to unmanaged
-      code.
-      </para>
-    </summary>
     <remarks>
-      <para>This type provides a set of values that identify the native types that are supported by the CLI. Each native type is encoded by a different value.  All encoding values in the range 0-63, inclusive, are reserved for backward compatibility with existing implementations of the CLI.  Values in the range 64-127 are reserved for future use in this and related Standards.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Runtime.InteropServices.UnmanagedType" /> enumeration with the <see cref="T:System.Runtime.InteropServices.MarshalAsAttribute" /> attribute to specify how types are marshaled during interoperation with unmanaged code.  You can use this enumeration to marshal code using simple value types (I1, I2, I4, I8, R4, R8, U2, U4, and U8), unmanaged types that are unavailable in the .NET Framework, and various miscellaneous types. </para>
+      <para>For more information, see <format type="text/html"><a href="ccb68ce7-b0e9-4ffb-839d-03b1cd2c1258">Interoperating with Unmanaged Code</a></format>.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies how to marshal parameters or fields to unmanaged code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AnsiBStr">
@@ -43,8 +45,11 @@
       </ReturnValue>
       <MemberValue>AnsiBStr</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An ANSI character string that is a length-prefixed single byte. You can use this member on the <see cref="T:System.String" /> data type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AsAny">
@@ -61,8 +66,11 @@
       </ReturnValue>
       <MemberValue>AsAny</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dynamic type that determines the type of an object at run time and marshals the object as that type. This member is valid for platform invoke methods only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Bool">
@@ -81,14 +89,11 @@
       <Parameters />
       <MemberValue>Bool</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a 4-byte Boolean value where 
-   <see langword="true" /> is denoted by all non-zero values and 
-   <see langword="false" /> is denoted by
-      zero.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 4-byte Boolean value (true != 0, false = 0). This is the Win32 BOOL type.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -106,8 +111,11 @@
       </ReturnValue>
       <MemberValue>BStr</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Unicode character string that is a length-prefixed double byte. You can use this member, which is the default string in COM, on the <see cref="T:System.String" /> data type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ByValArray">
@@ -126,14 +134,11 @@
       <Parameters />
       <MemberValue>ByValArray</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies an array of fixed size. This unmanaged type is valid only for
-      an array in a structure.</para>
-          <para>When <see cref="P:System.Runtime.InteropServices.MarshalAsAttribute.Value" /> is set to
-<see langword="ByValArray" />, the <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.SizeConst" /> field is required 
-   to contain the number of elements in the array.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Runtime.InteropServices.MarshalAsAttribute.Value" /> property is set to ByValArray, the <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.SizeConst" /> field must be set to indicate the number of elements in the array. The <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.ArraySubType" /> field can optionally contain the <see cref="T:System.Runtime.InteropServices.UnmanagedType" /> of the array elements when it is necessary to differentiate among string types. You can use this <see cref="T:System.Runtime.InteropServices.UnmanagedType" /> only on an array that whose elements appear as fields in a structure.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -151,8 +156,14 @@
       </ReturnValue>
       <MemberValue>ByValTStr</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>.NET Framework <see cref="F:System.Runtime.InteropServices.UnmanagedType.ByValTStr" /> types behave like C-style, fixed-size strings inside a structure (for example, char s[5]). The behavior in managed code differs from the Microsoft Visual Basic 6.0 behavior, which is not null terminated (for example, MyString As String * 5).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used for in-line, fixed-length character arrays that appear within a structure. The character type used with <see cref="F:System.Runtime.InteropServices.UnmanagedType.ByValTStr" /> is determined by the <see cref="T:System.Runtime.InteropServices.CharSet" /> argument of the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> attribute applied to the containing structure. Always use the <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.SizeConst" /> field to indicate the size of the array.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Currency">
@@ -169,8 +180,11 @@
       </ReturnValue>
       <MemberValue>Currency</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A currency type. Used on a <see cref="T:System.Decimal" /> to marshal the decimal value as a COM currency type instead of as a Decimal.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CustomMarshaler">
@@ -189,11 +203,11 @@
       <Parameters />
       <MemberValue>CustomMarshaler</MemberValue>
       <Docs>
-        <summary>
-   Specifies the custom marshaler class when used
-   with <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.MarshalType" /> or <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.MarshalTypeRef" /> .
-</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the custom marshaler class when used with the <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.MarshalType" /> or <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.MarshalTypeRef" /> field. The <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.MarshalCookie" /> field can be used to pass additional information to the custom marshaler. You can use this member on any reference type.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -211,8 +225,11 @@
       </ReturnValue>
       <MemberValue>Error</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A native type that is associated with an <see cref="F:System.Runtime.InteropServices.UnmanagedType.I4" /> or an <see cref="F:System.Runtime.InteropServices.UnmanagedType.U4" /> and that causes the parameter to be exported as an HRESULT in the exported type library.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FunctionPtr">
@@ -231,11 +248,11 @@
       <Parameters />
       <MemberValue>FunctionPtr</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a function pointer.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that can be used as a C-style function pointer. You can use this member on a <see cref="T:System.Delegate" /> data type or on a type that inherits from a <see cref="T:System.Delegate" />.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -255,11 +272,11 @@
       <Parameters />
       <MemberValue>I1</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a 1-byte signed integer.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 1-byte signed integer. You can use this member to transform a Boolean value into a 1-byte, C-style bool (true = 1, false = 0).</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -279,11 +296,11 @@
       <Parameters />
       <MemberValue>I2</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a 2-byte signed integer.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 2-byte signed integer.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -303,11 +320,11 @@
       <Parameters />
       <MemberValue>I4</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a 4-byte signed integer.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 4-byte signed integer.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -327,11 +344,11 @@
       <Parameters />
       <MemberValue>I8</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies an 8-byte signed integer.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-byte signed integer.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -349,8 +366,11 @@
       </ReturnValue>
       <MemberValue>IDispatch</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A COM IDispatch pointer (Object in Microsoft Visual Basic 6.0).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Interface">
@@ -367,8 +387,11 @@
       </ReturnValue>
       <MemberValue>Interface</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A COM interface pointer. The <see cref="T:System.Guid" /> of the interface is obtained from the class metadata. Use this member to specify the exact interface type or the default interface type if you apply it to a class. This member produces the same behavior as <see cref="F:System.Runtime.InteropServices.UnmanagedType.IUnknown" /> when you apply it to the <see cref="T:System.Object" /> data type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IUnknown">
@@ -385,8 +408,11 @@
       </ReturnValue>
       <MemberValue>IUnknown</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A COM IUnknown pointer. You can use this member on the <see cref="T:System.Object" /> data type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LPArray">
@@ -405,14 +431,11 @@
       <Parameters />
       <MemberValue>LPArray</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies a C-style array. When marshaling from 
-      managed to unmanaged, the length of the array is determined by the length of the
-      managed array. When marshaling from unmanaged to managed, the length of the
-      array is determined from the <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.SizeConst" /> and <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.SizeParamIndex" />
-      fields. </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A pointer to the first element of a C-style array. When marshaling from managed to unmanaged code, the length of the array is determined by the length of the managed array. When marshaling from unmanaged to managed code, the length of the array is determined from the <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.SizeConst" /> and <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.SizeParamIndex" /> fields, optionally followed by the unmanaged type of the elements within the array when it is necessary to differentiate among string types.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -432,11 +455,11 @@
       <Parameters />
       <MemberValue>LPStr</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a pointer to an ANSI character string.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single byte, null-terminated ANSI character string. You can use this member on the <see cref="T:System.String" /> and <see cref="T:System.Text.StringBuilder" /> data types.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -454,8 +477,11 @@
       </ReturnValue>
       <MemberValue>LPStruct</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A pointer to a C-style structure that you use to marshal managed formatted classes. This member is valid for platform invoke methods only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LPTStr">
@@ -474,16 +500,11 @@
       <Parameters />
       <MemberValue>LPTStr</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a pointer to the preferred character
-      string representation for the current platform. </para>
-          <para>
-            <block subset="none" type="note">A type library exported with an
-   <see langword="LPTStr" /> on an ANSI platform will have a different
-      size than one exported on a Unicode platform.</block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A platform-dependent character string: ANSI on Windows 98, and Unicode on Windows NT and Windows XP. This value is supported only for platform invoke and not for COM interop, because exporting a string of type LPTStr is not supported.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -503,11 +524,14 @@
       <Parameters />
       <MemberValue>LPWStr</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Note that you cannot use the <see cref="F:System.Runtime.InteropServices.UnmanagedType.LPWStr" /> value with an unmanaged string unless the string was created by using the unmanaged CoTaskMemAlloc function.  </para>
+        </remarks>
         <summary>
-          <para> Specifies a pointer to a Unicode character string.
-      </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 2-byte, null-terminated Unicode character string.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -527,11 +551,11 @@
       <Parameters />
       <MemberValue>R4</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a 4-byte floating-point number.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 4-byte floating-point number.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -551,11 +575,11 @@
       <Parameters />
       <MemberValue>R8</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies an 8-byte floating-point number.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-byte floating-point number.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -573,8 +597,11 @@
       </ReturnValue>
       <MemberValue>SafeArray</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A SafeArray, which is a self-describing array that carries the type, rank, and bounds of the associated array data. You can use this member with the <see cref="F:System.Runtime.InteropServices.MarshalAsAttribute.SafeArraySubType" /> field to override the default element type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Struct">
@@ -593,12 +620,11 @@
       <Parameters />
       <MemberValue>Struct</MemberValue>
       <Docs>
-        <summary>
-          <para>    A C-style structure, used to marshal managed formatted classes and value
-      types.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A VARIANT, which is used to marshal managed formatted classes and value types.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -618,10 +644,11 @@
       <Parameters />
       <MemberValue>SysInt</MemberValue>
       <Docs>
-        <summary>
-   Specifies an implementation-specific sized signed integer.
-</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A platform-dependent, signed integer: 4 bytes on 32-bit Windows, 8 bytes on 64-bit Windows.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -641,10 +668,11 @@
       <Parameters />
       <MemberValue>SysUInt</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies an implementation-specific sized unsigned integer.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A platform-dependent, unsigned integer: 4 bytes on 32-bit Windows, 8 bytes on 64-bit Windows.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -664,11 +692,11 @@
       <Parameters />
       <MemberValue>TBStr</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies a pointer to the preferred BSTR representation 
-      for the current platform - Unicode or SBCS.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A length-prefixed, platform-dependent char string: ANSI on Windows 98, Unicode on Windows NT. You rarely use this BSTR-like member.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -688,17 +716,11 @@
       <Parameters />
       <MemberValue>U1</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a 1-byte unsigned integer.
-      </para>
-          <para>
-            <block subset="none" type="note">
-              <see cref="F:System.Runtime.InteropServices.UnmanagedType.U1" /> can be used to marshal 
-   a <see cref="T:System.Char" /> parameter
-   as an ANSI character.</block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 1-byte unsigned integer.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -718,16 +740,11 @@
       <Parameters />
       <MemberValue>U2</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a 2-byte unsigned integer.
-      </para>
-          <para>
-            <block subset="none" type="note">
-              <see cref="F:System.Runtime.InteropServices.UnmanagedType.U2" /> 
-can be used to marshal a <see cref="T:System.Char" /> parameter as a Unicode character.</block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 2-byte unsigned integer.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -747,11 +764,11 @@ can be used to marshal a <see cref="T:System.Char" /> parameter as a Unicode cha
       <Parameters />
       <MemberValue>U4</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies a 4-byte unsigned integer.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 4-byte unsigned integer.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -771,11 +788,11 @@ can be used to marshal a <see cref="T:System.Char" /> parameter as a Unicode cha
       <Parameters />
       <MemberValue>U8</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies an 8-byte unsigned integer.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-byte unsigned integer.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -793,8 +810,11 @@ can be used to marshal a <see cref="T:System.Char" /> parameter as a Unicode cha
       </ReturnValue>
       <MemberValue>VariantBool</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 2-byte, OLE-defined VARIANT_BOOL type (true = -1, false = 0).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VBByRefStr">
@@ -811,8 +831,11 @@ can be used to marshal a <see cref="T:System.Char" /> parameter as a Unicode cha
       </ReturnValue>
       <MemberValue>VBByRefStr</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that enables Visual Basic to change a string in unmanaged code and have the results reflected in managed code. This value is only supported for platform invoke.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

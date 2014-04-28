@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlTransaction" FullName="System.Data.SqlClient.SqlTransaction">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class SqlTransaction : System.Data.Common.DbTransaction" />
   <AssemblyInfo>
@@ -14,8 +15,18 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The application creates a <see cref="T:System.Data.SqlClient.SqlTransaction" /> object by calling <see cref="M:System.Data.SqlClient.SqlConnection.BeginTransaction" /> on the <see cref="T:System.Data.SqlClient.SqlConnection" /> object. All subsequent operations associated with the transaction (for example, committing or aborting the transaction), are performed on the <see cref="T:System.Data.SqlClient.SqlTransaction" /> object.</para>
+      <block subset="none" type="note">
+        <para>Try/Catch exception handling should always be used when committing or rolling back a <see cref="T:System.Data.SqlClient.SqlTransaction" />. Both <see cref="M:System.Data.SqlClient.SqlTransaction.Commit" /> and <see cref="M:System.Data.SqlClient.SqlTransaction.Rollback" /> generate an <see cref="T:System.InvalidOperationException" /> if the connection is terminated or if the transaction has already been rolled back on the server.</para>
+      </block>
+      <para>For more information on ssNoVersion transactions, see <see cref="http://msdn.microsoft.com/library/ms175127(SQL.105).aspx">Explicit Transactions</see> and <see cref="http://msdn.microsoft.com/library/ms187484(SQL.105).aspx">Coding Efficient Transactions</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a tsql transaction to be made in a ssNoVersion database. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Commit">
@@ -26,8 +37,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.SqlClient.SqlTransaction.Commit" /> method is equivalent to the Transact-SQL COMMIT TRANSACTION statement. You cannot roll back a transaction once it has been committed, because all modifications have become a permanent part of the database. For more information, see SQL Server Books Online.</para>
+          <block subset="none" type="note">
+            <para>Try/Catch exception handling should always be used when committing or rolling back a <see cref="T:System.Data.SqlClient.SqlTransaction" />. Both Commit and <see cref="M:System.Data.SqlClient.SqlTransaction.Rollback" /> generates an <see cref="T:System.InvalidOperationException" /> if the connection is terminated or if the transaction has already been rolled back on the server.</para>
+          </block>
+          <para>For more information on SQL Server transactions, see "Explicit Transactions" and "Coding Efficient Transactions" in SQL Server Books Online.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Commits the database transaction.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,9 +62,15 @@
         <ReturnType>System.Data.SqlClient.SqlConnection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'SqlConnection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single application may have multiple database connections, each with zero or more transactions. This property lets you determine the connection object associated with a particular transaction created by <see cref="M:System.Data.SqlClient.SqlConnection.BeginTransaction" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Data.SqlClient.SqlConnection" /> object associated with the transaction, or null if the transaction is no longer valid.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -73,8 +100,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the resources that are held by the object. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -105,9 +135,16 @@
         <ReturnType>System.Data.IsolationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Data.IsolationLevel'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parallel transactions are not supported. Therefore, the <see cref="T:System.Data.IsolationLevel" /> applies to the whole transaction.</para>
+          <para>For more information on SQL Server isolation levels, see "Isolation Levels in the Database Engine" in SQL Server Books Online.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the <see cref="T:System.Data.IsolationLevel" /> for this transaction.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -122,8 +159,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.SqlClient.SqlTransaction.Rollback" /> method is equivalent to the Transact-SQL ROLLBACK TRANSACTION statement. For more information, see SQL Server Books Online.</para>
+          <para>The transaction can only be rolled back from a pending state (after <see cref="M:System.Data.SqlClient.SqlConnection.BeginTransaction" /> has been called, but before <see cref="M:System.Data.SqlClient.SqlTransaction.Commit" /> is called). The transaction is rolled back in the event it is disposed before Commit or Rollback is called.</para>
+          <block subset="none" type="note">
+            <para>Try/Catch exception handling should always be used when rolling back a transaction. A Rollback generates an <see cref="T:System.InvalidOperationException" /> if the connection is terminated or if the transaction has already been rolled back on the server.</para>
+          </block>
+          <para>For more information on SQL Server transactions, see "Explicit Transactions" and "Coding Efficient Transactions" in SQL Server Books Online.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rolls back a transaction from a pending state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -140,9 +188,21 @@
         <Parameter Name="transactionName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="transactionName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Data.SqlClient.SqlTransaction.Rollback" /> method is equivalent to the Transact-SQL ROLLBACK TRANSACTION statement. For more information, see "Explicit Transactions" and "Transaction Savepoints" in SQL Server Books Online.</para>
+          <para>The transaction can only be rolled back from a pending state (after <see cref="M:System.Data.SqlClient.SqlConnection.BeginTransaction" /> has been called, but before <see cref="M:System.Data.SqlClient.SqlTransaction.Commit" /> is called). The transaction is rolled back if it is disposed before Commit or Rollback is called. </para>
+          <block subset="none" type="note">
+            <para>Try/Catch exception handling should always be used when rolling back a transaction. A Rollback generates an <see cref="T:System.InvalidOperationException" /> if the connection is terminated or if the transaction has already been rolled back on the server.</para>
+          </block>
+          <para>For more information on SQL Server transactions, see "Explicit Transactions" and "Coding Efficient Transactions" in SQL Server Books Online.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Rolls back a transaction from a pending state, and specifies the transaction or savepoint name.</para>
+        </summary>
+        <param name="transactionName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the transaction to roll back, or the savepoint to which to roll back. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,9 +219,19 @@
         <Parameter Name="savePointName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="savePointName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Data.SqlClient.SqlTransaction.Save(System.String)" /> method is equivalent to the Transact-SQL SAVE TRANSACTION statement. </para>
+          <para>The value used in the <paramref name="savePoint" /> parameter can be the same value used in the <paramref name="transactionName" /> parameter of some implementations of the <see cref="M:System.Data.SqlClient.SqlConnection.BeginTransaction" /> method.</para>
+          <para>Savepoints offer a mechanism to roll back parts of transactions. You create a savepoint using the <see cref="M:System.Data.SqlClient.SqlTransaction.Save(System.String)" /> method, and then later call the <see cref="M:System.Data.SqlClient.SqlTransaction.Rollback" /> method to roll back to the savepoint instead of rolling back to the start of the transaction. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a savepoint in the transaction that can be used to roll back a part of the transaction, and specifies the savepoint name.</para>
+        </summary>
+        <param name="savePointName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the savepoint. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -179,9 +249,12 @@
         <ReturnType>System.Data.IDbConnection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this member, see <see cref="P:System.Data.IDbTransaction.Connection" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

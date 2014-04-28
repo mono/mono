@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TypeLibFuncFlags" FullName="System.Runtime.InteropServices.TypeLibFuncFlags">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum TypeLibFuncFlags" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed TypeLibFuncFlags extends System.Enum" />
@@ -21,8 +22,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Runtime.InteropServices.TypeLibFuncFlags" /> is used with the <see cref="T:System.Runtime.InteropServices.TypeLibFuncAttribute" />. The flags are retained for reference only. They are not used by the common language runtime.</para>
+      <para>For more information about FUNCFLAGS, see the MSDN library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the original settings of the FUNCFLAGS in the COM type library from where this method was imported.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FBindable">
@@ -39,8 +48,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function that supports data binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FDefaultBind">
@@ -57,8 +69,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function that best represents the object. Only one function in a type information can have this attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FDefaultCollelem">
@@ -75,8 +90,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Permits an optimization in which the compiler looks for a member named "xyz" on the type "abc". If such a member is found and is flagged as an accessor function for an element of the default collection, then a call is generated to that member function.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FDisplayBind">
@@ -93,8 +111,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function that is displayed to the user as bindable. <see cref="F:System.Runtime.InteropServices.TypeLibFuncFlags.FBindable" /> must also be set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FHidden">
@@ -111,8 +132,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function should not be displayed to the user, although it exists and is bindable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FImmediateBind">
@@ -129,8 +153,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is mapped as individual bindable properties.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FNonBrowsable">
@@ -147,8 +174,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property appears in an object browser, but not in a properties browser.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FReplaceable">
@@ -165,8 +195,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Tags the interface as having default behaviors.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FRequestEdit">
@@ -183,8 +216,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When set, any call to a method that sets the property results first in a call to IPropertyNotifySink::OnRequestEdit.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FRestricted">
@@ -201,8 +237,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This flag is intended for system-level functions or functions that type browsers should not display.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FSource">
@@ -219,8 +258,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function returns an object that is a source of events.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FUiDefault">
@@ -237,8 +279,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type information member is the default member for display in the user interface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FUsesGetLastError">
@@ -255,8 +300,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function supports GetLastError.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

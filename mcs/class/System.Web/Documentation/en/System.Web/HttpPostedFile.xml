@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpPostedFile" FullName="System.Web.HttpPostedFile">
   <TypeSignature Language="C#" Value="public sealed class HttpPostedFile" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,20 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.HttpFileCollection" /> class provides access to all the files that are uploaded from a client as a file collection. The <see cref="T:System.Web.HttpPostedFile" /> class provides properties and methods to get information about an individual file and to read and save the file. </para>
+      <para>The <see cref="T:System.Web.UI.HtmlControls.HtmlInputFile" /> control can be used to select and upload files from a client.</para>
+      <para>Files are uploaded in MIME multipart/form-data format. By default, all requests, including form fields and uploaded files, larger than 256 KB are buffered to disk, rather than held in server memory.</para>
+      <para>You can specify the maximum allowable request size by accessing the <see cref="P:System.Web.Configuration.HttpRuntimeSection.MaxRequestLength" /> property or by setting the maxRequestLength attribute of the <format type="text/html"><a href="e9b81350-8aaf-47cc-9843-5f7d0c59f369">httpRuntime Element (ASP.NET Settings Schema)</a></format> element within the Machine.config or Web.config file. The default is 4 MB.</para>
+      <para>The amount of data that is buffered in server memory for a request, which includes file uploads, can be specified by accessing the <see cref="P:System.Web.Configuration.HttpRuntimeSection.RequestLengthDiskThreshold" /> property or by setting the requestLengthDiskThreshold attribute of the <format type="text/html"><a href="e9b81350-8aaf-47cc-9843-5f7d0c59f369">httpRuntime Element (ASP.NET Settings Schema)</a></format> element within the Machine.config or Web.config file.</para>
+      <para>By adjusting the <see cref="P:System.Web.Configuration.HttpRuntimeSection.MaxRequestLength" /> and <see cref="P:System.Web.Configuration.HttpRuntimeSection.RequestLengthDiskThreshold" /> properties, you can fine tune the performance of your server. Additionally, you should consider setting the <see cref="P:System.Web.Configuration.HttpRuntimeSection.MaxRequestLength" /> to prevent denial of service attacks caused by users posting large files to the server.</para>
+      <para>Server resources that are allocated to buffer the uploaded file will be destroyed when the request ends. To save a durable copy of the file, use the <see cref="M:System.Web.HttpPostedFile.SaveAs(System.String)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides access to individual files that have been uploaded by a client.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ContentLength">
@@ -24,9 +37,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size of an uploaded file, in bytes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +56,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the MIME content type of a file sent by a client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,9 +75,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified name of the file on the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -73,9 +95,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.IO.Stream" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.IO.Stream" /> object that points to an uploaded file to prepare for reading the contents of the file.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -92,9 +117,16 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum size allowed for a request, which includes uploaded files, is 4 MB, by default. Maximum request size can be specified in the Machine.config or Web.config file in the maxRequestLength attribute of the <format type="text/html"><a href="e9b81350-8aaf-47cc-9843-5f7d0c59f369">httpRuntime Element (ASP.NET Settings Schema)</a></format> element. The maximum request size for a specific page can be specified using the <format type="text/html"><a href="922ef7d5-da38-4661-b1c6-5b9e5ceda1d5">location Element (ASP.NET Settings Schema)</a></format> element in a Web.config file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the contents of an uploaded file.</para>
+        </summary>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the saved file. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

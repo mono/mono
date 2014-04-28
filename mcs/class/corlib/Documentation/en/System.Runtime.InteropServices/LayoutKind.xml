@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LayoutKind" FullName="System.Runtime.InteropServices.LayoutKind" FullNameSP="System_Runtime_InteropServices_LayoutKind" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable LayoutKind extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum LayoutKind" />
@@ -19,11 +20,17 @@
     </Attribute>
   </Attributes>
   <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used with <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />. The common language runtime uses the Auto layout value by default. To reduce layout-related problems associated with the Auto value, C#, Visual Basic, and C++ compilers specify Sequential layout for value types.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> field controls the alignment of data fields, and thus affects the layout regardless of the <see cref="T:System.Runtime.InteropServices.LayoutKind" /> value you specify. By default, the value of <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> is 0, which indicates the default packing size for the current platform. For example, when you use the Explicit layout value and specify field alignments on byte boundaries, you must set <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> to 1 to get the desired result. </para>
+      </block>
+    </remarks>
     <summary>
-      <para> Indicates the physical memory layout of objects exported
-      to unmanaged code.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls the layout of an object when exported to unmanaged code.</para>
     </summary>
-    <remarks>To be added.</remarks>
   </Docs>
   <Members>
     <Member MemberName="Auto">
@@ -42,11 +49,11 @@
       <Parameters />
       <MemberValue>Auto</MemberValue>
       <Docs>
-        <summary>
-          <para> Indicates that the appropriate layout of members of an 
- object is automatically chosen. <block subset="none" type="note">The layout in this case is implementation defined.</block></para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The runtime automatically chooses an appropriate layout for the members of an object in unmanaged memory. Objects defined with this enumeration member cannot be exposed outside of managed code. Attempting to do so generates an exception.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -66,19 +73,11 @@
       <Parameters />
       <MemberValue>Explicit</MemberValue>
       <Docs>
-        <summary>
-          <para> Indicates that the precise position of each member of
-      an object is explicitly controlled in unmanaged memory. Each member of the
-      exported class or structure is required
-      to use <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" /> to indicate the position of that
-      field within the type.</para>
-          <para>
-            <block subset="none" type="note">For
-      an example that uses <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" />, see
-      the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> class overview.</block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The precise position of each member of an object in unmanaged memory is explicitly controlled, subject to the setting of the <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" /> field. Each member must use the <see cref="T:System.Runtime.InteropServices.FieldOffsetAttribute" /> to indicate the position of that field within the type.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -98,11 +97,11 @@
       <Parameters />
       <MemberValue>Sequential</MemberValue>
       <Docs>
-        <summary>
-          <para> Indicates that object members are laid out sequentially, in the
-      order in which they appear in the object's type definition.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The members of the object are laid out sequentially, in the order in which they appear when exported to unmanaged memory. The members are laid out according to the packing specified in <see cref="F:System.Runtime.InteropServices.StructLayoutAttribute.Pack" />, and can be noncontiguous.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

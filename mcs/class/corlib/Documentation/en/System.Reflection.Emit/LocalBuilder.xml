@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LocalBuilder" FullName="System.Reflection.Emit.LocalBuilder">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class LocalBuilder : System.Reflection.LocalVariableInfo, System.Runtime.InteropServices._LocalBuilder" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit LocalBuilder extends System.Reflection.LocalVariableInfo implements class System.Runtime.InteropServices._LocalBuilder" />
@@ -29,8 +30,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A LocalBuilder object can be defined using the <see cref="M:System.Reflection.Emit.ILGenerator.DeclareLocal(System.Type)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a local variable within a method or constructor.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="IsPinned">
@@ -45,10 +52,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In unsafe code, an object must be pinned before it can be referred to by an unmanaged pointer. While the referenced object is pinned, it cannot be moved by garbage collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the object referred to by the local variable is pinned in memory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LocalIndex">
@@ -63,10 +76,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Index numbers are assigned to local variables in the order in which they are declared or emitted, beginning with zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the zero-based index of the local variable within the method body.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LocalType">
@@ -82,9 +101,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the local variable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetLocalSymInfo">
@@ -103,9 +125,16 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Reflection.Emit.LocalBuilder.SetLocalSymInfo" /> method is supported for methods defined in dynamic types. It is not supported for dynamic methods defined using the <see cref="T:System.Reflection.Emit.DynamicMethod" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the name of this local variable.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the local variable. </param>
       </Docs>
     </Member>
     <Member MemberName="SetLocalSymInfo">
@@ -126,11 +155,20 @@
         <Parameter Name="endOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="startOffset">To be added: an object of type 'int'</param>
-        <param name="endOffset">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Reflection.Emit.LocalBuilder.SetLocalSymInfo" /> method is supported for methods defined in dynamic types. It is not supported for dynamic methods defined using the <see cref="T:System.Reflection.Emit.DynamicMethod" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the name and lexical scope of this local variable.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the local variable. </param>
+        <param name="startOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The beginning offset of the lexical scope of the local variable. </param>
+        <param name="endOffset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ending offset of the lexical scope of the local variable. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._LocalBuilder.GetIDsOfNames">
@@ -180,11 +218,20 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._LocalBuilder.GetTypeInfoCount">

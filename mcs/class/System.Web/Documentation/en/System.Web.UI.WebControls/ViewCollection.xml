@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ViewCollection" FullName="System.Web.UI.WebControls.ViewCollection">
   <TypeSignature Language="C#" Value="public class ViewCollection : System.Web.UI.ControlCollection" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ViewCollection" /> class represents a collection container that enables a <see cref="T:System.Web.UI.WebControls.MultiView" /> control to maintain a list of its child controls. A <see cref="T:System.Web.UI.WebControls.MultiView" /> control can contain only <see cref="T:System.Web.UI.WebControls.View" /> controls as child controls.</para>
+      <para>Use the <see cref="M:System.Web.UI.WebControls.ViewCollection.Add(System.Web.UI.Control)" /> method to add a new <see cref="T:System.Web.UI.WebControls.View" /> control to the <see cref="T:System.Web.UI.WebControls.ViewCollection" /> collection at the end of an ordinal index array. Use the <see cref="M:System.Web.UI.WebControls.ViewCollection.AddAt(System.Int32,System.Web.UI.Control)" /> method to add a new control at a specific index location. Use the <see cref="P:System.Web.UI.WebControls.ViewCollection.Item(System.Int32)" /> indexer to get a <see cref="T:System.Web.UI.WebControls.View" /> control from the <see cref="T:System.Web.UI.WebControls.ViewCollection" /> collection at a specified index, using simple array notation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection container that enables a <see cref="T:System.Web.UI.WebControls.MultiView" /> control to maintain a list of its child controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +32,13 @@
         <Parameter Name="owner" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="owner">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ViewCollection" /> class.</para>
+        </summary>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.MultiView" /> control that owns this collection of child controls. </param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -39,10 +51,18 @@
         <Parameter Name="v" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="v">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ViewCollection.Add(System.Web.UI.Control)" /> method adds the new control to the end of an ordinal index array. The control can only be an instance of a <see cref="T:System.Web.UI.WebControls.View" /> control.</para>
+          <para>To add a control to the collection at a specific index location, use the <see cref="M:System.Web.UI.WebControls.ViewCollection.AddAt(System.Int32,System.Web.UI.Control)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.UI.WebControls.View" /> control to the collection.</para>
+        </summary>
+        <param name="v">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.View" /> control to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,11 +79,20 @@
         <Parameter Name="v" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="v">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ViewCollection.AddAt(System.Int32,System.Web.UI.Control)" /> method adds the new control to the collection at the specified index location. The control can only be an instance of a <see cref="T:System.Web.UI.WebControls.View" /> control.</para>
+          <para>To add a control at the end of an ordinal index array, use the <see cref="M:System.Web.UI.WebControls.ViewCollection.Add(System.Web.UI.Control)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified <see cref="T:System.Web.UI.WebControls.View" /> control to the collection at the specified index location.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array index at which to add the <see cref="T:System.Web.UI.WebControls.View" /> control. </param>
+        <param name="v">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.View" /> control to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

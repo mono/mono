@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlNodeChangedAction" FullName="System.Xml.XmlNodeChangedAction">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum XmlNodeChangedAction" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlNodeChangedAction extends System.Enum" />
@@ -13,8 +14,11 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of node change.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Change">
@@ -31,8 +35,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A node value is being changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -49,8 +56,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A node is being inserted in the tree.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -67,8 +77,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A node is being removed from the tree.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

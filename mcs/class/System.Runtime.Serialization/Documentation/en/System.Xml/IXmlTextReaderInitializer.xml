@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IXmlTextReaderInitializer" FullName="System.Xml.IXmlTextReaderInitializer">
   <TypeSignature Language="C#" Value="public interface IXmlTextReaderInitializer" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IXmlTextReaderInitializer" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies implementation requirements for XML text readers that derive from this interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="SetInput">
@@ -28,12 +32,18 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="encoding">To be added.</param>
         <param name="quota">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies initialization requirements for XML text readers that read a stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding of the stream.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be called when the reader is closed.</param>
       </Docs>
     </Member>
     <Member MemberName="SetInput">
@@ -55,14 +65,22 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="encoding">To be added.</param>
         <param name="quota">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies initialization requirements for XML text readers that read a buffer.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding of the stream.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to be called when the reader is closed.</param>
       </Docs>
     </Member>
   </Members>

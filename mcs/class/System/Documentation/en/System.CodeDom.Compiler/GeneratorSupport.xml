@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GeneratorSupport" FullName="System.CodeDom.Compiler.GeneratorSupport">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum GeneratorSupport" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed GeneratorSupport extends System.Enum" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>These identifiers are used when calling the <see cref="M:System.CodeDom.Compiler.ICodeGenerator.Supports(System.CodeDom.Compiler.GeneratorSupport)" /> method of a code generator to determine whether the code generator supports generating certain types of code.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines identifiers used to determine whether a code generator supports certain types of code elements.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ArraysOfArrays">
@@ -37,8 +44,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports arrays of arrays.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AssemblyAttributes">
@@ -55,8 +65,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports assembly attributes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ChainedConstructorArguments">
@@ -73,8 +86,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports chained constructor arguments.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ComplexExpressions">
@@ -91,8 +107,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports complex expressions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeclareDelegates">
@@ -109,8 +128,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports delegate declarations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeclareEnums">
@@ -127,8 +149,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports enumeration declarations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeclareEvents">
@@ -145,8 +170,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports event declarations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeclareIndexerProperties">
@@ -161,7 +189,10 @@
         <ReturnType>System.CodeDom.Compiler.GeneratorSupport</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports the declaration of indexer properties.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeclareInterfaces">
@@ -178,8 +209,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports interface declarations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeclareValueTypes">
@@ -196,8 +230,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports value type declarations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EntryPointMethod">
@@ -214,8 +251,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports a program entry point method designation. This is used when building executables.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenericTypeDeclaration">
@@ -230,7 +270,10 @@
         <ReturnType>System.CodeDom.Compiler.GeneratorSupport</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports generic type declarations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GenericTypeReference">
@@ -245,7 +288,10 @@
         <ReturnType>System.CodeDom.Compiler.GeneratorSupport</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports generic type references.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GotoStatements">
@@ -262,8 +308,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports goto statements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MultidimensionalArrays">
@@ -280,8 +329,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports referencing multidimensional arrays. Currently, the CodeDom cannot be used to instantiate multidimensional arrays.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MultipleInterfaceMembers">
@@ -298,8 +350,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports the declaration of members that implement multiple interfaces.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NestedTypes">
@@ -316,8 +371,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports the declaration of nested types.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ParameterAttributes">
@@ -334,8 +392,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports parameter attributes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PartialTypes">
@@ -350,7 +411,10 @@
         <ReturnType>System.CodeDom.Compiler.GeneratorSupport</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports partial type declarations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PublicStaticMembers">
@@ -367,8 +431,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports public static members.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReferenceParameters">
@@ -385,8 +452,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports reference and out parameters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Resources">
@@ -401,7 +471,10 @@
         <ReturnType>System.CodeDom.Compiler.GeneratorSupport</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports compilation with .NET Framework resources. These can be default resources compiled directly into an assembly, or resources referenced in a satellite assembly.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReturnTypeAttributes">
@@ -418,8 +491,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports return type attribute declarations.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StaticConstructors">
@@ -436,8 +512,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports static constructors.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TryCatchStatements">
@@ -454,8 +533,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports try...catch statements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Win32Resources">
@@ -472,8 +554,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the generator supports compilation with Win32 resources.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

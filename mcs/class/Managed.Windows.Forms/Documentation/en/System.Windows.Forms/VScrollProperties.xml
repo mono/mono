@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="VScrollProperties" FullName="System.Windows.Forms.VScrollProperties">
   <TypeSignature Language="C#" Value="public class VScrollProperties : System.Windows.Forms.ScrollProperties" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides basic properties for the <see cref="T:System.Windows.Forms.VScrollBar" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +27,13 @@
         <Parameter Name="container" Type="System.Windows.Forms.ScrollableControl" />
       </Parameters>
       <Docs>
-        <param name="container">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.VScrollProperties" /> class. </para>
+        </summary>
+        <param name="container">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.ScrollableControl" /> that contains the scroll bar.</param>
       </Docs>
     </Member>
   </Members>

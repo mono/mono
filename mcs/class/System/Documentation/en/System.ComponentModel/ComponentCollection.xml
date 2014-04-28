@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComponentCollection" FullName="System.ComponentModel.ComponentCollection">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ComponentCollection : System.Collections.ReadOnlyCollectionBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ComponentCollection extends System.Collections.ReadOnlyCollectionBase" />
@@ -21,8 +22,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This collection inherits from <see cref="T:System.Collections.ReadOnlyCollectionBase" />. The only way to add <see cref="T:System.ComponentModel.IComponent" /> objects to this collection is to use the class constructor.</para>
+      <para>This collection provides two indexer properties, a string indexer and an integer indexer. The string indexer property returns a component in the collection by name if the <see cref="P:System.ComponentModel.IComponent.Site" /> property of a component in the collection is not null and the <see cref="P:System.ComponentModel.ISite.Name" /> property of the <see cref="P:System.ComponentModel.IComponent.Site" /> property of the component matches the specified string. The integer indexer property returns the <see cref="T:System.ComponentModel.IComponent" /> at the specified collection index. The <see cref="M:System.ComponentModel.ComponentCollection.CopyTo(System.ComponentModel.IComponent[],System.Int32)" /> method copies the contents of the collection to a specified array, beginning writing to the array at the specified index.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a read-only container for a collection of <see cref="T:System.ComponentModel.IComponent" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,9 +47,16 @@
         <Parameter Name="components" Type="System.ComponentModel.IComponent[]" />
       </Parameters>
       <Docs>
-        <param name="components">To be added: an object of type 'IComponent []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method adds each <see cref="T:System.ComponentModel.IComponent" /> in the specified <see cref="T:System.ComponentModel.IComponent" /> array to the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ComponentCollection" /> class using the specified array of components.</para>
+        </summary>
+        <param name="components">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.ComponentModel.IComponent" /> objects to initialize the collection with. </param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -61,10 +76,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="array">To be added: an object of type 'IComponent []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the entire collection to an array, starting writing at the specified array index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.IComponent" /> array to copy the objects in the collection to. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the <paramref name="array" /> at which copying to should begin. </param>
       </Docs>
     </Member>
     <Member MemberName="Item">

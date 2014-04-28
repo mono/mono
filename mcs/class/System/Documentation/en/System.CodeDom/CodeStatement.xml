@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeStatement" FullName="System.CodeDom.CodeStatement">
   <TypeSignature Language="C#" Value="public class CodeStatement : System.CodeDom.CodeObject" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeStatement extends System.CodeDom.CodeObject" />
@@ -23,10 +24,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Represents a statement in the CodeDom.</summary>
-    <remarks>This serves as a base class for code statements in the CodeDom. Some of the concrete classes for that are derived from this include
-
-<list type="bullet"><item><term><see cref="T:System.CodeDom.CodeAssignStatement" /></term></item><item><term><see cref="T:System.CodeDom.CodeCommentStatement" /></term></item><item><term><see cref="T:System.CodeDom.CodeConditionStatement" /></term></item><item><term><see cref="T:System.CodeDom.CodeExpressionStatement" /></term></item></list></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeStatement" /> provides an abstract base class for code statements within the <see cref="N:System.CodeDom" /> namespace. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the abstract base class from which all code statements derive.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -41,8 +47,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Creates an empty CodeStatement object.</summary>
         <remarks>This constructor should not be used.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeStatement" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndDirectives">
@@ -57,9 +66,12 @@
         <ReturnType>System.CodeDom.CodeDirectiveCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.CodeDom.CodeDirectiveCollection" /> object that contains end directives.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LinePragma">
@@ -77,9 +89,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeLinePragma'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property indicates the location of the code statement.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the line on which the code statement occurs. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StartDirectives">
@@ -94,9 +112,12 @@
         <ReturnType>System.CodeDom.CodeDirectiveCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.CodeDom.CodeDirectiveCollection" /> object that contains start directives.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

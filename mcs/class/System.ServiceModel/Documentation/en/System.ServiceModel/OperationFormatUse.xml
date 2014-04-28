@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OperationFormatUse" FullName="System.ServiceModel.OperationFormatUse">
   <TypeSignature Language="C#" Value="public enum OperationFormatUse" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed OperationFormatUse extends System.Enum" />
@@ -9,8 +10,25 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The default value is <see cref="F:System.ServiceModel.OperationFormatUse.Literal" />. <see cref="F:System.ServiceModel.OperationFormatUse.Literal" /> means that the message is a literal instance of the schema in the WSDL as shown in the following Document/Literal example.</para>
+      <code>&lt;Add xmlns="http://Microsoft.ServiceModel.Samples"&gt;
+  &lt;n1&gt;100&lt;/n1&gt;
+  &lt;n2&gt;15.99&lt;/n2&gt;
+ &lt;/Add&gt;</code>
+      <para>
+        <see cref="F:System.ServiceModel.OperationFormatUse.Encoded" /> means that the schemas in the WSDL are abstract specifications that are encoded according to the rules found in SOAP 1.1 section 5. The following is an RPC/Encoded example. </para>
+      <code>&lt;q1:Add xmlns:q1="http://Microsoft.ServiceModel.Samples"&gt;
+  &lt;n1 xsi:type="xsd:double" xmlns=""&gt;100&lt;/n1&gt;
+  &lt;n2 xsi:type="xsd:double" xmlns=""&gt;15.99&lt;/n2&gt;
+ &lt;/q1:Add&gt;</code>
+      <para>Use the <see cref="T:System.ServiceModel.XmlSerializerFormatAttribute" /> to set this value.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Determines the format of the message.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Encoded">
@@ -24,7 +42,10 @@
         <ReturnType>System.ServiceModel.OperationFormatUse</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implies that the schemas in the WSDL are abstract specifications that are encoded according to the rules found in SOAP 1.1 section 5.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Literal">
@@ -38,7 +59,10 @@
         <ReturnType>System.ServiceModel.OperationFormatUse</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Implies that the message is a literal instance of the schema in the WSDL.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

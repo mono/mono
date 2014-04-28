@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WSDualHttpBindingCollectionElement" FullName="System.ServiceModel.Configuration.WSDualHttpBindingCollectionElement">
   <TypeSignature Language="C#" Value="public class WSDualHttpBindingCollectionElement : System.ServiceModel.Configuration.StandardBindingCollectionElement&lt;System.ServiceModel.WSDualHttpBinding,System.ServiceModel.Configuration.WSDualHttpBindingElement&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi WSDualHttpBindingCollectionElement extends System.ServiceModel.Configuration.StandardBindingCollectionElement`2&lt;class System.ServiceModel.WSDualHttpBinding, class System.ServiceModel.Configuration.WSDualHttpBindingElement&gt;" />
@@ -14,8 +15,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that contains a collection of <see cref="T:System.ServiceModel.Configuration.WSDualHttpBindingElement" /> instances.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.WSDualHttpBindingCollectionElement" /> class. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

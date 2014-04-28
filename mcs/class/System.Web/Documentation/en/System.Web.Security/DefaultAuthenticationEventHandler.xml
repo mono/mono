@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DefaultAuthenticationEventHandler" FullName="System.Web.Security.DefaultAuthenticationEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void DefaultAuthenticationEventHandler(object sender, DefaultAuthenticationEventArgs e);" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.DefaultAuthenticationEventHandler" /> delegate is defined for the <see cref="E:System.Web.Security.DefaultAuthenticationModule.Authenticate" /> event of the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> class. You can access the <see cref="E:System.Web.Security.DefaultAuthenticationModule.Authenticate" /> event of the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> class by specifying a subroutine named <system>DefaultAuthentication_OnAuthenticate</system> in the Global.asax file for your ASP.NET application. The <see cref="E:System.Web.Security.DefaultAuthenticationModule.Authenticate" /> event is raised after the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event and is used to ensure that the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> is populated with an <see cref="T:System.Security.Principal.IPrincipal" /> object.</para>
+      <para>You can use the <see cref="P:System.Web.Security.DefaultAuthenticationEventArgs.Context" /> property of the <see cref="T:System.Web.Security.DefaultAuthenticationEventArgs" /> object supplied to the <system>DefaultAuthentication_OnAuthenticate</system> event to set the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> to a custom <see cref="T:System.Security.Principal.IPrincipal" /> object. If you do not specify a value for the <see cref="P:System.Web.HttpContext.User" /> property of the <see cref="T:System.Web.HttpContext" /> supplied during the <system>DefaultAuthentication_OnAuthenticate</system> event, the <see cref="T:System.Web.Security.DefaultAuthenticationModule" /> sets the <see cref="P:System.Web.HttpContext.User" /> property of the <see cref="T:System.Web.HttpContext" /> to a <see cref="T:System.Security.Principal.GenericPrincipal" /> object that contains no user information.</para>
+      <para>The <system>DefaultAuthentication_OnAuthenticate</system> event is raised after the <see cref="E:System.Web.HttpApplication.AuthenticateRequest" /> event and before the <see cref="E:System.Web.HttpApplication.AuthorizeRequest" /> event. If you have an <format type="text/html"><a href="2d3d9bf6-f914-4c30-ad03-32eea98fa612">authorization</a></format> section that depends on the user name to deny or allow access to your application, modifying the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> can affect the behavior of your application. Be sure that the user name you set during the <system>DefaultAuthentication_OnAuthenticate</system> event is considered when you specify the <format type="text/html"><a href="2d3d9bf6-f914-4c30-ad03-32eea98fa612">authorization</a></format> section in your configuration.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the <system>DefaultAuthentication_OnAuthenticate</system> event of a <see cref="T:System.Web.Security.DefaultAuthenticationModule" />.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebEventCodes" FullName="System.Web.Management.WebEventCodes">
   <TypeSignature Language="C#" Value="public sealed class WebEventCodes" />
   <AssemblyInfo>
@@ -9,8 +10,50 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET health monitoring allows production and operations staff to manage deployed Web applications. The <see cref="N:System.Web.Management" /> namespace contains the health-event types responsible for packaging application health-status data and the provider types responsible for processing this data. It also contains supporting types that help during the management of health events.</para>
+      <para>The <see cref="T:System.Web.Management.WebEventCodes" /> class contains codes that identify types of health-monitoring events. Two types of codes are defined within the class: major codes, which identify the ASP.NET health-monitoring events; and detail codes, which provide more information about a related major code. These codes are implemented as integers, rather than as an enumeration, to allow for extensibility.</para>
+      <para>When a health-monitoring event is raised, it is associated with a major event code. The following list identifies the categories of major event codes that are defined within the <see cref="T:System.Web.Management.WebEventCodes" /> class:</para>
+      <list type="bullet">
+        <item>
+          <para>Application codes. Application codes identify events in the lifetime of an application, such as startup and shutdown events. Their values are greater than the <see cref="F:System.Web.Management.WebEventCodes.ApplicationCodeBase" /> field constant. They are associated with the <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> event type. The heartbeat event is a special kind of application event. It identifies events raised at periodic intervals to provide information relative to the state of the running process. It is associated with the <see cref="T:System.Web.Management.WebHeartbeatEvent" /> event type. </para>
+        </item>
+        <item>
+          <para>Request codes. Request codes identify non-error events that provide per-request information. Their values are greater than the <see cref="F:System.Web.Management.WebEventCodes.RequestCodeBase" /> field constant. They are associated with the <see cref="T:System.Web.Management.WebRequestEvent" /> event type. </para>
+        </item>
+        <item>
+          <para>Error codes. Error codes identify events that contain information about two kinds of errors: errors specifically related to a Web request and systemic errors. The errors related to Web requests include unhandled exceptions, view-state errors, and input-validation errors. They are associated with the <see cref="T:System.Web.Management.WebRequestErrorEvent" /> event type. The systemic errors relate to configuration or application code, including parser errors and compilation errors. They are associated with the <see cref="T:System.Web.Management.WebErrorEvent" /> event type. Both kinds of errors have values greater than the <see cref="F:System.Web.Management.WebEventCodes.ErrorCodeBase" /> field constant.</para>
+        </item>
+        <item>
+          <para>Audit codes. Audit codes identify events that contain auditable information such as login attempts, access security violations, and authorization violations. Their values are greater than <see cref="F:System.Web.Management.WebEventCodes.AuditCodeBase" />. They are associated with <see cref="T:System.Web.Management.WebAuditEvent" /> and its derived event types. </para>
+        </item>
+        <item>
+          <para>Miscellaneous codes. Miscellaneous codes do not identify events but are used to flag nonstandard event information. Their values are greater than <see cref="F:System.Web.Management.WebEventCodes.MiscCodeBase" />. Refer also to <see cref="F:System.Web.Management.WebEventCodes.WebEventProviderInformation" /> for more information.</para>
+        </item>
+      </list>
+      <para>You can create your own custom event code by choosing code values above <see cref="F:System.Web.Management.WebEventCodes.WebExtendedBase" />. </para>
+      <para>In the eventMappings health-monitoring configuration element, you can optionally specify an event-code range.  If the event code range is specified, the mapping only applies to the events that have an event code within that range; otherwise, it applies to all the event codes. The following configuration file excerpt shows the <see cref="T:System.Web.Management.EventLogWebEventProvider" /> configured to handle <see cref="T:System.Web.Management.WebFailureAuditEvent" /> events whose event codes belong to the audit category.</para>
+      <code>&lt;healthMonitoring&gt;
+  &lt;eventMappings&gt; 
+    &lt;add name="Failure Audits" type=
+      "System.Web.Management.WebFailureAuditEvent,System.Web, Version=2.0.3600.0,Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" /&gt;
+  &lt;/eventMappings&gt;
+
+  &lt;rules&gt;
+    &lt;add name="Failure Audits Default"
+      eventName="Failure Audits"
+      provider="EventLogProvider"
+      profile="Default"
+      minInterval="00:01:00" /&gt;
+  &lt;/rules&gt;
+&lt;/healthMonitoring&gt;</code>
+      <para>You can create your own custom event code by choosing code values above <see cref="F:System.Web.Management.WebEventCodes.WebExtendedBase" />. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the codes associated with the ASP.NET health monitoring events.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +79,14 @@
       </ReturnValue>
       <MemberValue>1000</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.ApplicationCodeBase" /> value represents the offset for major event codes associated with the <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> type. All application codes are assigned values greater than <see cref="F:System.Web.Management.WebEventCodes.ApplicationCodeBase" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the offset for the ASP.NET health-monitoring application event codes. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationCompilationEnd">
@@ -51,8 +100,14 @@
       </ReturnValue>
       <MemberValue>1004</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.ApplicationCompilationEnd" /> value is a major code and its value is greater than the <see cref="F:System.Web.Management.WebEventCodes.ApplicationCodeBase" /> value. ASP.NET raises the related <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> event when the compilation of the application ends. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the compilation of the application has finished. This field is constant. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationCompilationStart">
@@ -66,8 +121,14 @@
       </ReturnValue>
       <MemberValue>1003</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.ApplicationCompilationStart" /> value is a major code and its value is greater than the <see cref="F:System.Web.Management.WebEventCodes.ApplicationCodeBase" /> value. ASP.NET raises the related <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> event when the compilation of the application starts. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the compilation of the application has started. This field is constant. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationDetailCodeBase">
@@ -81,8 +142,14 @@
       </ReturnValue>
       <MemberValue>50000</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.ApplicationDetailCodeBase" /> value represents the offset for the detail event code range associated with the <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> type. All application detail codes are assigned values greater than <see cref="F:System.Web.Management.WebEventCodes.ApplicationDetailCodeBase" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the offset for the application detail event codes. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationHeartbeat">
@@ -96,8 +163,14 @@
       </ReturnValue>
       <MemberValue>1005</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.ApplicationHeartbeat" /> is a major code and its value is greater than <see cref="F:System.Web.Management.WebEventCodes.ApplicationCodeBase" />. ASP.NET raises the related <see cref="T:System.Web.Management.WebHeartbeatEvent" /> event at a periodic interval, as defined by the configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that a heartbeat event occurred. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdown">
@@ -111,8 +184,15 @@
       </ReturnValue>
       <MemberValue>1002</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> is a major code and its value is greater than <see cref="F:System.Web.Management.WebEventCodes.ApplicationCodeBase" />. ASP.NET raises the related <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> event when the application shuts down.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that an application has shut down. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownBinDirChangeOrDirectoryRename">
@@ -126,8 +206,15 @@
       </ReturnValue>
       <MemberValue>50007</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownBinDirChangeOrDirectoryRename" /> is the detail code that specifies the causes of the shutdown. </para>
+          <para>When a subdirectory in the application's Bin directory is changed or renamed, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownBinDirChangeOrDirectoryRename" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating a subdirectory in the application's Bin directory was changed or renamed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownBrowsersDirChangeOrDirectoryRename">
@@ -141,8 +228,16 @@
       </ReturnValue>
       <MemberValue>50008</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownBrowsersDirChangeOrDirectoryRename" /> is the detail code that specifies the cause of the shutdown.</para>
+          <para>When a subdirectory in the Browsers application directory is changed or renamed, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownBrowsersDirChangeOrDirectoryRename" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating a subdirectory in the Browsers application directory was changed or renamed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownChangeInGlobalAsax">
@@ -156,8 +251,16 @@
       </ReturnValue>
       <MemberValue>50003</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownChangeInGlobalAsax" /> is the detail code that specifies the cause of the shutdown. </para>
+          <para>When the Global.asax file is changed, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownChangeInGlobalAsax" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the Global.asax file has changed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownChangeInSecurityPolicyFile">
@@ -171,8 +274,16 @@
       </ReturnValue>
       <MemberValue>50006</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownChangeInSecurityPolicyFile" /> is the detail code that specifies the cause of the shutdown. </para>
+          <para>When the security policy file is changed, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownChangeInSecurityPolicyFile" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the security policy file has changed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownCodeDirChangeOrDirectoryRename">
@@ -186,8 +297,16 @@
       </ReturnValue>
       <MemberValue>50009</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownCodeDirChangeOrDirectoryRename" /> is the detail code that specifies the cause of the shutdown.</para>
+          <para>When a subdirectory in the App_Code directory is changed or renamed, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownCodeDirChangeOrDirectoryRename" />.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating a subdirectory in the App_Code directory was changed or renamed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownConfigurationChange">
@@ -201,8 +320,16 @@
       </ReturnValue>
       <MemberValue>50004</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownConfigurationChange" /> is the detail code that specifies the cause of the shutdown. </para>
+          <para>When the configuration file is changed, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownConfigurationChange" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the configuration file has changed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownHostingEnvironment">
@@ -216,8 +343,15 @@
       </ReturnValue>
       <MemberValue>50002</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownHostingEnvironment" /> is the detail code that specifies the cause of the shutdown. </para>
+          <para>When the hosting environment is shutting down, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownHostingEnvironment" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the hosting environment is shutting down. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownHttpRuntimeClose">
@@ -231,8 +365,16 @@
       </ReturnValue>
       <MemberValue>50013</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownHttpRuntimeClose" /> is the detail code that specifies the cause of the shutdown. </para>
+          <para>When the ASP.NET run time is explicitly closed, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownHttpRuntimeClose" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the ASP.NET run time was explicitly closed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownIdleTimeout">
@@ -246,8 +388,15 @@
       </ReturnValue>
       <MemberValue>50011</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownIdleTimeout" /> is the detail code that specifies the cause of the shutdown. </para>
+          <para>When the idle time-out is exceeded, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownIdleTimeout" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the idle time-out was exceeded. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownInitializationError">
@@ -261,8 +410,16 @@
       </ReturnValue>
       <MemberValue>50014</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownInitializationError" /> is the detail code that specifies the cause of the shutdown.  </para>
+          <para>When an application-initialization error occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownInitializationError" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating an application-initialization error occurred. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownMaxRecompilationsReached">
@@ -276,8 +433,16 @@
       </ReturnValue>
       <MemberValue>50015</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownMaxRecompilationsReached" /> is the detail code that specifies the cause of the shutdown.  </para>
+          <para>When the maximum number of recompilations is reached, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownMaxRecompilationsReached" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the maximum number of recompilations was reached. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownPhysicalApplicationPathChanged">
@@ -291,8 +456,16 @@
       </ReturnValue>
       <MemberValue>50012</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownPhysicalApplicationPathChanged" /> is the detail code that specifies the cause of the shutdown.</para>
+          <para>When the physical path of the application is changed, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownPhysicalApplicationPathChanged" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the physical path of the application has changed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownResourcesDirChangeOrDirectoryRename">
@@ -306,8 +479,16 @@
       </ReturnValue>
       <MemberValue>50010</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownResourcesDirChangeOrDirectoryRename" /> is the detail code that specifies the cause of the shutdown.  </para>
+          <para>When a subdirectory in the App_Resources directory is changed or renamed, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownResourcesDirChangeOrDirectoryRename" />.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating a subdirectory in the App_Resources directory was changed or renamed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownUnknown">
@@ -321,8 +502,16 @@
       </ReturnValue>
       <MemberValue>50001</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownUnknown" /> is the detail code that specifies the causes of the shutdown.</para>
+          <para>When the application shuts down for an unknown reason, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownUnknown" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the application shutdown reason is unknown. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationShutdownUnloadAppDomainCalled">
@@ -336,8 +525,16 @@
       </ReturnValue>
       <MemberValue>50005</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownUnloadAppDomainCalled" /> is the detail code that specifies the cause of the shutdown.</para>
+          <para>When the application domain is explicitly unloaded, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdown" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationShutdownUnloadAppDomainCalled" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the application domain was explicitly unloaded. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplicationStart">
@@ -351,8 +548,15 @@
       </ReturnValue>
       <MemberValue>1001</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ApplicationStart" /> is the major code that refers to the start of an application. When the application starts, ASP.NET raises a <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.ApplicationStart" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that an application has started. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditCodeBase">
@@ -366,8 +570,15 @@
       </ReturnValue>
       <MemberValue>4000</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.AuditCodeBase" /> value represents the offset for the major event code range associated with the <see cref="T:System.Web.Management.WebAuthenticationSuccessAuditEvent" />, <see cref="T:System.Web.Management.WebSuccessAuditEvent" />, <see cref="T:System.Web.Management.WebAuthenticationFailureAuditEvent" />, <see cref="T:System.Web.Management.WebFailureAuditEvent" />, and <see cref="T:System.Web.Management.WebViewStateFailureAuditEvent" /> types. </para>
+          <para>All audit codes are assigned values greater than <see cref="F:System.Web.Management.WebEventCodes.AuditCodeBase" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the offset for the ASP.NET health-monitoring audit event codes. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditDetailCodeBase">
@@ -381,8 +592,15 @@
       </ReturnValue>
       <MemberValue>50200</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.AuditDetailCodeBase" /> represents the offset for the detail-event-code range associated with audit events. All audit detail codes are assigned values greater than <see cref="F:System.Web.Management.WebEventCodes.AuditDetailCodeBase" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the offset for the ASP.NET audit-detail event codes. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditFileAuthorizationFailure">
@@ -396,8 +614,15 @@
       </ReturnValue>
       <MemberValue>4008</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.AuditFileAuthorizationFailure" /> is the major code for the health event related to the access of a file for which authorization is not granted. When a file-authorization failure occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebFailureAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditFileAuthorizationFailure" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that a file-authorization failure occurred during a Web request. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditFileAuthorizationSuccess">
@@ -411,8 +636,15 @@
       </ReturnValue>
       <MemberValue>4004</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.AuditFileAuthorizationSuccess" /> is the major code for the health event related to the access of a file for which authorization is granted. When a file authorization is successful, ASP.NET raises a <see cref="T:System.Web.Management.WebSuccessAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditFileAuthorizationSuccess" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that a file-authorization success occurred during a Web request. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditFormsAuthenticationFailure">
@@ -426,8 +658,15 @@
       </ReturnValue>
       <MemberValue>4005</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.AuditFormsAuthenticationFailure" /> is the major code for the health event related to user's authentication failure. When this event happens, ASP.NET raises a <see cref="T:System.Web.Management.WebAuthenticationFailureAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditFormsAuthenticationFailure" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating a form authentication failure occurred during a Web request. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditFormsAuthenticationSuccess">
@@ -441,8 +680,14 @@
       </ReturnValue>
       <MemberValue>4001</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.AuditFormsAuthenticationSuccess" /> is the major code for the health event related to a user's authentication success. When this event occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebAuthenticationSuccessAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditFormsAuthenticationSuccess" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating a form-authentication success occurred during a Web request. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditInvalidViewStateFailure">
@@ -456,8 +701,15 @@
       </ReturnValue>
       <MemberValue>4009</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.AuditInvalidViewStateFailure" /> is the major code for the health event related to view-state verification failure. When this event occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebViewStateFailureAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditInvalidViewStateFailure" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the view-state verification failed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditMembershipAuthenticationFailure">
@@ -471,8 +723,14 @@
       </ReturnValue>
       <MemberValue>4006</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.AuditMembershipAuthenticationFailure" /> is the major code for the health event related to a user's membership-authentication failure. When this event occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebAuthenticationFailureAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditMembershipAuthenticationFailure" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that a membership-authentication failure occurred during a Web request. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditMembershipAuthenticationSuccess">
@@ -486,8 +744,15 @@
       </ReturnValue>
       <MemberValue>4002</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.AuditMembershipAuthenticationSuccess" /> is the major code for the health event related to a user's membership-authentication success. When this event occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebAuthenticationSuccessAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditMembershipAuthenticationSuccess" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that a membership-authentication success occurred during a Web request. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditUnhandledAccessException">
@@ -501,8 +766,15 @@
       </ReturnValue>
       <MemberValue>4011</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.AuditUnhandledAccessException" /> is the major code for the unhandled health event related to the access of a resource for which authorization is not granted. When this event occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebFailureAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditUnhandledAccessException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that an unhandled access exception occurred during a Web request. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditUnhandledSecurityException">
@@ -516,8 +788,15 @@
       </ReturnValue>
       <MemberValue>4010</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.AuditUnhandledSecurityException" /> is the major code of the unhandled health event related to a security violation. When an unhandled security exception is thrown, ASP.NET raises a <see cref="T:System.Web.Management.WebFailureAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditUnhandledSecurityException" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that an unhandled security exception occurred during a Web request. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditUrlAuthorizationFailure">
@@ -531,8 +810,15 @@
       </ReturnValue>
       <MemberValue>4007</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.AuditUrlAuthorizationFailure" /> is the major code for the health event related to the use of a URL for which authorization is not granted. When the URL-authorization failure occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebFailureAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditUrlAuthorizationFailure" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that a URL-authorization failure occurred during a Web request. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AuditUrlAuthorizationSuccess">
@@ -546,8 +832,15 @@
       </ReturnValue>
       <MemberValue>4003</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.AuditUrlAuthorizationSuccess" /> is the major code for the health event related to the use of a URL for which authorization is granted. When a URL is successfully authorized, ASP.NET raises a <see cref="T:System.Web.Management.WebSuccessAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditUrlAuthorizationSuccess" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating a URL-authorization success occurred during a Web request. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ErrorCodeBase">
@@ -561,8 +854,14 @@
       </ReturnValue>
       <MemberValue>3000</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.ErrorCodeBase" /> value represents the offset for the major event code range associated with the <see cref="T:System.Web.Management.WebRequestErrorEvent" /> and <see cref="T:System.Web.Management.WebErrorEvent" /> types. All error codes are assigned values greater than <see cref="F:System.Web.Management.WebEventCodes.ErrorCodeBase" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the offset for the ASP.NET health-monitoring error event codes. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExpiredTicketFailure">
@@ -576,8 +875,16 @@
       </ReturnValue>
       <MemberValue>50202</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.ExpiredTicketFailure" /> is the detail code that specifies the cause of the user's authentication failure.</para>
+          <para>When the user's authentication fails due to an expired ticket, ASP.NET raises a <see cref="T:System.Web.Management.WebAuthenticationFailureAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditFormsAuthenticationFailure" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.ExpiredTicketFailure" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the supplied ticket is expired. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InvalidEventCode">
@@ -591,8 +898,14 @@
       </ReturnValue>
       <MemberValue>-1</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.InvalidEventCode" /> represents the use of a code value that is not allowed by the system. For instance, this can happen if you customize an ASP.NET health-monitoring event and use a code value that is already assigned by the system.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the event code value is not allowed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InvalidTicketFailure">
@@ -606,8 +919,16 @@
       </ReturnValue>
       <MemberValue>50201</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.InvalidTicketFailure" /> is the detail code that specifies the cause of the user's authentication failure.</para>
+          <para>When the user's authentication fails due to an invalid ticket, ASP.NET raises a <see cref="T:System.Web.Management.WebAuthenticationFailureAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditFormsAuthenticationFailure" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.InvalidTicketFailure" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the supplied ticket is invalid. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InvalidViewState">
@@ -621,8 +942,16 @@
       </ReturnValue>
       <MemberValue>50204</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.InvalidViewState" /> is the detail code that specifies the cause of the view-state failure.  </para>
+          <para>When the view-state error occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebViewStateFailureAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditInvalidViewStateFailure" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.InvalidViewState" />.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the supplied view state is invalid. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InvalidViewStateMac">
@@ -636,8 +965,16 @@
       </ReturnValue>
       <MemberValue>50203</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.InvalidViewStateMac" /> is the detail code that specifies the cause of the view-state failure.  </para>
+          <para>When the supplied view state fails the integrity check, ASP.NET raises a <see cref="T:System.Web.Management.WebViewStateFailureAuditEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.AuditInvalidViewStateFailure" /> and a detail code of <see cref="F:System.Web.Management.WebEventCodes.InvalidViewStateMac" />.  </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the supplied view state failed the integrity check. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MiscCodeBase">
@@ -651,8 +988,14 @@
       </ReturnValue>
       <MemberValue>6000</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.MiscCodeBase" /> value represents the offset for the major event code range associated with health events that have not been categorized. All miscellaneous codes are assigned values greater than <see cref="F:System.Web.Management.WebEventCodes.MiscCodeBase" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the offset for the ASP.NET health-monitoring Web miscellaneous event codes. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequestCodeBase">
@@ -666,8 +1009,14 @@
       </ReturnValue>
       <MemberValue>2000</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.RequestCodeBase" /> value represents the offset for the major event code range associated with the <see cref="T:System.Web.Management.WebRequestEvent" /> type. All request codes are assigned values greater than <see cref="F:System.Web.Management.WebEventCodes.RequestCodeBase" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the offset for the ASP.NET health-monitoring Web-request event codes. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequestTransactionAbort">
@@ -681,8 +1030,15 @@
       </ReturnValue>
       <MemberValue>2002</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.RequestTransactionAbort" /> is the major code that refers to a Web-request abnormal termination. When a Web request aborts, ASP.NET raises a <see cref="T:System.Web.Management.WebRequestEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.RequestTransactionAbort" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the Web request was aborted. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RequestTransactionComplete">
@@ -696,8 +1052,15 @@
       </ReturnValue>
       <MemberValue>2001</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.RequestTransactionComplete" /> is the major code that refers to a Web request normal termination. When the Web request completes normally, ASP.NET raises a <see cref="T:System.Web.Management.WebRequestEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.RequestTransactionComplete" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the Web request was completed. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RuntimeErrorPostTooLarge">
@@ -711,8 +1074,15 @@
       </ReturnValue>
       <MemberValue>3004</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.RuntimeErrorPostTooLarge" /> is the major code that refers to a data posting whose size exceeds the allowed limits. When a form posts data that exceeds the allowed limits, ASP.NET raises a <see cref="T:System.Web.Management.WebRequestErrorEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.RuntimeErrorPostTooLarge" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the size of the posted information exceeded the allowed limits. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RuntimeErrorRequestAbort">
@@ -726,8 +1096,15 @@
       </ReturnValue>
       <MemberValue>3001</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.RuntimeErrorRequestAbort" /> is the major code that refers to the abnormal termination of the Web request. When the Web request aborts, ASP.NET raises a <see cref="T:System.Web.Management.WebRequestErrorEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.RuntimeErrorRequestAbort" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the Web request has been aborted.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RuntimeErrorUnhandledException">
@@ -741,8 +1118,15 @@
       </ReturnValue>
       <MemberValue>3005</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.RuntimeErrorUnhandledException" /> is the major code that refers to the occurrence of an exception that is not handled by ASP.NET. When the exception occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebRequestErrorEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.RuntimeErrorUnhandledException" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating an unhandled exception occurred. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RuntimeErrorValidationFailure">
@@ -756,8 +1140,15 @@
       </ReturnValue>
       <MemberValue>3003</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.RuntimeErrorValidationFailure" /> is the major code that refers to the occurrence of a validation exception that is not handled by ASP.NET. When this exception occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebRequestErrorEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.RuntimeErrorValidationFailure" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that a validation error occurred. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RuntimeErrorViewStateFailure">
@@ -771,8 +1162,15 @@
       </ReturnValue>
       <MemberValue>3002</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.RuntimeErrorViewStateFailure" /> is the major code that refers to a view-state failure. When this happens, ASP.NET raises a <see cref="T:System.Web.Management.WebRequestErrorEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.RuntimeErrorViewStateFailure" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that a view-state failure occurred. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SqlProviderEventsDropped">
@@ -786,8 +1184,14 @@
       </ReturnValue>
       <MemberValue>50301</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the notification occurs after the one during which events have been dropped, a special warning row is written to the SQL server. This row is written before all other events in the notification, and is not counted in the total number of events as far as the configured flush size is concerned.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the SQL provider dropped events. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="StateServerConnectionError">
@@ -801,8 +1205,15 @@
       </ReturnValue>
       <MemberValue>50016</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a connection error occurs while communicating with the state server, ASP.NET raises a <see cref="T:System.Web.Management.WebErrorEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.WebErrorOtherError" /> and detail code of <see cref="F:System.Web.Management.WebEventCodes.StateServerConnectionError" />.</para>
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.StateServerConnectionError" /> is a detail code and its value is greater than the <see cref="F:System.Web.Management.WebEventCodes.ApplicationCodeBase" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that an error occurred while communicating with the state server. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UndefinedEventCode">
@@ -816,8 +1227,15 @@
       </ReturnValue>
       <MemberValue>0</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.UndefinedEventCode" /> represents the use of a major code value that is not defined by the system. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the major event code value is not defined. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UndefinedEventDetailCode">
@@ -831,8 +1249,15 @@
       </ReturnValue>
       <MemberValue>0</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.UndefinedEventCode" /> represents the use of a detail code value that is not defined by the system. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that the detail event code value is not defined. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WebErrorCompilationError">
@@ -846,8 +1271,15 @@
       </ReturnValue>
       <MemberValue>3007</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.WebErrorCompilationError" /> is the major code that refers to an error that happened during the application compilation phase. When this error occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebErrorEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.WebErrorCompilationError" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a compilation error occurred.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WebErrorConfigurationError">
@@ -861,8 +1293,15 @@
       </ReturnValue>
       <MemberValue>3008</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.WebErrorConfigurationError" /> is the major code that refers to an error that happened during the application-configuring phase. When this error occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebErrorEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.WebErrorConfigurationError" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a configuration error occurred. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WebErrorObjectStateFormatterDeserializationError">
@@ -876,8 +1315,11 @@
       </ReturnValue>
       <MemberValue>3011</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that there was an error during the deserialization of the type or value of an object. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WebErrorOtherError">
@@ -891,8 +1333,15 @@
       </ReturnValue>
       <MemberValue>3009</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.WebErrorOtherError" /> is the major code for an unclassified error. When this error occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebErrorEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.WebErrorOtherError" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that an unclassified error occurred. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WebErrorParserError">
@@ -906,8 +1355,15 @@
       </ReturnValue>
       <MemberValue>3006</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.WebErrorParserError" /> is the major code that refers to an error that happened during the application-parsing phase. When this error occurs, ASP.NET raises a <see cref="T:System.Web.Management.WebErrorEvent" /> with a major code of <see cref="F:System.Web.Management.WebEventCodes.WebErrorParserError" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating a parser error occurred.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WebErrorPropertyDeserializationError">
@@ -921,8 +1377,11 @@
       </ReturnValue>
       <MemberValue>3010</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code indicating that there was an error during the deserialization of a property. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WebEventDetailCodeBase">
@@ -936,8 +1395,14 @@
       </ReturnValue>
       <MemberValue>50300</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.Management.WebEventCodes.WebEventDetailCodeBase" /> value represents the offset for the detail-event code range associated with the <see cref="T:System.Web.Management.WebApplicationLifetimeEvent" /> type. All application detail codes are assigned values greater than <see cref="F:System.Web.Management.WebEventCodes.ApplicationDetailCodeBase" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the offset for the ASP.NET health-monitoring Web-detail event codes. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WebEventProviderInformation">
@@ -951,8 +1416,19 @@
       </ReturnValue>
       <MemberValue>6001</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Web.Management.WebEventCodes.WebEventProviderInformation" /> is the major code used by providers to store nonstandard health event information. Its value is greater than <see cref="F:System.Web.Management.WebEventCodes.MiscCodeBase" />.</para>
+          <para>For example, if ASP.NET health events are dropped during buffering, the <see cref="T:System.Web.Management.SimpleMailWebEventProvider" /> adds a warning to the top of the messages without using the <see cref="F:System.Web.Management.WebEventCodes.WebEventProviderInformation" />.But  the only way for the <see cref="T:System.Web.Management.SqlWebEventProvider" /> to write this warning is to create a record in the database. Because every record in the database needs an event ID, the provider uses the <see cref="F:System.Web.Management.WebEventCodes.WebEventProviderInformation" /> as its major code and <see cref="F:System.Web.Management.WebEventCodes.SqlProviderEventsDropped" /> as the detail code to create this ID.</para>
+          <block subset="none" type="note">
+            <para>As you can see from the above discussion, the <see cref="F:System.Web.Management.WebEventCodes.WebEventProviderInformation" /> is not associated with any ASP.NET health event. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the event code used by providers to record nonstandard information about an event. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WebExtendedBase">
@@ -966,8 +1442,14 @@
       </ReturnValue>
       <MemberValue>100000</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you create your own custom event, you must use an event code with a value greater than <see cref="F:System.Web.Management.WebEventCodes.WebExtendedBase" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the offset for the custom event codes. This field is constant.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

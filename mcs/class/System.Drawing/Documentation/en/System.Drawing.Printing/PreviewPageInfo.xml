@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PreviewPageInfo" FullName="System.Drawing.Printing.PreviewPageInfo">
   <TypeSignature Language="C#" Value="public sealed class PreviewPageInfo" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used extensively by the <see cref="T:System.Drawing.Printing.PreviewPrintController" /> class.</para>
+      <para>For more information on printing, see the <see cref="N:System.Drawing.Printing" /> namespace overview.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies print preview information for a single page. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,10 +34,15 @@
         <Parameter Name="physicalSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="image">To be added: an object of type 'Drawing.Image'</param>
-        <param name="physicalSize">To be added: an object of type 'Drawing.Size'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Printing.PreviewPageInfo" /> class.</para>
+        </summary>
+        <param name="image">
+          <attribution license="cc4" from="Microsoft" modified="false" />The image of the printed page. </param>
+        <param name="physicalSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the printed page, in hundredths of an inch. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,9 +56,15 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing.Image'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>See the <see cref="N:System.Drawing" /> namespace for details on manipulating graphics.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the image of the printed page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,9 +78,12 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing.Size'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size of the printed page, in hundredths of an inch.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

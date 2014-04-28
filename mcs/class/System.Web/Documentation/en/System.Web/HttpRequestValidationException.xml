@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpRequestValidationException" FullName="System.Web.HttpRequestValidationException">
   <TypeSignature Language="C#" Value="public sealed class HttpRequestValidationException : System.Web.HttpException" />
   <AssemblyInfo>
@@ -10,8 +11,26 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Constraining and validating user input is essential in a Web application to prevent hacker attacks that rely on malicious input strings. Cross-site scripting attacks are one example of such hacks. Other types of malicious or undesired data can be passed in a request through various forms of input. By limiting the kinds of data that is passed at a low level in an application, you can prevent undesirable events, even when programmers who are using your code do not put the proper validation techniques in place.</para>
+      <para>Request validation detects potentially malicious client input and throws this exception to abort processing of the request. A request abort can indicate an attempt to compromise the security of your application, such as a cross-site scripting attack. It is strongly recommended that your application explicitly check all input regarding request aborts. However, you can disable request validation by setting the validateRequest attribute in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive to false, as shown in the following example: </para>
+      <para>&lt;%@ Page validateRequest="false" %&gt;</para>
+      <para>To disable request validation for your application, you must modify or create a Web.config file for your application and set the validateRequest attribute of the pages section to false, as shown in the following example: </para>
+      <code>&lt;configuration&gt; 
+  &lt;system.web&gt; 
+    &lt;pages validateRequest="false" /&gt; 
+  &lt;/system.web&gt; 
+&lt;/configuration&gt; </code>
+      <para>To disable request validation for all applications on your server, you can make this modification to the Machine.config file.</para>
+      <block subset="none" type="note">
+        <para>It is strongly recommended that your application explicitly check all inputs it uses in addition to the request validation performed by ASP.NET. The request validation feature cannot catch all attacks, especially those crafted specifically against your application logic.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception that is thrown when a potentially malicious input string is received from the client as part of the request data. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +38,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.HttpRequestValidationException" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +56,17 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The content of the <paramref name="message" /> parameter is intended to be human readable. The caller of the <see cref="M:System.Web.HttpRequestValidationException.#ctor(System.String)" /> constructor is required to ensure that the <paramref name="message" /> string has been localized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Web.HttpRequestValidationException" /> exception with the specified error message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that describes the error.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,11 +80,19 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the <see cref="M:System.Web.HttpRequestValidationException.#ctor(System.String,System.Exception)" /> constructor, or null if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the <see cref="M:System.Web.HttpRequestValidationException.#ctor(System.String,System.Exception)" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.HttpRequestValidationException" /> class with a specified error message and a reference to the inner exception that is the cause of the exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />An error message that explains the reason for the exception.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If this parameter is not null, the current exception is raised in a catch block that handles the inner exception.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

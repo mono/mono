@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LoginCancelEventArgs" FullName="System.Web.UI.WebControls.LoginCancelEventArgs">
   <TypeSignature Language="C#" Value="public class LoginCancelEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A cancelable event is raised when a component is about to perform an action that can be canceled, such as logging on to a Web site.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.LoginCancelEventArgs" /> class provides the <see cref="P:System.Web.UI.WebControls.LoginCancelEventArgs.Cancel" /> property to indicate whether the event should be canceled. A <see cref="T:System.Web.UI.WebControls.LoginCancelEventArgs" /> object is used with controls that have cancelable actions, such as the <see cref="T:System.Web.UI.WebControls.Login" /> control, the <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> control, and the <see cref="T:System.Web.UI.WebControls.PasswordRecovery" /> control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for a cancelable event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +27,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.LoginCancelEventArgs" /> class with the <see cref="P:System.Web.UI.WebControls.LoginCancelEventArgs.Cancel" /> property set to false.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +45,14 @@
         <Parameter Name="cancel" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="cancel">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.LoginCancelEventArgs" /> class with the <see cref="P:System.Web.UI.WebControls.LoginCancelEventArgs.Cancel" /> property set to the specified value.</para>
+        </summary>
+        <param name="cancel">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cancel the event; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +65,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Web.UI.WebControls.LoginCancelEventArgs.Cancel" /> property to indicate whether an event, such as the <see cref="E:System.Web.UI.WebControls.Login.LoggingIn" /> event, the <see cref="E:System.Web.UI.WebControls.LoginStatus.LoggingOut" /> event, or the <see cref="E:System.Web.UI.WebControls.ChangePassword.ChangingPassword" /> event, should be canceled. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the event should be canceled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

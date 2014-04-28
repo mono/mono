@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Part" FullName="System.Web.UI.WebControls.WebParts.Part">
   <TypeSignature Language="C#" Value="public abstract class Part : System.Web.UI.WebControls.Panel, System.Web.UI.INamingContainer, System.Web.UI.WebControls.ICompositeControlDesignerAccessor" />
   <AssemblyInfo>
@@ -16,9 +17,67 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.Part" /> class defines properties that are common to all part controls and enable them to have a modular and consistent appearance on a Web page. These common properties include a title, a description, and characteristics of the chrome or frame that surrounds a part control. </para>
+      <para>The <see cref="P:System.Web.UI.WebControls.WebParts.Part.Title" /> property specifies a title for the part control. The <see cref="P:System.Web.UI.WebControls.WebParts.Part.Description" /> property is used to summarize the part control's purpose, and appears as a ToolTip in the title bar of the control. The <see cref="P:System.Web.UI.WebControls.WebParts.Part.ChromeType" /> property dictates what kind of border is rendered around a part control, while the <see cref="P:System.Web.UI.WebControls.WebParts.Part.ChromeState" /> property indicates whether a part control is rendered normally, or minimized. The border of a part control is affected by the properties of the zone that contains it; for example, the <see cref="P:System.Web.UI.WebControls.WebParts.WebZone.PartChromeType" /> property affects the frames of all part controls contained in a zone.</para>
+      <para>One type of part control is the <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control, which renders content inside a corresponding zone. Another type is the <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> control, which provides user interface (UI) controls used to modify (personalize) individual <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> controls. A third type of part control is the <see cref="T:System.Web.UI.WebControls.WebParts.CatalogPart" /> control, which provides a list of <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> controls that users can add to or remove from a Web page.</para>
+      <para>Part controls are contained in zones, all of which derive from the abstract <see cref="T:System.Web.UI.WebControls.WebParts.WebZone" /> class. A zone is responsible for organizing the part controls it contains. Each zone also renders UI elements for itself, including a header, a footer, a title bar, and UI elements around each contained part control, such as borders. </para>
+      <block subset="none" type="note">
+        <para>While part controls usually reside in zones, it is possible to place a part control outside a zone, if the control is referenced declaratively in the markup of a Web page. If a part control is declared outside a zone on a Web page, the control still works, but loses most of its Web Parts functionality. For example, the control cannot be edited, and cannot be dragged into a zone at run time. It is also helpful to remember that no part control can be dragged from a zone and dropped onto a page outside of a zone at run time. </para>
+      </block>
+      <para>Some examples of base part types, and their corresponding zone types, are shown in the following table. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Part control type </para>
+            </term>
+            <description>
+              <para>Zone type </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.WebParts.WebPartZone" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.WebParts.EditorZone" /> </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.WebParts.CatalogPart" /> </para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.WebParts.CatalogZone" /> </para>
+          </description>
+        </item>
+      </list>
+      <para>The various kinds of part controls that derive from the <see cref="T:System.Web.UI.WebControls.WebParts.Part" /> class handle the inherited, UI-oriented properties differently. <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> controls override several of the inherited UI properties, and mark them with the Personalizable attribute (for details, see the <see cref="T:System.Web.UI.WebControls.WebParts.PersonalizableAttribute" /> class documentation), which enables the values of those properties to be saved for future browser sessions, a feature known as personalization. For example, if you programmatically enable a user to update the value of a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control's <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.Title" /> property at run time, that value will be personalized (assuming that personalization is enabled, which is the default). Several UI properties that <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> controls inherit from the <see cref="T:System.Web.UI.WebControls.WebParts.Part" /> class, and from the <see cref="T:System.Web.UI.WebControls.WebControl" /> class, are handled the same way. </para>
+      <para>In contrast, other part controls, such as <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> and <see cref="T:System.Web.UI.WebControls.WebParts.CatalogPart" />, do not enable the inherited UI properties to be personalized. For this reason, programmatically assigned property values are not saved for future browser sessions. For example, if you programmatically enable a user to update a <see cref="T:System.Web.UI.WebControls.WebParts.PropertyGridEditorPart" /> control's <see cref="P:System.Web.UI.WebControls.WebParts.PropertyGridEditorPart.Title" /> property at run time, the updated value is lost after the control is closed or the browser session ends. </para>
+      <para>An easy way to save the values on such inherited UI properties for <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> and <see cref="T:System.Web.UI.WebControls.WebParts.CatalogPart" /> controls for future browser sessions is to declare the property values in page persistence format. However, this is a static approach and still does not allow users to personalize the property values. As an alternative, if you want to enable programmatic updates to the inherited UI properties so users can personalize them at run time, you can use private, static variables to save the property values. Each time a new instance of an <see cref="T:System.Web.UI.WebControls.WebParts.EditorPart" /> or <see cref="T:System.Web.UI.WebControls.WebParts.CatalogPart" /> control is created (for example, in the method that handles the control's <see cref="E:System.Web.UI.Control.Init" /> event), you can reassign a static variable's value to a corresponding property. Such an approach gives users the ability to personalize the editing UI and catalog UI of a Web Parts application.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Serves as the base class for all Web Parts part controls, which render a modular user interface on a Web Forms page. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ChromeState">
@@ -28,10 +87,16 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.PartChromeState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A part control's <see cref="P:System.Web.UI.WebControls.WebParts.Part.ChromeState" /> can be normal or minimized. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether a part control is in a minimized or normal state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,10 +109,16 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.PartChromeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A part control's <see cref="P:System.Web.UI.WebControls.WebParts.Part.ChromeType" /> property determines what kind of border surrounds the control. Options include showing a title only, a border only, a title and border, neither, or the default option, which simply uses the value of the <see cref="P:System.Web.UI.WebControls.WebParts.WebZone.PartChromeType" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of border that frames a Web Parts control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +131,17 @@
         <ReturnType>System.Web.UI.ControlCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>On an ASP.NET page, when controls are added declaratively between the opening and closing tags of a server control, ASP.NET automatically adds the controls to the containing server control's <see cref="T:System.Web.UI.ControlCollection" /> object. Any HTML tags or text strings that are not processed on the server are treated as <see cref="T:System.Web.UI.LiteralControl" /> objects. These are added to the collection like other server controls.</para>
+          <para>The <see cref="P:System.Web.UI.Control.Controls" /> property allows you programmatic access to the instance of the <see cref="T:System.Web.UI.ControlCollection" /> class for any server control. You can add controls to the collection, remove controls from the collection, or iterate through the server controls in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.ControlCollection" /> object that contains the child controls for a specified server control in the user interface hierarchy.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -92,10 +170,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.WebParts.Part.Description" /> property is typically a string that is used in catalogs that provide lists of part controls, and as a ToolTip in the part control's title bar. The content of the <see cref="P:System.Web.UI.WebControls.WebParts.Part.Description" /> appears in a ToolTip when you position your mouse pointer over the title text in a part control's title bar. The ToolTip text is created from the value of the <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.DisplayTitle" /> property, followed by a hyphen, followed by the <see cref="P:System.Web.UI.WebControls.WebParts.Part.Description" /> property value.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a brief phrase that summarizes what the part control does, for use in ToolTips and catalogs of part controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -112,8 +197,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows the developer of a designer for a composite part control to recreate the control's child controls on the design surface.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Title">
@@ -123,10 +211,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The visible title text in a part control's title bar is set by the <see cref="P:System.Web.UI.WebControls.WebParts.Part.Title" /> property. The title text also appears as part of the ToolTip text when you position your mouse pointer over the title bar of a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control or other server control that appears in a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartZone" /> zone. </para>
+          <para>The style of the title text is determined by the <see cref="P:System.Web.UI.WebControls.WebParts.WebZone.PartTitleStyle" /> property of the zone that contains the part control.</para>
+          <para>If you do not supply a title for a control, the Web Parts control set automatically calculates a default string to use as a title. For more information, see <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.DisplayTitle" />. Also, it is possible to provide a standard subtitle that is appended to the title string. For details, see <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.Subtitle" />.</para>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the title of a part control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

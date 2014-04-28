@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StandardCommands" FullName="System.ComponentModel.Design.StandardCommands">
   <TypeSignature Language="C#" Value="public class StandardCommands" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi StandardCommands extends System.Object" />
@@ -15,8 +16,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class defines <see cref="T:System.ComponentModel.Design.CommandID" /> identifiers for standard commands that are available to designers.</para>
+      <para>To add a command from the <see cref="T:System.ComponentModel.Design.StandardCommands" /> class to a designer menu, you must call the <see cref="M:System.ComponentModel.Design.IMenuCommandService.AddCommand(System.ComponentModel.Design.MenuCommand)" /> method of an <see cref="T:System.ComponentModel.Design.IMenuCommandService" /> and add a <see cref="T:System.ComponentModel.Design.MenuCommand" /> that contains a <see cref="T:System.ComponentModel.Design.CommandID" /> from <see cref="T:System.ComponentModel.Design.StandardCommands" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines identifiers for the standard set of commands that are available to most applications.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.StandardCommands" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AlignBottom">
@@ -49,8 +60,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the AlignBottom command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AlignHorizontalCenters">
@@ -67,8 +81,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the AlignHorizontalCenters command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AlignLeft">
@@ -85,8 +102,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the AlignLeft command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AlignRight">
@@ -103,8 +123,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the AlignRight command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AlignToGrid">
@@ -121,8 +144,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the AlignToGrid command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AlignTop">
@@ -139,8 +165,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the AlignTop command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AlignVerticalCenters">
@@ -157,8 +186,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the AlignVerticalCenters command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ArrangeBottom">
@@ -175,8 +207,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the ArrangeBottom command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ArrangeIcons">
@@ -193,8 +228,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the ArrangeIcons command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ArrangeRight">
@@ -211,8 +249,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the ArrangeRight command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BringForward">
@@ -229,8 +270,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the BringForward command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BringToFront">
@@ -247,8 +291,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the BringToFront command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CenterHorizontally">
@@ -265,8 +312,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the CenterHorizontally command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CenterVertically">
@@ -283,8 +333,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the CenterVertically command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Copy">
@@ -301,8 +354,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the Copy command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Cut">
@@ -319,8 +375,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the Cut command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Delete">
@@ -337,8 +396,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the Delete command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DocumentOutline">
@@ -353,8 +415,11 @@
         <ReturnType>System.ComponentModel.Design.CommandID</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the Document Outline command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F1Help">
@@ -371,8 +436,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the F1Help command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Group">
@@ -389,8 +457,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the Group command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HorizSpaceConcatenate">
@@ -407,8 +478,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the HorizSpaceConcatenate command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HorizSpaceDecrease">
@@ -425,8 +499,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the HorizSpaceDecrease command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HorizSpaceIncrease">
@@ -443,8 +520,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the HorizSpaceIncrease command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HorizSpaceMakeEqual">
@@ -461,8 +541,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the HorizSpaceMakeEqual command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LineupIcons">
@@ -479,8 +562,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the LineupIcons command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LockControls">
@@ -497,8 +583,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the LockControls command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MultiLevelRedo">
@@ -515,8 +604,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the MultiLevelRedo command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MultiLevelUndo">
@@ -533,8 +625,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the MultiLevelUndo command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Paste">
@@ -551,8 +646,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the Paste command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -569,8 +667,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the Properties command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PropertiesWindow">
@@ -587,8 +688,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the PropertiesWindow command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Redo">
@@ -605,8 +709,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the Redo command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Replace">
@@ -623,8 +730,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the Replace command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SelectAll">
@@ -641,8 +751,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the SelectAll command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SendBackward">
@@ -659,8 +772,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the SendBackward command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SendToBack">
@@ -677,8 +793,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the SendToBack command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShowGrid">
@@ -695,8 +814,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the ShowGrid command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShowLargeIcons">
@@ -713,8 +835,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the ShowLargeIcons command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SizeToControl">
@@ -731,8 +856,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the SizeToControl command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SizeToControlHeight">
@@ -749,8 +877,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the SizeToControlHeight command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SizeToControlWidth">
@@ -767,8 +898,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the SizeToControlWidth command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SizeToFit">
@@ -785,8 +919,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the SizeToFit command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SizeToGrid">
@@ -803,8 +940,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the SizeToGrid command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SnapToGrid">
@@ -821,8 +961,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the SnapToGrid command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TabOrder">
@@ -839,8 +982,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the TabOrder command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Undo">
@@ -857,8 +1003,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the Undo command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ungroup">
@@ -875,8 +1024,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the Ungroup command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VerbFirst">
@@ -893,8 +1045,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a special <see cref="T:System.ComponentModel.Design.CommandID" /> that identifies the first of a set of designer verbs.</para>
+          <para>The Visual Studio Windows Forms Designer automatically maps designer verbs to the <see cref="P:System.ComponentModel.Design.IDesigner.Verbs" /> property on <see cref="T:System.ComponentModel.Design.IDesigner" />, so generally you do not need to access this command.</para>
+          <para>All designer verbs for an object become commands with a <see cref="T:System.ComponentModel.Design.CommandID" /> within a sequential range of IDs that begins with <see cref="F:System.ComponentModel.Design.StandardCommands.VerbFirst" /> and ends with <see cref="F:System.ComponentModel.Design.StandardCommands.VerbLast" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the first of a set of verbs. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VerbLast">
@@ -911,8 +1071,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a special <see cref="T:System.ComponentModel.Design.CommandID" /> that identifies the last of a set of designer verbs.</para>
+          <para>The Visual Studio Windows Forms Designer automatically maps designer verbs to the <see cref="P:System.ComponentModel.Design.IDesigner.Verbs" /> property on <see cref="T:System.ComponentModel.Design.IDesigner" />, so generally you do not need to access this command.</para>
+          <para>All designer verbs for an object become commands with a <see cref="T:System.ComponentModel.Design.CommandID" /> within a sequential range of IDs that begins with <see cref="F:System.ComponentModel.Design.StandardCommands.VerbFirst" /> and ends with <see cref="F:System.ComponentModel.Design.StandardCommands.VerbLast" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the last of a set of verbs. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VertSpaceConcatenate">
@@ -929,8 +1097,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the VertSpaceConcatenate command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VertSpaceDecrease">
@@ -947,8 +1118,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the VertSpaceDecrease command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VertSpaceIncrease">
@@ -965,8 +1139,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the VertSpaceIncrease command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VertSpaceMakeEqual">
@@ -983,8 +1160,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the VertSpaceMakeEqual command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ViewCode">
@@ -999,8 +1179,11 @@
         <ReturnType>System.ComponentModel.Design.CommandID</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the ViewCode command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ViewGrid">
@@ -1017,8 +1200,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Design.CommandID" /> for the ViewGrid command. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

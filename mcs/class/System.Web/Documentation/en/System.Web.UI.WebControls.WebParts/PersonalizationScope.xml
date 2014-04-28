@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PersonalizationScope" FullName="System.Web.UI.WebControls.WebParts.PersonalizationScope">
   <TypeSignature Language="C#" Value="public enum PersonalizationScope" />
   <AssemblyInfo>
@@ -8,9 +9,18 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Personalization scope is a key concept in Web Parts personalization and is tightly integrated with other settings, including the scope that the page, through the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control, is running in; the scope associated with each property on a control; and the way in which the control was added to the page. For more information on personalization scope, see <format type="text/html"><a href="7dc34f74-52aa-4082-b98d-2bcf9e07e320">Web Parts Personalization</a></format>.</para>
+      <para>Personalization scope refers to how personalization data is applicable to different sets of users. Some personalization data is applicable to only a specific user and control on a page. Other personalization data is applicable to all users who view a site. Personalization scope is used in various areas of personalization to indicate which set of data should be retrieved and displayed.</para>
+      <para>When a page is running in <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.Shared" /> personalization scope, this indicates that only the personalization data for a specific control, applicable to all users viewing the control, should be loaded. Depending on the currently executing user's rights, this broadly applicable data can also be modified and saved back to the data store. When a page is running in <see cref="F:System.Web.UI.WebControls.WebParts.PersonalizationScope.User" /> personalization scope, this indicates that a control's personalization data should be saved and loaded based on the currently executing user. Usually, this means user-specific data can be loaded and saved on a control, while broadly applicable data (or shared data) can only be viewed on the control.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control, which manages the high-level life cycle of personalization, executes in one of the two personalization scopes. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the personalization scope for a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> object or the personalization scope that applies to a property on a Web Parts control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Shared">
@@ -20,8 +30,15 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.PersonalizationScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When referring to the scope associated with a Web Parts control property, Shared scope indicates that the property normally only allows loading or saving of data associated with all users. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When referring to the scope on the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> control, Shared scope means that personalization data applies to all users for all personalizable controls on a page and is also available to be saved on the page. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +51,15 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.PersonalizationScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When referring to the scope associated with a Web Parts control property, User scope indicates that the property can only load and store data applicable to all users when running on a page in Shared scope. However, when the property's control is running on a page in User scope, the property's per-user and all-user data will be loaded and merged. In this case, though, only per-user data will be saved when a page is running in User scope. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When referring to the scope on the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" />control, User scope means that personalization data that is user-specific, as well as personalization data that applies to all users, is loaded for all personalizable controls on a page. Only personalization data that is user-specific can be saved on the page. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

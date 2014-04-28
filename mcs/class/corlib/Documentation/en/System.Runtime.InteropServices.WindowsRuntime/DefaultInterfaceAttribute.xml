@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DefaultInterfaceAttribute" FullName="System.Runtime.InteropServices.WindowsRuntime.DefaultInterfaceAttribute">
   <TypeSignature Language="C#" Value="public sealed class DefaultInterfaceAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit DefaultInterfaceAttribute extends System.Attribute" />
@@ -15,8 +16,24 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you develop wrt Components, use this attribute when you want to specify the default interface that is used to marshal the class the attribute is applied to. This is not necessary if you allow the class interfaces to be generated automatically. </para>
+      <para>A wrt class must have a default interface. If the WinMdExp.exe utility does not detect a default interface for a class when it builds your wrt component, it chooses an interface as follows: </para>
+      <list type="bullet">
+        <item>
+          <para>If the class has automatically generated interfaces, it uses the first one as the default. </para>
+        </item>
+        <item>
+          <para>If the class doesn't have any automatically generated interfaces, it uses the first interface in the class's interface implementation list. </para>
+        </item>
+      </list>
+      <para>You can apply the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.DefaultInterfaceAttribute" /> attribute to the class, or apply the Windows.Foundations.Metadata.DefaultAttribute attribute to an interface. The latter takes precedence if both attributes are supplied. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the default interface of a managed wrt class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +47,13 @@
         <Parameter Name="defaultInterface" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="defaultInterface">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.WindowsRuntime.DefaultInterfaceAttribute" /> class. </para>
+        </summary>
+        <param name="defaultInterface">
+          <attribution license="cc4" from="Microsoft" modified="false" />The interface type that is specified as the default interface for the class the attribute is applied to. </param>
       </Docs>
     </Member>
     <Member MemberName="DefaultInterface">
@@ -46,9 +67,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the default interface. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

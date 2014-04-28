@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TagMapCollection" FullName="System.Web.Configuration.TagMapCollection">
   <TypeSignature Language="C#" Value="public sealed class TagMapCollection : System.Configuration.ConfigurationElementCollection" />
   <AssemblyInfo>
@@ -14,9 +15,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.TagMapInfo" /> class allows you to remap the types of tags at compile time. This remapping causes the mapped type to be used in place of the original tag type for all pages and controls in the ASP.NET application in the scope of the configuration file. </para>
+      <para>The <see cref="T:System.Web.Configuration.TagMapCollection" /> class allows you to programmatically access and modify the tagMapping subsection of the pages section of a configuration file. Within the tagMapping subsection, you can add and remove mappings between tag types by specifying the fully qualified strong names of the types.</para>
+      <block subset="none" type="note">
+        <para>Unlike other attributes and collections in the pages section, tag remapping has no matching ASP.NET page directive.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains a collection of <see cref="T:System.Web.Configuration.TagMapInfo" /> objects. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +35,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.PagesSection.TagMapping" /> property of the <see cref="T:System.Web.Configuration.PagesSection" /> class always contains an instance of the <see cref="T:System.Web.Configuration.TagMapCollection" /> type. Use this instance, rather than creating your own.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.TagMapCollection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +59,17 @@
         <Parameter Name="tagMapInformation" Type="System.Web.Configuration.TagMapInfo" />
       </Parameters>
       <Docs>
-        <param name="tagMapInformation">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection must not already contain a <see cref="T:System.Web.Configuration.TagMapInfo" /> object with the same <see cref="P:System.Web.Configuration.TagMapInfo.TagType" /> property value. If it does, a <see cref="T:System.Configuration.ConfigurationException" /> will be thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a <see cref="T:System.Web.Configuration.TagMapInfo" /> object to the collection.</para>
+        </summary>
+        <param name="tagMapInformation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Configuration.TagMapInfo" /> object to add to the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,9 +83,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears all object from the collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -150,10 +177,14 @@
         <Parameter Name="tagMapInformation" Type="System.Web.Configuration.TagMapInfo" />
       </Parameters>
       <Docs>
-        <param name="tagMapInformation">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified object from the collection.</para>
+        </summary>
+        <param name="tagMapInformation">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Configuration.TagMapInfo" /> object in the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

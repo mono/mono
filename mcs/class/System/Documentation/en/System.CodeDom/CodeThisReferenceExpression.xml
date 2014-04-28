@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeThisReferenceExpression" FullName="System.CodeDom.CodeThisReferenceExpression">
   <TypeSignature Language="C#" Value="public class CodeThisReferenceExpression : System.CodeDom.CodeExpression" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeThisReferenceExpression extends System.CodeDom.CodeExpression" />
@@ -23,8 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This can represent the class object that is referenced by "this" or "me".</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a reference to the current local class instance.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeThisReferenceExpression" /> class. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

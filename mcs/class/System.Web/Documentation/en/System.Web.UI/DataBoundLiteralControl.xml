@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataBoundLiteralControl" FullName="System.Web.UI.DataBoundLiteralControl">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class DataBoundLiteralControl : System.Web.UI.Control, System.Web.UI.ITextControl" />
   <AssemblyInfo>
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.DataBoundLiteralControl" /> class persists the value of its <see cref="P:System.Web.UI.DataBoundLiteralControl.Text" /> property to view state.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Retains data-binding expressions and static literal text. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,10 +42,15 @@
         <Parameter Name="dataBoundLiteralCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="staticLiteralsCount">To be added: an object of type 'int'</param>
-        <param name="dataBoundLiteralCount">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.DataBoundLiteralControl" /> class. </para>
+        </summary>
+        <param name="staticLiteralsCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />Defines the size of the array to create for storing static literal strings.</param>
+        <param name="dataBoundLiteralCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />Defines the size of the array to create for storing data-bound literal strings.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -128,10 +140,15 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigns a string value to an array containing data-bound values.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in an array at which to retain the <paramref name="s" /> parameter value. </param>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the value for the data-bound expression.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -149,10 +166,15 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Assigns a string value to an array containing static values.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position in an array at which to retain the <paramref name="s" /> parameter value.</param>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the value for the data-bound expression.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -169,9 +191,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation of the <see cref="T:System.Web.UI.ITextControl" /> interface returns the value of the <see cref="P:System.Web.UI.DataBoundLiteralControl.Text" /> property. The value of the <see cref="P:System.Web.UI.DataBoundLiteralControl.Text" /> property is persisted in the view state.</para>
+          <para>The <see cref="T:System.Web.UI.DataBoundLiteralControl" /> object implements <see cref="T:System.Web.UI.ITextControl" /> but does not support the set method on the <see cref="P:System.Web.UI.ITextControl.Text" /> property. All attempts to use this method will return a <see cref="T:System.NotSupportedException" /> exception. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text content of the <see cref="T:System.Web.UI.DataBoundLiteralControl" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -181,9 +210,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.DataBoundLiteralControl" /> class persists the value of its <see cref="P:System.Web.UI.DataBoundLiteralControl.Text" /> property to view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the text content of the <see cref="T:System.Web.UI.DataBoundLiteralControl" /> object. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

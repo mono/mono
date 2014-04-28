@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaAttribute" FullName="System.Xml.Schema.XmlSchemaAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaAttribute : System.Xml.Schema.XmlSchemaAnnotated" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaAttribute extends System.Xml.Schema.XmlSchemaAnnotated" />
@@ -14,8 +15,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Attribute declarations can be present as child elements of the schema element (having global scope) or within complex type definitions. For complex types, attribute declarations can be present as local declarations or references to attributes with global scope. Both global and local attribute declarations have the optional type attribute that refers to an existing simple type. If the optional type attribute is not used, the attribute declaration (global or local) must define a local simple type.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the attribute element from the XML Schema as specified by the <format type="text/html"><a href="">World Wide Web Consortium (W3C)</a></format>. Attributes provide additional information for other document elements. The attribute tag is nested between the tags of a document's element for the schema. The XML document displays attributes as named items in the opening tag of an element.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +37,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaAttribute" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AttributeSchemaType">
@@ -51,10 +61,16 @@
         <ReturnType>System.Xml.Schema.XmlSchemaSimpleType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is a post-schema-validation infoset property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> object representing the type of the attribute based on the <see cref="P:System.Xml.Schema.XmlSchemaAttribute.SchemaType" /> or <see cref="P:System.Xml.Schema.XmlSchemaAttribute.SchemaTypeName" /> of the attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AttributeType">
@@ -78,9 +94,18 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object can be <see cref="T:System.Xml.Schema.XmlSchemaDatatype" /> if the attribute has a built-in XML Schema type or <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> if the attribute has a user-defined type. This property is a post-schema-validation infoset property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Xml.Schema.XmlSchemaAttribute.AttributeType" /> property is obsolete in the 2.0 version of the .NET Framework and has been replaced by the <see cref="P:System.Xml.Schema.XmlSchemaAttribute.AttributeSchemaType" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the common language runtime (CLR) object based on the <see cref="P:System.Xml.Schema.XmlSchemaAttribute.SchemaType" /> or <see cref="P:System.Xml.Schema.XmlSchemaAttribute.SchemaTypeName" /> of the attribute that holds the post-compilation value of the AttributeType property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultValue">
@@ -105,9 +130,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DefaultValue property indicates that the attribute is to appear unconditionally in the XML document, using the supplied value whenever the attribute is not present. By default, this property is set to null to indicate that no default value is supplied for the attribute. The fixed and default properties are mutually exclusive.</para>
+          <para>Optional.</para>
+          <para>The default is null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the default value for the attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FixedValue">
@@ -132,9 +165,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>FixedValue indicates that the attribute value, if present, must equal the supplied value. By default, this property is set to null, which means that no fixed value is supplied for the attribute. The fixed and default properties are mutually exclusive.</para>
+          <para>Optional.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the fixed value for the attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Form">
@@ -159,9 +199,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaForm'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the form for the attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -183,9 +226,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name must be an NCName (no-colon name) as defined in the World Wide Web Consortium (W3C) XML Namespaces specification. When an XML document is validated against a schema, each attribute in the document is validated against an attribute element in the schema. The attribute element with a name attribute that matches the local name of the attribute in the document is used to validate that attribute. The Name and RefName properties are mutually exclusive.</para>
+          <para>Optional.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="QualifiedName">
@@ -206,9 +256,15 @@
         <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Xml.XmlQualifiedName'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Optional.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the qualified name for the attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RefName">
@@ -230,9 +286,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Xml.XmlQualifiedName'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RefName must be a QName. The type can include a namespace prefix. The Name and RefName properties are mutually exclusive.</para>
+          <para>Optional.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of an attribute declared in this schema (or another schema indicated by the specified namespace).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SchemaType">
@@ -254,9 +317,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaSimpleType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>SchemaTypeName and SchemaType properties cannot be set at the same time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the attribute type to a simple type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SchemaTypeName">
@@ -278,9 +347,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Xml.XmlQualifiedName'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>SchemaTypeName and <see cref="P:System.Xml.Schema.XmlSchemaAttribute.SchemaType" /> properties cannot be set at the same time. The type must be a QName. The type can include a namespace prefix.</para>
+          <para>Optional.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the simple type defined in this schema (or another schema indicated by the specified namespace).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Use">
@@ -305,9 +381,59 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaUse'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If specified, this attribute must have one of the values shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Enum </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>None </para>
+              </term>
+              <description>
+                <para>Attribute has no value. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Prohibited </para>
+              </term>
+              <description>
+                <para>Attribute cannot be used. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Optional </para>
+              </term>
+              <description>
+                <para>Attribute is optional and may have any value. This is the default. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Required </para>
+              </term>
+              <description>
+                <para>Attribute must appear once. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets information about how the attribute is used.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

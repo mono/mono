@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CultureNotFoundException" FullName="System.Globalization.CultureNotFoundException">
   <TypeSignature Language="C#" Value="public class CultureNotFoundException : ArgumentException" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CultureNotFoundException extends System.ArgumentException implements class System.Runtime.Serialization.ISerializable" />
@@ -15,8 +16,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Globalization.CultureNotFoundException" /> is thrown whenever the construction of an invalid culture is eventually attempted within a method.</para>
+      <para>
+        <see cref="T:System.Globalization.CultureNotFoundException" /> uses the HRESULT COR_E_ARGUMENT, which has the value 0x80070057.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The exception thrown when a method is invoked which attempts to construct a culture that is not available on the machine.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +38,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Globalization.CultureNotFoundException" /> uses the HRESULT COR_E_ARGUMENT, which has the value 0x80070057.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.CultureNotFoundException" /> class with its message string set to a system-supplied message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -43,9 +60,18 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Globalization.CultureNotFoundException.Message" /> property of the new instance using the value of the <paramref name="message" /> parameter. The content of the <paramref name="message" /> parameter is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</para>
+          <para>
+            <see cref="T:System.Globalization.CultureNotFoundException" /> uses the HRESULT COR_E_ARGUMENT, which has the value 0x80070057.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.CultureNotFoundException" /> class with the specified error message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message to display with this exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -60,10 +86,18 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called during deserialization to reconstitute the exception object transmitted over a stream.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.CultureNotFoundException" /> class using the specified serialization data and context.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that holds the serialized object data.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contextual information about the source or destination.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -78,10 +112,19 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Globalization.CultureNotFoundException.Message" /> property of the new instance using the value of the <paramref name="message" /> parameter. The content of the <paramref name="message" /> parameter is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</para>
+          <para>An exception that is thrown as a direct result of a previous exception should include a reference to the previous exception in the <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or null if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.CultureNotFoundException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message to display with this exception.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -96,10 +139,21 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="paramName">To be added.</param>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Globalization.CultureNotFoundException.Message" /> property of the new instance using the value of the <paramref name="message" /> parameter. The content of the <paramref name="message" /> parameter is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</para>
+          <para>This constructor initializes the <see cref="P:System.ArgumentException.ParamName" /> property of the new instance using <paramref name="paramName" />. The content of <paramref name="paramName" /> is intended to be understood by humans.</para>
+          <para>
+            <see cref="T:System.Globalization.CultureNotFoundException" /> uses the HRESULT COR_E_ARGUMENT, which has the value 0x80070057.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.CultureNotFoundException" /> class with a specified error message and the name of the parameter that is the cause this exception.</para>
+        </summary>
+        <param name="paramName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter that is the cause of the current exception.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message to display with this exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -115,11 +169,22 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="invalidCultureId">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Globalization.CultureNotFoundException.Message" /> property of the new instance using the value of the <paramref name="message" /> parameter. The content of the <paramref name="message" /> parameter is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</para>
+          <para>
+            <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or null if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.CultureNotFoundException" /> class with a specified error message, the invalid Culture ID, and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message to display with this exception.</param>
+        <param name="invalidCultureId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Culture ID that cannot be found.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -135,11 +200,23 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="paramName">To be added.</param>
-        <param name="invalidCultureId">To be added.</param>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Globalization.CultureNotFoundException.Message" /> property of the new instance using the value of the <paramref name="message" /> parameter. The content of the <paramref name="message" /> parameter is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</para>
+          <para>This constructor initializes the <see cref="P:System.ArgumentException.ParamName" /> property of the new instance using <paramref name="paramName" />. The content of <paramref name="paramName" /> is intended to be understood by humans.</para>
+          <para>
+            <see cref="T:System.Globalization.CultureNotFoundException" /> uses the HRESULT COR_E_ARGUMENT, which has the value 0x80070057.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.CultureNotFoundException" /> class with a specified error message, the invalid Culture ID, and the name of the parameter that is the cause this exception.</para>
+        </summary>
+        <param name="paramName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter that is the cause the current exception.</param>
+        <param name="invalidCultureId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Culture ID that cannot be found.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message to display with this exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -155,11 +232,22 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="invalidCultureName">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Globalization.CultureNotFoundException.Message" /> property of the new instance using the value of the <paramref name="message" /> parameter. The content of the <paramref name="message" /> parameter is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</para>
+          <para>
+            <see cref="P:System.Exception.InnerException" /> property. The <see cref="P:System.Exception.InnerException" /> property returns the same value that is passed into the constructor, or null if the <see cref="P:System.Exception.InnerException" /> property does not supply the inner exception value to the constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.CultureNotFoundException" /> class with a specified error message, the invalid Culture Name, and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message to display with this exception.</param>
+        <param name="invalidCultureName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Culture Name that cannot be found.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current exception. If the <paramref name="innerException" /> parameter is not a null reference, the current exception is raised in a catch block that handles the inner exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -175,11 +263,23 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="paramName">To be added.</param>
-        <param name="invalidCultureName">To be added.</param>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor initializes the <see cref="P:System.Globalization.CultureNotFoundException.Message" /> property of the new instance using the value of the <paramref name="message" /> parameter. The content of the <paramref name="message" /> parameter is intended to be understood by humans. The caller of this constructor is required to ensure that this string has been localized for the current system culture.</para>
+          <para>This constructor initializes the <see cref="P:System.ArgumentException.ParamName" /> property of the new instance using <paramref name="paramName" />. The content of <paramref name="paramName" /> is intended to be understood by humans.</para>
+          <para>
+            <see cref="T:System.Globalization.CultureNotFoundException" /> uses the HRESULT COR_E_ARGUMENT, which has the value 0x80070057.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Globalization.CultureNotFoundException" /> class with a specified error message, the invalid Culture Name, and the name of the parameter that is the cause this exception.</para>
+        </summary>
+        <param name="paramName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the parameter that is the cause the current exception.</param>
+        <param name="invalidCultureName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Culture Name that cannot be found.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message to display with this exception.</param>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -197,10 +297,20 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Globalization.CultureNotFoundException.GetObjectData(System.Runtime.Serialization.SerializationInfo,System.Runtime.Serialization.StreamingContext)" /> sets a <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with all the exception object data targeted for serialization. During deserialization, the exception object is reconstituted from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> transmitted over the stream.</para>
+          <para>For more information, see <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> object with the parameter name and additional exception information.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that holds the serialized object data.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contextual information about the source or destination.</param>
       </Docs>
     </Member>
     <Member MemberName="InvalidCultureId">
@@ -214,9 +324,12 @@
         <ReturnType>System.Nullable&lt;System.Int32&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Culture ID that cannot be found.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InvalidCultureName">
@@ -230,9 +343,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the Culture Name that cannot be found.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Message">
@@ -246,9 +362,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the error message that explains the reason for the exception.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PrintPageEventArgs" FullName="System.Drawing.Printing.PrintPageEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class PrintPageEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.Drawing.Printing.PrintPageEventArgs.MarginBounds" /> property retrieves the rectangular area that represents the portion of the page between the margins. The <see cref="P:System.Drawing.Printing.PrintPageEventArgs.PageBounds" /> property retrieves the rectangular area that represents the total area of the page. The <see cref="P:System.Drawing.Printing.PrintPageEventArgs.Graphics" /> property defines the graphics object with which to do the painting. The <see cref="P:System.Drawing.Printing.PrintPageEventArgs.PageSettings" /> property retrieves the printer settings for the current page. The remaining properties indicate whether a print job should be canceled or whether a print job has more pages.</para>
+      <para>For more information about printing with Windows Forms, see the <see cref="N:System.Drawing.Printing" /> namespace overview. If you wish to print from a Windows Presentation Foundation application, see the <see cref="N:System.Printing" /> namespace.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Drawing.Printing.PrintDocument.PrintPage" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,12 +36,19 @@
         <Parameter Name="pageSettings" Type="System.Drawing.Printing.PageSettings" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added: an object of type 'Drawing.Graphics'</param>
-        <param name="marginBounds">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="pageBounds">To be added: an object of type 'Drawing.Rectangle'</param>
-        <param name="pageSettings">To be added: an object of type 'PageSettings'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Printing.PrintPageEventArgs" /> class.</para>
+        </summary>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to paint the item. </param>
+        <param name="marginBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The area between the margins. </param>
+        <param name="pageBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total area of the paper. </param>
+        <param name="pageSettings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Printing.PageSettings" /> for the page. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -49,9 +64,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the print job should be canceled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -65,9 +83,12 @@
         <ReturnType>System.Drawing.Graphics</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing.Graphics'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Graphics" /> used to paint the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -83,9 +104,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether an additional page should be printed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -99,9 +123,12 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing.Rectangle'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the rectangular area that represents the portion of the page inside the margins.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -115,9 +142,17 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing.Rectangle'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>Most printers cannot print at the very edge of the page.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the rectangular area that represents the total area of the page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -131,9 +166,12 @@
         <ReturnType>System.Drawing.Printing.PageSettings</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PageSettings'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the page settings for the current page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

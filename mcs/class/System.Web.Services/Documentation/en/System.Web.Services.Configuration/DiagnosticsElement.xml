@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DiagnosticsElement" FullName="System.Web.Services.Configuration.DiagnosticsElement">
   <TypeSignature Language="C#" Value="public sealed class DiagnosticsElement : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Services.Configuration.DiagnosticsElement" /> class represents the <format type="text/html"><a href="e4ca05d1-1e10-4873-9ef6-75e55851d888">&lt;diagnostics&gt;</a></format> element in a Web.config file. Set the <see cref="P:System.Web.Services.Configuration.DiagnosticsElement.SuppressReturningExceptions" /> property to true in order to return exceptions to the client for debugging purposes.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the <format type="text/html"><a href="e4ca05d1-1e10-4873-9ef6-75e55851d888">&lt;diagnostics&gt;</a></format> element in the Web.config configuration file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Configuration.DiagnosticsElement" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +65,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the service returns exceptions.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

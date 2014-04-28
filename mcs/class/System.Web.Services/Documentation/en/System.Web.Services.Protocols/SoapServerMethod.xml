@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapServerMethod" FullName="System.Web.Services.Protocols.SoapServerMethod">
   <TypeSignature Language="C#" Value="public sealed class SoapServerMethod" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the attributes and metadata for an XML Web service method. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +23,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Web.Services.Protocols.SoapServerMethod" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -35,11 +42,16 @@
         <Parameter Name="methodInfo" Type="System.Web.Services.Protocols.LogicalMethodInfo" />
       </Parameters>
       <Docs>
-        <param name="serverType">To be added.</param>
-        <param name="methodInfo">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.Web.Services.Protocols.SoapServerMethod" />.</para>
+        </summary>
+        <param name="serverType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to which this method belongs.</param>
+        <param name="methodInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> with which to initialize this <see cref="T:System.Web.Services.Protocols.SoapServerMethod" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -52,10 +64,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the SOAPAction HTTP header field of SOAP requests that are sent to this XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -68,10 +83,13 @@
         <ReturnType>System.Web.Services.Description.SoapBindingUse</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.Services.Description.SoapBindingUse" /> value that specifies whether the parts of SOAP messages sent to this XML Web service method are encoded as abstract type definitions or concrete schema definitions.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -84,10 +102,13 @@
         <ReturnType>System.Web.Services.Protocols.SoapHeaderMapping[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> used with SOAP requests to this Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -100,10 +121,13 @@
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Serialization.XmlSerializer" /> used with SOAP requests to this Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,10 +140,13 @@
         <ReturnType>System.Web.Services.Protocols.LogicalMethodInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> associated with this XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -132,10 +159,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> that indicates whether an XML Web service client waits for the Web server to finish processing this XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -148,10 +178,13 @@
         <ReturnType>System.Web.Services.Protocols.SoapHeaderMapping[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> used with SOAP responses from this Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -164,10 +197,13 @@
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Serialization.XmlSerializer" /> used with SOAP responses from this Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -180,10 +216,13 @@
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Serialization.XmlSerializer" /> used with parameters that are passed to this Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -196,10 +235,13 @@
         <ReturnType>System.Web.Services.Protocols.SoapParameterStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.Services.Protocols.SoapParameterStyle" /> object that specifies how parameters are formatted in SOAP messages sent to this XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -212,10 +254,13 @@
         <ReturnType>System.Xml.Serialization.XmlSerializer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Xml.Serialization.XmlSerializer" /> used with return values from this Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -228,10 +273,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Boolean" /> that indicates whether SOAP messages sent to and from this XML Web service method use RPC formatting.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -244,10 +292,13 @@
         <ReturnType>System.Web.Services.WsiProfiles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.Services.WsiProfiles" /> value that indicates the Web Services Interoperability (WSI) specification to which this Web service claims to conform.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

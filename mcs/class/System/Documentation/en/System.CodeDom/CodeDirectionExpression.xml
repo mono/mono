@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeDirectionExpression" FullName="System.CodeDom.CodeDirectionExpression">
   <TypeSignature Language="C#" Value="public class CodeDirectionExpression : System.CodeDom.CodeExpression" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeDirectionExpression extends System.CodeDom.CodeExpression" />
@@ -23,8 +24,20 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeDirectionExpression" /> can represent a parameter passed to a method and the reference direction of the parameter.</para>
+      <para>The <see cref="P:System.CodeDom.CodeDirectionExpression.Expression" /> property indicates the expression to qualify with a direction. The <see cref="P:System.CodeDom.CodeDirectionExpression.Direction" /> property indicates the direction of the parameter using one of the <see cref="T:System.CodeDom.FieldDirection" /> enumeration values.</para>
+      <block subset="none" type="note">
+        <para>
+          <see cref="T:System.CodeDom.CodeDirectionExpression" /> is intended to be used as a method invoke parameter, and should not be used when declaring methods.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an expression used as a method invoke parameter along with a reference direction indicator.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +52,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeDirectionExpression" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,10 +74,15 @@
         <Parameter Name="expression" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="direction">To be added: an object of type 'FieldDirection'</param>
-        <param name="expression">To be added: an object of type 'CodeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeDirectionExpression" /> class using the specified field direction and expression.</para>
+        </summary>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.FieldDirection" /> that indicates the field direction of the expression. </param>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the code expression to represent. </param>
       </Docs>
     </Member>
     <Member MemberName="Direction">
@@ -79,9 +100,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'FieldDirection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the field direction for this direction expression.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Expression">
@@ -99,9 +123,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the code expression to represent.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

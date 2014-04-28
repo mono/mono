@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SourceLevels" FullName="System.Diagnostics.SourceLevels">
   <TypeSignature Language="C#" Value="public enum SourceLevels" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SourceLevels extends System.Enum" />
@@ -15,8 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The source levels identify the <see cref="T:System.Diagnostics.TraceEventType" /> events that are to be traced. The <see cref="T:System.Diagnostics.SourceSwitch" /> class uses the <see cref="T:System.Diagnostics.SourceLevels" /> enumeration to define the event level of the trace message to use for filtering messages to send to the trace listener. </para>
+      <para>The <see cref="T:System.Diagnostics.EventTypeFilter" /> class uses the <see cref="T:System.Diagnostics.SourceLevels" /> enumeration to determine whether a trace listener should emit a trace.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the levels of trace messages filtered by the source switch and event type filter.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ActivityTracing">
@@ -36,7 +44,10 @@
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows the <see cref="F:System.Diagnostics.TraceEventType.Stop" />, <see cref="F:System.Diagnostics.TraceEventType.Start" />, <see cref="F:System.Diagnostics.TraceEventType.Suspend" />, <see cref="F:System.Diagnostics.TraceEventType.Transfer" />, and <see cref="F:System.Diagnostics.TraceEventType.Resume" /> events through.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="All">
@@ -51,7 +62,10 @@
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows all events through.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Critical">
@@ -66,7 +80,10 @@
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows only <see cref="F:System.Diagnostics.TraceEventType.Critical" /> events through.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Error">
@@ -81,7 +98,10 @@
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows <see cref="F:System.Diagnostics.TraceEventType.Critical" /> and <see cref="F:System.Diagnostics.TraceEventType.Error" /> events through.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Information">
@@ -96,7 +116,10 @@
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows <see cref="F:System.Diagnostics.TraceEventType.Critical" />, <see cref="F:System.Diagnostics.TraceEventType.Error" />, <see cref="F:System.Diagnostics.TraceEventType.Warning" />, and <see cref="F:System.Diagnostics.TraceEventType.Information" /> events through.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Off">
@@ -111,7 +134,10 @@
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Does not allow any events through.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Verbose">
@@ -126,7 +152,10 @@
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows <see cref="F:System.Diagnostics.TraceEventType.Critical" />, <see cref="F:System.Diagnostics.TraceEventType.Error" />, <see cref="F:System.Diagnostics.TraceEventType.Warning" />, <see cref="F:System.Diagnostics.TraceEventType.Information" />, and <see cref="F:System.Diagnostics.TraceEventType.Verbose" /> events through.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Warning">
@@ -141,7 +170,10 @@
         <ReturnType>System.Diagnostics.SourceLevels</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows <see cref="F:System.Diagnostics.TraceEventType.Critical" />, <see cref="F:System.Diagnostics.TraceEventType.Error" />, and <see cref="F:System.Diagnostics.TraceEventType.Warning" /> events through.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

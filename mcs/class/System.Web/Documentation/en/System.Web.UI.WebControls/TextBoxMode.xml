@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TextBoxMode" FullName="System.Web.UI.WebControls.TextBoxMode">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum TextBoxMode" />
   <AssemblyInfo>
@@ -12,8 +13,20 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.TextBoxMode" /> enumeration represents the different display options for <see cref="T:System.Web.UI.WebControls.TextBox" /> controls.</para>
+      <para>
+        <see cref="F:System.Web.UI.WebControls.TextBoxMode.SingleLine" /> mode displays the <see cref="T:System.Web.UI.WebControls.TextBox" /> control as a single row. If the user enters text that exceeds the physical size of the <see cref="T:System.Web.UI.WebControls.TextBox" /> control, the text will scroll horizontally. </para>
+      <para>
+        <see cref="F:System.Web.UI.WebControls.TextBoxMode.MultiLine" /> mode displays the height of the <see cref="T:System.Web.UI.WebControls.TextBox" /> based on the <see cref="P:System.Web.UI.WebControls.TextBox.Rows" /> property, and allows data entry on multiple lines. The text will automatically wrap if the <see cref="P:System.Web.UI.WebControls.TextBox.Wrap" /> property is set to true. If the user enters text that exceeds the physical size of the <see cref="T:System.Web.UI.WebControls.TextBox" />, the text will scroll accordingly and scroll bars will appear.</para>
+      <para>The behavior of <see cref="F:System.Web.UI.WebControls.TextBoxMode.Password" /> mode is similar to <see cref="F:System.Web.UI.WebControls.TextBoxMode.SingleLine" /> mode except that all characters entered in the <see cref="T:System.Web.UI.WebControls.TextBox" /> control are masked and are not saved in view state.</para>
+      <para>The remaining options correspond to type attribute values for the input element in the HTML5 specification.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the behavior mode of the text box.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="MultiLine">
@@ -25,8 +38,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents multiline entry mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,8 +58,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents password entry mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +78,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents single-line entry mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

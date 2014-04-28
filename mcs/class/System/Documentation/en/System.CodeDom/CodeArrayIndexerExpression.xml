@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeArrayIndexerExpression" FullName="System.CodeDom.CodeArrayIndexerExpression">
   <TypeSignature Language="C#" Value="public class CodeArrayIndexerExpression : System.CodeDom.CodeExpression" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeArrayIndexerExpression extends System.CodeDom.CodeExpression" />
@@ -23,8 +24,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeArrayIndexerExpression" /> can be used to represent a reference to an index of an array of one or more dimensions. Use <see cref="T:System.CodeDom.CodeIndexerExpression" /> for representing a reference to an index of a code (non-array) indexer. The <see cref="P:System.CodeDom.CodeArrayIndexerExpression.TargetObject" /> property indicates the indexer object. The <see cref="P:System.CodeDom.CodeArrayIndexerExpression.Indices" /> property indicates either a single index within the target array, or a set of indexes that together specify a specific intersection of indexes across the dimensions of the array.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a reference to an index of an array.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +47,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeArrayIndexerExpression" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -64,10 +75,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="targetObject">To be added: an object of type 'CodeExpression'</param>
-        <param name="indices">To be added: an object of type 'CodeExpression []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeArrayIndexerExpression" /> class using the specified target object and indexes.</para>
+        </summary>
+        <param name="targetObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the array the indexer targets. </param>
+        <param name="indices">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index or indexes to reference. </param>
       </Docs>
     </Member>
     <Member MemberName="Indices">
@@ -83,9 +99,15 @@
         <ReturnType>System.CodeDom.CodeExpressionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpressionCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This <see cref="T:System.CodeDom.CodeExpressionCollection" /> can contain a <see cref="T:System.CodeDom.CodeExpression" /> that specifies a single index within the target array, or multiple <see cref="T:System.CodeDom.CodeExpression" /> objects that together specify a specific intersection of indexes across the dimensions of the array.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the index or indexes of the indexer expression.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TargetObject">
@@ -103,9 +125,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property typically contains either a <see cref="T:System.CodeDom.CodeVariableReferenceExpression" />, a <see cref="T:System.CodeDom.CodePropertyReferenceExpression" />, or a <see cref="T:System.CodeDom.CodeFieldReferenceExpression" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the target object of the array indexer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

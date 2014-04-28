@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DetailsViewUpdateEventArgs" FullName="System.Web.UI.WebControls.DetailsViewUpdateEventArgs">
   <TypeSignature Language="C#" Value="public class DetailsViewUpdateEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DetailsView" /> control raises the <see cref="E:System.Web.UI.WebControls.DetailsView.ItemUpdating" /> event when an Update button (a button with its CommandName property set to "Update") within the control is clicked, but before the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control updates the record. This allows you to provide an event handler that performs a custom routine, such as HTML-encoding the values of a record before updating it in the data source, whenever this event occurs.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.DetailsViewUpdateEventArgs" /> object is passed to the event handler, which allows you to determine the value of an optional command argument sent to the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control and to indicate whether the update operation should be canceled. To determine the value of the command argument, use the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.CommandArgument" /> property. To cancel the update operation, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to true. You can also read or modify the new values entered by the user by using the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdatedEventArgs.Keys" /> and <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.NewValues" /> properties. The <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.Keys" /> property contains the key fields, while the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.NewValues" /> property contains the non-key fields. If you need to access the original non-key field values, use the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdatedEventArgs.OldValues" /> property.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewUpdateEventArgs" /> class, see the <see cref="M:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.#ctor(System.Object)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.DetailsView.ItemUpdating" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +32,41 @@
       </Parameters>
       <Docs>
         <param name="argument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewUpdateEventArgs" /> class.</para>
+          <para>The following table shows the initial property value for an instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewUpdateEventArgs" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.CommandArgument" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="commandArgument" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewUpdateEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +79,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertEventArgs.CommandArgument" /> property to determine the value of the command argument passed to the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the command argument for the update operation passed to the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +101,23 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.Keys" /> property to access the values of the key fields for the record to update. For example, you can use these values to keep a log of updated records.</para>
+          <block subset="none" type="note">
+            <para>This property contains only the key fields. To access the updated and original non-key fields, use the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.NewValues" /> and <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.OldValues" /> properties, respectively.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.Keys" /> property returns an object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the fields of the record to update.</para>
+          <block subset="none" type="note">
+            <para>As a shortcut, you can also use the indexer of the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> object to access the field values directly.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary that contains the key field name/value pairs for the record to update.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +130,23 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.NewValues" /> property to access the new field values for the record to update. For example, you can use these values to keep a log of updated records.</para>
+          <block subset="none" type="note">
+            <para>This property does not contain the key fields. To access the key fields, use the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.Keys" /> property. You can also access the original field values by using the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.OldValues" /> property.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.NewValues" /> property returns an object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the fields of the record to update.</para>
+          <block subset="none" type="note">
+            <para>As a shortcut, you can also use the indexer of the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> object to access the field values directly.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary that contains the new field name/value pairs for the record to update.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,10 +159,23 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.OldValues" /> property to access the original field values for the updated record. For example, you can use these values to keep a log of updated records.</para>
+          <block subset="none" type="note">
+            <para>This property does not contain the key fields. To access the key fields, use the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.Keys" /> property. You can also access the new field values entered by the user by using the <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.NewValues" /> property.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.DetailsViewUpdateEventArgs.OldValues" /> property returns an object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the fields of the record to update.</para>
+          <block subset="none" type="note">
+            <para>As a shortcut, you can also use the indexer of the object to access the field values directly.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary that contains the original field name/value pairs for the record to update.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

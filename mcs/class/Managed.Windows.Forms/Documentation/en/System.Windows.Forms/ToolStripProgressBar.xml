@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripProgressBar" FullName="System.Windows.Forms.ToolStripProgressBar">
   <TypeSignature Language="C#" Value="public class ToolStripProgressBar : System.Windows.Forms.ToolStripControlHost" />
   <AssemblyInfo>
@@ -14,9 +15,25 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> is the <see cref="T:System.Windows.Forms.ProgressBar" /> optimized for hosting in a <see cref="T:System.Windows.Forms.ToolStrip" />. A subset of the hosted control's properties and events are exposed at the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> level, but the underlying <see cref="T:System.Windows.Forms.ProgressBar" /> control is fully accessible through the <see cref="P:System.Windows.Forms.ToolStripProgressBar.ProgressBar" /> property.</para>
+      <para>A <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> control visually indicates the progress of a lengthy operation. The <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> control displays a bar that fills in from left to right with the system highlight color as an operation progresses. </para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> control can only be oriented horizontally. </para>
+      </block>
+      <para>The <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> control is typically used when an application performs tasks such as copying files or printing documents. Users of an application might consider an application unresponsive if there is no visual cue. Use the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> to notify the user that the application is performing a lengthy task and that the application is still responding.</para>
+      <para>The <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> and <see cref="P:System.Windows.Forms.ToolStripProgressBar.Minimum" /> properties define the range of values to represent the progress of a task. The <see cref="P:System.Windows.Forms.ToolStripProgressBar.Minimum" /> property is typically set to a value of zero, and the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> property is typically set to a value indicating the completion of a task. For example, to display the progress properly when copying a group of files, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> property could be set to the total number of files to be copied. The <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property represents the progress that the application has made toward completing the operation. Because the bar displayed in the control is a collection of blocks, the value displayed by the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> only approximates the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property's current value. Based on the size of the <see cref="T:System.Windows.Forms.ToolStripProgressBar" />, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property determines when to display the next block.</para>
+      <para>There are a number of ways to modify the value displayed by the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> other than changing the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property directly. You can use the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Step" /> property to specify a specific value to increment the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property by, and then call the <see cref="M:System.Windows.Forms.ToolStripProgressBar.PerformStep" /> method to increment the value. To vary the increment value, you can use the <see cref="M:System.Windows.Forms.ToolStripProgressBar.Increment(System.Int32)" /> method and specify a value by which to increment the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property.</para>
+      <para>
+        <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> replaces the older <see cref="T:System.Windows.Forms.ProgressBar" /> control, which is nevertheless retained for backward compatibility.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Windows progress bar control contained in a <see cref="T:System.Windows.Forms.StatusStrip" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +41,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Minimum" /> property is set to 0, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> property is set to 100, and the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Step" /> property is set to 10.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +62,14 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> class with specified name. </para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Windows.Forms.ToolStripProgressBar" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,9 +96,15 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayout">
@@ -95,9 +128,15 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not relevant to this class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultMargin">
@@ -110,9 +149,12 @@
         <ReturnType>System.Windows.Forms.Padding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the spacing between the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> and adjacent items.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultSize">
@@ -122,10 +164,13 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the height and width of the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> in pixels.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -141,10 +186,17 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ToolStripProgressBar.Increment(System.Int32)" /> method enables you to increment the value of the progress bar by a specific amount. This method of incrementing the progress bar is similar to using the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Step" /> property with the <see cref="M:System.Windows.Forms.ToolStripProgressBar.PerformStep" /> method. The <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property specifies the current position of the <see cref="T:System.Windows.Forms.ToolStripProgressBar" />. If, after calling the <see cref="M:System.Windows.Forms.ToolStripProgressBar.Increment(System.Int32)" /> method, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property is greater than the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> property, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property remains at the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> property. If, after calling the <see cref="M:System.Windows.Forms.ToolStripProgressBar.Increment(System.Int32)" /> method with a negative value specified in the <paramref name="value" /> parameter, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property is less than the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Minimum" /> property, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property remains at the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Minimum" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the current position of the progress bar by the specified amount.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The amount by which to increment the progress bar's current position.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -165,9 +217,15 @@
         <ReturnType>System.Windows.Forms.KeyEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -188,9 +246,15 @@
         <ReturnType>System.Windows.Forms.KeyPressEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -211,9 +275,15 @@
         <ReturnType>System.Windows.Forms.KeyEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -234,9 +304,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -257,9 +333,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolStripProgressBar.MarqueeAnimationSpeed" /> property gets or sets the delay of display update. Therefore, as you decrease the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.MarqueeAnimationSpeed" /> property, the speed of the animation increases.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value representing the delay between each <see cref="F:System.Windows.Forms.ProgressBarStyle.Marquee" /> display update, in milliseconds.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Maximum">
@@ -277,10 +359,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the upper limit of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property. When the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> property is changed, the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> control is redrawn to reflect the new range of the control. When the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property is equal to the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> property, the progress bar is completely filled.</para>
+          <para>You can use this property to specify a value that the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property must be set to (by setting the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property or using the <see cref="M:System.Windows.Forms.ToolStripProgressBar.Increment(System.Int32)" /> or <see cref="M:System.Windows.Forms.ToolStripProgressBar.PerformStep" /> methods) to indicate that an operation is complete. For example, you can set the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> property to the total number of files in a file copy operation. Each time a file is copied, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property can be increased by one until the total number of files is copied. At that point, the progress bar would be completely filled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the upper bound of the range that is defined for this <see cref="T:System.Windows.Forms.ToolStripProgressBar" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -301,10 +390,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the lower limit of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property. When the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Minimum" /> property is changed, the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> control is redrawn to reflect the new range of the control. When the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property is equal to the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Minimum" /> property, the progress bar is empty. To change the value of the progress bar, use the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Step" /> property with the <see cref="M:System.Windows.Forms.ToolStripProgressBar.PerformStep" /> method, use the <see cref="M:System.Windows.Forms.ToolStripProgressBar.Increment(System.Int32)" /> method, or set the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the lower bound of the range that is defined for this <see cref="T:System.Windows.Forms.ToolStripProgressBar" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -323,9 +418,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.ToolStripProgressBar.OnRightToLeftLayoutChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.ProgressBar.RightToLeftLayoutChanged" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnSubscribeControlEvents">
@@ -381,9 +484,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -397,9 +506,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.ToolStripProgressBar.PerformStep" /> method increments the value of the progress bar by the amount specified by the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Step" /> property. You can use the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Step" /> property to specify the amount that each completed task in an operation changes the value of the progress bar. For example, if you are copying a group of files, you might want to set the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Step" /> property to 1 and the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> property to the total number of files to copy. When each file is copied, you can call the <see cref="M:System.Windows.Forms.ToolStripProgressBar.PerformStep" /> method to increment the progress bar by the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Step" /> property. If you want to have more flexible control of the value of the progress bar, you can use the <see cref="M:System.Windows.Forms.ToolStripProgressBar.Increment(System.Int32)" /> method or set the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property directly.</para>
+          <para>The <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property specifies the current position of the <see cref="T:System.Windows.Forms.ToolStripProgressBar" />. If, after calling the <see cref="M:System.Windows.Forms.ToolStripProgressBar.PerformStep" /> method, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property is greater than the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> property, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property remains at the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> property. If, after calling the <see cref="M:System.Windows.Forms.ToolStripProgressBar.PerformStep" /> method with a negative value specified in the <paramref name="value" /> parameter, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property is less than the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Minimum" /> property, the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property remains at the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Minimum" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Advances the current position of the progress bar by the amount of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Step" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -420,10 +536,16 @@
         <ReturnType>System.Windows.Forms.ProgressBar</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a strongly typed accessor for this <see cref="T:System.Windows.Forms.ToolStripProgressBar" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.ProgressBar" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -447,9 +569,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.ToolStripProgressBar.RightToLeftLayout" /> property to control the layout of international applications in which the language is written from right to left. When the <see cref="P:System.Windows.Forms.ToolStripProgressBar.RightToLeftLayout" /> property is true, and the <see cref="T:System.Windows.Forms.RightToLeft" /> property is set to <see cref="F:System.Windows.Forms.RightToLeft.Yes" />, mirroring will be enabled on the Windows form and control placement and text will be from right to left.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> layout is right-to-left or left-to-right when the <see cref="T:System.Windows.Forms.RightToLeft" /> property is set to <see cref="F:System.Windows.Forms.RightToLeft.Yes" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeftLayoutChanged">
@@ -462,8 +590,14 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Windows.Forms.ToolStripProgressBar.RightToLeftLayout" /> property changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Step">
@@ -478,10 +612,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount by which to increment the current value of the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> when the <see cref="M:System.Windows.Forms.ToolStripProgressBar.PerformStep" /> method is called.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -499,10 +636,13 @@
         <ReturnType>System.Windows.Forms.ProgressBarStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the style of the <see cref="T:System.Windows.Forms.ToolStripProgressBar" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -526,10 +666,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Although the <see cref="T:System.Windows.Forms.ToolStripProgressBar" /> has a <see cref="P:System.Windows.Forms.ToolStripProgressBar.Text" /> property, no text is shown on the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text displayed on the <see cref="T:System.Windows.Forms.ToolStripProgressBar" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -550,9 +696,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant for this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -573,9 +725,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -596,9 +754,15 @@
         <ReturnType>System.ComponentModel.CancelEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not relevant to this class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -619,10 +783,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.ToolStripProgressBar.Value" /> property must be in the range specified by the <see cref="P:System.Windows.Forms.ToolStripProgressBar.Minimum" /> and <see cref="P:System.Windows.Forms.ToolStripProgressBar.Maximum" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the current value of the <see cref="T:System.Windows.Forms.ToolStripProgressBar" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

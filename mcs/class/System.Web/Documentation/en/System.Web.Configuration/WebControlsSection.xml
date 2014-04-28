@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebControlsSection" FullName="System.Web.Configuration.WebControlsSection">
   <TypeSignature Language="C#" Value="public sealed class WebControlsSection : System.Configuration.ConfigurationSection" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.WebControlsSection" /> class provides a way to programmatically access and modify the webControls section of a configuration file.</para>
+      <block subset="none" type="note">
+        <para>ASP.NET provides a shared location for the client script files, where they can be accessed from multiple pages and across applications.  The <see cref="T:System.Web.Configuration.WebControlsSection" /> can read and write information from and to the related section of the configuration file according to the section property <see cref="P:System.Configuration.SectionInformation.AllowDefinition" /> whose value is <see cref="F:System.Configuration.ConfigurationAllowDefinition.Everywhere" />.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures the webControls section. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +29,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Configuration.WebControlsSection.#ctor" /> constructor is not intended to be used directly from your code. It is called by the ASP.NET configuration system. You obtain an instance of the <see cref="T:System.Web.Configuration.WebControlsSection" /> class by using the <see cref="M:System.Configuration.Configuration.GetSection(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of <see cref="T:System.Web.Configuration.WebControlsSection" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +58,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For details about the client scripts and their use, refer to <format type="text/html"><a href="13edb6b9-2dea-43c6-b8c1-a47207de19aa">Client Script in ASP.NET Web Pages</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the client scripts location.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

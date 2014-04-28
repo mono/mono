@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PropertyTabScope" FullName="System.ComponentModel.PropertyTabScope">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum PropertyTabScope" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed PropertyTabScope extends System.Enum" />
@@ -14,8 +15,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.PropertyTabScope" /> indicates the persistence scope of a tab that is displayed in the Properties window when a component of a design document has an associated <see cref="T:System.ComponentModel.PropertyTabAttribute" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines identifiers that indicate the persistence scope of a tab in the Properties window.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Component">
@@ -32,8 +40,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This tab is specific to the current component. This tab is added to the Properties window for the current component only and is removed when the component is no longer selected.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Document">
@@ -50,8 +61,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This tab is specific to the current document. This tab is added to the Properties window and is removed when the currently selected document changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Global">
@@ -68,8 +82,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This tab is added to the Properties window and can only be removed explicitly by a parent component.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Static">
@@ -86,8 +103,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This tab is added to the Properties window and cannot be removed.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

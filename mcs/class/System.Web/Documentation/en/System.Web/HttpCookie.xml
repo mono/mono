@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpCookie" FullName="System.Web.HttpCookie">
   <TypeSignature Language="C#" Value="public sealed class HttpCookie" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,18 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Represents an HTTP Cookie.</summary>
     <remarks>
-      <para>
-You can use cookies to store information on the client browser that will be provided in subsequent calls to the site.  This can be useful to pass information across pages, or to store small bits of information that might be useful at a later time in the use of the web application
-</para>
-      <para>
-You could use it for example to store a transient user preference ("favorite color", "default action when replying to an email" and so on).
-</para>
-      <para>
-Once constructed, the cookie can be send to the client by calling the <see cref="M:HttpResponse.AppendCookie()" /> method.   This must be done before any input is sent back to the client.
-</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.HttpCookie" /> class gets and sets properties of individual cookies. The <see cref="T:System.Web.HttpCookieCollection" /> class provides methods to store, retrieve, and manage multiple cookies. </para>
+      <para>ASP.NET includes two intrinsic cookie collections. The collection accessed through the <see cref="P:System.Web.HttpRequest.Cookies" /> collection of the <see cref="T:System.Web.HttpRequest" /> object contains cookies transmitted by the client to the server in the Cookie header. The collection accessed through the <see cref="P:System.Web.HttpResponse.Cookies" /> collection of the <see cref="T:System.Web.HttpResponse" /> object contains new cookies created on the server and transmitted to the client in the Set-Cookie HTTP response header.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a type-safe way to create and manipulate individual HTTP cookies.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,9 +33,13 @@ Once constructed, the cookie can be send to the client by calling the <see cref=
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">The name of the cookie.</param>
-        <summary>Creates a cookie.</summary>
         <remarks>The cookie is created with an empty value ("").</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates and names a new cookie.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new cookie. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,11 +55,15 @@ Once constructed, the cookie can be send to the client by calling the <see cref=
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">The name of the cookie.
-</param>
-        <param name="value">The value of the cookie.</param>
-        <summary>Creates a cookie with a given value.</summary>
         <remarks>Creates a cookie with the given name and value.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates, names, and assigns a value to a new cookie.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new cookie. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the new cookie. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -73,42 +79,15 @@ Once constructed, the cookie can be send to the client by calling the <see cref=
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>The domain for which the cookie is valid.</summary>
         <value>The current value of the domain.   The default value is null.</value>
         <remarks>
-          <para>This is an optional parameter for cookies, and by default the value of this property is null.   
-</para>
-          <list type="bullet">
-            <item>
-              <term> The value for the Path attribute is not a prefix of the request-
-     URI.</term>
-            </item>
-            <item>
-              <term>The value for the Domain attribute contains no embedded dots or does not start with a dot.</term>
-            </item>
-            <item>
-              <term>The value for the request-host does not domain-match the Domain attribute.</term>
-            </item>
-            <item>
-              <term>The request-host is a FQDN (not IP address) and has the form HD, where D is the value of the Domain attribute, and H is a string that contains one or more dots.</term>
-            </item>
-          </list>
-          <para>   Examples:</para>
-          <list type="bullet">
-            <item>
-              <term>A Set-Cookie from request-host y.x.foo.com for Domain=.foo.com would be rejected, because H is y.x and contains a dot.</term>
-            </item>
-            <item>
-              <term>A Set-Cookie from request-host x.foo.com for Domain=.foo.com would be accepted.</term>
-            </item>
-            <item>
-              <term>A Set-Cookie with Domain=.com or Domain=.com., will always be rejected, because there is no embedded dot.</term>
-            </item>
-            <item>
-              <term>A Set-Cookie with Domain=ajax.com will be rejected because the value for Domain does not begin with a dot.</term>
-            </item>
-          </list>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting the Domain attribute limits transmission of the cookie to clients requesting a resource from that domain.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the domain to associate the cookie with.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -124,9 +103,12 @@ Once constructed, the cookie can be send to the client by calling the <see cref=
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Controls the expire date and time of the cookie.</summary>
         <value>The time and day when when the cookie will expire on the client.</value>
         <remarks>If this property isn't set, its value should be set to System.DateTime.MinValue, meaning that the cookie will expire as soon as the browser closes.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the expiration date and time for the cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -140,9 +122,12 @@ Once constructed, the cookie can be send to the client by calling the <see cref=
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Whether any key/value pairs have been set on the cookie.</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether a cookie has subkeys.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -159,9 +144,19 @@ Once constructed, the cookie can be send to the client by calling the <see cref=
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Microsoft Internet Explorer version 6 Service Pack 1 and later supports a cookie property, <see cref="P:System.Web.HttpCookie.HttpOnly" />, that can help mitigate cross-site scripting threats that result in stolen cookies. Stolen cookies can contain sensitive information identifying the user to the site, such as the ASP.NET session ID or forms authentication ticket, and can be replayed by the attacker in order to masquerade as the user or obtain sensitive information. When an HttpOnly cookie is received by a compliant browser, it is inaccessible to client-side script. </para>
+          <block subset="none" type="note">
+            <para>Setting the <see cref="P:System.Web.HttpCookie.HttpOnly" /> property to true does not prevent an attacker with access to the network channel from accessing the cookie directly. Consider using Secure Sockets Layer (SSL) to help protect against this. Workstation security is also important, as a malicious user could use an open browser window or a computer containing persistent cookies to obtain access to a Web site with a legitimate user's identity.</para>
+          </block>
+          <para>For more information on possible attacks and how this property can help mitigate them, see <see cref="http://go.microsoft.com/fwlink/?LinkId=41580">Mitigating Cross-site Scripting With HTTP-only Cookies</see>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether a cookie is accessible by client-side script.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -193,9 +188,12 @@ Once constructed, the cookie can be send to the client by calling the <see cref=
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>The name for the cookie.</summary>
         <value>The cookie name.</value>
         <remarks>Sets and resets the name of the cookie.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of a cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -211,13 +209,15 @@ Once constructed, the cookie can be send to the client by calling the <see cref=
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>The subset of URLs to which this cookie applies.</summary>
         <value>The current path value, by default it is "/".</value>
         <remarks>
-          <para>The Path attribute specifies the subset of URLs to which this cookie applies.</para>
-          <para>The value for the Path attribute will be ignored is not a prefix of the request-URI (see RFC 2109 for details).
-</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.HttpCookie.Path" /> property extends the <see cref="P:System.Web.HttpCookie.Domain" /> property to completely describe the specific URL to which the cookie applies. For example, in the URL http:/www.microsoft.com/asp, the domain is www.microsoft.com and the path is /asp.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the virtual path to transmit with the current cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -233,9 +233,16 @@ Once constructed, the cookie can be send to the client by calling the <see cref=
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Controls if the cookie is to be sent only using secure (encrypted) connections, meaning using SSL (HTTPS).</summary>
         <value>True if the value was transmited over a secure connection.</value>
-        <remarks>The transmission of cookies using SSL can be set using web.config for the application as a default, as setting programmatically this property will override the value set in web.config.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To set the transmission of cookies using SSL for an entire application, enable it in the application's configuration file, Web.config, which resides in the root directory of the application. For more information, see <format type="text/html"><a href="74790718-bfa3-4935-bc9a-59c88797e08f">httpCookies Element (ASP.NET Settings Schema)</a></format>. Values set programmatically using the <see cref="P:System.Web.HttpCookie.Secure" /> property override values set in the Web.config file.</para>
+          <para>When dealing with sensitive information, it is strongly recommended that you use HTTPS protocol with SSL encryption. SSL protects against data being altered (data integrity), protects a user's identity (confidentiality), and assures that data originates from the expected client (authentication). For more information on the benefits of encryption, see <format type="text/html"><a href="f96284bc-7b73-44b5-ac59-fac613ad09f8">Cryptography Overview</a></format>. For more information about configuring SSL on an Internet Information Services (IIS) Web server, see <see cref="http://go.microsoft.com/fwlink/?LinkId=38553">Configuring SSL on a Web Server or a Web Site</see>. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether to transmit the cookie using Secure Sockets Layer (SSL)--that is, over HTTPS only.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -251,9 +258,12 @@ Once constructed, the cookie can be send to the client by calling the <see cref=
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>The value of the cookie.</summary>
         <value>The current value stored in the cookie.</value>
         <remarks>The current cookie value, this does not include any other properties, for those you must use the property accessors.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an individual cookie value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -268,9 +278,12 @@ Once constructed, the cookie can be send to the client by calling the <see cref=
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.Specialized.NameValueCollection" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of key/value pairs that are contained within a single cookie object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AccessRule&lt;T&gt;" FullName="System.Security.AccessControl.AccessRule&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class AccessRule&lt;T&gt; : System.Security.AccessControl.AccessRule where T : struct" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit AccessRule`1&lt;struct .ctor (class System.ValueType) T&gt; extends System.Security.AccessControl.AccessRule" />
@@ -20,8 +21,14 @@
   <Interfaces />
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Access rights (permissions) are type T, which you can type-cast to or from an int. For example, you can cast a <see cref="T:System.Security.AccessControl.FileSystemRights" /> as the access rights type, and then use the instance normally. In contrast, <see cref="T:System.Security.AccessControl.AccessRule" /> always takes access rights of type int.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a combination of a user's identity, an access mask, and an access control type (allow or deny). An AccessRule`1 object also contains information about the how the rule is inherited by child objects and how that inheritance is propagated.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -123,9 +130,15 @@
         <ReturnType>T</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property contains the same information as the AccessMask property, but cast as type &lt;T&gt;. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the rights of the current instance.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

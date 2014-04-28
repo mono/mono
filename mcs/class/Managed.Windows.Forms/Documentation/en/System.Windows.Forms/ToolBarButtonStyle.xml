@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolBarButtonStyle" FullName="System.Windows.Forms.ToolBarButtonStyle">
   <TypeSignature Language="C#" Value="public enum ToolBarButtonStyle" />
   <AssemblyInfo>
@@ -9,8 +10,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by members such as <see cref="P:System.Windows.Forms.ToolBarButton.Style" />.</para>
+      <para>The toolbar button appearance is determined by the <see cref="P:System.Windows.Forms.ToolBar.Appearance" /> property of the toolbar. Setting the <see cref="P:System.Windows.Forms.ToolBar.Appearance" /> property to Flat will give the toolbar and its buttons a flat appearance. As the mouse pointer moves over the buttons, they take on a three-dimensional appearance. Also, when the toolbar has a flat appearance, button separators appear as a line rather than as a space between the buttons.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the button style within a toolbar.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DropDownButton">
@@ -20,7 +28,10 @@
         <ReturnType>System.Windows.Forms.ToolBarButtonStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A drop-down control that displays a menu or other window when clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -34,7 +45,10 @@
         <ReturnType>System.Windows.Forms.ToolBarButtonStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A standard, three-dimensional button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -48,7 +62,10 @@
         <ReturnType>System.Windows.Forms.ToolBarButtonStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A space or line between toolbar buttons. The appearance depends on the value of the <see cref="P:System.Windows.Forms.ToolBar.Appearance" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -62,7 +79,10 @@
         <ReturnType>System.Windows.Forms.ToolBarButtonStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A toggle button that appears sunken when clicked and retains the sunken appearance until clicked again.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

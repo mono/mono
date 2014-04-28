@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BehaviorsSection" FullName="System.ServiceModel.Configuration.BehaviorsSection">
   <TypeSignature Language="C#" Value="public class BehaviorsSection : System.Configuration.ConfigurationSection" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit BehaviorsSection extends System.Configuration.ConfigurationSection" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A behavior element contains a collection of settings for the behavior of a service. Each behavior is indexed by its name. Services use behaviors by linking to them using this name.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the configuration section that contains child entries that are behavior elements identified by their unique name.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.BehaviorsSection" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndpointBehaviors">
@@ -43,9 +53,12 @@
         <ReturnType>System.ServiceModel.Configuration.EndpointBehaviorElementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the child entries that are endpoint behavior elements identified by their unique name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -59,9 +72,12 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Configuration.ConfigurationPropertyCollection" /> instance that contains a collection of <see cref="T:System.Configuration.ConfigurationProperty" /> objects that can be attributes or <see cref="T:System.Configuration.ConfigurationElement" /> objects of this configuration element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ServiceBehaviors">
@@ -80,9 +96,12 @@
         <ReturnType>System.ServiceModel.Configuration.ServiceBehaviorElementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets all the child entries that are service behavior elements identified by their unique name.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

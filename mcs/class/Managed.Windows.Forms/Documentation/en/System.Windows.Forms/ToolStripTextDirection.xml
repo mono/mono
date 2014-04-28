@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripTextDirection" FullName="System.Windows.Forms.ToolStripTextDirection">
   <TypeSignature Language="C#" Value="public enum ToolStripTextDirection" />
   <AssemblyInfo>
@@ -8,9 +9,12 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the text orientation to use with a particular <see cref="P:System.Windows.Forms.ToolStrip.LayoutStyle" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Horizontal">
@@ -20,8 +24,11 @@
         <ReturnType>System.Windows.Forms.ToolStripTextDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies horizontal text orientation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +41,11 @@
         <ReturnType>System.Windows.Forms.ToolStripTextDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the text direction is inherited from the parent control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +58,11 @@
         <ReturnType>System.Windows.Forms.ToolStripTextDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that text is to be rotated 270 degrees.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +75,11 @@
         <ReturnType>System.Windows.Forms.ToolStripTextDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that text is to be rotated 90 degrees.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

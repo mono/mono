@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TransportBindingElementImporter" FullName="System.ServiceModel.Channels.TransportBindingElementImporter">
   <TypeSignature Language="C#" Value="public class TransportBindingElementImporter : System.ServiceModel.Description.IPolicyImportExtension, System.ServiceModel.Description.IWsdlImportExtension" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit TransportBindingElementImporter extends System.Object implements class System.ServiceModel.Description.IPolicyImportExtension, class System.ServiceModel.Description.IWsdlImportExtension" />
@@ -17,8 +18,15 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The TransportBindingElementImporter type is an implementation of the <see cref="T:System.ServiceModel.Description.IWsdlImportExtension" /> and <see cref="T:System.ServiceModel.Description.IPolicyImportExtension" /> interfaces. It imports the <see cref="T:System.ServiceModel.Channels.HttpTransportBindingElement" />, <see cref="T:System.ServiceModel.Channels.HttpsTransportBindingElement" />, <see cref="T:System.ServiceModel.Channels.TcpTransportBindingElement" />, <see cref="T:System.ServiceModel.Channels.NamedPipeTransportBindingElement" />, <see cref="T:System.ServiceModel.Channels.MsmqTransportBindingElement" />, and <see cref="T:System.ServiceModel.Channels.PeerTransportBindingElement" /> instances from WSDL service metadata.  </para>
+      <para>When these <see cref="T:System.ServiceModel.Channels.TransportBindingElement" /> types are imported, the TransportBindingElementImporter type also imports the addressing information from the WSDL metadata.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Imports standard transport binding elements from <see cref="http://go.microsoft.com/fwlink/?LinkId=96160">Web Services Description Language</see> (WSDL) documents with attached policy expressions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +38,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.TransportBindingElementImporter" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BeforeImport">

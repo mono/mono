@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpRequestHeader" FullName="System.Net.HttpRequestHeader">
   <TypeSignature Language="C#" Value="public enum HttpRequestHeader" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HttpRequestHeader extends System.Enum" />
@@ -10,9 +11,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The appropriate contents of various headers are described in detail in the HTTP/1.1 specification, available at <see cref="http://www.w3.org/Protocols/rfc2616/rfc2616.html">rfc2616</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The HTTP headers that may be specified in a client request.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Accept">
@@ -27,8 +34,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Accept header, which specifies the MIME types that are acceptable for the response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AcceptCharset">
@@ -43,8 +53,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Accept-Charset header, which specifies the character sets that are acceptable for the response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AcceptEncoding">
@@ -59,8 +72,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Accept-Encoding header, which specifies the content encodings that are acceptable for the response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AcceptLanguage">
@@ -75,8 +91,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Accept-Langauge header, which specifies that natural languages that are preferred for the response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Allow">
@@ -91,8 +110,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Allow header, which specifies the set of HTTP methods supported.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Authorization">
@@ -107,8 +129,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Authorization header, which specifies the credentials that the client presents in order to authenticate itself to the server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CacheControl">
@@ -123,8 +148,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Cache-Control header, which specifies directives that must be obeyed by all cache control mechanisms along the request/response chain.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Connection">
@@ -139,8 +167,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Connection header, which specifies options that are desired for a particular connection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentEncoding">
@@ -155,8 +186,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Content-Encoding header, which specifies the encodings that have been applied to the accompanying body data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentLanguage">
@@ -171,8 +205,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Content-Langauge header, which specifies the natural language(s) of the accompanying body data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentLength">
@@ -187,8 +224,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Content-Length header, which specifies the length, in bytes, of the accompanying body data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentLocation">
@@ -203,8 +243,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Content-Location header, which specifies a URI from which the accompanying body may be obtained.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentMd5">
@@ -219,8 +262,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Content-MD5 header, which specifies the MD5 digest of the accompanying body data, for the purpose of providing an end-to-end message integrity check.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentRange">
@@ -235,8 +281,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Content-Range header, which specifies where in the full body the accompanying partial body data should be applied.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContentType">
@@ -251,8 +300,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Content-Type header, which specifies the MIME type of the accompanying body data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Cookie">
@@ -267,8 +319,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Cookie header, which specifies cookie data presented to the server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Date">
@@ -283,8 +338,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Date header, which specifies the date and time at which the request originated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Expect">
@@ -299,8 +357,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Expect header, which specifies particular server behaviors that are required by the client.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Expires">
@@ -315,8 +376,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Expires header, which specifies the date and time after which the accompanying body data should be considered stale.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="From">
@@ -331,8 +395,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The From header, which specifies an Internet E-mail address for the human user who controls the requesting user agent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Host">
@@ -347,8 +414,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Host header, which specifies the host name and port number of the resource being requested.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IfMatch">
@@ -363,8 +433,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The If-Match header, which specifies that the requested operation should be performed only if the client's cached copy of the indicated resource is current.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IfModifiedSince">
@@ -379,8 +452,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The If-Modified-Since header, which specifies that the requested operation should be performed only if the requested resource has been modified since the indicated data and time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IfNoneMatch">
@@ -395,8 +471,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The If-None-Match header, which specifies that the requested operation should be performed only if none of client's cached copies of the indicated resources are current.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IfRange">
@@ -411,8 +490,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The If-Range header, which specifies that only the specified range of the requested resource should be sent, if the client's cached copy is current.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IfUnmodifiedSince">
@@ -427,8 +509,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The If-Unmodified-Since header, which specifies that the requested operation should be performed only if the requested resource has not been modified since the indicated date and time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeepAlive">
@@ -443,8 +528,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Keep-Alive header, which specifies a parameter used into order to maintain a persistent connection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LastModified">
@@ -459,8 +547,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Last-Modified header, which specifies the date and time at which the accompanying body data was last modified.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxForwards">
@@ -475,8 +566,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Max-Forwards header, which specifies an integer indicating the remaining number of times that this request may be forwarded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pragma">
@@ -491,8 +585,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Pragma header, which specifies implementation-specific directives that might apply to any agent along the request/response chain.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProxyAuthorization">
@@ -507,8 +604,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Proxy-Authorization header, which specifies the credentials that the client presents in order to authenticate itself to a proxy.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Range">
@@ -523,8 +623,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Range header, which specifies the the sub-range(s) of the response that the client requests be returned in lieu of the entire response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Referer">
@@ -539,8 +642,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Referer header, which specifies the URI of the resource from which the request URI was obtained.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Te">
@@ -555,8 +661,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The TE header, which specifies the transfer encodings that are acceptable for the response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Trailer">
@@ -571,8 +680,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Trailer header, which specifies the header fields present in the trailer of a message encoded with chunked transfer-coding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransferEncoding">
@@ -587,8 +699,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Transfer-Encoding header, which specifies what (if any) type of transformation that has been applied to the message body.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Translate">
@@ -603,8 +718,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Translate header, a Microsoft extension to the HTTP specification used in conjunction with WebDAV functionality.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Upgrade">
@@ -619,8 +737,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Upgrade header, which specifies additional communications protocols that the client supports.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UserAgent">
@@ -635,8 +756,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The User-Agent header, which specifies information about the client agent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Via">
@@ -651,8 +775,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Via header, which specifies intermediate protocols to be used by gateway and proxy agents.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Warning">
@@ -667,8 +794,11 @@
         <ReturnType>System.Net.HttpRequestHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Warning header, which specifies additional information about that status or transformation of a message that might not be reflected in the message.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

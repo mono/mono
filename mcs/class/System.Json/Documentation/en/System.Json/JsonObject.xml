@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="JsonObject" FullName="System.Json.JsonObject">
   <TypeSignature Language="C#" Value="public class JsonObject : System.Json.JsonValue, System.Collections.Generic.ICollection&lt;System.Collections.Generic.KeyValuePair&lt;string,System.Json.JsonValue&gt;&gt;, System.Collections.Generic.IDictionary&lt;string,System.Json.JsonValue&gt;, System.Collections.Generic.IEnumerable&lt;System.Collections.Generic.KeyValuePair&lt;string,System.Json.JsonValue&gt;&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit JsonObject extends System.Json.JsonValue implements class System.Collections.Generic.ICollection`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;string, class System.Json.JsonValue&gt;&gt;, class System.Collections.Generic.IDictionary`2&lt;string, class System.Json.JsonValue&gt;, class System.Collections.Generic.IEnumerable`1&lt;valuetype System.Collections.Generic.KeyValuePair`2&lt;string, class System.Json.JsonValue&gt;&gt;, class System.Collections.IEnumerable" />
@@ -20,8 +21,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a Json object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -96,10 +100,15 @@
         <Parameter Name="value" Type="System.Json.JsonValue" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a key/value pair to the JSON CLR object type.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key for the element added.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The JsonValue for the element added.</param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">
@@ -158,8 +167,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all key/value pairs from the JSON CLR object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ContainsKey">
@@ -176,10 +188,14 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether a key/value pair with a specified key exists in the JSON CLR object type.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key to check for.</param>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">
@@ -214,9 +230,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of key/value pairs in the JsonObject.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -267,9 +286,12 @@
         <ReturnType>System.Json.JsonType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the JSON type of the JsonObject.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Keys">
@@ -283,9 +305,12 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection that contains the keys in the JsonObject.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -302,10 +327,14 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the key/value pair with a specified from the JSON CLR object type.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The key of the item to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="Save">
@@ -395,9 +424,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an enumerator that iterates through the key/value pairs in the JsonObject.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TryGetValue">
@@ -433,9 +465,12 @@
         <ReturnType>System.Collections.Generic.ICollection&lt;System.Json.JsonValue&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection that contains the values in the JsonObject.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

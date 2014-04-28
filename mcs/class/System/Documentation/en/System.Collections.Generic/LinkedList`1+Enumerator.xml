@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LinkedList&lt;T&gt;+Enumerator" FullName="System.Collections.Generic.LinkedList&lt;T&gt;+Enumerator">
   <TypeSignature Language="C#" Value="public struct LinkedList&lt;T&gt;.Enumerator : System.Collections.Generic.IEnumerator&lt;T&gt;, System.Runtime.Serialization.IDeserializationCallback, System.Runtime.Serialization.ISerializable" />
   <TypeSignature Language="ILAsm" Value=".class nested public sequential ansi serializable sealed beforefieldinit LinkedList`1/Enumerator&lt;T&gt; extends System.ValueType implements class System.Collections.Generic.IEnumerator`1&lt;!T&gt;, class System.Collections.IEnumerator, class System.IDisposable, class System.Runtime.Serialization.IDeserializationCallback, class System.Runtime.Serialization.ISerializable" />
@@ -24,9 +25,23 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Collections.Generic.LinkedList`1" /> is a general-purpose linked list. It supports enumerators and implements the <see cref="T:System.Collections.ICollection" /> interface, consistent with other collection classes in the .NET Framework.</para>
+      <para>
+        <see cref="T:System.Collections.Generic.LinkedList`1" /> provides separate nodes of type <see cref="T:System.Collections.Generic.LinkedListNode`1" />, so insertion and removal are O(1) operations.</para>
+      <para>You can remove nodes and reinsert them, either in the same list or in another list, which results in no additional objects allocated on the heap. Because the list also maintains an internal count, getting the <see cref="P:System.Collections.Generic.LinkedList`1.Count" /> property is an O(1) operation. </para>
+      <para>Each node in a <see cref="T:System.Collections.Generic.LinkedList`1" /> object is of the type <see cref="T:System.Collections.Generic.LinkedListNode`1" />. Because the <see cref="T:System.Collections.Generic.LinkedList`1" /> is doubly linked, each node points forward to the <see cref="P:System.Collections.Generic.LinkedListNode`1.Next" /> node and backward to the <see cref="P:System.Collections.Generic.LinkedListNode`1.Previous" /> node. </para>
+      <para>Lists that contain reference types perform better when a node and its value are created at the same time. <see cref="T:System.Collections.Generic.LinkedList`1" /> accepts null as a valid <see cref="P:System.Collections.Generic.LinkedListNode`1.Value" /> property for reference types and allows duplicate values. </para>
+      <para>If the <see cref="T:System.Collections.Generic.LinkedList`1" /> is empty, the <see cref="P:System.Collections.Generic.LinkedList`1.First" /> and <see cref="P:System.Collections.Generic.LinkedList`1.Last" /> properties contain null.</para>
+      <para>The <see cref="T:System.Collections.Generic.LinkedList`1" /> class does not support chaining, splitting, cycles, or other features that can leave the list in an inconsistent state. The list remains consistent on a single thread. The only multithreaded scenario supported by <see cref="T:System.Collections.Generic.LinkedList`1" /> is multithreaded read operations. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a doubly linked list.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Current">

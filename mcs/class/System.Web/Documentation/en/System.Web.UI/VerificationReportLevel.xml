@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="VerificationReportLevel" FullName="System.Web.UI.VerificationReportLevel">
   <TypeSignature Language="C#" Value="public enum VerificationReportLevel" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When using extending a class, member or indexer with a <see cref="T:System.Web.UI.VerificationAttribute" />, you must define the level of reporting that the verification rule represents by specifying one of the <see cref="T:System.Web.UI.VerificationReportLevel" /> values.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies reporting levels for an accessibility rule defined by an <see cref="T:System.Web.UI.VerificationAttribute" /> instance.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Error">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.UI.VerificationReportLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The verification rule represented by the <see cref="T:System.Web.UI.VerificationAttribute" /> instance is an error.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.UI.VerificationReportLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The verification rule represented by the <see cref="T:System.Web.UI.VerificationAttribute" /> instance is a guideline.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Web.UI.VerificationReportLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The verification rule represented by the <see cref="T:System.Web.UI.VerificationAttribute" /> instance is a warning.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

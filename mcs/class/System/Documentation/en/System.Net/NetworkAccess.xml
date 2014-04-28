@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NetworkAccess" FullName="System.Net.NetworkAccess" FullNameSP="System_Net_NetworkAccess" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable NetworkAccess extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum NetworkAccess" />
@@ -20,17 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Specifies network access permission types.</para>
-    </summary>
     <remarks>
-      <para>This enumeration is used to indicate whether a 
-      permission object secures connect (client-side) or accept (server-side)
-      operations.</para>
-      <para>
-        <block subset="none" type="note">The <see cref="T:System.Net.NetworkAccess" /> enumeration is used with the <see cref="T:System.Net.WebPermission" /> and <see cref="T:System.Net.SocketPermission" /> classes.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.NetworkAccess" /> enumeration is used with the <see cref="T:System.Net.WebPermission" /> and <see cref="T:System.Net.SocketPermission" /> classes.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies network access permissions.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Accept">
@@ -50,12 +48,8 @@
       <MemberValue>Accept</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies accept operations.
-      </para>
-          <para>
-            <block subset="none" type="note">This access type is typically used by
-      servers. </block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the application is allowed to accept connections from the Internet on a local resource. Notice that this is a protection for the local host that uses Accept to grant access to a local resource (address/port). At the time a socket tries to bind to this local resource a permission check is performed to see if an Accept exists on that resource.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -77,11 +71,8 @@
       <MemberValue>Connect</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies connect operations.
-      </para>
-          <para>
-            <block subset="none" type="note">This access type is typically used by clients. </block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the application is allowed to connect to specific Internet resources. Notice that, in the case of remote host resource, no check is performed to see that Connect permissions exist. This is because the port of a connecting remote host is unknown and not suitable permissions can be built in advance. It is the application responsibility to check the permissions of the remote host trying to connect to a listening socket.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>

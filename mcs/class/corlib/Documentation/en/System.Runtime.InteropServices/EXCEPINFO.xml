@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EXCEPINFO" FullName="System.Runtime.InteropServices.EXCEPINFO">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct EXCEPINFO" />
   <TypeSignature Language="ILAsm" Value=".class public sequential sealed beforefieldinit EXCEPINFO extends System.ValueType" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about EXCEPINFO, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.EXCEPINFO" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="bstrDescription">
@@ -37,8 +44,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Describes the error intended for the customer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="bstrHelpFile">
@@ -55,8 +65,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the fully-qualified drive, path, and file name of a Help file with more information about the error.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="bstrSource">
@@ -73,8 +86,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the name of the source of the exception. Typically, this is an application name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="dwHelpContext">
@@ -91,8 +107,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the Help context ID of the topic within the Help file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="pfnDeferredFillIn">
@@ -109,8 +128,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a pointer to a function that takes an <see cref="T:System.Runtime.InteropServices.EXCEPINFO" /> structure as an argument and returns an HRESULT value. If deferred fill-in is not desired, this field is set to null.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="pvReserved">
@@ -127,8 +149,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field is reserved; must be set to null.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="wCode">
@@ -145,8 +170,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents an error code identifying the error.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="wReserved">
@@ -163,8 +191,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This field is reserved; must be set to 0.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

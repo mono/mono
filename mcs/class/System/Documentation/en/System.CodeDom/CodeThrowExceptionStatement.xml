@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeThrowExceptionStatement" FullName="System.CodeDom.CodeThrowExceptionStatement">
   <TypeSignature Language="C#" Value="public class CodeThrowExceptionStatement : System.CodeDom.CodeStatement" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeThrowExceptionStatement extends System.CodeDom.CodeStatement" />
@@ -23,8 +24,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeThrowExceptionStatement" /> can represent a statement that throws an exception. The expression should be, or evaluate to, a reference to an instance of a type that derives from the <see cref="T:System.Exception" /> class.</para>
+      <para>The <see cref="P:System.CodeDom.CodeThrowExceptionStatement.ToThrow" /> property specifies the exception to throw.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a statement that throws an exception.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +48,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeThrowExceptionStatement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -57,9 +69,13 @@
         <Parameter Name="toThrow" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="toThrow">To be added: an object of type 'CodeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeThrowExceptionStatement" /> class with the specified exception type instance.</para>
+        </summary>
+        <param name="toThrow">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the exception to throw. </param>
       </Docs>
     </Member>
     <Member MemberName="ToThrow">
@@ -77,9 +93,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the exception to throw.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

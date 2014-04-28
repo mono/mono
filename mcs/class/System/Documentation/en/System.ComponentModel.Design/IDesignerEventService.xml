@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDesignerEventService" FullName="System.ComponentModel.Design.IDesignerEventService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDesignerEventService" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDesignerEventService" />
@@ -12,8 +13,15 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.ComponentModel.Design.IDesignerEventService" /> provides notification when a new root designer is created, changed, or disposed. A root designer provides design time support for the base component of a document in designer view. The <see cref="E:System.ComponentModel.Design.IDesignerEventService.SelectionChanged" /> event provides notification when the current component selection has changed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides event notifications when root designers are added and removed, when a selected component changes, and when the current root designer changes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ActiveDesigner">
@@ -29,9 +37,12 @@
         <ReturnType>System.ComponentModel.Design.IDesignerHost</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IDesignerHost'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the root designer for the currently active document.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ActiveDesignerChanged">
@@ -48,8 +59,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event can result from the user opening or setting focus to a new document, or by closing a document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the current root designer changes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DesignerCreated">
@@ -66,8 +83,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised when a new document has been loaded and is ready for user input.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a root designer is created.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DesignerDisposed">
@@ -84,8 +107,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised when a document is about to be disposed, but before the document actually starts to dispose itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a root designer for a document is disposed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Designers">
@@ -101,9 +130,12 @@
         <ReturnType>System.ComponentModel.Design.DesignerCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DesignerCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of root designers for design documents that are currently active in the development environment.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SelectionChanged">
@@ -120,8 +152,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This selection changed event can result from the user changing the selection in the currently active document, or from the user switching to a new document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the current design-view selection changes.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

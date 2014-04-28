@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EnvironmentPermissionAccess" FullName="System.Security.Permissions.EnvironmentPermissionAccess" FullNameSP="System_Security_Permissions_EnvironmentPermissionAccess" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable EnvironmentPermissionAccess extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum EnvironmentPermissionAccess" />
@@ -22,16 +23,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Represents access to
- environment variables.</para>
-    </summary>
     <remarks>
-      <para>
-        <block subset="none" type="note">This enumeration is used by the <see cref="T:System.Security.Permissions.EnvironmentPermission" />
-class.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by <see cref="T:System.Security.Permissions.EnvironmentPermission" />.</para>
+      <block subset="none" type="note">
+        <para>Although <see cref="F:System.Security.Permissions.EnvironmentPermissionAccess.NoAccess" /> and <see cref="F:System.Security.Permissions.EnvironmentPermissionAccess.AllAccess" /> appear in <see cref="T:System.Security.Permissions.EnvironmentPermissionAccess" />, they are not valid for use as the parameter for <see cref="M:System.Security.Permissions.EnvironmentPermission.GetPathList(System.Security.Permissions.EnvironmentPermissionAccess)" /> because they describe no environment variable access types or all environment variable access types, respectively, and <see cref="M:System.Security.Permissions.EnvironmentPermission.GetPathList(System.Security.Permissions.EnvironmentPermissionAccess)" /> expects a single environment variable access type.</para>
+      </block>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies access to environment variables.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllAccess">
@@ -50,10 +52,12 @@ class.</block>
       <Parameters />
       <MemberValue>AllAccess</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies read and write access to one or more environment variables.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Security.Permissions.EnvironmentPermissionAccess.Read" /> and <see cref="F:System.Security.Permissions.EnvironmentPermissionAccess.Write" /> access to environment variables. <see cref="F:System.Security.Permissions.EnvironmentPermissionAccess.AllAccess" /> represents multiple <see cref="T:System.Security.Permissions.EnvironmentPermissionAccess" /> values and causes an <see cref="T:System.ArgumentException" /> when used as the <paramref name="flag" /> parameter for the <see cref="M:System.Security.Permissions.EnvironmentPermission.GetPathList(System.Security.Permissions.EnvironmentPermissionAccess)" /> method, which expects a single value.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -73,10 +77,11 @@ class.</block>
       <Parameters />
       <MemberValue>NoAccess</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies no access to one or more environment variables.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No access to environment variables. <see cref="F:System.Security.Permissions.EnvironmentPermissionAccess.NoAccess" /> represents no valid <see cref="T:System.Security.Permissions.EnvironmentPermissionAccess" /> values and causes an <see cref="T:System.ArgumentException" /> when used as the parameter for <see cref="M:System.Security.Permissions.EnvironmentPermission.GetPathList(System.Security.Permissions.EnvironmentPermissionAccess)" />, which expects a single value.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -96,15 +101,11 @@ class.</block>
       <Parameters />
       <MemberValue>Read</MemberValue>
       <Docs>
-        <summary>
-          <para> 
-      Specifies read access to one or more environment variables</para>
-          <para>
-            <block subset="none" type="note">Changing, deleting and creating 
-      environment variables is not included in this access level.</block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only read access to environment variables is specified. Changing, deleting and creating environment variables is not included in this access level.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -124,15 +125,11 @@ class.</block>
       <Parameters />
       <MemberValue>Write</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies write access to one or more environment variables. Write
-      access includes creating and deleting environment variables as well as changing existing values.</para>
-          <para>
-            <block subset="none" type="note">Reading environment variables is not 
-      included in this access level.</block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only write access to environment variables is specified. Write access includes creating and deleting environment variables as well as changing existing values. Reading environment variables is not included in this access level.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

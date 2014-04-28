@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileOptions" FullName="System.IO.FileOptions">
   <TypeSignature Language="C#" Value="public enum FileOptions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FileOptions extends System.Enum" />
@@ -18,9 +19,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents advanced options for creating a <see cref="T:System.IO.FileStream" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Asynchronous">
@@ -35,8 +39,11 @@
         <ReturnType>System.IO.FileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a file can be used for asynchronous reading and writing. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DeleteOnClose">
@@ -51,8 +58,11 @@
         <ReturnType>System.IO.FileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a file is automatically deleted when it is no longer in use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Encrypted">
@@ -67,8 +77,11 @@
         <ReturnType>System.IO.FileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a file is encrypted and can be decrypted only by using the same user account used for encryption.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -83,8 +96,11 @@
         <ReturnType>System.IO.FileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that no additional options should be used when creating a <see cref="T:System.IO.FileStream" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RandomAccess">
@@ -99,8 +115,11 @@
         <ReturnType>System.IO.FileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the file is accessed randomly. The system can use this as a hint to optimize file caching.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SequentialScan">
@@ -115,8 +134,15 @@
         <ReturnType>System.IO.FileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifying this flag can increase performance for applications that read large files using sequential access. Performance gains can be even more noticeable for applications that read large files mostly sequentially, but occasionally skip over small ranges of bytes.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the file is to be accessed sequentially from beginning to end. The system can use this as a hint to optimize file caching. If an application moves the file pointer for random access, optimum caching may not occur; however, correct operation is still guaranteed. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteThrough">
@@ -131,8 +157,11 @@
         <ReturnType>System.IO.FileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the system should write through any intermediate cache and go directly to disk.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

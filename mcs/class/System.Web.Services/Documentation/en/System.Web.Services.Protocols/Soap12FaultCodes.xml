@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Soap12FaultCodes" FullName="System.Web.Services.Protocols.Soap12FaultCodes">
   <TypeSignature Language="C#" Value="public sealed class Soap12FaultCodes" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A SOAP fault in version 1.2 of the SOAP specification contains a Code element and among other things an optional Subcode element. The Code element is one of a pre-defined set of codes, informing a recipient that the cause of the error fell into one of five large error categories. Those five fault codes are represented by the <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.ReceiverFaultCode" />, <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.SenderFaultCode" />, <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.VersionMismatchFaultCode" />, <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.MustUnderstandFaultCode" />, and <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.DataEncodingUnknownFaultCode" /> fields. The Subcode element allows the sender of the SOAP fault to provide an application-specific error code. ASP.NET defines two such codes that are represented by the <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.RpcProcedureNotPresentFaultCode" />, <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.RpcBadArgumentsFaultCode" />, <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.EncodingMissingIDFaultCode" />, and <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.EncodingUntypedValueFaultCode" /> fields.</para>
+      <para>An XML Web service throwing an exception sets the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property, which represents the Code element, when a new instance of the <see cref="T:System.Web.Services.Protocols.SoapException" /> or <see cref="T:System.Web.Services.Protocols.SoapHeaderException" /> class is created. That error is transmitted over the wire as a SOAP fault, which a .NET Framework client can catch as a <see cref="T:System.Web.Services.Protocols.SoapException" /> or <see cref="T:System.Web.Services.Protocols.SoapHeaderException" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the SOAP fault codes that appear in a SOAP message when an error occurs while communicating with XML Web services using the SOAP version 1.2 protocol.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DataEncodingUnknownFaultCode">
@@ -21,9 +29,15 @@
         <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET does not automatically throw a <see cref="T:System.Web.Services.Protocols.SoapException" /> with the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property set to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.DataEncodingUnknownFaultCode" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the SOAP version 1.2 DataEncodingUnknown fault code indicating the SOAP message is encoded in an unrecognized format.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -36,9 +50,12 @@
         <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the fault code for missing ID in SOAP encoding data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,9 +68,16 @@
         <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET does not automatically throw a <see cref="T:System.Web.Services.Protocols.SoapException" /> with the <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property set to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.EncodingUntypedValueFaultCode" />.</para>
+          <para>The <see cref="T:System.Web.Services.Protocols.SoapException" /> class has a <see cref="P:System.Web.Services.Protocols.SoapException.Subcode" /> property of type <see cref="T:System.Web.Services.Protocols.SoapFaultSubcode" /> that represents the SOAP fault subcode. The <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property represents the URI for the actual SOAP fault subcode. When setting the <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.EncodingUntypedValueFaultCode" />, set the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.SenderFaultCode" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the SOAP version 1.2 enc:UntypedValue fault subcode indicating that the SOAP message was RPC-encoded and the type name property of an encoded graph node was not specified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -66,9 +90,16 @@
         <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not all SOAP headers require processing by the recipient. However, if a SOAP header is marked with the MustUnderstand attribute equal to "true", processing is required. Failure to process the header when it resides within a SOAP 1.2 request generates a <see cref="T:System.Web.Services.Protocols.SoapHeaderException" /> with the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property set to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.MustUnderstandFaultCode" />. If the SOAP request resided within a SOAP 1.1 request, the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property is set to <see cref="F:System.Web.Services.Protocols.SoapException.MustUnderstandFaultCode" />.</para>
+          <para>Both SOAP 1.1 and 1.2 define MustUnderstand SOAP fault codes differing only by the version of the SOAP protocol used to send the SOAP message. This field represents the SOAP 1.2 version, and the SOAP 1.1 version is represented by <see cref="F:System.Web.Services.Protocols.SoapException.MustUnderstandFaultCode" />. The two fields map to different qualified names, but you can check whether the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property is either one of the fault codes by calling the <see cref="M:System.Web.Services.Protocols.SoapException.IsMustUnderstandFaultCode(System.Xml.XmlQualifiedName)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the SOAP version 1.2 MustUnderstand fault code indicating a SOAP header marked with the MustUnderstand attribute was not processed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,9 +112,16 @@
         <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Protocols.SoapException" /> is thrown with the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property set to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.ReceiverFaultCode" /> when a server is called and it could not respond to a request due to network problems. Typically, with this type of exception, the client call may succeed later.</para>
+          <para>The Receiver SOAP fault code is similar to the Server fault code, which is represented by the <see cref="F:System.Web.Services.Protocols.SoapException.ServerFaultCode" /> field, but the Server fault code is used when the SOAP request is sent using SOAP 1.1. To check whether the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property is either the Receiver or Server SOAP fault codes, call the <see cref="M:System.Web.Services.Protocols.SoapException.IsServerFaultCode(System.Xml.XmlQualifiedName)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the SOAP version 1.2 Receiver fault code indicating an error occurred during the processing of a client call on the server due to a problem with the recipient.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -96,9 +134,16 @@
         <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET does not automatically throw a <see cref="T:System.Web.Services.Protocols.SoapException" /> with the <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property set to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.RpcBadArgumentsFaultCode" />.</para>
+          <para>The <see cref="T:System.Web.Services.Protocols.SoapException" /> class has a <see cref="P:System.Web.Services.Protocols.SoapException.Subcode" /> property of type <see cref="T:System.Web.Services.Protocols.SoapFaultSubcode" /> that represents the SOAP fault subcode. The <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property represents the URI for the actual SOAP fault subcode. When setting the <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.RpcBadArgumentsFaultCode" />, set the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.SenderFaultCode" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the SOAP version 1.2 rpc:BadArguments fault subcode indicating that arguments sent to the XML Web service method were incorrect or could not be parsed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -111,9 +156,16 @@
         <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET does not automatically throw a <see cref="T:System.Web.Services.Protocols.SoapException" /> with the <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property set to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.RpcProcedureNotPresentFaultCode" />.</para>
+          <para>The <see cref="T:System.Web.Services.Protocols.SoapException" /> class has a <see cref="P:System.Web.Services.Protocols.SoapException.Subcode" /> property of type <see cref="T:System.Web.Services.Protocols.SoapFaultSubcode" /> that represents the SOAP fault subcode. The <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property represents the URI for the actual SOAP fault subcode. When setting the <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.RpcProcedureNotPresentFaultCode" />, set the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.SenderFaultCode" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the SOAP version 1.2 rpc:ProcedureNotPresent fault subcode indicating the XML Web service does not support the requested XML Web service method.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -126,9 +178,16 @@
         <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Protocols.SoapException" /> is thrown with the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property set to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.SenderFaultCode" /> when a SOAP 1.2 request is malformed or a parameter is missing.</para>
+          <para>The Sender SOAP fault code is similar to the Client fault code, which is represented by the <see cref="F:System.Web.Services.Protocols.SoapException.ClientFaultCode" /> field, but the Client fault code is used when the SOAP request is sent using SOAP 1.1. To check whether the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property is either the Sender or Client SOAP fault codes, call the <see cref="M:System.Web.Services.Protocols.SoapException.IsClientFaultCode(System.Xml.XmlQualifiedName)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the SOAP version 1.2 Sender fault code indicating a client call was not formatted correctly or did not contain the appropriate information.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -141,9 +200,16 @@
         <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Protocols.SoapException" /> is thrown with the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property set to <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.VersionMismatchFaultCode" /> when an XML Web service is configured to only accept SOAP 1.2 requests and it receives a SOAP 1.1 message. Likewise, if an XML Web service is configured to accept only SOAP 1.1 messages and it receives a SOAP 1.2 message, a <see cref="T:System.Web.Services.Protocols.SoapException" /> is thrown with the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property set to <see cref="F:System.Web.Services.Protocols.SoapException.VersionMismatchFaultCode" />. For details on configuring XML Web services, see <format type="text/html"><a href="1F0D71BC-8FAA-4730-B500-2A6C7B5D4F6B">[&lt;topic://cpconConfigurationOptionsForASPNETWebServices&gt;]</a></format>.</para>
+          <para>Both SOAP 1.1 and 1.2 define VersionMismatch SOAP fault codes that differ on the version of the SOAP protocol expected. This field represents the SOAP 1.2 version, whereas the SOAP 1.1 version is represented by <see cref="F:System.Web.Services.Protocols.SoapException.VersionMismatchFaultCode" />. The two fields map to different qualified names, but you can check whether the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property is either one of the fault codes by calling the <see cref="M:System.Web.Services.Protocols.SoapException.IsVersionMismatchFaultCode(System.Xml.XmlQualifiedName)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the SOAP version 1.2 VersionMismatch fault code indicating the XML Web service expected SOAP messages conforming to the SOAP 1.2 specification, yet received one conforming to SOAP 1.1.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

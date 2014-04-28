@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProcessModelComAuthenticationLevel" FullName="System.Web.Configuration.ProcessModelComAuthenticationLevel">
   <TypeSignature Language="C#" Value="public enum ProcessModelComAuthenticationLevel" />
   <AssemblyInfo>
@@ -8,9 +9,19 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.ProcessModelComAuthenticationLevel" /> enumerates the values to use when you set the <see cref="P:System.Web.Configuration.ProcessModelSection.ComAuthenticationLevel" /> property.</para>
+      <para>The default is <see cref="F:System.Web.Configuration.ProcessModelComAuthenticationLevel.Connect" />.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.Configuration.ProcessModelComAuthenticationLevel" /> settings are relevant only when you use the ASP.NET process model (Internet Information Services [IIS] 5.n or compatible mode on IIS 6 only).</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the level of authentication for DCOM security.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Call">
@@ -20,8 +31,15 @@
         <ReturnType>System.Web.Configuration.ProcessModelComAuthenticationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DCOM authenticates the credentials of the client when the server receives the request at the beginning of each remote procedure call.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that DCOM authenticates the credentials of the client. This field is constant.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +52,16 @@
         <ReturnType>System.Web.Configuration.ProcessModelComAuthenticationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DCOM authenticates the credentials of the client only when the client establishes a relationship with the server.</para>
+          <para>This is the default value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that DCOM authenticates the credentials of the client. This field is constant.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +74,15 @@
         <ReturnType>System.Web.Configuration.ProcessModelComAuthenticationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DCOM determines the authentication level using its normal security-negotiation algorithm.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that DCOM determines the authentication level. This field is constant. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +95,11 @@
         <ReturnType>System.Web.Configuration.ProcessModelComAuthenticationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies no authentication. This field is constant. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +112,15 @@
         <ReturnType>System.Web.Configuration.ProcessModelComAuthenticationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The datagram transports always use Pkt authentication.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that DCOM verifies that all data received is from the expected client. This field is constant. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -90,8 +133,15 @@
         <ReturnType>System.Web.Configuration.ProcessModelComAuthenticationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DCOM verifies that none of the data transferred between the client and the server has been modified.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that DCOM authenticates and verifies the data transferred. This field is constant. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,8 +154,15 @@
         <ReturnType>System.Web.Configuration.ProcessModelComAuthenticationLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DCOM authenticates all previous levels and encrypts the argument value of each remote procedure call.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that DCOM authenticates all previous levels and does encryption. This field is constant. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

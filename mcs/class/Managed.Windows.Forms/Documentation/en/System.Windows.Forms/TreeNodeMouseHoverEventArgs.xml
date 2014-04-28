@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TreeNodeMouseHoverEventArgs" FullName="System.Windows.Forms.TreeNodeMouseHoverEventArgs">
   <TypeSignature Language="C#" Value="public class TreeNodeMouseHoverEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.TreeView.NodeMouseHover" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +25,14 @@
         <Parameter Name="node" Type="System.Windows.Forms.TreeNode" />
       </Parameters>
       <Docs>
-        <param name="node">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.TreeNodeMouseHoverEventArgs" /> class. </para>
+        </summary>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.TreeNode" /> the mouse pointer is currently resting on.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +45,13 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node the mouse pointer is currently resting on.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

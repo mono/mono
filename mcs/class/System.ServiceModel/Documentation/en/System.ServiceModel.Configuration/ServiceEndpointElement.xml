@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceEndpointElement" FullName="System.ServiceModel.Configuration.ServiceEndpointElement">
   <TypeSignature Language="C#" Value="public sealed class ServiceEndpointElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ServiceEndpointElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that provides settings for binding, contract, and address properties for a service endpoint, which is used to expose services. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.ServiceEndpointElement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Address">
@@ -43,9 +50,15 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The address can be specified as an absolute or relative address. If a relative address is provided, the host is expected to provide a base address appropriate for the transport scheme used in the binding. If an address is not configured, the base address is assumed to be the address for that endpoint.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a URI that contains the address of the endpoint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BehaviorConfiguration">
@@ -67,9 +80,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that contains the name of the behavior to be used for the endpoint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Binding">
@@ -91,9 +107,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type must have a registered configuration section in order to be referenced. The type is registered by section name, rather than by the type name of the binding.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that specifies the type of binding to use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingConfiguration">
@@ -115,9 +137,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The binding name must be in scope when the endpoint is defined.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that contains the binding name of the binding to use when the endpoint is instantiated.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingName">
@@ -139,9 +167,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that defines the qualified name of the binding for definition export through WSDL.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingNamespace">
@@ -163,9 +194,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that defines the qualified name of the namespace of the binding for definition export through WSDL.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Contract">
@@ -187,9 +221,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The assembly must implement the contract type. If a service implementation implements a single contract type, then this property can be omitted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that specifies which contract this endpoint is exposing.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EndpointConfiguration">
@@ -211,9 +251,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the standard endpoint that is set by the <see cref="P:System.ServiceModel.Configuration.ServiceEndpointElement.Kind" /> property, which references to the additional configuration information of this standard endpoint. The same name must be defined in the <see cref="T:System.ServiceModel.Configuration.StandardEndpointsSection" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -232,9 +275,12 @@
         <ReturnType>System.ServiceModel.Configuration.AddressHeaderCollectionElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of address headers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Identity">
@@ -253,9 +299,12 @@
         <ReturnType>System.ServiceModel.Configuration.IdentityElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a configuration element that specifies the authentication of an endpoint by other endpoints exchanging messages with it.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsSystemEndpoint">
@@ -274,9 +323,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether this service endpoint is an infrastructure endpoint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Kind">
@@ -298,9 +350,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of standard endpoint applied. The type must be registered in the &lt;extensions&gt; section or in machine.config. If nothing is specified, a common service endpoint is created.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListenUri">
@@ -319,9 +374,12 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URI at which the service endpoint listens.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ListenUriMode">
@@ -340,9 +398,12 @@
         <ReturnType>System.ServiceModel.Description.ListenUriMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies how the transport treats the <see cref="P:System.ServiceModel.Configuration.ServiceEndpointElement.ListenUri" /> provided for the service to listen on.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -364,9 +425,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of this configuration element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">

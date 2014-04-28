@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SortOption" FullName="System.DirectoryServices.SortOption">
   <TypeSignature Language="C#" Value="public class SortOption" />
   <AssemblyInfo>
@@ -68,8 +69,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="M:System.DirectoryServices.SortOption.#ctor" /> class.          </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -80,10 +84,15 @@
         <Parameter Name="direction" Type="System.DirectoryServices.SortDirection" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
-        <param name="propertyName">To be added.</param>
-        <param name="direction">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.DirectoryServices.SortOption" /> class, which contains the specified property name and specified sort direction.          </para>
+        </summary>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property to sort by. The <see cref="P:System.DirectoryServices.SortOption.PropertyName" /> property is set to this value.</param>
+        <param name="direction">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.DirectoryServices.SortDirection" /> values. The <see cref="P:System.DirectoryServices.SortOption.Direction" /> property is set to this value.</param>
       </Docs>
     </Member>
     <Member MemberName="PropertyName">
@@ -101,9 +110,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the property to sort on.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Direction">
@@ -121,14 +133,20 @@
         <ReturnType>System.DirectoryServices.SortDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the direction in which to sort the results of a query.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how to sort the results of a search.          </para>
+    </summary>
   </Docs>
 </Type>

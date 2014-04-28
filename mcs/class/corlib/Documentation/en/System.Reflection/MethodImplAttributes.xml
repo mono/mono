@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MethodImplAttributes" FullName="System.Reflection.MethodImplAttributes">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum MethodImplAttributes" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed MethodImplAttributes extends System.Enum" />
@@ -18,8 +19,71 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The attributes are combined using the bitwise OR operation as follows: </para>
+      <para>Code implementation masks: </para>
+      <list type="bullet">
+        <item>
+          <para>CodeTypeMask </para>
+        </item>
+        <item>
+          <para>IL  </para>
+        </item>
+        <item>
+          <para>Native </para>
+        </item>
+        <item>
+          <para>OPTIL </para>
+        </item>
+        <item>
+          <para>Runtime </para>
+        </item>
+      </list>
+      <para>Managed masks: </para>
+      <list type="bullet">
+        <item>
+          <para>ManagedMask </para>
+        </item>
+        <item>
+          <para>Unmanaged </para>
+        </item>
+        <item>
+          <para>Managed </para>
+        </item>
+      </list>
+      <para>Implementation information and interop masks: </para>
+      <list type="bullet">
+        <item>
+          <para>ForwardRef </para>
+        </item>
+        <item>
+          <para>PreserveSig </para>
+        </item>
+        <item>
+          <para>InternalCall </para>
+        </item>
+        <item>
+          <para>Synchronized </para>
+        </item>
+        <item>
+          <para>NoInlining </para>
+        </item>
+        <item>
+          <para>NoOptimization </para>
+        </item>
+        <item>
+          <para>MaxMethodImplVal </para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>Locking on the instance or on the type, as with the <see cref="F:System.Reflection.MethodImplAttributes.Synchronized" /> flag, is not recommended for public types, because code other than your own can take locks on public types and instances. This might cause deadlocks or other synchronization problems.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies flags for the attributes of a method implementation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AggressiveInlining">
@@ -33,7 +97,10 @@
         <ReturnType>System.Reflection.MethodImplAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method should be inlined wherever possible.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CodeTypeMask">
@@ -50,8 +117,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies flags about code type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ForwardRef">
@@ -68,8 +138,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method is not defined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IL">
@@ -86,8 +159,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method implementation is in Microsoft intermediate language (MSIL).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InternalCall">
@@ -104,8 +180,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies an internal call.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Managed">
@@ -122,8 +201,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method is implemented in managed code. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ManagedMask">
@@ -140,8 +222,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies whether the method is implemented in managed or unmanaged code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxMethodImplVal">
@@ -158,8 +243,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a range check value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Native">
@@ -176,8 +264,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method implementation is native.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoInlining">
@@ -194,8 +285,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method cannot be inlined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoOptimization">
@@ -210,7 +304,10 @@
         <ReturnType>System.Reflection.MethodImplAttributes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method is not optimized by the just-in-time (JIT) compiler or by native code generation (see <format type="text/html"><a href="44bf97aa-a9a4-4eba-9a0d-cfaa6fc53a66">Ngen.exe</a></format>) when debugging possible code generation problems.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OPTIL">
@@ -227,8 +324,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method implementation is in Optimized Intermediate Language (OPTIL).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreserveSig">
@@ -245,8 +345,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method signature is exported exactly as declared.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Runtime">
@@ -263,8 +366,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method implementation is provided by the runtime.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Synchronized">
@@ -281,8 +387,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method is single-threaded through the body. Static methods (Shared in Visual Basic) lock on the type, whereas instance methods lock on the instance. You can also use the C# <format type="text/html"><a href="656DA1A4-707E-4EF6-9C6E-6D13B646AF42">lock statement</a></format> or the Visual Basic <format type="text/html"><a href="14501703-298f-4d43-b139-c4b6366af176">SyncLock statement</a></format> for this purpose. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unmanaged">
@@ -299,8 +408,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method is implemented in unmanaged code.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

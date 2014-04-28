@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RoleManagerEventArgs" FullName="System.Web.Security.RoleManagerEventArgs">
   <TypeSignature Language="C#" Value="public sealed class RoleManagerEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.RoleManagerEventArgs" /> object provides event information to the <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event of the <see cref="T:System.Web.Security.RoleManagerModule" /> class. The <see cref="T:System.Web.Security.RoleManagerEventArgs" /> object provides access to the <see cref="T:System.Web.HttpContext" /> of the current request, and a Boolean <see cref="P:System.Web.Security.RoleManagerEventArgs.RolesPopulated" /> property is used to enable or cancel creation of a <see cref="T:System.Web.Security.RolePrincipal" /> by the <see cref="T:System.Web.Security.RoleManagerModule" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides event data for the <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event of the <see cref="T:System.Web.Security.RoleManagerModule" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +28,17 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Security.RoleManagerEventArgs" /> object provides event information to the <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event of the <see cref="T:System.Web.Security.RoleManagerModule" /> class. The <see cref="T:System.Web.Security.RoleManagerEventArgs" /> object provides access to the <see cref="T:System.Web.HttpContext" /> of the current request, and a Boolean <see cref="P:System.Web.Security.RoleManagerEventArgs.RolesPopulated" /> property is used to enable or cancel creation of a <see cref="T:System.Web.Security.RolePrincipal" /> by the <see cref="T:System.Web.Security.RoleManagerModule" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Web.Security.RoleManagerEventArgs" /> class and sets the <see cref="P:System.Web.Security.RoleManagerEventArgs.Context" /> property to the specified <see cref="T:System.Web.HttpContext" />.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> of the current request.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +51,16 @@
         <ReturnType>System.Web.HttpContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Security.RoleManagerEventArgs" /> object provides event information to the <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event of the <see cref="T:System.Web.Security.RoleManagerModule" /> class. The <see cref="P:System.Web.Security.RoleManagerEventArgs.Context" /> property provides access to the <see cref="T:System.Web.HttpContext" /> of the current request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpContext" /> for the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +73,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Security.RoleManagerEventArgs.RolesPopulated" /> property is used to enable or cancel creation of a <see cref="T:System.Web.Security.RolePrincipal" /> by the <see cref="T:System.Web.Security.RoleManagerModule" />.</para>
+          <para>If set to true in the <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event, then the <see cref="T:System.Web.Security.RoleManagerModule" /> assumes that role membership for the current user has been verified and any required role membership information has been set up for the current user. No action is taken by the <see cref="T:System.Web.Security.RoleManagerModule" /> to create a <see cref="T:System.Web.Security.RolePrincipal" /> object for the current user.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether role information has been applied to the current user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

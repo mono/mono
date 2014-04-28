@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PropertyAttributes" FullName="System.Reflection.PropertyAttributes" FullNameSP="System_Reflection_PropertyAttributes" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable PropertyAttributes extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum PropertyAttributes" />
@@ -22,13 +23,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-   Defines the attributes that can be associated with a
-   property.
-</summary>
     <remarks>
-      <para>This enumeration is used by the <see cref="P:System.Reflection.PropertyInfo.Attributes" /> property.</para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To get the PropertyAttributes, first get the class Type. From the Type, get the PropertyInfo. From the PropertyInfo, get the Attributes.</para>
+      <para>The enumerated value is a number representing the bitwise OR of the attributes implemented on the method.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the attributes that can be associated with a property. These attribute values are defined in corhdr.h.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="HasDefault">
@@ -47,10 +50,11 @@
       <Parameters />
       <MemberValue>HasDefault</MemberValue>
       <Docs>
+        <remarks>To be added.</remarks>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies that the property has a default value.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -70,10 +74,11 @@
       <Parameters />
       <MemberValue>None</MemberValue>
       <Docs>
+        <remarks>To be added.</remarks>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies that no attributes are associated with a property.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -91,8 +96,11 @@
       </ReturnValue>
       <MemberValue>Reserved2</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reserved3">
@@ -109,8 +117,11 @@
       </ReturnValue>
       <MemberValue>Reserved3</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reserved4">
@@ -127,8 +138,11 @@
       </ReturnValue>
       <MemberValue>Reserved4</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReservedMask">
@@ -145,8 +159,11 @@
       </ReturnValue>
       <MemberValue>ReservedMask</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a flag reserved for runtime use only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RTSpecialName">
@@ -163,8 +180,11 @@
       </ReturnValue>
       <MemberValue>RTSpecialName</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the metadata internal APIs check the name encoding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SpecialName">
@@ -183,16 +203,11 @@
       <Parameters />
       <MemberValue>SpecialName</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that the property is treated in a special way by some tools. </para>
-          <block subset="none" type="note">
-            <para>For more information on special names, see Partition I of the CLI 
-         Specification.</para>
-            <para>For more information on <see langword="SpecialName " />in metadata, see 
-      Partition II of the CLI Specification.</para>
-          </block>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the property is special, with the name describing how the property is special.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

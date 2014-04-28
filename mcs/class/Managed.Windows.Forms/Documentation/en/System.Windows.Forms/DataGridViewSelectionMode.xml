@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewSelectionMode" FullName="System.Windows.Forms.DataGridViewSelectionMode">
   <TypeSignature Language="C#" Value="public enum DataGridViewSelectionMode" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used to set the <see cref="P:System.Windows.Forms.DataGridView.SelectionMode" /> property of a <see cref="T:System.Windows.Forms.DataGridView" /> control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes how cells of a DataGridView control can be selected.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CellSelect">
@@ -20,8 +27,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewSelectionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One or more individual cells can be selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewSelectionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column will be selected by clicking in the column's header cell. An individual cell can be selected by clicking that cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewSelectionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The entire column will be selected by clicking the column's header or a cell contained in that column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +78,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewSelectionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The entire row will be selected by clicking its row's header or a cell contained in that row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +95,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewSelectionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row will be selected by clicking in the row's header cell. An individual cell can be selected by clicking that cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

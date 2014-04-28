@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProfileEventArgs" FullName="System.Web.Profile.ProfileEventArgs">
   <TypeSignature Language="C#" Value="public sealed class ProfileEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="T:System.Web.Profile.ProfileEventArgs" /> class during the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event to specify a custom user profile. If, when the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event completes, the <see cref="T:System.Web.Profile.ProfileEventArgs" /> parameter of the <see cref="T:System.Web.Profile.ProfileEventHandler" /> has its <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property set to a value that’s not null, then the <see cref="T:System.Web.Profile.ProfileModule" /> uses the value of the <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property in the current <see cref="T:System.Web.HttpContext" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +28,17 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.Profile.ProfileEventArgs.#ctor(System.Web.HttpContext)" /> creates an instance of the <see cref="T:System.Web.Profile.ProfileEventArgs" /> class and sets the <see cref="P:System.Web.Profile.ProfileEventArgs.Context" /> property to the specified <see cref="T:System.Web.HttpContext" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of the <see cref="T:System.Web.Profile.ProfileEventArgs" /> class.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpContext" /> of the current request.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +51,16 @@
         <ReturnType>System.Web.HttpContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Profile.ProfileEventArgs" /> object provides event information to the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class. The <see cref="P:System.Web.Profile.ProfileEventArgs.Context" /> property provides access to the <see cref="T:System.Web.HttpContext" /> of the current request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpContext" /> for the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +73,19 @@
         <ReturnType>System.Web.Profile.ProfileBase</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property during the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event to specify a custom user profile. If, when the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event completes, the <see cref="T:System.Web.Profile.ProfileEventArgs" /> parameter of the <see cref="T:System.Web.Profile.ProfileEventHandler" /> has its <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property set to a value that’s not null, then the <see cref="T:System.Web.Profile.ProfileModule" /> uses the value of the <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property in the current <see cref="T:System.Web.HttpContext" />.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.Profile.ProfileModule" /> does not set the <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property for the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event. The <see cref="T:System.Web.Profile.ProfileModule" /> only gets the value of the <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property when the code in the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event completes. If the <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property is not explicitly set by application code during the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event, the <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property value will be null.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the user profile for the current request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

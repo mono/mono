@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ELEMDESC" FullName="System.Runtime.InteropServices.ComTypes.ELEMDESC">
   <TypeSignature Language="C#" Value="public struct ELEMDESC" />
   <TypeSignature Language="ILAsm" Value=".class public sequential sealed beforefieldinit ELEMDESC extends System.ValueType" />
@@ -11,9 +12,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about ELEMDESC, see the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the type description and process transfer information for a variable, function, or a function parameter.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="desc">
@@ -28,9 +36,12 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.ELEMDESC+DESCUNION</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains information about an element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="tdesc">
@@ -45,9 +56,15 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.TYPEDESC</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ELEMDESC, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Identifies the type of the element.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

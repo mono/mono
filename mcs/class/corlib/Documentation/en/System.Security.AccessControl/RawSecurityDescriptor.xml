@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RawSecurityDescriptor" FullName="System.Security.AccessControl.RawSecurityDescriptor">
   <TypeSignature Language="C#" Value="public sealed class RawSecurityDescriptor : System.Security.AccessControl.GenericSecurityDescriptor" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit RawSecurityDescriptor extends System.Security.AccessControl.GenericSecurityDescriptor" />
@@ -11,9 +12,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a security descriptor. A security descriptor includes an owner, a primary group, a Discretionary Access Control List (DACL), and a System Access Control List (SACL).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,10 +32,14 @@
         <Parameter Name="sddlForm" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="sddlForm">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> class from the specified Security Descriptor Definition Language (SDDL) string.</para>
+        </summary>
+        <param name="sddlForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The SDDL string from which to create the new <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -47,11 +55,16 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="binaryForm">To be added.</param>
-        <param name="offset">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> class from the specified array of byte values.</para>
+        </summary>
+        <param name="binaryForm">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of byte values from which to create the new <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The offset in the  <paramref name="binaryForm" /> array at which to begin copying.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -70,14 +83,22 @@
         <Parameter Name="discretionaryAcl" Type="System.Security.AccessControl.RawAcl" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <param name="owner">To be added.</param>
-        <param name="group">To be added.</param>
-        <param name="systemAcl">To be added.</param>
-        <param name="discretionaryAcl">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> class with the specified values.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that specify behavior of the new <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object.</param>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The owner for the new <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object.</param>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The primary group for the new <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object.</param>
+        <param name="systemAcl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The System Access Control List (SACL) for the new <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object.</param>
+        <param name="discretionaryAcl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Discretionary Access Control List (DACL) for the new <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="ControlFlags">
@@ -92,10 +113,13 @@
         <ReturnType>System.Security.AccessControl.ControlFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets values that specify behavior of the <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DiscretionaryAcl">
@@ -110,10 +134,13 @@
         <ReturnType>System.Security.AccessControl.RawAcl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the Discretionary Access Control List (DACL) for this <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object. The DACL contains access rules.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Group">
@@ -128,10 +155,13 @@
         <ReturnType>System.Security.Principal.SecurityIdentifier</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the primary group for this <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Owner">
@@ -146,10 +176,13 @@
         <ReturnType>System.Security.Principal.SecurityIdentifier</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the owner of the object associated with this <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ResourceManagerControl">
@@ -164,10 +197,16 @@
         <ReturnType>System.Byte</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resource manager control bits contain information specific to the resource manager accessing the security descriptor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a byte value that represents the resource manager control bits associated with this <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetFlags">
@@ -185,10 +224,14 @@
         <Parameter Name="flags" Type="System.Security.AccessControl.ControlFlags" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="P:System.Security.AccessControl.RawSecurityDescriptor.ControlFlags" /> property of this <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object to the specified value.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />One or more values of the <see cref="T:System.Security.AccessControl.ControlFlags" /> enumeration combined with a logical OR operation.</param>
       </Docs>
     </Member>
     <Member MemberName="SystemAcl">
@@ -203,10 +246,13 @@
         <ReturnType>System.Security.AccessControl.RawAcl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the System Access Control List (SACL) for this <see cref="T:System.Security.AccessControl.RawSecurityDescriptor" /> object. The SACL contains audit rules.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

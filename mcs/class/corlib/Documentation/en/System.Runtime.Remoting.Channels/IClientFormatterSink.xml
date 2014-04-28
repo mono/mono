@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IClientFormatterSink" FullName="System.Runtime.Remoting.Channels.IClientFormatterSink">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IClientFormatterSink : System.Runtime.Remoting.Channels.IClientChannelSink, System.Runtime.Remoting.Messaging.IMessageSink" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IClientFormatterSink implements class System.Runtime.Remoting.Channels.IChannelSinkBase, class System.Runtime.Remoting.Channels.IClientChannelSink, class System.Runtime.Remoting.Messaging.IMessageSink" />
@@ -23,8 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Formatter sinks must implement both <see cref="T:System.Runtime.Remoting.Messaging.IMessageSink" /> and <see cref="T:System.Runtime.Remoting.Channels.IClientChannelSink" />. <see cref="T:System.Runtime.Remoting.Channels.IClientFormatterSink" /> combines these into one interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Marks a sink as a client formatter sink that serializes messages into a stream.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

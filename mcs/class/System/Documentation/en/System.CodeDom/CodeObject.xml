@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeObject" FullName="System.CodeDom.CodeObject">
   <TypeSignature Language="C#" Value="public class CodeObject" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeObject extends System.Object" />
@@ -23,8 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is the base class for most CodeDOM objects.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a common base class for most Code Document Object Model (CodeDOM) objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeObject" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UserData">
@@ -56,9 +66,12 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Collections.IDictionary'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the user-definable data for the current object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

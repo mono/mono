@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataControlRowState" FullName="System.Web.UI.WebControls.DataControlRowState">
   <TypeSignature Language="C#" Value="public enum DataControlRowState" />
   <AssemblyInfo>
@@ -13,9 +14,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> enumeration identifies the state of a row in a data control such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> or <see cref="T:System.Web.UI.WebControls.GridView" />. A row's state can be one or a combination of the <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> values, so use bitwise operations to determine whether the state of the row includes a <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> value, rather than an equivalence test. The <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> enumeration is used for any type of row, not just <see cref="F:System.Web.UI.WebControls.DataControlRowType.DataRow" /> rows (typically, the state of header and footer rows is set to <see cref="F:System.Web.UI.WebControls.DataControlRowState.Normal" />).</para>
+      <para>You can use the <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> enumeration to identify the state of a <see cref="T:System.Web.UI.WebControls.GridViewRow" /> or <see cref="T:System.Web.UI.WebControls.DetailsViewRow" /> object when enumerating through a <see cref="T:System.Web.UI.WebControls.GridViewRowCollection" /> or <see cref="T:System.Web.UI.WebControls.DetailsViewRowCollection" /> collection, respectively. If you are writing a data control that uses rows, you can use the <see cref="T:System.Web.UI.WebControls.DataControlRowState" /> enumeration to identify when to render different colors for a row (the <see cref="F:System.Web.UI.WebControls.DataControlRowState.Alternate" /> value), or controls that are enabled or disabled for editing a row (the <see cref="F:System.Web.UI.WebControls.DataControlRowState.Edit" /> and <see cref="F:System.Web.UI.WebControls.DataControlRowState.Insert" /> values).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the state of a row in a data control, such as <see cref="T:System.Web.UI.WebControls.DetailsView" /> or <see cref="T:System.Web.UI.WebControls.GridView" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Alternate">
@@ -25,8 +33,15 @@
         <ReturnType>System.Web.UI.WebControls.DataControlRowState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="F:System.Web.UI.WebControls.DataControlRowState.Alternate" /> state can be combined with other states, such as <see cref="F:System.Web.UI.WebControls.DataControlRowState.Normal" />, <see cref="F:System.Web.UI.WebControls.DataControlRowState.Edit" />, or <see cref="F:System.Web.UI.WebControls.DataControlRowState.Insert" />, at any time. These rows might be affected by the AlternateRowStyle property of the data control, if set.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the data control row is an alternate row. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +54,11 @@
         <ReturnType>System.Web.UI.WebControls.DataControlRowState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the row is in an edit state, often the result of clicking an edit button for the row. Typically, the <see cref="F:System.Web.UI.WebControls.DataControlRowState.Edit" /> and <see cref="F:System.Web.UI.WebControls.DataControlRowState.Insert" /> states are mutually exclusive.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,8 +71,11 @@
         <ReturnType>System.Web.UI.WebControls.DataControlRowState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the row is a new row, often the result of clicking an insert button to add a new row. Typically, the <see cref="F:System.Web.UI.WebControls.DataControlRowState.Insert" /> and <see cref="F:System.Web.UI.WebControls.DataControlRowState.Edit" /> states are mutually exclusive.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,8 +88,11 @@
         <ReturnType>System.Web.UI.WebControls.DataControlRowState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the data control row is in a normal state. The <see cref="F:System.Web.UI.WebControls.DataControlRowState.Normal" /> state is mutually exclusive with other states except the <see cref="F:System.Web.UI.WebControls.DataControlRowState.Alternate" /> state.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,8 +105,11 @@
         <ReturnType>System.Web.UI.WebControls.DataControlRowState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the row has been selected by the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

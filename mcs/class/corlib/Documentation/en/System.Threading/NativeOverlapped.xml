@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NativeOverlapped" FullName="System.Threading.NativeOverlapped">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct NativeOverlapped" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit NativeOverlapped extends System.ValueType" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Threading.NativeOverlapped" />.NET Framework value type represents an unmanaged version of the Win32 OVERLAPPED structure. The layout of this structure must be identical to OVERLAPPED. Four additional DWORDs are reserved at the end.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an explicit layout that is visible from unmanaged code and that will have the same layout as the Win32 OVERLAPPED structure with additional reserved fields at the end.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="EventHandle">
@@ -37,8 +44,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the handle to an event set to the signaled state when the operation is complete. The calling process must set this member either to zero or to a valid event handle before calling any overlapped functions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InternalHigh">
@@ -55,8 +65,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the length of the data transferred. Reserved for operating system use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InternalLow">
@@ -73,8 +86,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a system-dependent status. Reserved for operating system use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OffsetHigh">
@@ -91,8 +107,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is ignored when reading from or writing to named pipes and communications devices and in those cases its value should be zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the high word of the byte offset at which to start the transfer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OffsetLow">
@@ -109,8 +131,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file position is a byte offset from the start of the file. The calling process sets this member before calling the OR function. This member is ignored when reading from or writing to named pipes and communications devices, and in those cases its value should be zero.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a file position at which to start the transfer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

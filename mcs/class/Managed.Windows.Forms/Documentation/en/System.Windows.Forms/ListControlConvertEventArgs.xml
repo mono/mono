@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ListControlConvertEventArgs" FullName="System.Windows.Forms.ListControlConvertEventArgs">
   <TypeSignature Language="C#" Value="public class ListControlConvertEventArgs : System.Windows.Forms.ConvertEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ListControl.Format" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,12 +27,21 @@
         <Parameter Name="listItem" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="desiredType">To be added.</param>
-        <param name="listItem">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class can be used to build a custom string to display in the <see cref="T:System.Windows.Forms.ListControl" /> from the data source item.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ListControlConvertEventArgs" /> class with the specified object, type, and list item.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value displayed in the <see cref="T:System.Windows.Forms.ListControl" />.</param>
+        <param name="desiredType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> for the displayed item.</param>
+        <param name="listItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data source item to be displayed in the <see cref="T:System.Windows.Forms.ListControl" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,10 +54,13 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a data source item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

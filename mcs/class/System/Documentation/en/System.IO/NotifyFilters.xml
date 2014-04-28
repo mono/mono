@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NotifyFilters" FullName="System.IO.NotifyFilters">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum NotifyFilters" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed NotifyFilters extends System.Enum" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can combine the members of this enumeration to watch for more than one kind of change. For example, you can watch for changes in the size of a file or folder, and for changes in security settings. This raises an event anytime there is a change in size or security settings of a file or folder.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies changes to watch for in a file or folder.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Attributes">
@@ -37,8 +44,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attributes of the file or folder.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreationTime">
@@ -55,8 +65,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The time the file or folder was created.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DirectoryName">
@@ -73,8 +86,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the directory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FileName">
@@ -91,8 +107,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LastAccess">
@@ -109,8 +128,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date the file or folder was last opened.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LastWrite">
@@ -127,8 +149,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date the file or folder last had anything written to it.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Security">
@@ -145,8 +170,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security settings of the file or folder.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Size">
@@ -163,8 +191,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The size of the file or folder.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

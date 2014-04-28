@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PrintAction" FullName="System.Drawing.Printing.PrintAction">
   <TypeSignature Language="C#" Value="public enum PrintAction" />
   <AssemblyInfo>
@@ -8,9 +9,18 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Drawing.Printing.PrintAction" /> is used by the <see cref="T:System.Drawing.Printing.PrintEventArgs" /> type to indicate what type of <see cref="M:System.Drawing.Printing.PrintDocument.Print" /> event is occurring.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="P:System.Drawing.Printing.PrintEventArgs.PrintAction" /> does not reliably indicate the type of print operation occurring, and returns <see cref="F:System.Drawing.Printing.PrintAction.PrintToFile" /> in all cases.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of print operation occurring.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="PrintToFile">
@@ -20,8 +30,11 @@
         <ReturnType>System.Drawing.Printing.PrintAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The print operation is printing to a file.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +47,11 @@
         <ReturnType>System.Drawing.Printing.PrintAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The print operation is a print preview.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +64,11 @@
         <ReturnType>System.Drawing.Printing.PrintAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The print operation is printing to a printer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

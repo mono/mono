@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SerializationEntry" FullName="System.Runtime.Serialization.SerializationEntry">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct SerializationEntry" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit SerializationEntry extends System.ValueType" />
@@ -19,8 +20,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Holds the value, <see cref="T:System.Type" />, and name of a serialized object. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Name">
@@ -36,9 +40,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ObjectType">
@@ -54,9 +61,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the serialized object is null, this property returns the <see cref="T:System.Object" /> type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> of the object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -72,9 +85,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value contained in the object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

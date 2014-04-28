@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="INamingContainer" FullName="System.Web.UI.INamingContainer">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface INamingContainer" />
   <AssemblyInfo>
@@ -10,8 +11,15 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Any control that implements this interface creates a new namespace in which all child control ID attributes are guaranteed to be unique within an entire application. The marker provided by this interface allows unique naming of the dynamically generated server control instances within the Web server controls that support data binding. These controls include the <see cref="T:System.Web.UI.WebControls.Repeater" />, <see cref="T:System.Web.UI.WebControls.DataGrid" />, <see cref="T:System.Web.UI.WebControls.DataList" />, <see cref="T:System.Web.UI.WebControls.CheckBoxList" />, <see cref="T:System.Web.UI.WebControls.ChangePassword" />, <see cref="T:System.Web.UI.WebControls.LoginView" />, <see cref="T:System.Web.UI.WebControls.Menu" />, <see cref="T:System.Web.UI.WebControls.SiteMapNodeItem" />, and <see cref="T:System.Web.UI.WebControls.RadioButtonList" /> controls.</para>
+      <para>When you develop templated controls, you should implement this interface to avoid naming conflicts on a page. For more information, see <format type="text/html"><a href="1d5a99d7-0a72-403e-812e-2c1ab595c810">ASP.NET Control Designers Overview</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a container control that creates a new ID namespace within a <see cref="T:System.Web.UI.Page" /> object's control hierarchy. This is a marker interface only.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

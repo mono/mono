@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Enumerable" FullName="System.Linq.Enumerable">
   <TypeSignature Language="C#" Value="public static class Enumerable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Enumerable extends System.Object" />
@@ -11,8 +12,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The methods in this class provide an implementation of the standard query operators for querying data sources that implement <see cref="T:System.Collections.Generic.IEnumerable`1" />. The standard query operators are general purpose methods that follow the vbteclinq pattern and enable you to express traversal, filter, and projection operations over data in any .NET-based programming language.</para>
+      <para>The majority of the methods in this class are defined as extension methods that extend <see cref="T:System.Collections.Generic.IEnumerable`1" />. This means they can be called like an instance method on any object that implements <see cref="T:System.Collections.Generic.IEnumerable`1" />.</para>
+      <para>Methods that are used in a query that returns a sequence of values do not consume the target data until the query object is enumerated. This is known as deferred execution. Methods that are used in a query that returns a singleton value execute and consume the target data immediately.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of static (Shared in Visual Basic) methods for querying objects that implement <see cref="T:System.Collections.Generic.IEnumerable`1" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Aggregate&lt;TSource&gt;">
@@ -711,10 +720,22 @@
       </Parameters>
       <Docs>
         <typeparam name="TResult">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is implemented by using deferred execution. The immediate return value is an object that stores all the information that is required to perform the action. The query represented by this method is not executed until the object is enumerated either by calling its <unmanagedCodeEntityReference>GetEnumerator</unmanagedCodeEntityReference> method directly or by using foreach in csprcs or For Each in vbprvb.</para>
+          <para>The <see cref="M:System.Linq.Enumerable.Cast``1(System.Collections.IEnumerable)" /> method enables the standard query operators to be invoked on non-generic collections by supplying the necessary type information. For example, <see cref="T:System.Collections.ArrayList" /> does not implement <see cref="T:System.Collections.Generic.IEnumerable`1" />, but by calling <see cref="M:System.Linq.Enumerable.Cast``1(System.Collections.IEnumerable)" /> on the <see cref="T:System.Collections.ArrayList" /> object, the standard query operators can then be used to query the sequence.</para>
+          <para>If an element cannot be cast to type <paramref name="TResult" />, this method will throw an exception. To obtain only those elements that can be cast to type <paramref name="TResult" />, use the <see cref="M:System.Linq.Enumerable.OfType``1(System.Collections.IEnumerable)" /> method instead of <see cref="M:System.Linq.Enumerable.Cast``1(System.Collections.IEnumerable)" />.</para>
+          <para>In a query expression, an explicitly typed iteration variable translates to an invocation of <see cref="M:System.Linq.Enumerable.Cast``1(System.Collections.IEnumerable)" />. This example shows the syntax for an explicitly typed range variable.</para>
+          <code>from int i in objects</code>
+          <code>From i As Integer In objects</code>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Casts the elements of an <see cref="T:System.Collections.IEnumerable" /> to the specified type.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IEnumerable" /> that contains the elements to be cast to type <paramref name="TResult" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Concat&lt;TSource&gt;">
@@ -1027,9 +1048,16 @@
       <Parameters />
       <Docs>
         <typeparam name="TResult">To be added.</typeparam>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Linq.Enumerable.Empty``1" /> method caches an empty sequence of type <paramref name="TResult" />. When the object it returns is enumerated, it yields no elements.</para>
+          <para>In some cases, this method is useful for passing an empty sequence to a user-defined method that takes an <see cref="T:System.Collections.Generic.IEnumerable`1" />. It can also be used to generate a neutral element for methods such as <see cref="M:System.Linq.Enumerable.Union``1(System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEnumerable{``0})" />. See the Example section for an example of this use of <see cref="M:System.Linq.Enumerable.Empty``1" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> that has the specified type argument.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Except&lt;TSource&gt;">
@@ -2923,10 +2951,20 @@
       </Parameters>
       <Docs>
         <typeparam name="TResult">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is implemented by using deferred execution. The immediate return value is an object that stores all the information that is required to perform the action. The query represented by this method is not executed until the object is enumerated either by calling its <unmanagedCodeEntityReference>GetEnumerator</unmanagedCodeEntityReference> method directly or by using foreach in csprcs or For Each in vbprvb.</para>
+          <para>The <see cref="M:System.Linq.Enumerable.OfType``1(System.Collections.IEnumerable)" /> method returns only those elements in <paramref name="source" /> that can be cast to type <paramref name="TResult" />. To instead receive an exception if an element cannot be cast to type <paramref name="TResult" />, use <see cref="M:System.Linq.Enumerable.Cast``1(System.Collections.IEnumerable)" />.</para>
+          <para>This method is one of the few standard query operator methods that can be applied to a collection that has a non-parameterized type, such as an <see cref="T:System.Collections.ArrayList" />. This is because <see cref="M:System.Linq.Enumerable.OfType``1(System.Collections.IEnumerable)" /> extends the type <see cref="T:System.Collections.IEnumerable" />. <see cref="M:System.Linq.Enumerable.OfType``1(System.Collections.IEnumerable)" /> cannot only be applied to collections that are based on the parameterized <see cref="T:System.Collections.Generic.IEnumerable`1" /> type, but collections that are based on the non-parameterized <see cref="T:System.Collections.IEnumerable" /> type also.</para>
+          <para>By applying <see cref="M:System.Linq.Enumerable.OfType``1(System.Collections.IEnumerable)" /> to a collection that implements <see cref="T:System.Collections.IEnumerable" />, you gain the ability to query the collection by using the standard query operators. For example, specifying a type argument of <see cref="T:System.Object" /> to <see cref="M:System.Linq.Enumerable.OfType``1(System.Collections.IEnumerable)" /> would return an object of type <unmanagedCodeEntityReference>IEnumerable&lt;Object&gt;</unmanagedCodeEntityReference> in C# or <unmanagedCodeEntityReference>IEnumerable(Of Object)</unmanagedCodeEntityReference> in vbprvb, to which the standard query operators can be applied.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Filters the elements of an <see cref="T:System.Collections.IEnumerable" /> based on a specified type.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IEnumerable" /> whose elements to filter.</param>
       </Docs>
     </Member>
     <Member MemberName="OrderBy&lt;TSource,TKey&gt;">
@@ -3065,11 +3103,19 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="start">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is implemented by using deferred execution. The immediate return value is an object that stores all the information that is required to perform the action. The query represented by this method is not executed until the object is enumerated either by calling its <unmanagedCodeEntityReference>GetEnumerator</unmanagedCodeEntityReference> method directly or by using foreach in csprcs or For Each in vbprvb.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a sequence of integral numbers within a specified range.</para>
+        </summary>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the first integer in the sequence.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of sequential integers to generate.</param>
       </Docs>
     </Member>
     <Member MemberName="Repeat&lt;TResult&gt;">

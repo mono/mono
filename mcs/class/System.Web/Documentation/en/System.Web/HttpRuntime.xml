@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpRuntime" FullName="System.Web.HttpRuntime">
   <TypeSignature Language="C#" Value="public sealed class HttpRuntime" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,30 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>The main driver for processing Http requests.</summary>
-    <remarks>The HttpRuntime class drives the processing of an incoming request.
-
-<para>
-   To process a request an incoming HTTP request an object of type <see cref="T:System.Web.HttpWorkerRequest" /> is created.  This object acts as a gateway between the System.Web runtime and the web server (two implementations are distributed with Mono: mod_mono to integrate with the Apache server and XSP a lightweight testing server).
-</para><para>
-    The <see cref="T:System.Web.HttpRequest.ProcessRequest (System.Web.HttpWorkerRequest)" /> method drives the request.  It determines based on the url what handler must be employed.  Handlers are registered in the system.web/httpHandler section of the machine.config and per-directory Web.config files. 
-</para><para>
-    The request is then passed to the proper http handler.  For example files ending in .aspx are processed by the internal PageHandlerFactory, files ending in .ashx are processed by the SimplerHandlerFactory and so on.
-</para><para>
-   Users can define their own handlers by listing it on the web.config file like this:
-</para><example><code lang="Web.config">
-    &lt;configuration&gt;
-     &lt;system.web&gt;
-        &lt;httpHandlers&gt;
-          &lt;add verb="GET" path="*.diff" type="GenerateCuteDiff.dll"/&gt;
-        &lt;/httpHandlers&gt;
-     &lt;/system.web&gt;
-    &lt;/configuration&gt;
-  </code></example><para>
-In this example requests made with the HTTP GET method to files ending in the extension "diff" will be handled by GenerateCuteDiff type.  The library must be available on either the GAC or the bin/ directory of the path where the file lives. 
-</para><para>
-    Handlers must implement the <see cref="T:System.Web.IHttpHandlerFactory" /> or <see cref="T:System.Web.IHttpHandler" /> interfaces.
-</para></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.HttpRuntime" /> object is used at the beginning of the ASP.NET pipeline model that processes HTTP requests. The <see cref="M:System.Web.HttpRuntime.ProcessRequest(System.Web.HttpWorkerRequest)" /> method drives all subsequent ASP.NET Web processing. </para>
+      <para>Page developers can use the <see cref="T:System.Web.HttpRuntime" /> class properties to find out information about the current application domain for diagnostic purposes, for example. Developers creating custom process pipeline or a custom hosting environment should call the <see cref="M:System.Web.HttpRuntime.ProcessRequest(System.Web.HttpWorkerRequest)" /> method from a class derived from the <see cref="T:System.Web.HttpWorkerRequest" /> or <see cref="T:System.Web.Hosting.SimpleWorkerRequest" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of ASP.NET run-time services for the current application. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -45,8 +31,11 @@ In this example requests made with the HTTP GET method to files ending in the ex
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>HttpRuntime constructor.</summary>
         <remarks>There is no need to create instances of HttpRuntime.  This is probably a mistake in the original implementation of this class, as all of its public methods and properties are static.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.HttpRuntime" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -60,9 +49,15 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>AppDomainAppID uniquely identifies the application. It does not change after the application is restarted and a new application domain is created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the application identification of the application domain where the <see cref="T:System.Web.HttpRuntime" /> exists.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,9 +71,12 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>Physical application directory for the application.</summary>
         <value>The physical directory path.</value>
         <remarks>The physical path for the application being executed in the current application domain.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical drive path of the application directory for the application hosted in the current application domain.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -92,9 +90,12 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The virtual path for the current application.</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the virtual path of the directory that contains the application hosted in the current application domain.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -108,9 +109,15 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The unique AppDomain ID.</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>AppDomainID changes whenever the application is restarted and a new application domain is created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the domain identification of the application domain where the <see cref="T:System.Web.HttpRuntime" /> instance exists.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -124,9 +131,12 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The directory where the runtime lives.</summary>
         <value>The path where the system libraries are installed.</value>
         <remarks>This directory is also the directory where all the other assemblies and compilers are located.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical path of the directory where the ASP.NET executable files are installed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -140,9 +150,12 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical path to the /bin directory for the current application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -156,9 +169,15 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <ReturnType>System.Web.Caching.Cache</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The cache object</summary>
         <value>The <see cref="T:System.Web.Caching.Cache" /> object.</value>
-        <remarks />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see the <see cref="T:System.Web.Caching.Cache" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.Caching.Cache" /> for the current application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -173,8 +192,14 @@ In this example requests made with the HTTP GET method to files ending in the ex
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is provided for use when your code implements its own hosting environment. There is no need to call this method in the course of normal request processing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Shuts down the <see cref="T:System.Web.HttpRuntime" /> instance.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -188,9 +213,12 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>The directory where the runtime files reside.</summary>
         <value>The directory where all assemblies for the runtime resides.</value>
         <remarks>In Mono this directory contains the assemblies, it does not contain other configuration elements which are installed in a Unix compliant way.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical path to the directory where the common language runtime executable files are installed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -204,9 +232,12 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical path to the directory where ASP.NET stores temporary files (generated sources, compiled assemblies, and so on) for the current application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -220,9 +251,12 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the application is mapped to a universal naming convention (UNC) share.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -236,9 +270,12 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the physical path to the directory where the Machine.config file for the current application is located.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -255,15 +292,16 @@ In this example requests made with the HTTP GET method to files ending in the ex
         <Parameter Name="wr" Type="System.Web.HttpWorkerRequest" />
       </Parameters>
       <Docs>
-        <param name="wr">An <see cref="T:System.Web.HttpWorkerRequest" /> instance.</param>
-        <summary>Processes a request.</summary>
-        <remarks>This method executes the HTTP pipeline.
-
-<para>
-The provided object is the interface between the pipeline and the HTTP Request.   
-</para><para>
-The <see cref="T:System.Web.HttpWorkerRequest" /> class defines the interface that must be exposed by a server so that it can be hooked up to ASP.NET'.   Typically this is a front-end for an incoming HTTP request from the network, but an implementation can do anything it wants and this can be used to process ASP.NET requests even without a network connection.
-</para></remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is provided for use when your code implements its own hosting environment. It also can be used to execute child requests when your code implements its own <see cref="T:System.Web.HttpWorkerRequest" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Drives all ASP.NET Web processing execution.</para>
+        </summary>
+        <param name="wr">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpWorkerRequest" /> for the current application. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -278,8 +316,14 @@ The <see cref="T:System.Web.HttpWorkerRequest" /> class defines the interface th
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>UnloadAppDomain is useful for servers that have a large number of applications that infrequently receive requests. Rather than keep application resources alive for the lifetime of the process, UnloadAppDomain allows programmatic shutdown of unused applications.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Terminates the current application. The application restarts the next time a request is received for it.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

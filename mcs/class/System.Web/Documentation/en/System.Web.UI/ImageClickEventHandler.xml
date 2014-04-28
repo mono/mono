@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ImageClickEventHandler" FullName="System.Web.UI.ImageClickEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void ImageClickEventHandler(object sender, ImageClickEventArgs e);" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This delegate defines the required signature for all click events raised when a user clicks an image-based ASP.NET server control. You must use the signature defined by this delegate for any OnServerClick event handlers that you create for an <see cref="T:System.Web.UI.HtmlControls.HtmlInputImage" /> server control or any OnClick event handlers that you create for an <see cref="T:System.Web.UI.WebControls.ImageButton" /> Web server control.</para>
+      <para>If you create a custom image-based ASP.NET server control that users can click, use this delegate to define the events associated with that user action. </para>
+      <para>For more information about delegates and how they interact with events, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">Events and Delegates</a></format>. For information about how to raise events, see <format type="text/html"><a href="F2ADAF01-1ED1-42E1-8C31-8D467E7E0EE2">Raising an Event</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles any events that are raised when a user clicks an image-based ASP.NET server control.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

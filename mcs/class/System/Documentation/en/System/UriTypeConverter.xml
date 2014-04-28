@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UriTypeConverter" FullName="System.UriTypeConverter">
   <TypeSignature Language="C#" Value="public class UriTypeConverter : System.ComponentModel.TypeConverter" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UriTypeConverter extends System.ComponentModel.TypeConverter" />
@@ -11,9 +12,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Converts a <see cref="T:System.String" /> type to a <see cref="T:System.Uri" /> type, and vice versa.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +30,12 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTypeConverter" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanConvertFrom">
@@ -47,12 +54,17 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="sourceType">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether this converter can convert an object of the given type to the type of this converter.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" />  that provides a format context.</param>
+        <param name="sourceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type that you want to convert from.</param>
       </Docs>
     </Member>
     <Member MemberName="CanConvertTo">
@@ -71,12 +83,17 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="destinationType">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether this converter can convert the object to the specified type, using the specified context.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" />  that provides a format context.</param>
+        <param name="destinationType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type that you want to convert to.</param>
       </Docs>
     </Member>
     <Member MemberName="ConvertFrom">
@@ -96,13 +113,19 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the given object to the type of this converter, using the specified context and culture information.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" />  that provides a format context.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Globalization.CultureInfo" /> to use as the current culture.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to convert.</param>
       </Docs>
     </Member>
     <Member MemberName="ConvertTo">
@@ -123,14 +146,21 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="culture">To be added.</param>
-        <param name="value">To be added.</param>
-        <param name="destinationType">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts a given value object to the specified type, using the specified context and culture information.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" />  that provides a format context.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" />. If null is passed, the current culture is assumed.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to convert.</param>
+        <param name="destinationType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to convert the <paramref name="value" /> parameter to.</param>
       </Docs>
     </Member>
     <Member MemberName="IsValid">
@@ -149,12 +179,17 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns whether the given value object is a <see cref="T:System.Uri" /> or a <see cref="T:System.Uri" /> can be created from it.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" />  that provides a format context.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to test for validity.</param>
       </Docs>
     </Member>
   </Members>

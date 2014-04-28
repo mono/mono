@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebPageTraceListener" FullName="System.Web.WebPageTraceListener">
   <TypeSignature Language="C#" Value="public class WebPageTraceListener : System.Diagnostics.TraceListener" />
   <AssemblyInfo>
@@ -9,8 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> attribute applied to this class has the following <see cref="P:System.Security.Permissions.HostProtectionAttribute.Resources" /> property value: <see cref="F:System.Security.Permissions.HostProtectionResource.Synchronization" />. The <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> does not affect desktop applications (which are typically started by double-clicking an icon, typing a command, or entering a URL in a browser). For more information, see the <see cref="T:System.Security.Permissions.HostProtectionAttribute" /> class or <format type="text/html"><a href="7dfa36b4-e773-4c75-a3ff-ff1af3ce4c4f">SQL Server Programming and Host Protection Attributes</a></format>.</para>
+      </block>
+      <para>The <see cref="T:System.Web.WebPageTraceListener" /> class forwards trace messages that are written to the <see cref="T:System.Diagnostics.Trace" /> log to ASP.NET Web page output channels. You can enable trace forwarding by adding a <see cref="T:System.Web.WebPageTraceListener" /> object to your Web.config file as a listener in the <format type="text/html"><a href="05f08d15-1e2c-4c56-84d1-b1d7ba039af6">trace Element (ASP.NET Settings Schema)</a></format> subsection of the <format type="text/html"><a href="3f348f42-fa72-4ff2-aa1c-bb9eecad4bb2">&lt;system.diagnostics&gt; Element</a></format> section. You can also add a <see cref="T:System.Web.WebPageTraceListener" /> to the listeners collection programmatically. Commonly, this is done by adding a <see cref="T:System.Web.WebPageTraceListener" /> to the collection during application startup, using the Application_Start method in the Global.asax file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a listener that directs <see cref="T:System.Diagnostics.Trace" /> messages to ASP.NET Web page outputs. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.WebPageTraceListener" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TraceEvent">
@@ -42,13 +55,24 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="severity">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.WebPageTraceListener.TraceEvent(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String)" /> method writes the event message to the <see cref="T:System.Web.TraceContext" /> object using <paramref name="source" /> as the category and <paramref name="message" /> as the message. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes an event message to a Web page or to the ASP.NET trace viewer using the specified system and event data.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> that contains the current process and  thread IDs and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
+        <param name="severity">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message to write.</param>
       </Docs>
     </Member>
     <Member MemberName="TraceEvent">
@@ -75,14 +99,26 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="eventCache">To be added.</param>
-        <param name="source">To be added.</param>
-        <param name="severity">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="format">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.WebPageTraceListener.TraceEvent(System.Diagnostics.TraceEventCache,System.String,System.Diagnostics.TraceEventType,System.Int32,System.String,System.Object[])" /> method calls the <see cref="M:System.String.Format(System.IFormatProvider,System.String,System.Object[])" /> method, passing <paramref name="format" /> and <paramref name="args" /> and using the <see cref="P:System.Globalization.CultureInfo.InvariantCulture" /> property to format the string as the message to write to the trace viewer or Web page. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a localized event message to a Web page or to the ASP.NET trace viewer using the specified system and event data.</para>
+        </summary>
+        <param name="eventCache">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Diagnostics.TraceEventCache" /> that contains the current process and thread IDs and stack trace information.</param>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output. </param>
+        <param name="severity">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.TraceEventType" /> values.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric identifier for the event.</param>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A format string that contains zero or more format items, which correspond to objects in <paramref name="args" />.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of zero or more objects to format.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -98,9 +134,16 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Web.WebPageTraceListener.Write" /> method does not write to the <see cref="T:System.Diagnostics.Trace" /> object output, even if it is enabled in the configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a message to a Web page or to the ASP.NET trace viewer.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to write.</param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -117,10 +160,18 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="category">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Web.WebPageTraceListener.Write" /> method does not write to the <see cref="T:System.Diagnostics.Trace" /> object output, even if it is enabled in the configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and a message to a Web page or to the ASP.NET trace viewer.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to write.</param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -136,9 +187,16 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Web.WebPageTraceListener.WriteLine" /> method does not write to the <see cref="T:System.Diagnostics.Trace" /> object output, even if it is enabled in the configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a message to a Web page or to the ASP.NET trace viewer.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to write.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -155,10 +213,18 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="category">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Web.WebPageTraceListener.WriteLine" /> method does not write to the <see cref="T:System.Diagnostics.Trace" /> object output, even if it is enabled in the configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a category name and a message to a Web page or to the ASP.NET trace viewer.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to write.</param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />A category name used to organize the output.</param>
       </Docs>
     </Member>
   </Members>

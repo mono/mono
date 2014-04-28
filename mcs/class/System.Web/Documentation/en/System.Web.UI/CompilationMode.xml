@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompilationMode" FullName="System.Web.UI.CompilationMode">
   <TypeSignature Language="C#" Value="public enum CompilationMode" />
   <AssemblyInfo>
@@ -8,9 +9,18 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.CompilationMode" /> enumeration values indicate whether a page or control should be compiled at run time. When no compilation mode is specified, the default value is <see cref="F:System.Web.UI.CompilationMode.Always" />. Setting a page to never compile using the <see cref="F:System.Web.UI.CompilationMode.Never" /> attribute will increase performance by disqualifying the specified page in the compilation process. To define a page-specific <see cref="T:System.Web.UI.CompilationMode" /> attribute that specifies an .aspx, .ascx or .master file should not be compiled at the page level, you can use a directive like the following:</para>
+      <para>&lt;%@ page compilationMode="never" %&gt;</para>
+      <para>The compilation mode can also be specified in configuration files. The <see cref="T:System.Web.Configuration.PagesSection" /> configuration section object identifies page-specific configuration settings. The <format type="text/html"><a href="4123bb66-3fe4-4d62-b70e-33758656b458">pages</a></format> configuration section element can be declared at the machine, site, application, and subdirectory levels of the configuration files. </para>
+      <para>If the <see cref="T:System.Web.UI.CompilationMode" /> is set to <see cref="F:System.Web.UI.CompilationMode.Never" /> and a page contains a script block or code construct that requires compilation, ASP.NET will return with an error and the page will not run.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines constants that specify how ASP.NET should compile .aspx pages and .ascx controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Always">
@@ -20,8 +30,11 @@
         <ReturnType>System.Web.UI.CompilationMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The page should always be compiled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +47,11 @@
         <ReturnType>System.Web.UI.CompilationMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET will not compile the page, if possible.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +64,11 @@
         <ReturnType>System.Web.UI.CompilationMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The page or control should never be dynamically compiled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebPartAuthorizationEventArgs" FullName="System.Web.UI.WebControls.WebParts.WebPartAuthorizationEventArgs">
   <TypeSignature Language="C#" Value="public class WebPartAuthorizationEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.AuthorizeWebPart" /> event occurs before a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control is added to a page. There are a number of common scenarios where a control can be added to a page. For a full description of these, see the Remarks section for the <see cref="Overload:System.Web.UI.WebControls.WebParts.WebPartManager.IsAuthorized" /> method. </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartAuthorizationEventArgs" /> class provides access to properties about the Web Parts control being added to the page. When a control is added, it must be checked to see whether its <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.AuthorizationFilter" /> property has been set and, if so, whether the control is authorized to be added to the page.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.AuthorizeWebPart" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,13 +32,20 @@
         <Parameter Name="isShared" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="path">To be added.</param>
-        <param name="authorizationFilter">To be added.</param>
-        <param name="isShared">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartAuthorizationEventArgs" /> class. </para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the control being checked for authorization. </param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The relative application path to the source file for the control being authorized, if the control is a user control. </param>
+        <param name="authorizationFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />An arbitrary string value assigned to the <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.AuthorizationFilter" /> property of a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control, used for authorizing whether a control can be added to a page. </param>
+        <param name="isShared">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the control being checked for authorization is a shared control, meaning that it is visible to many or all users of the application, and its <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.IsShared" /> property value is set to true. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,10 +58,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the string value assigned to the <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.AuthorizationFilter" /> property of a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control, used for authorizing whether a control can be added to a page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +77,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value indicating whether a Web Parts control can be added to a page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,10 +96,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shared Web Parts control is visible to all users of a Web page. The opposite of a shared control is a per-user control, which is user-specific and is visible only to the user who added that control to the page.</para>
+          <para>If a dynamic control is added while a user is viewing the page in shared personalization scope, the control will be shared. If the control is added while the user is in user personalization scope, the <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.IsShared" /> property value for that control will be false.</para>
+          <para>For more information about shared and per-user controls, see <format type="text/html"><a href="7dc34f74-52aa-4082-b98d-2bcf9e07e320">Web Parts Personalization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether a Web Parts control is visible to all users of a Web Parts page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -91,10 +120,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the relative application path to the source file for the control being authorized, if the control is a user control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -107,10 +139,13 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> of the Web Parts control being checked for authorization.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

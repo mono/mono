@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ITrackingPersonalizable" FullName="System.Web.UI.WebControls.WebParts.ITrackingPersonalizable">
   <TypeSignature Language="C#" Value="public interface ITrackingPersonalizable" />
   <AssemblyInfo>
@@ -6,9 +7,16 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface allows control developers to track different phases of the personalization life cycle, including the loading and saving of personalization data. In most cases, to use this interface you would create a custom <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> or <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> and implement this interface. Additionally, controls that need to manage their own change ("dirty") tracking should implement this interface. Controls that manage their own change tracking should return true from the <see cref="P:System.Web.UI.WebControls.WebParts.ITrackingPersonalizable.TracksChanges" /> property.</para>
+      <para>If false is returned, then ASP.NET is responsible for determining changes by comparing the property information loaded with the property information that was saved.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows Web Parts controls to track the specific phases of the personalization load and save process.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BeginLoad">
@@ -19,9 +27,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web Parts control set calls this method prior to applying personalization data. A control that tracks its own change state should use this method to set an internal flag indicating that properties should not call <see cref="Overload:System.Web.UI.WebControls.WebParts.WebPart.SetPersonalizationDirty" />. This is because property-setting methods can be called during the application of personalization data, subsequent to the call to <see cref="M:System.Web.UI.WebControls.WebParts.ITrackingPersonalizable.BeginLoad" />. In most scenarios, a control should not be considered changed ("dirty") just because its personalizable properties have been set based on data loaded from the underlying data store.</para>
+          <block subset="none" type="note">
+            <para>This method is also called when personalization data is applied after importing a Web Parts control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the beginning of the load phase for personalization information. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -35,9 +52,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web Parts control set calls this method prior to extracting personalization data from the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the phase prior to extracting personalization data from a control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,9 +74,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web Parts control set calls this method after personalization data has been applied to the control. A control that tracks its change state should use this method to reset its internal state to indicate that subsequent property-setting methods should call <see cref="Overload:System.Web.UI.WebControls.WebParts.WebPart.SetPersonalizationDirty" />. By the time the <see cref="M:System.Web.UI.WebControls.WebParts.ITrackingPersonalizable.EndLoad" /> method is called, the Web Parts control set has completed any application of personalization data to the control. As a result, subsequent changes to the control's state should be considered valid indicators that the control has changed (is "dirty").</para>
+          <block subset="none" type="note">
+            <para>This method is also called when personalization data is applied after importing a Web Parts control.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the phase after personalization data has been applied to a control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,9 +99,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Web Parts control set calls this method after personalization data has been extracted from the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the phase after personalization data has been extracted from a control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -82,10 +120,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a control returns true from this property, then it is the Web Parts control's responsibility to determine when it considers itself "dirty." If a control determines that it has changed (is "dirty"), that control must call <see cref="Overload:System.Web.UI.WebControls.WebParts.WebPart.SetPersonalizationDirty" /> on itself.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the control tracks the status of its changes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

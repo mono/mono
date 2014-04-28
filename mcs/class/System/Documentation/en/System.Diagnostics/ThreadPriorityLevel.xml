@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ThreadPriorityLevel" FullName="System.Diagnostics.ThreadPriorityLevel">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum ThreadPriorityLevel" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ThreadPriorityLevel extends System.Enum" />
@@ -14,8 +15,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Every thread has a base-priority level determined by the thread's priority value and the priority class of its process. The operating system uses the base-priority level of all executable threads to determine which thread gets the next slice of processor time.</para>
+      <para>The priority level is not an absolute value, but instead is a range of priority values. The operating system computes the priority by using the process priority class to determine where, in the range specified by the <see cref="P:System.Diagnostics.ProcessThread.PriorityLevel" /> property, to set the thread's priority.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the priority level of a thread.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AboveNormal">
@@ -32,8 +40,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies one step above the normal priority for the associated <see cref="T:System.Diagnostics.ProcessPriorityClass" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BelowNormal">
@@ -50,8 +61,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies one step below the normal priority for the associated <see cref="T:System.Diagnostics.ProcessPriorityClass" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Highest">
@@ -68,8 +82,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies highest priority. This is two steps above the normal priority for the associated <see cref="T:System.Diagnostics.ProcessPriorityClass" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Idle">
@@ -86,8 +103,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies idle priority. This is the lowest possible priority value of all threads, independent of the value of the associated <see cref="T:System.Diagnostics.ProcessPriorityClass" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Lowest">
@@ -104,8 +124,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies lowest priority. This is two steps below the normal priority for the associated <see cref="T:System.Diagnostics.ProcessPriorityClass" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Normal">
@@ -122,8 +145,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies normal priority for the associated <see cref="T:System.Diagnostics.ProcessPriorityClass" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TimeCritical">
@@ -140,8 +166,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies time-critical priority. This is the highest priority of all threads, independent of the value of the associated <see cref="T:System.Diagnostics.ProcessPriorityClass" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

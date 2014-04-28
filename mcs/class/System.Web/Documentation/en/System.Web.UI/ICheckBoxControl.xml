@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICheckBoxControl" FullName="System.Web.UI.ICheckBoxControl">
   <TypeSignature Language="C#" Value="public interface ICheckBoxControl" />
   <AssemblyInfo>
@@ -6,9 +7,15 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.ICheckBoxControl" /> interface defines the property and event that must be implemented for a control to act as a check box on a Web page. The <see cref="P:System.Web.UI.ICheckBoxControl.Checked" /> property can be used to determine whether the check box is selected or to set the property programmatically. The <see cref="E:System.Web.UI.ICheckBoxControl.CheckedChanged" /> event is raised when the <see cref="P:System.Web.UI.ICheckBoxControl.Checked" /> value changes between posts to the server. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the property and event a control implements to act as a check box. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Checked">
@@ -18,10 +25,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Controls implementing <see cref="T:System.Web.UI.ICheckBoxControl" /> use <see cref="P:System.Web.UI.ICheckBoxControl.Checked" /> to determine whether the control is selected, or to set the value programmatically. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of an <see cref="T:System.Web.UI.ICheckBoxControl" /> control that indicates whether the control is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,9 +47,15 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.ICheckBoxControl.CheckedChanged" /> event is raised when the value of <see cref="P:System.Web.UI.ICheckBoxControl.Checked" /> changes between posts to the server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the value of the <see cref="P:System.Web.UI.ICheckBoxControl.Checked" /> property changes between posts to the server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

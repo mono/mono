@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Interlocked" FullName="System.Threading.Interlocked" FullNameSP="System_Threading_Interlocked" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed Interlocked extends System.Object" />
   <TypeSignature Language="C#" Value="public static class Interlocked" />
@@ -16,28 +17,28 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para> The <see cref="T:System.Threading.Interlocked" /> class provides atomic operations for variables that are shared by
-   multiple threads.</para>
-    </summary>
     <remarks>
-      <para> The <see cref="T:System.Threading.Interlocked" /> methods protect against errors that can
-   occur when the scheduler switches contexts while a
-   thread is updating a variable that can be accessed by other threads. The
-   members of this class do not throw exceptions.</para>
-      <block subset="none" type="note">
-        <para>The <see cref="M:System.Threading.Interlocked.Increment(System.Int32@)" /> method
-   and its counterpart, <see cref="M:System.Threading.Interlocked.Decrement(System.Int32@)" />,
-   
-   increment or decrement a variable and store
-   the resulting value, as an atomic operation.</para>
-        <para>The <see cref="M:System.Threading.Interlocked.Exchange(System.Int32@,System.Int32)" /> method atomically exchanges the values of the
-specified variables. The <see cref="M:System.Threading.Interlocked.CompareExchange(System.Int32@,System.Int32,System.Int32)" /> method
-provides an atomic
-operation that compares two values and stores a third value in one of the
-variables, based on the outcome of the comparison.</para>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The methods of this class help protect against errors that can occur when the scheduler switches contexts while a thread is updating a variable that can be accessed by other threads, or when two threads are executing concurrently on separate processors. The members of this class do not throw exceptions.</para>
+      <para>The <see cref="M:System.Threading.Interlocked.Increment(System.Int32@)" /> and <see cref="M:System.Threading.Interlocked.Decrement(System.Int32@)" /> methods increment or decrement a variable and store the resulting value in a single operation. On most computers, incrementing a variable is not an atomic operation, requiring the following steps: </para>
+      <list type="ordered">
+        <item>
+          <para>Load a value from an instance variable into a register.</para>
+        </item>
+        <item>
+          <para>Increment or decrement the value.</para>
+        </item>
+        <item>
+          <para>Store the value in the instance variable.</para>
+        </item>
+      </list>
+      <para>If you do not use <see cref="M:System.Threading.Interlocked.Increment(System.Int32@)" /> and <see cref="M:System.Threading.Interlocked.Decrement(System.Int32@)" />, a thread can be preempted after executing the first two steps. Another thread can then execute all three steps. When the first thread resumes execution, it overwrites the value in the instance variable, and the effect of the increment or decrement performed by the second thread is lost.</para>
+      <para>The <see cref="M:System.Threading.Interlocked.Exchange(System.Int32@,System.Int32)" /> method atomically exchanges the values of the specified variables. The <see cref="M:System.Threading.Interlocked.CompareExchange(System.Int32@,System.Int32,System.Int32)" /> method combines two operations: comparing two values and storing a third value in one of the variables, based on the outcome of the comparison. The compare and exchange operations are performed as an atomic operation.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides atomic operations for variables that are shared by multiple threads. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -749,8 +750,17 @@ other, but not with respect to other means of accessing the data.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method was added to the <see cref="T:System.Threading.Interlocked" /> class in the net_v45 as a convenience; it's a wrapper for the <see cref="M:System.Threading.Thread.MemoryBarrier" /> method. </para>
+          <para>
+            <see cref="M:System.Threading.Interlocked.MemoryBarrier" /> is required only on multiprocessor systems that have weak memory ordering (for example, a system that employs multiple Intel Itanium processors).</para>
+          <para>For most purposes, the C# lock statement, the Visual Basic SyncLock statement, or the <see cref="T:System.Threading.Monitor" /> class provide easier ways to synchronize data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Synchronizes memory access as follows: The processor that executes the current thread cannot reorder instructions in such a way that memory accesses before the call to <see cref="M:System.Threading.Interlocked.MemoryBarrier" /> execute after memory accesses that follow the call to <see cref="M:System.Threading.Interlocked.MemoryBarrier" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Read">

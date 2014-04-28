@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="VarEnum" FullName="System.Runtime.InteropServices.VarEnum">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum VarEnum" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed VarEnum extends System.Enum" />
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used with <see cref="T:System.Runtime.InteropServices.MarshalAsAttribute" /> to explicitly control the element type of the <see cref="F:System.Runtime.InteropServices.UnmanagedType.SafeArray" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates how to marshal the array elements when an array is marshaled from managed to unmanaged code as a <see cref="F:System.Runtime.InteropServices.UnmanagedType.SafeArray" />. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="VT_ARRAY">
@@ -36,8 +43,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SAFEARRAY pointer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_BLOB">
@@ -54,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates length prefixed bytes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_BLOB_OBJECT">
@@ -72,8 +85,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a blob contains an object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_BOOL">
@@ -90,8 +106,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a Boolean value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_BSTR">
@@ -108,8 +127,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a BSTR string.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_BYREF">
@@ -126,8 +148,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a value is a reference.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_CARRAY">
@@ -144,8 +169,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a C style array.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_CF">
@@ -162,8 +190,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the clipboard format.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_CLSID">
@@ -180,8 +211,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a class ID.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_CY">
@@ -198,8 +232,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a currency value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_DATE">
@@ -216,8 +253,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a DATE value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_DECIMAL">
@@ -234,8 +274,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a decimal value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_DISPATCH">
@@ -252,8 +295,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an IDispatch pointer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_EMPTY">
@@ -270,8 +316,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a value was not specified.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_ERROR">
@@ -288,8 +337,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an SCODE.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_FILETIME">
@@ -306,8 +358,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a FILETIME value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_HRESULT">
@@ -324,8 +379,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an HRESULT.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_I1">
@@ -342,8 +400,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a char value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_I2">
@@ -360,8 +421,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a short integer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_I4">
@@ -378,8 +442,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a long integer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_I8">
@@ -396,8 +463,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a 64-bit integer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_INT">
@@ -414,8 +484,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an integer value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_LPSTR">
@@ -432,8 +505,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a null-terminated string.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_LPWSTR">
@@ -450,8 +526,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a wide string terminated by null.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_NULL">
@@ -468,8 +547,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a null value, similar to a null value in SQL.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_PTR">
@@ -486,8 +568,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a pointer type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_R4">
@@ -504,8 +589,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a float value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_R8">
@@ -522,8 +610,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a double value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_RECORD">
@@ -540,8 +631,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a user defined type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_SAFEARRAY">
@@ -558,8 +652,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a SAFEARRAY. Not valid in a VARIANT.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_STORAGE">
@@ -576,8 +673,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the name of a storage follows.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_STORED_OBJECT">
@@ -594,8 +694,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a storage contains an object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_STREAM">
@@ -612,8 +715,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the name of a stream follows.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_STREAMED_OBJECT">
@@ -630,8 +736,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a stream contains an object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_UI1">
@@ -648,8 +757,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a byte.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_UI2">
@@ -666,8 +778,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an unsigned short.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_UI4">
@@ -684,8 +799,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an unsigned long.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_UI8">
@@ -702,8 +820,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an 64-bit unsigned integer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_UINT">
@@ -720,8 +841,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an unsigned integer value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_UNKNOWN">
@@ -738,8 +862,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates an IUnknown pointer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_USERDEFINED">
@@ -756,8 +883,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a user defined type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_VARIANT">
@@ -774,8 +904,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a VARIANT far pointer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_VECTOR">
@@ -792,8 +925,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a simple, counted array.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VT_VOID">
@@ -810,8 +946,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates a C style void.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

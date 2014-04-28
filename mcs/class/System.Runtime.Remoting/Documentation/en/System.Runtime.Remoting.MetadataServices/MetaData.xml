@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MetaData" FullName="System.Runtime.Remoting.MetadataServices.MetaData">
   <TypeSignature Language="C#" Value="public class MetaData" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.MetadataServices.MetaData" /> class provides methods that allow you to generate Web Services Description Language (WSDL) from type information, convert an XML Schema into a code stream, and compile the code stream into an assembly. This functionality is also present in the <format type="text/html"><a href="40F6F8C8-B80C-4E9F-A920-31BCD0CF45C5">[&lt;topic://cpgrfsoapsudsutilitysoapsudsexe&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides methods that allow you to work with XML schema.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Runtime.Remoting.MetadataServices.MetaData" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,11 +53,23 @@
         <Parameter Name="strongNameFilename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="codePath">To be added: an object of type 'string'</param>
-        <param name="assemblyPath">To be added: an object of type 'string'</param>
-        <param name="strongNameFilename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information on strong names, see <format type="text/html"><a href="D4A80263-F3E0-4D81-9B61-F0CBEAE3797B">Strong-Named Assemblies</a></format>.</para>
+          <block subset="none" type="note">
+            <para>If a file with the specified name already exists, it is overwritten.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles a specified code source file into a runtime assembly file.</para>
+        </summary>
+        <param name="codePath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path to the file that contains the source code. </param>
+        <param name="assemblyPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location where the new run-time assembly is generated. </param>
+        <param name="strongNameFilename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The strong name to compile into the new assembly. Can be <see cref="F:System.String.Empty" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -66,11 +88,23 @@
         <Parameter Name="strongNameFilename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="outCodeStreamList">To be added: an object of type 'Collections.ArrayList'</param>
-        <param name="assemblyPath">To be added: an object of type 'string'</param>
-        <param name="strongNameFilename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information on strong names, see <format type="text/html"><a href="D4A80263-F3E0-4D81-9B61-F0CBEAE3797B">Strong-Named Assemblies</a></format>.</para>
+          <block subset="none" type="note">
+            <para>If a file with the specified name already exists, it is overwritten.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Compiles specified code source streams into a run-time assembly file.</para>
+        </summary>
+        <param name="outCodeStreamList">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.ArrayList" /> of streams with the source code. </param>
+        <param name="assemblyPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The location where the new run-time assembly is generated. </param>
+        <param name="strongNameFilename">
+          <attribution license="cc4" from="Microsoft" modified="false" />The strong name to compile into the new run-time assembly. Can be <see cref="F:System.String.Empty" />. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -90,12 +124,24 @@
         <Parameter Name="outCodeStreamList" Type="System.Collections.ArrayList" />
       </Parameters>
       <Docs>
-        <param name="clientProxy">To be added: an object of type 'bool'</param>
-        <param name="outputDirectory">To be added: an object of type 'string'</param>
-        <param name="inputStream">To be added: an object of type 'IO.Stream'</param>
-        <param name="outCodeStreamList">To be added: an object of type 'Collections.ArrayList'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>If files with the specified names already exist, they are overwritten.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified schema definition into C# proxy source code.</para>
+        </summary>
+        <param name="clientProxy">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates the type of proxy to generate. If true, generates a simple proxy (also known as wrapped proxy) that automatically loads the channels, exposes all the methods of the remote object, and provides access to the channel properties. If false, generates a transparent proxy that exposes all the methods of the remote object. </param>
+        <param name="outputDirectory">
+          <attribution license="cc4" from="Microsoft" modified="false" />The directory where the new C# source code files with the proxy are created. </param>
+        <param name="inputStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input stream that contains the schema definition in Web Services Description Language (WSDL) format. </param>
+        <param name="outCodeStreamList">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of file names for the code streams that are generated. Note that the <see cref="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertSchemaStreamToCodeSourceStream(System.Boolean,System.String,System.IO.Stream,System.Collections.ArrayList,System.String,System.String)" /> method can create multiple source code streams. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -116,13 +162,26 @@
         <Parameter Name="proxyUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="clientProxy">To be added: an object of type 'bool'</param>
-        <param name="outputDirectory">To be added: an object of type 'string'</param>
-        <param name="inputStream">To be added: an object of type 'IO.Stream'</param>
-        <param name="outCodeStreamList">To be added: an object of type 'Collections.ArrayList'</param>
-        <param name="proxyUrl">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>If files with the specified names already exist, they are overwritten.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified schema definition into C# proxy source code for a remote object that is located at the specified URL.</para>
+        </summary>
+        <param name="clientProxy">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates the type of proxy to generate. If true, generates a simple proxy (also known as wrapped proxy) that automatically loads the channels, exposes all the methods of the remote object, and provides access to the channel properties. If false, generates a transparent proxy that exposes all the methods of the remote object. </param>
+        <param name="outputDirectory">
+          <attribution license="cc4" from="Microsoft" modified="false" />The directory where the new C# source code files with the proxy are created. </param>
+        <param name="inputStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input stream that contains the schema definition in Web Services Description Language (WSDL) format. </param>
+        <param name="outCodeStreamList">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of file names for the code streams that are generated. Note that the <see cref="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertSchemaStreamToCodeSourceStream(System.Boolean,System.String,System.IO.Stream,System.Collections.ArrayList,System.String,System.String)" /> method can create multiple source code streams. </param>
+        <param name="proxyUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL where the target remote object that is represented by the new proxy will be located. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -144,14 +203,28 @@
         <Parameter Name="proxyNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="clientProxy">To be added: an object of type 'bool'</param>
-        <param name="outputDirectory">To be added: an object of type 'string'</param>
-        <param name="inputStream">To be added: an object of type 'IO.Stream'</param>
-        <param name="outCodeStreamList">To be added: an object of type 'Collections.ArrayList'</param>
-        <param name="proxyUrl">To be added: an object of type 'string'</param>
-        <param name="proxyNamespace">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>If files with the specified names already exist, they are overwritten.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified schema definition into C# proxy source code for a remote object that is located at the specified URL and in the provided class namespace.</para>
+        </summary>
+        <param name="clientProxy">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates the type of proxy to generate. If true, generates a simple proxy (also known as wrapped proxy) that automatically loads the channels, exposes all the methods of the remote object, and provides access to the channel properties. If false, generates a transparent proxy that exposes all the methods of the remote object. </param>
+        <param name="outputDirectory">
+          <attribution license="cc4" from="Microsoft" modified="false" />The directory where the new C# source code files with the proxy are created. </param>
+        <param name="inputStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input stream containing the schema definition in Web Services Description Language (WSDL) format. </param>
+        <param name="outCodeStreamList">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of file names for the code streams that are generated. Note that the <see cref="M:System.Runtime.Remoting.MetadataServices.MetaData.ConvertSchemaStreamToCodeSourceStream(System.Boolean,System.String,System.IO.Stream,System.Collections.ArrayList,System.String,System.String)" /> method can create multiple source code streams. </param>
+        <param name="proxyUrl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL where the target remote object that is represented by the new proxy will be located. </param>
+        <param name="proxyNamespace">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace of the newly created proxy. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -172,9 +245,19 @@
       <Docs>
         <param name="servicetypes">To be added.</param>
         <param name="sdltype">To be added.</param>
-        <param name="path">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.MetadataServices.ServiceType" /> instance allows you to associate a URL with an object <see cref="T:System.Type" />.</para>
+          <block subset="none" type="note">
+            <para>If a file with the specified name already exists, it is overwritten.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified service types to XML schema, and writes it to a file that is specified by name.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path of the XML file. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -193,11 +276,21 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="types">To be added: an object of type 'Type []'</param>
         <param name="sdltype">To be added.</param>
-        <param name="path">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>If a file with the specified name already exists, it is overwritten.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified object types to XML schema, and writes it to a file that is specified by name.</para>
+        </summary>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object types to convert to XML schema. </param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path of the XML file. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -220,8 +313,14 @@
         <param name="sdltype">To be added.</param>
         <param name="stream">To be added.</param>
         <param name="outputStream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.MetadataServices.ServiceType" /> instance allows you to associate a URL with an object <see cref="T:System.Type" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified service types to XML schema, and writes it to a specified stream.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -240,11 +339,15 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="types">To be added: an object of type 'Type []'</param>
         <param name="sdltype">To be added.</param>
         <param name="stream">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the specified object types to XML schema, and writes it to a specified stream.</para>
+        </summary>
+        <param name="types">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object types to convert to XML schema. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -262,10 +365,20 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="url">To be added: an object of type 'string'</param>
-        <param name="path">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>If a file with the specified name already exists, it is overwritten.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Downloads the XML schema from a URL, and writes it to the specified file.</para>
+        </summary>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL where the XML schema is located. </param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path of the file that the schema is written to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -283,10 +396,15 @@
         <Parameter Name="outputStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="url">To be added: an object of type 'string'</param>
-        <param name="outputStream">To be added: an object of type 'IO.Stream'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Downloads the XML schema from a URL, and writes it to the specified stream.</para>
+        </summary>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL where the XML schema is located. </param>
+        <param name="outputStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> that the schema is written to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -304,10 +422,20 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="inputStream">To be added: an object of type 'IO.Stream'</param>
-        <param name="path">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>If a file with the specified name already exists, it is overwritten.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Saves the input stream to a file with the specified name.</para>
+        </summary>
+        <param name="inputStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to the specified file. </param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file that the input stream is written to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

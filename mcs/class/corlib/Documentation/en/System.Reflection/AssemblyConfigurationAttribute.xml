@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyConfigurationAttribute" FullName="System.Reflection.AssemblyConfigurationAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AssemblyConfigurationAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AssemblyConfigurationAttribute extends System.Attribute" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In integrated build environments such as Microsoft Visual Studio, build configuration information is usually determined by the development environment settings for the project.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the build configuration, such as retail or debug, for an assembly.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +47,13 @@
         <Parameter Name="configuration" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="configuration">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.AssemblyConfigurationAttribute" /> class.</para>
+        </summary>
+        <param name="configuration">
+          <attribution license="cc4" from="Microsoft" modified="false" />The assembly configuration. </param>
       </Docs>
     </Member>
     <Member MemberName="Configuration">
@@ -58,9 +69,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets assembly configuration information.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

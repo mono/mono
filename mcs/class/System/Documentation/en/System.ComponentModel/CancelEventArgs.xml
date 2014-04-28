@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CancelEventArgs" FullName="System.ComponentModel.CancelEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class CancelEventArgs : EventArgs" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CancelEventArgs extends System.EventArgs" />
@@ -15,8 +16,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A cancelable event is raised by a component when it is about to perform an action that can be canceled, such as the <see cref="E:System.Windows.Forms.Form.Closing" /> event of a <see cref="T:System.Windows.Forms.Form" />.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="E:System.Windows.Forms.Form.Closing" /> event is deprecated and has been replaced by <see cref="E:System.Windows.Forms.Form.FormClosing" />. It is offered as an example here only to illustrate the usage of <see cref="T:System.ComponentModel.CancelEventArgs" />.</para>
+      </block>
+      <para>
+        <see cref="T:System.ComponentModel.CancelEventArgs" /> provides the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to indicate whether the event should be canceled.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for a cancelable event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +43,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.CancelEventArgs" /> class with the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property set to false.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -49,9 +64,13 @@
         <Parameter Name="cancel" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="cancel">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.CancelEventArgs" /> class with the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property set to the given value.</para>
+        </summary>
+        <param name="cancel">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to cancel the event; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="Cancel">
@@ -69,9 +88,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the event should be canceled.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

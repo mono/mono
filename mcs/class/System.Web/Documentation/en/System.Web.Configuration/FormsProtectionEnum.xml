@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormsProtectionEnum" FullName="System.Web.Configuration.FormsProtectionEnum">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum FormsProtectionEnum" />
   <AssemblyInfo>
@@ -12,8 +13,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If you select the <see cref="F:System.Web.Configuration.FormsProtectionEnum.All" /> value, the system uses the configured data-validation algorithm, based on the <format type="text/html"><a href="4b5699a9-bc21-4c4a-85f1-8b3b8ebd2d46">machineKey</a></format> tag. This is the default, and recommended, value.</para>
+      <para>If you select <see cref="F:System.Web.Configuration.FormsProtectionEnum.None" />, cookies might be subject to plaintext attacks.</para>
+      <para>If you select <see cref="F:System.Web.Configuration.FormsProtectionEnum.Validation" />, the cookie is created using cookie validation by concatenating a validation key with the cookie data, computing a Message Authentication Code (MAC), and appending the MAC to the outgoing cookie.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the type of encryption, if any, to use for cookies. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -25,8 +34,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the application use both data validation and encryption to help protect cookies. This option uses the configured data-validation algorithm (based on the machineKey element). Triple-DES (3DES) is used for encryption, if it is available and if the key is at least 48 bytes long. All is the default (and recommended) value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,8 +54,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that cookies are encrypted using Triple-DES or DES, but data validation is not performed on cookies. Cookies used this way might be subject to chosen plaintext security attacks.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +74,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that both encryption and validation are disabled for sites that use cookies only for personalization and thus have weaker security requirements. Using cookies in this manner is not recommended; however, it is the least resource-intensive way to enable personalization using the .NET Framework.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,8 +94,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the application use a validation scheme to verify that the contents of an encrypted cookie have not been altered in transit. The cookie is created by concatenating a validation key with the cookie data, computing a Message Authentication Code (MAC), and appending the MAC to the outgoing cookie.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

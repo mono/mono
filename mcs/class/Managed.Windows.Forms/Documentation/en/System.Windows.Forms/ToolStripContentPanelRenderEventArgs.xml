@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripContentPanelRenderEventArgs" FullName="System.Windows.Forms.ToolStripContentPanelRenderEventArgs">
   <TypeSignature Language="C#" Value="public class ToolStripContentPanelRenderEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ToolStripContentPanel.RendererChanged" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +26,16 @@
         <Parameter Name="contentPanel" Type="System.Windows.Forms.ToolStripContentPanel" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="contentPanel">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripContentPanelRenderEventArgs" /> class. </para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> representing the GDI+ drawing surface.</param>
+        <param name="contentPanel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStripContentPanel" /> to render.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +48,13 @@
         <ReturnType>System.Drawing.Graphics</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object to use for drawing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +67,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the event was handled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,10 +86,13 @@
         <ReturnType>System.Windows.Forms.ToolStripContentPanel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.ToolStripContentPanel" /> affected by the click.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

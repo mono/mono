@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MaskFormat" FullName="System.Windows.Forms.MaskFormat">
   <TypeSignature Language="C#" Value="public enum MaskFormat" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by <see cref="P:System.Windows.Forms.MaskedTextBox.CutCopyMaskFormat" /> and <see cref="P:System.Windows.Forms.MaskedTextBox.TextMaskFormat" /> to control how text is returned—in the first case, by performing a cut and copy operation, and in the second place, by using the <see cref="P:System.Windows.Forms.MaskedTextBox.Text" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines how to format the text inside of a <see cref="T:System.Windows.Forms.MaskedTextBox" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ExcludePromptAndLiterals">
@@ -20,8 +27,11 @@
         <ReturnType>System.Windows.Forms.MaskFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return only text input by the user. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Windows.Forms.MaskFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return text input by the user as well as any literal characters defined in the mask.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Windows.Forms.MaskFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return text input by the user as well as any instances of the prompt character.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +78,11 @@
         <ReturnType>System.Windows.Forms.MaskFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return text input by the user as well as any literal characters defined in the mask and any instances of the prompt character. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

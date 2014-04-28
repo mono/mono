@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DVASPECT" FullName="System.Runtime.InteropServices.ComTypes.DVASPECT">
   <TypeSignature Language="C#" Value="public enum DVASPECT" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DVASPECT extends System.Enum" />
@@ -15,8 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about DVASPECT, see the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the desired data or view aspect of the object when drawing or getting data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DVASPECT_CONTENT">
@@ -31,7 +39,10 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.DVASPECT</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of an object that lets that object be displayed as an embedded object inside a container. This value is typically specified for compound document objects. The presentation can be provided for the screen or printer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DVASPECT_DOCPRINT">
@@ -46,7 +57,10 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.DVASPECT</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of an object on the screen as though it were printed to a printer using the <ui>Print</ui> command from the <ui>File</ui> menu. The described data may represent a sequence of pages.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DVASPECT_ICON">
@@ -61,7 +75,10 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.DVASPECT</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An iconic representation of an object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DVASPECT_THUMBNAIL">
@@ -76,7 +93,10 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.DVASPECT</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A thumbnail representation of an object that lets that object be displayed in a browsing tool. The thumbnail is approximately a 120 by 120 pixel, 16-color (recommended), device-independent bitmap potentially wrapped in a metafile.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

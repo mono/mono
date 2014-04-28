@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDynamicMessageSink" FullName="System.Runtime.Remoting.Contexts.IDynamicMessageSink">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IDynamicMessageSink" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDynamicMessageSink" />
@@ -16,8 +17,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Dynamic message sinks are provided with notifications of call start and call finish with flags indicating whether the call is currently on the client side or server side (this is useful for the context level sinks).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that the implementing message sink will be provided by dynamically registered properties.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ProcessMessageFinish">
@@ -38,11 +45,20 @@
         <Parameter Name="bAsync" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="replyMsg">To be added.</param>
-        <param name="bCliSide">To be added.</param>
-        <param name="bAsync">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Boolean parameters indicate whether the sink is located on the client side or the server side and whether the call is using the <see cref="M:System.Runtime.Remoting.Messaging.IMessageSink.AsyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Messaging.IMessageSink)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a call is returning.</para>
+        </summary>
+        <param name="replyMsg">
+          <attribution license="cc4" from="Microsoft" modified="false" />A reply message. </param>
+        <param name="bCliSide">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value of true if the method is invoked on the client side and false if it is invoked on the server side. </param>
+        <param name="bAsync">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value of true if this is an asynchronic call and false if it is a synchronic call. </param>
       </Docs>
     </Member>
     <Member MemberName="ProcessMessageStart">
@@ -63,11 +79,20 @@
         <Parameter Name="bAsync" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="reqMsg">To be added.</param>
-        <param name="bCliSide">To be added.</param>
-        <param name="bAsync">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Boolean parameters indicate whether the sink is located on the client side or the server side and whether the call is using the <see cref="M:System.Runtime.Remoting.Messaging.IMessageSink.AsyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Messaging.IMessageSink)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that a call is starting.</para>
+        </summary>
+        <param name="reqMsg">
+          <attribution license="cc4" from="Microsoft" modified="false" />A request message. </param>
+        <param name="bCliSide">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value of true if the method is invoked on the client side and false if the method is on the server side. </param>
+        <param name="bAsync">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value of true if this is an asynchronic call and false if it is a synchronic call. </param>
       </Docs>
     </Member>
   </Members>

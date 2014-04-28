@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerAutoFormatStyle" FullName="System.Web.UI.Design.DesignerAutoFormatStyle">
   <TypeSignature Language="C#" Value="public class DesignerAutoFormatStyle : System.Web.UI.WebControls.Style" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Design.DesignerAutoFormatStyle" /> class encapsulates the properties that control the appearance of a Web server control for automatic formatting at design time. You can specify the background color, font color, and the vertical alignment of a control by setting the <see cref="P:System.Web.UI.WebControls.Style.BackColor" />, <see cref="P:System.Web.UI.WebControls.Style.ForeColor" />, and <see cref="P:System.Web.UI.Design.DesignerAutoFormatStyle.VerticalAlign" /> properties, respectively.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the style for a <see cref="T:System.Web.UI.Design.DesignerAutoFormat" /> object. This class is used primarily by control developers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +28,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.DesignerAutoFormatStyle" /> class using default values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VerticalAlign">
@@ -35,9 +45,15 @@
         <ReturnType>System.Web.UI.WebControls.VerticalAlign</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="T:System.Web.UI.WebControls.VerticalAlign" /> property to specify the vertical alignment of the contents for the associated control. If the <see cref="T:System.Web.UI.WebControls.VerticalAlign" /> property does not apply to an associated control, the setting is ignored. For the defined values for the vertical alignment enumeration, see <see cref="T:System.Web.UI.WebControls.VerticalAlign" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the vertical alignment of the contents for the associated control.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompositeDuplexElement" FullName="System.ServiceModel.Configuration.CompositeDuplexElement">
   <TypeSignature Language="C#" Value="public sealed class CompositeDuplexElement : System.ServiceModel.Configuration.BindingElementExtensionElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit CompositeDuplexElement extends System.ServiceModel.Configuration.BindingElementExtensionElement" />
@@ -10,8 +11,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This configuration element adds two-way messaging to a custom binding. It is used with transports that do not allow duplex communications natively, for example, HTTP. TCP, by contrast, allows duplex communications natively, and does not require the use of this binding element for the service to send messages back to a client.</para>
+      <para>The client must expose an address for the service to make contact and establish a connection. This client address is provided by the <see cref="P:System.ServiceModel.Configuration.CompositeDuplexElement.ClientBaseAddress" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the configuration element that is used when the client must expose an endpoint for the service to send messages over HTTP. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.CompositeDuplexElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingElementType">
@@ -38,9 +49,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of binding element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClientBaseAddress">
@@ -59,9 +73,15 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The service uses this address to make contact and establish a connection with the client.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the base address for the client.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateBindingElement">

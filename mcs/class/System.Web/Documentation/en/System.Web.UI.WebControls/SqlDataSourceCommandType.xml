@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlDataSourceCommandType" FullName="System.Web.UI.WebControls.SqlDataSourceCommandType">
   <TypeSignature Language="C#" Value="public enum SqlDataSourceCommandType" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandType" /> enumeration is used by the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> and <see cref="T:System.Web.UI.WebControls.AccessDataSource" /> controls to describe the type of SQL command contained in the <see cref="P:System.Web.UI.WebControls.SqlDataSource.SelectCommand" />, <see cref="P:System.Web.UI.WebControls.SqlDataSource.InsertCommand" />, <see cref="P:System.Web.UI.WebControls.SqlDataSource.UpdateCommand" />, and <see cref="P:System.Web.UI.WebControls.SqlDataSource.DeleteCommand" /> properties. The <see cref="F:System.Web.UI.WebControls.SqlDataSourceCommandType.Text" /> value indicates that the text is a SQL query or command string while the <see cref="F:System.Web.UI.WebControls.SqlDataSourceCommandType.StoredProcedure" /> value indicates that the text is the name of a stored procedure.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the type of SQL command used by the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> and <see cref="T:System.Web.UI.WebControls.AccessDataSource" /> controls when performing a database operation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="StoredProcedure">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceCommandType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text contained in a corresponding text property is the name of a stored procedure.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.UI.WebControls.SqlDataSourceCommandType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text contained in a corresponding text property is a SQL query or command.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

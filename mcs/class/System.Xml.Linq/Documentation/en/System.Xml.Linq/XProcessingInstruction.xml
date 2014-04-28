@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XProcessingInstruction" FullName="System.Xml.Linq.XProcessingInstruction">
   <TypeSignature Language="C#" Value="public class XProcessingInstruction : System.Xml.Linq.XNode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XProcessingInstruction extends System.Xml.Linq.XNode" />
@@ -10,8 +11,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use processing instructions in XML to indicate that an XML document can be processed by some processor, such as XSLT. </para>
+      <para>Processing instructions are nodes in the XML tree. When a processing instruction is found in the XML being parsed, sqltecxlinq creates an <see cref="T:System.Xml.Linq.XProcessingInstruction" /> node. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an XML processing instruction. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +33,16 @@
         <Parameter Name="other" Type="System.Xml.Linq.XProcessingInstruction" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is primarily used internally to make a deep copy of an XML tree.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XProcessingInstruction" /> class. </para>
+        </summary>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XProcessingInstruction" /> node to copy from.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,10 +57,15 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XProcessingInstruction" /> class. </para>
+        </summary>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the target application for this <see cref="T:System.Xml.Linq.XProcessingInstruction" />.</param>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string data for this <see cref="T:System.Xml.Linq.XProcessingInstruction" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Data">
@@ -59,9 +79,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to modify an XML tree. This property will cause events to occur.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the string value of this processing instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NodeType">
@@ -75,9 +101,15 @@
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because all classes that derive from <see cref="T:System.Xml.Linq.XObject" /> contain a <see cref="P:System.Xml.Linq.XObject.NodeType" /> property, you can write code that operates on collections of concrete subclass of <see cref="T:System.Xml.Linq.XObject" />. Your code can then test for the node type of each node in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node type for this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Target">
@@ -91,9 +123,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string containing the target application for this processing instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">
@@ -110,9 +145,16 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is primarily used internally by the methods that write an XML tree to an <see cref="T:System.Xml.XmlWriter" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes this processing instruction to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlWriter" /> to write this processing instruction to.</param>
       </Docs>
     </Member>
   </Members>

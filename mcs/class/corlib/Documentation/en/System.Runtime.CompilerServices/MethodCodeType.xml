@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MethodCodeType" FullName="System.Runtime.CompilerServices.MethodCodeType">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum MethodCodeType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed MethodCodeType extends System.Enum" />
@@ -18,8 +19,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used with <see cref="T:System.Runtime.CompilerServices.MethodImplAttribute" />.</para>
+      <para>The classes in System.Runtime.CompilerServices are for compiler writers use only.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines how a method is implemented.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="IL">
@@ -36,8 +44,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method implementation is in Microsoft intermediate language (MSIL).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Native">
@@ -54,8 +65,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method is implemented in native code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OPTIL">
@@ -72,8 +86,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method implementation is in optimized intermediate language (OPTIL).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Runtime">
@@ -90,8 +107,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method implementation is provided by the runtime.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

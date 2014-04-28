@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PARAMDESC" FullName="System.Runtime.InteropServices.ComTypes.PARAMDESC">
   <TypeSignature Language="C#" Value="public struct PARAMDESC" />
   <TypeSignature Language="ILAsm" Value=".class public sequential sealed beforefieldinit PARAMDESC extends System.ValueType" />
@@ -11,9 +12,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about PARAMDESC, see the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains information about how to transfer a structure element, parameter, or function return value between processes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="lpVarValue">
@@ -28,9 +36,15 @@
         <ReturnType>System.IntPtr</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about PARAMDESC, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a pointer to a value that is being passed between processes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="wParamFlags">
@@ -45,9 +59,15 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.PARAMFLAG</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about PARAMDESC, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents bitmask values that describe the structure element, parameter, or return value.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

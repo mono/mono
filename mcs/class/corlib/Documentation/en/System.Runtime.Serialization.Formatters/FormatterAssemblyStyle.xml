@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormatterAssemblyStyle" FullName="System.Runtime.Serialization.Formatters.FormatterAssemblyStyle">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum FormatterAssemblyStyle" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FormatterAssemblyStyle extends System.Enum" />
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the method that will be used during deserialization for locating and loading assemblies.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Full">
@@ -36,8 +40,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In full mode, the assembly used during deserialization must match exactly the assembly used during serialization. The <see cref="Overload:System.Reflection.Assembly.Load" /> method of the <see cref="T:System.Reflection.Assembly" /> class is used to load the assembly.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Simple">
@@ -54,8 +61,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In simple mode, the assembly used during deserialization need not match exactly the assembly used during serialization. Specifically, the version numbers need not match as the <see cref="Overload:System.Reflection.Assembly.LoadWithPartialName" /> method is used to load the assembly.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

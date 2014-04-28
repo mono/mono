@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DecompressionMethods" FullName="System.Net.DecompressionMethods">
   <TypeSignature Language="C#" Value="public enum DecompressionMethods" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DecompressionMethods extends System.Enum" />
@@ -15,8 +16,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the file compression and decompression encoding format to be used to compress the data received in response to an <see cref="T:System.Net.HttpWebRequest" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Deflate">
@@ -31,7 +35,10 @@
         <ReturnType>System.Net.DecompressionMethods</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the deflate compression-decompression algorithm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GZip">
@@ -46,7 +53,10 @@
         <ReturnType>System.Net.DecompressionMethods</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the gZip compression-decompression algorithm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -61,7 +71,10 @@
         <ReturnType>System.Net.DecompressionMethods</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use compression.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

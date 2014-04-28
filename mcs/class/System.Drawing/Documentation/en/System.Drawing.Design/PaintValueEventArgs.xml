@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PaintValueEventArgs" FullName="System.Drawing.Design.PaintValueEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class PaintValueEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Drawing.Design.PaintValueEventArgs" /> provides all the information needed for a <see cref="T:System.Drawing.Design.UITypeEditor" /> to paint within an area based on the value of the specified object, including the <see cref="T:System.Drawing.Rectangle" /> in which the drawing should be done and the <see cref="T:System.Drawing.Graphics" /> object with which the drawing should be done.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="M:System.Drawing.Design.UITypeEditor.PaintValue(System.Object,System.Drawing.Graphics,System.Drawing.Rectangle)" /> method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,12 +36,19 @@
         <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="context">To be added: an object of type 'ComponentModel.ITypeDescriptorContext'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <param name="graphics">To be added: an object of type 'Drawing.Graphics'</param>
-        <param name="bounds">To be added: an object of type 'Drawing.Rectangle'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Design.PaintValueEventArgs" /> class using the specified values.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context in which the value appears. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to paint. </param>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> object with which drawing is to be done. </param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> in which drawing is to be done. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,9 +62,12 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing.Rectangle'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the rectangle that indicates the area in which the painting should be done.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -63,9 +81,12 @@
         <ReturnType>System.ComponentModel.ITypeDescriptorContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ComponentModel.ITypeDescriptorContext'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> interface to be used to gain additional information about the context this value appears in.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,9 +100,12 @@
         <ReturnType>System.Drawing.Graphics</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Drawing.Graphics'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Graphics" /> object with which painting should be done.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,9 +119,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value to paint.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

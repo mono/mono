@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IColumnMapping" FullName="System.Data.IColumnMapping">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IColumnMapping" />
   <AssemblyInfo>
@@ -10,8 +11,16 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.IColumnMapping" /> interface enables an inheriting class to implement a Column Mapping class, which associates a data source column with a <see cref="T:System.Data.DataSet" /> column. For more information, see <format type="text/html"><a href="D023260A-A66A-4C39-B8F4-090CD130E730">[&lt;topic://cpconsettingupdatatabledatacolumnmappings&gt;]</a></format>.</para>
+      <para>An application does not create an instance of the <see cref="T:System.Data.IColumnMapping" /> interface directly, but creates an instance of a class that inherits <see cref="T:System.Data.IColumnMapping" />.</para>
+      <para>Classes that inherit <see cref="T:System.Data.IColumnMapping" /> must implement all inherited members, and typically define additional members to add provider-specific functionality. For example, the <see cref="T:System.Data.IColumnMapping" /> interface defines the <see cref="P:System.Data.IColumnMapping.DataSetColumn" /> property. In turn, the <see cref="T:System.Data.Common.DataColumnMapping" /> class inherits this property, and also defines the <see cref="M:System.Data.Common.DataColumnMapping.GetDataColumnBySchemaAction(System.Data.DataTable,System.Type,System.Data.MissingSchemaAction)" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Associates a data source column with a <see cref="T:System.Data.DataSet" /> column, and is implemented by the <see cref="T:System.Data.Common.DataColumnMapping" /> class, which is used in common by .NET Framework data providers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DataSetColumn">
@@ -23,9 +32,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the column within the <see cref="T:System.Data.DataSet" /> to map to.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,9 +53,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the column within the data source to map from. The name is case-sensitive.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

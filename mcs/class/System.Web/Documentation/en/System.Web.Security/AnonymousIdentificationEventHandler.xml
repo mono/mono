@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AnonymousIdentificationEventHandler" FullName="System.Web.Security.AnonymousIdentificationEventHandler">
   <TypeSignature Language="C#" Value="public delegate void AnonymousIdentificationEventHandler(object sender, AnonymousIdentificationEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,17 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.AnonymousIdentificationEventHandler" /> delegate is defined for the <see cref="E:System.Web.Security.AnonymousIdentificationModule.Creating" /> event of the <see cref="T:System.Web.Security.AnonymousIdentificationModule" /> class. You can access the <see cref="E:System.Web.Security.AnonymousIdentificationModule.Creating" /> event of the <see cref="T:System.Web.Security.AnonymousIdentificationModule" /> class by specifying a subroutine named <system>AnonymousIdentification_Creating</system> in the Global.asax file for your ASP.NET application. The <see cref="E:System.Web.Security.AnonymousIdentificationModule.Creating" /> event is raised during the <see cref="E:System.Web.HttpApplication.PostAuthenticateRequest" /> event.</para>
+      <para>The <see cref="T:System.Web.Security.AnonymousIdentificationModule" /> constructs an <see cref="T:System.Web.Security.AnonymousIdentificationEventArgs" /> object using the current <see cref="T:System.Web.HttpContext" /> and passes it to the <system>AnonymousIdentification_Creating</system> event.</para>
+      <para>You can use the <see cref="P:System.Web.Security.AnonymousIdentificationEventArgs.AnonymousId" /> property of the <see cref="T:System.Web.Security.AnonymousIdentificationEventArgs" /> object supplied to the <system>AnonymousIdentification_Creating</system> event to set the anonymous identifier to a custom value. If you do not specify a value for the <see cref="P:System.Web.Security.AnonymousIdentificationEventArgs.AnonymousId" /> property during the <system>AnonymousIdentification_Creating</system> event, a <see cref="T:System.Guid" /> is used.</para>
+      <para>The <system>AnonymousIdentification_Creating</system> event is only raised when anonymous identification is <see cref="P:System.Web.Security.AnonymousIdentificationModule.Enabled" /> by setting the <format type="text/html"><a href="2bd927ef-9057-4703-9c55-4cfb6d7d0929">anonymousIdentification</a></format> configuration element to true.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the <system>AnonymousIdentification_Creating</system> event of a <see cref="T:System.Web.Security.AnonymousIdentificationModule" />.</para>
+    </summary>
   </Docs>
 </Type>

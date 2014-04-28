@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DragDropEffects" FullName="System.Windows.Forms.DragDropEffects">
   <TypeSignature Language="C#" Value="public enum DragDropEffects" />
   <AssemblyInfo>
@@ -14,8 +15,24 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by the following classes: <see cref="T:System.Windows.Forms.DragEventArgs" />, <see cref="T:System.Windows.Forms.GiveFeedbackEventArgs" />, and <see cref="T:System.Windows.Forms.Control" />.</para>
+      <para>You can use <see cref="T:System.Windows.Forms.DragDropEffects" /> to display different mouse pointers for drag-and-drop operations. For example, you can display a plus symbol for a <see cref="F:System.Windows.Forms.DragDropEffects.Copy" /> drag-and-drop operation, an arrow symbol for a <see cref="F:System.Windows.Forms.DragDropEffects.Move" /> drag-and-drop operation, or a red circle with a line through it symbol for a <see cref="F:System.Windows.Forms.DragDropEffects.None" /> drag-and-drop operation.</para>
+      <para>If you want to drop data at a position in the target that is not currently visible, you could scroll the target while dragging. If a target does not support scrolling, you must make sure that the drop position is visible in the target before you begin the drag-and-drop operation. The following are some scenarios when you might want to scroll a target:</para>
+      <list type="bullet">
+        <item>
+          <para>You are dragging text into a document, and you want to drop the text at a position not visible in the document window.</para>
+        </item>
+        <item>
+          <para>You are dragging a file into a file tree, and you want to drop the file on a node not visible in the file tree.</para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the possible effects of a drag-and-drop operation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -25,7 +42,10 @@
         <ReturnType>System.Windows.Forms.DragDropEffects</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The combination of the <see cref="F:System.Windows.DragDropEffects.Copy" />, <see cref="F:System.Windows.Forms.DragDropEffects.Move" />, and <see cref="F:System.Windows.Forms.DragDropEffects.Scroll" /> effects.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,7 +59,10 @@
         <ReturnType>System.Windows.Forms.DragDropEffects</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data from the drag source is copied to the drop target.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,7 +76,10 @@
         <ReturnType>System.Windows.Forms.DragDropEffects</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data from the drag source is linked to the drop target.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,7 +93,10 @@
         <ReturnType>System.Windows.Forms.DragDropEffects</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data from the drag source is moved to the drop target.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,7 +110,10 @@
         <ReturnType>System.Windows.Forms.DragDropEffects</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The drop target does not accept the data.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,7 +127,10 @@
         <ReturnType>System.Windows.Forms.DragDropEffects</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The target can be scrolled while dragging to locate a drop position that is not currently visible in the target.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

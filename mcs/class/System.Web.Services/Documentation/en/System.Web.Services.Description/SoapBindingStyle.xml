@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapBindingStyle" FullName="System.Web.Services.Description.SoapBindingStyle">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum SoapBindingStyle" />
   <AssemblyInfo>
@@ -12,8 +13,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration allows the user to specify whether the message being transmitted is procedure-oriented or document-oriented. Procedure-oriented messages contain parameters and return values, while document-oriented messages contain documents.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of action that occurs in the XML Web service at the level of the class hierarchy to which this enumeration is applied.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Default">
@@ -25,8 +32,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default type of action for the current hierarchical level of the Web Services Description Language (WSDL) file.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,8 +57,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message being transmitted is document-oriented.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -69,8 +82,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message being transmitted contains the parameters to call a procedure or the return values from that procedure. RPC is an acronym for "remote procedure call." </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

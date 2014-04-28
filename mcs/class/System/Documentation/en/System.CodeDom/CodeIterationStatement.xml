@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeIterationStatement" FullName="System.CodeDom.CodeIterationStatement">
   <TypeSignature Language="C#" Value="public class CodeIterationStatement : System.CodeDom.CodeStatement" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeIterationStatement extends System.CodeDom.CodeStatement" />
@@ -23,8 +24,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.CodeDom.CodeIterationStatement" /> can represent a for loop or while loop.</para>
+      <para>The <see cref="P:System.CodeDom.CodeIterationStatement.InitStatement" /> property specifies the statement to execute before the first loop iteration. The <see cref="P:System.CodeDom.CodeIterationStatement.TestExpression" /> property specifies the loop continuation expression, which must evaluate to true at the end of each loop iteration for another iteration to begin. The <see cref="P:System.CodeDom.CodeIterationStatement.IncrementStatement" /> property specifies the statement to execute at the end of each loop iteration. The <see cref="P:System.CodeDom.CodeIterationStatement.Statements" /> property specifies the collection of statements to execute within the loop.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a for statement, or a loop through a block of statements, using a test expression as a condition for continuing to loop.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +47,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeIterationStatement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -66,12 +77,19 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="initStatement">To be added: an object of type 'CodeStatement'</param>
-        <param name="testExpression">To be added: an object of type 'CodeExpression'</param>
-        <param name="incrementStatement">To be added: an object of type 'CodeStatement'</param>
-        <param name="statements">To be added: an object of type 'CodeStatement []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeIterationStatement" /> class using the specified parameters.</para>
+        </summary>
+        <param name="initStatement">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeStatement" /> containing the loop initialization statement. </param>
+        <param name="testExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> containing the expression to test for exit condition. </param>
+        <param name="incrementStatement">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeStatement" /> containing the per-cycle increment statement. </param>
+        <param name="statements">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.CodeDom.CodeStatement" /> containing the statements within the loop. </param>
       </Docs>
     </Member>
     <Member MemberName="IncrementStatement">
@@ -89,9 +107,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeStatement'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This statement is called after each iteration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the statement that is called after each loop cycle.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitStatement">
@@ -109,9 +133,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeStatement'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can specify an empty initialization statement by setting this property to a <see cref="T:System.CodeDom.CodeExpressionStatement" /> that contains a <see cref="T:System.CodeDom.CodeSnippetExpression" /> that contains an empty string.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the loop initialization statement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Statements">
@@ -127,9 +157,12 @@
         <ReturnType>System.CodeDom.CodeStatementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeStatementCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of statements to be executed within the loop.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TestExpression">
@@ -147,9 +180,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If this expression resolves to true, the loop will continue.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the expression to test as the condition that continues the loop.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

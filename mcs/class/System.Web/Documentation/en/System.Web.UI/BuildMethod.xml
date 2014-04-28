@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BuildMethod" FullName="System.Web.UI.BuildMethod">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate System.Web.UI.Control BuildMethod();" />
   <AssemblyInfo>
@@ -12,9 +13,15 @@
     <BaseTypeName>System.Delegate</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
     <value>To be added.</value>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.BuildMethod" /> delegate passes the information that is required to build ASP.NET server controls. The information is defined by the <see cref="T:System.Web.UI.TemplateControl" /> class or a class that is derived from the <see cref="T:System.Web.UI.TemplateControl" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that is used to build a control.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IChannelSender" FullName="System.Runtime.Remoting.Channels.IChannelSender">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IChannelSender : System.Runtime.Remoting.Channels.IChannel" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IChannelSender implements class System.Runtime.Remoting.Channels.IChannel" />
@@ -20,8 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The sending side of channels must expose the <see cref="T:System.Runtime.Remoting.Channels.IChannelSender" /> interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides required functions and properties for the sender channels.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateMessageSink">

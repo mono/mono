@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventLogPermissionAccess" FullName="System.Diagnostics.EventLogPermissionAccess">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum EventLogPermissionAccess" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed EventLogPermissionAccess extends System.Enum" />
@@ -19,8 +20,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines access levels used by <see cref="T:System.Diagnostics.EventLog" /> permission classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Administer">
@@ -35,7 +39,10 @@
         <ReturnType>System.Diagnostics.EventLogPermissionAccess</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Diagnostics.EventLog" /> can create an event source, read existing logs, delete event sources or logs, respond to entries, clear an event log, listen to events, and access a collection of all event logs.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Audit">
@@ -57,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Diagnostics.EventLog" /> can read existing logs, delete event sources or logs, respond to entries, clear an event log, listen to events, and access a collection of all event logs. Note This member is now obsolete, use <see cref="F:System.Diagnostics.EventLogPermissionAccess.Administer" /> instead.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Browse">
@@ -80,8 +90,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Diagnostics.EventLog" /> can read existing logs. Note This member is now obsolete, use <see cref="F:System.Diagnostics.EventLogPermissionAccess.Administer" /> instead.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Instrument">
@@ -103,8 +116,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Diagnostics.EventLog" /> can read or write to existing logs, and create event sources and logs. Note This member is now obsolete, use <see cref="F:System.Diagnostics.EventLogPermissionAccess.Write" /> instead.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -121,8 +137,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Diagnostics.EventLog" /> has no permissions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -137,7 +156,10 @@
         <ReturnType>System.Diagnostics.EventLogPermissionAccess</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Diagnostics.EventLog" /> can write to existing logs, and create event sources and logs.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

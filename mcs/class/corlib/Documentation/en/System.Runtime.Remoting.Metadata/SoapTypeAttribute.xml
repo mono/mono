@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapTypeAttribute" FullName="System.Runtime.Remoting.Metadata.SoapTypeAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class SoapTypeAttribute : System.Runtime.Remoting.Metadata.SoapAttribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SoapTypeAttribute extends System.Runtime.Remoting.Metadata.SoapAttribute" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Metadata.SoapTypeAttribute" /> attribute is a custom attribute that can be applied to objects, value types, and interface objects. This attribute is used to specify information on an object type that controls how SOAP will generate the SOAP XML wire format.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Customizes SOAP generation and processing for target types. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,8 +45,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of <see cref="T:System.Runtime.Remoting.Metadata.SoapTypeAttribute" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SoapOptions">
@@ -55,9 +65,18 @@
         <ReturnType>System.Runtime.Remoting.Metadata.SoapOption</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.Metadata.SoapOption" /> value indicates the SOAP configuration options that will be used with a <see cref="T:System.Runtime.Remoting.Metadata.SoapTypeAttribute" /> attribute.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Runtime.Remoting.Metadata.SoapTypeAttribute.SoapOptions" /> enumeration has no effect on serialization of objects with the <see cref="T:System.Runtime.Serialization.Formatters.Soap.SoapFormatter" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a <see cref="T:System.Runtime.Remoting.Metadata.SoapOption" /> configuration value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseAttribute">
@@ -73,9 +92,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Runtime.Remoting.Metadata.SoapTypeAttribute.UseAttribute" /> property cannot be set on the <see cref="T:System.Runtime.Remoting.Metadata.SoapTypeAttribute" /> attribute.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the target of the current attribute will be serialized as an XML attribute instead of an XML field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlElementName">
@@ -91,9 +116,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML element name.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlFieldOrder">
@@ -109,9 +137,12 @@
         <ReturnType>System.Runtime.Remoting.Metadata.XmlFieldOrderOption</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML field order for the target object type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlNamespace">
@@ -127,9 +158,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML namespace that is used during serialization of the target object type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlTypeName">
@@ -145,9 +179,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML type name for the target object type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="XmlTypeNamespace">
@@ -163,9 +200,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the XML type namespace for the current object type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

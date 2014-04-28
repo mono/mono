@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Queryable" FullName="System.Linq.Queryable">
   <TypeSignature Language="C#" Value="public static class Queryable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Queryable extends System.Object" />
@@ -11,8 +12,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The set of methods declared in the <see cref="T:System.Linq.Queryable" /> class provides an implementation of the standard query operators for querying data sources that implement <see cref="T:System.Linq.IQueryable`1" />. The standard query operators are general purpose methods that follow the vbteclinq pattern and enable you to express traversal, filter, and projection operations over data in any .NET-based programming language.</para>
+      <para>The majority of the methods in this class are defined as extension methods that extend the <see cref="T:System.Linq.IQueryable`1" /> type. This means they can be called like an instance method on any object that implements <see cref="T:System.Linq.IQueryable`1" />. These methods that extend <see cref="T:System.Linq.IQueryable`1" /> do not perform any querying directly. Instead, their functionality is to build an <see cref="T:System.Linq.Expressions.Expression" /> object, which is an expression tree that represents the cumulative query. The methods then pass the new expression tree to either the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method or the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the input <see cref="T:System.Linq.IQueryable`1" />. The method that is called depends on whether the <see cref="T:System.Linq.Queryable" /> method returns a singleton value, in which case <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> is called, or has enumerable results, in which case <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> is called.</para>
+      <para>The actual query execution on the target data is performed by a class that implements <see cref="T:System.Linq.IQueryable`1" />. The expectation of any <see cref="T:System.Linq.IQueryable`1" /> implementation is that the result of executing an expression tree that was constructed by a <see cref="T:System.Linq.Queryable" /> standard query operator method is equivalent to the result of calling the corresponding method in the <see cref="T:System.Linq.Enumerable" /> class, if the data source were an <see cref="T:System.Collections.Generic.IEnumerable`1" />.</para>
+      <para>In addition to the standard query operator methods that operate on <see cref="T:System.Linq.IQueryable`1" /> objects, this class also contains a method, <see cref="Overload:System.Linq.Queryable.AsQueryable" />, which types <see cref="T:System.Collections.IEnumerable" /> objects as <see cref="T:System.Linq.IQueryable" /> objects.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of static (Shared in Visual Basic) methods for querying data structures that implement <see cref="T:System.Linq.IQueryable`1" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Aggregate&lt;TSource&gt;">
@@ -202,10 +212,18 @@
         <Parameter Name="source" Type="System.Collections.IEnumerable" RefType="this" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the type of <paramref name="source" /> implements <see cref="T:System.Linq.IQueryable`1" />, <see cref="M:System.Linq.Queryable.AsQueryable(System.Collections.IEnumerable)" /> returns it directly. Otherwise, it returns an <see cref="T:System.Linq.IQueryable`1" /> that executes queries by calling the equivalent query operator methods in <see cref="T:System.Linq.Enumerable" /> instead of those in <see cref="T:System.Linq.Queryable" />.</para>
+          <para>This method assumes that <paramref name="source" /> implements <see cref="T:System.Collections.Generic.IEnumerable`1" /> for some <paramref name="T" />. At runtime, the result is of type <see cref="T:System.Linq.IQueryable`1" /> for the same <paramref name="T" />. This method is useful in dynamic scenarios when you do not statically know the type of <paramref name="T" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an <see cref="T:System.Collections.IEnumerable" /> to an <see cref="T:System.Linq.IQueryable" />.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />A sequence to convert.</param>
       </Docs>
     </Member>
     <Member MemberName="AsQueryable&lt;TElement&gt;">
@@ -732,10 +750,18 @@
       </Parameters>
       <Docs>
         <typeparam name="TResult">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Linq.Queryable.Cast``1(System.Linq.IQueryable)" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Cast``1(System.Linq.IQueryable)" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
+          <para>The query behavior that occurs as a result of executing an expression tree that represents calling <see cref="M:System.Linq.Queryable.Cast``1(System.Linq.IQueryable)" /> depends on the implementation of the type of the <paramref name="source" /> parameter. The expected behavior is that it converts the values in <paramref name="source" /> to type <paramref name="TResult" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the elements of an <see cref="T:System.Linq.IQueryable" /> to the specified type.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Linq.IQueryable" /> that contains the elements to be converted.</param>
       </Docs>
     </Member>
     <Member MemberName="Concat&lt;TSource&gt;">
@@ -1962,10 +1988,18 @@
       </Parameters>
       <Docs>
         <typeparam name="TResult">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OfType method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling OfType itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
+          <para>The query behavior that occurs as a result of executing an expression tree that represents calling OfType depends on the implementation of the type of the <paramref name="source" /> parameter. The expected behavior is that it filters out any elements in <paramref name="source" /> that are not of type <paramref name="TResult" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Filters the elements of an <see cref="T:System.Linq.IQueryable" /> based on a specified type.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable" /> whose elements to filter.</param>
       </Docs>
     </Member>
     <Member MemberName="OrderBy&lt;TSource,TKey&gt;">

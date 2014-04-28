@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PrecompilationFlags" FullName="System.Web.Compilation.PrecompilationFlags">
   <TypeSignature Language="C#" Value="public enum PrecompilationFlags" />
   <AssemblyInfo>
@@ -13,9 +14,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The PrecompilationFlags class defines the behavior of the build manager during precompilation. The <see cref="T:System.Web.Compilation.ClientBuildManager" /> class takes PrecompilationFlags as one of its constructor parameters. Precompilation can be performed programmatically through <see cref="T:System.Web.Compilation.ClientBuildManager" /> or through the Aspnet_compiler.exe command-line tool.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides flags that determine precompilation behavior.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllowPartiallyTrustedCallers">
@@ -25,8 +32,11 @@
         <ReturnType>System.Web.Compilation.PrecompilationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.AllowPartiallyTrustedCallersAttribute" /> attribute is generated for the assemblies, which means the assemblies can be called by partially trusted code. The /aptca flag will be added as a compilation symbol.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +49,11 @@
         <ReturnType>System.Web.Compilation.PrecompilationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The application will be built "clean": Any previously compiled components will be recompiled. This field corresponds to the -c switch on Aspnet_compiler.exe.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,8 +66,11 @@
         <ReturnType>System.Web.Compilation.PrecompilationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The /define:CodeAnalysis flag will be added as a compilation symbol.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,8 +83,11 @@
         <ReturnType>System.Web.Compilation.PrecompilationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value; no special behavior specified for precompilation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,8 +100,11 @@
         <ReturnType>System.Web.Compilation.PrecompilationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The assembly is not fully signed when created. The assembly can be signed later by a signing tool such as Sn.exe. The /delaysign flag will be added as a compilation symbol.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,8 +117,11 @@
         <ReturnType>System.Web.Compilation.PrecompilationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The assembly is generated with fixed names for the Web pages. The files are not batched during compilation and instead are compiled individually to produce the fixed names. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,8 +134,11 @@
         <ReturnType>System.Web.Compilation.PrecompilationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The compiler will emit debug information. This field corresponds to the -d switch on Aspnet_compiler.exe.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -123,8 +151,11 @@
         <ReturnType>System.Web.Compilation.PrecompilationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The target directory can be overwritten. This field corresponds to the -f switch on Aspnet_compiler.exe for a previously precompiled target.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -137,8 +168,11 @@
         <ReturnType>System.Web.Compilation.PrecompilationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deployed application will be updatable. This field corresponds to the -u switch on Aspnet_compiler.exe.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

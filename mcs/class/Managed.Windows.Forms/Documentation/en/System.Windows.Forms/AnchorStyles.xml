@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AnchorStyles" FullName="System.Windows.Forms.AnchorStyles">
   <TypeSignature Language="C#" Value="public enum AnchorStyles" />
   <AssemblyInfo>
@@ -17,8 +18,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a control is anchored to an edge of its container, the distance between the control and the specified edge remains constant when the container resizes. For example, if a control is anchored to the right edge of its container, the distance between the right edge of the control and the right edge of the container remains constant when the container resizes. A control can be anchored to any combination of control edges. If the control is anchored to opposite edges of its container (for example, to the top and bottom), it resizes when the container resizes. If a control has its <see cref="P:System.Windows.Forms.Control.Anchor" /> property set to <see cref="F:System.Windows.Forms.AnchorStyles.None" />, the control moves half of the distance that the container of the control is resized. For example, if a <see cref="T:System.Windows.Forms.Button" /> has its <see cref="P:System.Windows.Forms.Control.Anchor" /> property set to <see cref="F:System.Windows.Forms.AnchorStyles.None" /> and the <see cref="T:System.Windows.Forms.Form" /> that the control is located on is resized by 20 pixels in either direction, the button will be moved 10 pixels in both directions.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how a control anchors to the edges of its container.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Bottom">
@@ -28,7 +35,10 @@
         <ReturnType>System.Windows.Forms.AnchorStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control is anchored to the bottom edge of its container.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,7 +52,10 @@
         <ReturnType>System.Windows.Forms.AnchorStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control is anchored to the left edge of its container.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,7 +69,10 @@
         <ReturnType>System.Windows.Forms.AnchorStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control is not anchored to any edges of its container.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,7 +86,10 @@
         <ReturnType>System.Windows.Forms.AnchorStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control is anchored to the right edge of its container.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -84,7 +103,10 @@
         <ReturnType>System.Windows.Forms.AnchorStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control is anchored to the top edge of its container.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

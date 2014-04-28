@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectDataSourceStatusEventArgs" FullName="System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs">
   <TypeSignature Language="C#" Value="public class ObjectDataSourceStatusEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,150 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> class is used in the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnSelected(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" />, <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnUpdated(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" />, <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnInserted(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" />, and <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnDeleted(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" /> methods to provide access to output parameters, return values, and exceptions that are thrown by the method that is called by the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control. These are accessed by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.OutputParameters" />, <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.ReturnValue" />, and <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.Exception" /> properties, respectively. By adding a delegate to handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selected" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updated" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserted" />, or <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleted" /> events, you can examine this data and perform any additional post processing that is required.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control exposes many events that you can handle to work with the underlying business object at various times in its lifecycle. The following table lists the events and the associated <see cref="T:System.EventArgs" /> classes and event handler delegates.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Event</para>
+            </term>
+            <description>
+              <para>EventArgs</para>
+            </description>
+            <description>
+              <para>EventHandler</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectCreating" />.</para>
+            <para>Occurs immediately before the instance of the business object is created.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceObjectEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectCreated" />.</para>
+            <para>Occurs immediately after the instance of the business object is created.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceObjectEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selecting" />.</para>
+            <para>Occurs before the data is retrieved.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserting" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updating" />, and <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleting" />.</para>
+            <para>Occur before an insert, update, or delete operation is performed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selected" />.</para>
+            <para>Occurs after the data is retrieved.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserted" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updated" />, and <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleted" />.</para>
+            <para>Occur after the insert, update, or delete operation is completed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectDisposing" />.</para>
+            <para>Occurs before a business object is destroyed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceDisposingEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceDisposingEventHandler" />
+            </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selected" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserted" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updated" />, and <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleted" /> events of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +166,15 @@
       <Docs>
         <param name="returnVal">To be added.</param>
         <param name="outPutParam">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="returnValue" /> parameter can be any object that is returned by a call to the business object data method. The <paramref name="outputParameters" /> parameter is an <see cref="T:System.Collections.IDictionary" /> collection of name/value pairs that match those in the method signature and are passed by reference.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> class using the specified output parameters and return value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -44,9 +192,15 @@
         <param name="returnVal">To be added.</param>
         <param name="outPutParam">To be added.</param>
         <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="returnValue" /> parameter can be any object that is returned by a call to the business object data method. The <paramref name="outputParameters" /> parameter is an <see cref="T:System.Collections.IDictionary" /> collection of name/value pairs that match those in the method signature and are passed by reference. The <paramref name="exception" /> parameter is an <see cref="T:System.Exception" /> exception that wraps any exceptions that are thrown by the method that is called by the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control during a data operation. If the exception is not handled by an <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnSelected(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" />, <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnUpdated(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" />, <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnInserted(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" />, or <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnDeleted(System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs)" /> method, it is thrown by the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control after the data operation returns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> class using the specified output parameters, return value, and exception.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,9 +216,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.AffectedRows" /> value to verify that the expected number of rows was affected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of rows that are affected by the data operation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Exception">
@@ -74,10 +234,16 @@
         <ReturnType>System.Exception</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Exception" /> exception does not represent the actual exception that is thrown by the business object data method. You can use the <see cref="P:System.Exception.InnerException" /> property to access the thrown exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a wrapper for any exceptions that are thrown by the method that is called by the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control during a data operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -90,10 +256,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the business object throws an exception, the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.ExceptionHandled" /> property is set to false and the exception is wrapped by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.Exception" /> property. If you use an <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler" /> object, you can check the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.Exception" /> property and handle the exception. If you handle the exception, set the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.ExceptionHandled" /> property to true or the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control will throw an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether an exception that was thrown by the business object has been handled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -106,10 +278,16 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Any parameters that are passed to the business object method by reference are returned in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.OutputParameters" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection that contains business object method parameters and their values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -122,10 +300,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.ReturnValue" /> property is set in the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> constructor. The value is set to the return value of the business object method call, which is called using reflection. If the business method returns no value (such as when the business object method returns void), the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.ReturnValue" /> property evaluated to null.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the return value that is returned by the business object method, if any, as an object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

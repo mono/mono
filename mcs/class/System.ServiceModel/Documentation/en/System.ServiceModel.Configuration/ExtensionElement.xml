@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExtensionElement" FullName="System.ServiceModel.Configuration.ExtensionElement">
   <TypeSignature Language="C#" Value="public class ExtensionElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ExtensionElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that defines an extension, which enables the user to create user-defined bindings, behaviors, etc.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.ExtensionElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -38,9 +45,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.ExtensionElement" /> class with a specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A unique name of this configuration element.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,10 +66,15 @@
         <Parameter Name="type" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.ExtensionElement" /> class with a specified name and type.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />A unique name of this configuration element.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of this configuration element.</param>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -80,9 +96,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a unique name of this configuration element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -96,9 +115,12 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Configuration.ConfigurationPropertyCollection" /> instance that contains a collection of <see cref="T:System.Configuration.ConfigurationProperty" /> objects that can be attributes or <see cref="T:System.Configuration.ConfigurationElement" /> objects of this configuration element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -120,9 +142,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of this configuration element.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SerializationMode" FullName="System.Web.Configuration.SerializationMode">
   <TypeSignature Language="C#" Value="public enum SerializationMode" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.Web.Configuration.ProfilePropertySettings.SerializeAs" /> property of the <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> object controls the serialization mode for a single profile property setting.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Determines the serialization method used for a <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Binary">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.Configuration.SerializationMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> object is serialized using binary serialization.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.Configuration.SerializationMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The provider has implicit knowledge of the type and is responsible for deciding how to serialize the <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> object into the data store.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Web.Configuration.SerializationMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> object is serialized to a simple string.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +78,11 @@
         <ReturnType>System.Web.Configuration.SerializationMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The profile <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> is serialized as XML using XML serialization.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

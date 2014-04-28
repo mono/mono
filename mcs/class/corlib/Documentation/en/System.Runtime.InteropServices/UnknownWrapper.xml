@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UnknownWrapper" FullName="System.Runtime.InteropServices.UnknownWrapper">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class UnknownWrapper" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit UnknownWrapper extends System.Object" />
@@ -19,8 +20,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Only applies when the managed signature of a method takes an object.</para>
+      <code> int MyMethod(Object o); //Managed signature
+     HRESULT MyMethod(VARIANT o); //COM signature
+     MyObject o = new MyObject();
+     MyMethod(o); //o gets passed as VARIANT VT_DISPATCH
+     MyMethod(new UnknownWrapper(o)); //o gets passed as VARIANT VT_UNKNOWN</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Wraps objects the marshaler should marshal as a VT_UNKNOWN.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,9 +49,13 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.UnknownWrapper" /> class with the object to be wrapped.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object being wrapped. </param>
       </Docs>
     </Member>
     <Member MemberName="WrappedObject">
@@ -55,9 +71,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object contained by this wrapper.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UCOMITypeInfo" FullName="System.Runtime.InteropServices.UCOMITypeInfo">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface UCOMITypeInfo" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract UCOMITypeInfo" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about ITypeInfo, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.ITypeInfo" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddressOfMember">
@@ -198,11 +205,20 @@
         <Parameter Name="pMemId" Type="System.Int32[]" />
       </Parameters>
       <Docs>
-        <param name="rgszNames">To be added: an object of type 'string []'</param>
-        <param name="cNames">To be added: an object of type 'int'</param>
-        <param name="pMemId">To be added: an object of type 'int []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo::GetIDsOfNames, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Maps between member names and member IDs, and parameter names and parameter IDs.</para>
+        </summary>
+        <param name="rgszNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />On succesful return, an array of names to map. </param>
+        <param name="cNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />Count of names to map. </param>
+        <param name="pMemId">
+          <attribution license="cc4" from="Microsoft" modified="false" />Reference to an array in which name mappings are placed. </param>
       </Docs>
     </Member>
     <Member MemberName="GetImplTypeFlags">
@@ -438,9 +454,16 @@
         <Parameter Name="pFuncDesc" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pFuncDesc">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo::ReleaseFuncDesc, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases a <see cref="T:System.Runtime.InteropServices.FUNCDESC" /> previously returned by <see cref="M:System.Runtime.InteropServices.UCOMITypeInfo.GetFuncDesc(System.Int32,System.IntPtr@)" />.</para>
+        </summary>
+        <param name="pFuncDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />Reference to the FUNCDESC to release. </param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseTypeAttr">
@@ -459,9 +482,16 @@
         <Parameter Name="pTypeAttr" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pTypeAttr">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo::ReleaseTypeAttr, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases a <see cref="T:System.Runtime.InteropServices.TYPEATTR" /> previously returned by <see cref="M:System.Runtime.InteropServices.UCOMITypeInfo.GetTypeAttr(System.IntPtr@)" />.</para>
+        </summary>
+        <param name="pTypeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />Reference to the TYPEATTR to release. </param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseVarDesc">
@@ -480,9 +510,16 @@
         <Parameter Name="pVarDesc" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="pVarDesc">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about ITypeInfo::ReleaseVarDesc, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases a VARDESC previously returned by <see cref="M:System.Runtime.InteropServices.UCOMITypeInfo.GetVarDesc(System.Int32,System.IntPtr@)" />.</para>
+        </summary>
+        <param name="pVarDesc">
+          <attribution license="cc4" from="Microsoft" modified="false" />Reference to the VARDESC to release. </param>
       </Docs>
     </Member>
   </Members>

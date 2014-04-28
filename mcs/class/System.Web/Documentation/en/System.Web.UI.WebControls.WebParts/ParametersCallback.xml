@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ParametersCallback" FullName="System.Web.UI.WebControls.WebParts.ParametersCallback">
   <TypeSignature Language="C#" Value="public delegate void ParametersCallback(IDictionary parametersData);" />
   <AssemblyInfo>
@@ -15,8 +16,15 @@
   </ReturnValue>
   <Docs>
     <param name="parametersData">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.ParametersCallback" /> delegate represents the method to call for retrieving row data from a provider based on a parameter from the consumer. </para>
+      <para>The <see cref="M:System.Web.UI.WebControls.WebParts.IWebPartParameters.GetParametersData(System.Web.UI.WebControls.WebParts.ParametersCallback)" /> method contains a <see cref="T:System.Web.UI.WebControls.WebParts.ParametersCallback" /> delegate parameter. The <see cref="M:System.Web.UI.WebControls.WebParts.IWebPartParameters.GetParametersData(System.Web.UI.WebControls.WebParts.ParametersCallback)" /> method is used in the <see cref="T:System.Web.UI.WebControls.WebParts.RowToParametersTransformer" /> class to retrieve row data for transformation.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>References the method to call when retrieving row data from a provider.</para>
+    </summary>
   </Docs>
 </Type>

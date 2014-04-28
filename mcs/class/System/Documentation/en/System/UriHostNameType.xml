@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UriHostNameType" FullName="System.UriHostNameType" FullNameSP="System_UriHostNameType" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable UriHostNameType extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum UriHostNameType" />
@@ -15,15 +16,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para>Specifies the format of host names.</para>
-    </summary>
     <remarks>
-      <para>
-        <block subset="none" type="note">The <see cref="T:System.UriHostNameType" /> enumeration defines the values returned by the <see cref="M:System.Uri.CheckHostName(System.String)" qualify="true" /> 
-method.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.UriHostNameType" /> enumeration defines the values that the <see cref="M:System.Uri.CheckHostName(System.String)" /> method can return.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines host name types for the <see cref="M:System.Uri.CheckHostName(System.String)" /> method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Basic">
@@ -40,8 +40,11 @@ method.</block>
       </ReturnValue>
       <MemberValue>Basic</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The host is set, but the type cannot be determined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dns">
@@ -61,7 +64,8 @@ method.</block>
       <MemberValue>Dns</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies that the host name is a domain name system (DNS) style host address.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The host name is a domain name system (DNS) style host name.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -83,7 +87,8 @@ method.</block>
       <MemberValue>IPv4</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies that the host name is an Internet Protocol (IP) version 4 host address.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The host name is an Internet Protocol (IP) version 4 host address.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -105,8 +110,8 @@ method.</block>
       <MemberValue>IPv6</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies that the host name is an Internet Protocol (IP)
- version 6 host address.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The host name is an Internet Protocol (IP) version 6 host address.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -128,7 +133,8 @@ method.</block>
       <MemberValue>Unknown</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the format of a host name is not known or no host information is present.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the host name is not supplied.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>

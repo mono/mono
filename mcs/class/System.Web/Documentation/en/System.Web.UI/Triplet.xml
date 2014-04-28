@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Triplet" FullName="System.Web.UI.Triplet">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class Triplet" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.Triplet" /> class is used as a basic structure to store three related objects. It is a utility class that is used in various ways throughout ASP.NET. You can use the <see cref="T:System.Web.UI.Triplet" /> class in your own code anywhere that you need a structure to contain three related objects and where data-hiding is not essential. The <see cref="T:System.Web.UI.Triplet" /> class does not encapsulate its object references, <see cref="F:System.Web.UI.Triplet.First" />, <see cref="F:System.Web.UI.Triplet.Second" />, and <see cref="F:System.Web.UI.Triplet.Third" />, in properties; it exposes them directly to all calling code as public class fields. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a basic utility class that is used to store three related objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Triplet" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,10 +50,15 @@
         <Parameter Name="y" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'object'</param>
-        <param name="y">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Triplet" /> class and sets the first two objects. </para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />Object assigned to <see cref="F:System.Web.UI.Triplet.First" />.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />Object assigned to <see cref="F:System.Web.UI.Triplet.Second" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -60,11 +75,17 @@
         <Parameter Name="z" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="x">To be added: an object of type 'object'</param>
-        <param name="y">To be added: an object of type 'object'</param>
-        <param name="z">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Triplet" /> class with the provided three objects. </para>
+        </summary>
+        <param name="x">
+          <attribution license="cc4" from="Microsoft" modified="false" />Object assigned to <see cref="F:System.Web.UI.Triplet.First" />.</param>
+        <param name="y">
+          <attribution license="cc4" from="Microsoft" modified="false" />Object assigned to <see cref="F:System.Web.UI.Triplet.Second" />.</param>
+        <param name="z">
+          <attribution license="cc4" from="Microsoft" modified="false" />Object assigned to <see cref="F:System.Web.UI.Triplet.Third" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,8 +100,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the first object of the triplet.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,8 +119,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the second object of the triplet.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -111,8 +138,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the third object of the triplet.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

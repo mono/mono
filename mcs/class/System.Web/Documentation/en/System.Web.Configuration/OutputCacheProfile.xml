@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OutputCacheProfile" FullName="System.Web.Configuration.OutputCacheProfile">
   <TypeSignature Language="C#" Value="public sealed class OutputCacheProfile : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,9 +10,21 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.OutputCacheProfile" /> class provides a way to programmatically access and modify the add element of the outputCacheProfiles section in the caching section of a configuration file.</para>
+      <para>The <see cref="T:System.Web.Configuration.OutputCacheProfile" /> object centralizes frequently used configuration settings such as dependencies, cache location, and cache expiration time, eliminating the need to specify them on every page.</para>
+      <para>The <see cref="T:System.Web.Configuration.OutputCacheProfile" /> can be applied to a page using the CacheProfile attribute of the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive.</para>
+      <block subset="none" type="note">
+        <para>The <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive can override all the settings contained by an <see cref="T:System.Web.Configuration.OutputCacheProfile" /> object except for the <see cref="P:System.Web.Configuration.OutputCacheProfile.Enabled" /> attribute. This is to enable or disable the <see cref="T:System.Web.Configuration.OutputCacheProfile" /> without having to modify the directives in all the pages that might have overridden it.</para>
+      </block>
+      <para>The <see cref="T:System.Web.Caching.CacheDependency" /> class monitors the dependencies so that when any cached item changes, the cached item will be automatically removed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures the output cache profile that can be used by the application pages. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +34,14 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.OutputCacheProfile" /> class.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name value to use.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,10 +59,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.Duration" /> represents the time in seconds that the page or user control is cached. Setting this property establishes an expiration policy for HTTP responses from the page or control to which it applies and will automatically cause the caching of their output. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.Duration" /> must be defined in either the profile or the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive of a page using the profile.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the time duration during which the page or control is cached.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,10 +89,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.Enabled" /> property allows enabling or disabling the caching mechanism in one place only. It affects all the pages or controls that use this <see cref="T:System.Web.Configuration.OutputCacheProfile" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether caching is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -84,10 +116,16 @@
         <ReturnType>System.Web.UI.OutputCacheLocation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <see cref="P:System.Web.Configuration.OutputCacheProfile.Location" /> is set to Any, the output cache can be located on the browser client, where the request originated; on a proxy server, or any other server, participating in the request; or on the server where the request was processed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the output cache location.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -111,10 +149,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You use the <see cref="P:System.Web.Configuration.OutputCacheProfile.Name" /> to assign a value to the CacheProfile attribute of the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive if you want to apply the <see cref="T:System.Web.Configuration.OutputCacheProfile" /> values to a page or control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Web.Configuration.OutputCacheProfile" /> name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -132,10 +176,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The page that has the <see cref="P:System.Web.Configuration.OutputCacheProfile.NoStore" /> property set to true issues a response specifying in its header to prevent secondary storage of sensitive information.</para>
+          <para>Setting this attribute to true is equivalent to invoking the <see cref="M:System.Web.HttpCachePolicy.SetNoStore" /> method during a Web request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether secondary storage is enabled. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -169,10 +220,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.SqlDependency" /> defines a relationship between a Web application and an instance of SQL Server, allowing the detection of changes in the data at the server. The <see cref="P:System.Web.Configuration.OutputCacheProfile.SqlDependency" /> ensures that output cached pages are removed from the cache whenever the SQL table on which they depend changes.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.Caching.SqlCacheDependency" /> class monitors the table so that when the table changes, the item will be automatically removed from the Cache. This class cannot be inherited. </para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="P:System.Web.Configuration.OutputCacheProfile.SqlDependency" /> property. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -193,9 +253,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByContentEncoding" /> settings are the same ones used by the VaryByContentEncoding attribute of the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive.</para>
+          <para>
+            <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByContentEncoding" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the semicolon-delimited set of content encodings to be cached.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VaryByControl">
@@ -210,10 +278,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByControl" /> is a semicolon-delimited set of IDs of controls to be cached. </para>
+          <para>For more information, see <format type="text/html"><a href="7f7d839a-c060-4d2a-9c4e-7fd1080ec0ad">Caching Multiple Versions of User Control Output</a></format>.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByControl" /> settings are the same ones used by the VaryByControls attribute of the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByControl" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -231,10 +309,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByCustom" /> can be any text that represents custom output-caching requirements. If a custom string is entered, you must override the <see cref="M:System.Web.HttpApplication.GetVaryByCustomString(System.Web.HttpContext,System.String)" /> method in the application's Global.asax file.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByCustom" /> settings are the same ones used by the VaryByCustom attribute of the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByCustom" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -252,10 +339,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByHeader" /> is a semicolon-delimited set of headers used to vary the cached output. These are HTTP headers associated with the request. For more information, see <format type="text/html"><a href="c60284a9-9899-4fdc-a97c-020766b7572e">Caching Multiple Versions of a Page</a></format>.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByHeader" /> settings are the same ones used by the VaryByHeader attribute of the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format>. Varying by all headers by setting the value of "*" is not recommended. It can result in cache overflow or a denial of service attack on the Web server.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByHeader" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -273,10 +369,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByParam" /> is a semicolon-delimited set of parameters used to vary the cached output. It allows varying the cached output by GET query string or form POST parameters. For instance, you can vary the user-control output to the cache by specifying the user-control name along with either a query string or a form POST parameter. For more information, see <format type="text/html"><a href="7f7d839a-c060-4d2a-9c4e-7fd1080ec0ad">Caching Multiple Versions of User Control Output</a></format>.</para>
+          <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByParam" /> setting must be defined in either the profile or the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format> directive of the page using the profile.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByParam" /> settings are the same ones used by the VaryByParam attribute of the <format type="text/html"><a href="28a9e101-fb44-4198-9cb6-b8a52312fec2">@ OutputCache</a></format>. Varying by all parameters by setting the value of "*" is not recommended. It can result in cache overflow or a denial of service attack on the Web server.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="P:System.Web.Configuration.OutputCacheProfile.VaryByParam" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

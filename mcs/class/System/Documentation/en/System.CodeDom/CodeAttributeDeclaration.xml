@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeAttributeDeclaration" FullName="System.CodeDom.CodeAttributeDeclaration">
   <TypeSignature Language="C#" Value="public class CodeAttributeDeclaration" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeAttributeDeclaration extends System.Object" />
@@ -23,8 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.CodeDom.CodeAttributeDeclaration" /> can be used to represent an expression that declares an attribute. The attribute name and the arguments for the attribute are stored as properties of the object. A <see cref="T:System.CodeDom.CodeAttributeArgument" /> can be used to represent each argument for the attribute.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an attribute declaration.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeAttributeDeclaration" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,9 +65,16 @@
         <Parameter Name="attributeType" Type="System.CodeDom.CodeTypeReference" />
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="attributeType" /> parameter is used to set the <see cref="P:System.CodeDom.CodeAttributeDeclaration.AttributeType" /> and <see cref="P:System.CodeDom.CodeAttributeDeclaration.Name" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeAttributeDeclaration" /> class using the specified code type reference.</para>
+        </summary>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeReference" /> that identifies the attribute.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -74,9 +91,13 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeAttributeDeclaration" /> class using the specified name.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -98,10 +119,18 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="attributeType">To be added.</param>
-        <param name="arguments">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="attributeType" /> parameter is used to set the <see cref="P:System.CodeDom.CodeAttributeDeclaration.AttributeType" /> and <see cref="P:System.CodeDom.CodeAttributeDeclaration.Name" /> properties, and the <paramref name="arguments" /> parameter is used to set the <see cref="P:System.CodeDom.CodeAttributeDeclaration.Arguments" /> property for the <see cref="T:System.CodeDom.CodeAttributeDeclaration" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeAttributeDeclaration" /> class using the specified code type reference and arguments.</para>
+        </summary>
+        <param name="attributeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeReference" /> that identifies the attribute.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.CodeDom.CodeAttributeArgument" /> that contains the arguments for the attribute.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -125,10 +154,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="arguments">To be added: an object of type 'CodeAttributeArgument []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeAttributeDeclaration" /> class using the specified name and arguments.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the attribute. </param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.CodeDom.CodeAttributeArgument" />  that contains the arguments for the attribute. </param>
       </Docs>
     </Member>
     <Member MemberName="Arguments">
@@ -144,9 +178,12 @@
         <ReturnType>System.CodeDom.CodeAttributeArgumentCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeAttributeArgumentCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the arguments for the attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AttributeType">
@@ -161,9 +198,12 @@
         <ReturnType>System.CodeDom.CodeTypeReference</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the code type reference for the code attribute declaration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -181,9 +221,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the attribute being declared.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

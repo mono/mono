@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XCData" FullName="System.Xml.Linq.XCData">
   <TypeSignature Language="C#" Value="public class XCData : System.Xml.Linq.XText" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XCData extends System.Xml.Linq.XText" />
@@ -10,8 +11,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An XML CDATA section allows you to store almost any arbitrary string as the contents of an XML element. This class represents the XML concept of a CDATA text node.</para>
+      <para>This class derives from <see cref="T:System.Xml.Linq.XText" />, which represents XML text. CDATA sections are special cases of XML text.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a text node that contains CDATA. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +33,13 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XCData" /> class. </para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the value of the <see cref="T:System.Xml.Linq.XCData" /> node.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -41,9 +53,16 @@
         <Parameter Name="other" Type="System.Xml.Linq.XCData" />
       </Parameters>
       <Docs>
-        <param name="other">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is primarily used internally to make a deep copy of an XML tree.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Linq.XCData" /> class. </para>
+        </summary>
+        <param name="other">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XCData" /> node to copy from.</param>
       </Docs>
     </Member>
     <Member MemberName="NodeType">
@@ -57,9 +76,15 @@
         <ReturnType>System.Xml.XmlNodeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because all classes that derive from <see cref="T:System.Xml.Linq.XObject" /> contain a <see cref="P:System.Xml.Linq.XObject.NodeType" /> property, you can write code that operates on collections of concrete subclass of <see cref="T:System.Xml.Linq.XObject" />. Your code can then test for the node type of each node in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node type for this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteTo">
@@ -76,9 +101,16 @@
         <Parameter Name="writer" Type="System.Xml.XmlWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is primarily used internally by the methods that write an XML tree to an <see cref="T:System.Xml.XmlWriter" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes this CDATA object to an <see cref="T:System.Xml.XmlWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlWriter" /> into which this method will write.</param>
       </Docs>
     </Member>
   </Members>

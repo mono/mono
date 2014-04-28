@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RadioButtonState" FullName="System.Windows.Forms.VisualStyles.RadioButtonState">
   <TypeSignature Language="C#" Value="public enum RadioButtonState" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.VisualStyles.RadioButtonState" /> values correspond to the states of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> objects exposed by the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.Button.RadioButton" /> class. The <see cref="T:System.Windows.Forms.VisualStyles.RadioButtonState" /> values are also used as an argument in the <see cref="Overload:System.Windows.Forms.RadioButtonRenderer.DrawRadioButton" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the visual state of an option button (also known as a radio button) that is drawn with visual styles.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CheckedDisabled">
@@ -20,8 +27,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.RadioButtonState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The option button is checked and disabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.RadioButtonState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The option button is checked and hot.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.RadioButtonState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The option button is checked and normal.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +78,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.RadioButtonState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The option button is checked and pressed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +95,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.RadioButtonState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The option button is unchecked and disabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -90,8 +112,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.RadioButtonState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The option button is unchecked and hot.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,8 +129,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.RadioButtonState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The option button is unchecked and normal.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -118,8 +146,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.RadioButtonState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The option button is unchecked and pressed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

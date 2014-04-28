@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IXmlMtomReaderInitializer" FullName="System.Xml.IXmlMtomReaderInitializer">
   <TypeSignature Language="C#" Value="public interface IXmlMtomReaderInitializer" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IXmlMtomReaderInitializer" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies implementation requirements for XML MTOM readers that derive from this interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="SetInput">
@@ -30,14 +34,23 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="encodings">To be added.</param>
-        <param name="contentType">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <param name="maxBufferSize">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies initialization requirements for XML MTOM readers that read a stream.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream from which to read.</param>
+        <param name="encodings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The possible character encodings of the stream.</param>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Content-Type of the message. Can be null if the MIME type is present in the document being read.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to apply to the reader.</param>
+        <param name="maxBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum allowed size of the buffer.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to use when an onClose event happens.</param>
       </Docs>
     </Member>
     <Member MemberName="SetInput">
@@ -61,16 +74,27 @@
         <Parameter Name="onClose" Type="System.Xml.OnXmlDictionaryReaderClose" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="offset">To be added.</param>
-        <param name="count">To be added.</param>
-        <param name="encodings">To be added.</param>
-        <param name="contentType">To be added.</param>
-        <param name="quotas">To be added.</param>
-        <param name="maxBufferSize">To be added.</param>
-        <param name="onClose">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies initialization requirements for XML MTOM readers that read a buffer.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer from which to read.</param>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting position from which to read in <paramref name="buffer" />.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that can be read from <paramref name="buffer" />.</param>
+        <param name="encodings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The possible character encodings of the input.</param>
+        <param name="contentType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Content-Type of the message. Can be null if the MIME type is present in the document being read.</param>
+        <param name="quotas">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionaryReaderQuotas" /> to apply to the reader.</param>
+        <param name="maxBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum allowed size of the buffer.</param>
+        <param name="onClose">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to use when an onClose event happens.</param>
       </Docs>
     </Member>
   </Members>

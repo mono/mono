@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ClientTargetSection" FullName="System.Web.Configuration.ClientTargetSection">
   <TypeSignature Language="C#" Value="public sealed class ClientTargetSection : System.Configuration.ConfigurationSection" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.ClientTargetSection" /> class provides a way to programmatically access and modify the clientTarget section of the configuration file. It belongs to a group that includes the <see cref="T:System.Web.Configuration.ClientTargetCollection" /> class and the <see cref="T:System.Web.Configuration.ClientTarget" /> class.</para>
+      <para>The <see cref="T:System.Web.Configuration.ClientTargetSection" /> class contains <see cref="T:System.Web.Configuration.ClientTarget" /> objects that define pairs of aliases and associated target user agents for which ASP.NET server controls should render content.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures the clientTarget section. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +27,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called by the ASP.NET configuration system and is not intended to be used directly from your code. You can obtain an instance of the <see cref="T:System.Web.Configuration.ClientTargetSection" /> class by using the <see cref="M:System.Configuration.Configuration.GetSection(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.ClientTargetSection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +53,16 @@
         <ReturnType>System.Web.Configuration.ClientTargetCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each <see cref="T:System.Web.Configuration.ClientTarget" /> object contains two properties identifying a client browser, also called the user agent. One property is the alias associated with the client browser that is identified by the other property. ASP.NET uses this information to render server controls on a page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of <see cref="T:System.Web.Configuration.ClientTarget" /> objects.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

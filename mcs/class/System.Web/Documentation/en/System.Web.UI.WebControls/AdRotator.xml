@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AdRotator" FullName="System.Web.UI.WebControls.AdRotator">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class AdRotator : System.Web.UI.WebControls.DataBoundControl" />
   <AssemblyInfo>
@@ -28,8 +29,208 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#Introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#XMLAdvertisementFileFormat">XML Advertisement File Format</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#DeclarativeSyntax">Declarative Syntax</a>
+            </format> </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#Introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>Use the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control to display a randomly selected advertisement banner on the Web page. The displayed advertisement changes whenever the page refreshes.</para>
+      <para>Advertisement information is stored in a separate XML file. The XML file allows you to maintain a list of advertisements and their associated attributes. Attributes include the path to an image to display, the URL to link to when the control is clicked, the alternate text to display when the image is not available, a keyword, and the frequency of the advertisement. Information in this file is not validated by the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control. To prevent ads from executing malicious scripts, you should always check the data before releasing it, or accept ad information only from trusted sources.</para>
+      <para>To secure your advertisement file from unauthorized Internet access, do one or more of the following:</para>
+      <list type="bullet">
+        <item>
+          <para>Store it in the App_Data directory, which is configured to deny Internet access for files of any type.</para>
+        </item>
+        <item>
+          <para>Rename the file with an extension that is not .xml, and map the extension to the HttpForbiddenHandler in Web.config. For more information, see the <format type="text/html"><a href="24ca01f3-7141-4fdc-acac-71c0733cf6c2">httpHandlers</a></format> section in your Machine.config file.</para>
+        </item>
+      </list>
+      <para>As an alternative to an XML file as the source of data, it is possible to provide advertisement information through a callback event. This event can also be used in combination with the XML file to extend the behavior of the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control, such as redirecting to another page. See the <see cref="P:System.Web.UI.WebControls.AdRotator.AdvertisementFile" /> property for additional information on the file format.</para>
+      <block subset="none" type="note">
+        <para>When page caching is enabled, an <see cref="T:System.Web.UI.WebControls.AdRotator" /> control is not cached. A new advertisement is selected whenever the Web page refreshes. A new advertisement is not selected, however, if you provide an event handler for the <see cref="E:System.Web.UI.WebControls.AdRotator.AdCreated" /> event.</para>
+      </block>
+      <format type="text/html">
+        <a href="#XMLAdvertisementFileFormat" />
+      </format>
+      <format type="text/html">
+        <h2>XML Advertisement File Format</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.AdRotator" /> control uses a separate XML advertisement file to store the advertisement information, such as the location of the image to display and the URL of the page to link to. The <see cref="P:System.Web.UI.WebControls.AdRotator.AdvertisementFile" /> property of the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control specifies the path to this file.</para>
+      <para>When creating the advertisement file, opening and closing &lt;Advertisements&gt; tags mark the beginning and the end of the file, respectively. Opening and closing &lt;Ad&gt; tags delimit each advertisement. All advertisements are nested between the opening and closing &lt;Advertisements&gt; tags. If the file contains multiple &lt;Advertisements&gt; tags, only the first set of &lt;Advertisements&gt; tags in the file will be parsed by the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control. All other &lt;Advertisements&gt; tags will be ignored.</para>
+      <para>The data elements for each advertisement are nested between the opening and closing &lt;Ad&gt; tags. Although certain data elements are predefined (such as <see cref="P:System.Web.UI.WebControls.AdCreatedEventArgs.ImageUrl" /> and <see cref="P:System.Web.UI.WebControls.AdCreatedEventArgs.NavigateUrl" />), you can place custom elements between the &lt;Ad&gt; tags. These elements will be read by the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control when it parses the file. The information is then passed to the <see cref="E:System.Web.UI.WebControls.AdRotator.AdCreated" /> event in the <see cref="P:System.Web.UI.WebControls.AdCreatedEventArgs.AdProperties" /> dictionary property.</para>
+      <para>The following table lists the data elements that are predefined for the XML advertisement file.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Element</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>ImageUrl</para>
+          </term>
+          <description>
+            <para>The absolute or relative URL to an image file (optional).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>NavigateUrl</para>
+          </term>
+          <description>
+            <para>The URL of a page to link to if the user clicks the ad (optional).</para>
+            <block subset="none" type="note">
+              <para>If this element is not set, the HRef property is not rendered on the anchor tag.</para>
+            </block>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Height</para>
+          </term>
+          <description>
+            <para>The height of the image, in pixels (optional).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Width</para>
+          </term>
+          <description>
+            <para>The width of the image, in pixels (optional).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AlternateText</para>
+          </term>
+          <description>
+            <para>The text display in place of the image when the image specified by the <see cref="P:System.Web.UI.WebControls.AdCreatedEventArgs.ImageUrl" /> property is not available (optional).</para>
+            <para>In some browsers, this text also appears as a ToolTip for the advertisement.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Keyword</para>
+          </term>
+          <description>
+            <para>A category for the advertisement (for example, "computers") that you can filter by (optional).</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Impressions</para>
+          </term>
+          <description>
+            <para>A number that indicates the importance of the ad in the schedule of rotation relative to the other ads in the file (optional).</para>
+            <para>The larger the number, the more often the ad is displayed. The total of all &lt;Impressions&gt; values in the XML file cannot exceed 2,047,999,999<legacyItalic>.</legacyItalic> If it does, the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control throws a run-time exception.</para>
+          </description>
+        </item>
+      </list>
+      <para>The following example shows the format for the XML advertisement file.</para>
+      <code>&lt;Advertisements&gt;
+  &lt;Ad&gt;
+    &lt;ImageUrl&gt;
+      URL of image to display for Advertisement #1
+    &lt;/ImageUrl&gt;
+    &lt;NavigateUrl&gt;
+      URL of page to link to for Advertisement #1
+    &lt;/NavigateUrl&gt;
+    &lt;AlternateText&gt;
+      Text to show as a ToolTip for Advertisement #1
+    &lt;/AlternateText&gt;
+    &lt;Keyword&gt;
+      Keyword used to filter for Advertisement #1
+    &lt;/Keyword&gt;
+    &lt;Impressions&gt;
+       Relative importance of Advertisement #1
+    &lt;/Impressions&gt;
+    &lt;CustomInformation&gt;
+      Custom Data about Advertisement #1
+    &lt;/CustomInformation&gt;
+  &lt;/Ad&gt;
+&lt;/Advertisements&gt;</code>
+      <format type="text/html">
+        <a href="#DeclarativeSyntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:AdRotator
+    AccessKey="string"
+    AdvertisementFile="uri"
+    AlternateTextField="string"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    CssClass="string"
+    DataMember="string"
+    DataSource="string"
+    DataSourceID="string"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ForeColor="color name|#dddddd"
+    Height="size"
+    ID="string"
+    ImageUrlField="string"
+    KeywordFilter="string"
+    NavigateUrlField="string"
+    OnAdCreated="AdCreated event handler"
+    OnDataBinding="DataBinding event handler"
+    OnDataBound="DataBound event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    Target="string|_blank|_parent|_search|_self|<codeFeaturedElement>_top</codeFeaturedElement>"
+    ToolTip="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+/&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays an advertisement banner on a Web page.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -38,8 +239,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.AdRotator" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.AdRotator" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -54,8 +261,19 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is raised once per round trip to the server after the creation of the control, but before the page is rendered. When the <see cref="P:System.Web.UI.WebControls.AdRotator.AdvertisementFile" /> property is set, this event occurs after the advertisement has been selected from the file.</para>
+          <para>You can control how the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control is displayed by modifying the arguments passed to the event handler of the <see cref="E:System.Web.UI.WebControls.AdRotator.AdCreated" /> event. If the <see cref="P:System.Web.UI.WebControls.AdRotator.AdvertisementFile" /> property is not set, this allows you to specify the advertisement information directly, without using a separate advertisement file. If the <see cref="P:System.Web.UI.WebControls.AdRotator.AdvertisementFile" /> property is set, this allows you to extend the behavior of the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control, such as redirecting to another page.</para>
+          <block subset="none" type="note">
+            <para>When page caching is enabled, an <see cref="T:System.Web.UI.WebControls.AdRotator" /> control is not cached. A new advertisement is selected whenever the Web page refreshes. A new advertisement is not selected, however, if you provide an event handler for the <see cref="E:System.Web.UI.WebControls.AdRotator.AdCreated" /> event.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs once per round trip to the server after the creation of the control, but before the page is rendered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -70,9 +288,100 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.AdRotator.AdvertisementFile" /> property to specify the location of an XML file that contains advertisement information. The XML file must reside within the same Web site. For deployment and security purposes, it is strongly recommended that you place the file in the same Web application. It is only possible to access an XML file that is located in a different application on the same site if the application has sufficient trust.</para>
+          <para>You can set this property to either an absolute path or a path relative to the XML file. Use a relative path to simplify deployment. If you use a relative path, that path is relative to the location of the page or user control that contains the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.AdRotator.AdvertisementFile" /> property is optional. An advertisement can also be programmatically set in the <see cref="E:System.Web.UI.WebControls.AdRotator.AdCreated" /> event.</para>
+          <para>The XML file contains the following predefined attributes. Only the ImageUrl attribute is required.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Attribute </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>ImageUrl</para>
+              </term>
+              <description>
+                <para>The URL of the image to display. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Height</para>
+              </term>
+              <description>
+                <para>The height of the image, in pixels (optional).</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Width</para>
+              </term>
+              <description>
+                <para>The width of the image, in pixels (optional).</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>NavigateUrl</para>
+              </term>
+              <description>
+                <para>The URL of the page to navigate to when the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control is clicked. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>AlternateText</para>
+              </term>
+              <description>
+                <para>The text to display if the image is unavailable. On some browsers, this text is displayed as a ToolTip. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Keyword</para>
+              </term>
+              <description>
+                <para>The category for the advertisement. This is used by the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control to filter the list of advertisements for a specific category. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Impressions</para>
+              </term>
+              <description>
+                <para>A value that indicates how often an advertisement is displayed in relation to other advertisements in the XML file.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>The ImageUrl and NavigateUrl attributes can be a full URL, a root-relative path, or a relative path. If you use a root-relative path, the path is relative to the same Web site. If you use a relative path, the path is relative to the directory that contains the advertisement file.</para>
+          </block>
+          <para>You can also include custom attributes by using custom tags in the XML file. All attribute tags are parsed from the advertisement file, and the values are placed in the <see cref="P:System.Web.UI.WebControls.AdCreatedEventArgs.AdProperties" /> dictionary. You can use the <see cref="P:System.Web.UI.WebControls.AdCreatedEventArgs.AdProperties" /> dictionary to programmatically access your custom attributes.</para>
+          <para>Information in this file is not validated by the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control. To prevent ads from executing malicious scripts, you should always check the data before releasing it, or accept ad information only from trusted sources.</para>
+          <para>To secure your advertisement file from unauthorized Internet access, do one or more of the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Store it in the Data directory, which is configured in Machine.config to deny Internet access for files of any type.</para>
+            </item>
+            <item>
+              <para>Rename the file with an extension that is not .xml, and map the extension to HttpForbiddenHandler in Web.config. For more information, see the <format type="text/html"><a href="24ca01f3-7141-4fdc-acac-71c0733cf6c2">httpHandlers</a></format> section in your Machine.config file.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path to an XML file that contains advertisement information.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -108,9 +417,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.AdRotator.AlternateTextField" /> property is used to select a custom data field to use in place of the AlternateText attribute for an advertisement. Like AlternateText, this custom field is defined in the XML file that contains advertisement information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a custom data field to use in place of the AlternateText attribute for an advertisement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Font">
@@ -121,9 +436,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Web.UI.WebControls.FontInfo" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the font properties associated with the advertisement banner control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -156,9 +474,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.AdRotator.ImageUrlField" /> property is used for selecting a custom data field used in place of the ImageUrl attribute for an advertisement. Like ImageUrl, this custom field is defined in the XML file that contains advertisement information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a custom data field to use in place of the ImageUrl attribute for an advertisement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeywordFilter">
@@ -169,9 +493,22 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each advertisement in the XML advertisement file can be assigned a category keyword. Use the <see cref="P:System.Web.UI.WebControls.AdRotator.KeywordFilter" /> property to filter the advertisements for the specified keyword. Only advertisements containing the keyword will be selected for the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control. The <see cref="P:System.Web.UI.WebControls.AdRotator.KeywordFilter" /> property can be programmatically set to match the profile of the user.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.AdRotator.KeywordFilter" /> property is a very simple filter that searches for the specified keyword. It is not possible to specify more than one keyword in the <see cref="P:System.Web.UI.WebControls.AdRotator.KeywordFilter" /> property, nor is it possible to declare multiple keywords in the advertisement file.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.AdRotator.AdvertisementFile" /> property needs to be set for this property to have any effect.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>If the specified keyword is not found in the XML advertisement file, no advertisement is displayed in the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control. Be sure to specify a keyword for this property with at least one match in the advertisement file.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a category keyword to filter for specific types of advertisements in the XML advertisement file.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -201,9 +538,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.AdRotator.NavigateUrlField" /> property is used to select a custom data field used in place of the NavigateUrl attribute for an advertisement. Like NavigateUrl, this custom field is defined in the XML file that contains advertisement information.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a custom data field to use in place of the NavigateUrl attribute for an advertisement.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnAdCreated">
@@ -216,9 +559,17 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.AdCreatedEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added: an object of type 'AdCreatedEventArgs'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.AdRotator.AdCreated" /> event is raised on the server after the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control is created, but before the page is rendered. If the <see cref="P:System.Web.UI.WebControls.AdRotator.AdvertisementFile" /> property is set, the <see cref="E:System.Web.UI.WebControls.AdRotator.AdCreated" /> event is raised after an advertisement has been selected by the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control.</para>
+          <para>Raising an event invokes the event-handling method through a delegate. For more information, see <format type="text/html"><a href="73bf8638-c4ec-4069-b0bb-a1dc79b92e32">How to: Consume Events in a Web Forms Application</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.AdRotator.AdCreated" /> event for the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.WebControls.AdCreatedEventArgs" /> that contains event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -238,9 +589,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.Init" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />The event arguments.</param>
       </Docs>
     </Member>
     <Member MemberName="OnPreRender">
@@ -254,8 +609,11 @@
       </Parameters>
       <Docs>
         <param name="eee">a <see cref="T:System.EventArgs" /></param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the advertisement information for rendering by looking up the file data or calling the user event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -275,9 +633,17 @@
         <Parameter Name="data" Type="System.Collections.IEnumerable" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.AdRotator.PerformDataBinding(System.Collections.IEnumerable)" /> method is called by the base <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class methods to bind the advertisement data from a data source to the control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds the specified data source to the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control.</para>
+        </summary>
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the data source; the object must implement the <see cref="T:System.Collections.IEnumerable" /> interface.</param>
       </Docs>
     </Member>
     <Member MemberName="PerformSelect">
@@ -291,8 +657,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is used primarily by control developers.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.AdRotator.PerformSelect" /> method for an <see cref="T:System.Web.UI.WebControls.AdRotator" /> object retrieves the advertisement data from the <see cref="P:System.Web.UI.WebControls.AdRotator.AdvertisementFile" />, and then calls the <see cref="M:System.Web.UI.Control.OnDataBinding(System.EventArgs)" /> and <see cref="M:System.Web.UI.WebControls.BaseDataBoundControl.OnDataBound(System.EventArgs)" /> methods.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.AdRotator.AdvertisementFile" /> property is not set, then the method calls the <see cref="M:System.Web.UI.WebControls.AdRotator.PerformSelect" /> method of the base <see cref="T:System.Web.UI.WebControls.DataBoundControl" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the advertisement data from the associated data source.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Render">
@@ -306,8 +680,14 @@
       </Parameters>
       <Docs>
         <param name="w">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays an image obtained from the advertisement chosen in <see cref="M:System.Web.UI.WebControls.AdRotator.OnPreRender(System.EventArgs)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control on the client.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -325,9 +705,16 @@
         <ReturnType>System.Web.UI.HtmlTextWriterTag</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used primarily by control developers.</para>
+          <para>Use the <see cref="P:System.Web.UI.WebControls.AdRotator.TagKey" /> property to determine the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value associated with an <see cref="T:System.Web.UI.WebControls.AdRotator" /> control. This property overrides the base implementation to always return <see cref="F:System.Web.UI.HtmlTextWriterTag.A" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the HTML tag for the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Target">
@@ -338,9 +725,74 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.AdRotator.Target" /> property to specify the target window or frame that displays the contents of the Web page linked to when the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control is clicked. </para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.AdRotator.Target" /> property renders as a target attribute . The target attribute on anchor (a) elements is not allowed in XHTML 1.1. Therefore, if rendered markup must conform to XHTML standards or must conform to accessibility standards, do not set the <see cref="P:System.Web.UI.WebControls.AdRotator.Target" /> property. For more information, see <format type="text/html"><a href="1b78d416-66bb-43a5-ac77-c703aab55b97">XHTML Standards in Visual Studio 2010 and ASP.NET 4</a></format> and <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">Accessibility in Visual Studio 2010 and ASP.NET 4</a></format>.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.AdRotator.Target" /> value must begin with a letter in the range of A to Z (case-insensitive), except for the following special values, which begin with an underscore. </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Target value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>_blank </para>
+              </term>
+              <description>
+                <para>Renders the content in a new window without frames. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_parent </para>
+              </term>
+              <description>
+                <para>Renders the content in the immediate frameset parent. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_search </para>
+              </term>
+              <description>
+                <para>Renders the content in the search pane. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_self </para>
+              </term>
+              <description>
+                <para>Renders the content in the frame with focus. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_top </para>
+              </term>
+              <description>
+                <para>Renders the content in the full window without frames. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Check your browser documentation to determine whether the _search value is supported.  For example, Internet Explorer 5.0 or later supports the _search target value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the browser window or frame that displays the contents of the Web page linked to when the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -369,9 +821,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property differs from the <see cref="P:System.Web.UI.Control.ID" /> property in that the <see cref="P:System.Web.UI.WebControls.AdRotator.UniqueID" /> property includes the identifier for the server control's naming container. This identifier is generated automatically when a page request is processed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unique, hierarchically qualified identifier for the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

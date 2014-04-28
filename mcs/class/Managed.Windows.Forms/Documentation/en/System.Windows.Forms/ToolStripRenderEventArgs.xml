@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripRenderEventArgs" FullName="System.Windows.Forms.ToolStripRenderEventArgs">
   <TypeSignature Language="C#" Value="public class ToolStripRenderEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.ToolStripRenderEventArgs" /> class also provides data for the <see cref="M:System.Windows.Forms.ToolStripRenderer.DrawImageMargin(System.Windows.Forms.ToolStripRenderEventArgs)" />, <see cref="M:System.Windows.Forms.ToolStripRenderer.DrawToolStripBorder(System.Windows.Forms.ToolStripRenderEventArgs)" />, and <see cref="M:System.Windows.Forms.ToolStripRenderer.DrawToolStripBackground(System.Windows.Forms.ToolStripRenderEventArgs)" /> methods.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="M:System.Windows.Forms.ToolStripRenderer.OnRenderImageMargin(System.Windows.Forms.ToolStripRenderEventArgs)" />, <see cref="M:System.Windows.Forms.ToolStripRenderer.OnRenderToolStripBorder(System.Windows.Forms.ToolStripRenderEventArgs)" />, and <see cref="M:System.Windows.Forms.ToolStripRenderer.OnRenderToolStripBackground(System.Windows.Forms.ToolStripRenderEventArgs)" /> methods. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +29,16 @@
         <Parameter Name="toolStrip" Type="System.Windows.Forms.ToolStrip" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="toolStrip">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripRenderEventArgs" /> class for the specified <see cref="T:System.Windows.Forms.ToolStrip" /> and using the specified <see cref="T:System.Drawing.Graphics" />. </para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> to use for painting.</param>
+        <param name="toolStrip">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStrip" /> to paint.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -42,13 +54,20 @@
         <Parameter Name="backColor" Type="System.Drawing.Color" />
       </Parameters>
       <Docs>
-        <param name="g">To be added.</param>
-        <param name="toolStrip">To be added.</param>
-        <param name="affectedBounds">To be added.</param>
-        <param name="backColor">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripRenderEventArgs" /> class for the specified <see cref="T:System.Windows.Forms.ToolStrip" />, using the specified <see cref="T:System.Drawing.Graphics" /> to paint the specified bounds with the specified <see cref="T:System.Drawing.Color" />.</para>
+        </summary>
+        <param name="g">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> to use for painting.</param>
+        <param name="toolStrip">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ToolStrip" /> to paint.</param>
+        <param name="affectedBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> representing the bounds of the area to be painted.</param>
+        <param name="backColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> that the background of the <see cref="T:System.Windows.Forms.ToolStrip" /> is painted with.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,10 +80,13 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Rectangle" /> representing the bounds of the area to be painted. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,10 +99,13 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Color" /> that the background of the <see cref="T:System.Windows.Forms.ToolStrip" /> is painted with.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,10 +118,16 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Windows.Forms.ToolStrip" /> is not a <see cref="T:System.Windows.Forms.ToolStripDropDown" /> or the <see cref="P:System.Windows.Forms.ToolStripDropDown.OwnerItem" /> is null, the <see cref="P:System.Windows.Forms.ToolStripRenderEventArgs.ConnectedArea" /> property returns an empty <see cref="T:System.Drawing.Rectangle" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Rectangle" /> representing the overlap area between a <see cref="T:System.Windows.Forms.ToolStripDropDown" /> and its <see cref="P:System.Windows.Forms.ToolStripDropDown.OwnerItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,10 +140,13 @@
         <ReturnType>System.Drawing.Graphics</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Graphics" /> used to paint.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,10 +159,13 @@
         <ReturnType>System.Windows.Forms.ToolStrip</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.ToolStrip" /> to be painted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

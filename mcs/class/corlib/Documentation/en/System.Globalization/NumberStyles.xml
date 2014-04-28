@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NumberStyles" FullName="System.Globalization.NumberStyles" FullNameSP="System_Globalization_NumberStyles" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable NumberStyles extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum NumberStyles" />
@@ -22,29 +23,305 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Specifies styles for <see cref="T:System.String" /> representations of numeric values.</para>
-    </summary>
     <remarks>
-      <para>
-        <see cref="T:System.Globalization.NumberStyles" /> define the presence and/or location of various elements
-   in a <see cref="T:System.String" /> representation of a numeric value. <block subset="none" type="note">For example, the <see cref="F:System.Globalization.NumberStyles.AllowParentheses" /> style describes strings where the
-   numeric value is enclosed in parenthesis, such as "(432.00)".</block></para>
-      <block subset="none" type="note">
-        <para>Where symbols such as a currency symbol are allowed in a
-   <see cref="T:System.Globalization.NumberStyles" />
-   pattern, a <see cref="T:System.Globalization.NumberFormatInfo" /> instance defines the <see cref="T:System.String" /> representations of the symbols.</para>
-        <para>
-          <see cref="T:System.Globalization.NumberStyles" /> values are passed to methods that convert between
-<see cref="T:System.String" /> and 
-numeric data types, such as the <see langword="Parse" /> methods implemented by
-numeric base types. To specify multiple <see cref="T:System.Globalization.NumberStyles" /> values, use the bitwise OR
-operator.</para>
-        <para>For a list of the valid white space characters, see
-   the <see cref="T:System.String" />
-   class.</para>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Globalization.NumberStyles" /> enumeration consists of two kinds of enumeration values that are used to parse the string representations of numeric values: </para>
+      <list type="bullet">
+        <item>
+          <para>Individual field flags, which define specific style elements (such as white space and group separators) that can be present in the parsed string.</para>
+        </item>
+        <item>
+          <para>Composite number styles, which consist of multiple field flags that define the style elements that can be present in the parsed string.</para>
+        </item>
+      </list>
+      <para>Except for <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" />, the individual field flags in the <see cref="T:System.Globalization.NumberStyles" /> enumeration define style elements that are used when parsing the string representation of a decimal number. <see cref="F:System.Globalization.NumberStyles.None" /> indicates that only digits can be present in the parsed string. The remaining individual field flags define style elements that may be, but do not have to be, present in the string representation of a decimal number for the parse operation to succeed. In contrast, the <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" /> flag indicates that the string to be parsed is always interpreted as a hexadecimal value. The only individual field flags that can be used with <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" /> are <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" /> and <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />. The <see cref="T:System.Globalization.NumberStyles" /> enumeration includes a composite number style, <see cref="F:System.Globalization.NumberStyles.HexNumber" />, that consists of all three flags.</para>
+      <para>The symbols (such as the currency symbol, the group separator, the decimal separator, and the positive and negative signs) that can appear in the string to be parsed are defined by the members of the <see cref="T:System.Globalization.NumberFormatInfo" /> object that is passed either implicitly or explicitly to the Parse method. The members table in this topic provides a description of each individual flag and indicates its relationship to <see cref="T:System.Globalization.NumberFormatInfo" /> properties.</para>
+      <para>The following table lists the composite number styles and indicates which individual field flags they include. A "1" in a cell indicates that the composite number style includes the individual number style in that row. A "0" indicates that the composite number style does not include the individual number style.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para> </para>
+            </term>
+            <description>
+              <para>Any </para>
+            </description>
+            <description>
+              <para>Currency </para>
+            </description>
+            <description>
+              <para>Float </para>
+            </description>
+            <description>
+              <para>Integer </para>
+            </description>
+            <description>
+              <para>Number </para>
+            </description>
+            <description>
+              <para>HexNumber </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>AllowHexSpecifier (0x0200) </para>
+          </term>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AllowCurrencySymbol (0x0100) </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AllowExponent (0x0080) </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AllowThousands (0x0040) </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AllowDecimalPoint (0x0020) </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AllowParentheses (0x0010) </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AllowTrailingSign (0x0008) </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AllowLeadingSign (0x0004) </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>0 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AllowTrailingWhite (0x0002) </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>AllowLeadingWhite (0x0001) </para>
+          </term>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+          <description>
+            <para>1 </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para> </para>
+          </term>
+          <description>
+            <para>(0x1ff)</para>
+          </description>
+          <description>
+            <para>(0x17f)</para>
+          </description>
+          <description>
+            <para>(0x0a7)</para>
+          </description>
+          <description>
+            <para>(0x007)</para>
+          </description>
+          <description>
+            <para>(0x06f)</para>
+          </description>
+          <description>
+            <para>(0x203)</para>
+          </description>
+        </item>
+      </list>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Determines the styles permitted in numeric string arguments that are passed to the Parse and TryParse methods of the integral and floating-point numeric types.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllowCurrencySymbol">
@@ -63,10 +340,11 @@ operator.</para>
       <Parameters />
       <MemberValue>AllowCurrencySymbol</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that a currency symbol is allowed. <block subset="none" type="note"> See <see cref="P:System.Globalization.NumberFormatInfo.CurrencySymbol" /> .</block></para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the numeric string can contain a currency symbol. Valid currency symbols are determined by the <see cref="P:System.Globalization.NumberFormatInfo.CurrencySymbol" /> property.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -86,10 +364,11 @@ operator.</para>
       <Parameters />
       <MemberValue>AllowDecimalPoint</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that a decimal point is allowed. <block subset="none" type="note"> See <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalSeparator" />, <see cref="P:System.Globalization.NumberFormatInfo.PercentDecimalSeparator" />, and <see cref="P:System.Globalization.NumberFormatInfo.CurrencyDecimalSeparator" /> .</block></para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the numeric string can have a decimal point. If the <see cref="T:System.Globalization.NumberStyles" /> value includes the <see cref="F:System.Globalization.NumberStyles.AllowCurrencySymbol" /> flag and the parsed string includes a currency symbol, the decimal separator character is determined by the <see cref="P:System.Globalization.NumberFormatInfo.CurrencyDecimalSeparator" /> property. Otherwise, the decimal separator character is determined by the <see cref="P:System.Globalization.NumberFormatInfo.NumberDecimalSeparator" /> property.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -109,23 +388,11 @@ operator.</para>
       <Parameters />
       <MemberValue>AllowExponent</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that exponential notation is allowed.</para>
-          <para>This style is used for values in one of the following forms:</para>
-          <para>[-]m.ddddddE+xx 
-   </para>
-          <para>[-]m.ddddddE-xx</para>
-          <para>[-]m.dddddde+xx 
-   </para>
-          <para>[-]m.dddddde-xx 
-   </para>
-          <para>One or more non-zero digits (m) precede the decimal 
-      separator ("."). A minus sign ("-") can precede m. The type performing the
-      conversion determines the number of decimal places (dddddd) in the string, and
-      maximum and minimum values for xx and m. The exponent (+/-xx)
-      consists of either a plus or minus sign followed by at least one digit.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the numeric string can be in exponential notation. The <see cref="F:System.Globalization.NumberStyles.AllowExponent" /> flag allows the parsed string to contain an exponent that begins with the "E" or "e" character and that is followed by an optional positive or negative sign and an integer. In other words, it successfully parses strings in the form nnnExx, nnnE+xx, and nnnE-xx. It does not allow a decimal separator or sign in the significand or mantissa; to allow these elements in the string to be parsed, use the <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" /> and <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" /> flags, or use a composite style that includes these individual flags.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -145,14 +412,11 @@ operator.</para>
       <Parameters />
       <MemberValue>AllowHexSpecifier</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that hexadecimal representation (Base 16) is allowed.</para>
-          <para>Valid hexadecimal values include the numeric digits 0-9 and the hexadecimal
-      digits A-F, and a-f. The hexadecimal digits can be in upper or lower case.
-      Hexadecimal values can be left-padded with zeros. Strings parsed using this
-      style are not permitted to be prefixed with "0x".</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the numeric string represents a hexadecimal value. Valid hexadecimal values include the numeric digits 0-9 and the hexadecimal digits A-F and a-f. Strings that are parsed using this style cannot be prefixed with "0x" or "&amp;h". A string that is parsed with the <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" /> style will always be interpreted as a hexadecimal value. The only flags that can be combined with <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" /> are <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" /> and <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />. The <see cref="T:System.Globalization.NumberStyles" /> enumeration includes a composite style, <see cref="F:System.Globalization.NumberStyles.HexNumber" />, that consists of these three flags.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -172,10 +436,11 @@ operator.</para>
       <Parameters />
       <MemberValue>AllowLeadingSign</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that a leading sign symbol is allowed. <block subset="none" type="note"> See <see cref="P:System.Globalization.NumberFormatInfo.PositiveSign" /> and <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" /> .</block></para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the numeric string can have a leading sign. Valid leading sign characters are determined by the <see cref="P:System.Globalization.NumberFormatInfo.PositiveSign" /> and <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" /> properties.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -195,10 +460,11 @@ operator.</para>
       <Parameters />
       <MemberValue>AllowLeadingWhite</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that the string can be prefixed with white space characters.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that leading white-space characters can be present in the parsed string. Valid white-space characters have the Unicode values U+0009, U+000A, U+000B, U+000C, U+000D, and U+0020. Note that this is a subset of the characters for which the <see cref="M:System.Char.IsWhiteSpace(System.Char)" /> method returns true.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -218,10 +484,11 @@ operator.</para>
       <Parameters />
       <MemberValue>AllowParentheses</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that one pair of balanced parentheses is allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the numeric string can have one pair of parentheses enclosing the number. The parentheses indicate that the string to be parsed represents a negative number.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -241,11 +508,11 @@ operator.</para>
       <Parameters />
       <MemberValue>AllowThousands</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that group separators are allowed; for
-      instance, separating the hundreds from the thousands. <block subset="none" type="note"> See <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSeparator" />, <see cref="P:System.Globalization.NumberFormatInfo.PercentGroupSeparator" />, and <see cref="P:System.Globalization.NumberFormatInfo.CurrencyGroupSeparator" /> .</block></para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the numeric string can have group separators, such as symbols that separate hundreds from thousands. If the <see cref="T:System.Globalization.NumberStyles" /> value includes the <see cref="F:System.Globalization.NumberStyles.AllowCurrencySymbol" /> flag and the string to be parsed includes a currency symbol, the valid group separator character is determined by the <see cref="P:System.Globalization.NumberFormatInfo.CurrencyGroupSeparator" /> property,  and the number of digits in each group is determined by the <see cref="P:System.Globalization.NumberFormatInfo.CurrencyGroupSizes" /> property. Otherwise, the valid group separator character is determined by the <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSeparator" /> property, and the number of digits in each group is determined by the <see cref="P:System.Globalization.NumberFormatInfo.NumberGroupSizes" /> property.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -265,10 +532,11 @@ operator.</para>
       <Parameters />
       <MemberValue>AllowTrailingSign</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that a trailing sign symbol is allowed. <block subset="none" type="note"> See <see cref="P:System.Globalization.NumberFormatInfo.PositiveSign" /> and <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" /> .</block></para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the numeric string can have a trailing sign. Valid trailing sign characters are determined by the <see cref="P:System.Globalization.NumberFormatInfo.PositiveSign" /> and <see cref="P:System.Globalization.NumberFormatInfo.NegativeSign" /> properties.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -288,10 +556,11 @@ operator.</para>
       <Parameters />
       <MemberValue>AllowTrailingWhite</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that the string can be suffixed with white space characters.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that trailing white-space characters can be present in the parsed string. Valid white-space characters have the Unicode values U+0009, U+000A, U+000B, U+000C, U+000D, and U+0020. Note that this is a subset of the characters for which the <see cref="M:System.Char.IsWhiteSpace(System.Char)" /> method returns true.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -311,10 +580,11 @@ operator.</para>
       <Parameters />
       <MemberValue>Any</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingSign" />, <see cref="F:System.Globalization.NumberStyles.AllowParentheses" />, <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" />, <see cref="F:System.Globalization.NumberStyles.AllowThousands" />, <see cref="F:System.Globalization.NumberStyles.AllowCurrencySymbol" /> and <see cref="F:System.Globalization.NumberStyles.AllowExponent" /> styles are allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that all styles except <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" /> are used. This is a composite number style.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -334,10 +604,11 @@ operator.</para>
       <Parameters />
       <MemberValue>Currency</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingSign" />, <see cref="F:System.Globalization.NumberStyles.AllowParentheses" />, <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" />, <see cref="F:System.Globalization.NumberStyles.AllowThousands" />, and <see cref="F:System.Globalization.NumberStyles.AllowCurrencySymbol" /> styles are allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that all styles except <see cref="F:System.Globalization.NumberStyles.AllowExponent" /> and <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" /> are used. This is a composite number style.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -357,10 +628,11 @@ operator.</para>
       <Parameters />
       <MemberValue>Float</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />, <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" /> and <see cref="F:System.Globalization.NumberStyles.AllowExponent" /> styles are allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />, <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" />, and <see cref="F:System.Globalization.NumberStyles.AllowExponent" /> styles are used. This is a composite number style.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -380,10 +652,11 @@ operator.</para>
       <Parameters />
       <MemberValue>HexNumber</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" /> styles are allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, and <see cref="F:System.Globalization.NumberStyles.AllowHexSpecifier" /> styles are used. This is a composite number style.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -403,10 +676,11 @@ operator.</para>
       <Parameters />
       <MemberValue>Integer</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, and <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" /> styles are allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, and <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" /> styles are used. This is a composite number style.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -426,10 +700,11 @@ operator.</para>
       <Parameters />
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that no styles are allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that no style elements, such as leading or trailing white space, thousands separators, or a decimal separator, can be present in the parsed string. The string to be parsed must consist of integral decimal digits only. </para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -449,10 +724,11 @@ operator.</para>
       <Parameters />
       <MemberValue>Number</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingSign" />, <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" /> and <see cref="F:System.Globalization.NumberStyles.AllowThousands" /> styles are allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the <see cref="F:System.Globalization.NumberStyles.AllowLeadingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingWhite" />, <see cref="F:System.Globalization.NumberStyles.AllowLeadingSign" />, <see cref="F:System.Globalization.NumberStyles.AllowTrailingSign" />, <see cref="F:System.Globalization.NumberStyles.AllowDecimalPoint" />, and <see cref="F:System.Globalization.NumberStyles.AllowThousands" /> styles are used. This is a composite number style.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

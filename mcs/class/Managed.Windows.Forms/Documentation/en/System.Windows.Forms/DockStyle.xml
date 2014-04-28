@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DockStyle" FullName="System.Windows.Forms.DockStyle">
   <TypeSignature Language="C#" Value="public enum DockStyle" />
   <AssemblyInfo>
@@ -14,8 +15,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a control is docked to an edge of its container, it is always positioned flush against that edge when the container is resized. If more than one control is docked to an edge, the controls appear side by side according to their z-order; controls higher in the z-order are positioned farther from the container's edge.</para>
+      <para>If <see cref="F:System.Windows.Forms.DockStyle.Left" />, <see cref="F:System.Windows.Forms.DockStyle.Right" />, <see cref="F:System.Windows.Forms.DockStyle.Top" />, or <see cref="F:System.Windows.Forms.DockStyle.Bottom" /> is selected, the specified and opposite edges of the control are resized to the size of the containing control's corresponding edges. If <see cref="F:System.Windows.Forms.DockStyle.Fill" /> is selected, all four sides of the control are resized to match the containing control's edges.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the position and manner in which a control is docked.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Bottom">
@@ -25,7 +33,10 @@
         <ReturnType>System.Windows.Forms.DockStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control's bottom edge is docked to the bottom of its containing control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,7 +50,10 @@
         <ReturnType>System.Windows.Forms.DockStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All the control's edges are docked to the all edges of its containing control and sized appropriately.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,7 +67,10 @@
         <ReturnType>System.Windows.Forms.DockStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control's left edge is docked to the left edge of its containing control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,7 +84,10 @@
         <ReturnType>System.Windows.Forms.DockStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control is not docked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,7 +101,10 @@
         <ReturnType>System.Windows.Forms.DockStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control's right edge is docked to the right edge of its containing control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -95,7 +118,10 @@
         <ReturnType>System.Windows.Forms.DockStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The control's top edge is docked to the top of its containing control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

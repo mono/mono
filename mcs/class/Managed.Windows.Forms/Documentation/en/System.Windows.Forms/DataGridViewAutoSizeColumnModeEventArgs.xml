@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewAutoSizeColumnModeEventArgs" FullName="System.Windows.Forms.DataGridViewAutoSizeColumnModeEventArgs">
   <TypeSignature Language="C#" Value="public class DataGridViewAutoSizeColumnModeEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.DataGridView.AutoSizeColumnModeChanged" /> event is raised when the value of the <see cref="P:System.Windows.Forms.DataGridViewColumn.AutoSizeMode" /> property of a column in a <see cref="T:System.Windows.Forms.DataGridView" /> control changes. </para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.DataGridView.AutoSizeColumnModeChanged" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +30,16 @@
         <Parameter Name="previousMode" Type="System.Windows.Forms.DataGridViewAutoSizeColumnMode" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewColumn">To be added.</param>
-        <param name="previousMode">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewAutoSizeColumnModeEventArgs" /> class. </para>
+        </summary>
+        <param name="dataGridViewColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column with the <see cref="P:System.Windows.Forms.DataGridViewColumn.AutoSizeMode" /> property that changed.</param>
+        <param name="previousMode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The previous <see cref="T:System.Windows.Forms.DataGridViewAutoSizeColumnMode" /> value of the column's <see cref="P:System.Windows.Forms.DataGridViewColumn.AutoSizeMode" /> property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +52,13 @@
         <ReturnType>System.Windows.Forms.DataGridViewColumn</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column with the <see cref="P:System.Windows.Forms.DataGridViewColumn.AutoSizeMode" /> property that changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +71,13 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeColumnMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the previous value of the <see cref="P:System.Windows.Forms.DataGridViewColumn.AutoSizeMode" /> property of the column.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

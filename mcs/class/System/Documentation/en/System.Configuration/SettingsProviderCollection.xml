@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SettingsProviderCollection" FullName="System.Configuration.SettingsProviderCollection">
   <TypeSignature Language="C#" Value="public class SettingsProviderCollection : System.Configuration.Provider.ProviderCollection" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SettingsProviderCollection extends System.Configuration.Provider.ProviderCollection" />
@@ -11,9 +12,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Configuration.SettingsProviderCollection" /> class is a straightforward extension of the <see cref="T:System.Configuration.Provider.ProviderCollection" /> class to provide for storage of <see cref="T:System.Configuration.SettingsProvider" /> objects.</para>
+      <para>The <see cref="T:System.Configuration.ApplicationSettingsBase" /> class uses this collection to manage the settings providers associated with each of its application settings properties through the <see cref="T:System.Configuration.SettingsProviderAttribute" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of application settings providers.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +34,15 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is the default constructor that is implicitly provided.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Configuration.SettingsProviderCollection" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -46,10 +60,20 @@
         <Parameter Name="provider" Type="System.Configuration.Provider.ProviderBase" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Configuration.Provider.ProviderBase.Name" /> property of the <see cref="T:System.Configuration.SettingsProvider" /> is used as the storage key.</para>
+          <block subset="none" type="note">
+            <para>Although the <see cref="M:System.Configuration.SettingsProviderCollection.Add(System.Configuration.Provider.ProviderBase)" /> method has a single <see cref="T:System.Configuration.Provider.ProviderBase" /> parameter to match the signature of this same method in the base class <see cref="T:System.Configuration.Provider.ProviderCollection" />, this method will throw an exception if the <paramref name="provider" /> parameter is not of type <see cref="T:System.Configuration.SettingsProvider" />.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a new settings provider to the collection.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.Provider.ProviderBase" /> to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Item">

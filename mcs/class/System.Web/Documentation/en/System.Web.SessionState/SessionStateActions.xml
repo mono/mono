@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SessionStateActions" FullName="System.Web.SessionState.SessionStateActions">
   <TypeSignature Language="C#" Value="public enum SessionStateActions" />
   <AssemblyInfo>
@@ -8,9 +9,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.SessionState.SessionStateActions" /> enumeration is used by the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItem(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> and <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItemExclusive(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> methods of a <see cref="T:System.Web.SessionState.SessionStateStoreProviderBase" /> implementation. When a session item is retrieved from the data store, the enumeration value indicates whether the session requires initialization or not based on a value stored with the data. The <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItem(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> and <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItemExclusive(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> methods set an <paramref name="actions" /> parameter to a <see cref="T:System.Web.SessionState.SessionStateActions" /> enumeration value based on this value retrieved with the session item. If the value of the <paramref name="actions" /> parameter is set to <see cref="F:System.Web.SessionState.SessionStateActions.InitializeItem" />, the <see cref="T:System.Web.SessionState.SessionStateModule" /> initializes the session and executes the Session_OnStart event defined in the Global.asax file for the ASP.NET application. If the value of the <paramref name="actions" /> parameter is <see cref="F:System.Web.SessionState.SessionStateActions.None" />, no additional steps are taken for the current session.</para>
+      <para>A session item created by the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.CreateUninitializedItem(System.Web.HttpContext,System.String,System.Int32)" /> method is created with a value indicating that the item requires initialization and that the <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItem(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> and <see cref="M:System.Web.SessionState.SessionStateStoreProviderBase.GetItemExclusive(System.Web.HttpContext,System.String,System.Boolean@,System.TimeSpan@,System.Object@,System.Web.SessionState.SessionStateActions@)" /> methods should set the <paramref name="actions" /> parameter to <see cref="F:System.Web.SessionState.SessionStateActions.InitializeItem" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies whether a session item from a data store is for a session that requires initialization.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="InitializeItem">
@@ -20,8 +28,11 @@
         <ReturnType>System.Web.SessionState.SessionStateActions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The session item from the data store is for a session that requires initialization.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,7 +48,10 @@
         <ReturnType>System.Web.SessionState.SessionStateActions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No initialization actions need to be performed by the calling code.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>
