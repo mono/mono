@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ClientBuildManagerParameter" FullName="System.Web.Compilation.ClientBuildManagerParameter">
   <TypeSignature Language="C#" Value="public class ClientBuildManagerParameter" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET Web pages and code files can be precompiled to facilitate a faster response for users and allow for the deployment of the site without deploying the source code. For more information on precompiling an ASP.NET Web site, see <format type="text/html"><a href="a88e56f9-b232-47c5-92e0-f9674ed15e5a">ASP.NET Web Site Precompilation</a></format>.</para>
+      <para>The <see cref="T:System.Web.Compilation.ClientBuildManagerParameter" /> class stores values that are used during precompilation. The <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.PrecompilationFlags" /> property determines how the assembly will be built. For example, you can set <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.PrecompilationFlags" /> to <see cref="F:System.Web.Compilation.PrecompilationFlags.Clean" /> to recompile any previously compiled components, or set it to <see cref="F:System.Web.Compilation.PrecompilationFlags.OverwriteTarget" /> to permit the resulting assembly to overwrite any components in the target directory. The <see cref="T:System.Web.Compilation.PrecompilationFlags" /> enumerator has a <see cref="T:System.FlagsAttribute" /> attribute that allows a bitwise combination of its member values. The <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.PrecompilationFlags" /> property can contain more than one value from the <see cref="T:System.Web.Compilation.PrecompilationFlags" /> enumeration to specify a combination of precompilation behaviors.</para>
+      <para>Either the <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.StrongNameKeyContainer" /> property or the <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.StrongNameKeyFile" /> property is assigned a value to create a strong-named assembly. Both values do not need to be set to create a strong-named assembly.</para>
+      <para>A <see cref="T:System.Web.Compilation.ClientBuildManagerParameter" /> object is passed to the <see cref="T:System.Web.Compilation.ClientBuildManager" /> object through the <see cref="M:System.Web.Compilation.ClientBuildManager.#ctor(System.String,System.String,System.String,System.Web.Compilation.ClientBuildManagerParameter)" /> constructor. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains values passed to the ASP.NET compiler during precompilation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +29,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor does not initialize any property values. Those values must be set through the <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.StrongNameKeyContainer" />, <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.StrongNameKeyFile" />, and <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.PrecompilationFlags" /> properties after the object has been created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Compilation.ClientBuildManagerParameter" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +50,16 @@
         <ReturnType>System.Web.Compilation.PrecompilationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.PrecompilationFlags" /> property determines how the assembly will be built. For example, you can set <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.PrecompilationFlags" /> to <see cref="F:System.Web.Compilation.PrecompilationFlags.Clean" /> to recompile any previously compiled components, or set it to <see cref="F:System.Web.Compilation.PrecompilationFlags.OverwriteTarget" /> to permit the resulting assembly to overwrite any components in the target directory. The <see cref="T:System.Web.Compilation.PrecompilationFlags" /> enumerator has a <see cref="T:System.FlagsAttribute" /> attribute that allows a bitwise combination of its member values. The <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.PrecompilationFlags" /> property can contain more than one value from the <see cref="T:System.Web.Compilation.PrecompilationFlags" /> enumeration to specify a combination of precompilation behaviors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the flags that determine precompilation behavior.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +72,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Either the <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.StrongNameKeyContainer" /> property or the <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.StrongNameKeyFile" /> property is assigned a value to create a strong-named assembly. Both values do not need to be set to create a strong-named assembly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key container used during compilation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -66,10 +94,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Either the <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.StrongNameKeyContainer" /> property or the <see cref="P:System.Web.Compilation.ClientBuildManagerParameter.StrongNameKeyFile" /> property is assigned a value to create a strong-named assembly. Both values do not need to be set to create a strong-named assembly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the key file used during compilation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

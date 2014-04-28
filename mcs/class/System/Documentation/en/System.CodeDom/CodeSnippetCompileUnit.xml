@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeSnippetCompileUnit" FullName="System.CodeDom.CodeSnippetCompileUnit">
   <TypeSignature Language="C#" Value="public class CodeSnippetCompileUnit : System.CodeDom.CodeCompileUnit" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeSnippetCompileUnit extends System.CodeDom.CodeCompileUnit" />
@@ -23,8 +24,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeSnippetCompileUnit" /> can represent a literal block of code that is included directly in the source without modification.</para>
+      <para>A <see cref="T:System.CodeDom.CodeSnippetCompileUnit" /> stores a section of code, exactly in its original format, as a string. The CodeDOM does not translate literal code fragments. Literal code fragments are stored and output in their original format. CodeDOM objects that contain literal code are provided so developers can encapsulate code that is already in the target language.</para>
+      <para>The <see cref="P:System.CodeDom.CodeSnippetCompileUnit.Value" /> property contains the literal code fragment as a string. The <see cref="P:System.CodeDom.CodeSnippetCompileUnit.LinePragma" /> property is optional and specifies the position of the code within a source code document.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a literal code fragment that can be compiled.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,8 +47,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you use this constructor you should also set the <see cref="P:System.CodeDom.CodeSnippetCompileUnit.Value" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeSnippetCompileUnit" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -55,9 +71,13 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeSnippetCompileUnit" /> class.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The literal code fragment to represent. </param>
       </Docs>
     </Member>
     <Member MemberName="LinePragma">
@@ -75,9 +95,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeLinePragma'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the line and file information about where the code is located in a source code document.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -95,9 +118,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the literal code fragment to represent.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SiteMapNodeItemType" FullName="System.Web.UI.WebControls.SiteMapNodeItemType">
   <TypeSignature Language="C#" Value="public enum SiteMapNodeItemType" />
   <AssemblyInfo>
@@ -8,9 +9,30 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.SiteMapPath" /> control manages its site navigation information as a collection of <see cref="T:System.Web.UI.WebControls.SiteMapNodeItem" /> objects. <see cref="T:System.Web.UI.WebControls.SiteMapNodeItem" /> objects represent functionally different types of <see cref="T:System.Web.SiteMapNode" /> nodes. Accordingly, they are managed by the <see cref="T:System.Web.UI.WebControls.SiteMapPath" /> control. The following list describes the types of nodes available:</para>
+      <list type="bullet">
+        <item>
+          <para>One node that represent the currently viewed page. </para>
+        </item>
+        <item>
+          <para>One node that is the top node of the site navigation hierarchy.</para>
+        </item>
+        <item>
+          <para>Zero or more nodes between the top node and the current node (parent nodes).</para>
+        </item>
+        <item>
+          <para>Zero or more nodes that represent site navigation path separators.</para>
+        </item>
+      </list>
+      <para>Each node is data-bound to an underlying <see cref="T:System.Web.SiteMapNode" />, except nodes of the <see cref="F:System.Web.UI.WebControls.SiteMapNodeItemType.PathSeparator" /> type.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.SiteMapNodeItemType" /> enumeration is used by the <see cref="T:System.Web.UI.WebControls.SiteMapPath" /> control to identify the type of a <see cref="T:System.Web.UI.WebControls.SiteMapNodeItem" /> node within a node hierarchy.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Current">
@@ -20,8 +42,11 @@
         <ReturnType>System.Web.UI.WebControls.SiteMapNodeItemType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The currently viewed page in the site navigation path.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +59,11 @@
         <ReturnType>System.Web.UI.WebControls.SiteMapNodeItemType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A parent node of the currently viewed page in the site navigation path. A parent node is any node that is found between the root node and the current node in the navigation hierarchy.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +76,11 @@
         <ReturnType>System.Web.UI.WebControls.SiteMapNodeItemType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A site map navigation path separator. The default separator for the <see cref="T:System.Web.UI.WebControls.SiteMapPath" /> control is the "&gt;" character.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +93,11 @@
         <ReturnType>System.Web.UI.WebControls.SiteMapNodeItemType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The top node of the site navigation hierarchy. There can be only one root node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

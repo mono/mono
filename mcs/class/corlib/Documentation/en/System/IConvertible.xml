@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IConvertible" FullName="System.IConvertible">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IConvertible" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IConvertible" />
@@ -19,8 +20,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface provides methods to convert the value of an instance of an implementing type to a common language runtime type that has an equivalent value. The common language runtime types are <see cref="T:System.Boolean" />, <see cref="T:System.SByte" />, <see cref="T:System.Byte" />, <see cref="T:System.Int16" />, <see cref="T:System.UInt16" />, <see cref="T:System.Int32" />, <see cref="T:System.UInt32" />, <see cref="T:System.Int64" />, <see cref="T:System.UInt64" />, <see cref="T:System.Single" />, <see cref="T:System.Double" />, <see cref="T:System.Decimal" />, <see cref="T:System.DateTime" />, <see cref="T:System.Char" />, and <see cref="T:System.String" />.</para>
+      <para>If there is no meaningful conversion to a common language runtime type, then a particular interface method implementation throws <see cref="T:System.InvalidCastException" />. For example, if this interface is implemented on a Boolean type, the implementation of the <see cref="M:System.IConvertible.ToDateTime(System.IFormatProvider)" /> method throws an exception because there is no meaningful <see cref="T:System.DateTime" /> equivalent to a Boolean type.</para>
+      <para>The common language runtime typically exposes the <see cref="T:System.IConvertible" /> interface through the <see cref="T:System.Convert" /> class. The common language runtime also uses the <see cref="T:System.IConvertible" /> interface internally, in explicit interface implementations, to simplify the code used to support conversions in the <see cref="T:System.Convert" /> class and basic common language runtime types.</para>
+      <para>In addition to the <see cref="T:System.IConvertible" /> interface, the .NET Framework provides classes called type converters for converting user-defined data types to other data types. For more information, see the <format type="text/html"><a href="49253AE6-7657-4810-82AB-1176A6FEEADA">Generalized Type Conversion</a></format> topic.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines methods that convert the value of the implementing reference or value type to a common language runtime type that has an equivalent value.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetTypeCode">
@@ -37,9 +47,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'TypeCode'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.TypeCode" /> for this instance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToBoolean">
@@ -58,10 +71,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent Boolean value using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToByte">
@@ -80,10 +97,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'byte'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 8-bit unsigned integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToChar">
@@ -102,10 +123,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'char'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent Unicode character using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToDateTime">
@@ -124,10 +149,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent <see cref="T:System.DateTime" /> using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToDecimal">
@@ -146,10 +175,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'decimal'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent <see cref="T:System.Decimal" /> number using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToDouble">
@@ -168,10 +201,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'double'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent double-precision floating-point number using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToInt16">
@@ -190,10 +227,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'short'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 16-bit signed integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToInt32">
@@ -212,10 +253,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 32-bit signed integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToInt64">
@@ -234,10 +279,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'long'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 64-bit signed integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToSByte">
@@ -256,10 +305,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'sbyte'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 8-bit signed integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToSingle">
@@ -278,10 +331,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent single-precision floating-point number using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -300,10 +357,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent <see cref="T:System.String" /> using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToType">
@@ -323,11 +384,16 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="conversionType">To be added: an object of type 'Type'</param>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an <see cref="T:System.Object" /> of the specified <see cref="T:System.Type" /> that has an equivalent value, using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="conversionType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> to which the value of this instance is converted. </param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToUInt16">
@@ -346,10 +412,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'ushort'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 16-bit unsigned integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToUInt32">
@@ -368,10 +438,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'uint'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 32-bit unsigned integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
     <Member MemberName="ToUInt64">
@@ -390,10 +464,14 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'IFormatProvider'</param>
-        <summary>To be added</summary>
         <returns>To be added: an object of type 'ulong'</returns>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the value of this instance to an equivalent 64-bit unsigned integer using the specified culture-specific formatting information.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> interface implementation that supplies culture-specific formatting information. </param>
       </Docs>
     </Member>
   </Members>

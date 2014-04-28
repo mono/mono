@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509KeyUsageFlags" FullName="System.Security.Cryptography.X509Certificates.X509KeyUsageFlags">
   <TypeSignature Language="C#" Value="public enum X509KeyUsageFlags" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed X509KeyUsageFlags extends System.Enum" />
@@ -15,9 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is an implementation of a commonly used extension that is mapped by default to the <see cref="T:System.Security.Cryptography.CryptoConfig" /> file. When the <see cref="P:System.Security.Cryptography.X509Certificates.X509Certificate2.Extensions" /> property of the <see cref="T:System.Security.Cryptography.X509Certificates.X509Certificate2" /> class is invoked, this class can be used directly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines how the certificate key can be used. If this value is not defined, the key can be used for any purpose.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CrlSign">
@@ -32,8 +39,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyUsageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key can be used to sign a certificate revocation list (CRL).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataEncipherment">
@@ -48,8 +58,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyUsageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key can be used for data encryption.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DecipherOnly">
@@ -64,8 +77,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyUsageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key can be used for decryption only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DigitalSignature">
@@ -80,8 +96,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyUsageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key can be used as a digital signature.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EncipherOnly">
@@ -96,8 +115,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyUsageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key can be used for encryption only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyAgreement">
@@ -112,8 +134,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyUsageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key can be used to determine key agreement, such as a key created using the Diffie-Hellman key agreement algorithm.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyCertSign">
@@ -128,8 +153,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyUsageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key can be used to sign certificates.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyEncipherment">
@@ -144,8 +172,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyUsageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key can be used for key encryption.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -160,8 +191,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyUsageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No key usage parameters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NonRepudiation">
@@ -176,8 +210,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509KeyUsageFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key can be used for authentication.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WindowsAccountType" FullName="System.Security.Principal.WindowsAccountType">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum WindowsAccountType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed WindowsAccountType extends System.Enum" />
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>The differrent types of account under Windows.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Security.Principal.WindowsAccountType" /> enumeration is used by the <see cref="T:System.Security.Principal.WindowsIdentity" /> class. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of Windows account used.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Anonymous">
@@ -36,8 +43,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An anonymous account.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Guest">
@@ -54,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Windows guest account.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Normal">
@@ -72,8 +85,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A standard user account.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System">
@@ -90,8 +106,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Windows system account.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

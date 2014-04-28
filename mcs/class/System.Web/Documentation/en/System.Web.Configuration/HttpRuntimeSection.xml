@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpRuntimeSection" FullName="System.Web.Configuration.HttpRuntimeSection">
   <TypeSignature Language="C#" Value="public sealed class HttpRuntimeSection : System.Configuration.ConfigurationSection" />
   <AssemblyInfo>
@@ -9,9 +10,32 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.HttpRuntimeSection" /> allows you to handle those parameters that affect the behavior of the ASP.NET runtime. </para>
+      <para>It refers to the node in the configuration file that is indicated by the <format type="text/html"><a href="e9b81350-8aaf-47cc-9843-5f7d0c59f369">&lt;httpRuntime&gt;</a></format> element and can be used at any level in the configuration hierarchy.</para>
+      <para>The <see cref="T:System.Web.Configuration.HttpRuntimeSection" /> section contains directives that manage the following:</para>
+      <list type="bullet">
+        <item>
+          <para>Request execution timeouts.</para>
+        </item>
+        <item>
+          <para>Directives to thread scheduling at the application level.</para>
+        </item>
+        <item>
+          <para>Directives that govern application queue limits.</para>
+        </item>
+        <item>
+          <para>Request length.</para>
+        </item>
+      </list>
+      <para>When running more than one application in a single process, you should lock down this section so that applications cannot elevate their relative priority to one another.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures the ASP.NET HTTP runtime. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +43,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.HttpRuntimeSection" /> class using default settings.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +66,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value is false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether application apartment threading is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,10 +96,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET queues requests when there are not enough free threads to process them.</para>
+          <block subset="none" type="note">
+            <para>When the number of requests queued exceeds the limit imposed by this setting, incoming requests will be rejected with a "503 - Server Too Busy" error.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates the maximum number of requests that ASP.NET queues for the application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -87,10 +129,19 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can address the problem caused by some antivirus applications, when writing information back to the scanned files, by setting the <see cref="P:System.Web.Configuration.HttpRuntimeSection.DelayNotificationTimeout" /> property. </para>
+          <block subset="none" type="note">
+            <para>The problem occurs because file changes caused by antivirus scanning cannot be distinguished from the ones made by the user. The end result is the restart of the application whose files are being scanned.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the change notification delay.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -108,10 +159,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This setting affects the application domain or domains at the current node level and below. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the application domain is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -129,10 +186,25 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The purpose of this property is to enable encoding of the carriage return and newline characters, \r and \n, that are found in response headers. </para>
+          <para>In outbound response headers, the characters that are represented by the codes 0x1F and below are encoded and also the character 0x7F (delete character). The only exception is that the character 0x09 (the tab character) is unmodified.</para>
+          <para>This encoding can help to avoid injection attacks that exploit an application that echoes untrusted data contained by the header.</para>
+          <block subset="none" type="note">
+            <para>This property does not apply to the status line itself (status code and status description), but should apply to other headers. Although <format type="text/html"><a href="e9b81350-8aaf-47cc-9843-5f7d0c59f369">&lt;httpRuntime&gt;</a></format> can be set at any level, this property is only applicable at the machine and application level.</para>
+          </block>
+          <para>When this property is true, which is the default, the \r or \n characters found in a response header are encoded to %0d and %0a. This defeats header-injection attacks by making the injected material part of the same header line. This might break the response but should not open attack vectors against the client. Echoing back untrusted data is never a good idea in any situation, though.</para>
+          <block subset="none" type="note">
+            <para>HTTP header continuations rely on headers spanning multiple lines and require new lines in them. If you need to use header continuations, you need to set the <see cref="P:System.Web.Configuration.HttpRuntimeSection.EnableHeaderChecking" /> property to false. Because there is a performance impact from looking at headers, if you are certain you are already doing the right checks, turning off this feature can improve the performance of your application. Before you disable this feature, be sure you are already taking the right precautions in this area.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the header checking is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -150,10 +222,33 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In order to cache a response, the following criteria need to be met:</para>
+          <list type="bullet">
+            <item>
+              <para>Caching must be explicitly enabled by a page directive or by the caching API.</para>
+            </item>
+            <item>
+              <para>Caching must have an expiration policy so that the kernel knows when to discard it.</para>
+            </item>
+            <item>
+              <para>Caching cannot have any variable headers or parameters.</para>
+            </item>
+            <item>
+              <para>The request must not require any authentication. </para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This property is relevant only when Internet Information Services (IIS) version 6.0 or later is installed.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether output caching is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -171,10 +266,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This attribute is used by Visual Studio to determine which version of ASP.NET is in use. It is not necessary for production sites and can be disabled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether ASP.NET should output a version header.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -198,10 +299,17 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpRuntimeSection.ExecutionTimeout" /> property indicates the maximum number of seconds a request is allowed to execute before being automatically shut down by ASP.NET. The default is 110 seconds. This time-out applies only if the debug attribute in the <format type="text/html"><a href="7c319582-074a-4d2a-a787-03b9d4541c12">&lt;compilation&gt;</a></format> element is set to false. </para>
+          <para>If the time-out expires an exception is raised. You can record the related information in the Application folder of the Event Log. You do this by enabling the application health monitoring in the <format type="text/html"><a href="956dd91b-448e-4a50-b526-961b244d02f8">&lt;healthMonitoring&gt;</a></format> configuration element. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the allowed execution time for the request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -222,10 +330,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpRuntimeSection.MaxRequestLength" /> property specifies the limit for the buffering threshold of the input stream. For example, this limit can be used to prevent denial of service attacks that are caused by users who post large files to the server. </para>
+          <para>The value assigned to this property should be greater or equal to value assigned to the <see cref="P:System.Web.Configuration.HttpRuntimeSection.RequestLengthDiskThreshold" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum request size.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -246,10 +361,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A suggested value for the <see cref="P:System.Web.Configuration.HttpRuntimeSection.MaxWaitChangeNotification" /> property would exceed the length of time to complete a copy during the deployment process. </para>
+          <block subset="none" type="note">
+            <para>The content might appear cached if you view it immediately after a copy-and-deploy process. This is typical behavior. The changes take effect when the wait period that you specified has elapsed.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the time interval between the first change notification and the time at which the application domain is restarted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -270,10 +394,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpRuntimeSection.MinFreeThreads" /> property defines the minimum number of free threads to execute a request. If a sufficient number of threads are not available, the request will remain queued and periodic checks for thread availability will continue until the required amount of threads are present. The default value is 8.</para>
+          <block subset="none" type="note">
+            <para>ASP.NET keeps this many threads free for requests that require additional threads to complete their processing.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum number of threads that must be free before a request for resources in this configuration scope can be serviced.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -294,10 +427,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpRuntimeSection.MinLocalRequestFreeThreads" /> property defines the number of free threads that ASP.NET keeps available to allow execution of new local requests. The intent is to avoid a possible deadlock with recursive reentry into the Web server.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum number of free threads required to service a local request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -334,10 +473,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpRuntimeSection.RequestLengthDiskThreshold" /> property specifies the input-stream buffering threshold limit in number of bytes. Its value should not exceed the <see cref="P:System.Web.Configuration.HttpRuntimeSection.MaxRequestLength" /> property value. After a request entity exceeds this threshold, it is buffered transparently onto disk. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the input-stream buffering threshold.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -355,10 +500,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpRuntimeSection.RequireRootedSaveAsPath" /> property specifies whether the file name argument to SaveAs methods must be a rooted path. The ASP.NET process must have permission to create files in the specified location. </para>
+          <para>For more information, see the save methods defined in the <see cref="T:System.Configuration.Configuration" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the file name must be a fully qualified physical file path.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -376,10 +528,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.HttpResponse" /> class checks both the <see cref="P:System.Web.Configuration.HttpRuntimeSection.SendCacheControlHeader" /> property and the <see cref="P:System.Web.Configuration.OutputCacheSection.SendCacheControlHeader" /> property to determine whether to send the cache-control:private header in the HTTP response. If either property is set to false, the header will not be sent. When the cache-control header is set to private, then the client will not cache the response in a shared cache.</para>
+          <para>Support for the <see cref="P:System.Web.Configuration.HttpRuntimeSection.SendCacheControlHeader" /> property in the <see cref="T:System.Web.Configuration.HttpRuntimeSection" /> class is provided for compatibility with legacy applications; this property is obsolete in the .NET Framework version 2.0. For more information, see the <see cref="T:System.Web.Configuration.OutputCacheSection" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the cache-control:private header is sent as part of the HTTP response.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -400,10 +559,16 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpRuntimeSection.ShutdownTimeout" /> property indicates the amount of time before an application is shut down gracefully. The default is 90 seconds.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the length of time the application is allowed to idle before it is terminated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -421,10 +586,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.HttpRuntimeSection.UseFullyQualifiedRedirectUrl" /> property indicates whether client-side redirects are fully qualified (in the form http://server/path) or whether relative redirects are instead sent to the client. </para>
+          <block subset="none" type="note">
+            <para>Some browsers might have problems loading pages in cookieless sessions when this value is false.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the client-side redirects are fully qualified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -445,10 +619,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A suggested value for <see cref="P:System.Web.Configuration.HttpRuntimeSection.WaitChangeNotification" /> would exceed the length of time to complete a copy during the deployment process. </para>
+          <block subset="none" type="note">
+            <para>The content might appear cached if you view it immediately after a copy and deploy process. This is typical behavior. The changes take effect when the wait period that you specified has elapsed.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the waiting time before the next change notification.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

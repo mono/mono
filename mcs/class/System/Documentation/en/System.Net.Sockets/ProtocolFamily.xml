@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProtocolFamily" FullName="System.Net.Sockets.ProtocolFamily">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum ProtocolFamily" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ProtocolFamily extends System.Enum" />
@@ -14,8 +15,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Sockets.ProtocolFamily" /> enumeration specifies the protocol scheme that is used by the <see cref="T:System.Net.Sockets.Socket" /> class to resolve an address. For example, <see cref="F:System.Net.Sockets.ProtocolFamily.InterNetwork" /> indicates that the IP version 4 protocol is expected when a <see cref="T:System.Net.Sockets.Socket" /> connects to an endpoint.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the type of protocol that an instance of the <see cref="T:System.Net.Sockets.Socket" /> class can use.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AppleTalk">
@@ -32,8 +39,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>AppleTalk protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Atm">
@@ -50,8 +60,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Native ATM services protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Banyan">
@@ -68,8 +81,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Banyan protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ccitt">
@@ -86,8 +102,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>CCITT protocol, such as X.25.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Chaos">
@@ -104,8 +123,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>MIT CHAOS protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Cluster">
@@ -122,8 +144,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Microsoft Cluster products protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataKit">
@@ -140,8 +165,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DataKit protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataLink">
@@ -158,8 +186,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Direct data link protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DecNet">
@@ -176,8 +207,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>DECNet protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ecma">
@@ -194,8 +228,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>European Computer Manufacturers Association (ECMA) protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FireFox">
@@ -212,8 +249,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>FireFox protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HyperChannel">
@@ -230,8 +270,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>NSC HyperChannel protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ieee12844">
@@ -248,8 +291,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IEEE 1284.4 workgroup protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImpLink">
@@ -266,8 +312,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ARPANET IMP protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InterNetwork">
@@ -284,8 +333,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IP version 4 protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InterNetworkV6">
@@ -302,8 +354,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IP version 6 protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Ipx">
@@ -320,8 +375,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IPX or SPX protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Irda">
@@ -338,8 +396,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IrDA protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Iso">
@@ -356,8 +417,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ISO protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Lat">
@@ -374,8 +438,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>LAT protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Max">
@@ -392,8 +459,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>MAX protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NetBios">
@@ -410,8 +480,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>NetBIOS protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NetworkDesigners">
@@ -428,8 +501,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Network Designers OSI gateway enabled protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NS">
@@ -446,8 +522,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Xerox NS protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Osi">
@@ -464,8 +543,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>OSI protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pup">
@@ -482,8 +564,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>PUP protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Sna">
@@ -500,8 +585,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>IBM SNA protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unix">
@@ -518,8 +606,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unix local to host protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unknown">
@@ -536,8 +627,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unknown protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unspecified">
@@ -554,8 +648,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Unspecified protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VoiceView">
@@ -572,8 +669,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>VoiceView protocol.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

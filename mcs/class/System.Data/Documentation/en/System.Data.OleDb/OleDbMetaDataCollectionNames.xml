@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OleDbMetaDataCollectionNames" FullName="System.Data.OleDb.OleDbMetaDataCollectionNames">
   <TypeSignature Language="C#" Value="public static class OleDbMetaDataCollectionNames" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a list of constants for use with the GetSchema method to retrieve metadata collections.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Catalogs">
@@ -23,8 +27,11 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Catalogs collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Collations">
@@ -37,8 +44,11 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Collations collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Columns">
@@ -51,8 +61,11 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Columns collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Indexes">
@@ -65,8 +78,11 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Indexes collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcedureColumns">
@@ -79,8 +95,11 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the ProcedureColumns collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcedureParameters">
@@ -93,8 +112,11 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the ProcedureParameters collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Procedures">
@@ -107,8 +129,11 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Procedures collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Tables">
@@ -121,8 +146,11 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Tables collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Views">
@@ -135,8 +163,11 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Views collection. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

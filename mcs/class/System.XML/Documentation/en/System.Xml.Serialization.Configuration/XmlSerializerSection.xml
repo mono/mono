@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSerializerSection" FullName="System.Xml.Serialization.Configuration.XmlSerializerSection">
   <TypeSignature Language="C#" Value="public sealed class XmlSerializerSection : System.Configuration.ConfigurationSection" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used to handle the <format type="text/html"><a href="d129d10c-3eb7-45d9-8098-5fa853825e47">&lt;xmlSerializer&gt; Element</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handles the XML elements used to configure XML serialization. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +28,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.Configuration.XmlSerializerSection" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CheckDeserializeAdvances">
@@ -40,9 +50,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use this method. Instead, set the checkDeserializerAdvances attribute of the <format type="text/html"><a href="d129d10c-3eb7-45d9-8098-5fa853825e47">&lt;xmlSerializer&gt; Element</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines whether an additional check of progress of the <see cref="T:System.Xml.Serialization.XmlSerializer" /> is done.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">

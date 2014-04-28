@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISet&lt;T&gt;" FullName="System.Collections.Generic.ISet&lt;T&gt;">
   <TypeSignature Language="C#" Value="public interface ISet&lt;T&gt; : System.Collections.Generic.ICollection&lt;T&gt;, System.Collections.Generic.IEnumerable&lt;T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISet`1&lt;T&gt; implements class System.Collections.Generic.ICollection`1&lt;!T&gt;, class System.Collections.Generic.IEnumerable`1&lt;!T&gt;, class System.Collections.IEnumerable" />
@@ -18,8 +19,14 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface provides methods for implementing sets, which are collections that have unique elements and specific operations. The <see cref="T:System.Collections.Generic.HashSet`1" /> and <see cref="T:System.Collections.Generic.SortedSet`1" /> collections implement this interface. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base interface for the abstraction of sets.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">

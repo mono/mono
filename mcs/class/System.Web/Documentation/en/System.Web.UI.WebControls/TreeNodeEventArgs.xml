@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TreeNodeEventArgs" FullName="System.Web.UI.WebControls.TreeNodeEventArgs">
   <TypeSignature Language="C#" Value="public sealed class TreeNodeEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.TreeNodeEventArgs" /> class is used to store the event data that is passed to an event-handling method.</para>
+      <para>For a list of the initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.TreeNodeEventArgs" /> class, see <see cref="M:System.Web.UI.WebControls.TreeNodeEventArgs.#ctor(System.Web.UI.WebControls.TreeNode)" />.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.TreeView.TreeNodeCheckChanged" />, <see cref="E:System.Web.UI.WebControls.TreeView.TreeNodeCollapsed" />, <see cref="E:System.Web.UI.WebControls.TreeView.TreeNodeDataBound" />, <see cref="E:System.Web.UI.WebControls.TreeView.TreeNodeExpanded" />, and <see cref="E:System.Web.UI.WebControls.TreeView.TreeNodePopulate" /> events of the <see cref="T:System.Web.UI.WebControls.TreeView" /> control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +30,42 @@
         <Parameter Name="node" Type="System.Web.UI.WebControls.TreeNode" />
       </Parameters>
       <Docs>
-        <param name="node">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TreeNodeEventArgs.#ctor(System.Web.UI.WebControls.TreeNode)" /> constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNodeEventArgs" /> class.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="M:System.Web.UI.WebControls.TreeNodeEventArgs.#ctor(System.Web.UI.WebControls.TreeNode)" /> constructor is used primarily by control developers when raising events.</para>
+          </block>
+          <para>The following table shows the initial property value for an instance of the <see cref="T:System.Web.UI.WebControls.TreeNodeEventArgs" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.TreeNodeEventArgs.Node" /> </para>
+              </term>
+              <description>
+                <para>The <see cref="T:System.Web.UI.WebControls.TreeNode" /> contained in <paramref name="node" />. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNodeEventArgs" /> class using the specified <see cref="T:System.Web.UI.WebControls.TreeNode" /> object.</para>
+        </summary>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.TreeNode" /> that represents the current node when the event is raised. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +78,16 @@
         <ReturnType>System.Web.UI.WebControls.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TreeNodeEventArgs.Node" /> property to access the properties of the node that raised the event. The <see cref="P:System.Web.UI.WebControls.TreeNodeEventArgs.Node" /> property returns a <see cref="T:System.Web.UI.WebControls.TreeNode" /> object and is commonly used to determine the contents of the node, to modify the properties of the node, or to add child nodes dynamically.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node that raised the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

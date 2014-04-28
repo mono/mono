@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UpnEndpointIdentity" FullName="System.ServiceModel.UpnEndpointIdentity">
   <TypeSignature Language="C#" Value="public class UpnEndpointIdentity : System.ServiceModel.EndpointIdentity" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit UpnEndpointIdentity extends System.ServiceModel.EndpointIdentity" />
@@ -10,8 +11,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A user account name (UPN) is the user name (sometimes referred to as the user logon name) and a domain name that identifies the domain in which the user account is located. This is one of the standard ways to log on to a Windows domain. The format is: someone@example.com (as for an e-mail address).</para>
+      <para>A Down-Level Logon Name can also be used for creating a <see cref="T:System.ServiceModel.UpnEndpointIdentity" />. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a user principal name (UPN) for an identity which is used when the binding utilizes the <newTerm>SSPINegotiate</newTerm> authentication mode.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +33,16 @@
         <Parameter Name="identity" Type="System.IdentityModel.Claims.Claim" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method calls <see cref="M:System.ServiceModel.EndpointIdentity.Initialize(System.IdentityModel.Claims.Claim)" /> using <paramref name="identity" /> as the input parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.UpnEndpointIdentity" /> class from a claim.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IdentityModel.Claims.Claim" />.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -42,8 +57,14 @@
       </Parameters>
       <Docs>
         <param name="upn">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method creates a claim from <paramref name="upnName" /> and then calls <see cref="M:System.ServiceModel.EndpointIdentity.Initialize(System.IdentityModel.Claims.Claim)" /> using that claim as the input parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.UpnEndpointIdentity" /> class. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

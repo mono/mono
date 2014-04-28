@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlRowUpdatingEventHandler" FullName="System.Data.SqlClient.SqlRowUpdatingEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void SqlRowUpdatingEventHandler(object sender, SqlRowUpdatingEventArgs e);" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The handler is not required to perform any action, and your code should avoid generating exceptions or allowing exceptions to propagate to the calling method. Any exceptions that do reach the caller are ignored.</para>
+      <para>The handler may use the <see cref="T:System.Data.SqlClient.SqlRowUpdatingEventArgs" /> to influence the processing of the updates. For example, the handler may opt to skip the update of the current row or skip the update of all remaining rows. Note that the rows are updated in the order that they were received from the data source.</para>
+      <para>When you create a <see cref="T:System.Data.SqlClient.SqlRowUpdatingEventArgs" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event handler delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Data.SqlClient.SqlDataAdapter.RowUpdating" /> event of a <see cref="T:System.Data.SqlClient.SqlDataAdapter" />.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

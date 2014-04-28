@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExpressionBuilder" FullName="System.Web.Configuration.ExpressionBuilder">
   <TypeSignature Language="C#" Value="public sealed class ExpressionBuilder : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,9 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET automatically evaluates expressions during page parsing using the <see cref="T:System.Web.Configuration.ExpressionBuilder" /> class. The <see cref="T:System.Web.Configuration.ExpressionBuilderCollection" /> collection, which is made up of the expressionBuilders elements contained in the compilation section of the configuration. The <see cref="T:System.Web.Configuration.ExpressionBuilder" /> contains specific values in key/value pairs. </para>
+      <para>A value is retrieved by including an expression of the form</para>
+      <para>&lt;%$ ExpressionPrefix: ExpressionKey %&gt;</para>
+      <para>within the page. The ExpressionPrefix maps the type of expression to be retrieved as either a common expression-builder type (that is, <see cref="T:System.Web.Compilation.AppSettingsExpressionBuilder" />) or a custom expression builder type. The ExpressionKey specifies the key used to reference the returned value. </para>
+      <para>If you choose to implement a common expression-builder type, you must map the expression builder to the associated section name in the configuration. If you choose to implement a custom expression-builder type, you must map your expression builder to your custom expression-builder class, which must derive from the <see cref="T:System.Web.Configuration.ExpressionBuilder" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Retrieves a dynamic resource during compilation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +33,16 @@
         <Parameter Name="theType" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="expressionPrefix">To be added.</param>
-        <param name="theType">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.ExpressionBuilder" /> class. </para>
+        </summary>
+        <param name="expressionPrefix">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that identifies the type of expression to retrieve.</param>
+        <param name="theType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that specifies the expression type.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -47,10 +63,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.ExpressionBuilder.ExpressionPrefix" /> maps the expression to the associated section name in the configuration for common expression types, or maps the expression to the custom expression class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that identifies the type of expression to retrieve.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -87,10 +109,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.ExpressionBuilder.Type" /> specifies the type of object used to determine the value of the expression. The type can specify either a section within the configuration, or a custom class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that specifies the expression type.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

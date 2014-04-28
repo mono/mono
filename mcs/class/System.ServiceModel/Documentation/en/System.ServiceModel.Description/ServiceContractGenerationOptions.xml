@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceContractGenerationOptions" FullName="System.ServiceModel.Description.ServiceContractGenerationOptions">
   <TypeSignature Language="C#" Value="public enum ServiceContractGenerationOptions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ServiceContractGenerationOptions extends System.Enum" />
@@ -14,8 +15,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.ServiceModel.Description.ServiceContractGenerationOptions" /> enumeration with the <see cref="P:System.ServiceModel.Description.ServiceContractGenerator.Options" /> property to control the generated contract code.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the contract generation options available using the <see cref="T:System.ServiceModel.Description.ServiceContractGenerator" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AsynchronousMethods">
@@ -29,7 +36,10 @@
         <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates asynchronous methods for operations in addition to synchronous versions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ChannelInterface">
@@ -43,7 +53,10 @@
         <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates an interface that derives from the contract interface and <see cref="T:System.ServiceModel.IClientChannel" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClientClass">
@@ -57,7 +70,10 @@
         <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a indigo1 client class that extends <see cref="T:System.ServiceModel.ClientBase`1" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EventBasedAsynchronousMethods">
@@ -71,7 +87,10 @@
         <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates event-based asynchronous methods for operations in addition to synchronous versions.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InternalTypes">
@@ -85,7 +104,10 @@
         <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Causes all types to be marked internal.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -99,7 +121,10 @@
         <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No options specified.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypedMessages">
@@ -113,7 +138,10 @@
         <ReturnType>System.ServiceModel.Description.ServiceContractGenerationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generate message contracts.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

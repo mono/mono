@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectDataSourceSelectingEventArgs" FullName="System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs">
   <TypeSignature Language="C#" Value="public class ObjectDataSourceSelectingEventArgs : System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,150 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs" /> class is used in the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnSelecting(System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs)" /> method. Because it is derived from the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" /> class, the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs" /> class provides access to input parameters for validation and manipulation through the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs.InputParameters" /> property. The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs" /> class also provides the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs.ExecutingSelectCount" /> property, which is used to check whether the currently executing data retrieval operation is retrieving a row count, in addition to the data. This is important because when data source paging is enabled, the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selecting" /> event is raised twice. For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs.ExecutingSelectCount" />.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control exposes many events that you can handle to work with the underlying business object at various times in its life cycle. The following table lists the events and associated <see cref="T:System.EventArgs" /> classes and event handler delegates.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Event</para>
+            </term>
+            <description>
+              <para>EventArgs</para>
+            </description>
+            <description>
+              <para>EventHandler</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectCreating" />.</para>
+            <para>Occurs immediately before the business object is instantiated.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceObjectEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectCreated" />.</para>
+            <para>Occurs immediately after the business object is instantiated.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceObjectEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selecting" />.</para>
+            <para>Occurs before the data is retrieved.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserting" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updating" />, and <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleting" />.</para>
+            <para>Occur before an insert, update, or delete operation is performed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selected" />.</para>
+            <para>Occurs after the data is retrieved.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserted" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updated" />, and <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleted" />.</para>
+            <para>Occur after the insert, update, or delete operation is completed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectDisposing" />.</para>
+            <para>Occurs before a business object is destroyed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceDisposingEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceDisposingEventHandler" />
+            </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selecting" /> event of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,12 +165,20 @@
         <Parameter Name="executeSelectCount" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="inputParameters">To be added.</param>
-        <param name="arguments">To be added.</param>
         <param name="executeSelectCount">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="inputParameters" /> parameter is an <see cref="T:System.Collections.IDictionary" /> collection of name/value pairs that match those in the method signature and are passed by reference.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs" /> class.</para>
+        </summary>
+        <param name="inputParameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> of <see cref="T:System.Web.UI.WebControls.Parameter" /> objects.</param>
+        <param name="arguments">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> that specifies which additional data-related operations the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> should perform on a results set, such as sorting the data or returning a specific subset of data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,10 +191,16 @@
         <ReturnType>System.Web.UI.DataSourceSelectArguments</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Data-bound controls use the <see cref="T:System.Web.UI.DataSourceSelectArguments" /> class to request that the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> object perform additional data-related operations on a results set, such as sorting the data or returning a specific subset of data. These data-related operations are enumerated by the <see cref="T:System.Web.UI.DataSourceCapabilities" /> enumeration. The <see cref="P:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs.Arguments" /> property is read-only, so you can examine, but not change, the arguments that are passed by the data-bound control. For more information, see <see cref="T:System.Web.UI.DataSourceSelectArguments" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Provides a mechanism that the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> object can use to request data-related operations when data is retrieved.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +213,25 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> object is performing data retrieval and data source paging is enabled, the data retrieval method is called twice: </para>
+          <list type="bullet">
+            <item>
+              <para>Once to retrieve the set of data.</para>
+            </item>
+            <item>
+              <para>Once to retrieve a total row count. </para>
+            </item>
+          </list>
+          <para>This raises the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selecting" /> event twice. For code that handles the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selecting" /> event, it might be important to determine the nature of the event (retrieving data or retrieving row count) so that any additional work that is performed by the handler is not unnecessarily duplicated for every data retrieval operation that is performed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> is retrieving a row count during a data retrieval operation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

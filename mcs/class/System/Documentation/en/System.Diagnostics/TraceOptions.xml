@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TraceOptions" FullName="System.Diagnostics.TraceOptions">
   <TypeSignature Language="C#" Value="public enum TraceOptions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed TraceOptions extends System.Enum" />
@@ -15,8 +16,39 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by trace listeners to determine which options, or elements, should be included in the trace output. Trace listeners store the trace options in the <see cref="P:System.Diagnostics.TraceListener.TraceOutputOptions" /> property. </para>
+      <para>The following example shows the use of the traceOutputOptions attribute to specify the trace output options for a <see cref="T:System.Diagnostics.ConsoleTraceListener" /> that is enabled using a configuration file.</para>
+      <code>&lt;configuration&gt;
+  &lt;system.diagnostics&gt;
+    &lt;trace autoflush="false" indentsize="4"&gt;
+      &lt;listeners&gt;
+        &lt;add name="consoleListener"
+          type="System.Diagnostics.ConsoleTraceListener" 
+<codeFeaturedElement>          traceOutputOptions="ProcessId, DateTime" /&gt;</codeFeaturedElement>
+      &lt;/listeners&gt;
+    &lt;/trace&gt;
+  &lt;/system.diagnostics&gt;
+&lt;/configuration&gt;</code>
+      <para>For details about adding trace listeners to the application configuration file, see <format type="text/html"><a href="1394c2c3-6304-46db-87c1-8e8b16f5ad5b">&lt;listeners&gt; Element</a></format>.</para>
+      <para>The <see cref="T:System.Diagnostics.TraceOptions" /> enumeration is not used by the following classes and methods:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="T:System.Diagnostics.EventLogTraceListener" /> class, because it can cause a large volume of data to be written to the log. </para>
+        </item>
+        <item>
+          <para>The Write and WriteLine methods of the <see cref="T:System.Diagnostics.ConsoleTraceListener" />, <see cref="T:System.Diagnostics.DefaultTraceListener" />, and <see cref="T:System.Diagnostics.TextWriterTraceListener" /> classes.</para>
+        </item>
+        <item>
+          <para>The <see cref="Overload:System.Diagnostics.TraceListener.Write" /> and <see cref="Overload:System.Diagnostics.TraceListener.WriteLine" /> methods of the <see cref="T:System.Diagnostics.TraceListener" /> class when they are not overridden in a derived class. </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies trace data options to be written to the trace output.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Callstack">
@@ -31,7 +63,10 @@
         <ReturnType>System.Diagnostics.TraceOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write the call stack, which is represented by the return value of the <see cref="P:System.Environment.StackTrace" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DateTime">
@@ -46,7 +81,10 @@
         <ReturnType>System.Diagnostics.TraceOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write the date and time. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LogicalOperationStack">
@@ -61,7 +99,10 @@
         <ReturnType>System.Diagnostics.TraceOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write the logical operation stack, which is represented by the return value of the <see cref="P:System.Diagnostics.CorrelationManager.LogicalOperationStack" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -76,7 +117,10 @@
         <ReturnType>System.Diagnostics.TraceOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not write any elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcessId">
@@ -91,7 +135,10 @@
         <ReturnType>System.Diagnostics.TraceOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write the process identity, which is represented by the return value of the <see cref="P:System.Diagnostics.Process.Id" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ThreadId">
@@ -106,7 +153,10 @@
         <ReturnType>System.Diagnostics.TraceOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write the thread identity, which is represented by the return value of the <see cref="P:System.Threading.Thread.ManagedThreadId" /> property for the current thread.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Timestamp">
@@ -121,7 +171,10 @@
         <ReturnType>System.Diagnostics.TraceOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Write the timestamp, which is represented by the return value of the <see cref="M:System.Diagnostics.Stopwatch.GetTimestamp" /> method.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DirectoryServicesPermission" FullName="System.DirectoryServices.DirectoryServicesPermission">
   <TypeSignature Language="C#" Value="public sealed class DirectoryServicesPermission : System.Security.Permissions.ResourcePermissionBase, System.Security.Permissions.IUnrestrictedPermission, System.Security.IPermission, System.Security.ISecurityEncodable, System.Security.IStackWalk" />
   <AssemblyInfo>
@@ -76,8 +77,11 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.DirectoryServices.DirectoryServicesPermission" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -87,9 +91,12 @@
         <Parameter Name="entries" Type="System.DirectoryServices.DirectoryServicesPermissionEntry[]" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="entries">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.DirectoryServices.DirectoryServicesPermission" /> class with the specified permission access level entries.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -99,9 +106,12 @@
         <Parameter Name="ps" Type="System.Security.Permissions.PermissionState" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="ps">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.DirectoryServices.DirectoryServicesPermission" /> class with the specified permission state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -112,10 +122,14 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <summary>To be added.</summary>
         <param name="access">To be added.</param>
-        <param name="path">To be added.</param>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.DirectoryServices.DirectoryServicesPermission" /> class with the specified access levels and specified path to an Active Directory Domain Services node.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path of the Active Directory Domain Services object, otherwise known as the ADsPath, to which the permissions apply.</param>
       </Docs>
     </Member>
     <Member MemberName="PermissionEntries">
@@ -125,14 +139,20 @@
         <ReturnType>System.DirectoryServices.DirectoryServicesPermissionEntryCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of permission entries for this permission.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.DirectoryServices.DirectoryServicesPermission" /> class allows you to control code access security permissions for <see cref="N:System.DirectoryServices" />.</para>
+    </summary>
   </Docs>
 </Type>

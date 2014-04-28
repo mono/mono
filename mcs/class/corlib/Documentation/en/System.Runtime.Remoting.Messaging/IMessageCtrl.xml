@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IMessageCtrl" FullName="System.Runtime.Remoting.Messaging.IMessageCtrl">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IMessageCtrl" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IMessageCtrl" />
@@ -16,8 +17,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a way to control asynchronous messages after they have dispatched using the <see cref="M:System.Runtime.Remoting.Messaging.IMessageSink.AsyncProcessMessage(System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Messaging.IMessageSink)" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Cancel">
@@ -36,9 +40,13 @@
         <Parameter Name="msToCancel" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="msToCancel">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cancels an asynchronous call.</para>
+        </summary>
+        <param name="msToCancel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds after which to cancel the message. </param>
       </Docs>
     </Member>
   </Members>

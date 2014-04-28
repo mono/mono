@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewCellToolTipTextNeededEventHandler" FullName="System.Windows.Forms.DataGridViewCellToolTipTextNeededEventHandler">
   <TypeSignature Language="C#" Value="public delegate void DataGridViewCellToolTipTextNeededEventHandler(object sender, DataGridViewCellToolTipTextNeededEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,20 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.DataGridView.CellToolTipTextNeeded" /> event occurs only when the <see cref="T:System.Windows.Forms.DataGridView" /> control <see cref="P:System.Windows.Forms.DataGridView.DataSource" /> property is set or its <see cref="P:System.Windows.Forms.DataGridView.VirtualMode" /> property is true.</para>
+      <para>When you handle the <see cref="E:System.Windows.Forms.DataGridView.CellToolTipTextNeeded" /> event, the ToolTip text you specify in the handler is shown whenever the mouse pointer is over a cell and the control <see cref="P:System.Windows.Forms.DataGridView.ShowCellToolTips" /> property value is true. The <see cref="E:System.Windows.Forms.DataGridView.CellToolTipTextNeeded" /> event is useful when you want to display ToolTips determined by the current state or value of a cell. </para>
+      <para>The <see cref="E:System.Windows.Forms.DataGridView.CellToolTipTextNeeded" /> event also occurs whenever the value of the <see cref="P:System.Windows.Forms.DataGridViewCell.ToolTipText" /> property is retrieved, either programmatically or when the mouse pointer enters a cell. </para>
+      <para>You can use the <see cref="P:System.Windows.Forms.DataGridViewCellEventArgs.ColumnIndex" /> and <see cref="P:System.Windows.Forms.DataGridViewCellEventArgs.RowIndex" /> properties to determine the state or value of a cell, and use this information to set the <see cref="P:System.Windows.Forms.DataGridViewCellToolTipTextNeededEventArgs.ToolTipText" /> property. This property is initialized with the value of the cell <see cref="P:System.Windows.Forms.DataGridViewCell.ToolTipText" /> property, which the event value overrides.</para>
+      <para>Handle the <see cref="E:System.Windows.Forms.DataGridView.CellToolTipTextNeeded" /> event when working with large amounts of data to avoid the performance penalties of setting the cell <see cref="P:System.Windows.Forms.DataGridViewCell.ToolTipText" /> value for multiple cells. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>When you create a <see cref="T:System.Windows.Forms.DataGridViewCellToolTipTextNeededEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event-handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Windows.Forms.DataGridView.CellToolTipTextNeeded" /> event of a <see cref="T:System.Windows.Forms.DataGridView" />. </para>
+    </summary>
   </Docs>
 </Type>

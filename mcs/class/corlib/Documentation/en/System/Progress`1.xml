@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Progress&lt;T&gt;" FullName="System.Progress&lt;T&gt;">
   <TypeSignature Language="C#" Value="public class Progress&lt;T&gt; : IProgress&lt;T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit Progress`1&lt;T&gt; extends System.Object implements class System.IProgress`1&lt;!T&gt;" />
@@ -18,8 +19,15 @@
   </Interfaces>
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Any handler provided to the constructor or event handlers registered with the <see cref="E:System.Progress`1.ProgressChanged" /> event are invoked through a <see cref="T:System.Threading.SynchronizationContext" /> instance captured when the instance is constructed. If there is no current <see cref="T:System.Threading.SynchronizationContext" /> at the time of construction, the callbacks will be invoked on the <see cref="T:System.Threading.ThreadPool" />.</para>
+      <para>For more information and a code example, see the article <see cref="http://go.microsoft.com/fwlink/p/?LinkId=267243">Async in 4.5: Enabling Progress and Cancellation in Async APIs</see> in the .NET Framework blog.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an <see cref="T:System.IProgress`1" /> that invokes callbacks for each reported progress value.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +39,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes the <see cref="T:System.Progress`1" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -81,8 +92,14 @@
         <ReturnType>System.EventHandler&lt;T&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Handlers registered with this event will be invoked on the <see cref="T:System.Threading.SynchronizationContext" /> captured when the instance was constructed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raised for each reported progress value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.IProgress&lt;T&gt;.Report">

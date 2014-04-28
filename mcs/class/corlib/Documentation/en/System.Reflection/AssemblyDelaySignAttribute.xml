@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyDelaySignAttribute" FullName="System.Reflection.AssemblyDelaySignAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AssemblyDelaySignAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AssemblyDelaySignAttribute extends System.Attribute" />
@@ -22,8 +23,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When this attribute is used on an assembly, space is reserved for the signature which is later filled by a signing tool such as the Sn.exe utility. Delayed signing is used when the author of the assembly does not have access to the private key that will be used to generate the signature, as in [assembly:AssemblyDelaySignAttribute(true)].</para>
+      <para>The classes in System.Runtime.CompilerServices are intended for use by compilers only. Do not use them unless you are building a compiler.</para>
+      <para>For more information, see the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that the assembly is not fully signed when created.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +49,13 @@
         <Parameter Name="delaySign" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="delaySign">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.AssemblyDelaySignAttribute" /> class.</para>
+        </summary>
+        <param name="delaySign">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the feature this attribute represents is activated; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="DelaySign">
@@ -58,9 +71,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the state of the attribute.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

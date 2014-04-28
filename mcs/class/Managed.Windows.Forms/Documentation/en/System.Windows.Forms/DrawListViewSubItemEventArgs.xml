@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DrawListViewSubItemEventArgs" FullName="System.Windows.Forms.DrawListViewSubItemEventArgs">
   <TypeSignature Language="C#" Value="public class DrawListViewSubItemEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,8 +10,21 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.ListView.DrawSubItem" /> event enables you to customize (or owner-draw) the appearance of a <see cref="T:System.Windows.Forms.ListView" /> control in the details view.</para>
+      <para>The <see cref="E:System.Windows.Forms.ListView.DrawSubItem" /> event is raised by a <see cref="T:System.Windows.Forms.ListView" /> control when its <see cref="P:System.Windows.Forms.ListView.OwnerDraw" /> property is set to true and its <see cref="P:System.Windows.Forms.ListView.View" /> property is set to <see cref="F:System.Windows.Forms.View.Details" />. The <see cref="T:System.Windows.Forms.DrawListViewSubItemEventArgs" /> passed to the event handler contains information about the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> to draw and also provides methods to help you draw the subitem.</para>
+      <para>Use the <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.ItemState" /> or <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.Item" /> properties to retrieve information about the parent item of the subitem to draw. To retrieve the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> itself, use the <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.SubItem" /> property. Use the <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.Header" /> property to retrieve the <see cref="T:System.Windows.Forms.ColumnHeader" /> representing the header of the column in which the subitem is displayed.</para>
+      <para>Use the <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.Graphics" /> property to do the actual drawing within the area specified by the <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.Bounds" /> property. To draw standard <see cref="T:System.Windows.Forms.ListView" /> elements that do not need customization, use the <see cref="M:System.Windows.Forms.DrawListViewSubItemEventArgs.DrawBackground" />, <see cref="Overload:System.Windows.Forms.DrawListViewSubItemEventArgs.DrawText" />, and <see cref="M:System.Windows.Forms.DrawListViewSubItemEventArgs.DrawFocusRectangle(System.Drawing.Rectangle)" /> methods.</para>
+      <para>Use the <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.DrawDefault" /> property when you want the operating system to draw the subitem. This is useful when you want to customize only specific subitems.</para>
+      <block subset="none" type="note">
+        <para>To avoid issues with graphics flickering when owner drawing, override the <see cref="T:System.Windows.Forms.ListView" /> control and set the <see cref="P:System.Windows.Forms.ListView.DoubleBuffered" /> property to true. This feature is available only on Windows XP and the Windows Server 2003 family when your application calls the <see cref="M:System.Windows.Forms.Application.EnableVisualStyles" /> method.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ListView.DrawSubItem" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -52,9 +66,15 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location specified by this property is relative to the upper-left corner of the <see cref="T:System.Windows.Forms.ListView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size and location of the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> to draw.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ColumnIndex">
@@ -67,9 +87,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the <see cref="T:System.Windows.Forms.ListView" /> column in which the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> is displayed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawBackground">
@@ -83,8 +106,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to draw a standard background that uses the current value of the <see cref="P:System.Windows.Forms.ListViewItem.ListViewSubItem.BackColor" /> property. The background is drawn to fill the area specified by the <see cref="P:System.Windows.Forms.DrawListViewItemEventArgs.Bounds" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Windows.Forms.ListViewItem.UseItemStyleForSubItems" /> property of the parent <see cref="T:System.Windows.Forms.ListViewItem" /> must be set to false to prevent the <see cref="P:System.Windows.Forms.ListViewItem.BackColor" /> value of the parent item from overriding the subitem value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the background of the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> using its current background color.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawDefault">
@@ -97,9 +129,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property when handling the <see cref="E:System.Windows.Forms.ListView.DrawSubItem" /> event for subitems that you do not want to customize. If you set this property to true, the subitem will be drawn normally using the current values of the <see cref="P:System.Windows.Forms.ListViewItem.ListViewSubItem.BackColor" />, <see cref="P:System.Windows.Forms.ListViewItem.ListViewSubItem.ForeColor" />, and <see cref="P:System.Windows.Forms.ListViewItem.ListViewSubItem.Font" /> properties </para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Windows.Forms.ListViewItem.UseItemStyleForSubItems" /> property of the parent <see cref="T:System.Windows.Forms.ListViewItem" /> must be set to false to prevent the <see cref="P:System.Windows.Forms.ListViewItem.BackColor" /> value of the parent item from overriding the subitem value.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> should be drawn by the operating system instead of owner-drawn.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawFocusRectangle">
@@ -115,9 +156,18 @@
         <Parameter Name="bounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="bounds">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to draw a standard focus rectangle around the subitem. The focus rectangle is drawn one pixel inside the area specified by the <paramref name="bounds" /> parameter. It is drawn only when the parent item has focus, so you do not need to check the focus state of the item before you call this method.</para>
+          <para>You might want to draw the focus rectangle only around the first subitem (that is, the parent item, which is displayed in the first column) rather than drawing it around every subitem of an item. This corresponds to the normal behavior of a <see cref="T:System.Windows.Forms.ListView" /> control when the <see cref="P:System.Windows.Forms.ListView.FullRowSelect" /> property is set to false. To draw the focus rectangle around the first subitem, call the <see cref="M:System.Windows.Forms.DrawListViewSubItemEventArgs.DrawFocusRectangle(System.Drawing.Rectangle)" /> method only when the <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.ColumnIndex" /> value is 0.</para>
+          <para>The <see cref="T:System.Windows.Forms.ListView" /> control does not provide the ability to select individual subitems, but if you want to implement subitem selection yourself, you can use this method to draw the focus rectangle around a subitem other than the first one.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws a focus rectangle for the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> if the parent <see cref="T:System.Windows.Forms.ListViewItem" /> has focus.</para>
+        </summary>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The area within which to draw the focus rectangle.</param>
       </Docs>
     </Member>
     <Member MemberName="DrawText">
@@ -131,8 +181,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to draw the subitem text using the current values of the <see cref="P:System.Windows.Forms.ListViewItem.ListViewSubItem.ForeColor" /> and <see cref="P:System.Windows.Forms.ListViewItem.ListViewSubItem.Font" /> properties. The text is drawn within the area specified by the <see cref="P:System.Windows.Forms.DrawListViewItemEventArgs.Bounds" /> property.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Windows.Forms.ListViewItem.UseItemStyleForSubItems" /> property of the parent <see cref="T:System.Windows.Forms.ListViewItem" /> must be set to false to prevent the <see cref="P:System.Windows.Forms.ListViewItem.ForeColor" /> and <see cref="P:System.Windows.Forms.ListViewItem.Font" /> values of the parent item from overriding the subitem values.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the text of the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> using its current foreground color.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawText">
@@ -148,9 +207,19 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to draw the subitem text using the current values of the <see cref="P:System.Windows.Forms.ListViewItem.ListViewSubItem.ForeColor" /> and <see cref="P:System.Windows.Forms.ListViewItem.ListViewSubItem.Font" /> properties. The text is drawn within the area specified by the <see cref="P:System.Windows.Forms.DrawListViewItemEventArgs.Bounds" /> property. The <see cref="T:System.Windows.Forms.TextFormatFlags" /> values specified in the <paramref name="flags" /> parameter let you provide formatting properties for the node label, such as text alignment.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Windows.Forms.ListViewItem.UseItemStyleForSubItems" /> property of the parent <see cref="T:System.Windows.Forms.ListViewItem" /> must be set to false to prevent the <see cref="P:System.Windows.Forms.ListViewItem.ForeColor" /> and <see cref="P:System.Windows.Forms.ListViewItem.Font" /> values of the parent item from overriding the subitem values.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the text of the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> using its current foreground color and formatting it with the specified <see cref="T:System.Windows.Forms.TextFormatFlags" /> values.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.TextFormatFlags" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="Graphics">
@@ -163,9 +232,15 @@
         <ReturnType>System.Drawing.Graphics</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Graphics" /> class provides properties and methods useful for drawing on the display device.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Graphics" /> used to draw the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Header">
@@ -178,9 +253,12 @@
         <ReturnType>System.Windows.Forms.ColumnHeader</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the header of the <see cref="T:System.Windows.Forms.ListView" /> column in which the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> is displayed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -193,9 +271,16 @@
         <ReturnType>System.Windows.Forms.ListViewItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to access the <see cref="T:System.Windows.Forms.ListViewItem" /> parent of the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> to draw. This is useful when the <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.ItemState" /> property does not provide adequate information to meet your needs. The <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.ItemState" /> property provides only basic state information that you can use, for example, to determine whether the parent item is selected, checked, or focused. The <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.Item" /> property, on the other hand, allows you to access all members of the parent <see cref="T:System.Windows.Forms.ListViewItem" />. </para>
+          <para>To access the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> being drawn, use the <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.SubItem" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent <see cref="T:System.Windows.Forms.ListViewItem" /> of the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> to draw.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ItemIndex">
@@ -208,9 +293,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the parent <see cref="T:System.Windows.Forms.ListViewItem" /> of the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> to draw.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ItemState">
@@ -223,9 +311,15 @@
         <ReturnType>System.Windows.Forms.ListViewItemStates</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to check whether the <see cref="T:System.Windows.Forms.ListViewItem" /> parent of the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> to draw is in a particular state. This property provides only basic state information about the parent item. You can use this property, for example, to determine whether the parent item is selected, checked, or focused. If you need to know more, retrieve the parent item through the <see cref="P:System.Windows.Forms.DrawListViewItemEventArgs.Item" /> property and check its properties directly.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current state of the parent <see cref="T:System.Windows.Forms.ListViewItem" /> of the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> to draw.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SubItem">
@@ -238,9 +332,15 @@
         <ReturnType>System.Windows.Forms.ListViewItem+ListViewSubItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is useful when the other <see cref="T:System.Windows.Forms.DrawListViewSubItemEventArgs" /> properties do not provide adequate information to meet your needs. The <see cref="P:System.Windows.Forms.DrawListViewSubItemEventArgs.SubItem" /> property allows you to access all members of the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> being drawn. You must access this object directly, for example, to draw the <see cref="P:System.Windows.Forms.ListViewItem.ListViewSubItem.Text" /> value yourself rather than using the <see cref="Overload:System.Windows.Forms.DrawListViewSubItemEventArgs.DrawText" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.ListViewItem.ListViewSubItem" /> to draw.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

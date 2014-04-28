@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PeerResolverSettings" FullName="System.ServiceModel.PeerResolvers.PeerResolverSettings">
   <TypeSignature Language="C#" Value="public class PeerResolverSettings" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit PeerResolverSettings extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the settings for a peer resolver service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.PeerResolvers.PeerResolverSettings" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Custom">
@@ -38,9 +45,15 @@
         <ReturnType>System.ServiceModel.PeerResolvers.PeerCustomResolverSettings</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is set only if <see cref="P:System.ServiceModel.PeerResolvers.PeerResolverSettings.Mode" /> is set to <see cref="F:System.ServiceModel.PeerResolvers.PeerResolverMode.Custom" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the specific settings for a custom peer resolver.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Mode">
@@ -54,9 +67,12 @@
         <ReturnType>System.ServiceModel.PeerResolvers.PeerResolverMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets whether the peer resolver instance associated with this service is either PNRP-specific, a custom resolver, or automatically determined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReferralPolicy">
@@ -70,9 +86,12 @@
         <ReturnType>System.ServiceModel.PeerResolvers.PeerReferralPolicy</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the specific referral policy used by the peer resolver service.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

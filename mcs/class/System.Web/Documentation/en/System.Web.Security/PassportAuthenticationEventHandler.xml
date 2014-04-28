@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PassportAuthenticationEventHandler" FullName="System.Web.Security.PassportAuthenticationEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void PassportAuthenticationEventHandler(object sender, PassportAuthenticationEventArgs e);" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class has been deprecated and is no longer supported. Microsoft Passport Network has been replaced by Windows Live ID. For more information about how to use Windows Live ID to authenticate users in a Web application, see <see cref="http://go.microsoft.com/fwlink/?LinkId=106346">Windows Live ID SDK</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the PassportAuthentication_OnAuthenticate event of a <see cref="T:System.Web.Security.PassportAuthenticationModule" />. This class is deprecated.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IdentityElement" FullName="System.ServiceModel.Configuration.IdentityElement">
   <TypeSignature Language="C#" Value="public sealed class IdentityElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit IdentityElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that enables the authentication of an endpoint by other endpoints exchanging messages with it. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.IdentityElement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Certificate">
@@ -43,9 +50,12 @@
         <ReturnType>System.ServiceModel.Configuration.CertificateElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration settings of an X.509 certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CertificateReference">
@@ -64,9 +74,12 @@
         <ReturnType>System.ServiceModel.Configuration.CertificateReferenceElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the configuration settings for X.509 certificate validation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dns">
@@ -85,9 +98,12 @@
         <ReturnType>System.ServiceModel.Configuration.DnsElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a DNS identity.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InitializeFrom">
@@ -104,9 +120,13 @@
         <Parameter Name="identity" Type="System.ServiceModel.EndpointIdentity" />
       </Parameters>
       <Docs>
-        <param name="identity">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes this configuration element with the content of the specified object.</para>
+        </summary>
+        <param name="identity">
+          <attribution license="cc4" from="Microsoft" modified="false" />The endpoint identity.</param>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -141,9 +161,12 @@
         <ReturnType>System.ServiceModel.Configuration.RsaElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an RSA identity.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ServicePrincipalName">
@@ -162,9 +185,12 @@
         <ReturnType>System.ServiceModel.Configuration.ServicePrincipalNameElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a service principal name (SPN) identity.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UserPrincipalName">
@@ -183,9 +209,12 @@
         <ReturnType>System.ServiceModel.Configuration.UserPrincipalNameElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a user principal name (UPN) identity.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

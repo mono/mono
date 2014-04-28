@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProfileSection" FullName="System.Web.Configuration.ProfileSection">
   <TypeSignature Language="C#" Value="public sealed class ProfileSection : System.Configuration.ConfigurationSection" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.ProfileSection" /> class provides a way to programmatically access and modify the content of the configuration file profile section. The profile section of the configuration file specifies a schema for user profiles. At run time, the ASP.NET compilation system uses the information specified in the profile section to generate a class called ProfileCommon, which is derived from <see cref="T:System.Web.Profile.ProfileBase" />. The ProfileCommon class definition is based on the properties defined in the profile section of the configuration file. The class allows you to access and modify the values for individual profiles. An instance of this class is created for each user profile, and you can access the individual profile values in your code through the <see cref="P:System.Web.HttpContext.Profile" /> property. For more information about the profile features added to vstecasplong, see <format type="text/html"><a href="89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET Profile Properties Overview</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.ProfileSection" /> class provides a way to programmatically access and modify the profile section of a configuration file. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,77 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the default settings that are used for this constructor.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Setting</para>
+                </term>
+                <description>
+                  <para>Default Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.Configuration.ProfileSection.DefaultProvider" />
+                </para>
+              </term>
+              <description>
+                <para>"AspNetSqlProfileProvider".</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.Configuration.ProfileSection.Enabled" />
+                </para>
+              </term>
+              <description>
+                <para>true.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.Configuration.ProfileSection.Inherits" />
+                </para>
+              </term>
+              <description>
+                <para>An empty string ("").</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.Configuration.ProfileSection.PropertySettings" />
+                </para>
+              </term>
+              <description>
+                <para>An empty <see cref="T:System.Web.Configuration.RootProfilePropertySettingsCollection" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.Configuration.ProfileSection.Providers" />
+                </para>
+              </term>
+              <description>
+                <para>An empty <see cref="T:System.Configuration.ProviderSettingsCollection" />.</para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.ProfileSection" /> class using default settings.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +114,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.Configuration.ProfileSection.AutomaticSaveEnabled" /> property is false, changes to individual profiles are not saved unless the <see cref="M:System.Web.Profile.ProfileBase.Save" /> method of the ProfileCommon class is called in code. When the <see cref="P:System.Web.Configuration.ProfileSection.AutomaticSaveEnabled" /> property is true, the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event also allows code to override the automatic save behavior.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that determines whether changes to user-profile information are automatically saved on page exit.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,10 +144,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A profile provider points to a data source in which user profile values are stored. You can specify profile providers in the providers subsection of the profile section of a configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the default profile provider. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -84,10 +171,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.Configuration.ProfileSection.Enabled" /> property is false, the profile feature is disabled, and you will not be able to access user-profile information from your ASP.NET code.</para>
+          <para>When the property is true, at run time the ASP.NET compilation system uses the information specified in the profile section to generate a class called ProfileCommon, which is derived from <see cref="T:System.Web.Profile.ProfileBase" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the ASP.NET profile feature is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -105,10 +199,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>At run time, the ASP.NET compilation system uses the information specified in the profile section of the configuration to generate a class called ProfileCommon, which is derived from <see cref="T:System.Web.Profile.ProfileBase" />. To customize the information this class provides, you can set the <see cref="P:System.Web.Configuration.ProfileSection.Inherits" /> property to the name of a type you create that derives from <see cref="T:System.Web.Profile.ProfileBase" />, and the compilation system will use this custom type as the base class for ProfileCommon. </para>
+          <block subset="none" type="note">
+            <para>If you provide a type reference in the <see cref="P:System.Web.Configuration.ProfileSection.Inherits" /> property, you can define properties in your custom types that are not defined with a property element.</para>
+          </block>
+          <para>For more information about the profile features added to vstecasplong, see <format type="text/html"><a href="89439440-92ea-48c3-a4bd-dea40307899d">ASP.NET Profile Properties Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a type reference for a custom type derived from <see cref="T:System.Web.Profile.ProfileBase" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -121,10 +225,13 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the properties collection for the <see cref="T:System.Web.Configuration.ProfileSection" /> object. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -142,10 +249,16 @@
         <ReturnType>System.Web.Configuration.RootProfilePropertySettingsCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Configuration.ProfileSection.PropertySettings" /> property is a <see cref="T:System.Web.Configuration.RootProfilePropertySettingsCollection" /> that provides a collection of <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> objects and a collection of <see cref="T:System.Web.Configuration.ProfileGroupSettings" /> objects, each of which provides a named collection of other <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> objects. These collections are used by the ASP.NET compilation engine to dynamically generate a class called ProfileCommon, which is derived from <see cref="T:System.Web.Profile.ProfileBase" />. The properties of the ProfileCommon class consist of the properties defined in the two collections. In addition, each group property of the ProfileCommon class will contain its own properties, as defined for that group.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.Configuration.RootProfilePropertySettingsCollection" /> collection of <see cref="T:System.Web.Configuration.ProfilePropertySettings" /> objects.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -163,10 +276,16 @@
         <ReturnType>System.Configuration.ProviderSettingsCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A profile provider points to a data source in which user profile values are stored. You can specify profile providers in the providers subsection of the profile section of a configuration file.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of <see cref="T:System.Configuration.ProviderSettings" /> objects.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

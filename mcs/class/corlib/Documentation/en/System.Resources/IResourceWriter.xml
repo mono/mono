@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IResourceWriter" FullName="System.Resources.IResourceWriter">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IResourceWriter : IDisposable" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IResourceWriter implements class System.IDisposable" />
@@ -20,8 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Resource writers are used to write resources to files in a particular file format. Implement this interface if you want to control the way in which a resource file is written (for example, to store resources in something other than a .txt, .resx, or binary .resources file). Otherwise, use the default <see cref="T:System.Resources.ResourceWriter" /> class, which writes resources to a binary .resources file, or the <see cref="T:System.Resources.ResXResourceWriter" /> class, which writes resources to an XML resource (.resx) file. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides the base functionality for writing resources to an output file or stream.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddResource">
@@ -41,10 +48,18 @@
         <Parameter Name="value" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'byte []'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resources are not written until the <see cref="M:System.Resources.IResourceWriter.Generate" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds an 8-bit unsigned integer array as a named resource to the list of resources to be written.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name of a resource. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />Value of a resource as an 8-bit unsigned integer array. </param>
       </Docs>
     </Member>
     <Member MemberName="AddResource">
@@ -64,10 +79,22 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resource is not written until the <see cref="M:System.Resources.IResourceWriter.Generate" /> method is called.</para>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="value" /> might have to be serializable, so you might have to provide a type converter, depending on which resource writer is used.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a named resource of type <see cref="T:System.Object" /> to the list of resources to be written.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the resource. </param>
       </Docs>
     </Member>
     <Member MemberName="AddResource">
@@ -87,10 +114,18 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resource is not written until the <see cref="M:System.Resources.IResourceWriter.Generate" /> method is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a named resource of type <see cref="T:System.String" /> to the list of resources to be written.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the resource. </param>
       </Docs>
     </Member>
     <Member MemberName="Close">
@@ -107,8 +142,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If necessary, <see cref="M:System.Resources.IResourceWriter.Close" /> will call the <see cref="M:System.Resources.IResourceWriter.Generate" /> method to output the resources to the underlying file or stream before closing it.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the underlying resource file or stream, ensuring all the data has been written to the file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Generate">
@@ -125,8 +166,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Resources.IResourceWriter.Generate" /> does not close the output file or output stream. Instead, consider calling the <see cref="M:System.Resources.IResourceWriter.Close" /> method. <see cref="M:System.Resources.IResourceWriter.Generate" /> is useful when you want to create a resource file, but you don't want to close the output stream. <see cref="M:System.Resources.IResourceWriter.Generate" /> can be called only once. After you call <see cref="M:System.Resources.IResourceWriter.Generate" />, all <see cref="T:System.Resources.IResourceWriter" /> methods other than <see cref="M:System.Resources.IResourceWriter.Close" /> will throw an exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes all the resources added by the <see cref="M:System.Resources.IResourceWriter.AddResource(System.String,System.String)" /> method to the output file or stream.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

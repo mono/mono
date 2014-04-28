@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LiteralMode" FullName="System.Web.UI.WebControls.LiteralMode">
   <TypeSignature Language="C#" Value="public enum LiteralMode" />
   <AssemblyInfo>
@@ -8,9 +9,19 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.LiteralMode" /> enumeration represents the modes that you can specify for how the content in a <see cref="T:System.Web.UI.WebControls.Literal" /> control is rendered. The <see cref="P:System.Web.UI.WebControls.Literal.Mode" /> property uses these enumeration values to set the behavior of the contents of the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property in a <see cref="T:System.Web.UI.WebControls.Literal" /> control.</para>
+      <para>If you specify PassThrough, the entire contents of the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property are passed to the device or browser without any modifications. For example, if the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property of a <see cref="T:System.Web.UI.WebControls.Literal" /> control contains an &lt;hr&gt; tag, it is sent to all devices and browsers regardless of whether it is supported.</para>
+      <para>If you specify Encode, the contents for the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property are converted into an HTML-encoded string before rendering. For example, if the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property of a <see cref="T:System.Web.UI.WebControls.Literal" /> control contains an &lt;hr&gt; tag, it will be converted to &amp;lt;hr&amp;gt; and sent to the device or browser.</para>
+      <para>If you specify Transform, the rendering behavior of the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property depends on the type of markup being rendered. When the <see cref="T:System.Web.UI.WebControls.Literal" /> control is rendered for a device or browser that supports HTML or XHTML, specifying <see cref="F:System.Web.UI.WebControls.LiteralMode.Transform" /> produces the same behavior as specifying <see cref="F:System.Web.UI.WebControls.LiteralMode.PassThrough" />. All markup tags and elements for the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property are rendered for the requesting browser.</para>
+      <para>When the <see cref="T:System.Web.UI.WebControls.Literal" /> control is rendered for a markup language other than HTML or XHTML, such as WML or cHTML, you can use the <see cref="F:System.Web.UI.WebControls.LiteralMode.Transform" /> value to remove unsupported markup elements. In this case, any markup-language elements of the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property that are not supported in the targeted markup language are not rendered for the control. For example, if the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property of a <see cref="T:System.Web.UI.WebControls.Literal" /> control contains an &lt;hr&gt; tag, the tag is removed before the content is sent to a WML device. If an unsupported tag contains content, only the tag is removed and the content is sent to the device or browser. For example, if the <see cref="P:System.Web.UI.WebControls.Literal.Text" /> property contains the content &lt;XYZ&gt;Test&lt;/XYZ&gt;, the &lt;XYZ&gt; and &lt;/XYZ&gt; tags are removed while the text Test is sent to the device or browser.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how the content in a <see cref="T:System.Web.UI.WebControls.Literal" /> control is rendered.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Encode">
@@ -20,8 +31,11 @@
         <ReturnType>System.Web.UI.WebControls.LiteralMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The literal control's contents are HTML-encoded.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +48,11 @@
         <ReturnType>System.Web.UI.WebControls.LiteralMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The literal control's contents are not modified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +65,11 @@
         <ReturnType>System.Web.UI.WebControls.LiteralMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The literal control's unsupported markup-language elements are removed. If the literal control is rendered on a browser that supports HTML or XHTML, the control's contents are not modified.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

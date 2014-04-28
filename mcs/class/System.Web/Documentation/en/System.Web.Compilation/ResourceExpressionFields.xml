@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ResourceExpressionFields" FullName="System.Web.Compilation.ResourceExpressionFields">
   <TypeSignature Language="C#" Value="public sealed class ResourceExpressionFields" />
   <AssemblyInfo>
@@ -9,9 +10,21 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a page is parsed, the values contained in a resource expression are parsed and stored in an instance of the <see cref="T:System.Web.Compilation.ResourceExpressionFields" /> class. This <see cref="T:System.Web.Compilation.ResourceExpressionFields" /> object contains two fields, <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> and <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" />. These fields are drawn from the values of a resource expression in either the explicit (&lt;%$ Resources: ClassKey, ResourceKey %&gt;) or implicit (meta:resourcekey="ResourceKey") form. </para>
+      <para>The <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> property identifies the class name of a resource that is mapped to a resource file. For example, to reference a resource file named Financial.resx, or a localized version such as Financial.en-GB.resx, the resource expression would appear as &lt;%$ Resources: Financial, ResourceKey %&gt;. After parsing, the <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> property would return "Financial" as its value.</para>
+      <para>The <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> property identifies the particular key/value pair to be retrieved from the file. If the Financial.resx file contains a key called Currency, that value could be specified with the resource expression &lt;%$ Resources: Financial, Currency %&gt;. After parsing, the <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> property would return "Currency" as its value.</para>
+      <para>The resource expression is parsed through the <see cref="M:System.Web.Compilation.ResourceExpressionBuilder.ParseExpression(System.String)" /> method.</para>
+      <block subset="none" type="note">
+        <para>Sensitive information should not be stored in a resource file.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the fields from a parsed resource expression.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ClassKey">
@@ -21,10 +34,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns the class key for a parsed resource expression. The class key represents the name of the resource file, and is the value specified before the comma (,) in an expression of the form &lt;%$ Resources: [Namespace.]ClassKey, ResourceKey $&gt;. A namespace value for the resource class is optional. When a namespace is provided, the namespace and the class key are returned in the <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> property. The class key cannot contain spaces or double-byte character sets (DBCS).</para>
+          <para>To reference a resource file named Financial.resx or a localized version such as Financial.en-GB.resx, you would include the resource expression &lt;%$ Resources: Financial, ResourceKey %&gt;. After parsing, the <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> property would return "Financial" as its value.</para>
+          <block subset="none" type="note">
+            <para>Sensitive information should not be stored in a resource file.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the class key for a parsed resource expression.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +60,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns the resource key for a parsed resource expression. The resource key is the value specified after the comma (,) in an expression of the form &lt;%$ Resources: ClassKey, ResourceKey %&gt;. The <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> property identifies a particular key/value pair within the resource file mapped to the class key. For example, if a file named Financial.resx contains a key called Currency, that value could be specified with the resource expression &lt;%$ Resources: Financial, Currency %&gt;. After parsing, the <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> property would return "Currency" as its value.</para>
+          <block subset="none" type="note">
+            <para>Sensitive information should not be stored in a resource file.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the resource key for a parsed resource expression.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IXmlBinaryWriterInitializer" FullName="System.Xml.IXmlBinaryWriterInitializer">
   <TypeSignature Language="C#" Value="public interface IXmlBinaryWriterInitializer" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IXmlBinaryWriterInitializer" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies implementation requirements for XML binary writers that derive from this interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="SetOutput">
@@ -28,12 +32,19 @@
         <Parameter Name="ownsStream" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="stream">To be added.</param>
-        <param name="dictionary">To be added.</param>
-        <param name="session">To be added.</param>
-        <param name="ownsStream">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies initialization requirements for XML binary writers that implement this method.</para>
+        </summary>
+        <param name="stream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream to write to.</param>
+        <param name="dictionary">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlDictionary" /> to use.</param>
+        <param name="session">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlBinaryWriterSession" /> to use.</param>
+        <param name="ownsStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />If true, stream is closed by the writer when done; otherwise false.</param>
       </Docs>
     </Member>
   </Members>

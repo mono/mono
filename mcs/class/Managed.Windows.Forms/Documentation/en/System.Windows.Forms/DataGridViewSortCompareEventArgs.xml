@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewSortCompareEventArgs" FullName="System.Windows.Forms.DataGridViewSortCompareEventArgs">
   <TypeSignature Language="C#" Value="public class DataGridViewSortCompareEventArgs : System.ComponentModel.HandledEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can handle the <see cref="E:System.Windows.Forms.DataGridView.SortCompare" /> event to provide custom sorting. This event occurs only when the <see cref="P:System.Windows.Forms.DataGridView.DataSource" /> property is not set and the <see cref="P:System.Windows.Forms.DataGridView.VirtualMode" /> property is set to false. This event occurs once for each pair of cells in the column being sorted. It occurs only when the user clicks the header of a column with a <see cref="P:System.Windows.Forms.DataGridViewColumn.SortMode" /> property value of <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.Automatic" />, or when you call the <see cref="M:System.Windows.Forms.DataGridView.Sort(System.Windows.Forms.DataGridViewColumn,System.ComponentModel.ListSortDirection)" /> overload. When this event occurs for a column with a <see cref="P:System.Windows.Forms.DataGridViewColumn.SortMode" /> property value of <see cref="F:System.Windows.Forms.DataGridViewColumnSortMode.Programmatic" />, you must display the sorting glyph yourself through the <see cref="P:System.Windows.Forms.DataGridViewColumnHeaderCell.SortGlyphDirection" /> property.</para>
+      <para>You can use this event to sort rows using the cell values in one column or in multiple columns. Use the <see cref="P:System.Windows.Forms.DataGridViewSortCompareEventArgs.CellValue1" /> and <see cref="P:System.Windows.Forms.DataGridViewSortCompareEventArgs.CellValue2" /> properties to compare cell values in the column specified in the <see cref="P:System.Windows.Forms.DataGridViewSortCompareEventArgs.Column" /> property. Use the <see cref="P:System.Windows.Forms.DataGridViewSortCompareEventArgs.RowIndex1" /> and <see cref="P:System.Windows.Forms.DataGridViewSortCompareEventArgs.RowIndex2" /> properties to access values in other columns through the <see cref="P:System.Windows.Forms.DataGridView.Rows" /> collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.DataGridView.SortCompare" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,14 +33,22 @@
         <Parameter Name="rowIndex2" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewColumn">To be added.</param>
-        <param name="cellValue1">To be added.</param>
-        <param name="cellValue2">To be added.</param>
-        <param name="rowIndex1">To be added.</param>
-        <param name="rowIndex2">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewSortCompareEventArgs" /> class.</para>
+        </summary>
+        <param name="dataGridViewColumn">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column to sort.</param>
+        <param name="cellValue1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the first cell to compare.</param>
+        <param name="cellValue2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the second cell to compare.</param>
+        <param name="rowIndex1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row containing the first cell.</param>
+        <param name="rowIndex2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row containing the second cell.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,10 +61,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is typically used in conjunction with the <see cref="P:System.Windows.Forms.DataGridViewSortCompareEventArgs.CellValue2" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the first cell to compare.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -61,10 +83,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is typically used in conjunction with the <see cref="P:System.Windows.Forms.DataGridViewSortCompareEventArgs.CellValue1" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the second cell to compare.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -77,10 +105,16 @@
         <ReturnType>System.Windows.Forms.DataGridViewColumn</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is useful in determining and controlling sort behavior in programmatic sorts.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column being sorted. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -93,10 +127,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is useful when sorting rows based on the cell values in multiple columns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the row containing the first cell to compare.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,10 +149,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is useful when sorting rows based on the cell values in multiple columns.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the row containing the second cell to compare.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,10 +171,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this value is typically the last operation you will perform in a handler for the <see cref="E:System.Windows.Forms.DataGridView.SortCompare" /> event. You will typically set this value to the return value of a comparison method such as <see cref="Overload:System.String.Compare" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating the order in which the compared cells will be sorted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

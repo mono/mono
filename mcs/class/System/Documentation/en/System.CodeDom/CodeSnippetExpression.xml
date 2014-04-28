@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeSnippetExpression" FullName="System.CodeDom.CodeSnippetExpression">
   <TypeSignature Language="C#" Value="public class CodeSnippetExpression : System.CodeDom.CodeExpression" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeSnippetExpression extends System.CodeDom.CodeExpression" />
@@ -23,16 +24,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Represents a literal code expression in the CodeDOM.</summary>
-    <remarks>While the <see cref="T:System.CodeDOM.CodeSnippetExpression" /> provides a quick and dirty way of adding an Expression to the CodeDOM, its use is not recommended because it reduces the portability of the CodeDOM between language generators.
-
-<example>
-For example,
-  <code lang="C#">
-CodeSnippetExpression exp=new CodeSnippetExpression("a==true");
-  </code>
-will work fine for the C# generator. However, because the VB.NET language doesn't contain the '==' operator it'll generate broken code for it.
-</example></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A literal expression stores the code of an expression as a literal code fragment. The CodeDOM does not translate literal code fragments. Literal code fragments are stored and output just as they are. CodeDOM objects that contain literal code are provided so developers can encapsulate code that is already in the target language.</para>
+      <para>The <see cref="P:System.CodeDom.CodeSnippetExpression.Value" /> property contains the literal code for this snippet expression.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a literal expression.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -47,8 +47,11 @@ will work fine for the C# generator. However, because the VB.NET language doesn'
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Creates an undefined <see cref="T:System.CodeDom.CodeSnippetExpression" /> object. The <see cref="P:System.CodeDom.CodeSnippetExpression.Value" /> will have to be set later.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeSnippetExpression" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -65,9 +68,13 @@ will work fine for the C# generator. However, because the VB.NET language doesn'
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">Value the <see cref="T:System.CodeDom.CodeSnippetExpression.Value" /> should be set to.</param>
-        <summary>Creates a <see cref="T:System.CodeDom.CodeSnippetExpression" /> object with the <see cref="P:System.CodeDom.CodeSnippetExpression.Value" /> set to the provided value.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeSnippetExpression" /> class using the specified literal expression.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The literal expression to represent. </param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -85,9 +92,15 @@ will work fine for the C# generator. However, because the VB.NET language doesn'
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Literal expression to be used.</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This can contain code or comments.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the literal string of code.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityPermissionFlag" FullName="System.Security.Permissions.SecurityPermissionFlag" FullNameSP="System_Security_Permissions_SecurityPermissionFlag" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable SecurityPermissionFlag extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum SecurityPermissionFlag" />
@@ -22,23 +23,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Specifies a set of security permissions applied to a
-   <see cref="T:System.Security.Permissions.SecurityPermission" /> instance.</para>
-    </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration has a <see cref="T:System.FlagsAttribute" /> attribute that allows a bitwise combination of its member values.</para>
       <para>This enumeration is used by <see cref="T:System.Security.Permissions.SecurityPermission" />.</para>
-      <para>
-        <see cref="T:System.Security.Permissions.SecurityPermissionFlag" /> is
-a bit-field; specify multiple values using the bitwise OR
-operator.</para>
-      <para>For information on security, see Partition
-   II of the CLI Specification.</para>
-      <para>
-        <block subset="none" type="note">Many of these flags are powerful and
-   should only be granted to highly trusted code. </block>
-      </para>
+      <block subset="none" type="note">
+        <para>Many of these flags are powerful and should only be granted to highly trusted code.</para>
+      </block>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies access flags for the security permission object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllFlags">
@@ -55,8 +51,11 @@ operator.</para>
       </ReturnValue>
       <MemberValue>AllFlags</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The unrestricted state of the permission.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Assertion">
@@ -75,23 +74,11 @@ operator.</para>
       <Parameters />
       <MemberValue>Assertion</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies the ability to assert that all of the callers 
-      of the code granted this permission
-      will pass the check for
-      a specific permission
-      or permission set.</para>
-          <para>The ability to assert a specific permission or permission set allows code to 
-      ensure that its callers do not fail with a security exception for lack of
-      the specific permission or permission set asserted. </para>
-          <para>
-            <block subset="none" type="note">Asserting a permission is often used 
-      when writing library code that accesses protected resources but itself does not
-      expose these resources in any exploitable way to the calling code.
-   </block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to assert that all this code's callers have the requisite permission for the operation.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -109,8 +96,11 @@ operator.</para>
       </ReturnValue>
       <MemberValue>BindingRedirects</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Permission to perform explicit binding redirection in the application configuration file. This includes redirection of .NET Framework assemblies that have been unified as well as other assemblies found outside the .NET Framework.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ControlAppDomain">
@@ -127,8 +117,11 @@ operator.</para>
       </ReturnValue>
       <MemberValue>ControlAppDomain</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to create and manipulate an <see cref="T:System.AppDomain" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ControlDomainPolicy">
@@ -145,8 +138,11 @@ operator.</para>
       </ReturnValue>
       <MemberValue>ControlDomainPolicy</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to specify domain policy.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ControlEvidence">
@@ -163,8 +159,14 @@ operator.</para>
       </ReturnValue>
       <MemberValue>ControlEvidence</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a powerful permission that should only be granted to highly trusted code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to provide evidence, including the ability to alter the evidence provided by the common language runtime.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ControlPolicy">
@@ -181,8 +183,14 @@ operator.</para>
       </ReturnValue>
       <MemberValue>ControlPolicy</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a powerful permission that should only be granted to highly trusted code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to view and modify policy.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ControlPrincipal">
@@ -199,8 +207,11 @@ operator.</para>
       </ReturnValue>
       <MemberValue>ControlPrincipal</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to manipulate the principal object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ControlThread">
@@ -219,12 +230,11 @@ operator.</para>
       <Parameters />
       <MemberValue>ControlThread</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies the ability to control thread behavior.
-      The operations protected include <see cref="M:System.Threading.Thread.Abort(System.Object)" />
-      and <see cref="M:System.Threading.Thread.ResetAbort" /> .</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to use certain advanced operations on threads.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -244,11 +254,14 @@ operator.</para>
       <Parameters />
       <MemberValue>Execution</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This flag has no effect when used dynamically with stack modifiers such as <see cref="M:System.Security.CodeAccessPermission.Deny" />, <see cref="M:System.Security.CodeAccessPermission.Assert" />, and <see cref="M:System.Security.CodeAccessPermission.PermitOnly" />.</para>
+        </remarks>
         <summary>
-          <para> Specifies permission for the code to run. Without this
- permission managed code cannot execute.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Permission for the code to run. Without this permission, managed code will not be executed.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -266,8 +279,11 @@ operator.</para>
       </ReturnValue>
       <MemberValue>Infrastructure</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Permission to plug code into the common language runtime infrastructure, such as adding Remoting Context Sinks, Envoy Sinks and Dynamic Sinks.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoFlags">
@@ -286,11 +302,11 @@ operator.</para>
       <Parameters />
       <MemberValue>NoFlags</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that none of the permissions in this 
-      enumeration are available.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No security access.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -308,8 +324,11 @@ operator.</para>
       </ReturnValue>
       <MemberValue>RemotingConfiguration</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Permission to configure Remoting types and channels.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SerializationFormatter">
@@ -326,8 +345,11 @@ operator.</para>
       </ReturnValue>
       <MemberValue>SerializationFormatter</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to provide serialization services. Used by serialization formatters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SkipVerification">
@@ -346,18 +368,15 @@ operator.</para>
       <Parameters />
       <MemberValue>SkipVerification</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This is a powerful permission that should be granted only to highly trusted code.</para>
+          <para>This flag has no effect when used dynamically with stack modifiers such as <see cref="M:System.Security.CodeAccessPermission.Deny" />, <see cref="M:System.Security.CodeAccessPermission.Assert" />, and <see cref="M:System.Security.CodeAccessPermission.PermitOnly" />.</para>
+        </remarks>
         <summary>
-          <para>Specifies the right to skip the verification checks that
-      ensure type safety and metadata correctness in an assembly. If an assembly has
-      been granted this permission it will not fail with a <see cref="T:System.Security.VerificationException" />
-      even if the assembly contains unverifiable constructs.</para>
-          <para>
-            <block subset="none" type="note">Code that is
-      unverifiable can execute without causing a <see cref="T:System.Security.VerificationException" /> if
-      this permission is granted.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to skip verification of code in this assembly. Code that is unverifiable can be run if this permission is granted.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -377,17 +396,14 @@ operator.</para>
       <Parameters />
       <MemberValue>UnmanagedCode</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Since unmanaged code potentially allows other permissions to be bypassed, this is a dangerous permission that should only be granted to highly trusted code. It is used for such applications as calling native code using PInvoke or using COM interop.</para>
+        </remarks>
         <summary>
-          <para> Specifies the ability to call unmanaged code.</para>
-          <para>
-            <block subset="none" type="note">
-      
-      Because unmanaged code potentially allows other permissions to be bypassed,
-      this permission should be used with caution. It is used for applications calling native
-      code using PInvoke.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ability to call unmanaged code.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

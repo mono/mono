@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ExpressionContext" FullName="System.ComponentModel.Design.Serialization.ExpressionContext">
   <TypeSignature Language="C#" Value="public sealed class ExpressionContext" />
   <AssemblyInfo>
@@ -9,8 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.ComponentModel.Design.Serialization.ExpressionContext" /> is placed on the context stack and contains the most relevant expression during serialization. The following C# code demonstrates an assignment.</para>
+      <code>button1.Text = "Hello";</code>
+      <para>During serialization, several serializers are responsible for creating this single statement. One of those serializers is responsible for creating "Hello". There are times when that serializer may need to know the context in which it is creating its expression. In the previous example, this context is not needed. The following C# code shows a situation in which knowledge of the context is necessary.</para>
+      <code>button1.Text = rm.GetString("button1_Text");</code>
+      <para>In this case, the serializer responsible for creating the resource expression needs to be informed of the names of the target objects. The <see cref="T:System.ComponentModel.Design.Serialization.ExpressionContext" /> class can be used for this. As each serializer creates an expression and invokes a serializer to handle a smaller part of the statement as a whole, the serializer pushes an expression context on the context stack. Each expression context has a parent property that locates the next expression context on the stack. This provides a convenient traversal capability.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a means of passing context state among serializers. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,11 +36,17 @@
         <Parameter Name="owner" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="expressionType">To be added.</param>
-        <param name="owner">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.ExpressionContext" /> class with the given expression and owner. </para>
+        </summary>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The given code expression.</param>
+        <param name="expressionType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The given code expression type.</param>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The given code expression owner.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -45,12 +62,19 @@
         <Parameter Name="presetValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="expression">To be added.</param>
-        <param name="expressionType">To be added.</param>
-        <param name="owner">To be added.</param>
-        <param name="presetValue">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.Serialization.ExpressionContext" /> class with a current value.</para>
+        </summary>
+        <param name="expression">
+          <attribution license="cc4" from="Microsoft" modified="false" />The given code expression.</param>
+        <param name="expressionType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The given code expression type.</param>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The given code expression owner.</param>
+        <param name="presetValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The given code expression preset value.</param>
       </Docs>
     </Member>
     <Member MemberName="Expression">
@@ -63,9 +87,12 @@
         <ReturnType>System.CodeDom.CodeExpression</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the expression this context represents.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExpressionType">
@@ -78,9 +105,15 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use <see cref="T:System.ComponentModel.Design.Serialization.ExpressionContext" /> to determine if a cast is needed when assigning to the expression.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Type" /> of the expression.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Owner">
@@ -93,9 +126,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the expression is a property reference to the <see cref="P:System.Windows.Forms.Control.Text" /> property of an instance of <see cref="T:System.Windows.Forms.Button" /> called button1, <see cref="P:System.ComponentModel.Design.Serialization.ExpressionContext.Owner" /> returns button1.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object owning this expression.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PresetValue">
@@ -108,9 +147,23 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Contains the preset value of an expression, should one exist. For example, if the expression is a property reference expression referring to the <see cref="P:System.Windows.Forms.Control.Controls" /> property of a <see cref="T:System.Windows.Forms.Button" />, the <see cref="P:System.ComponentModel.Design.Serialization.ExpressionContext.PresetValue" /> property contains the instance of the <see cref="P:System.Windows.Forms.Control.Controls" /> property. This is because the property is read-only and preset by the object to contain a value. On the other hand, a property such as <see cref="P:System.Windows.Forms.Control.Text" /> or <see cref="P:System.Windows.Forms.Control.Visible" /> does not have a preset value and therefore the <see cref="P:System.ComponentModel.Design.Serialization.ExpressionContext.PresetValue" /> property returns null.</para>
+          <para>The following C# code shows how serializers can use this information to guide serialization.</para>
+          <para>[C#]</para>
+          <code>Padding p = new Padding();
+p.Left = 5;
+button1.Padding = p;
+
+button1.Padding.Left = 5;</code>
+          <para>The serializer of the <see cref="T:System.Windows.Forms.Padding" /> structure needs to be informed if it should generate the first or second form. The first form is generated by default. The second form is only generated if there is an <see cref="T:System.ComponentModel.Design.Serialization.ExpressionContext" /> on the context stack that contains a <see cref="P:System.ComponentModel.Design.Serialization.ExpressionContext.PresetValue" /> equal to the value of the <see cref="T:System.Windows.Forms.Padding" /> currently being serialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the preset value of an expression.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

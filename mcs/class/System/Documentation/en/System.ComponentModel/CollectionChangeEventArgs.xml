@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CollectionChangeEventArgs" FullName="System.ComponentModel.CollectionChangeEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class CollectionChangeEventArgs : EventArgs" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit CollectionChangeEventArgs extends System.EventArgs" />
@@ -15,8 +16,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="E:System.Data.DataColumnCollection.CollectionChanged" /> event is raised when you change which items are in a collection, for example, by adding an element to a collection or removing an element from the collection. This event is not raised when an individual element changes its value.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Data.DataColumnCollection.CollectionChanged" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,10 +41,15 @@
         <Parameter Name="element" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="action">To be added: an object of type 'CollectionChangeAction'</param>
-        <param name="element">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.CollectionChangeEventArgs" /> class.</para>
+        </summary>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.ComponentModel.CollectionChangeAction" /> values that specifies how the collection changed. </param>
+        <param name="element">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that specifies the instance of the collection where the change occurred. </param>
       </Docs>
     </Member>
     <Member MemberName="Action">
@@ -53,9 +65,51 @@
         <ReturnType>System.ComponentModel.CollectionChangeAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CollectionChangeAction'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can have one of the following values: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Action </para>
+                </term>
+                <description>
+                  <para>Property value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>An element was added to the collection </para>
+              </term>
+              <description>
+                <para>CollectionChangeAction.Add </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>An element was removed from the collection </para>
+              </term>
+              <description>
+                <para>CollectionChangeAction.Remove </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>The collection was completely changed </para>
+              </term>
+              <description>
+                <para>CollectionChangeAction.Refresh </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets an action that specifies how the collection changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Element">
@@ -71,9 +125,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the instance of the collection with the change.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

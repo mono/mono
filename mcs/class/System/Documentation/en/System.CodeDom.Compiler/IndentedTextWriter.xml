@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IndentedTextWriter" FullName="System.CodeDom.Compiler.IndentedTextWriter">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class IndentedTextWriter : System.IO.TextWriter" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit IndentedTextWriter extends System.IO.TextWriter" />
@@ -16,8 +17,19 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.Compiler.IndentedTextWriter" /> extends a <see cref="T:System.IO.TextWriter" /> by providing methods that insert a tab string and track the current indentation level. Text formatted with multiple indentation levels is useful for generated code, so this class is used by CodeDOM code generator implementations.</para>
+      <para>The tab string is the string that each indentation consists of. Typically the tab string contains white space.</para>
+      <block subset="none" type="note">
+        <para>This class contains a link demand and an inheritance demand at the class level that applies to all members. A <see cref="T:System.Security.SecurityException" /> is thrown when either the immediate caller or the derived class does not have full-trust permission. For details about security demands, see <format type="text/html"><a href="a33fd5f9-2de9-4653-a4f0-d9df25082c4d">Link Demands</a></format> and <format type="text/html"><a href="28b9adbb-8f08-4f10-b856-dbf59eb932d9">Inheritance Demands</a></format>.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a text writer that can indent new lines by a tab string token.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,9 +46,13 @@
         <Parameter Name="writer" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added: an object of type 'IO.TextWriter'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.IndentedTextWriter" /> class using the specified text writer and default tab string.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to use for output. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -54,10 +70,15 @@
         <Parameter Name="tabString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added: an object of type 'IO.TextWriter'</param>
-        <param name="tabString">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.Compiler.IndentedTextWriter" /> class using the specified text writer and tab string.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.TextWriter" /> to use for output. </param>
+        <param name="tabString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The tab string to use for indentation. </param>
       </Docs>
     </Member>
     <Member MemberName="Close">
@@ -74,8 +95,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Closes the document being written to.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultTabString">
@@ -92,8 +116,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default tab string consists of a single white space. (" ") </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the default tab string. This field is constant. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Encoding">
@@ -109,9 +139,12 @@
         <ReturnType>System.Text.Encoding</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Text.Encoding'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the encoding for the text writer to use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Flush">
@@ -128,8 +161,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This clears the stream of any data.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Flushes the stream.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Indent">
@@ -147,9 +186,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of spaces to indent.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InnerWriter">
@@ -165,9 +207,12 @@
         <ReturnType>System.IO.TextWriter</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IO.TextWriter'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.IO.TextWriter" /> to use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NewLine">
@@ -185,9 +230,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the new line character to use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutputTabs">
@@ -204,8 +252,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Outputs the tab string once for each level of indentation according to the <see cref="P:System.CodeDom.Compiler.IndentedTextWriter.Indent" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -224,9 +275,13 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of a Boolean value to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Boolean value to write. </param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -245,9 +300,13 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'char'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to write. </param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -267,8 +326,11 @@
       </Parameters>
       <Docs>
         <param name="value">To be added: an object of type 'char []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character array to the text stream.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -287,9 +349,13 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'double'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of a Double to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The double to write. </param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -308,9 +374,13 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of an integer to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The integer to write. </param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -329,9 +399,13 @@
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'long'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of an 8-byte integer to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The 8-byte integer to write. </param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -350,9 +424,13 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of an object to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to write. </param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -371,9 +449,13 @@
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of a Single to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The single to write. </param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -393,8 +475,11 @@
       </Parameters>
       <Docs>
         <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the specified string to the text stream.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -414,10 +499,14 @@
         <Parameter Name="arg" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="format">To be added: an object of type 'string'</param>
         <param name="arg">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out a formatted string, using the same semantics as specified.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The formatting string. </param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -443,10 +532,14 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="format">To be added: an object of type 'string'</param>
         <param name="args">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out a formatted string, using the same semantics as specified.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The formatting string to use. </param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -467,11 +560,17 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added: an object of type 'char []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a subarray of characters to the text stream.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character array to write data from. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Starting index in the buffer. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to write. </param>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -492,11 +591,17 @@
         <Parameter Name="arg1" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="format">To be added: an object of type 'string'</param>
-        <param name="arg0">To be added: an object of type 'object'</param>
-        <param name="arg1">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out a formatted string, using the same semantics as specified.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The formatting string to use. </param>
+        <param name="arg0">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to write into the formatted string. </param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to write into the formatted string. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -513,8 +618,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a line terminator.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -533,9 +641,13 @@
         <Parameter Name="value" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'bool'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of a Boolean, followed by a line terminator, to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Boolean to write. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -554,9 +666,13 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'char'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character, followed by a line terminator, to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to write. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -576,8 +692,11 @@
       </Parameters>
       <Docs>
         <param name="value">To be added: an object of type 'char []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a character array, followed by a line terminator, to the text stream.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -596,9 +715,13 @@
         <Parameter Name="value" Type="System.Double" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'double'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of a Double, followed by a line terminator, to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The double to write. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -617,9 +740,13 @@
         <Parameter Name="value" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of an integer, followed by a line terminator, to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The integer to write. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -638,9 +765,13 @@
         <Parameter Name="value" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'long'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of an 8-byte integer, followed by a line terminator, to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The 8-byte integer to write. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -659,9 +790,13 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of an object, followed by a line terminator, to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to write. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -680,9 +815,13 @@
         <Parameter Name="value" Type="System.Single" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'float'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of a Single, followed by a line terminator, to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The single to write. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -702,8 +841,11 @@
       </Parameters>
       <Docs>
         <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the specified string, followed by a line terminator, to the text stream.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -727,9 +869,13 @@
         <Parameter Name="value" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'uint'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the text representation of a UInt32, followed by a line terminator, to the text stream.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />A UInt32 to output. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -749,10 +895,14 @@
         <Parameter Name="arg" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="format">To be added: an object of type 'string'</param>
         <param name="arg">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out a formatted string, followed by a line terminator, using the same semantics as specified.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The formatting string. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -778,10 +928,14 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="format">To be added: an object of type 'string'</param>
         <param name="args">To be added.</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out a formatted string, followed by a line terminator, using the same semantics as specified.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The formatting string to use. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -802,11 +956,17 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added: an object of type 'char []'</param>
-        <param name="index">To be added: an object of type 'int'</param>
-        <param name="count">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes a subarray of characters, followed by a line terminator, to the text stream.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character array to write data from. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Starting index in the buffer. </param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to write. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLine">
@@ -827,11 +987,17 @@
         <Parameter Name="arg1" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="format">To be added: an object of type 'string'</param>
-        <param name="arg0">To be added: an object of type 'object'</param>
-        <param name="arg1">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes out a formatted string, followed by a line terminator, using the same semantics as specified.</para>
+        </summary>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The formatting string to use. </param>
+        <param name="arg0">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first object to write into the formatted string. </param>
+        <param name="arg1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second object to write into the formatted string. </param>
       </Docs>
     </Member>
     <Member MemberName="WriteLineNoTabs">
@@ -851,8 +1017,11 @@
       </Parameters>
       <Docs>
         <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the specified string to a line without tabs.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

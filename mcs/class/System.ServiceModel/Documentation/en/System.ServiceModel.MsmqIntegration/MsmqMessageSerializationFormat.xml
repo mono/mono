@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MsmqMessageSerializationFormat" FullName="System.ServiceModel.MsmqIntegration.MsmqMessageSerializationFormat">
   <TypeSignature Language="C#" Value="public enum MsmqMessageSerializationFormat" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MsmqMessageSerializationFormat extends System.Enum" />
@@ -9,8 +10,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The default value is <see cref="F:System.ServiceModel.MsmqIntegration.MsmqMessageSerializationFormat.Xml" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the formatter that is used to serialize objects that are sent as the body of an MSMQ message.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ActiveX">
@@ -24,7 +31,10 @@
         <ReturnType>System.ServiceModel.MsmqIntegration.MsmqMessageSerializationFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ActiveX formatter is used to serialize the object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Binary">
@@ -38,7 +48,10 @@
         <ReturnType>System.ServiceModel.MsmqIntegration.MsmqMessageSerializationFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Serialization.Formatters.Binary.BinaryFormatter" /> is used to serialize the object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ByteArray">
@@ -52,7 +65,10 @@
         <ReturnType>System.ServiceModel.MsmqIntegration.MsmqMessageSerializationFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the object to an array of bytes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Stream">
@@ -66,7 +82,10 @@
         <ReturnType>System.ServiceModel.MsmqIntegration.MsmqMessageSerializationFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Serializes the object to a stream.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Xml">
@@ -80,7 +99,11 @@
         <ReturnType>System.ServiceModel.MsmqIntegration.MsmqMessageSerializationFormat</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Xml.Serialization.XmlSerializer" /> is used to serialize the object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

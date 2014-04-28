@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TableHeaderCell" FullName="System.Web.UI.WebControls.TableHeaderCell">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class TableHeaderCell : System.Web.UI.WebControls.TableCell" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.TableHeaderCell" /> class represents a heading cell in a <see cref="T:System.Web.UI.WebControls.Table" /> control. You can use the <see cref="P:System.Web.UI.WebControls.TableCell.Text" /> property to specify or determine the contents of the heading cell.</para>
+      <para>This class allows you to control how the contents of the heading cell are displayed. The alignment of the contents in the heading cell is specified by setting the <see cref="P:System.Web.UI.WebControls.TableCell.HorizontalAlign" /> and <see cref="P:System.Web.UI.WebControls.TableCell.VerticalAlign" /> properties. You can use the <see cref="P:System.Web.UI.WebControls.TableCell.Wrap" /> property to specify whether the contents of the heading cell wrap in the cell.</para>
+      <para>You can also specify how many rows or columns in the <see cref="T:System.Web.UI.WebControls.Table" /> control are occupied by an individual heading cell. The <see cref="P:System.Web.UI.WebControls.TableCell.RowSpan" /> and <see cref="P:System.Web.UI.WebControls.TableCell.ColumnSpan" /> properties control how may rows and columns are used, respectively.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a heading cell within a <see cref="T:System.Web.UI.WebControls.Table" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +33,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.TableHeaderCell" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.TableHeaderCell" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,9 +62,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.TableHeaderCell.AbbreviatedText" /> property is rendered as the abbr attribute of the HTML th element. The abbr attribute is used by screen readers to read a shortened version of a header for each cell in the table. The <see cref="P:System.Web.UI.WebControls.TableHeaderCell.AbbreviatedText" /> property is significant for browsers that render abbreviated text in place of the content for the <see cref="T:System.Web.UI.WebControls.TableHeaderCell" /> control. </para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the abbr attribute of the HTML th element for the <see cref="T:System.Web.UI.WebControls.TableHeaderCell" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddAttributesToRender">
@@ -65,9 +87,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.TableHeaderCell.AddAttributesToRender(System.Web.UI.HtmlTextWriter)" /> method overrides the <see cref="M:System.Web.UI.WebControls.WebControl.AddAttributesToRender(System.Web.UI.HtmlTextWriter)" /> method for the base class and, in addition to calling the base method, renders the <see cref="P:System.Web.UI.WebControls.TableHeaderCell.Scope" /> and <see cref="P:System.Web.UI.WebControls.TableHeaderCell.AbbreviatedText" /> properties to the scope and abbr attribute of HTML th element, respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies attributes to render to the <see cref="T:System.Web.UI.WebControls.TableHeaderCell" /> control.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that receives the rendered content.</param>
       </Docs>
     </Member>
     <Member MemberName="CategoryText">
@@ -88,9 +117,16 @@
         <ReturnType>System.String[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The categories can be any string values that are pertinent to the table. The <see cref="P:System.Web.UI.WebControls.TableHeaderCell.CategoryText" /> property is rendered as the axis attribute of the HTML th element, which is used to group table cells into conceptual categories. The categories are rendered in HTML as a comma-delimited list.   </para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the axis attribute of the HTML th element for the <see cref="T:System.Web.UI.WebControls.TableHeaderCell" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Scope">
@@ -108,9 +144,17 @@
         <ReturnType>System.Web.UI.WebControls.TableHeaderScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TableHeaderCell.Scope" /> property to get or set the scope of the <see cref="T:System.Web.UI.WebControls.TableHeaderCell" /> control when it is rendered. The scope of the <see cref="T:System.Web.UI.WebControls.TableHeaderCell" /> represents the cells that the header applies to. For complex tables, use the <see cref="P:System.Web.UI.WebControls.TableCell.AssociatedHeaderCellID" /> property, which provides more control over the specification of the relationship of header cells to data cells. The <see cref="P:System.Web.UI.WebControls.TableHeaderCell.Scope" /> property is used to make HTML tables more accessible by providing information about relationships between the cells and the headers.</para>
+          <para>For a list of the available table header scopes, see <see cref="T:System.Web.UI.WebControls.TableHeaderScope" />.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the scope of the <see cref="T:System.Web.UI.WebControls.TableHeaderCell" /> control when it is rendered.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

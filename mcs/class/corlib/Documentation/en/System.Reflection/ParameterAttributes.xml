@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ParameterAttributes" FullName="System.Reflection.ParameterAttributes" FullNameSP="System_Reflection_ParameterAttributes" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable ParameterAttributes extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum ParameterAttributes" />
@@ -22,15 +23,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Defines the attributes for a parameter.</para>
-    </summary>
     <remarks>
-      <para>
-        <SPAN>This 
-      enumeration is used by the <see cref="P:System.Reflection.ParameterInfo.Attributes" /> property.</SPAN>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To get the ParameterAttributes value, first get the Type. From the Type, get the ParameterInfo array. The ParameterAttributes value is within the array.</para>
+      <para>These enumerator values are dependent on optional metadata. Not all attributes are available from all compilers. See the appropriate compiler instructions to determine which enumerated values are available.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the attributes that can be associated with a parameter. These are defined in CorHdr.h.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="HasDefault">
@@ -49,10 +50,11 @@
       <Parameters />
       <MemberValue>HasDefault</MemberValue>
       <Docs>
+        <remarks>To be added.</remarks>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies that the parameter has a default value.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -72,10 +74,11 @@
       <Parameters />
       <MemberValue>HasFieldMarshal</MemberValue>
       <Docs>
+        <remarks>To be added.</remarks>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies that the parameter has field marshaling information.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -93,8 +96,11 @@
       </ReturnValue>
       <MemberValue>In</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the parameter is an input parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Lcid">
@@ -111,8 +117,11 @@
       </ReturnValue>
       <MemberValue>Lcid</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the parameter is a locale identifier (lcid).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -129,8 +138,11 @@
       </ReturnValue>
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that there is no parameter attribute.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Optional">
@@ -147,8 +159,11 @@
       </ReturnValue>
       <MemberValue>Optional</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the parameter is optional.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Out">
@@ -165,8 +180,11 @@
       </ReturnValue>
       <MemberValue>Out</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the parameter is an output parameter.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reserved3">
@@ -183,8 +201,11 @@
       </ReturnValue>
       <MemberValue>Reserved3</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Reserved4">
@@ -201,8 +222,11 @@
       </ReturnValue>
       <MemberValue>Reserved4</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReservedMask">
@@ -219,8 +243,11 @@
       </ReturnValue>
       <MemberValue>ReservedMask</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the parameter is reserved.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Retval">
@@ -237,8 +264,11 @@
       </ReturnValue>
       <MemberValue>Retval</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the parameter is a return value.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

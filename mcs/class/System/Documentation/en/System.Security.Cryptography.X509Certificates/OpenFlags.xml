@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OpenFlags" FullName="System.Security.Cryptography.X509Certificates.OpenFlags">
   <TypeSignature Language="C#" Value="public enum OpenFlags" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed OpenFlags extends System.Enum" />
@@ -15,9 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="F:System.Security.Cryptography.X509Certificates.OpenFlags.ReadOnly" />, <see cref="F:System.Security.Cryptography.X509Certificates.OpenFlags.ReadWrite" />, and <see cref="F:System.Security.Cryptography.X509Certificates.OpenFlags.MaxAllowed" /> flags are mutually exclusive. The <see cref="F:System.Security.Cryptography.X509Certificates.OpenFlags.OpenExistingOnly" /> flag is the only flag that does not require the <see cref="F:System.Security.Permissions.StorePermissionFlags.CreateStore" /> permission to be granted.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the way to open the X.509 certificate store.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="IncludeArchived">
@@ -32,8 +39,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Open the X.509 certificate store and include archived certificates.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxAllowed">
@@ -48,8 +58,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Open the X.509 certificate store for the highest access allowed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OpenExistingOnly">
@@ -64,8 +77,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens only existing stores; if no store exists, the <see cref="M:System.Security.Cryptography.X509Certificates.X509Store.Open(System.Security.Cryptography.X509Certificates.OpenFlags)" /> method will not create a new store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadOnly">
@@ -80,8 +96,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Open the X.509 certificate store for reading only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReadWrite">
@@ -96,8 +115,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.OpenFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Open the X.509 certificate store for both reading and writing.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ChannelParameterCollection" FullName="System.ServiceModel.Channels.ChannelParameterCollection">
   <TypeSignature Language="C#" Value="public class ChannelParameterCollection : System.Collections.ObjectModel.Collection&lt;object&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ChannelParameterCollection extends System.Collections.ObjectModel.Collection`1&lt;object&gt;" />
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used to cache channel properties when channels are destroyed and re-created.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of channel parameters.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,8 +33,14 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This default constructor implicitly calls the constructor of the parent class. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.ChannelParameterCollection" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -41,9 +54,16 @@
         <Parameter Name="channel" Type="System.ServiceModel.Channels.IChannel" />
       </Parameters>
       <Docs>
-        <param name="channel">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance is created with <see cref="P:System.ServiceModel.Channels.ChannelParameterCollection.Channel" /> set to <paramref name="channel" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.ChannelParameterCollection" /> class.  </para>
+        </summary>
+        <param name="channel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The channel whose parameters are in this collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Channel">
@@ -57,9 +77,15 @@
         <ReturnType>System.ServiceModel.Channels.IChannel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is set to <paramref name="channel" /> when <see cref="M:System.ServiceModel.Channels.ChannelParameterCollection.#ctor(System.ServiceModel.Channels.IChannel)" /> is called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the channel whose parameters are in this collection. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClearItems">
@@ -74,8 +100,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the collection of parameters.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InsertItem">
@@ -93,10 +122,15 @@
         <Parameter Name="item" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Inserts the specified item into the collection using the specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the item in the collection.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />The item to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="PropagateChannelParameters">
@@ -113,9 +147,13 @@
         <Parameter Name="innerChannel" Type="System.ServiceModel.Channels.IChannel" />
       </Parameters>
       <Docs>
-        <param name="innerChannel">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the parameters in the current collection to a specified channel's <see cref="T:System.ServiceModel.Channels.ChannelParameterCollection" />.</para>
+        </summary>
+        <param name="innerChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The channel that receives the current collection's parameters.</param>
       </Docs>
     </Member>
     <Member MemberName="RemoveItem">
@@ -132,9 +170,13 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a parameter from the collection.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Index of the parameter to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="SetItem">
@@ -152,10 +194,15 @@
         <Parameter Name="item" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
-        <param name="item">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces an item in the collection at a specified index.</para>
+        </summary>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Index of the item to replace.</param>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />Value of the replacement item.</param>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripStatusLabelBorderSides" FullName="System.Windows.Forms.ToolStripStatusLabelBorderSides">
   <TypeSignature Language="C#" Value="public enum ToolStripStatusLabelBorderSides" />
   <AssemblyInfo>
@@ -19,9 +20,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies which sides of a <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> have borders.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -31,8 +35,11 @@
         <ReturnType>System.Windows.Forms.ToolStripStatusLabelBorderSides</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All sides of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> have borders.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -45,8 +52,11 @@
         <ReturnType>System.Windows.Forms.ToolStripStatusLabelBorderSides</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the bottom side of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> has borders.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,8 +69,11 @@
         <ReturnType>System.Windows.Forms.ToolStripStatusLabelBorderSides</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the left side of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> has borders.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,8 +86,11 @@
         <ReturnType>System.Windows.Forms.ToolStripStatusLabelBorderSides</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> has no borders.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -87,8 +103,11 @@
         <ReturnType>System.Windows.Forms.ToolStripStatusLabelBorderSides</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the right side of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> has borders.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -101,8 +120,11 @@
         <ReturnType>System.Windows.Forms.ToolStripStatusLabelBorderSides</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the top side of the <see cref="T:System.Windows.Forms.ToolStripStatusLabel" /> has borders.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

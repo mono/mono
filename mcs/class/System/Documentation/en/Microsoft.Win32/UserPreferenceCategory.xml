@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UserPreferenceCategory" FullName="Microsoft.Win32.UserPreferenceCategory">
   <TypeSignature Language="C#" Value="public enum UserPreferenceCategory" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed UserPreferenceCategory extends System.Enum" />
@@ -11,8 +12,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:Microsoft.Win32.UserPreferenceCategory" /> provides identifiers that can represent a category of user preferences.</para>
+      <para>Some of the user preferences in these categories can be changed using the Windows Control Panel, the Computer Management console, or programatically using an appropriate API.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines identifiers that represent categories of user preferences.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Accessibility">
@@ -28,7 +37,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences associated with accessibility features of the system for users with disabilities.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Color">
@@ -44,7 +56,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences associated with system colors. This category includes such as the default color of windows or menus.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Desktop">
@@ -60,7 +75,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences associated with the system desktop. This category includes the background image or background image layout of the desktop.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="General">
@@ -76,7 +94,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences that are not associated with any other category.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Icon">
@@ -92,7 +113,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences for icon settings, including icon height and spacing.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Keyboard">
@@ -108,7 +132,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences for keyboard settings, such as the key down repeat rate and delay.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Locale">
@@ -124,7 +151,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates changes in user preferences for regional settings, such as the character encoding and culture strings.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Menu">
@@ -140,7 +170,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences for menu settings, such as menu delays and text alignment.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Mouse">
@@ -156,7 +189,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences for mouse settings, such as double-click time and mouse sensitivity.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Policy">
@@ -172,7 +208,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences for policy settings, such as user rights and access levels.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Power">
@@ -188,7 +227,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the user preferences for system power settings. This category includes power feature settings, such as the idle time before the system automatically enters low power mode.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Screensaver">
@@ -204,7 +246,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences associated with the screensaver.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VisualStyle">
@@ -219,8 +264,11 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences associated with visual styles, such as enabling or disabling visual styles and switching from one visual style to another.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Window">
@@ -236,7 +284,10 @@
         <ReturnType>Microsoft.Win32.UserPreferenceCategory</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates user preferences associated with the dimensions and characteristics of windows on the system.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

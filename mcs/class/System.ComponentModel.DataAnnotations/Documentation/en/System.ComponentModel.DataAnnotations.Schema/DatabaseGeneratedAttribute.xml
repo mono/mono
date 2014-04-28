@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DatabaseGeneratedAttribute" FullName="System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute">
   <TypeSignature Language="C#" Value="public class DatabaseGeneratedAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit DatabaseGeneratedAttribute extends System.Attribute" />
@@ -15,8 +16,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a database generated attribute.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,9 +34,13 @@
         <Parameter Name="databaseGeneratedOption" Type="System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption" />
       </Parameters>
       <Docs>
-        <param name="databaseGeneratedOption">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedAttribute" /> class.</para>
+        </summary>
+        <param name="databaseGeneratedOption">
+          <attribution license="cc4" from="Microsoft" modified="false" />The database generated option.</param>
       </Docs>
     </Member>
     <Member MemberName="DatabaseGeneratedOption">
@@ -46,9 +54,12 @@
         <ReturnType>System.ComponentModel.DataAnnotations.Schema.DatabaseGeneratedOption</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the database generated option.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

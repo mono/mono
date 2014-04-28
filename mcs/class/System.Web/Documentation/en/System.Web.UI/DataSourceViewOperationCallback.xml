@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataSourceViewOperationCallback" FullName="System.Web.UI.DataSourceViewOperationCallback">
   <TypeSignature Language="C#" Value="public delegate bool DataSourceViewOperationCallback(int recordsAffected, Exception exception);" />
   <AssemblyInfo>
@@ -17,9 +18,15 @@
   <Docs>
     <param name="recordsAffected">To be added.</param>
     <param name="exception">To be added.</param>
-    <summary>To be added.</summary>
     <value>To be added.</value>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>By default, ASP.NET Web page and control execution is synchronous. However, data source controls can be extended to support asynchronous data retrieval and data operations. The <see cref="T:System.Web.UI.DataSourceView" /> object supports the <see cref="M:System.Web.UI.DataSourceView.Insert(System.Collections.IDictionary,System.Web.UI.DataSourceViewOperationCallback)" />, <see cref="M:System.Web.UI.DataSourceView.Update(System.Collections.IDictionary,System.Collections.IDictionary,System.Collections.IDictionary,System.Web.UI.DataSourceViewOperationCallback)" />, and <see cref="M:System.Web.UI.DataSourceView.Delete(System.Collections.IDictionary,System.Collections.IDictionary,System.Web.UI.DataSourceViewOperationCallback)" /> methods for asynchronous data processing. The <see cref="T:System.Web.UI.DataSourceViewOperationCallback" /> delegate is passed to the data source view by a data-bound control, so that the view can call this delegate when asynchronous processing is complete and notify the data-bound control of the operation's outcome. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the asynchronous callback method that a data-bound control supplies to a data source view for asynchronous insert, update, or delete data operations.</para>
+    </summary>
   </Docs>
 </Type>

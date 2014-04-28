@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Validator" FullName="System.ComponentModel.DataAnnotations.Validator">
   <TypeSignature Language="C#" Value="public static class Validator" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit Validator extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a helper class that can be used to validate objects, properties, and methods when it is included in their associated <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute" /> attributes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="TryValidateObject">
@@ -129,10 +133,18 @@
         <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <param name="validationContext">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method evaluates each <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute" /> instance that is attached to the object type.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is valid using the validation context.</para>
+        </summary>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
       </Docs>
     </Member>
     <Member MemberName="ValidateObject">
@@ -151,11 +163,20 @@
         <Parameter Name="validateAllProperties" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="instance">To be added.</param>
-        <param name="validationContext">To be added.</param>
-        <param name="validateAllProperties">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method evaluates each <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute" /> instance that is attached to the object type. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified object is valid using the validation context, and a value that specifies whether to validate all properties.</para>
+        </summary>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the object to validate.</param>
+        <param name="validateAllProperties">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to validate all properties; otherwise, false.</param>
       </Docs>
     </Member>
     <Member MemberName="ValidateProperty">
@@ -173,10 +194,18 @@
         <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="validationContext">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method tests each <see cref="P:System.ComponentModel.DataAnnotations.ValidationException.ValidationAttribute" /> instance that is associated with the property identified by the <paramref name="validationContext" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Validates the property.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to validate.</param>
+        <param name="validationContext">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context that describes the property to validate.</param>
       </Docs>
     </Member>
     <Member MemberName="ValidateValue">

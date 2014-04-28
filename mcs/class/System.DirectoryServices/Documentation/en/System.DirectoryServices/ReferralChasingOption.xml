@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ReferralChasingOption" FullName="System.DirectoryServices.ReferralChasingOption">
   <TypeSignature Language="C#" Value="public sealed enum ReferralChasingOption" />
   <AssemblyInfo>
@@ -87,8 +88,11 @@
       </ReturnValue>
       <MemberValue>All</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Chase referrals of either the subordinate or external type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="External">
@@ -99,8 +103,11 @@
       </ReturnValue>
       <MemberValue>External</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Chase external referrals.  If no referral chasing option is specified for a directory search, the type of referral chasing performed is  <see cref="F:System.DirectoryServices.ReferralChasingOption.External" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -111,8 +118,11 @@
       </ReturnValue>
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Never chase the referred-to server. Setting this option prevents a client from contacting other servers in a referral process.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Subordinate">
@@ -123,13 +133,24 @@
       </ReturnValue>
       <MemberValue>Subordinate</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Chase only subordinate referrals that are a subordinate naming context in a directory tree. The ADSI LDAP provider always turns off this flag for paged searches.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When a server determines that other servers hold relevant information the server might refer the client to another server to obtain the result. Referral chasing is the process by which a client contacts the referenced server to continue the directory search.</para>
+      <para>Use the constants of this enumeration to set up search preferences for referral chasing. The action involves assigning the appropriate fields of <see cref="T:System.DirectoryServices.DirectorySearcher" /> to elements of the <see cref="T:System.DirectoryServices.ReferralChasingOption" /> enumeration.</para>
+      <para>The ADSI LDAP provider supports external referrals for paged searches, but does not support subordinate referrals during paging.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.DirectoryServices.ReferralChasingOption" /> enumeration specifies if and how referral chasing is pursued.          </para>
+    </summary>
   </Docs>
 </Type>

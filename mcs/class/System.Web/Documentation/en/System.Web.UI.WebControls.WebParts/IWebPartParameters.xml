@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IWebPartParameters" FullName="System.Web.UI.WebControls.WebParts.IWebPartParameters">
   <TypeSignature Language="C#" Value="public interface IWebPartParameters" />
   <AssemblyInfo>
@@ -6,9 +7,17 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Data is usually sent from a provider to a consumer in a Web Parts connection. However, in some cases, a provider needs a parameter from the consumer to determine which values it should send back. The <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartParameters" /> interface defines members to implement that facilitate the passing of a parameter from a consumer to a provider. </para>
+      <para>The <see cref="T:System.Web.UI.WebControls.WebParts.RowToParametersTransformer" /> class implements the <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartParameters" /> interface. Transformers are used to translate data between two Web Parts controls with incompatible connection points. A <see cref="T:System.Web.UI.WebControls.WebParts.RowToParametersTransformer" /> object transforms data from a provider implementing the <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartRow" /> interface when the provider needs a parameter from the consumer.</para>
+      <para>The <see cref="M:System.Web.UI.WebControls.WebParts.IWebPartParameters.GetParametersData(System.Web.UI.WebControls.WebParts.ParametersCallback)" /> method retrieves the data from the provider and provides a callback method to process the data for the consumer. The callback method can be a customized method within the consumer that sets the return values accordingly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the contract a Web Parts control implements to pass a parameter value in a Web Parts connection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetParametersData">
@@ -21,10 +30,17 @@
         <Parameter Name="callback" Type="System.Web.UI.WebControls.WebParts.ParametersCallback" />
       </Parameters>
       <Docs>
-        <param name="callback">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.WebParts.IWebPartParameters.GetParametersData(System.Web.UI.WebControls.WebParts.ParametersCallback)" /> method is used to retrieve the values from the provider based on a parameter. The method represented by the <paramref name="callback" /> parameter processes the data for use by the consumer.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the data from the connection provider.</para>
+        </summary>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The method to call to process the data from the provider.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +53,16 @@
         <ReturnType>System.ComponentModel.PropertyDescriptorCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.WebParts.IWebPartParameters.Schema" /> property provides property information for the data passed by the interface. Transformer and consumer controls can query this property to get information about the type, contents, and other details of the field contained in the <see cref="T:System.Web.UI.WebControls.WebParts.IWebPartParameters" /> interface instance.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the property descriptors for the data to be received by the consumer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -56,10 +78,14 @@
         <Parameter Name="schema" Type="System.ComponentModel.PropertyDescriptorCollection" />
       </Parameters>
       <Docs>
-        <param name="schema">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the property descriptors for the properties that the consumer receives when calling the <see cref="M:System.Web.UI.WebControls.WebParts.IWebPartParameters.GetParametersData(System.Web.UI.WebControls.WebParts.ParametersCallback)" /> method.</para>
+        </summary>
+        <param name="schema">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> returned by <see cref="P:System.Web.UI.WebControls.WebParts.IWebPartParameters.Schema" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

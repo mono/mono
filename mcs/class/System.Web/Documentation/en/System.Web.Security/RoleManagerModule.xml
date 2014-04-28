@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RoleManagerModule" FullName="System.Web.Security.RoleManagerModule">
   <TypeSignature Language="C#" Value="public sealed class RoleManagerModule : System.Web.IHttpModule" />
   <AssemblyInfo>
@@ -13,9 +14,17 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.RoleManagerModule" /> class is used to assign a <see cref="T:System.Web.Security.RolePrincipal" /> to the <see cref="P:System.Web.HttpContext.User" /> property of the <see cref="P:System.Web.HttpContext.Current" /> <see cref="T:System.Web.HttpContext" />.</para>
+      <para>When a request completes, the <see cref="T:System.Web.Security.RoleManagerModule" /> refreshes the roles cookie that contains cached role information. If the <see cref="P:System.Web.HttpContext.User" /> property is of type <see cref="T:System.Web.Security.RolePrincipal" />, and that <see cref="T:System.Web.Security.RolePrincipal" /> indicates that its cached role list has been modified by setting the <see cref="P:System.Web.Security.RolePrincipal.CachedListChanged" /> property to true, the <see cref="T:System.Web.Security.RoleManagerModule" /> will update the roles cookie that contains cached role information.</para>
+      <para>This class is not intended to be used directly from your code.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages a <see cref="T:System.Web.Security.RolePrincipal" /> instance for the current user. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +32,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Security.RoleManagerModule" /> class is used to place a <see cref="T:System.Web.Security.RolePrincipal" /> in the <see cref="P:System.Web.HttpContext.User" /> property of the <see cref="P:System.Web.HttpContext.Current" /> <see cref="T:System.Web.HttpContext" /> and is not intended to be used directly from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.Security.RoleManagerModule" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,9 +54,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Web.Security.RoleManagerModule.Dispose" /> when you are finished using the <see cref="T:System.Web.Security.RoleManagerModule" />. The <see cref="M:System.Web.Security.RoleManagerModule.Dispose" /> method leaves the <see cref="T:System.Web.Security.RoleManagerModule" /> in an unusable state. After calling <see cref="M:System.Web.Security.RoleManagerModule.Dispose" />, you must release all references to the <see cref="T:System.Web.Security.RoleManagerModule" /> so the memory it occupied can be reclaimed by garbage collection.</para>
+          <para>This method is not intended to be used directly from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the HTTP runtime to dispose of the role-manager module.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,9 +76,17 @@
         <ReturnType>System.Web.Security.RoleManagerEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event is raised before the <see cref="T:System.Web.Security.RoleManagerModule" /> creates a <see cref="T:System.Web.Security.RolePrincipal" /> object and assigns it to the <see cref="P:System.Web.HttpContext.User" /> property of the <see cref="P:System.Web.HttpContext.Current" /> <see cref="T:System.Web.HttpContext" />. You can use this event to audit when role information is applied or to replace the creation of a <see cref="T:System.Web.Security.RolePrincipal" /> by the <see cref="T:System.Web.Security.RoleManagerModule" /> with your own code.</para>
+          <para>You can cancel the application of role information by the <see cref="T:System.Web.Security.RoleManagerModule" /> by setting the <see cref="P:System.Web.Security.RoleManagerEventArgs.RolesPopulated" /> property of the <see cref="T:System.Web.Security.RoleManagerEventArgs" /> to true in the <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event.</para>
+          <para>If you set <see cref="P:System.Web.Security.RoleManagerEventArgs.RolesPopulated" /> to true in your <see cref="E:System.Web.Security.RoleManagerModule.GetRoles" /> event handler, then the <see cref="P:System.Web.HttpContext.User" /> property of the current <see cref="T:System.Web.HttpContext" /> is not set to a <see cref="T:System.Web.Security.RolePrincipal" /> object by the <see cref="T:System.Web.Security.RoleManagerModule" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A global application event that is raised when the <see cref="T:System.Web.Security.RoleManagerModule" /> is ready to create a <see cref="T:System.Web.Security.RolePrincipal" /> that represents the current user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,10 +102,17 @@
         <Parameter Name="app" Type="System.Web.HttpApplication" />
       </Parameters>
       <Docs>
-        <param name="app">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method subscribes to the <see cref="E:System.Web.HttpApplication.PostAuthorizeRequest" /> and <see cref="E:System.Web.HttpApplication.EndRequest" /> methods of the specified <see cref="T:System.Web.HttpApplication" /> for the purpose of managing role information and is not intended to be used directly from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Associates the role manager with the specified application.</para>
+        </summary>
+        <param name="app">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpApplication" /> to associate the <see cref="T:System.Web.Security.RoleManagerModule" /> with.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

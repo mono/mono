@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IClientMessageInspector" FullName="System.ServiceModel.Dispatcher.IClientMessageInspector">
   <TypeSignature Language="C#" Value="public interface IClientMessageInspector" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IClientMessageInspector" />
@@ -7,8 +8,14 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implement the <see cref="T:System.ServiceModel.Dispatcher.IClientMessageInspector" /> interface and add it to the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.MessageInspectors" /> collection to inspect or modify messages as they pass through a indigo2 client object. For details, see <see cref="T:System.ServiceModel.Dispatcher.ClientRuntime" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a message inspector object that can be added to the <see cref="P:System.ServiceModel.Dispatcher.ClientRuntime.MessageInspectors" /> collection to view or modify messages.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AfterReceiveReply">

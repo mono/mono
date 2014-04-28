@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataGridColumnStyleEditingNotificationService" FullName="System.Windows.Forms.IDataGridColumnStyleEditingNotificationService">
   <TypeSignature Language="C#" Value="public interface IDataGridColumnStyleEditingNotificationService" />
   <AssemblyInfo>
@@ -7,8 +8,14 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To create a new <see cref="T:System.Windows.Forms.DataGrid" /> column with special properties, you must first inherit from the <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> class. The <see cref="T:System.Windows.Forms.IDataGridColumnStyleEditingNotificationService" /> interface is provided to notify the <see cref="T:System.Windows.Forms.DataGrid" /> when a column is being edited.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an editing notification interface.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ColumnStartedEditing">
@@ -21,9 +28,16 @@
         <Parameter Name="editingControl" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <param name="editingControl">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When called, the <see cref="M:System.Windows.Forms.IDataGridColumnStyleEditingNotificationService.ColumnStartedEditing(System.Windows.Forms.Control)" /> method allows the <see cref="T:System.Windows.Forms.DataGrid" /> control to show a pencil in the row header indicating the row is being edited.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Informs the <see cref="T:System.Windows.Forms.DataGrid" /> that the user has begun editing the column.</para>
+        </summary>
+        <param name="editingControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> that is editing the column. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

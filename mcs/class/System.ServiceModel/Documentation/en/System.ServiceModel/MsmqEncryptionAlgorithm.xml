@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MsmqEncryptionAlgorithm" FullName="System.ServiceModel.MsmqEncryptionAlgorithm">
   <TypeSignature Language="C#" Value="public enum MsmqEncryptionAlgorithm" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MsmqEncryptionAlgorithm extends System.Enum" />
@@ -9,8 +10,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Message Queuing (MSMQ) can encrypt messages on the wire when transferring queued messages between queue managers. <see cref="T:System.ServiceModel.MsmqEncryptionAlgorithm" /> is an enumeration that contains the set of encryption algorithms that can be used to encrypt messages on the wire.</para>
+      <para>For encryption to work, the <see cref="P:System.ServiceModel.MsmqTransportSecurity.MsmqProtectionLevel" /> property must be set to <see cref="F:System.Net.Security.ProtectionLevel.EncryptAndSign" />.</para>
+      <para>Only <see cref="F:System.ServiceModel.MsmqEncryptionAlgorithm.RC4Stream" /> is supported on ws2003 and wxp.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the set of encryption algorithms that can be used to encrypt messages on the wire.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Aes">
@@ -24,7 +33,10 @@
         <ReturnType>System.ServiceModel.MsmqEncryptionAlgorithm</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Advanced Encryption Standard (AES) defined by the National Institute of Standards and Technology (NIST).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RC4Stream">
@@ -38,7 +50,10 @@
         <ReturnType>System.ServiceModel.MsmqEncryptionAlgorithm</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A stream cipher defined by <see cref="http://go.microsoft.com/fwlink/?LinkId=95942">RSA Security</see>.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ThreadPriority" FullName="System.Threading.ThreadPriority" FullNameSP="System_Threading_ThreadPriority" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable ThreadPriority extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum ThreadPriority" />
@@ -19,36 +20,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para> Specifies the scheduling priority of a <see cref="T:System.Threading.Thread" />.
-   </para>
-    </summary>
     <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
       <para>
-        <see cref="T:System.Threading.ThreadPriority" />
-values specify the relative scheduling priority of
-threads.</para>
-      <para>Operating systems are not guaranteed to support
-   preemptive scheduling. Also, the concept of "thread priority" might not exist at
-   all or its meaning might vary, depending on the underlying operating system.
-   Implementers of this type are required to describe how the notion of thread
-   priority maps to operating system priority. For more information about threads,
-   see the <see cref="T:System.Threading.Thread" />
-   class. </para>
-      <para> The <see cref="P:System.Threading.Thread.Priority" />
-property sets and returns the priority value information for a thread.
-Applications can request a scheduling priority for a thread by setting the
-<see cref="P:System.Threading.Thread.Priority" /> property to the appropriate 
-<see langword="ThreadPriority" />
-value. The
-default thread priority is <see cref="F:System.Threading.ThreadPriority.Normal" />
-.</para>
-      <para>
-        <block subset="none" type="note">A thread cannot be scheduled if it is in the <see cref="F:System.Threading.ThreadState.Unstarted" /> state or
-the <see cref="F:System.Threading.ThreadState.Stopped" /> state.
-</block>
-      </para>
+        <see cref="T:System.Threading.ThreadPriority" /> defines the set of all possible values for a thread priority. Thread priorities specify the relative priority of one thread versus another.</para>
+      <para>Every thread has an assigned priority. Threads created within the runtime are initially assigned the Normal priority, while threads created outside the runtime retain their previous priority when they enter the runtime. You can get and set the priority of a thread by accessing its <see cref="P:System.Threading.Thread.Priority" /> property.</para>
+      <para>Threads are scheduled for execution based on their priority. The scheduling algorithm used to determine the order of thread execution varies with each operating system. The operating system can also adjust the thread priority dynamically as the user interface's focus is moved between the foreground and the background.</para>
+      <para>The priority of a thread does not affect the thread's state; the state of the thread must be <see cref="F:System.Threading.ThreadState.Running" /> before the operating system can schedule it.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the scheduling priority of a <see cref="T:System.Threading.Thread" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AboveNormal">
@@ -67,11 +50,11 @@ the <see cref="F:System.Threading.ThreadState.Stopped" /> state.
       <Parameters />
       <MemberValue>AboveNormal</MemberValue>
       <Docs>
-        <summary>
-          <para> Threads with this priority can be scheduled after threads
-      with <see cref="F:System.Threading.ThreadPriority.Highest" /> priority and before those with <see cref="F:System.Threading.ThreadPriority.Normal" /> priority.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.Thread" /> can be scheduled after threads with Highest priority and before those with Normal priority.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -91,13 +74,11 @@ the <see cref="F:System.Threading.ThreadState.Stopped" /> state.
       <Parameters />
       <MemberValue>BelowNormal</MemberValue>
       <Docs>
-        <summary>
-          <para>Threads with this priority can be scheduled
-      after threads with <see cref="F:System.Threading.ThreadPriority.Normal" /> priority, and before those with <see cref="F:System.Threading.ThreadPriority.Lowest" />
-      priority.
-      </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.Thread" /> can be scheduled after threads with Normal priority and before those with Lowest priority.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -117,13 +98,11 @@ the <see cref="F:System.Threading.ThreadState.Stopped" /> state.
       <Parameters />
       <MemberValue>Highest</MemberValue>
       <Docs>
-        <summary>
-          <para>
-            <SPAN>Threads with this priority can be scheduled before threads with any
-      other priority.</SPAN>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.Thread" /> can be scheduled before threads with any other priority.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -143,14 +122,11 @@ the <see cref="F:System.Threading.ThreadState.Stopped" /> state.
       <Parameters />
       <MemberValue>Lowest</MemberValue>
       <Docs>
-        <summary>
-          <para>
-            <SPAN>Threads with
-      this priority can be scheduled after threads with any other
-      priority.</SPAN>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.Thread" /> can be scheduled after threads with any other priority.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -170,13 +146,11 @@ the <see cref="F:System.Threading.ThreadState.Stopped" /> state.
       <Parameters />
       <MemberValue>Normal</MemberValue>
       <Docs>
-        <summary>
-          <para>Threads with this priority can be scheduled after threads with <see cref="F:System.Threading.ThreadPriority.AboveNormal" /> priority and before those with <see cref="F:System.Threading.ThreadPriority.BelowNormal" />
-priority.</para>
-          <para>Threads have <see cref="F:System.Threading.ThreadPriority.Normal" /> priority by
-default.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.Thread" /> can be scheduled after threads with AboveNormal priority and before those with BelowNormal priority. Threads have Normal priority by default.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

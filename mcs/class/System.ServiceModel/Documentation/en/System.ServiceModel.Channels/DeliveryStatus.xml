@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DeliveryStatus" FullName="System.ServiceModel.Channels.DeliveryStatus">
   <TypeSignature Language="C#" Value="public enum DeliveryStatus" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DeliveryStatus extends System.Enum" />
@@ -9,8 +10,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A message sent to a queue can land in a dead-letter queue because the message was not delivered or the Queue Manager is not sure of the delivery outcome. The DeliveryStatus is a way to get the status of message delivery when the message is read from a dead-letter queue.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An enumeration that specifies the delivery status of a message when the delivery of the message is in doubt, or when the message was not delivered.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="InDoubt">
@@ -24,7 +31,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The delivery of the message is in doubt.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotDelivered">
@@ -38,7 +48,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message was not delivered.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

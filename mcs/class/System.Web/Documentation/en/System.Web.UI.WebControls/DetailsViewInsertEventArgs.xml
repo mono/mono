@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DetailsViewInsertEventArgs" FullName="System.Web.UI.WebControls.DetailsViewInsertEventArgs">
   <TypeSignature Language="C#" Value="public class DetailsViewInsertEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.DetailsView" /> control raises the <see cref="E:System.Web.UI.WebControls.DetailsView.ItemInserting" /> event when an Insert button (a button with its CommandName property set to "Insert") within the control is clicked, but before the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control inserts the record. This allows you to provide an event handler that performs a custom routine, such as HTML-encoding the values of a record before inserting it in the data source, whenever this event occurs.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.DetailsViewInsertEventArgs" /> object is passed to the event handler, which allows you to determine the value of an optional command argument sent to the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control and to indicate that the insert operation should be canceled. To determine the value of the command argument, use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertEventArgs.CommandArgument" /> property. To cancel the insert operation, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to true. You can also read or modify the field values for the new record by using the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertEventArgs.Values" /> property.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewInsertEventArgs" /> class, see the <see cref="M:System.Web.UI.WebControls.DetailsViewInsertEventArgs.#ctor(System.Object)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.DetailsView.ItemInserting" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +32,41 @@
       </Parameters>
       <Docs>
         <param name="argument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewInsertEventArgs" /> class.</para>
+          <para>The following table shows the initial property value for an instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewInsertEventArgs" /> class.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property</para>
+                </term>
+                <description>
+                  <para>Initial Value</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DetailsViewInsertEventArgs.CommandArgument" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="commandArgument" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DetailsViewInsertEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +79,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertEventArgs.CommandArgument" /> property to determine the value of the command argument passed to the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control. The <see cref="P:System.Web.UI.WebControls.DetailsViewInsertEventArgs.CommandArgument" /> property is used to carry extra information about insertion.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the command argument for the insert operation passed to the <see cref="T:System.Web.UI.WebControls.DetailsView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +101,20 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DetailsViewInsertEventArgs.Values" /> property to access the values of the fields for the record to insert. For example, you can HTML-encode the values of the record before inserting it in the data source.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.DetailsViewInsertEventArgs.Values" /> property returns an object that implements the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> interface. The object contains <see cref="T:System.Collections.DictionaryEntry" /> objects that represent the fields of the record. </para>
+          <block subset="none" type="note">
+            <para>As a shortcut, you can also use the indexer of the <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> object to access the field values directly.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary that contains the field name/value pairs for the record to insert.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

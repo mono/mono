@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerActionUIStateChangeEventArgs" FullName="System.ComponentModel.Design.DesignerActionUIStateChangeEventArgs">
   <TypeSignature Language="C#" Value="public class DesignerActionUIStateChangeEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="E:System.ComponentModel.Design.DesignerActionUIService.DesignerActionUIStateChange" /> event occurs when a smart tag panel is displayed or hidden. This event is not generated directly by the panel but rather by the <see cref="T:System.ComponentModel.Design.DesignerActionUIService" /> class when its <see cref="M:System.ComponentModel.Design.DesignerActionUIService.ShowUI(System.ComponentModel.IComponent)" /> and <see cref="M:System.ComponentModel.Design.DesignerActionUIService.HideUI(System.ComponentModel.IComponent)" /> methods are executed. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.ComponentModel.Design.DesignerActionUIService.DesignerActionUIStateChange" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,10 +31,18 @@
         <Parameter Name="changeType" Type="System.ComponentModel.Design.DesignerActionUIStateChangeType" />
       </Parameters>
       <Docs>
-        <param name="relatedObject">To be added.</param>
-        <param name="changeType">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For the <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event, the <paramref name="relatedObject" /> parameter always references the <see cref="T:System.ComponentModel.Component" /> that the panel is associated with.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.DesignerActionUIStateChangeEventArgs" /> class.</para>
+        </summary>
+        <param name="relatedObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that is associated with the panel.</param>
+        <param name="changeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies whether the panel is being displayed or hidden.</param>
       </Docs>
     </Member>
     <Member MemberName="ChangeType">
@@ -40,9 +55,15 @@
         <ReturnType>System.ComponentModel.Design.DesignerActionUIStateChangeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the panel is being hidden through a call to the <see cref="M:System.ComponentModel.Design.DesignerActionUIService.HideUI(System.ComponentModel.IComponent)" /> method, this property has a value of <see cref="F:System.ComponentModel.Design.DesignerActionUIStateChangeType.Hide" />. If the panel is being shown through a call to <see cref="M:System.ComponentModel.Design.DesignerActionUIService.ShowUI(System.ComponentModel.IComponent)" />, this property has a value of <see cref="F:System.ComponentModel.Design.DesignerActionUIStateChangeType.Show" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a flag indicating whether the smart tag panel is being displayed or hidden.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RelatedObject">
@@ -55,9 +76,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.DesignerActionUIStateChangeEventArgs.RelatedObject" /> property enables the programmer to associate an object to an instance of the <see cref="T:System.ComponentModel.Design.DesignerActionUIStateChangeEventArgs" /> class. This object then is available to methods that handle the <see cref="E:System.ComponentModel.Design.DesignerActionUIService.DesignerActionUIStateChange" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object that is associated with the smart tag panel.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

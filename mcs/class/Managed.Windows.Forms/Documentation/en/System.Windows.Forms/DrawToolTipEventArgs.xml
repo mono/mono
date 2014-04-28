@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DrawToolTipEventArgs" FullName="System.Windows.Forms.DrawToolTipEventArgs">
   <TypeSignature Language="C#" Value="public class DrawToolTipEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,8 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.ToolTip.Draw" /> event is raised by the <see cref="T:System.Windows.Forms.ToolTip" /> class when the <see cref="T:System.Windows.Forms.ToolTip" /> is drawn and the <see cref="P:System.Windows.Forms.ToolTip.OwnerDraw" /> property value is true. The handler for this event receives a parameter of type <see cref="T:System.Windows.Forms.DrawToolTipEventArgs" />. The <see cref="T:System.Windows.Forms.DrawToolTipEventArgs" /> class contains all the information needed to paint the <see cref="T:System.Windows.Forms.ToolTip" />, including the <see cref="T:System.Windows.Forms.ToolTip" /> text, the <see cref="T:System.Drawing.Rectangle" />, and the <see cref="T:System.Drawing.Graphics" /> object on which the drawing should be done. To customize the look of the ToolTip, use the <see cref="T:System.Drawing.Rectangle" /> to determine the bounds of the ToolTip, and the <see cref="T:System.Drawing.Graphics" /> object to perform your customized drawing. You can increase the bounds of the <see cref="T:System.Windows.Forms.ToolTip" /> before it is shown by handling the <see cref="E:System.Windows.Forms.ToolTip.Popup" /> event.</para>
+      <para>
+        <see cref="T:System.Windows.Forms.DrawToolTipEventArgs" /> also supports partial customization through the <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.DrawBackground" />, <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.DrawText" /> and <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.DrawBorder" /> methods. Using these methods, you can owner draw portions of the ToolTip while leaving the other portions drawn in the standard way.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ToolTip.Draw" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,16 +39,30 @@
         <Parameter Name="font" Type="System.Drawing.Font" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="associatedWindow">To be added.</param>
-        <param name="associatedControl">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="toolTipText">To be added.</param>
-        <param name="backColor">To be added.</param>
-        <param name="foreColor">To be added.</param>
-        <param name="font">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.#ctor(System.Drawing.Graphics,System.Windows.Forms.IWin32Window,System.Windows.Forms.Control,System.Drawing.Rectangle,System.String,System.Drawing.Color,System.Drawing.Color,System.Drawing.Font)" /> constructor uses the <paramref name="graphics" />, <paramref name="associatedControl" />, <paramref name="associatedWindow" />, <paramref name="bounds" />, <paramref name="font" /> and <paramref name="toolTipText" /> parameters to initialize their corresponding, similarly named properties. The <paramref name="backColor" /> and <paramref name="foreColor" /> parameters are used by the <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.DrawBackground" /> and <see cref="Overload:System.Windows.Forms.DrawToolTipEventArgs.DrawText" /> methods, respectively.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DrawToolTipEventArgs" /> class.</para>
+        </summary>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> context used to draw the ToolTip. </param>
+        <param name="associatedWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.IWin32Window" /> that the ToolTip is bound to.</param>
+        <param name="associatedControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> that the ToolTip is being created for.</param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that outlines the area where the ToolTip is to be displayed.</param>
+        <param name="toolTipText">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the text for the ToolTip.</param>
+        <param name="backColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> of the ToolTip background.</param>
+        <param name="foreColor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Color" /> of the ToolTip text. </param>
+        <param name="font">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Font" /> used to draw the ToolTip text.</param>
       </Docs>
     </Member>
     <Member MemberName="AssociatedControl">
@@ -52,9 +75,15 @@
         <ReturnType>System.Windows.Forms.Control</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because the <see cref="T:System.Windows.Forms.ToolTip" /> can be associated with multiple controls through the <see cref="M:System.Windows.Forms.ToolTip.SetToolTip(System.Windows.Forms.Control,System.String)" /> method, the <see cref="P:System.Windows.Forms.DrawToolTipEventArgs.AssociatedControl" /> property can be used to determine which control the <see cref="E:System.Windows.Forms.ToolTip.Draw" /> event is associated with. This is helpful if you want to perform different ToolTip customization based on the associated control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the control for which the <see cref="T:System.Windows.Forms.ToolTip" /> is being drawn.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AssociatedWindow">
@@ -67,9 +96,15 @@
         <ReturnType>System.Windows.Forms.IWin32Window</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a window is owned by another window, the owned window is minimized and closed with the owner window. Owned windows are also never displayed behind their owner form. Here the ToolTip is owned by the native Win32 window represented by the <see cref="P:System.Windows.Forms.DrawToolTipEventArgs.AssociatedWindow" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the window to which this <see cref="T:System.Windows.Forms.ToolTip" /> is bound.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Bounds">
@@ -82,9 +117,15 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the bounds are set by the operating system based on system settings and the <see cref="T:System.Windows.Forms.ToolTip" /> text. You can increase the bounds of the <see cref="T:System.Windows.Forms.ToolTip" /> before it is shown by handling the <see cref="E:System.Windows.Forms.ToolTip.Popup" /> <see cref="E:System.Windows.Forms.ToolTip.Popup" /> event of the <see cref="T:System.Windows.Forms.ToolTip" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size and location of the <see cref="T:System.Windows.Forms.ToolTip" /> to draw.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawBackground">
@@ -98,8 +139,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when you want to customize certain visual aspects of the <see cref="T:System.Windows.Forms.ToolTip" />, but want a standard ToolTip background drawn for you using the current value of <see cref="P:System.Drawing.SystemColors.Info" />. The background is drawn to fill the area specified by the <see cref="P:System.Windows.Forms.DrawToolTipEventArgs.Bounds" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the background of the <see cref="T:System.Windows.Forms.ToolTip" /> using the system background color.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawBorder">
@@ -113,8 +160,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method when you want to customize certain visual aspects of a <see cref="T:System.Windows.Forms.ToolTip" />, but want a standard ToolTip border drawn for you using the current value of <see cref="P:System.Drawing.SystemColors.WindowFrame" />. The border is drawn to the size specified by the <see cref="P:System.Windows.Forms.DrawToolTipEventArgs.Bounds" /> property. You can increase the bounds of the <see cref="T:System.Windows.Forms.ToolTip" /> before it is shown by handling the <see cref="E:System.Windows.Forms.ToolTip.Popup" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the border of the <see cref="T:System.Windows.Forms.ToolTip" /> using the system border color.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawText">
@@ -128,8 +181,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.DrawText" /> method represents the default method of displaying a <see cref="T:System.Windows.Forms.ToolTip" />. This method uses the system specified font and the current value of <see cref="P:System.Drawing.SystemColors.InfoText" /> for the font color. The text is drawn as a single line centered horizontally and vertically within the rectangle specified by the <see cref="P:System.Windows.Forms.DrawToolTipEventArgs.Bounds" /> property; it is equivalent to the following call to the overloaded version of <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.DrawText(System.Windows.Forms.TextFormatFlags)" />:</para>
+          <para>DrawText(TextFormatFlags.HorizontalCenter | TextFormatFlags.VerticalCenter | TextFormatFlags.SingleLine | TextFormatFlags.HidePrefix)</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the text of the <see cref="T:System.Windows.Forms.ToolTip" /> using the system text color and font.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawText">
@@ -145,9 +205,16 @@
         <Parameter Name="flags" Type="System.Windows.Forms.TextFormatFlags" />
       </Parameters>
       <Docs>
-        <param name="flags">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.DrawText(System.Windows.Forms.TextFormatFlags)" /> method is used to customize certain visual aspects of a <see cref="T:System.Windows.Forms.ToolTip" />, including the layout of the ToolTip text. This method uses the system specified font and the current value of <see cref="P:System.Drawing.SystemColors.InfoText" /> for the font color.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the text of the <see cref="T:System.Windows.Forms.ToolTip" /> using the system text color and font, and the specified text layout.</para>
+        </summary>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.TextFormatFlags" /> containing a bitwise combination of values that specifies the display and layout for the <see cref="P:System.Windows.Forms.DrawToolTipEventArgs.ToolTipText" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Font">
@@ -160,9 +227,15 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.DrawToolTipEventArgs.Font" /> property when you are custom drawing a <see cref="T:System.Windows.Forms.ToolTip" /> that should use the Windows default font.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the font used to draw the <see cref="T:System.Windows.Forms.ToolTip" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Graphics">
@@ -175,9 +248,17 @@
         <ReturnType>System.Drawing.Graphics</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You use the <see cref="T:System.Drawing.Graphics" /> object to customize the drawing of certain visual aspects of a <see cref="T:System.Windows.Forms.ToolTip" />. For example, you can draw your own ToolTip background by using the <see cref="M:System.Drawing.Graphics.FillRectangle(System.Drawing.Brush,System.Drawing.RectangleF)" /> method.</para>
+          <para>Any custom drawing that is done outside of the rectangle specified by the <see cref="P:System.Windows.Forms.DrawToolTipEventArgs.Bounds" /> property will not show up. You can increase the bounds of the <see cref="T:System.Windows.Forms.ToolTip" /> before it is shown by handling the ToolTip.Popup event.</para>
+          <para>The <see cref="T:System.Windows.Forms.DrawToolTipEventArgs" /> class also provides the <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.DrawBackground" />, <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.DrawText" /> and <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.DrawBorder" /> methods to draw individual parts of the <see cref="T:System.Windows.Forms.ToolTip" /> in the standard way used by the operating system. You can use these methods, together with the <see cref="T:System.Drawing.Graphics" /> object methods, to make some parts of your ToolTip standard, while customizing other parts.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the graphics surface used to draw the <see cref="T:System.Windows.Forms.ToolTip" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToolTipText">
@@ -190,9 +271,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Typically you would use the <see cref="P:System.Windows.Forms.DrawToolTipEventArgs.ToolTipText" /> property to determine what the ToolTip text is when you are custom drawing your ToolTip. You can use the <see cref="M:System.Drawing.Graphics.DrawString(System.String,System.Drawing.Font,System.Drawing.Brush,System.Single,System.Single)" /> method to customize the drawing of the ToolTip text. If you want to have the ToolTip text drawn using the system specified style, use the <see cref="M:System.Windows.Forms.DrawToolTipEventArgs.DrawText" /> method. The text value comes from the value passed to the <see cref="M:System.Windows.Forms.ToolTip.SetToolTip(System.Windows.Forms.Control,System.String)" /> method of the <see cref="T:System.Windows.Forms.ToolTip" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the text for the <see cref="T:System.Windows.Forms.ToolTip" /> that is being drawn.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

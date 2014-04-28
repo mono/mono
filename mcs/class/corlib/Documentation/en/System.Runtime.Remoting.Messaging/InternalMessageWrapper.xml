@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InternalMessageWrapper" FullName="System.Runtime.Remoting.Messaging.InternalMessageWrapper">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class InternalMessageWrapper" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit InternalMessageWrapper extends System.Object" />
@@ -19,8 +20,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Messaging.InternalMessageWrapper" /> class is the base class for the <see cref="T:System.Runtime.Remoting.Messaging.MethodCallMessageWrapper" /> and <see cref="T:System.Runtime.Remoting.Messaging.MethodReturnMessageWrapper" /> classes, which wrap messages for method calls on remote objects.</para>
+      <para>
+        <see cref="T:System.Runtime.Remoting.Messaging.InternalMessageWrapper" /> is used by the infrastructure of the .NET Framework. You do not need to create instances of the <see cref="T:System.Runtime.Remoting.Messaging.InternalMessageWrapper" />, <see cref="T:System.Runtime.Remoting.Messaging.MethodCallMessageWrapper" />, and <see cref="T:System.Runtime.Remoting.Messaging.MethodReturnMessageWrapper" /> classes directly.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Wraps remoting data for passing between message sinks, either for requests from client to server or for the subsequent responses.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,9 +46,17 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Messaging.IMessage" />
       </Parameters>
       <Docs>
-        <param name="msg">To be added: an object of type 'IMessage'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Runtime.Remoting.Messaging.InternalMessageWrapper" /> class is used by the remoting infrastructure of the .NET Framework. You do not need to create an <see cref="T:System.Runtime.Remoting.Messaging.InternalMessageWrapper" /> directly.</para>
+          <para>The <see cref="T:System.Runtime.Remoting.Messaging.IMessage" /> parameter also implements the derived interface, <see cref="T:System.Runtime.Remoting.Messaging.IMethodMessage" />, which indicates that the message acts as a request or as a response on a remote method call. The <see cref="T:System.Runtime.Remoting.Messaging.IMethodCallMessage" /> and <see cref="T:System.Runtime.Remoting.Messaging.IMethodReturnMessage" /> interfaces, in turn, inherit from the <see cref="T:System.Runtime.Remoting.Messaging.IMethodMessage" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Messaging.InternalMessageWrapper" /> class. </para>
+        </summary>
+        <param name="msg">
+          <attribution license="cc4" from="Microsoft" modified="false" />A message that acts either as an outgoing method call on a remote object, or as the subsequent response.</param>
       </Docs>
     </Member>
     <Member MemberName="WrappedMessage">
@@ -56,8 +73,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the request or response <see cref="T:System.Runtime.Remoting.Messaging.IMethodMessage" /> interface that is wrapped by the message wrapper. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

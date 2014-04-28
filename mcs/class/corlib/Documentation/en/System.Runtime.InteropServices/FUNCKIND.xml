@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FUNCKIND" FullName="System.Runtime.InteropServices.FUNCKIND">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum FUNCKIND" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed FUNCKIND extends System.Enum" />
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about FUNCKIND, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.FUNCKIND" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="FUNC_DISPATCH">
@@ -36,8 +43,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function can be accessed only through IDispatch.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FUNC_NONVIRTUAL">
@@ -54,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is accessed by static address and takes an implicit this pointer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FUNC_PUREVIRTUAL">
@@ -72,8 +85,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is accessed through the virtual function table (VTBL), and takes an implicit this pointer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FUNC_STATIC">
@@ -90,8 +106,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is accessed by static address and does not take an implicit this pointer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FUNC_VIRTUAL">
@@ -108,8 +127,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is accessed the same as <see cref="F:System.Runtime.InteropServices.FUNCKIND.FUNC_PUREVIRTUAL" />, except the function has an implementation.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

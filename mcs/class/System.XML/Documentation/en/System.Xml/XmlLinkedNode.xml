@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlLinkedNode" FullName="System.Xml.XmlLinkedNode">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class XmlLinkedNode : System.Xml.XmlNode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit XmlLinkedNode extends System.Xml.XmlNode" />
@@ -15,8 +16,11 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Gets the node immediately preceding or following this node.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="NextSibling">
@@ -32,9 +36,12 @@
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node immediately following this node.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreviousSibling">
@@ -50,9 +57,12 @@
         <ReturnType>System.Xml.XmlNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the node immediately preceding this node.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

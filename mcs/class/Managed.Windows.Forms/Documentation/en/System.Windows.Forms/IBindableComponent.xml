@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IBindableComponent" FullName="System.Windows.Forms.IBindableComponent">
   <TypeSignature Language="C#" Value="public interface IBindableComponent : System.ComponentModel.IComponent" />
   <AssemblyInfo>
@@ -10,9 +11,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Windows.Forms.Binding" /> contains a reference to its <see cref="T:System.Windows.Forms.IBindableComponent" /> owner through the <see cref="P:System.Windows.Forms.Binding.BindableComponent" /> property.</para>
+      <para>The <see cref="T:System.Windows.Forms.Control" /> class implements this interface, so if your bindable component inherits from <see cref="T:System.Windows.Forms.Control" />, you do not need to implement this interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables a non-control component to emulate the data-binding behavior of a Windows Forms control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="BindingContext">
@@ -22,10 +30,13 @@
         <ReturnType>System.Windows.Forms.BindingContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the collection of currency managers for the <see cref="T:System.Windows.Forms.IBindableComponent" />. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,10 +49,13 @@
         <ReturnType>System.Windows.Forms.ControlBindingsCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of data-binding objects for this <see cref="T:System.Windows.Forms.IBindableComponent" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectDataSourceMethodEventArgs" FullName="System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs">
   <TypeSignature Language="C#" Value="public class ObjectDataSourceMethodEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,150 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" /> class is used in the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnSelecting(System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs)" />, <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnUpdating(System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)" />, <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnInserting(System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)" />, and <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.OnDeleting(System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs)" /> methods to provide access to input parameters that are passed to the <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Select" />, <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Update" />, <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Delete" />, and <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Insert" /> methods of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control. These parameters are accessed using the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs.InputParameters" /> property. By adding a delegate to handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selecting" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updating" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserting" />, or <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleting" /> event, you can examine and manipulate the values of the parameters and perform any additional preprocessing that is required. Any changes to the parameters in this dictionary will affect which method overload is called for the operation. When the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DataObjectTypeName" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control is set, you can only modify the data object properties for the items in this dictionary; you cannot add or remove parameters. For more information, see <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Delete" />.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control exposes many events that you can handle to work with the underlying business object at various times in its life cycle. The following table lists the events and associated <see cref="T:System.EventArgs" /> classes and event handler delegates.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Event</para>
+            </term>
+            <description>
+              <para>EventArgs class</para>
+            </description>
+            <description>
+              <para>EventHandler delegate</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectCreating" />.</para>
+            <para>Occurs immediately before the instance of the business object is created.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceObjectEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectCreated" />.</para>
+            <para>Occurs immediately after the instance of the business object is created.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceObjectEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selecting" />.</para>
+            <para>Occurs before the data is retrieved.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceSelectingEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserting" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updating" />, and <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleting" />.</para>
+            <para>Occur before an insert, update, or delete operation is performed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Selected" />.</para>
+            <para>Occurs after the data is retrieved.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserted" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updated" />, and <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleted" />.</para>
+            <para>Occur after the insert, update, or delete operation is completed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.ObjectDataSource.ObjectDisposing" />.</para>
+            <para>Occurs before a business object is destroyed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceDisposingEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.ObjectDataSourceDisposingEventHandler" />
+            </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Inserting" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Updating" />, and <see cref="E:System.Web.UI.WebControls.ObjectDataSource.Deleting" /> events of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +163,14 @@
         <Parameter Name="inputParameters" Type="System.Collections.Specialized.IOrderedDictionary" />
       </Parameters>
       <Docs>
-        <param name="inputParameters">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs" /> class using the specified input parameters collection.</para>
+        </summary>
+        <param name="inputParameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Specialized.IOrderedDictionary" /> of <see cref="T:System.Web.UI.WebControls.Parameter" /> objects that represent the names of the parameters of the business object method and their associated values. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +183,17 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Parameters can be passed to the business object method by reference or by value. If you use an <see cref="T:System.Web.UI.WebControls.ObjectDataSourceMethodEventHandler" /> object to handle the <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Selecting" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Updating" />, <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Inserting" />, or <see cref="E:System.Web.UI.WebControls.ObjectDataSourceView.Deleting" /> events, you can access and manipulate these parameters using the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceMethodEventArgs.InputParameters" /> property. Any changes to the parameters in this dictionary will affect which method overload is called for the operation.  When the <see cref="P:System.Web.UI.WebControls.ObjectDataSource.DataObjectTypeName" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control is set, you can modify only the data object properties for the items in this dictionary; you cannot add or remove parameters. For more information, see <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Delete" />.</para>
+          <para>Parameters that are passed by reference are returned in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs.OutputParameters" /> property of the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceStatusEventArgs" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection that contains business object method parameters and their values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

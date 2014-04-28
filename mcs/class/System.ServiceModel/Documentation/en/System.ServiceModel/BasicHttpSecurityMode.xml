@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BasicHttpSecurityMode" FullName="System.ServiceModel.BasicHttpSecurityMode">
   <TypeSignature Language="C#" Value="public enum BasicHttpSecurityMode" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed BasicHttpSecurityMode extends System.Enum" />
@@ -9,8 +10,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Security in this context means message protection (integrity and confidentiality) as well as client and service authentication.</para>
+      <para>Actual protection requirements (the specific parts of SOAP messages that must be signed or signed and encrypted) are controlled through attributes on the service contract or through properties in the contract description. Properties on the binding do not control what is being signed or encrypted: a binding only delivers the general capability of signing and encrypting. </para>
+      <para>The default behavior for the <see cref="T:System.ServiceModel.BasicHttpBinding" /> is <see cref="F:System.ServiceModel.BasicHttpSecurityMode.None" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the types of security that can be used with the system-provided <see cref="T:System.ServiceModel.BasicHttpBinding" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Message">
@@ -24,7 +33,10 @@
         <ReturnType>System.ServiceModel.BasicHttpSecurityMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Security is provided using SOAP message security. For the <see cref="T:System.ServiceModel.BasicHttpBinding" />, the system requires that the server certificate be provided to the client separately. The valid client credential types for this binding are UserName and Certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -38,7 +50,10 @@
         <ReturnType>System.ServiceModel.BasicHttpSecurityMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SOAP message is not secured during transfer. This is the default behavior.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Transport">
@@ -52,7 +67,10 @@
         <ReturnType>System.ServiceModel.BasicHttpSecurityMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Security is provided using HTTPS. The service must be configured with SSL certificates. The SOAP message is protected as a whole using HTTPS. The service is authenticated by the client using the service’s SSL certificate. The client authentication is controlled through the <see cref="P:System.ServiceModel.HttpTransportSecurity.ClientCredentialType" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransportCredentialOnly">
@@ -66,7 +84,10 @@
         <ReturnType>System.ServiceModel.BasicHttpSecurityMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This mode does not provide message integrity and confidentiality. It provides only HTTP-based client authentication. Use this mode with caution. It should be used in environments where the transfer security is being provided by other means (such as IPSec) and only client authentication is provided by the indigo1 infrastructure.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransportWithMessageCredential">
@@ -80,7 +101,10 @@
         <ReturnType>System.ServiceModel.BasicHttpSecurityMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Integrity, confidentiality and server authentication are provided by HTTPS. The service must be configured with a certificate. Client authentication is provided by means of SOAP message security. This mode is applicable when the user is authenticating with a UserName or Certificate credential and there is an existing HTTPS deployment for securing message transfer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

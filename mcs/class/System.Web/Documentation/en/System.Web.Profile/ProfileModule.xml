@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProfileModule" FullName="System.Web.Profile.ProfileModule">
   <TypeSignature Language="C#" Value="public sealed class ProfileModule : System.Web.IHttpModule" />
   <AssemblyInfo>
@@ -13,9 +14,28 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When the user profile is enabled, ASP.NET uses the <see cref="T:System.Web.Profile.ProfileModule" /> to create the user profile and store it in the <see cref="P:System.Web.HttpContext.Profile" /> property of the current <see cref="T:System.Web.HttpContext" />.</para>
+      <para>The <see cref="T:System.Web.Profile.ProfileModule" /> exposes the following events you can handle to configure authentication in your application:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="E:System.Web.Profile.ProfileModule.MigrateAnonymous" /> event, to migrate profile settings from an anonymous profile to an authenticated profile when an anonymous user logs in.</para>
+        </item>
+        <item>
+          <para>The <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event, to customize how the user profile is created.</para>
+        </item>
+        <item>
+          <para>The <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event, to control how the user profile is saved when the <see cref="P:System.Web.Profile.ProfileManager.AutomaticSaveEnabled" /> property is set to true.</para>
+        </item>
+      </list>
+      <para>For information about enabling the user profile, see <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">&lt;profile&gt; Element for &lt;system.web&gt;</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages the creation of the user profile and profile events. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +43,16 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is not intended to be called from application code.</para>
+          <para>An <see cref="T:System.Web.HttpApplication" /> is created when an ASP.NET application is started. The <see cref="T:System.Web.HttpApplication" /> calls the <see cref="T:System.Web.Profile.ProfileModule" /> constructor to create the <see cref="T:System.Web.Profile.ProfileModule" /> for the application. The <see cref="T:System.Web.Profile.ProfileModule" /> is specified in the configuration for an application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Profile.ProfileModule" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,9 +66,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+          <para>An <see cref="T:System.Web.HttpApplication" /> is created when an ASP.NET application is started. The <see cref="T:System.Web.HttpApplication" /> creates and initializes the <see cref="T:System.Web.Profile.ProfileModule" /> for the application and calls the <see cref="M:System.Web.Profile.ProfileModule.Dispose" /> method when the object is released. The <see cref="T:System.Web.Profile.ProfileModule" /> is specified in the configuration for an application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Web.Profile.ProfileModule" />. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +91,18 @@
         <Parameter Name="app" Type="System.Web.HttpApplication" />
       </Parameters>
       <Docs>
-        <param name="app">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be called from application code.</para>
+          <para>An <see cref="T:System.Web.HttpApplication" /> is created when an ASP.NET application is started. The <see cref="T:System.Web.HttpApplication" /> calls the <see cref="M:System.Web.Profile.ProfileModule.Init(System.Web.HttpApplication)" /> method when it creates the <see cref="T:System.Web.Profile.ProfileModule" /> for the application. The <see cref="T:System.Web.Profile.ProfileModule" /> is specified in the configuration for an application.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calls initialization code when a <see cref="T:System.Web.Profile.ProfileModule" /> object is created.</para>
+        </summary>
+        <param name="app">
+          <attribution license="cc4" from="Microsoft" modified="false" />The current application. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -73,9 +115,17 @@
         <ReturnType>System.Web.Profile.ProfileMigrateEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can access the <see cref="E:System.Web.Profile.ProfileModule.MigrateAnonymous" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class in the Global.asax file for your ASP.NET application by using the Profile_MigrateAnonymous global event, as shown in the example for this topic.</para>
+          <para>You can use the <see cref="E:System.Web.Profile.ProfileModule.MigrateAnonymous" /> event to copy profile property values from an anonymous profile to an authenticated profile when a user who has been anonymously using your application logs in.</para>
+          <para>When an application that has the user profile enabled is started, ASP.NET creates a new class of type ProfileCommon, which inherits from the <see cref="T:System.Web.Profile.ProfileBase" /> class. Strongly typed accessors are added to the ProfileCommon class for each property defined in the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration section. A GetProfile method enables you to retrieve a ProfileCommon object based on a user name. You can use the GetProfile method of the current, authenticated profile to retrieve the property values of the anonymous profile. The anonymous property values can then be copied to the current profile for the authenticated user.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the anonymous user for a profile logs in.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -88,9 +138,16 @@
         <ReturnType>System.Web.Profile.ProfileEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event is raised during the <see cref="E:System.Web.HttpApplication.AcquireRequestState" /> event. You can access the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class in the Global.asax file for your ASP.NET application using the Profile_Personalize global event as shown in the example for this topic.</para>
+          <para>You can use the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event to specify a custom user profile. If the <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property value specified for the <see cref="T:System.Web.Profile.ProfileEventHandler" /> event handler for the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event is set to a value that is not null when the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event ends, then the <see cref="T:System.Web.Profile.ProfileModule" /> will use the specified value of the <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property as the value of the <see cref="P:System.Web.HttpContext.Profile" /> property of the current <see cref="T:System.Web.HttpContext" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the user profile is created.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -103,9 +160,18 @@
         <ReturnType>System.Web.Profile.ProfileAutoSaveEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event is raised at the end of page execution if the <see cref="P:System.Web.Profile.ProfileManager.AutomaticSaveEnabled" /> property is true. You can access the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class in the Global.asax file for your ASP.NET application using the Profile_ProfileAutoSaving global event, as shown in the example for this topic.</para>
+          <para>The <see cref="M:System.Configuration.SettingsBase.Save" /> method checks the <see cref="P:System.Configuration.SettingsPropertyValue.IsDirty" /> property value for each <see cref="T:System.Configuration.SettingsPropertyValue" /> in the user profile to determine whether properties that are made up of primitive types, strings, or <see cref="T:System.DateTime" /> objects have been changed. The <see cref="M:System.Configuration.SettingsBase.Save" /> method cannot explicitly determine whether a custom class has changed. You can use the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event to determine whether a custom object has been changed and then either to continue with the automatic save for modified objects or to cancel the automatic save if no objects have been modified.</para>
+          <para>To cancel the automatic profile save operation, set the <see cref="P:System.Web.Profile.ProfileAutoSaveEventArgs.ContinueWithProfileAutoSave" /> property to false in the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event; otherwise, set the <see cref="P:System.Web.Profile.ProfileAutoSaveEventArgs.ContinueWithProfileAutoSave" /> property to true.</para>
+          <para>There may be multiple subscribers to the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event. The <see cref="T:System.Web.Profile.ProfileModule" /> will use the last value that the <see cref="P:System.Web.Profile.ProfileAutoSaveEventArgs.ContinueWithProfileAutoSave" /> property is set to. As a result, it is recommended that you explicitly set the <see cref="P:System.Web.Profile.ProfileAutoSaveEventArgs.ContinueWithProfileAutoSave" /> property in the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event whether you are canceling or continuing with the automatic save, as you may need to overwrite the value set by an earlier subscriber. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs at the end of page execution if automatic profile saving is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

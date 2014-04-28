@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPv6MulticastOption" FullName="System.Net.Sockets.IPv6MulticastOption">
   <TypeSignature Language="C#" Value="public class IPv6MulticastOption" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit IPv6MulticastOption extends System.Object" />
@@ -12,8 +13,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains option values for joining an IPv6 multicast group.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -29,9 +33,13 @@
         <Parameter Name="group" Type="System.Net.IPAddress" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new version of the <see cref="T:System.Net.Sockets.IPv6MulticastOption" /> class for the specified IP multicast group.</para>
+        </summary>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.IPAddress" /> of the multicast group. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -48,10 +56,18 @@
         <Parameter Name="ifindex" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="group">To be added.</param>
-        <param name="ifindex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="ifindex" /> parameter specifies the interface on which data is received or sent.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Sockets.IPv6MulticastOption" /> class with the specified IP multicast group and the local interface address.</para>
+        </summary>
+        <param name="group">
+          <attribution license="cc4" from="Microsoft" modified="false" />The group <see cref="T:System.Net.IPAddress" />. </param>
+        <param name="ifindex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local interface address. </param>
       </Docs>
     </Member>
     <Member MemberName="Group">
@@ -67,9 +83,12 @@
         <ReturnType>System.Net.IPAddress</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the IP address of a multicast group.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InterfaceIndex">
@@ -85,9 +104,15 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property specifies the interface on which data is received or sent.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the interface index that is associated with a multicast group.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

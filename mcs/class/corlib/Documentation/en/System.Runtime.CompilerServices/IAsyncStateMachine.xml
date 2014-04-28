@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IAsyncStateMachine" FullName="System.Runtime.CompilerServices.IAsyncStateMachine">
   <TypeSignature Language="C#" Value="public interface IAsyncStateMachine" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IAsyncStateMachine" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents state machines that are generated for asynchronous methods. This type is intended for compiler use only.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="MoveNext">
@@ -23,8 +27,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves the state machine to its next state.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetStateMachine">
@@ -41,9 +48,13 @@
         <Parameter Name="stateMachine" Type="System.Runtime.CompilerServices.IAsyncStateMachine" />
       </Parameters>
       <Docs>
-        <param name="stateMachine">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Configures the state machine with a heap-allocated replica.</para>
+        </summary>
+        <param name="stateMachine">
+          <attribution license="cc4" from="Microsoft" modified="false" />The heap-allocated replica.</param>
       </Docs>
     </Member>
   </Members>

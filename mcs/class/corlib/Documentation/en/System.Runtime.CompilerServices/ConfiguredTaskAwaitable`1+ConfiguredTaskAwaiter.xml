@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConfiguredTaskAwaitable&lt;TResult&gt;+ConfiguredTaskAwaiter" FullName="System.Runtime.CompilerServices.ConfiguredTaskAwaitable&lt;TResult&gt;+ConfiguredTaskAwaiter">
   <TypeSignature Language="C#" Value="public struct ConfiguredTaskAwaitable&lt;TResult&gt;.ConfiguredTaskAwaiter : System.Runtime.CompilerServices.ICriticalNotifyCompletion" />
   <TypeSignature Language="ILAsm" Value=".class nested public sequential ansi sealed beforefieldinit ConfiguredTaskAwaitable`1/ConfiguredTaskAwaiter&lt;TResult&gt; extends System.ValueType implements class System.Runtime.CompilerServices.ICriticalNotifyCompletion, class System.Runtime.CompilerServices.INotifyCompletion" />
@@ -17,8 +18,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This type is intended for compiler use; do not use it directly in your code.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an awaitable object that enables configured awaits on a task.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GetResult">

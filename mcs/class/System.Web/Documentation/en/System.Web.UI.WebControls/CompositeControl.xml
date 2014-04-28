@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CompositeControl" FullName="System.Web.UI.WebControls.CompositeControl">
   <TypeSignature Language="C#" Value="public abstract class CompositeControl : System.Web.UI.WebControls.WebControl, System.Web.UI.INamingContainer, System.Web.UI.WebControls.ICompositeControlDesignerAccessor" />
   <AssemblyInfo>
@@ -21,9 +22,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.CompositeControl" /> class is an abstract class that provides naming container and control designer functionality for custom controls that encompass child controls in their entirety or use the functionality of other controls. This class is inherited by controls such as <see cref="T:System.Web.UI.WebControls.Login" />, and <see cref="T:System.Web.UI.WebControls.Wizard" />. You cannot use this class directly.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.CompositeControl" /> class implements the <see cref="T:System.Web.UI.INamingContainer" /> interface. This is required to ensure that all child control ID attributes are unique, and can be located on post back for data binding.</para>
+      <para>To create a custom composite control, derive from the <see cref="T:System.Web.UI.WebControls.CompositeControl" /> class. The functionality this class provides is built-in verification that child controls have been created prior to being accessed and it enables the design-time environment to recreate the collection of child controls. The <see cref="P:System.Web.UI.WebControls.CompositeControl.Controls" /> property ensures that all child controls have been created prior to accessing the <see cref="T:System.Web.UI.ControlCollection" />. The <see cref="M:System.Web.UI.WebControls.CompositeControl.DataBind" /> method verifies that all child controls have been created prior to binding them to a data source.</para>
+      <para>Control developers can use the <see cref="T:System.Web.UI.Design.WebControls.CompositeControlDesigner" /> class to create a custom designer for a composite control derived from <see cref="T:System.Web.UI.WebControls.CompositeControl" />. A control designer is a class that defines how a control is displayed and manipulated in design view. For more information, see <see cref="T:System.Web.UI.Design.WebControls.CompositeControlDesigner" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Implements the basic functionality required by Web controls that contain child controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,9 +41,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.CompositeControl" /> constructor is called by ASP.NET to create an instance of the <see cref="T:System.Web.UI.WebControls.CompositeControl" />. This constructor is not intended to be used from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.CompositeControl" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -46,10 +62,17 @@
         <ReturnType>System.Web.UI.ControlCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.CompositeControl.Controls" /> property overrides the base implementation to ensure that all child controls have been created prior to returning the <see cref="T:System.Web.UI.ControlCollection" /> object.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.CompositeControl.Controls" /> property allows you to programmatically access the <see cref="T:System.Web.UI.ControlCollection" /> for the <see cref="T:System.Web.UI.WebControls.CompositeControl" />. You can add controls to, or remove controls from the collection, and iterate through the controls in the collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.ControlCollection" /> object that represents the child controls in a <see cref="T:System.Web.UI.WebControls.CompositeControl" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -63,9 +86,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CompositeControl.DataBind" /> method binds a data source to the <see cref="T:System.Web.UI.WebControls.CompositeControl" /> control and all its child controls. This <see cref="M:System.Web.UI.WebControls.CompositeControl.DataBind" /> method overrides its base implementation to verify that all child controls have been created prior to binding them to a data source.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds a data source to the <see cref="T:System.Web.UI.WebControls.CompositeControl" /> and all its child controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -79,9 +108,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CompositeControl.RecreateChildControls" /> method is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Recreates the child controls in a control derived from <see cref="T:System.Web.UI.WebControls.CompositeControl" />. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -101,8 +136,14 @@
       </Parameters>
       <Docs>
         <param name="w">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.CompositeControl.Render(System.Web.UI.HtmlTextWriter)" /> method writes the rendered content of the control and its child controls to the client using the specified <see cref="T:System.Web.UI.HtmlTextWriter" />. This method overrides the base implementation to ensure that all child controls in the <see cref="P:System.Web.UI.WebControls.CompositeControl.Controls" /> collection are created and then renders the control and its child controls using the base <see cref="M:System.Web.UI.Control.Render(System.Web.UI.HtmlTextWriter)" /> and <see cref="M:System.Web.UI.Control.RenderChildren(System.Web.UI.HtmlTextWriter)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the <see cref="T:System.Web.UI.WebControls.CompositeControl" /> content to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object, for display on the client.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.WebControls.ICompositeControlDesignerAccessor.RecreateChildControls">
@@ -116,8 +157,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables a designer to recreate the composite control's collection of child controls in the design-time environment.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

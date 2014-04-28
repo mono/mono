@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeAssignStatement" FullName="System.CodeDom.CodeAssignStatement">
   <TypeSignature Language="C#" Value="public class CodeAssignStatement : System.CodeDom.CodeStatement" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeAssignStatement extends System.CodeDom.CodeStatement" />
@@ -23,8 +24,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeAssignStatement" /> can be used to represent a statement that assigns the value of an object to another object, or a reference to another reference. Simple assignment statements are usually of the form " <paramref name="value1" /> = <paramref name="value2" /> ", where <paramref name="value1" /> is the object being assigned to, and <paramref name="value2" /> is being assigned. The <see cref="P:System.CodeDom.CodeAssignStatement.Left" /> property indicates the object to assign to. The <see cref="P:System.CodeDom.CodeAssignStatement.Right" /> property indicates the object to assign.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a simple assignment statement.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +47,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeAssignStatement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,10 +69,15 @@
         <Parameter Name="right" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="left">To be added: an object of type 'CodeExpression'</param>
-        <param name="right">To be added: an object of type 'CodeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeAssignStatement" /> class using the specified expressions.</para>
+        </summary>
+        <param name="left">
+          <attribution license="cc4" from="Microsoft" modified="false" />The variable to assign to. </param>
+        <param name="right">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to assign. </param>
       </Docs>
     </Member>
     <Member MemberName="Left">
@@ -79,9 +95,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the expression representing the object or reference to assign to.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Right">
@@ -99,9 +118,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the expression representing the object or reference to assign.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

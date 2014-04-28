@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RelatedImageListAttribute" FullName="System.Windows.Forms.RelatedImageListAttribute">
   <TypeSignature Language="C#" Value="public sealed class RelatedImageListAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about using attributes, see <format type="text/html"><a href="30386922-1e00-4602-9ebf-526b271a8b87">Extending Metadata Using Attributes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates which <see cref="T:System.Windows.Forms.ImageList" /> a property is related to.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,9 +35,16 @@
         <Parameter Name="relatedImageList" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="relatedImageList">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="relatedImageList" /> parameter can refer to a property of the current object, or a property of a property of the current object. For example, if you have a <see cref="T:System.Windows.Forms.ListViewItem" /> object with a <see cref="P:System.Windows.Forms.ListViewItem.ListView" /> property set to a containing <see cref="T:System.Windows.Forms.ListView" /> object, and the containing <see cref="T:System.Windows.Forms.ListView" /> object has an <see cref="P:System.Windows.Forms.ListView.SmallImageList" /> property, you could pass "ListView.SmallImageList" as the <paramref name="relatedImageList" /> value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.RelatedImageListAttribute" /> class. </para>
+        </summary>
+        <param name="relatedImageList">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Windows.Forms.ImageList" /> the property relates to.</param>
       </Docs>
     </Member>
     <Member MemberName="RelatedImageList">
@@ -43,9 +57,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.RelatedImageListAttribute.RelatedImageList" /> property can refer to a property of the current object, or a property of a property of the current object. For example, if you have a <see cref="T:System.Windows.Forms.ListViewItem" /> object with a <see cref="P:System.Windows.Forms.ListViewItem.ListView" /> property set to a containing <see cref="T:System.Windows.Forms.ListView" /> object, and the containing <see cref="T:System.Windows.Forms.ListView" /> object has an <see cref="P:System.Windows.Forms.ListView.SmallImageList" /> property, the <see cref="P:System.Windows.Forms.RelatedImageListAttribute.RelatedImageList" /> property would be set to "ListView.SmallImageList".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the related <see cref="T:System.Windows.Forms.ImageList" /> </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

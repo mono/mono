@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CspProviderFlags" FullName="System.Security.Cryptography.CspProviderFlags">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum CspProviderFlags" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CspProviderFlags extends System.Enum" />
@@ -21,8 +22,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Cryptographic Service Provider (CSP) Provider Flags.</summary>
     <remarks>On Mono the informations are only used to determine where will be stored the key pair when (and if) it is persisted.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies flags that modify the behavior of the cryptographic service providers (CSP).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CreateEphemeralKey">
@@ -36,7 +40,16 @@
         <ReturnType>System.Security.Cryptography.CspProviderFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <block subset="none" type="note">
+            <para>The <see cref="F:System.Security.Cryptography.CspProviderFlags.CreateEphemeralKey" /> flag provides temporary keys with more reliable cleanup. If this flag is not used, the common language runtime (CLR) generates a randomly named key when an RSA object is created. When the object is finalized or disposed of, the key is deleted. When impersonation is in effect, not explicitly calling Dispose can potentially create a problem. For example, if you use impersonation, create an RSA object, and do not dispose of it, the finalizer thread (which is not impersonating) can fail to delete the key, and then throws an exception. This exception is unhandled and can terminate the process. The resources allocated to the key are not recovered, resulting in a memory leak. The <see cref="T:System.Security.Permissions.KeyContainerPermission" /> demand is suppressed by this flag.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Create a temporary key that is released when the associated Rivest-Shamir-Adleman (RSA) object is closed. Do not use this flag if you want your key to be independent of the RSA object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoFlags">
@@ -51,8 +64,11 @@
         <ReturnType>System.Security.Cryptography.CspProviderFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not specify any settings.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoPrompt">
@@ -67,8 +83,11 @@
         <ReturnType>System.Security.Cryptography.CspProviderFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Prevent the CSP from displaying any user interface (UI) for this context.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseArchivableKey">
@@ -83,8 +102,11 @@
         <ReturnType>System.Security.Cryptography.CspProviderFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allow a key to be exported for archival or recovery.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseDefaultKeyContainer">
@@ -101,8 +123,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Use the "default" container for the user (or the machine).</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use key information from the default key container.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseExistingKey">
@@ -118,7 +143,10 @@
         <ReturnType>System.Security.Cryptography.CspProviderFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use key information from the current key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseMachineKeyStore">
@@ -135,8 +163,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Load an existing key pair, or store a newly generated one, from the machine key containers. By default key pairs are conserved by users.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use key information from the computer's key store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseNonExportableKey">
@@ -151,8 +182,11 @@
         <ReturnType>System.Security.Cryptography.CspProviderFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use key information that cannot be exported.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseUserProtectedKey">
@@ -167,8 +201,11 @@
         <ReturnType>System.Security.Cryptography.CspProviderFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Notify the user through a dialog box or another method when certain actions are attempting to use a key.  This flag is not compatible with the <see cref="F:System.Security.Cryptography.CspProviderFlags.NoPrompt" /> flag.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

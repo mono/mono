@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ViewStateEncryptionMode" FullName="System.Web.UI.ViewStateEncryptionMode">
   <TypeSignature Language="C#" Value="public enum ViewStateEncryptionMode" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.ViewStateEncryptionMode" /> enumeration provides values for specifying whether the view-state information in a <see cref="T:System.Web.UI.Page" /> object is encrypted. The <see cref="T:System.Web.UI.ViewStateEncryptionMode" /> value can be set only in the <format type="text/html"><a href="f06cf9e5-22bb-461d-8b8f-549e53ff40a4">@ Page</a></format> directive or in the <format type="text/html"><a href="4123bb66-3fe4-4d62-b70e-33758656b458">pages</a></format> section of the configuration file.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies whether view-state information is encrypted.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Always">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.UI.ViewStateEncryptionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The view-state information is always encrypted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.UI.ViewStateEncryptionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The view-state information is encrypted if a control requests encryption by calling the <see cref="M:System.Web.UI.Page.RegisterRequiresViewStateEncryption" /> method. This is the default.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Web.UI.ViewStateEncryptionMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The view-state information is never encrypted, even if a control requests it.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CommonServiceBehaviorElement" FullName="System.ServiceModel.Configuration.CommonServiceBehaviorElement">
   <TypeSignature Language="C#" Value="public class CommonServiceBehaviorElement : System.ServiceModel.Configuration.ServiceModelExtensionCollectionElement&lt;System.ServiceModel.Configuration.BehaviorExtensionElement&gt;, System.Collections.Generic.ICollection&lt;System.ServiceModel.Configuration.BehaviorExtensionElement&gt;, System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Configuration.BehaviorExtensionElement&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi CommonServiceBehaviorElement extends System.ServiceModel.Configuration.ServiceModelExtensionCollectionElement`1&lt;class System.ServiceModel.Configuration.BehaviorExtensionElement&gt; implements class System.Collections.Generic.ICollection`1&lt;class System.ServiceModel.Configuration.BehaviorExtensionElement&gt;, class System.Collections.Generic.IEnumerable`1&lt;class System.ServiceModel.Configuration.BehaviorExtensionElement&gt;, class System.Collections.IEnumerable" />
@@ -20,8 +21,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the configuration element that contains a list of service behaviors that is applied to all indigo1 endpoints on the machine before the behaviors in the serviceBehaviors section are applied.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,8 +37,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.CommonServiceBehaviorElement" /> class.  </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

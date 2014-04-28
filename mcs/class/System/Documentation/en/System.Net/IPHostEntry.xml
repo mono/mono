@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPHostEntry" FullName="System.Net.IPHostEntry" FullNameSP="System_Net_IPHostEntry" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public IPHostEntry extends System.Object" />
   <TypeSignature Language="C#" Value="public class IPHostEntry" />
@@ -17,13 +18,6 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>
-      <para>Provides a container class for Internet host address information.</para>
-    </summary>
-    <remarks>
-      <para>The <see cref="T:System.Net.IPHostEntry" /> class associates a Domain Name System (DNS) host
-   name with an array of aliases and an array of matching IP addresses.</para>
-    </remarks>
     <example>
       <para> The following example queries the DNS database for information
       on the host "www.contoso.com" and
@@ -53,6 +47,15 @@ public class IPHostEntryTest {
         <para>Alias www.contoso.com == 207.46.230.186 </para>
       </c>
     </example>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.IPHostEntry" /> class associates a Domain Name System (DNS) host name with an array of aliases and an array of matching IP addresses.</para>
+      <para>The <see cref="T:System.Net.IPHostEntry" /> class is used as a helper class with the <see cref="T:System.Net.Dns" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a container class for Internet host address information.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -68,8 +71,11 @@ public class IPHostEntryTest {
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Constructs a new instance of the <see cref="T:System.Net.IPHostEntry" /> class.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.IPHostEntry" /> class.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -88,15 +94,16 @@ public class IPHostEntryTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets a list of IP addresses associated with a host.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.Net.IPAddress" /> array containing IP addresses that resolve
  to the host names contained in the <see cref="P:System.Net.IPHostEntry.Aliases" />
  property. </para>
         </value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a list of IP addresses that are associated with a host.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -115,14 +122,15 @@ public class IPHostEntryTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para>Gets or sets a list of aliases associated with a host.</para>
-        </summary>
         <value>
           <para> A <see cref="T:System.String" /> array containing DNS names that resolve to the IP addresses
  in the <see cref="P:System.Net.IPHostEntry.AddressList" /> property.</para>
         </value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a list of aliases that are associated with a host.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -141,22 +149,18 @@ public class IPHostEntryTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>
-          <para> Gets or sets the DNS
-      name of the host.</para>
-        </summary>
         <value>
           <para>A <see cref="T:System.String" /> containing the DNS host name that corresponds to
    the address and alias information contained in the current instance.</para>
         </value>
         <remarks>
-          <para>
-            <block subset="none" type="note">The <see cref="P:System.Net.IPHostEntry.HostName" /> property contains the primary host name for
-   a server. If the DNS entry for the host defines additional aliases, they are
-   available via the <see cref="P:System.Net.IPHostEntry.Aliases" />
-   property.</block>
-          </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Net.IPHostEntry.HostName" /> property contains the primary host name for a server. If the DNS entry for the server defines additional aliases, they will be available in the <see cref="P:System.Net.IPHostEntry.Aliases" /> property.</para>
         </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the DNS name of the host.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

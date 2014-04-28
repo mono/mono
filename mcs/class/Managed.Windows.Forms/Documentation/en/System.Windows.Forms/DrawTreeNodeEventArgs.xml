@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DrawTreeNodeEventArgs" FullName="System.Windows.Forms.DrawTreeNodeEventArgs">
   <TypeSignature Language="C#" Value="public class DrawTreeNodeEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="E:System.Windows.Forms.TreeView.DrawNode" /> event to customize the appearance of nodes in a <see cref="T:System.Windows.Forms.TreeView" /> control using owner drawing.</para>
+      <para>The <see cref="E:System.Windows.Forms.TreeView.DrawNode" /> event is raised by a <see cref="T:System.Windows.Forms.TreeView" /> control when its <see cref="P:System.Windows.Forms.TreeView.DrawMode" /> property is set to <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll" /> or <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawText" /> and a node is displayed or updated. The <see cref="T:System.Windows.Forms.DrawTreeNodeEventArgs" /> passed to the event handler contains information about the node to draw as well as providing methods to help you draw the node.</para>
+      <para>Use the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.State" /> or <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Node" /> properties to retrieve information about the node to draw. Use the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Graphics" /> property to do the actual drawing within the area specified by the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Bounds" /> property. To make the operating system draw a node that does not need to be owner drawn, set the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.DrawDefault" /> property to true.</para>
+      <para>When the <see cref="P:System.Windows.Forms.TreeView.DrawMode" /> property is set to <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawText" />, the area indicated by the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Bounds" /> property includes the label portion of the node only. When the <see cref="P:System.Windows.Forms.TreeView.DrawMode" /> property is set to <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll" />, the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Bounds" /> area includes the entire node, including the area typically used for icons, checkboxes, plus and minus signs, and lines connecting the nodes.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.TreeView.DrawNode" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,13 +34,20 @@
         <Parameter Name="state" Type="System.Windows.Forms.TreeNodeStates" />
       </Parameters>
       <Docs>
-        <param name="graphics">To be added.</param>
-        <param name="node">To be added.</param>
-        <param name="bounds">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DrawTreeNodeEventArgs" /> class.</para>
+        </summary>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> surface on which to draw. </param>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.TreeNode" /> to draw. </param>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Rectangle" /> within which to draw. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Windows.Forms.TreeNodeStates" /> values indicating the current state of the <see cref="T:System.Windows.Forms.TreeNode" /> to draw. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,10 +60,17 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The location specified by this property is relative to the upper-left corner of the <see cref="T:System.Windows.Forms.TreeView" /> control.</para>
+          <para>When the <see cref="P:System.Windows.Forms.TreeView.DrawMode" /> property is set to <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawText" />, the area specified by the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Bounds" /> property is the region in which a node can be clicked to select it. If you draw outside this hit test region, you should provide your own code for selecting a node when its visible area is clicked. You may also want to provide your own hit test code when the <see cref="P:System.Windows.Forms.TreeView.DrawMode" /> property is set to <see cref="F:System.Windows.Forms.TreeViewDrawMode.OwnerDrawAll" />. In this mode, the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Bounds" /> property encompasses the whole node across the entire width of the <see cref="T:System.Windows.Forms.TreeView" /> control, rather than the just hit test region.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size and location of the <see cref="T:System.Windows.Forms.TreeNode" /> to draw.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +83,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set this property to true for nodes that you do not want to customize when you handle the <see cref="E:System.Windows.Forms.TreeView.DrawNode" /> event. For example, this is useful when you want to customize only nodes that are in a specific state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Windows.Forms.TreeNode" /> should be drawn by the operating system rather than being owner drawn.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,10 +105,16 @@
         <ReturnType>System.Drawing.Graphics</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Graphics" /> class provides properties and methods useful for drawing on the display device.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Graphics" /> object used to draw the <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -91,10 +127,16 @@
         <ReturnType>System.Windows.Forms.TreeNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to access the <see cref="T:System.Windows.Forms.TreeNode" /> object to draw. This is useful when the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.State" /> property does not provide adequate information to meet your needs. The <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.State" /> property provides only basic state information that you can use, for example, to determine whether a node is selected, checked, or focused. The <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Node" /> property, on the other hand, allows you to access all members of the <see cref="T:System.Windows.Forms.TreeNode" /> object. You must access the node directly, for example, when you want to determine its expansion state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.TreeNode" /> to draw.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -107,10 +149,16 @@
         <ReturnType>System.Windows.Forms.TreeNodeStates</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this property to check whether the <see cref="T:System.Windows.Forms.TreeNode" /> object to draw is in a particular state. This property provides only basic state information about the node. You can use this property, for example, to determine whether a node is selected, checked, or focused. If you need to know more, retrieve the node through the <see cref="P:System.Windows.Forms.DrawTreeNodeEventArgs.Node" /> property. For example, to determine whether the node is expanded, you must retrieve the node and check the <see cref="P:System.Windows.Forms.TreeNode.IsExpanded" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the current state of the <see cref="T:System.Windows.Forms.TreeNode" /> to draw.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

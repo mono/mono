@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UserNameServiceElement" FullName="System.ServiceModel.Configuration.UserNameServiceElement">
   <TypeSignature Language="C#" Value="public sealed class UserNameServiceElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit UserNameServiceElement extends System.Configuration.ConfigurationElement" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a configuration element that specifies a service's credentials based on username and password. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +27,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.UserNameServiceElement" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CachedLogonTokenLifetime">
@@ -43,9 +50,12 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum length of time a token is cached. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CacheLogonTokens">
@@ -64,9 +74,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether logon tokens are cached. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CustomUserNamePasswordValidatorType">
@@ -88,9 +101,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of custom username password validator used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IncludeWindowsGroups">
@@ -109,9 +125,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Setting this property to true has a performance impact as it results in a full group expansion. Set this property to false if you do not need to establish the list of groups a user belongs to.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether Windows groups are included in the security context. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxCachedLogonTokens">
@@ -133,9 +155,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of logon tokens to cache. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MembershipProviderName">
@@ -157,9 +182,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When using username ClientCredentialType on a binding, the usernames are mapped to Windows accounts by default. It is possible to override this behavior using this property, which provides the name of the <see cref="T:System.Web.Security.MembershipProvider" /> that specifies the relevant password validation logic.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a string that specifies the name of a member provider that provides password validation logic.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -194,9 +225,12 @@
         <ReturnType>System.ServiceModel.Security.UserNamePasswordValidationMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the manner in which username password is validated. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

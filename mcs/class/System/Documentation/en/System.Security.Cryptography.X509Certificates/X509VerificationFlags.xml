@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509VerificationFlags" FullName="System.Security.Cryptography.X509Certificates.X509VerificationFlags">
   <TypeSignature Language="C#" Value="public enum X509VerificationFlags" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed X509VerificationFlags extends System.Enum" />
@@ -15,9 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>These flags indicate the conditions under which chain verification should occur. For example, if an application does not require certificates time values in a chain to be valid, the <see cref="F:System.Security.Cryptography.X509Certificates.X509VerificationFlags.IgnoreNotTimeValid" /> flag can be used.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies conditions under which verification of certificates in the X509 chain should be conducted.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllFlags">
@@ -32,8 +39,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All flags pertaining to verification are included.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowUnknownCertificateAuthority">
@@ -48,8 +58,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore that the chain cannot be verified due to an unknown certificate authority (CA).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreCertificateAuthorityRevocationUnknown">
@@ -64,8 +77,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore that the certificate authority revocation is unknown when determining certificate verification.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreCtlNotTimeValid">
@@ -80,8 +96,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore that the certificate trust list (CTL) is not valid, for reasons such as the CTL has expired, when determining certificate verification.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreCtlSignerRevocationUnknown">
@@ -96,8 +115,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore that the certificate trust list (CTL) signer revocation is unknown when determining certificate verification.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreEndRevocationUnknown">
@@ -112,8 +134,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore that the end certificate (the user certificate) revocation is unknown when determining certificate verification.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreInvalidBasicConstraints">
@@ -128,8 +153,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore that the basic constraints are not valid when determining certificate verification.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreInvalidName">
@@ -144,8 +172,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore that the certificate has an invalid name when determining certificate verification.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreInvalidPolicy">
@@ -160,8 +191,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore that the certificate has invalid policy when determining certificate verification.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreNotTimeNested">
@@ -176,8 +210,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore that the CA (certificate authority) certificate and the issued certificate have validity periods that are not nested when verifying the certificate. For example, the CA cert can be valid from January 1 to December 1 and the issued certificate from January 2 to December 2, which would mean the validity periods are not nested.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreNotTimeValid">
@@ -192,8 +229,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore certificates in the chain that are not valid either because they have expired or they are not yet in effect when determining certificate validity.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreRootRevocationUnknown">
@@ -208,8 +248,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore that the root revocation is unknown when determining certificate verification.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreWrongUsage">
@@ -224,8 +267,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignore that the certificate was not issued for the current use when determining certificate verification.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoFlag">
@@ -240,8 +286,11 @@
         <ReturnType>System.Security.Cryptography.X509Certificates.X509VerificationFlags</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No flags pertaining to verification are included.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

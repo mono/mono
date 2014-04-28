@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewRowEventArgs" FullName="System.Windows.Forms.DataGridViewRowEventArgs">
   <TypeSignature Language="C#" Value="public class DataGridViewRowEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,77 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewRowEventArgs" /> class provides data for the following <see cref="T:System.Windows.Forms.DataGridView" /> events:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.DefaultValuesNeeded" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.NewRowNeeded" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.RowDefaultCellStyleChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.RowErrorTextChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.RowHeaderCellChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.RowHeightChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.RowMinimumHeightChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.RowUnshared" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.UserAddedRow" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.UserDeletedRow" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.RowContextMenuStripChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.RowDividerHeightChanged" />
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for row-related <see cref="T:System.Windows.Forms.DataGridView" /> events. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +90,17 @@
         <Parameter Name="dataGridViewRow" Type="System.Windows.Forms.DataGridViewRow" />
       </Parameters>
       <Docs>
-        <param name="dataGridViewRow">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor uses the <paramref name="dataGridViewRow" /> parameter value to initialize the <see cref="P:System.Windows.Forms.DataGridViewRowEventArgs.Row" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewRowEventArgs" /> class. </para>
+        </summary>
+        <param name="dataGridViewRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridViewRow" /> that the event occurred for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +113,13 @@
         <ReturnType>System.Windows.Forms.DataGridViewRow</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.DataGridViewRow" /> associated with the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

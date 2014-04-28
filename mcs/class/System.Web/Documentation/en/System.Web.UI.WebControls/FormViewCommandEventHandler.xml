@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FormViewCommandEventHandler" FullName="System.Web.UI.WebControls.FormViewCommandEventHandler">
   <TypeSignature Language="C#" Value="public delegate void FormViewCommandEventHandler(object sender, FormViewCommandEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,85 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.WebControls.FormView.ItemCommand" /> event is raised when a button within the <see cref="T:System.Web.UI.WebControls.FormView" /> control is clicked. This allows you to provide an event-handling method that performs a custom routine whenever this event occurs.</para>
+      <para>Buttons within a <see cref="T:System.Web.UI.WebControls.FormView" /> control can also invoke some of the built-in functionality of the control. To perform one of these operations, set the CommandName property of a button to one of the values in the following table.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>CommandName value</para>
+            </term>
+            <description>
+              <para>Description</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>"Cancel"</para>
+          </term>
+          <description>
+            <para>Cancels an edit or insert operation and returns the <see cref="T:System.Web.UI.WebControls.FormView" /> control to the mode specified by the <see cref="P:System.Web.UI.WebControls.FormView.DefaultMode" /> property. Raises the <see cref="E:System.Web.UI.WebControls.FormView.ModeChanged" /> and <see cref="E:System.Web.UI.WebControls.FormView.ModeChanging" /> events.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"Delete"</para>
+          </term>
+          <description>
+            <para>Deletes the current record. Raises the <see cref="E:System.Web.UI.WebControls.FormView.ItemDeleted" /> and <see cref="E:System.Web.UI.WebControls.FormView.ItemDeleting" /> events.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"Edit"</para>
+          </term>
+          <description>
+            <para>Puts the <see cref="T:System.Web.UI.WebControls.FormView" /> control in edit mode. Raises the <see cref="E:System.Web.UI.WebControls.FormView.ModeChanged" /> and <see cref="E:System.Web.UI.WebControls.FormView.ModeChanging" /> events.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"Insert"</para>
+          </term>
+          <description>
+            <para>Inserts the current record in the data source. Raises the <see cref="E:System.Web.UI.WebControls.FormView.ItemInserted" /> and <see cref="E:System.Web.UI.WebControls.FormView.ItemInserting" /> events.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"New"</para>
+          </term>
+          <description>
+            <para>Puts the <see cref="T:System.Web.UI.WebControls.FormView" /> control in insert mode. Raises the <see cref="E:System.Web.UI.WebControls.FormView.ModeChanged" /> and <see cref="E:System.Web.UI.WebControls.FormView.ModeChanging" /> events.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"Page"</para>
+          </term>
+          <description>
+            <para>Performs a paging operation. Set the CommandArgument property of the button to "First", "Last", "Next", "Prev", or a page number to specify the type of paging operation to perform. Raises the <see cref="E:System.Web.UI.WebControls.FormView.PageIndexChanged" /> and <see cref="E:System.Web.UI.WebControls.FormView.PageIndexChanging" /> events.</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>"Update"</para>
+          </term>
+          <description>
+            <para>Updates the current record in the data source. Raises the <see cref="E:System.Web.UI.WebControls.FormView.ItemUpdated" /> and <see cref="E:System.Web.UI.WebControls.FormView.ItemUpdating" /> events.</para>
+          </description>
+        </item>
+      </list>
+      <para>Although the <see cref="E:System.Web.UI.WebControls.FormView.ItemCommand" /> event is raised when a button listed in the previous table is clicked, it is recommended that you handle the events listed in the table for the operation.</para>
+      <para>When you create a <see cref="T:System.Web.UI.WebControls.FormViewCommandEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event-handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles the <see cref="E:System.Web.UI.WebControls.FormView.ItemCommand" /> event of a <see cref="T:System.Web.UI.WebControls.FormView" /> control. This class cannot be inherited. </para>
+    </summary>
   </Docs>
 </Type>

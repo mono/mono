@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StreamingContextStates" FullName="System.Runtime.Serialization.StreamingContextStates">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum StreamingContextStates" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed StreamingContextStates extends System.Enum" />
@@ -21,8 +22,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a set of flags that specifies the source or destination context for the stream during serialization.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -39,8 +43,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the serialized data can be transmitted to or received from any of the other contexts.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -57,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the object graph is being cloned. Users can assume that the cloned graph will continue to exist within the same process and be safe to access handles or other references to unmanaged resources.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CrossAppDomain">
@@ -75,8 +85,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the source or destination context is a different AppDomain. (For a description of AppDomains, see <format type="text/html"><a href="39E57D07-A740-4CD4-AE82-E119EA3856C1">[&lt;topic://cpconapplicationdomains&gt;]</a></format>).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CrossMachine">
@@ -93,8 +106,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the source or destination context is a different computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CrossProcess">
@@ -111,8 +127,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the source or destination context is a different process on the same computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="File">
@@ -129,8 +148,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the source or destination context is a file. Users can assume that files will last longer than the process that created them and not serialize objects in such a way that deserialization will require accessing any data from the current process.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Other">
@@ -147,8 +169,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the serialization context is unknown.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Persistence">
@@ -165,8 +190,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the source or destination context is a persisted store, which could include databases, files, or other backing stores. Users can assume that persisted data will last longer than the process that created the data and not serialize objects so that deserialization will require accessing any data from the current process.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Remoting">
@@ -183,8 +211,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the data is remoted to a context in an unknown location. Users cannot make any assumptions whether this is on the same computer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

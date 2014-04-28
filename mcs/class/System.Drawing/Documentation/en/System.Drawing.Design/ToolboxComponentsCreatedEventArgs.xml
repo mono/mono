@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolboxComponentsCreatedEventArgs" FullName="System.Drawing.Design.ToolboxComponentsCreatedEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class ToolboxComponentsCreatedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Drawing.Design.ToolboxItem.ComponentsCreated" /> event is raised when components are added to the toolbox. <see cref="T:System.Drawing.Design.ToolboxComponentsCreatedEventArgs" /> provides data indicating which component or components are being added.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Drawing.Design.ToolboxItem.ComponentsCreated" /> event that occurs when components are added to the toolbox.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +32,13 @@
         <Parameter Name="components" Type="System.ComponentModel.IComponent[]" />
       </Parameters>
       <Docs>
-        <param name="components">To be added: an object of type 'ComponentModel.IComponent []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Design.ToolboxComponentsCreatedEventArgs" /> class.</para>
+        </summary>
+        <param name="components">
+          <attribution license="cc4" from="Microsoft" modified="false" />The components to include in the toolbox. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,9 +52,12 @@
         <ReturnType>System.ComponentModel.IComponent[]</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ComponentModel.IComponent []'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an array containing the components to add to the toolbox.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

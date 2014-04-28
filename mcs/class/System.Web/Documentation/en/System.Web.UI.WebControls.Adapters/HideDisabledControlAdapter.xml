@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HideDisabledControlAdapter" FullName="System.Web.UI.WebControls.Adapters.HideDisabledControlAdapter">
   <TypeSignature Language="C#" Value="public class HideDisabledControlAdapter : System.Web.UI.WebControls.Adapters.WebControlAdapter" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.Adapters.HideDisabledControlAdapter" /> class adapts the associated <see cref="T:System.Web.UI.WebControls.WebControl" /> control to modify the default markup or behavior for a specific browser. You can extend the <see cref="T:System.Web.UI.WebControls.Adapters.HideDisabledControlAdapter" /> class to further customize rendering of the <see cref="T:System.Web.UI.WebControls.WebControl" /> control. </para>
+      <para>Adapters are compiled .NET Framework components that take over one or more stages in the life cycle of a page or control. Extending the <see cref="T:System.Web.UI.WebControls.Adapters.HideDisabledControlAdapter" /> class will provide access to the life-cycle stages of the <see cref="T:System.Web.UI.WebControls.WebControl" /> control. For more information, see <format type="text/html"><a href="4ff05ae9-4109-4352-929e-ad893895dbff">Architectural Overview of Adaptive Control Behavior</a></format>.</para>
+      <para>The initial request for an adapter causes the .NET Framework to search for a mapped adapter for the control given the characteristics of the requesting browser. Browser definition files are used by the <see cref="T:System.Web.HttpBrowserCapabilities" /> class to identify the characteristics of the client browser and map the adapter to the browser type. For more information, see <format type="text/html"><a href="4ff05ae9-4109-4352-929e-ad893895dbff">Architectural Overview of Adaptive Control Behavior</a></format>.</para>
+      <para>For a description of the adaptive rendering architecture of ASP.NET and a step-by-step walkthrough that shows how to implement a control adapter and map it to a control, see "Authoring ASP.NET Server Control Adapters: An Introduction" in the MSDN Library at <see cref="http://msdn.microsoft.com/library">http://msdn.microsoft.com/library</see>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides rendering capabilities for the associated Web control to modify the default markup or behavior for a specific browser.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +29,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework constructs an instance of the <see cref="T:System.Web.UI.WebControls.Adapters.HideDisabledControlAdapter" /> class. The initial request for an adapter causes the .NET Framework to search for a mapped adapter for the control given the characteristics of the requesting browser. Once found, the control holds a reference to the mapped adapter instance in its <see cref="P:System.Web.UI.Control.Adapter" /> property. For information on adapter mappings and browser definition files, see <format type="text/html"><a href="4ff05ae9-4109-4352-929e-ad893895dbff">Architectural Overview of Adaptive Control Behavior</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Adapters.HideDisabledControlAdapter" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -40,9 +56,19 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Adapters.HideDisabledControlAdapter.Render(System.Web.UI.HtmlTextWriter)" /> method writes the associated <see cref="T:System.Web.UI.WebControls.WebControl" /> control to the output stream as HTML. </para>
+          <para>By default, the .NET Framework calls on the Web server control's own <see cref="M:System.Web.UI.Control.Render(System.Web.UI.HtmlTextWriter)" /> method. However, once the <see cref="P:System.Web.UI.Control.Adapter" /> property of that control is set, the .NET Framework will execute the adapter's implementation of the <see cref="M:System.Web.UI.WebControls.Adapters.HideDisabledControlAdapter.Render(System.Web.UI.HtmlTextWriter)" /> event over that of the associated control.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.Adapters.HideDisabledControlAdapter.Render(System.Web.UI.HtmlTextWriter)" /> event is used to perform modifications to the markup code that is rendered to a device browser. Control properties should be set prior to this phase of the life cycle and only the actual markup creation for the control done here. Changes made to the control in this stage of the life cycle are not saved to view state. For saving changes made to the control, override the <see cref="M:System.Web.UI.Adapters.ControlAdapter.OnPreRender(System.EventArgs)" /> event.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.Adapters.HideDisabledControlAdapter.Render(System.Web.UI.HtmlTextWriter)" /> event also allows derived classes to handle the event without attaching a delegate, which is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the associated Web control to the output stream as HTML.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> containing methods to build and render the device-specific output. </param>
       </Docs>
     </Member>
   </Members>

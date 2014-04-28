@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServiceDescriptionFormatExtension" FullName="System.Web.Services.Description.ServiceDescriptionFormatExtension">
   <TypeSignature Language="C#" Value="public abstract class ServiceDescriptionFormatExtension" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In a derived class, the ServiceDescriptionFormatExtension class allows users to define extensibility elements in addition to those defined in the Web Services Description Language (WSDL) specification. Extensibility elements can be added to a <see cref="T:System.Web.Services.Description.ServiceDescription" /> at any of several levels within the class hierarchy. Thus many classes derived from the <see cref="T:System.Web.Services.Description.DocumentableItem" /> class (including the <see cref="T:System.Web.Services.Description.ServiceDescription" /> class) have an Extensions property, which returns a <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtensionCollection" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an extensibility element added to an XML Web service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +30,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,9 +49,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A derived class, representing an extensibility element added to an XML Web service, can be attached to a <see cref="T:System.Web.Services.Description.ServiceDescription" /> by using the <see cref="M:System.Web.Services.Description.ServiceDescriptionImporter.Import(System.CodeDom.CodeNamespace,System.CodeDom.CodeCompileUnit)" /> method (which is used by the wsdl.exe tool). You can also use a custom class derived from the <see cref="T:System.Web.Services.Description.SoapExtensionImporter" /> class to extend the import process to handle custom extensibility elements.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> is used by the import process when the extensibility element is imported.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -60,9 +76,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When overridden in a derived class, the class returned by this property will be a derived class within the <see cref="N:System.Web.Services.Description" /> namespace rather than the base <see cref="T:System.Object" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the parent of the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -77,9 +99,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="T:System.Web.Services.Description.ServiceDescriptionFormatExtension" /> is necessary for the action to which it refers.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

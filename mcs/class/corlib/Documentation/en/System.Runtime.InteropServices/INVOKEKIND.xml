@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="INVOKEKIND" FullName="System.Runtime.InteropServices.INVOKEKIND">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum INVOKEKIND" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed INVOKEKIND extends System.Enum" />
@@ -18,8 +19,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about INVOKEKIND, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.INVOKEKIND" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="INVOKE_FUNC">
@@ -36,8 +43,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The member is called using a normal function invocation syntax.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="INVOKE_PROPERTYGET">
@@ -54,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is invoked using a normal property-access syntax.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="INVOKE_PROPERTYPUT">
@@ -72,8 +85,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is invoked using a property value assignment syntax.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="INVOKE_PROPERTYPUTREF">
@@ -90,8 +106,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The function is invoked using a property reference assignment syntax.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

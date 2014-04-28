@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SelectedGridItemChangedEventArgs" FullName="System.Windows.Forms.SelectedGridItemChangedEventArgs">
   <TypeSignature Language="C#" Value="public class SelectedGridItemChangedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.PropertyGrid.SelectedGridItemChanged" /> event occurs when the user changes the <see cref="T:System.Windows.Forms.GridItem" /> that is selected in a <see cref="T:System.Windows.Forms.PropertyGrid" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.PropertyGrid.SelectedGridItemChanged" /> event of the <see cref="T:System.Windows.Forms.PropertyGrid" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,10 +29,15 @@
         <Parameter Name="newSel" Type="System.Windows.Forms.GridItem" />
       </Parameters>
       <Docs>
-        <param name="oldSel">To be added.</param>
-        <param name="newSel">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.SelectedGridItemChangedEventArgs" /> class.</para>
+        </summary>
+        <param name="oldSel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The previously selected grid item. </param>
+        <param name="newSel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The newly selected grid item. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,9 +51,12 @@
         <ReturnType>System.Windows.Forms.GridItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the newly selected <see cref="T:System.Windows.Forms.GridItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -55,9 +70,12 @@
         <ReturnType>System.Windows.Forms.GridItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the previously selected <see cref="T:System.Windows.Forms.GridItem" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

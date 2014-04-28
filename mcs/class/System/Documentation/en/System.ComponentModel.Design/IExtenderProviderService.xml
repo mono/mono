@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IExtenderProviderService" FullName="System.ComponentModel.Design.IExtenderProviderService">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IExtenderProviderService" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IExtenderProviderService" />
@@ -12,8 +13,14 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Typically, only components that have been added to a container offer extender providers. The <see cref="T:System.ComponentModel.Design.IExtenderProviderService" /> allows you to extend this capability to objects that are not in the container.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface for adding and removing extender providers at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddExtenderProvider">
@@ -32,9 +39,16 @@
         <Parameter Name="provider" Type="System.ComponentModel.IExtenderProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'ComponentModel.IExtenderProvider'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This interface allows objects besides components to add extender providers to the design time set of extender providers. All properties that are displayed from these extender providers are marked as design time only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified extender provider.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The extender provider to add. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveExtenderProvider">
@@ -53,9 +67,16 @@
         <Parameter Name="provider" Type="System.ComponentModel.IExtenderProvider" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added: an object of type 'ComponentModel.IExtenderProvider'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This interface allows objects besides components to add extender providers to the design-time set of extender providers. All properties that are displayed from these extender providers are marked as design time only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified extender provider.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The extender provider to remove. </param>
       </Docs>
     </Member>
   </Members>

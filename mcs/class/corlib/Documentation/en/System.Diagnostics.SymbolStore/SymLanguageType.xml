@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SymLanguageType" FullName="System.Diagnostics.SymbolStore.SymLanguageType">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class SymLanguageType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit SymLanguageType extends System.Object" />
@@ -19,8 +20,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Holds the public GUIDs for language types to be used with the symbol store.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +39,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.SymbolStore.SymLanguageType" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Basic">
@@ -54,8 +61,11 @@
       <Parameters />
       <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the Basic language type to be used with the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="C">
@@ -73,8 +83,11 @@
       <Parameters />
       <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the C language type to be used with the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Cobol">
@@ -92,8 +105,11 @@
       <Parameters />
       <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the Cobol language type to be used with the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CPlusPlus">
@@ -111,8 +127,11 @@
       <Parameters />
       <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the C++ language type to be used with the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CSharp">
@@ -130,8 +149,11 @@
       <Parameters />
       <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the C# language type to be used with the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ILAssembly">
@@ -149,8 +171,11 @@
       <Parameters />
       <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the ILAssembly language type to be used with the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Java">
@@ -168,8 +193,11 @@
       <Parameters />
       <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the Java language type to be used with the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="JScript">
@@ -187,8 +215,11 @@
       <Parameters />
       <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the JScript language type to be used with the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MCPlusPlus">
@@ -206,8 +237,11 @@
       <Parameters />
       <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the C++ language type to be used with the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pascal">
@@ -225,8 +259,11 @@
       <Parameters />
       <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the Pascal language type to be used with the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SMC">
@@ -244,8 +281,11 @@
       <Parameters />
       <MemberValue>00000000-0000-0000-0000-000000000000</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the GUID of the SMC language type to be used with the symbol store.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

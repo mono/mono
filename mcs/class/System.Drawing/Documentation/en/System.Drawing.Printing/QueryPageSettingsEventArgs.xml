@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="QueryPageSettingsEventArgs" FullName="System.Drawing.Printing.QueryPageSettingsEventArgs">
   <TypeSignature Language="C#" Value="public class QueryPageSettingsEventArgs : System.Drawing.Printing.PrintEventArgs" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>It is possible to print each page of a document using different page settings. You set page settings by modifying individual properties of the <see cref="P:System.Drawing.Printing.QueryPageSettingsEventArgs.PageSettings" /> property or by setting the property to a <see cref="T:System.Drawing.Printing.PageSettings" />. The print job can also be canceled by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to true.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Drawing.Printing.PrintDocument.QueryPageSettings" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,9 +32,13 @@
         <Parameter Name="pageSettings" Type="System.Drawing.Printing.PageSettings" />
       </Parameters>
       <Docs>
-        <param name="pageSettings">To be added: an object of type 'PageSettings'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Drawing.Printing.QueryPageSettingsEventArgs" /> class.</para>
+        </summary>
+        <param name="pageSettings">
+          <attribution license="cc4" from="Microsoft" modified="false" />The page settings for the page to be printed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,9 +54,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PageSettings'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>It is possible to print each page of a document using different page settings. You set page settings by modifying individual properties of the <see cref="P:System.Drawing.Printing.QueryPageSettingsEventArgs.PageSettings" /> property or by setting the property to a <see cref="T:System.Drawing.Printing.PageSettings" />. The print job can also be canceled by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the page settings for the page to be printed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataSetFieldSchema" FullName="System.Web.UI.Design.DataSetFieldSchema">
   <TypeSignature Language="C#" Value="public sealed class DataSetFieldSchema : System.Web.UI.Design.IDataSourceFieldSchema" />
   <AssemblyInfo>
@@ -13,8 +14,33 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="T:System.Web.UI.Design.DataSetFieldSchema" /> class to get the properties of a data field using a <see cref="T:System.Data.DataColumn" />. You can discover the structure of a data field by using the following properties in this class: <see cref="P:System.Web.UI.Design.DataSetFieldSchema.DataType" />, <see cref="P:System.Web.UI.Design.DataSetFieldSchema.IsReadOnly" />, <see cref="P:System.Web.UI.Design.DataSetFieldSchema.Length" />, <see cref="P:System.Web.UI.Design.DataSetFieldSchema.Name" />, and <see cref="P:System.Web.UI.Design.DataSetFieldSchema.IsUnique" />. In addition, you can use the <see cref="P:System.Web.UI.Design.DataSetFieldSchema.Identity" /> property to determine if a data column is set for <see cref="P:System.Data.DataColumn.AutoIncrement" />, or the <see cref="P:System.Web.UI.Design.DataSetFieldSchema.PrimaryKey" /> property to determine if a data column is in the primary key.</para>
+      <para>The <see cref="T:System.Web.UI.Design.DataSetFieldSchema" /> class is used by custom control designer components to provide information about a data field at design time. </para>
+      <para>To examine the components of data using a <see cref="T:System.Data.DataSet" />, use the following classes.</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Web.UI.Design.DataSetSchema" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Web.UI.Design.DataSetViewSchema" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Web.UI.Design.DataSetFieldSchema" />
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the structure, or schema, of a data field.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,9 +53,16 @@
         <Parameter Name="column" Type="System.Data.DataColumn" />
       </Parameters>
       <Docs>
-        <param name="column">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="T:System.Web.UI.Design.DataSetFieldSchema" /> class to examine the properties of a data field using a <see cref="T:System.Data.DataColumn" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.DataSetFieldSchema" /> class using a specified <see cref="T:System.Data.DataColumn" />.</para>
+        </summary>
+        <param name="column">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataColumn" /> object that the <see cref="T:System.Web.UI.Design.DataSetFieldSchema" /> object  describes.</param>
       </Docs>
     </Member>
     <Member MemberName="DataType">
@@ -42,9 +75,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of data stored in the data field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Identity">
@@ -57,9 +93,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DataSetFieldSchema.Identity" /> property corresponds to the <see cref="P:System.Data.DataColumn.AutoIncrement" /> property of a <see cref="T:System.Data.DataColumn" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the value of the data field automatically increments for each new row added to the table or view.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -72,9 +114,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <see cref="T:System.Data.DataColumn" /> is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsUnique">
@@ -87,9 +132,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DataSetFieldSchema.IsUnique" /> property corresponds to the <see cref="P:System.Data.DataColumn.Unique" /> property of a <see cref="T:System.Data.DataColumn" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether values in the data field are required to be unique.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Length">
@@ -102,9 +153,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DataSetFieldSchema.Length" /> property corresponds to the <see cref="P:System.Data.DataColumn.MaxLength" /> property of a <see cref="T:System.Data.DataColumn" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the size of data that can be stored in the data field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -117,9 +174,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DataSetFieldSchema.Name" /> property corresponds to the <see cref="P:System.Data.DataColumn.ColumnName" /> property of a <see cref="T:System.Data.DataColumn" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the data field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Nullable">
@@ -132,9 +195,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DataSetFieldSchema.Nullable" /> property corresponds to the <see cref="P:System.Data.DataColumn.AllowDBNull" /> property of a <see cref="T:System.Data.DataColumn" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the data field can accept null values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Precision">
@@ -147,9 +216,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DataSetFieldSchema.Precision" /> property is required by the <see cref="T:System.Web.UI.Design.IDataSourceFieldSchema" /> interface, but is not used by the <see cref="T:System.Web.UI.Design.DataSetFieldSchema" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the maximum number of digits used to represent a numerical value in the data field.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrimaryKey">
@@ -162,9 +237,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the data field is in the primary key for the containing table or view.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Scale">
@@ -177,9 +255,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.DataSetFieldSchema.Scale" /> property is required by the <see cref="T:System.Web.UI.Design.IDataSourceFieldSchema" /> interface, but is not used by the <see cref="T:System.Web.UI.Design.DataSetFieldSchema" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of decimal places to which numerical values in the data field are resolved.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

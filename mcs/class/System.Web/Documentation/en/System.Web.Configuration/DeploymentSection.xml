@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DeploymentSection" FullName="System.Web.Configuration.DeploymentSection">
   <TypeSignature Language="C#" Value="public sealed class DeploymentSection : System.Configuration.ConfigurationSection" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a configuration setting that is typically used on a production server to override application-level settings that are appropriate only on development computers. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +23,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is called by the ASP.NET configuration system. You obtain an instance of the <see cref="T:System.Web.Configuration.DeploymentSection" /> class by using the <see cref="M:System.Configuration.Configuration.GetSection(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.DeploymentSection" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +65,19 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Web.Configuration.DeploymentSection.Retail" /> is true, ASP.NET disables trace output, disables debug capabilities, and disables detailed system-generated error messages for remote users. For applications that have a customErrors element in the application Web.config file, the mode attribute is forced to On. These settings override any settings that are made in application Web.config files.</para>
+          <block subset="none" type="note">
+            <para>When you use the retail setting, you should continue to set the debug attribute to false in application Web.config files that are deployed to the server. The debug setting disables request execution timeout, and this is not overridden by the retail setting. For more information, see. <see cref="http://www.hanselman.com/blog/MostCommonASPNETSupportIssuesReportingFromDeepInsideMicrosoftDeveloperSupport.aspx">Most Common ASP.NET Support issues - Reporting from deep inside Microsoft Developer Support</see> on Scott Hanselman's blog.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether Web applications on the computer are deployed in retail mode.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

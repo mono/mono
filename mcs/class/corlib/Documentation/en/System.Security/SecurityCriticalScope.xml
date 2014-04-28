@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityCriticalScope" FullName="System.Security.SecurityCriticalScope">
   <TypeSignature Language="C#" Value="public enum SecurityCriticalScope" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SecurityCriticalScope extends System.Enum" />
@@ -15,9 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Security-critical code is any code that protects sensitive resources and exposes brokered access to the resource to untrusted or partially trusted code by performing the necessary elevation of privilege operations.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the scope of a <see cref="T:System.Security.SecurityCriticalAttribute" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Everything">
@@ -32,8 +39,11 @@
         <ReturnType>System.Security.SecurityCriticalScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attribute applies to all code that follows it.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Explicit">
@@ -48,8 +58,11 @@
         <ReturnType>System.Security.SecurityCriticalScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The attribute applies only to the immediate target.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

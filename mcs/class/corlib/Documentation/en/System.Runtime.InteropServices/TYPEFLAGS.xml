@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TYPEFLAGS" FullName="System.Runtime.InteropServices.TYPEFLAGS">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum TYPEFLAGS" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed TYPEFLAGS extends System.Enum" />
@@ -21,8 +22,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about TYPEFLAGS, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.TYPEFLAGS" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="TYPEFLAG_FAGGREGATABLE">
@@ -39,8 +46,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class supports aggregation.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FAPPOBJECT">
@@ -57,8 +67,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A type description that describes an Application object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FCANCREATE">
@@ -75,8 +88,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Instances of the type can be created by ITypeInfo::CreateInstance.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FCONTROL">
@@ -93,8 +109,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type is a control from which other types will be derived, and should not be displayed to users.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FDISPATCHABLE">
@@ -111,8 +130,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the interface derives from IDispatch, either directly or indirectly. This flag is computed, there is no Object Description Language for the flag.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FDUAL">
@@ -129,8 +151,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The interface supplies both IDispatch and VTBL binding.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FHIDDEN">
@@ -147,8 +172,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type should not be displayed to browsers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FLICENSED">
@@ -165,8 +193,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type is licensed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FNONEXTENSIBLE">
@@ -183,8 +214,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The interface cannot add members at run time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FOLEAUTOMATION">
@@ -201,8 +235,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The types used in the interface are fully compatible with Automation, including VTBL binding support. Setting dual on an interface sets this flag in addition to <see cref="F:System.Runtime.InteropServices.TYPEFLAGS.TYPEFLAG_FDUAL" />. Not allowed on dispinterfaces.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FPREDECLID">
@@ -219,8 +256,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type is predefined. The client application should automatically create a single instance of the object that has this attribute. The name of the variable that points to the object is the same as the class name of the object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FPROXY">
@@ -237,8 +277,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the interface will be using a proxy/stub dynamic link library. This flag specifies that the type library proxy should not be unregistered when the type library is unregistered.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FREPLACEABLE">
@@ -255,8 +298,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object supports IConnectionPointWithDefault, and has default behaviors.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FRESTRICTED">
@@ -273,8 +319,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Should not be accessible from macro languages. This flag is intended for system-level types or types that type browsers should not display.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TYPEFLAG_FREVERSEBIND">
@@ -291,8 +340,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates base interfaces should be checked for name resolution before checking children, the reverse of the default behavior.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

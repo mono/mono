@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapFaultSubCode" FullName="System.Web.Services.Protocols.SoapFaultSubCode">
   <TypeSignature Language="C#" Value="public class SoapFaultSubCode" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A SOAP 1.2 fault contains a Code element and among other things an optional Subcode element. The Code element specifies the type of error that occurred using a limited number of pre-defined error codes specified by the SOAP protocol, whereas the Subcode element allows the sender of the SOAP fault to provide an application specific error code. This class represents the contents of the Subcode element.</para>
+      <para>XML Web services return a SOAP fault by throwing a <see cref="T:System.Web.Services.Protocols.SoapException" /> and.NET clients receive a SOAP fault by catching a <see cref="T:System.Web.Services.Protocols.SoapException" />. A <see cref="T:System.Web.Services.Protocols.SoapException" /> has the <see cref="P:System.Web.Services.Protocols.SoapException.Code" /> property representing the Code element and the <see cref="P:System.Web.Services.Protocols.SoapException.Subcode" /> property representing the Subcode element.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the contents of the optional Subcode element of a SOAP fault when SOAP version 1.2 is used to communicate between a client and an XML Web service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +29,14 @@
         <Parameter Name="code" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <param name="code">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.SoapFaultSubcode" /> class sets the application specific error code.</para>
+        </summary>
+        <param name="code">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> specifying the application specific error code. Sets the <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -38,11 +50,15 @@
         <Parameter Name="subcode" Type="System.Web.Services.Protocols.SoapFaultSubCode" />
       </Parameters>
       <Docs>
-        <param name="code">To be added.</param>
         <param name="subcode">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Protocols.SoapFaultSubcode" /> class setting the application specific error code and additional error information.</para>
+        </summary>
+        <param name="code">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> specifying the application specific error code. Sets the <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +71,17 @@
         <ReturnType>System.Xml.XmlQualifiedName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use a constructor to set the <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property.</para>
+          <para>The value of the <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Code" /> property can be any user defined XML qualified name, including the codes represented by the <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.RpcProcedureNotPresentFaultCode" />, <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.RpcBadArgumentsFaultCode" />, <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.EncodingMissingIDFaultCode" />, and <see cref="F:System.Web.Services.Protocols.Soap12FaultCodes.EncodingUntypedValueFaultCode" /> fields.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the application specific error code in the form of an XML qualified name.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -71,10 +94,17 @@
         <ReturnType>System.Web.Services.Protocols.SoapFaultSubCode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use a constructor to set the <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Subcode" /> property.</para>
+          <para>The <see cref="P:System.Web.Services.Protocols.SoapFaultSubcode.Subcode" /> property allows an XML Web service to provide nested error information. This is useful for providing an error code specific to the XML Web service while passing along error information returned from components the XML Web service called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets additional error information contained within a child Subcode element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

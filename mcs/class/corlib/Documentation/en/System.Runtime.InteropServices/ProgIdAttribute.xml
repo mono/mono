@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProgIdAttribute" FullName="System.Runtime.InteropServices.ProgIdAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ProgIdAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ProgIdAttribute extends System.Attribute" />
@@ -22,8 +23,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to classes.</para>
+      <para>ProgIDs are automatically generated for a class by combining the namespace with the type name. This can produce an invalid ProgID however, as ProgIDs are limited to 39 characters and can contain no punctuation other than a period. In such case, a ProgID can be manually assigned to the class using <see cref="T:System.Runtime.InteropServices.ProgIdAttribute" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows the user to specify the ProgID of a class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +48,13 @@
         <Parameter Name="progId" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="progId">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the ProgIdAttribute with the specified ProgID.</para>
+        </summary>
+        <param name="progId">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ProgID to be assigned to the class. </param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -58,9 +70,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the ProgID of the class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AssemblyCopyrightAttribute" FullName="System.Reflection.AssemblyCopyrightAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class AssemblyCopyrightAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit AssemblyCopyrightAttribute extends System.Attribute" />
@@ -22,8 +23,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a copyright custom attribute for an assembly manifest.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +44,13 @@
         <Parameter Name="copyright" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="copyright">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Reflection.AssemblyCopyrightAttribute" /> class.</para>
+        </summary>
+        <param name="copyright">
+          <attribution license="cc4" from="Microsoft" modified="false" />The copyright information. </param>
       </Docs>
     </Member>
     <Member MemberName="Copyright">
@@ -58,9 +66,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets copyright information.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

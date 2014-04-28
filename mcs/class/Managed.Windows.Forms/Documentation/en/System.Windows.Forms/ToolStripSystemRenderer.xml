@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ToolStripSystemRenderer" FullName="System.Windows.Forms.ToolStripSystemRenderer">
   <TypeSignature Language="C#" Value="public class ToolStripSystemRenderer : System.Windows.Forms.ToolStripRenderer" />
   <AssemblyInfo>
@@ -9,8 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Forms.ToolStripSystemRenderer" /> applies system colors and a flat visual style to <see cref="T:System.Windows.Forms.ToolStrip" /> applications.</para>
+      <para>By default, the <see cref="T:System.Windows.Forms.ToolStripSystemRenderer" /> applies a palette of <see cref="T:System.Drawing.SystemColors" /> and visual styles, if visual styles are enabled for the application. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handles the painting functionality for <see cref="T:System.Windows.Forms.ToolStrip" /> objects, using system colors and a flat visual style.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ToolStripSystemRenderer" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnRenderButtonBackground">

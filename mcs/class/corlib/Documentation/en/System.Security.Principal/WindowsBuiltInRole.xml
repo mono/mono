@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WindowsBuiltInRole" FullName="System.Security.Principal.WindowsBuiltInRole">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum WindowsBuiltInRole" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed WindowsBuiltInRole extends System.Enum" />
@@ -18,8 +19,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Built-in Windows roles.</summary>
-    <remarks>This is a very incomplete list of roles for Windows.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>These roles represent the local Windows groups common to most installations of Windows NT, Windows 2000 and Windows XP.</para>
+      <block subset="none" type="note">
+        <para>In Windows Vista, User Account Control (UAC) determines the privileges of a user. If you are a member of the Built-in Administrators group, you are assigned two run-time access tokens: a standard user access token and an administrator access token. By default, you are in the standard user role. When you attempt to perform a task that requires administrative privileges, you can dynamically elevate your role by using the Consent dialog box. The code that executes the <see cref="Overload:System.Security.Principal.WindowsPrincipal.IsInRole" /> method does not display the Consent dialog box. The code returns false if you are in the standard user role, even if you are in the Built-in Administrators group. You can elevate your privileges before you execute the code by right-clicking the application icon and indicating that you want to run as an administrator.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies common roles to be used with <see cref="M:System.Security.Principal.WindowsPrincipal.IsInRole(System.String)" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AccountOperator">
@@ -36,8 +46,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Account operators manage the user accounts on a computer or domain.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Administrator">
@@ -54,8 +67,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Administrators have complete and unrestricted access to the computer or domain.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackupOperator">
@@ -72,8 +88,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Backup operators can override security restrictions for the sole purpose of backing up or restoring files.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Guest">
@@ -90,8 +109,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Guests are more restricted than users.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PowerUser">
@@ -108,8 +130,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Power users possess most administrative permissions with some restrictions. Thus, power users can run legacy applications, in addition to certified applications.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrintOperator">
@@ -126,8 +151,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Print operators can take control of a printer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Replicator">
@@ -144,8 +172,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replicators support file replication in a domain.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SystemOperator">
@@ -162,8 +193,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>System operators manage a particular computer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="User">
@@ -180,8 +214,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Users are prevented from making accidental or intentional system-wide changes. Thus, users can run certified applications, but not most legacy applications.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

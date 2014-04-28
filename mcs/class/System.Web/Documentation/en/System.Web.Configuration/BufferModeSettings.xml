@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BufferModeSettings" FullName="System.Web.Configuration.BufferModeSettings">
   <TypeSignature Language="C#" Value="public sealed class BufferModeSettings : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,9 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Configuration.BufferModeSettings" /> class is used to define roles for event providers, such as Critical, Notification, Analysis, and Logging. Each role would buffer events differently, as appropriate for that role. For example a Critical role would keep the <see cref="P:System.Web.Configuration.BufferModeSettings.MaxBufferSize" />, <see cref="P:System.Web.Configuration.BufferModeSettings.MaxFlushSize" />, and <see cref="P:System.Web.Configuration.BufferModeSettings.UrgentFlushInterval" /> properties small, whereas an Analysis role would set those properties to higher values.</para>
+      <para>This class corresponds to the bufferModes configuration-file element.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Configures the ASP.NET event-buffering settings for event providers. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,16 +35,26 @@
         <Parameter Name="maxBufferThreads" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="maxBufferSize">To be added.</param>
-        <param name="maxFlushSize">To be added.</param>
-        <param name="urgentFlushThreshold">To be added.</param>
-        <param name="regularFlushInterval">To be added.</param>
-        <param name="urgentFlushInterval">To be added.</param>
-        <param name="maxBufferThreads">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Configuration.BufferModeSettings" /> class using specified settings.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Web.Configuration.BufferModeSettings" /> object being created.</param>
+        <param name="maxBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of events buffered at one time. The value must be greater than zero.</param>
+        <param name="maxFlushSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of events per buffer flush. Must be greater than zero.</param>
+        <param name="urgentFlushThreshold">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of events buffered before a buffer flush is triggered. The value must be greater than zero and less than or equal to <paramref name="maxBufferSize" />.</param>
+        <param name="regularFlushInterval">
+          <attribution license="cc4" from="Microsoft" modified="false" />The standard amount of time between buffer flushes. The value can be made infinite by setting it to <see cref="F:System.Int32.MaxValue" /> ticks.</param>
+        <param name="urgentFlushInterval">
+          <attribution license="cc4" from="Microsoft" modified="false" />The minimum length of time that can pass between buffer flushes. The value must be less than or equal to <paramref name="regularFlushInterval" />.</param>
+        <param name="maxBufferThreads">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of buffer-flushing threads that can be active at one time.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,10 +94,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property must have a value greater than zero. Invalid values may cause an exception to be thrown when the configuration section is saved.</para>
+          <para>The default value varies based on the provider. The <see cref="T:System.Web.Configuration.BufferModeSettings" /> objects in the <see cref="P:System.Web.Configuration.HealthMonitoringSection.BufferModes" /> collection are referred to by name by the providers in the <see cref="P:System.Web.Configuration.HealthMonitoringSection.Providers" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of events that can be buffered at one time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -103,10 +128,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property must have a value greater than zero. Invalid values may cause an exception to be thrown when the configuration section is saved.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of flushing threads that can be active at one time.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -130,10 +161,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property must have a value greater than zero. Invalid values may cause an exception to be thrown when the configuration section is saved.</para>
+          <para>The default value varies based on the provider. The <see cref="T:System.Web.Configuration.BufferModeSettings" /> objects in the <see cref="P:System.Web.Configuration.HealthMonitoringSection.BufferModes" /> collection are referred to by name by the providers in the <see cref="P:System.Web.Configuration.HealthMonitoringSection.Providers" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the maximum number of events per flush.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -154,10 +192,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unique name is required.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the <see cref="T:System.Web.Configuration.BufferModeSettings" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -170,10 +214,16 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be used directly from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Configuration.ConfigurationPropertyCollection" /> collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -197,10 +247,17 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property must have a value greater than zero. The value can be made infinite by setting it to <see cref="F:System.Int32.MaxValue" /> ticks. Invalid values may cause an exception when the configuration section is saved.</para>
+          <para>The default value varies based on the provider. The <see cref="T:System.Web.Configuration.BufferModeSettings" /> objects in the <see cref="P:System.Web.Configuration.HealthMonitoringSection.BufferModes" /> collection are referred to by name by the providers in the <see cref="P:System.Web.Configuration.HealthMonitoringSection.Providers" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of time between buffer flushes.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -221,10 +278,17 @@
         <ReturnType>System.TimeSpan</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property must have a value greater than zero and less than or equal to the value of the <see cref="P:System.Web.Configuration.BufferModeSettings.RegularFlushInterval" /> property. Invalid values may cause an exception to be thrown when the configuration section is saved.</para>
+          <para>The default value varies based on the provider. The <see cref="T:System.Web.Configuration.BufferModeSettings" /> objects in the <see cref="P:System.Web.Configuration.HealthMonitoringSection.BufferModes" /> collection are referred to by name by the providers in the <see cref="P:System.Web.Configuration.HealthMonitoringSection.Providers" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the minimum amount of time that can pass between buffer flushes. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -248,10 +312,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property must have a value greater than zero and less than or equal to the value of the <see cref="P:System.Web.Configuration.BufferModeSettings.MaxBufferSize" /> property. Invalid values may cause an exception when the configuration section is saved.</para>
+          <para>The default value varies based on the provider. The <see cref="T:System.Web.Configuration.BufferModeSettings" /> objects in the <see cref="P:System.Web.Configuration.HealthMonitoringSection.BufferModes" /> collection are referred to by name by the providers in the <see cref="P:System.Web.Configuration.HealthMonitoringSection.Providers" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of events that can be buffered before a flush is triggered.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

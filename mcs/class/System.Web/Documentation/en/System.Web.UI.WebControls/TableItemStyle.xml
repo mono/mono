@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TableItemStyle" FullName="System.Web.UI.WebControls.TableItemStyle">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class TableItemStyle : System.Web.UI.WebControls.Style" />
   <AssemblyInfo>
@@ -14,8 +15,15 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class represents the style properties for an element of a control that renders as a <see cref="T:System.Web.UI.WebControls.TableRow" /> or <see cref="T:System.Web.UI.WebControls.TableCell" />. You can control the vertical and horizontal alignment of the contents in an item of the table by setting the <see cref="P:System.Web.UI.WebControls.TableItemStyle.HorizontalAlign" /> and <see cref="P:System.Web.UI.WebControls.TableItemStyle.VerticalAlign" /> properties, respectively. You can also specify whether the contents of the cell automatically continue on the next line when the end of the cell is reached by setting the <see cref="P:System.Web.UI.WebControls.TableItemStyle.Wrap" /> property.</para>
+      <para>This class provides methods that are useful for creating a style for an item in the <see cref="T:System.Web.UI.WebControls.Table" /> control. You can use the <see cref="M:System.Web.UI.WebControls.TableItemStyle.CopyFrom(System.Web.UI.WebControls.Style)" /> and <see cref="M:System.Web.UI.WebControls.TableItemStyle.MergeWith(System.Web.UI.WebControls.Style)" /> methods to copy or merge the style properties of another <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> with the instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> that the method is called from.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the style properties for an element of a control that renders as a <see cref="T:System.Web.UI.WebControls.TableRow" /> or <see cref="T:System.Web.UI.WebControls.TableCell" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +32,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class using default values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +54,16 @@
         <Parameter Name="bag" Type="System.Web.UI.StateBag" />
       </Parameters>
       <Docs>
-        <param name="bag">a <see cref="T:System.Web.UI.StateBag" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class using the specified <see cref="T:System.Web.UI.StateBag" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class with the specified state bag.</para>
+        </summary>
+        <param name="bag">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.StateBag" /> that represents the state bag in which to store style information. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -60,10 +81,18 @@
         <Parameter Name="owner" Type="System.Web.UI.WebControls.WebControl" />
       </Parameters>
       <Docs>
-        <param name="writer">a <see cref="T:System.Web.UI.HtmlTextWriter" /></param>
-        <param name="owner">a <see cref="T:System.Web.UI.WebControls.WebControl" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="Overload:System.Web.UI.WebControls.TableItemStyle.AddAttributesToRender" /> method is used primarily by control developers to insert additional attributes and styles in the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream for the <see cref="T:System.Web.UI.WebControls.TableItemStyle" />. The <see cref="Overload:System.Web.UI.WebControls.TableItemStyle.AddAttributesToRender" /> method overrides the <see cref="Overload:System.Web.UI.WebControls.Style.AddAttributesToRender" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds information about horizontal alignment, vertical alignment, and wrap to the list of attributes to render.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output stream that renders HTML content to the client. </param>
+        <param name="owner">
+          <attribution license="cc4" from="Microsoft" modified="false" />The control that the style refers to. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -80,9 +109,19 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.Web.UI.WebControls.Style" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TableItemStyle.CopyFrom(System.Web.UI.WebControls.Style)" /> method to duplicate the non-empty style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> into the instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class that this method is called from.</para>
+          <block subset="none" type="note">
+            <para>All properties in the current instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class are replaced by the associated property in the <paramref name="s" /> parameter.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Duplicates the non-empty style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> into the instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class that this method is called from.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Style" /> that represents the style to copy. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -97,9 +136,64 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'HorizontalAlign'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TableItemStyle.HorizontalAlign" /> property to specify the horizontal alignment of the data list control within its container. This property is set with one of the <see cref="T:System.Web.UI.WebControls.HorizontalAlign" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.HorizontalAlign.NotSet" /> </para>
+              </term>
+              <description>
+                <para>The horizontal alignment is not set. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.HorizontalAlign.Left" /> </para>
+              </term>
+              <description>
+                <para>The contents of a cell are left justified within the cell. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.MobileControls.Alignment.Center" /> </para>
+              </term>
+              <description>
+                <para>The contents of a cell are centered within the cell. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.HorizontalAlign.Right" /> </para>
+              </term>
+              <description>
+                <para>The contents of a cell are right justified within the cell. </para>
+              </description>
+            </item>
+          </list>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the horizontal alignment of the contents in a cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -124,9 +218,17 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.Web.UI.WebControls.Style" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.TableItemStyle.MergeWith(System.Web.UI.WebControls.Style)" /> method to combine the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> into the instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class that this method is called from.</para>
+          <para>This method joins the properties of the <see cref="T:System.Web.UI.WebControls.Style" /> object and the current instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class. This is accomplished by setting each property that is not set in the current instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class with the value in the corresponding property of the <paramref name="s" /> parameter. Only properties that have not been set are replaced. If a property in the <paramref name="s" /> parameter is not set, it does not replace the corresponding property in the current instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Combines the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> into the instance of the <see cref="T:System.Web.UI.WebControls.TableItemStyle" /> class that this method is called from.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.Style" /> that represents the style to combine. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -141,8 +243,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method to remove any defined style elements from the style, leaving the style in its default configuration.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes any defined style elements from the style.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -157,9 +265,64 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'VerticalAlign'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TableItemStyle.VerticalAlign" /> property to specify the vertical alignment of the contents of the cell. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Vertical Alignment </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.VerticalAlign.NotSet" /> </para>
+              </term>
+              <description>
+                <para>The vertical alignment is not set. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.VerticalAlign.Top" /> </para>
+              </term>
+              <description>
+                <para>The contents of the cell are aligned with the upper edge of the cell. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.VerticalAlign.Middle" /> </para>
+              </term>
+              <description>
+                <para>The contents of the cell are aligned with the center of the cell. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.VerticalAlign.Bottom" /> </para>
+              </term>
+              <description>
+                <para>The contents of the cell are aligned with the lower edge of the cell. </para>
+              </description>
+            </item>
+          </list>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the vertical alignment of the contents in a cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -182,9 +345,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.TableItemStyle.Wrap" /> property to specify or determine whether the contents of the cell wrap.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the contents of a cell wrap in the cell.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

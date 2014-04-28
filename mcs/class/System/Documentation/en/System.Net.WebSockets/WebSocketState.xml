@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebSocketState" FullName="System.Net.WebSockets.WebSocketState">
   <TypeSignature Language="C#" Value="public enum WebSocketState" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WebSocketState extends System.Enum" />
@@ -9,8 +10,11 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para> Defines the different states a WebSockets instance can be in.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Aborted">
@@ -24,7 +28,10 @@
         <ReturnType>System.Net.WebSockets.WebSocketState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved for future use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Closed">
@@ -38,7 +45,10 @@
         <ReturnType>System.Net.WebSockets.WebSocketState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the WebSocket close handshake completed gracefully.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloseReceived">
@@ -52,7 +62,10 @@
         <ReturnType>System.Net.WebSockets.WebSocketState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A close message was received from the remote endpoint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CloseSent">
@@ -66,7 +79,10 @@
         <ReturnType>System.Net.WebSockets.WebSocketState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A close message was sent to the remote endpoint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Connecting">
@@ -80,7 +96,10 @@
         <ReturnType>System.Net.WebSockets.WebSocketState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The connection is negotiating the handshake with the remote endpoint.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -94,7 +113,10 @@
         <ReturnType>System.Net.WebSockets.WebSocketState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reserved for future use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Open">
@@ -108,7 +130,10 @@
         <ReturnType>System.Net.WebSockets.WebSocketState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The initial state after the HTTP handshake has been completed.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TreeNodeSelectAction" FullName="System.Web.UI.WebControls.TreeNodeSelectAction">
   <TypeSignature Language="C#" Value="public enum TreeNodeSelectAction" />
   <AssemblyInfo>
@@ -8,9 +9,18 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When the <see cref="P:System.Web.UI.WebControls.TreeNode.NavigateUrl" /> property for a <see cref="T:System.Web.UI.WebControls.TreeNode" /> control is set to a value other than an empty string (""), clicking the node navigates to the specified URL. If the <see cref="P:System.Web.UI.WebControls.TreeNode.NavigateUrl" /> property is set to an empty string, clicking the node causes a postback. The <see cref="P:System.Web.UI.WebControls.TreeNode.SelectAction" /> property determines the events to raise on the postback. By default, the <see cref="M:System.Web.UI.WebControls.TreeNode.Select" /> event is raised. No events are raised if the <see cref="P:System.Web.UI.WebControls.TreeNode.NavigateUrl" /> property is set.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="P:System.Web.UI.WebControls.TreeView.HoverNodeStyle" /> property is not rendered for a node with its <see cref="P:System.Web.UI.WebControls.TreeNode.SelectAction" /> property set to the <see cref="F:System.Web.UI.WebControls.TreeNodeSelectAction.None" /> value.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the event or events to raise when a node in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control is selected.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Expand">
@@ -20,8 +30,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeNodeSelectAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.TreeView.TreeNodeExpanded" /> event when a node is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +47,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeNodeSelectAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises no events when a node is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +64,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeNodeSelectAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.TreeView.SelectedNodeChanged" /> event when a node is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +81,11 @@
         <ReturnType>System.Web.UI.WebControls.TreeNodeSelectAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises both the <see cref="E:System.Web.UI.WebControls.TreeView.SelectedNodeChanged" /> and <see cref="E:System.Web.UI.WebControls.TreeView.TreeNodeExpanded" /> events when a node is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

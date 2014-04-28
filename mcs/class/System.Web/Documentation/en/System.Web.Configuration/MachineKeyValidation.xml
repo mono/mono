@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MachineKeyValidation" FullName="System.Web.Configuration.MachineKeyValidation">
   <TypeSignature Language="C#" Value="public enum MachineKeyValidation" />
   <AssemblyInfo>
@@ -8,9 +9,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET uses a hash-based message authentication code (HMAC) to help detect whether data that is used for forms authentication or view state has been tampered with. The HMAC is generated when view state content is created, and the HMAC is checked on subsequent requests. The HMAC helps ASP.NET determine whether someone has changed data that is sent between the server and the client, but the data can be read by anyone as it travels through the Internet unless it is also encrypted. By default, view state is validated but not encrypted. For more information, see <see cref="P:System.Web.UI.Page.ViewStateEncryptionMode" /> and <see cref="M:System.Web.UI.Page.RegisterRequiresViewStateEncryption" />.</para>
+      <para>The <see cref="T:System.Web.Configuration.MachineKeyValidation" /> enumeration lets you specify the algorithm that ASP.NET uses to create the HMAC. The default value is <see cref="F:System.Web.Configuration.MachineKeyValidation.HMACSHA256" />. ASP.NET uses the value of the <see cref="P:System.Web.Configuration.MachineKeySection.ValidationKey" /> property with the selected algorithm to generate the HMAC.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the hashing algorithm that ASP.NET uses for forms authentication and for validating view state data, and for out-of-process session state identification.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AES">
@@ -20,8 +28,15 @@
         <ReturnType>System.Web.Configuration.MachineKeyValidation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Choose this option if you want to encrypt view state in your Web application. If you choose this option, the <see cref="P:System.Web.Configuration.MachineKeySection.DecryptionKey" /> property will be used for encryption and decryption, and the HMACSHA1 hash algorithm will be used with the <see cref="P:System.Web.Configuration.MachineKeySection.ValidationKey" /> property for validation. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that ASP.NET uses the AES (Rijndael) encryption algorithm.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +49,15 @@
         <ReturnType>System.Web.Configuration.MachineKeyValidation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>MD5 is a hashing algorithm that generates a 128-bit hash value. This option is included for legacy purposes and should be selected only if compatibility with earlier versions of ASP.NET is required. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that ASP.NET uses the Message Digest 5 (MD5) hashing algorithm. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +70,15 @@
         <ReturnType>System.Web.Configuration.MachineKeyValidation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HMACSHA1 is a hashing algorithm that generates a 160-bit hash value. This option is included for legacy purposes and should be selected only if compatibility with earlier versions of ASP.NET is required.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that ASP.NET uses the HMACSHA1 hash algorithm.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +91,15 @@
         <ReturnType>System.Web.Configuration.MachineKeyValidation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>TripleDES is an encryption algorithm that is used only if you specify that view state is encrypted. This option is included for legacy purposes and should be selected only if compatibility with earlier versions of ASP.NET is required. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that ASP.NET uses the TripleDES (3DES) encryption algorithm. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

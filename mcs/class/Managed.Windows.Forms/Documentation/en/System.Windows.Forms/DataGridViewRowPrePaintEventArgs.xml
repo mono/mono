@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewRowPrePaintEventArgs" FullName="System.Windows.Forms.DataGridViewRowPrePaintEventArgs">
   <TypeSignature Language="C#" Value="public class DataGridViewRowPrePaintEventArgs : System.ComponentModel.HandledEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.DataGridView.RowPrePaint" /> event occurs before a row is painted on a <see cref="T:System.Windows.Forms.DataGridView" /> control. <see cref="E:System.Windows.Forms.DataGridView.RowPrePaint" /> enables you to manually adjust the appearance of the row before any of the cells in the row are painted. This is useful if you want to customize the row, such as to produce a row where the content of one column spans multiple columns. Use the properties in <see cref="T:System.Windows.Forms.DataGridViewRowPrePaintEventArgs" /> to get the settings of the row without directly accessing the row in the <see cref="T:System.Windows.Forms.DataGridView" />. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.DataGridView.RowPrePaint" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,19 +37,32 @@
         <Parameter Name="isLastVisibleRow" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="dataGridView">To be added.</param>
-        <param name="graphics">To be added.</param>
-        <param name="clipBounds">To be added.</param>
-        <param name="rowBounds">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <param name="rowState">To be added.</param>
-        <param name="errorText">To be added.</param>
-        <param name="inheritedRowStyle">To be added.</param>
-        <param name="isFirstDisplayedRow">To be added.</param>
-        <param name="isLastVisibleRow">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewRowPrePaintEventArgs" /> class. </para>
+        </summary>
+        <param name="dataGridView">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridView" /> that owns the row that is being painted.</param>
+        <param name="graphics">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to paint the <see cref="T:System.Windows.Forms.DataGridViewRow" />.</param>
+        <param name="clipBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that represents the area of the <see cref="T:System.Windows.Forms.DataGridView" /> that needs to be painted.</param>
+        <param name="rowBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that contains the bounds of the <see cref="T:System.Windows.Forms.DataGridViewRow" /> that is being painted.</param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The row index of the cell that is being painted.</param>
+        <param name="rowState">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewElementStates" /> values that specifies the state of the row.</param>
+        <param name="errorText">
+          <attribution license="cc4" from="Microsoft" modified="false" />An error message that is associated with the row.</param>
+        <param name="inheritedRowStyle">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> that contains formatting and style information about the row.</param>
+        <param name="isFirstDisplayedRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate whether the current row is the first row currently displayed in the <see cref="T:System.Windows.Forms.DataGridView" />; otherwise, false.</param>
+        <param name="isLastVisibleRow">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate whether the current row is the last row in the <see cref="T:System.Windows.Forms.DataGridView" /> that has the <see cref="P:System.Windows.Forms.DataGridViewRow.Visible" /> property set to true; otherwise, false.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +75,16 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.ClipBounds" /> property represents the area of the <see cref="T:System.Windows.Forms.DataGridView" /> that needs to be repainted. For example, if a user covers the entire <see cref="T:System.Windows.Forms.DataGridView" /> with another window and then uncovers it, then <see cref="P:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.ClipBounds" /> represents the entire <see cref="T:System.Windows.Forms.DataGridView" />. If a user covers a small area of the <see cref="T:System.Windows.Forms.DataGridView" /> and then uncovers it, then <see cref="P:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.ClipBounds" /> represents the small area that was covered.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the area of the <see cref="T:System.Windows.Forms.DataGridView" /> that needs to be repainted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,11 +101,19 @@
         <Parameter Name="cellsPaintSelectionBackground" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="bounds">To be added.</param>
-        <param name="cellsPaintSelectionBackground">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.DrawFocus(System.Drawing.Rectangle,System.Boolean)" /> method when you draw the <see cref="T:System.Windows.Forms.DataGridViewRow" /> and its cells' contents yourself. If you manually paint the entire row and its cells' contents, set the <see cref="P:System.ComponentModel.HandledEventArgs.Handled" /> property to true. When <see cref="P:System.ComponentModel.HandledEventArgs.Handled" /> is true, the <see cref="E:System.Windows.Forms.DataGridView.CellPainting" /> and <see cref="E:System.Windows.Forms.DataGridView.RowPostPaint" /> events do not occur.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Draws the focus rectangle around the specified bounds.</para>
+        </summary>
+        <param name="bounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that specifies the focus area.</param>
+        <param name="cellsPaintSelectionBackground">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to use the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.SelectionBackColor" /> property of the <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" /> property to determine the color of the focus rectangle; false to use the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.BackColor" /> property of the <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -92,10 +126,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.ErrorText" /> property is the same as the current row's <see cref="P:System.Windows.Forms.DataGridViewRow.ErrorText" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a string that represents an error message for the current <see cref="T:System.Windows.Forms.DataGridViewRow" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -108,10 +148,16 @@
         <ReturnType>System.Drawing.Graphics</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Graphics" /> class provides properties and methods that are useful for custom drawing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Drawing.Graphics" /> used to paint the current <see cref="T:System.Windows.Forms.DataGridViewRow" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -124,10 +170,17 @@
         <ReturnType>System.Windows.Forms.DataGridViewCellStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.InheritedRowStyle" /> property contains the same values as the row's <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" /> property. Directly accessing a <see cref="T:System.Windows.Forms.DataGridViewRow" /> in the <see cref="T:System.Windows.Forms.DataGridView" /> can affect performance. Use <see cref="P:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.InheritedRowStyle" /> in the <see cref="E:System.Windows.Forms.DataGridView.RowPrePaint" /> event to avoid unsharing the row and maintain optimal performance.</para>
+          <para>The <see cref="P:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.InheritedRowStyle" /> property is read-only. Although you can set the properties of the <see cref="T:System.Windows.Forms.DataGridViewCellStyle" /> retrieved through the <see cref="P:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.InheritedRowStyle" /> property, the new settings will have no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the cell style applied to the row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -140,10 +193,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current row is the first row currently displayed in the <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -156,10 +212,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the current row is the last visible row in the <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -176,11 +235,16 @@
         <Parameter Name="paintParts" Type="System.Windows.Forms.DataGridViewPaintParts" />
       </Parameters>
       <Docs>
-        <param name="clipBounds">To be added.</param>
-        <param name="paintParts">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints the specified cell parts for the area in the specified bounds.</para>
+        </summary>
+        <param name="clipBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that specifies the area of the <see cref="T:System.Windows.Forms.DataGridView" /> to be painted.</param>
+        <param name="paintParts">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewPaintParts" /> values specifying the parts to paint.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -197,11 +261,19 @@
         <Parameter Name="cellsPaintSelectionBackground" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="clipBounds">To be added.</param>
-        <param name="cellsPaintSelectionBackground">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.PaintCellsBackground(System.Drawing.Rectangle,System.Boolean)" /> method when you draw the <see cref="T:System.Windows.Forms.DataGridViewRow" /> and its cells' contents yourself. If you manually paint the entire row and its cells' contents, set the <see cref="P:System.ComponentModel.HandledEventArgs.Handled" /> property to true. When <see cref="P:System.ComponentModel.HandledEventArgs.Handled" /> is true, the <see cref="E:System.Windows.Forms.DataGridView.CellPainting" /> and <see cref="E:System.Windows.Forms.DataGridView.RowPostPaint" /> events do not occur.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints the cell backgrounds for the area in the specified bounds.</para>
+        </summary>
+        <param name="clipBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that specifies the area of the <see cref="T:System.Windows.Forms.DataGridView" /> to be painted.</param>
+        <param name="cellsPaintSelectionBackground">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to paint the background of the specified bounds with the color of the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.SelectionBackColor" /> property of the <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" />; false to paint the background of the specified bounds with the color of the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.BackColor" /> property of the <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -217,10 +289,14 @@
         <Parameter Name="clipBounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="clipBounds">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints the cell contents for the area in the specified bounds.</para>
+        </summary>
+        <param name="clipBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that specifies the area of the <see cref="T:System.Windows.Forms.DataGridView" /> to be painted.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -236,10 +312,17 @@
         <Parameter Name="paintSelectionBackground" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="paintSelectionBackground">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.PaintHeader(System.Boolean)" /> method when you draw the <see cref="T:System.Windows.Forms.DataGridViewRow" /> and its cells' contents yourself. If you manually paint the entire row and its cells' contents, set the <see cref="P:System.ComponentModel.HandledEventArgs.Handled" /> property to true. When <see cref="P:System.ComponentModel.HandledEventArgs.Handled" /> is true, the <see cref="E:System.Windows.Forms.DataGridView.CellPainting" /> and <see cref="E:System.Windows.Forms.DataGridView.RowPostPaint" /> events do not occur.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints the entire row header of the current <see cref="T:System.Windows.Forms.DataGridViewRow" />.</para>
+        </summary>
+        <param name="paintSelectionBackground">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to paint the row header with the color of the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.SelectionBackColor" /> property of the <see cref="P:System.Windows.Forms.DataGridViewRow.InheritedStyle" />; false to paint the row header with the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.BackColor" /> of the <see cref="P:System.Windows.Forms.DataGridView.RowHeadersDefaultCellStyle" /> property.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -255,10 +338,14 @@
         <Parameter Name="paintParts" Type="System.Windows.Forms.DataGridViewPaintParts" />
       </Parameters>
       <Docs>
-        <param name="paintParts">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Paints the specified parts of the row header of the current row.</para>
+        </summary>
+        <param name="paintParts">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Windows.Forms.DataGridViewPaintParts" /> values specifying the parts to paint.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -271,10 +358,13 @@
         <ReturnType>System.Windows.Forms.DataGridViewPaintParts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cell parts that are to be painted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -287,10 +377,16 @@
         <ReturnType>System.Drawing.Rectangle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The width of the <see cref="P:System.Windows.Forms.DataGridViewRowPrePaintEventArgs.RowBounds" /> property is the same as the width of the <see cref="T:System.Windows.Forms.DataGridView" />. To get the width of the columns in the <see cref="T:System.Windows.Forms.DataGridView" />, use the <see cref="M:System.Windows.Forms.DataGridViewColumnCollection.GetColumnsWidth(System.Windows.Forms.DataGridViewElementStates)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Get the bounds of the current <see cref="T:System.Windows.Forms.DataGridViewRow" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -303,10 +399,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row index can be used to access the current row within a <see cref="T:System.Windows.Forms.DataGridViewRowCollection" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the current <see cref="T:System.Windows.Forms.DataGridViewRow" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -319,10 +421,16 @@
         <ReturnType>System.Windows.Forms.DataGridViewElementStates</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property can be used to determine whether the row is frozen, read-only, or selected, among other states.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the state of the current <see cref="T:System.Windows.Forms.DataGridViewRow" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

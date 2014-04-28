@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BulletStyle" FullName="System.Web.UI.WebControls.BulletStyle">
   <TypeSignature Language="C#" Value="public enum BulletStyle" />
   <AssemblyInfo>
@@ -8,9 +9,28 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.BulletStyle" /> enumeration represents the bullet styles that you can apply to the list items in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. The <see cref="P:System.Web.UI.WebControls.BulletedList.BulletStyle" /> property uses these enumeration values to set the bullet styles in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. For example, if you set the <see cref="P:System.Web.UI.WebControls.BulletedList.BulletStyle" /> property to Disc, each list item in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control will render a filled circle preceding the content of the list item as follows: </para>
+      <list type="bullet">
+        <item>
+          <para>List Item 1 </para>
+        </item>
+        <item>
+          <para>List Item 2 </para>
+        </item>
+        <item>
+          <para>List Item 3 </para>
+        </item>
+      </list>
+      <para>Specifying the CustomImage bullet style allows you to supply your own image for the bullet. If you specify the CustomImage bullet style, you must also set the <see cref="P:System.Web.UI.WebControls.BulletedList.BulletImageUrl" /> property to the URL of the custom image to use.</para>
+      <para>If you specify NotSet, the browser in which the control is rendered will determine the bullet style to display with the list items in the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the bullet styles you can apply to list items in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Circle">
@@ -20,8 +40,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bullet style is an empty circle shape.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +57,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bullet style is a custom image.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +74,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bullet style is a filled circle shape.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +91,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bullet style is a lowercase letter (a, b, c, ...).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +108,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bullet style is a lowercase Roman numeral (i, ii, iii, ...).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -90,8 +125,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bullet style is not set. The browser that renders the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control will determine the bullet style to display.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,8 +142,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bullet style is a number (1, 2, 3, ...).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -118,8 +159,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bullet style is a filled square shape.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -132,8 +176,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bullet style is an uppercase letter (A, B, C, ...).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -146,8 +193,11 @@
         <ReturnType>System.Web.UI.WebControls.BulletStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bullet style is an uppercase Roman numeral (I, II, III, ...).</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

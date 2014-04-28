@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ScrollEventArgs" FullName="System.Windows.Forms.ScrollEventArgs">
   <TypeSignature Language="C#" Value="public class ScrollEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -15,8 +16,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The Scroll event occurs when the user changes the value of the scroll bar. This event can result from a variety of actions, such as clicking a scroll bar arrow, pressing the UP ARROW or DOWN ARROW, or dragging the scroll box. The <see cref="T:System.Windows.Forms.ScrollEventArgs" /> specifies the type of scroll event that occurred and the new value of the scroll bar. Use the <see cref="P:System.Windows.Forms.ScrollEventArgs.ScrollOrientation" /> property to determine the scroll bar orientation for the Scroll event.</para>
+      <para>The Scroll event occurs for the <see cref="T:System.Windows.Forms.DataGridView" />, <see cref="T:System.Windows.Forms.ScrollableControl" />, <see cref="T:System.Windows.Forms.ScrollBar" />, and <see cref="T:System.Windows.Forms.DataGrid" /> controls.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the Scroll event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,10 +35,15 @@
         <Parameter Name="newValue" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="newValue">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ScrollEventArgs" /> class using the given values for the <see cref="P:System.Windows.Forms.ScrollEventArgs.Type" /> and <see cref="P:System.Windows.Forms.ScrollEventArgs.NewValue" /> properties.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.ScrollEventType" /> values. </param>
+        <param name="newValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value for the scroll bar. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -49,11 +62,17 @@
         <Parameter Name="newValue" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="oldValue">To be added.</param>
-        <param name="newValue">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ScrollEventArgs" /> class using the given values for the <see cref="P:System.Windows.Forms.ScrollEventArgs.Type" />, <see cref="P:System.Windows.Forms.ScrollEventArgs.OldValue" />, and <see cref="P:System.Windows.Forms.ScrollEventArgs.NewValue" /> properties.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.ScrollEventType" /> values. </param>
+        <param name="oldValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The old value for the scroll bar. </param>
+        <param name="newValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value for the scroll bar. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -68,11 +87,17 @@
         <Parameter Name="scroll" Type="System.Windows.Forms.ScrollOrientation" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="newValue">To be added.</param>
-        <param name="scroll">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ScrollEventArgs" /> class using the given values for the <see cref="P:System.Windows.Forms.ScrollEventArgs.Type" />, <see cref="P:System.Windows.Forms.ScrollEventArgs.NewValue" />, and <see cref="P:System.Windows.Forms.ScrollEventArgs.ScrollOrientation" /> properties.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.ScrollEventType" /> values. </param>
+        <param name="newValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value for the scroll bar. </param>
+        <param name="scroll">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.ScrollOrientation" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -88,12 +113,19 @@
         <Parameter Name="scroll" Type="System.Windows.Forms.ScrollOrientation" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="oldValue">To be added.</param>
-        <param name="newValue">To be added.</param>
-        <param name="scroll">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.ScrollEventArgs" /> class using the given values for the <see cref="P:System.Windows.Forms.ScrollEventArgs.Type" />, <see cref="P:System.Windows.Forms.ScrollEventArgs.OldValue" />, <see cref="P:System.Windows.Forms.ScrollEventArgs.NewValue" />, and <see cref="P:System.Windows.Forms.ScrollEventArgs.ScrollOrientation" /> properties.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.ScrollEventType" /> values. </param>
+        <param name="oldValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The old value for the scroll bar. </param>
+        <param name="newValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new value for the scroll bar. </param>
+        <param name="scroll">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.ScrollOrientation" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName="NewValue">
@@ -103,9 +135,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the new <see cref="P:System.Windows.Forms.ScrollBar.Value" /> of the scroll bar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -122,9 +157,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the old <see cref="P:System.Windows.Forms.ScrollBar.Value" /> of the scroll bar.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ScrollOrientation">
@@ -137,9 +175,15 @@
         <ReturnType>System.Windows.Forms.ScrollOrientation</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You would typically use the <see cref="P:System.Windows.Forms.ScrollEventArgs.ScrollOrientation" /> property to determine the scroll bar orientation that raised the Scroll event, such as with the <see cref="E:System.Windows.Forms.ScrollableControl.Scroll" /> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the scroll bar orientation that raised the Scroll event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -149,9 +193,12 @@
         <ReturnType>System.Windows.Forms.ScrollEventType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of scroll event that occurred.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

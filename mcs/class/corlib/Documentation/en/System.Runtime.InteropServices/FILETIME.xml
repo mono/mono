@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FILETIME" FullName="System.Runtime.InteropServices.FILETIME">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct FILETIME" />
   <TypeSignature Language="ILAsm" Value=".class public sequential ansi sealed beforefieldinit FILETIME extends System.ValueType" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For more information about the FILETIME structure, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.FILETIME" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="dwHighDateTime">
@@ -37,8 +44,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the high 32 bits of the FILETIME.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="dwLowDateTime">
@@ -55,8 +65,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the low 32 bits of the FILETIME.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

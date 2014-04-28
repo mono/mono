@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaSimpleType" FullName="System.Xml.Schema.XmlSchemaSimpleType">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaSimpleType : System.Xml.Schema.XmlSchemaType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi XmlSchemaSimpleType extends System.Xml.Schema.XmlSchemaType" />
@@ -14,8 +15,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Simple types are defined by deriving them from existing simple types (built-in data types and derived simple types). A simple type cannot contain elements and cannot have attributes.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the simpleType element for simple content from XML Schema as specified by the <format type="text/html"><a href="">World Wide Web Consortium (W3C)</a></format>. This class defines a simple type. Simple types can specify information and constraints for the value of attributes or elements with text-only content.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +37,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaSimpleType" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Content">
@@ -59,9 +69,52 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'XmlSchemaSimpleTypeContent'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the ways in which simple types can be defined.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Simple type </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Restriction </para>
+              </term>
+              <description>
+                <para>Restricts the range of values for the simple type to a subset of those for the inherited simple type. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>List </para>
+              </term>
+              <description>
+                <para>Defines a simple type that contains a white space-separated list of values of an inherited simple type. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Union </para>
+              </term>
+              <description>
+                <para>Defines a simple type that contains a union of the values of two or more inherited simple types. </para>
+              </description>
+            </item>
+          </list>
+          <para />
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets one of <see cref="T:System.Xml.Schema.XmlSchemaSimpleTypeUnion" />, <see cref="T:System.Xml.Schema.XmlSchemaSimpleTypeList" />, or <see cref="T:System.Xml.Schema.XmlSchemaSimpleTypeRestriction" />.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

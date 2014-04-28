@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpCacheAgeControl" FullName="System.Net.Cache.HttpCacheAgeControl">
   <TypeSignature Language="C#" Value="public enum HttpCacheAgeControl" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed HttpCacheAgeControl extends System.Enum" />
@@ -10,9 +11,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by members of the <see cref="T:System.Net.Cache.HttpRequestCachePolicy" /> class to configure the time values for cache policies.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the meaning of time values that control caching behavior for resources obtained using <see cref="T:System.Net.HttpWebRequest" /> objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="MaxAge">
@@ -27,8 +34,11 @@
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Content can be taken from the cache until it is older than the age specified with this value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxAgeAndMaxStale">
@@ -43,8 +53,12 @@
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxAge" /> and <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxStale" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxAgeAndMinFresh">
@@ -59,7 +73,11 @@
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MaxAge" /> and <see cref="P:System.Net.Cache.HttpRequestCachePolicy.MinFresh" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MaxStale">
@@ -74,8 +92,11 @@
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Content can be taken from the cache after it has expired, until the time specified with this value elapses.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MinFresh">
@@ -90,8 +111,11 @@
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Content can be taken from the cache if the time remaining before expiration is greater than or equal to the time specified with this value.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -106,7 +130,10 @@
         <ReturnType>System.Net.Cache.HttpCacheAgeControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For internal use only. The Framework will throw an <see cref="T:System.ArgumentException" /> if you try to use this member.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

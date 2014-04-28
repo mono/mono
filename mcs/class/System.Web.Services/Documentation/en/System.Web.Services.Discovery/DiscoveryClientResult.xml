@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DiscoveryClientResult" FullName="System.Web.Services.Discovery.DiscoveryClientResult">
   <TypeSignature Language="C#" Value="public sealed class DiscoveryClientResult" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Using the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.WriteAll(System.String,System.String)" /> method of <see cref="T:System.Web.Services.Discovery.DiscoveryClientProtocol" />, all valid referenced documents and a file containing a map of all save documents can be written to disk. The file containing a map of all saved documents contains the details of each document as summarized by the properties of <see cref="T:System.Web.Services.Discovery.DiscoveryClientResult" />.</para>
+      <para>After the referenced documents and the map of the referenced documents have been written to disk using the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.WriteAll(System.String,System.String)" /> method, you can invoke the <see cref="M:System.Web.Services.Discovery.DiscoveryClientProtocol.ReadAll(System.String)" /> method to read the discovery documents.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the details of a discovery reference without the contents of the referenced document. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +31,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Discovery.DiscoveryClientResult" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,11 +52,17 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="referenceType">To be added: an object of type 'Type'</param>
-        <param name="url">To be added: an object of type 'string'</param>
-        <param name="filename">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Discovery.DiscoveryClientResult" /> class and sets the <see cref="P:System.Web.Services.Discovery.DiscoveryClientResult.ReferenceTypeName" /> property to <paramref name="referenceType" />, the <see cref="P:System.Web.Services.Discovery.DiscoveryClientResult.Url" /> property to <paramref name="url" /> and the <see cref="P:System.Web.Services.Discovery.DiscoveryClientResult.Filename" /> property to <paramref name="filename" />.</para>
+        </summary>
+        <param name="referenceType">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name of the class representing the type of reference in the discovery document. Sets the <see cref="P:System.Web.Services.Discovery.DiscoveryClientResult.ReferenceTypeName" /> property. </param>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />URL for the reference. Sets the <see cref="P:System.Web.Services.Discovery.DiscoveryClientResult.Url" /> property. </param>
+        <param name="filename">
+          <attribution license="cc4" from="Microsoft" modified="false" />Name of the file in which the reference was saved. Sets the <see cref="P:System.Web.Services.Discovery.DiscoveryClientResult.Filename" /> property. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -60,9 +77,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the file is the name of the file saved on the local computer based on the contents of the file. For instance, if the referenced file is a discovery document, the saved file will have a.disco extension on a Windows operating system.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the file in which the reference is saved.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -82,9 +105,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference within a discovery document can contain references to service descriptions, XSD schemas, or other discovery documents. Therefore, <see cref="P:System.Web.Services.Discovery.DiscoveryClientResult.ReferenceTypeName" /> can have the following values: <see cref="T:System.Web.Services.Description.ServiceDescription" />, <see cref="T:System.Xml.Schema.XmlSchema" />, and <see cref="T:System.Web.Services.Discovery.DiscoveryDocument" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Name of the class representing the type of reference in the discovery document.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -104,9 +133,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The URL can refer to a discovery document, XML Schema Definition (XSD) schema, or a Service Description.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the URL for the reference.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

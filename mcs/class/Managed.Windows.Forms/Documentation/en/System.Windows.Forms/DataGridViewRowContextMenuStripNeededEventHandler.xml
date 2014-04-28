@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewRowContextMenuStripNeededEventHandler" FullName="System.Windows.Forms.DataGridViewRowContextMenuStripNeededEventHandler">
   <TypeSignature Language="C#" Value="public delegate void DataGridViewRowContextMenuStripNeededEventHandler(object sender, DataGridViewRowContextMenuStripNeededEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,20 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.DataGridView.RowContextMenuStripNeeded" /> event occurs only when the <see cref="T:System.Windows.Forms.DataGridView" /> control <see cref="P:System.Windows.Forms.DataGridView.DataSource" /> property is set or its <see cref="P:System.Windows.Forms.DataGridView.VirtualMode" /> property is true. Handling the <see cref="E:System.Windows.Forms.DataGridView.RowContextMenuStripNeeded" /> event is useful when you want to display a shortcut menu determined by a row's current state or the values it contains. </para>
+      <para>When you handle the <see cref="E:System.Windows.Forms.DataGridView.RowContextMenuStripNeeded" /> event, the shortcut menu that you specify in the handler is shown whenever the user right-clicks a row unless the <see cref="E:System.Windows.Forms.DataGridView.CellContextMenuStripNeeded" /> overrides the shortcut menu for the specific cell that was clicked. </para>
+      <para>The <see cref="E:System.Windows.Forms.DataGridView.RowContextMenuStripNeeded" /> event also occurs whenever the value of the <see cref="P:System.Windows.Forms.DataGridViewRow.ContextMenuStrip" /> property is retrieved, either programmatically or when the user right-clicks a row. </para>
+      <para>You can use the <see cref="P:System.Windows.Forms.DataGridViewRowContextMenuStripNeededEventArgs.RowIndex" /> property to determine the state of a row or the values it contains, and use this information to change or modify the <see cref="P:System.Windows.Forms.DataGridViewRowContextMenuStripNeededEventArgs.ContextMenuStrip" /> property. This property is initialized with the value of the row <see cref="P:System.Windows.Forms.DataGridViewRow.ContextMenuStrip" /> property, which the event value overrides. </para>
+      <para>Handle the <see cref="E:System.Windows.Forms.DataGridView.RowContextMenuStripNeeded" /> event when working with large amounts of data to avoid the performance penalties of setting the row <see cref="P:System.Windows.Forms.DataGridViewRow.ContextMenuStrip" /> value for multiple rows. For more information, see <format type="text/html"><a href="8321a8a6-6340-4fd1-b475-fa090b905aaf">Best Practices for Scaling the Windows Forms DataGridView Control</a></format>.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>When you create a <see cref="T:System.Windows.Forms.DataGridViewRowContextMenuStripNeededEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event-handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Windows.Forms.DataGridView.RowContextMenuStripNeeded" /> event of a <see cref="T:System.Windows.Forms.DataGridView" />. </para>
+    </summary>
   </Docs>
 </Type>

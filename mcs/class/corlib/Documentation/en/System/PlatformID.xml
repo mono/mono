@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PlatformID" FullName="System.PlatformID">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum PlatformID" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed PlatformID extends System.Enum" />
@@ -18,8 +19,97 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Represents the Platform of the <see cref="T:System.OperatingSystem" />.</summary>
-    <remarks>This is an Enum used to represent an operating system platform.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use the <see cref="P:System.Environment.OSVersion" /> and <see cref="P:System.OperatingSystem.Platform" /> properties to obtain the <see cref="T:System.PlatformID" /> enumeration for the currently executing operating system or development platform. Use the <see cref="T:System.PlatformID" /> enumeration to help determine whether the current operating system or development platform supports your application.</para>
+      <para>You can use the underlying integer value of each <see cref="T:System.PlatformID" /> enumeration member, as shown in the table, as the <paramref name="PlatformId" /> argument for the <format type="text/html"><a href="0c25ff6c-bff3-422e-b017-146a3ee86cb9">SignTool.exe (Sign Tool)</a></format> utility. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Member</para>
+            </term>
+            <description>
+              <para>Underlying value</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.PlatformID.Win32S" />
+            </para>
+          </term>
+          <description>
+            <para>0</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.PlatformID.Win32Windows" />
+            </para>
+          </term>
+          <description>
+            <para>1</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.PlatformID.Win32NT" />
+            </para>
+          </term>
+          <description>
+            <para>2</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.PlatformID.WinCE" />
+            </para>
+          </term>
+          <description>
+            <para>3</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.PlatformID.Unix" />
+            </para>
+          </term>
+          <description>
+            <para>4</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.PlatformID.Xbox" />
+            </para>
+          </term>
+          <description>
+            <para>5</para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.PlatformID.MacOSX" />
+            </para>
+          </term>
+          <description>
+            <para>6</para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the operating system, or platform, supported by an assembly.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="MacOSX">
@@ -34,7 +124,10 @@
         <ReturnType>System.PlatformID</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operating system is Macintosh.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unix">
@@ -49,8 +142,11 @@
         <ReturnType>System.PlatformID</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operating system is Unix.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Win32NT">
@@ -67,8 +163,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The WinNT Platform (Microsoft Windows NT or later).</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operating system is Windows NT or later.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Win32S">
@@ -85,8 +184,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The Win32s platform (a layer for 16 bit Windows versions to access 32 bit Windows applications).</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operating system is Win32s. Win32s is a layer that runs on 16-bit versions of Windows to provide access to 32-bit applications.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Win32Windows">
@@ -103,8 +205,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>A Win32 platform (Microsoft Windows 95 and later).</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operating system is Windows 95 or Windows 98.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WinCE">
@@ -121,8 +226,11 @@
       </ReturnValue>
       <MemberValue>WinCE</MemberValue>
       <Docs>
-        <summary>Microsoft Windows CE (Embedded Windows Operating System).</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operating system is Windows CE.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Xbox">
@@ -137,7 +245,10 @@
         <ReturnType>System.PlatformID</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The development platform is Xbox 360.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

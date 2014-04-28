@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProfileAutoSaveEventHandler" FullName="System.Web.Profile.ProfileAutoSaveEventHandler">
   <TypeSignature Language="C#" Value="public delegate void ProfileAutoSaveEventHandler(object sender, ProfileAutoSaveEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,17 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Profile.ProfileAutoSaveEventHandler" /> delegate is defined for the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class. You can access the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class in the Global.asax file for your ASP.NET application, as shown in the example for this topic. The <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event is raised at the end of page execution if the <see cref="P:System.Web.Profile.ProfileManager.AutomaticSaveEnabled" /> property is true.</para>
+      <para>The <see cref="M:System.Configuration.SettingsBase.Save" /> method automatically determines whether properties that are made up of primitive types, strings, or <see cref="T:System.DateTime" /> objects have been changed, by checking the <see cref="P:System.Configuration.SettingsPropertyValue.IsDirty" /> property value for each <see cref="T:System.Configuration.SettingsPropertyValue" /> in the user profile. However, the <see cref="M:System.Configuration.SettingsBase.Save" /> method cannot explicitly determine whether a custom class has changed. You can handle the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event to determine whether a custom object has been modified and to continue with the automatic save for modified objects and cancel the automatic save if no objects have been modified.</para>
+      <para>To cancel the automatic profile save operation, set the <see cref="P:System.Web.Profile.ProfileAutoSaveEventArgs.ContinueWithProfileAutoSave" /> property to false in the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event; otherwise, set the <see cref="P:System.Web.Profile.ProfileAutoSaveEventArgs.ContinueWithProfileAutoSave" /> property to true.</para>
+      <para>There may be multiple subscribers to the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event. The <see cref="T:System.Web.Profile.ProfileModule" /> will use the last value that the <see cref="P:System.Web.Profile.ProfileAutoSaveEventArgs.ContinueWithProfileAutoSave" /> property is set to. As a result, it is recommended that you explicitly set the <see cref="P:System.Web.Profile.ProfileAutoSaveEventArgs.ContinueWithProfileAutoSave" /> property in the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event, regardless of whether you are canceling or continuing with the automatic save, as you may need to overwrite the value set by an earlier subscriber.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Web.Profile.ProfileModule.ProfileAutoSaving" /> event of a <see cref="T:System.Web.Profile.ProfileModule" />. </para>
+    </summary>
   </Docs>
 </Type>

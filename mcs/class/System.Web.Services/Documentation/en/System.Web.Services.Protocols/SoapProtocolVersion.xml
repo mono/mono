@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SoapProtocolVersion" FullName="System.Web.Services.Protocols.SoapProtocolVersion">
   <TypeSignature Language="C#" Value="public enum SoapProtocolVersion" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="F:System.Web.Services.Protocols.SoapProtocolVersion.Default" /> member has a different meaning for clients than it does for XML Web services. For details, see the <see cref="P:System.Web.Services.Protocols.SoapHttpClientProtocol.SoapVersion" /> and <see cref="P:System.Web.Services.WebService.SoapVersion" /> properties.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the version of the SOAP protocol used to communicate with an XML Web service.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Default">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.Services.Protocols.SoapProtocolVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value for this enumeration.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.Services.Protocols.SoapProtocolVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>SOAP protocol version 1.1.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Web.Services.Protocols.SoapProtocolVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>SOAP protocol version 1.2.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

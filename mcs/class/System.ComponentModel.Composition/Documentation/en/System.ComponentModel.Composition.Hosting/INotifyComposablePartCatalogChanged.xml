@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="INotifyComposablePartCatalogChanged" FullName="System.ComponentModel.Composition.Hosting.INotifyComposablePartCatalogChanged">
   <TypeSignature Language="C#" Value="public interface INotifyComposablePartCatalogChanged" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract INotifyComposablePartCatalogChanged" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides notifications when a <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartCatalog" /> changes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Changed">
@@ -22,8 +26,11 @@
         <ReturnType>System.EventHandler&lt;System.ComponentModel.Composition.Hosting.ComposablePartCatalogChangeEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartCatalog" /> has changed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Changing">
@@ -37,8 +44,11 @@
         <ReturnType>System.EventHandler&lt;System.ComponentModel.Composition.Hosting.ComposablePartCatalogChangeEventArgs&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartCatalog" /> is changing.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

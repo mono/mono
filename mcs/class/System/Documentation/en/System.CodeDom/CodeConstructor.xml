@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeConstructor" FullName="System.CodeDom.CodeConstructor">
   <TypeSignature Language="C#" Value="public class CodeConstructor : System.CodeDom.CodeMemberMethod" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeConstructor extends System.CodeDom.CodeMemberMethod" />
@@ -23,8 +24,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeConstructor" /> can be used to represent a declaration of an instance constructor for a type. Use <see cref="T:System.CodeDom.CodeTypeConstructor" /> to declare a static constructor for a type.</para>
+      <para>If the constructor calls a base class constructor, set the constructor arguments for the base class constructor in the <see cref="P:System.CodeDom.CodeConstructor.BaseConstructorArgs" /> property. If the constructor overloads another constuctor for the type, set the constructor arguments to pass to the overloaded type constructor in the <see cref="P:System.CodeDom.CodeConstructor.ChainedConstructorArgs" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a declaration for an instance constructor of a type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +48,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeConstructor" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BaseConstructorArgs">
@@ -56,9 +68,15 @@
         <ReturnType>System.CodeDom.CodeExpressionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpressionCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.CodeDom.CodeConstructor" /> overloads a base class constructor, this collection contains any arguments to pass to a base class constructor. To call a base class constructor with no arguments, set a <see cref="T:System.CodeDom.CodeSnippetExpression" /> containing an empty string ("") to this collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of base constructor arguments.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ChainedConstructorArgs">
@@ -74,9 +92,15 @@
         <ReturnType>System.CodeDom.CodeExpressionCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpressionCollection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.CodeDom.CodeConstructor" /> overloads another constructor of the same type, this collection contains any arguments to pass to the overloaded type constructor. To call a constructor for the current type with no arguments, set a <see cref="T:System.CodeDom.CodeSnippetExpression" /> containing an empty string ("") to this collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of chained constructor arguments.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FileDialogCustomPlacesCollection" FullName="System.Windows.Forms.FileDialogCustomPlacesCollection">
   <TypeSignature Language="C#" Value="public class FileDialogCustomPlacesCollection : System.Collections.ObjectModel.Collection&lt;System.Windows.Forms.FileDialogCustomPlace&gt;" />
   <AssemblyInfo>
@@ -12,8 +13,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>On winxp or winxpsvr, this class does not have any effect.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a collection of wiprlhext custom places for the <see cref="T:System.Windows.Forms.FileDialog" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.FileDialogCustomPlacesCollection" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -41,9 +51,17 @@
         <Parameter Name="knownFolderGuid" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <param name="knownFolderGuid">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The folder is added to custom places only for a particular <see cref="T:System.Windows.Forms.FileDialog" /> and is not a system or application wide change.</para>
+          <para>The folders are positioned in the custom places in the order that they are added to the <see cref="T:System.Windows.Forms.FileDialog" />. The last one added will be at the top. If you add a custom place to the collection that does not exist on the computer running the application, the custom place will not be shown. GUIDs are case-insensitive. For a list of the available wiprlhext Known Folders, see <format type="text/html"><a href="d8d8b544-8b4d-4da5-ba3a-b05e93244778">Known Folder Guids for File Dialog Custom Places</a></format> or the KnownFolders.h file in the winSDK.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a custom place to the <see cref="T:System.Windows.Forms.FileDialogCustomPlacesCollection" /> collection.</para>
+        </summary>
+        <param name="knownFolderGuid">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Guid" /> that represents a wiprlhext Known Folder. </param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -59,9 +77,17 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The folder is added to custom places only for a particular <see cref="T:System.Windows.Forms.FileDialog" /> and is not a system or application wide change.</para>
+          <para>The folders are positioned in the custom places in the order that they are added to the <see cref="T:System.Windows.Forms.FileDialog" />. The last one added will be at the top. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a custom place to the <see cref="T:System.Windows.Forms.FileDialogCustomPlacesCollection" /> collection.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />A folder path to the custom place.</param>
       </Docs>
     </Member>
   </Members>

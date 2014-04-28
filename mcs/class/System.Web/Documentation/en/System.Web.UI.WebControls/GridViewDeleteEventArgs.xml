@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GridViewDeleteEventArgs" FullName="System.Web.UI.WebControls.GridViewDeleteEventArgs">
   <TypeSignature Language="C#" Value="public class GridViewDeleteEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.GridView" /> control raises the <see cref="E:System.Web.UI.WebControls.GridView.RowDeleting" /> event when a Delete button is clicked, but before the <see cref="T:System.Web.UI.WebControls.GridView" /> control deletes the record. (A Delete button is a button control whose CommandName property is set to "Delete".) You can perform a custom routine whenever this event occurs, such as canceling the delete operation.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.GridViewDeleteEventArgs" /> object is passed to the event handler. This enables you to determine the index of the row being deleted and to cancel the delete operation. To cancel the delete operation, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.GridViewDeleteEventArgs" /> object to true. You can also manipulate the <see cref="P:System.Web.UI.WebControls.GridViewDeleteEventArgs.Keys" /> and <see cref="P:System.Web.UI.WebControls.GridViewDeleteEventArgs.Values" /> collections before the values are passed to the data source.</para>
+      <para>For more information about how to handle events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.GridViewDeleteEventArgs" />, see the <see cref="M:System.Web.UI.WebControls.GridViewDeleteEventArgs.#ctor(System.Int32)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.GridView.RowDeleting" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,9 +32,39 @@
       </Parameters>
       <Docs>
         <param name="index">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.WebControls.GridViewDeleteEventArgs" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.GridViewDeleteEventArgs.RowIndex" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="rowIndex" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is primarily used by control developers when they raise events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewDeleteEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +77,21 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.GridView.DataKeyNames" /> property of a <see cref="T:System.Web.UI.WebControls.GridView" /> control is set, use the <see cref="P:System.Web.UI.WebControls.GridViewDeleteEventArgs.Keys" /> property (dictionary) to get the value of the primary key or keys of the row to delete.</para>
+          <block subset="none" type="note">
+            <para>To get the values of the non-key fields, use the <see cref="P:System.Web.UI.WebControls.GridViewDeleteEventArgs.Values" /> property.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.GridViewDeleteEventArgs.Keys" /> dictionary is automatically populated with the name/value pairs of the field or fields specified in the <see cref="P:System.Web.UI.WebControls.GridView.DataKeyNames" /> property. If multiple fields form the primary key, a separate entry is added to the <see cref="P:System.Web.UI.WebControls.GridViewDeleteEventArgs.Keys" /> dictionary for each key field.</para>
+          <para>To determine the name of a key field, use the <see cref="P:System.Collections.DictionaryEntry.Key" /> property of a <see cref="T:System.Collections.DictionaryEntry" /> object in the <see cref="P:System.Web.UI.WebControls.GridViewDeleteEventArgs.Keys" /> dictionary. To determine the value of a key field, use the <see cref="P:System.Collections.DictionaryEntry.Value" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary of field name/value pairs that represent the primary key of the row to delete.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +104,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The row index is frequently used to retrieve the specified row from the <see cref="P:System.Web.UI.WebControls.GridView.Rows" /> collection of the <see cref="T:System.Web.UI.WebControls.GridView" /> control. You can then access the row's properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the row being deleted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +126,19 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.GridViewDeleteEventArgs.Values" /> property is automatically populated with the name/value pairs of the non-key fields for the row. To determine the field name of an entry, use the <see cref="P:System.Collections.DictionaryEntry.Key" /> property of a <see cref="T:System.Collections.DictionaryEntry" /> object in the <see cref="P:System.Web.UI.WebControls.GridViewDeleteEventArgs.Values" /> dictionary. To determine the value of an entry, use the <see cref="P:System.Collections.DictionaryEntry.Value" /> property.</para>
+          <block subset="none" type="note">
+            <para>The primary key field or fields are not included in this dictionary. To access the values of the primary key field or fields, use the <see cref="P:System.Web.UI.WebControls.GridViewDeleteEventArgs.Keys" /> property.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary of the non-key field name/value pairs for the row to delete.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

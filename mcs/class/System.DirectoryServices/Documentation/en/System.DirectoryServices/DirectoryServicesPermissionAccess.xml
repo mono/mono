@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DirectoryServicesPermissionAccess" FullName="System.DirectoryServices.DirectoryServicesPermissionAccess">
   <TypeSignature Language="C#" Value="public sealed enum DirectoryServicesPermissionAccess" />
   <AssemblyInfo>
@@ -92,8 +93,11 @@
       </ReturnValue>
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No permissions are allowed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Browse">
@@ -104,8 +108,11 @@
       </ReturnValue>
       <MemberValue>Browse</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reading the Active Directory Domain Services tree is allowed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Write">
@@ -116,13 +123,19 @@
       </ReturnValue>
       <MemberValue>Write</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reading, writing, deleting, changing, and adding to the Active Directory Domain Srevices tree are allowed.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.DirectoryServices.DirectoryServicesPermissionAccess" /> enumeration defines access levels that are used by <see cref="N:System.DirectoryServices" /> permission classes. This enumeration has a <see cref="T:System.FlagsAttribute" /> attribute that allows a bitwise combination of its member values.</para>
+    </summary>
   </Docs>
 </Type>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CultureTypes" FullName="System.Globalization.CultureTypes">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum CultureTypes" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed CultureTypes extends System.Enum" />
@@ -21,8 +22,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>These culture type values are returned by the <see cref="P:System.Globalization.CultureInfo.CultureTypes" /> property, and also serve as a filter that limits the cultures returned by the <see cref="M:System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes)" /> method. For more information on cultures, see <see cref="T:System.Globalization.CultureInfo" />.</para>
+      <para>Generally, your application should enumerate all cultures, using the <see cref="F:System.Globalization.CultureTypes.AllCultures" /> value. This allows enumeration of custom cultures, as well as the other culture types.</para>
+      <para>Note that the <see cref="F:System.Globalization.CultureTypes.FrameworkCultures" /> and <see cref="F:System.Globalization.CultureTypes.WindowsOnlyCultures" /> members have been deprecated. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the types of culture lists that can be retrieved using the <see cref="M:System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes)" /> method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllCultures">
@@ -39,8 +48,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All cultures that ship with the .NET Framework, including neutral and specific cultures, cultures installed in the Windows operating system, and custom cultures created by the user.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FrameworkCultures">
@@ -60,8 +72,11 @@
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is deprecated; using this value with <see cref="M:System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes)" />  returns neutral and specific cultures shipped with the previous .NET Framework.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InstalledWin32Cultures">
@@ -78,8 +93,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All cultures that are installed in the Windows operating system. Note that not all cultures supported by the .NET Framework are installed in the operating system.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NeutralCultures">
@@ -96,8 +114,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom cultures can have any user-specified name, not just a two-letter code.</para>
+          <para>The invariant culture is included in the array of cultures returned by the <see cref="M:System.Globalization.CultureInfo.GetCultures(System.Globalization.CultureTypes)" /> method that specifies this value.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cultures that are associated with a language but are not specific to a country/region. The names of .NET Framework cultures consist of the lowercase two-letter code derived from ISO 639-1. For example: "en" (English) is a neutral culture. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReplacementCultures">
@@ -112,8 +137,11 @@
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom cultures created by the user that replace cultures shipped with the .NET Framework.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SpecificCultures">
@@ -130,8 +158,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom cultures can have any user-specified name, not just a standard-compliant name.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Cultures that are specific to a country/region. The names of these cultures follow RFC 4646 (Windows Vista and later). The format is "&lt;languagecode2&gt;-&lt;country/regioncode2&gt;", where &lt;languagecode2&gt; is a lowercase two-letter code derived from ISO 639-1 and &lt;country/regioncode2&gt; is an uppercase two-letter code derived from ISO 3166. For example, "en-US" for English (United States) is a specific culture.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UserCustomCulture">
@@ -146,8 +180,11 @@
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Custom cultures created by the user.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WindowsOnlyCultures">
@@ -167,8 +204,11 @@
         <ReturnType>System.Globalization.CultureTypes</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is deprecated; the default behavior is set to return an empty list for backward compatibility reasons.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

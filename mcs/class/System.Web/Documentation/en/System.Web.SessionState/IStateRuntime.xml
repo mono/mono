@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IStateRuntime" FullName="System.Web.SessionState.IStateRuntime">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IStateRuntime" />
   <AssemblyInfo>
@@ -18,8 +19,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>ASP.NET can manage session state out-of-process by using a Windows service called the ASP.NET state service. The <see cref="T:System.Web.SessionState.StateRuntime" /> class is used by unmanaged code in this service to manage session data. This class supports the .NET Framework infrastructure implementation of the ASP.NET state service and is not intended be used directly from your code.</para>
+      <para>Using the ASP.NET state service is not the default method of managing sessionstate in ASP.NET; ASP.NET supports in-process session-state management by default. It also supports a second out-of-process option that manages session state in a Microsoft SQL Server database, and it enables custom session-state management solutions. For more information about session-state storage options, see <format type="text/html"><a href="0bb0a3a3-650f-4c47-a0c5-b08b9b591bb4">Session State Modes</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the interface used by the ASP.NET state service to manage session data.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ProcessRequest">
@@ -40,17 +48,33 @@
         <Parameter Name="content" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="tracker">To be added: an object of type 'IntPtr'</param>
-        <param name="verb">To be added: an object of type 'int'</param>
-        <param name="uri">To be added: an object of type 'string'</param>
-        <param name="exclusive">To be added: an object of type 'int'</param>
-        <param name="timeout">To be added: an object of type 'int'</param>
-        <param name="lockCookieExists">To be added: an object of type 'int'</param>
-        <param name="lockCookie">To be added: an object of type 'int'</param>
-        <param name="contentLength">To be added: an object of type 'int'</param>
-        <param name="content">To be added: an object of type 'IntPtr'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET can manage session state out-of-process by using a Windows service called the ASP.NET state service. The <see cref="M:System.Web.SessionState.IStateRuntime.ProcessRequest(System.IntPtr,System.Int32,System.String,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.IntPtr)" /> method is used by unmanaged code in this service to manage the session data.</para>
+          <para>This member supports the .NET Framework infrastructure implementation of the ASP.NET state service and is not intended be used directly from your code. For more information about session-state storage options, see <format type="text/html"><a href="0bb0a3a3-650f-4c47-a0c5-b08b9b591bb4">Session State Modes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by the ASP.NET state server to process session data.</para>
+        </summary>
+        <param name="tracker">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> pointer to an object stored in the unmanaged ASP.NET state server.</param>
+        <param name="verb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action to take on the object.</param>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />An identifier for the session.</param>
+        <param name="exclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access to objects in the store.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of minutes the session data is stored.</param>
+        <param name="lockCookieExists">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that indicates whether the lock cookie exists in the original request from the ASP.NET Web server to the ASP.NET state server.</param>
+        <param name="lockCookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />The owner of the lock on the session state.</param>
+        <param name="contentLength">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length, in bytes, of the data stored for the session.</param>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> pointer to the content stored for the session in the unmanaged ASP.NET state server.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,18 +103,35 @@
         <Parameter Name="content" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="tracker">To be added.</param>
-        <param name="verb">To be added.</param>
-        <param name="uri">To be added.</param>
-        <param name="exclusive">To be added.</param>
-        <param name="extraFlags">To be added.</param>
-        <param name="timeout">To be added.</param>
-        <param name="lockCookieExists">To be added.</param>
-        <param name="lockCookie">To be added.</param>
-        <param name="contentLength">To be added.</param>
-        <param name="content">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET can manage session state out-of-process by using a Windows service called the ASP.NET state service. The <see cref="M:System.Web.SessionState.IStateRuntime.ProcessRequest(System.IntPtr,System.Int32,System.String,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.IntPtr)" /> method is used by unmanaged code in this service to manage the session data.</para>
+          <para>This member supports the .NET Framework infrastructure implementation of the ASP.NET state service and is not intended be used directly from your code. For more information about session-state storage options, see <format type="text/html"><a href="0bb0a3a3-650f-4c47-a0c5-b08b9b591bb4">Session State Modes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Used by the ASP.NET state server to process session data.</para>
+        </summary>
+        <param name="tracker">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> pointer to an object stored in the unmanaged ASP.NET state server.</param>
+        <param name="verb">
+          <attribution license="cc4" from="Microsoft" modified="false" />The action to take on the object.</param>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />An identifier for the session.</param>
+        <param name="exclusive">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of access to objects in the store.</param>
+        <param name="extraFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that indicates whether the current session is an uninitialized, cookieless session.</param>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of minutes the session data is stored.</param>
+        <param name="lockCookieExists">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that indicates whether the lock cookie exists in the original request from the ASP.NET Web server to the ASP.NET state server.</param>
+        <param name="lockCookie">
+          <attribution license="cc4" from="Microsoft" modified="false" />The owner of the lock on the session state.</param>
+        <param name="contentLength">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length, in bytes, of the data stored for the session.</param>
+        <param name="content">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> pointer to the content stored for the session in the unmanaged ASP.NET state server.</param>
       </Docs>
     </Member>
     <Member MemberName="StopProcessing">
@@ -101,8 +142,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ASP.NET can manage session state out-of-process by using a Windows service called the ASP.NET state service. The <see cref="M:System.Web.SessionState.StateRuntime.StopProcessing" /> method is used by unmanaged code in this service to stop processing the session data. This member is provided to support the .NET Framework infrastructure implementation of the ASP.NET state service and is not intended be used directly from your code. For more information about session-state storage options, see <format type="text/html"><a href="0bb0a3a3-650f-4c47-a0c5-b08b9b591bb4">Session State Modes</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Stops the processing of session data stored in ASP.NET state server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

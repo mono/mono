@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerActionUIStateChangeType" FullName="System.ComponentModel.Design.DesignerActionUIStateChangeType">
   <TypeSignature Language="C#" Value="public enum DesignerActionUIStateChangeType" />
   <AssemblyInfo>
@@ -8,8 +9,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ComponentModel.Design.DesignerActionUIStateChangeType" /> enumeration is used in the <see cref="T:System.ComponentModel.Design.DesignerActionUIStateChangeEventArgs" /> class and is associated with the <see cref="E:System.ComponentModel.Design.DesignerActionUIService.DesignerActionUIStateChange" /> event, which indicates whether the panel is being displayed or hidden.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the display state of a smart tag panel.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Hide">
@@ -22,7 +29,10 @@
         <ReturnType>System.ComponentModel.Design.DesignerActionUIStateChangeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The smart tag panel is being hidden.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Refresh">
@@ -35,7 +45,10 @@
         <ReturnType>System.ComponentModel.Design.DesignerActionUIStateChangeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The smart tag panel is being refreshed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Show">
@@ -48,7 +61,10 @@
         <ReturnType>System.ComponentModel.Design.DesignerActionUIStateChangeType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The smart tag panel is being displayed.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

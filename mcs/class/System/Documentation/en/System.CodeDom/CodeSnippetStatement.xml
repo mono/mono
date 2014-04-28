@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeSnippetStatement" FullName="System.CodeDom.CodeSnippetStatement">
   <TypeSignature Language="C#" Value="public class CodeSnippetStatement : System.CodeDom.CodeStatement" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeSnippetStatement extends System.CodeDom.CodeStatement" />
@@ -23,16 +24,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Represents a literal code statement in the CodeDOM.</summary>
-    <remarks>While the <see cref="T:System.CodeDOM.CodeSnippetStatement" /> provides a quick and dirty way of adding a Statement to the CodeDOM, its use is not recommended because it reduces the portability of the CodeDOM between language generators.
-
-<example>
-For example,
-  <code lang="C#">
-CodeSnippetStatement exp=new CodeSnippetExpression("a+=1");
-  </code>
-will work fine for the C# generator. However, because the VB.NET language doesn't contain the '+=' operator it'll generate broken code for it.
-</example></remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeSnippetStatement" /> can represent a statement using a literal code fragment that will be included directly in the source without modification.</para>
+      <para>A <see cref="T:System.CodeDom.CodeSnippetStatement" /> stores a section of code exactly in its original format as a string. The CodeDOM does not translate literal code fragments. Literal code fragments are stored and output in their original format. CodeDOM objects that contain literal code are provided so developers can encapsulate code that is already in the target language.</para>
+      <para>The <see cref="P:System.CodeDom.CodeSnippetStatement.Value" /> property contains the literal code for the snippet statement.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a statement using a literal code fragment.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -47,8 +49,11 @@ will work fine for the C# generator. However, because the VB.NET language doesn'
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Creates an undefined <see cref="T:System.CodeDom.CodeSnippetStatement" /> object. The <see cref="P:System.CodeDom.CodeSnippetStatement.Value" /> will have to be set later.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeSnippetStatement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -65,9 +70,13 @@ will work fine for the C# generator. However, because the VB.NET language doesn'
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>Creates a <see cref="T:System.CodeDom.CodeSnippetStatement" /> object with the <see cref="P:System.CodeDom.CodeSnippetStatement.Value" /> set to the provided value.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeSnippetStatement" /> class using the specified code fragment.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The literal code fragment of the statement to represent. </param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -85,9 +94,12 @@ will work fine for the C# generator. However, because the VB.NET language doesn'
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>Literal expression to be used.</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the literal code fragment statement.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

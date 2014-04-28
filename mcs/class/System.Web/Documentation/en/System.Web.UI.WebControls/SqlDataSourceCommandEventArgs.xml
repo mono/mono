@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlDataSourceCommandEventArgs" FullName="System.Web.UI.WebControls.SqlDataSourceCommandEventArgs">
   <TypeSignature Language="C#" Value="public class SqlDataSourceCommandEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,80 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>By adding an event handler delegate to handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Updating" />, <see cref="E:System.Web.UI.WebControls.SqlDataSource.Inserting" />, or <see cref="E:System.Web.UI.WebControls.SqlDataSource.Deleting" /> events, you can perform any additional preprocessing required or cancel the database command entirely.</para>
+      <para>Because the <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs" /> class is derived from the <see cref="T:System.ComponentModel.CancelEventArgs" /> class, you can cancel a pending <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> database command by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to true. You can examine and manipulate the <see cref="P:System.Data.Common.DbCommand.CommandText" />, <see cref="P:System.Data.Common.DbCommand.Parameters" /> collection, and other command properties prior to running the command by accessing the <see cref="T:System.Data.Common.DbCommand" /> object exposed by the <see cref="P:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs.Command" /> property.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs" /> class is used in the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnUpdating(System.Web.UI.WebControls.SqlDataSourceCommandEventArgs)" />, <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnInserting(System.Web.UI.WebControls.SqlDataSourceCommandEventArgs)" />, and <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.OnDeleting(System.Web.UI.WebControls.SqlDataSourceCommandEventArgs)" /> methods to provide access to a <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> database command before it is run. The <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control exposes many events that you can handle to work with the underlying data objects during the course of a data operation. The following table lists the events and associated <see cref="T:System.EventArgs" /> and event handler classes, to better guide you to the various events that correspond to the lifecycle of a data operation using the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Event</para>
+            </term>
+            <description>
+              <para>EventArgs</para>
+            </description>
+            <description>
+              <para>EventHandler</para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.SqlDataSource.Selecting" /> occurs before the data is retrieved.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.SqlDataSourceSelectingEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.SqlDataSourceSelectingEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.SqlDataSource.Inserting" />, <see cref="E:System.Web.UI.WebControls.SqlDataSource.Updating" />, <see cref="E:System.Web.UI.WebControls.SqlDataSource.Deleting" /> occur before an insert, update, or delete operation is performed.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventHandler" />
+            </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="E:System.Web.UI.WebControls.SqlDataSource.Selected" />, <see cref="E:System.Web.UI.WebControls.SqlDataSource.Inserted" />, <see cref="E:System.Web.UI.WebControls.SqlDataSource.Updated" />, <see cref="E:System.Web.UI.WebControls.SqlDataSource.Deleted" /> occur after the data retrieval, insert, update, or delete operations completes.</para>
+          </term>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.SqlDataSourceStatusEventArgs" />
+            </para>
+          </description>
+          <description>
+            <para>
+              <see cref="T:System.Web.UI.WebControls.SqlDataSourceStatusEventHandler" />
+            </para>
+          </description>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Updating" />, <see cref="E:System.Web.UI.WebControls.SqlDataSource.Deleting" /> and <see cref="E:System.Web.UI.WebControls.SqlDataSource.Inserting" /> events of the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +93,14 @@
         <Parameter Name="command" Type="System.Data.Common.DbCommand" />
       </Parameters>
       <Docs>
-        <param name="command">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs" /> class, using the specified database command object.</para>
+        </summary>
+        <param name="command">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Data.Common.DbCommand" /> object that represents the cancelable <see cref="M:System.Web.UI.WebControls.SqlDataSource.Update" />, <see cref="M:System.Web.UI.WebControls.SqlDataSource.Insert" />, or <see cref="M:System.Web.UI.WebControls.SqlDataSource.Delete" /> command. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +113,16 @@
         <ReturnType>System.Data.Common.DbCommand</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can handle the <see cref="E:System.Web.UI.WebControls.SqlDataSource.Updating" />, <see cref="E:System.Web.UI.WebControls.SqlDataSource.Inserting" />, or <see cref="E:System.Web.UI.WebControls.SqlDataSource.Deleting" /> event to examine and manipulate the properties of the <see cref="T:System.Data.Common.DbCommand" /> before it is run by the <see cref="T:System.Web.UI.WebControls.SqlDataSource" /> control. The connection to the underlying data source is not yet open when the event handler delegate is called. Therefore, you cannot cancel the database operation by calling the <see cref="M:System.Data.Common.DbCommand.Cancel" /> method on the <see cref="T:System.Data.Common.DbCommand" /> object directly. However, you can cancel the database operation by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.SqlDataSourceCommandEventArgs" /> to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the pending database command.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

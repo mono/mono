@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ControlStyles" FullName="System.Windows.Forms.ControlStyles">
   <TypeSignature Language="C#" Value="public enum ControlStyles" />
   <AssemblyInfo>
@@ -14,8 +15,25 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Controls use this enumeration in various properties and methods to specify functionality. A control can enable a style by calling the <see cref="M:System.Windows.Forms.Control.SetStyle(System.Windows.Forms.ControlStyles,System.Boolean)" /> method and passing in the appropriate <see cref="T:System.Windows.Forms.ControlStyles" /> bit (or bits) and the Boolean value to set the bit(s) to. For example, the following line of Visual Basic code would enable double-buffering.</para>
+      <code> myControl.SetStyle(UserPaint Or AllPaintingInWmPaint Or DoubleBuffer, True)</code>
+      <para>If the <see cref="F:System.Windows.Forms.ControlStyles.AllPaintingInWmPaint" /> bit is set to true, the window message WM_ERASEBKGND is ignored, and both <see cref="M:System.Windows.Forms.Control.OnPaintBackground(System.Windows.Forms.PaintEventArgs)" /> and <see cref="M:System.Windows.Forms.Control.OnPaint(System.Windows.Forms.PaintEventArgs)" /> methods are called directly from the window message WM_PAINT. This generally reduces flicker unless other controls send the window message WM_ERASEBKGND to the control. You might send the window message WM_ERASEBKGRND to achieve a pseudo-transparent effect similar to <see cref="F:System.Windows.Forms.ControlStyles.SupportsTransparentBackColor" />; for example, a <see cref="T:System.Windows.Forms.ToolBar" /> with flat appearance does this.</para>
+      <para />
+      <para>To fully enable double-buffering, you can set the <see cref="F:System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer" /> and <see cref="F:System.Windows.Forms.ControlStyles.AllPaintingInWmPaint" /> bits to true. However the preferred method for enabling double buffering, which yields the same result, is to set the <see cref="P:System.Windows.Forms.Control.DoubleBuffered" /> property for the control to true. </para>
+      <para>If the <see cref="F:System.Windows.Forms.ControlStyles.SupportsTransparentBackColor" /> bit is set to true, and the <see cref="P:System.Windows.Forms.Control.BackColor" /> is set to a color whose alpha component is less than 255, <see cref="M:System.Windows.Forms.Control.OnPaintBackground(System.Windows.Forms.PaintEventArgs)" /> will simulate transparency by asking its parent control to paint the background. This is not true transparency.</para>
+      <block subset="none" type="note">
+        <para>If there is another control between the control and its parent, the current control will not show the control in the middle.</para>
+      </block>
+      <para>When the <see cref="F:System.Windows.Forms.ControlStyles.UserMouse" /> bit is set to true, the following methods are still called: <see cref="M:System.Windows.Forms.Control.OnMouseDown(System.Windows.Forms.MouseEventArgs)" />, <see cref="M:System.Windows.Forms.Control.OnMouseUp(System.Windows.Forms.MouseEventArgs)" />, <see cref="M:System.Windows.Forms.Control.OnMouseEnter(System.EventArgs)" />, <see cref="M:System.Windows.Forms.Control.OnMouseMove(System.Windows.Forms.MouseEventArgs)" />, <see cref="M:System.Windows.Forms.Control.OnMouseHover(System.EventArgs)" />, <see cref="M:System.Windows.Forms.Control.OnMouseLeave(System.EventArgs)" />, and <see cref="M:System.Windows.Forms.Control.OnMouseWheel(System.Windows.Forms.MouseEventArgs)" />.</para>
+      <para>When the control is clicked, if the <see cref="F:System.Windows.Forms.ControlStyles.StandardClick" /> bit is set to true the <see cref="M:System.Windows.Forms.Control.OnClick(System.EventArgs)" /> method is called and it raises the <see cref="E:System.Windows.Forms.Control.Click" /> event. When the control is double-clicked, and both the <see cref="F:System.Windows.Forms.ControlStyles.StandardClick" /> and <see cref="F:System.Windows.Forms.ControlStyles.StandardDoubleClick" /> bits are set to true, the click is passed on to the <see cref="E:System.Windows.Forms.Control.DoubleClick" /> event. Then the <see cref="M:System.Windows.Forms.Control.OnDoubleClick(System.EventArgs)" /> method is called and it raises the <see cref="E:System.Windows.Forms.Control.DoubleClick" /> event. However, the control can call <see cref="M:System.Windows.Forms.Control.OnClick(System.EventArgs)" /> or <see cref="M:System.Windows.Forms.Control.OnDoubleClick(System.EventArgs)" /> directly regardless of the <see cref="F:System.Windows.Forms.ControlStyles.StandardClick" /> and <see cref="F:System.Windows.Forms.ControlStyles.StandardDoubleClick" /> bit values. For more information on control click and double click behaviors, see the <see cref="E:System.Windows.Forms.Control.Click" /> and <see cref="E:System.Windows.Forms.Control.DoubleClick" /> topics.</para>
+      <para>When the <see cref="F:System.Windows.Forms.ControlStyles.UseTextForAccessibility" /> bit is set and there is a value in the control's Text property, the value of that control's Text property determines the control's default Active Accessibility name and shortcut key. Otherwise, the text of the preceding <see cref="T:System.Windows.Forms.Label" /> control will be used instead. This style is set by default. Certain built-in control types, such as <see cref="T:System.Windows.Forms.TextBox" /> and <see cref="T:System.Windows.Forms.ComboBox" />, reset this style so that the Text property of those controls will not be used by Active Accessibility.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the style and behavior of a control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllPaintingInWmPaint">
@@ -25,7 +43,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control ignores the window message WM_ERASEBKGND to reduce flicker. This style should only be applied if the <see cref="F:System.Windows.Forms.ControlStyles.UserPaint" /> bit is set to true.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,7 +60,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control keeps a copy of the text rather than getting it from the <see cref="P:System.Windows.Forms.Control.Handle" /> each time it is needed. This style defaults to false. This behavior improves performance, but makes it difficult to keep the text synchronized.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,7 +77,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control is a container-like control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -67,7 +94,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, drawing is performed in a buffer, and after it completes, the result is output to the screen. Double-buffering prevents flicker caused by the redrawing of the control. If you set <see cref="F:System.Windows.Forms.ControlStyles.DoubleBuffer" /> to true, you should also set <see cref="F:System.Windows.Forms.ControlStyles.UserPaint" /> and <see cref="F:System.Windows.Forms.ControlStyles.AllPaintingInWmPaint" /> to true.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -86,7 +116,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the <see cref="M:System.Windows.Forms.Control.OnNotifyMessage(System.Windows.Forms.Message)" /> method is called for every message sent to the control's <see cref="M:System.Windows.Forms.Control.WndProc(System.Windows.Forms.Message@)" />. This style defaults to false. <see cref="F:System.Windows.Forms.ControlStyles.EnableNotifyMessage" /> does not work in partial trust.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -100,7 +133,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control has a fixed height when auto-scaled. For example, if a layout operation attempts to rescale the control to accommodate a new <see cref="T:System.Drawing.Font" />, the control's <see cref="P:System.Windows.Forms.Control.Height" /> remains unchanged.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -114,7 +150,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control has a fixed width when auto-scaled. For example, if a layout operation attempts to rescale the control to accommodate a new <see cref="T:System.Drawing.Font" />, the control's <see cref="P:System.Windows.Forms.Control.Width" /> remains unchanged.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -128,7 +167,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control is drawn opaque and the background is not painted.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -142,8 +184,11 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control is first drawn to a buffer rather than directly to the screen, which can reduce flicker. If you set this property to true, you should also set the <see cref="F:System.Windows.Forms.ControlStyles.AllPaintingInWmPaint" /> to true.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -156,7 +201,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control is redrawn when it is resized.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -170,7 +218,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control can receive focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -184,7 +235,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control implements the standard <see cref="E:System.Windows.Forms.Control.Click" /> behavior.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -198,7 +252,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control implements the standard <see cref="E:System.Windows.Forms.Control.DoubleClick" /> behavior. This style is ignored if the <see cref="F:System.Windows.Forms.ControlStyles.StandardClick" /> bit is not set to true.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -212,7 +269,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control accepts a <see cref="P:System.Windows.Forms.Control.BackColor" /> with an alpha component of less than 255 to simulate transparency. Transparency will be simulated only if the <see cref="F:System.Windows.Forms.ControlStyles.UserPaint" /> bit is set to true and the parent control is derived from <see cref="T:System.Windows.Forms.Control" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -226,7 +286,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control does its own mouse processing, and mouse events are not handled by the operating system.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -240,7 +303,10 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If true, the control paints itself rather than the operating system doing so. If false, the <see cref="E:System.Windows.Forms.Control.Paint" /> event is not raised. This style only applies to classes derived from <see cref="T:System.Windows.Forms.Control" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -254,8 +320,11 @@
         <ReturnType>System.Windows.Forms.ControlStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the value of the control's Text property, if set, determines the control's default Active Accessibility name and shortcut key.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

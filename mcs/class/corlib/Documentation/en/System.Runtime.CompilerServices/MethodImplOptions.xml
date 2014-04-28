@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MethodImplOptions" FullName="System.Runtime.CompilerServices.MethodImplOptions" FullNameSP="System_Runtime_CompilerServices_MethodImplOptions" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable MethodImplOptions extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum MethodImplOptions" />
@@ -22,13 +23,18 @@
     </Attribute>
   </Attributes>
   <Docs>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used with the <see cref="T:System.Runtime.CompilerServices.MethodImplAttribute" />attribute.</para>
+      <para>You can specify multiple <see cref="T:System.Runtime.CompilerServices.MethodImplOptions" /> values by using the bitwise OR operator.</para>
+      <block subset="none" type="note">
+        <para>Locking on the instance or on the type, as with the <see cref="F:System.Runtime.CompilerServices.MethodImplOptions.Synchronized" /> flag, is not recommended for public types, because code other than your own can take locks on public types and instances. This might cause deadlocks or other synchronization problems. </para>
+      </block>
+    </remarks>
     <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
       <para>Defines the details of how a method is implemented.</para>
     </summary>
-    <remarks>
-      <para>This enumeration is used by <see cref="T:System.Runtime.CompilerServices.MethodImplAttribute" />.
-   </para>
-    </remarks>
   </Docs>
   <Members>
     <Member MemberName="AggressiveInlining">
@@ -42,7 +48,10 @@
         <ReturnType>System.Runtime.CompilerServices.MethodImplOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method should be inlined if possible.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ForwardRef">
@@ -61,16 +70,11 @@
       <Parameters />
       <MemberValue>ForwardRef</MemberValue>
       <Docs>
-        <summary>
-          <para> Specifies that the method is declared, but its implementation is
-      provided elsewhere. </para>
-          <para>
-            <block subset="none" type="note">For most languages, it is recommended 
-      that the notion of "forward" be attached to methods using language syntax
-      instead of custom attributes. </block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method is declared, but its implementation is provided elsewhere.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -90,16 +94,11 @@
       <Parameters />
       <MemberValue>InternalCall</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies an internal call.</para>
-          <para>
-            <block subset="none" type="note">An internal call
-      is a call to a method implemented within the system itself, providing
-      additional functionality that regular managed code cannot provide. <see cref="M:System.Object.MemberwiseClone" />
-      is an example of an internally called method.</block>
-          </para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The call is internal, that is, it calls a method that is implemented within the common language runtime.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -119,10 +118,11 @@
       <Parameters />
       <MemberValue>NoInlining</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that the method is not permitted to be inlined.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method cannot be inlined. Inlining is an optimization by which a method call is replaced with the method body.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -138,7 +138,10 @@
         <ReturnType>System.Runtime.CompilerServices.MethodImplOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method is not optimized by the just-in-time (JIT) compiler or by native code generation (see <format type="text/html"><a href="44bf97aa-a9a4-4eba-9a0d-cfaa6fc53a66">Ngen.exe</a></format>) when debugging possible code generation problems.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreserveSig">
@@ -155,8 +158,11 @@
       </ReturnValue>
       <MemberValue>PreserveSig</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method signature is exported exactly as declared.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Synchronized">
@@ -175,33 +181,11 @@
       <Parameters />
       <MemberValue>Synchronized</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies the method can be executed by only one thread at a time.</para>
-          <para>This option specifies that before a thread can execute the target method, the
-      thread is required to acquire a lock on either the current
-      instance or the <see cref="T:System.Type" />
-      object for the method's class. If the target method is an instance method, the
-      lock is on the current instance. If the target is a static method, the lock is
-      on the <see cref="T:System.Type" /> object. Specifying this option causes the target method to behave as though its
-      statements are enclosed by <see cref="M:System.Threading.Monitor.Enter(System.Object)" /> and <see cref="M:System.Threading.Monitor.Exit(System.Object)" />
-      statements locking the previous described object. This option and the <see cref="T:System.Threading.Monitor" /> methods are functionally equivalent, and both
-      are functionally equivalent to enclosing the target method's code in a C# lock
-      (this)
-      statement. </para>
-          <block subset="none" type="note">
-            <para>Because this option holds the lock for
-         the duration of the target method, it should be used only when the entire method
-         must be single threaded. Use the <see cref="T:System.Threading.Monitor" /> methods (or the C#
-         lock statement) if the object lock can be taken after the method begins, or
-         released before the method ends. Any mechanism that uses locks can cause an
-         application to experience deadlocks and performance degradation; for these
-         reasons, use this option with care.</para>
-            <para> For most languages, it is recommended that the notion of
-         "synchronized" be attached to methods using language syntax instead of custom
-         attributes.</para>
-          </block>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method can be executed by only one thread at a time. Static methods lock on the type, whereas instance methods lock on the instance. Only one thread can execute in any of the instance functions, and only one thread can execute in any of a class's static functions.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -221,10 +205,11 @@
       <Parameters />
       <MemberValue>Unmanaged</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that the method is implemented in unmanaged code.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method is implemented in unmanaged code.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
