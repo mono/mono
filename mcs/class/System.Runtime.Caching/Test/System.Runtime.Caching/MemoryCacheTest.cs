@@ -1355,7 +1355,7 @@ namespace MonoTests.System.Runtime.Caching
 
 				Assert.AreEqual (200, mc.GetCount (), "#CEO3");
 
-				global::System.Threading.Thread.Sleep (2 * 1000);
+				global::System.Threading.Thread.Sleep (4 * 1000);
 
 				Assert.AreEqual (100, mc.GetCount (), "#CEO4");
 			}
@@ -1397,7 +1397,7 @@ namespace MonoTests.System.Runtime.Caching
 
 				Assert.AreEqual (1, mc.GetCount (), "#CSL4");
 
-				global::System.Threading.Thread.Sleep (2000);
+				global::System.Threading.Thread.Sleep (4 * 1000);
 
 				Assert.AreEqual (0, mc.GetCount (), "#CSL5");
 			}
