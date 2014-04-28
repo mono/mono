@@ -4,6 +4,7 @@
 //
 // Author:
 //	Tom Philpot  <tom.philpot@logos.com>
+//	Dave Curylo  <curylod@asme.org>
 //
 // Copyright (C) 2014 Logos Bible Software
 //
@@ -28,9 +29,12 @@
 //
 
 using System;
+using System.CodeDom.Compiler;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using Microsoft.CSharp;
 using NUnit.Framework;
 
 namespace MonoTests.System.Configuration
@@ -58,6 +62,9 @@ namespace MonoTests.System.Configuration
 			Directory.SetCurrentDirectory (originalCurrentDir);
 			if (Directory.Exists (tempFolder))
 				Directory.Delete (tempFolder, true);
+			File.Delete ("TestLoadsFromFileAttribute.exe");
+			File.Delete ("TestLoadsFromFileAttribute.exe.config");
+			File.Delete ("extra.config");
 		}
 		
 		[Test]
@@ -70,6 +77,36 @@ namespace MonoTests.System.Configuration
 			Assert.AreEqual ("Test/appSettings.config", config.AppSettings.File, "#A01");
 			Assert.AreEqual ("foo", ConfigurationSettings.AppSettings["TestKey1"], "#A02");
 			Assert.AreEqual ("bar", ConfigurationSettings.AppSettings["TestKey2"], "#A03");
+		}
+
+		[Test]
+		public void TestLoadsFileAttributeRelativePath () {
+			// Compile a test executable with codedom that returns a string from the file
+			// Create an app.config file.
+			// Create an extra.config file that is referenced by the app.config file.
+			// Process.Start the executable from a different directory (up one).
+			// Should not find the setting from extra.config before the fix
+			// Should find it after the fix.
+			var code = "using System; using System.Configuration; namespace Testing { class LoadsFromFileAttribute { public static void Main(string[] args) { if (ConfigurationManager.AppSettings[\"foo\"] == \"bar\") Environment.Exit (100); }  } }";
+			var codeProvider = new CSharpCodeProvider ();
+			var icc = codeProvider.CreateCompiler ();
+			var parameters = new CompilerParameters ();
+			parameters.GenerateExecutable = true;
+			parameters.OutputAssembly = "TestLoadsFromFileAttribute.exe";
+			parameters.ReferencedAssemblies.Add ("System.Configuration");
+			CompilerResults results = icc.CompileAssemblyFromSource (parameters, code);
+			if (results.Errors.Count > 0) {
+				Assert.Inconclusive (String.Format ("Test assembly failed to build. Errors : {0}", results.Errors [0]));
+			}
+			File.WriteAllText ("TestLoadsFromFileAttribute.exe.config", "<configuration><appSettings file=\"extra.config\"/></configuration>");
+			File.WriteAllText ("extra.config", "<appSettings><add key=\"foo\" value=\"bar\" /></appSettings>");
+			var pwd = Environment.CurrentDirectory;
+			var p = Process.Start (new ProcessStartInfo {
+				WorkingDirectory = "../",
+				FileName = Path.Combine (pwd, "TestLoadsFromFileAttribute.exe"),
+			});
+			p.WaitForExit ();
+			Assert.AreEqual (100, p.ExitCode, "Couldn't find setting from extra.config file when launched from different directory.");
 		}
 	}
 }

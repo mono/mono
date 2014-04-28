@@ -4,6 +4,7 @@
 // Authors:
 //	Duncan Mak (duncan@ximian.com)
 //	Chris Toshok (toshok@ximian.com)
+//	Dave Curylo (curylod@asme.org)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -71,14 +72,25 @@ namespace System.Configuration {
 
 			if (File != "") {
 				try {
-					string filePath = File;
-					if (!Path.IsPathRooted (filePath))
-						filePath = Path.Combine (Path.GetDirectoryName (Configuration.FilePath), filePath);
-
-					Stream s = System.IO.File.OpenRead (filePath);
-					XmlReader subreader = new ConfigXmlTextReader (s, filePath);
-					base.DeserializeElement (subreader, serializeCollectionKey);
-					s.Close ();
+					string filePath = null;
+					if (!Path.IsPathRooted (File)) {
+						// Relative path, we should ensure check relative to the configuration file, which may be a symlink on *nix
+						string directory;
+						var p = Environment.OSVersion.Platform;
+						if ((p == PlatformID.Unix) || (p == PlatformID.MacOSX) || ((int)p == 128)) {
+							var realPath = Mono.Unix.UnixPath.GetRealPath (AppDomain.CurrentDomain.SetupInformation.ConfigurationFile);
+							directory = new FileInfo (realPath).DirectoryName;
+						} else {
+							directory = new FileInfo (AppDomain.CurrentDomain.SetupInformation.ConfigurationFile).DirectoryName;
+						}
+						filePath = Path.Combine (directory, File);
+					} else {
+						filePath = File;
+					}
+					using (Stream s = System.IO.File.OpenRead (filePath)) {
+						XmlReader subreader = new ConfigXmlTextReader (s, filePath);
+						base.DeserializeElement (subreader, serializeCollectionKey);
+					}
 				}
 				catch {
 					// nada, we just ignore a missing/unreadble file
