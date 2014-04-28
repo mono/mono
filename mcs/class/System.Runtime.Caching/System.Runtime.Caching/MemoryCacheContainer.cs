@@ -193,7 +193,7 @@ namespace System.Runtime.Caching
 				if (timedItems == null)
 					return 0;
 				
-				long now = DateTime.Now.Ticks;
+				long now = DateTime.UtcNow.Ticks;
 				MemoryCacheEntry entry = timedItems.Peek ();
 
 				while (entry != null) {
@@ -207,6 +207,13 @@ namespace System.Runtime.Caching
 						break;
 
 					timedItems.Dequeue ();
+
+					if (entry.IsSliding && entry.ExpiresAtNext > now) {
+						entry.ResetSlidingExpiry ();
+						timedItems.Enqueue (entry);
+						break;
+					}
+					
 					count++;
 					DoRemoveEntry (entry, true, entry.Key, CacheEntryRemovedReason.Expired);
 					entry = timedItems.Peek ();
@@ -235,6 +242,9 @@ namespace System.Runtime.Caching
 				MemoryCacheEntry entry;
 				if (cache.TryGetValue (key, out entry) && entry != null) {
 					perfCounters.Increment (MemoryCachePerformanceCounters.CACHE_HITS);
+					if (entry.IsSliding)
+						entry.UpdateSlidingExpiry ();
+
 					return entry.Value;
 				}
 				perfCounters.Increment (MemoryCachePerformanceCounters.CACHE_MISSES);
@@ -272,6 +282,9 @@ namespace System.Runtime.Caching
 
 				MemoryCacheEntry entry;
 				if (cache.TryGetValue (key, out entry)) {
+					if (entry.IsSliding)
+						entry.UpdateSlidingExpiry ();
+
 					if (ExpireIfNeeded (key, entry))
 						return null;
 					
@@ -294,6 +307,9 @@ namespace System.Runtime.Caching
 
 				MemoryCacheEntry entry;
 				if (cache.TryGetValue (key, out entry)) {
+					if (entry.IsSliding)
+						entry.UpdateSlidingExpiry ();
+
 					if (ExpireIfNeeded (key, entry))
 						return null;
 					
