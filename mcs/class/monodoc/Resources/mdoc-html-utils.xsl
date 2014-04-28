@@ -1620,6 +1620,7 @@
 			<xsl:for-each select="item">
 				<li>
 					<xsl:apply-templates select="term" mode="notoppara"/>
+					<xsl:apply-templates select="para" mode="notoppara"/>
 				</li>
 			</xsl:for-each>
 		</ul>
