@@ -3506,10 +3506,22 @@ remove_breakpoint (BreakpointInstance *inst)
 #endif
 }	
 
+static inline MonoMethod*
+get_declaring_method(MonoMethod* method)
+{
+	if (!method || !method->is_inflated)
+		return method;
+
+	return mono_method_get_declaring_generic_method(method);
+}
+
 static inline gboolean
 bp_matches_method (MonoBreakpoint *bp, MonoMethod *method)
 {
-	return (!bp->method || method == bp->method || (method->is_inflated && ((MonoMethodInflated*)method)->declaring == bp->method));
+	MonoMethod* bp_declaring_method = get_declaring_method(bp->method);
+	MonoMethod* declaring_method = get_declaring_method(method);
+
+	return (!bp->method || bp_declaring_method == declaring_method);
 }
 
 /*

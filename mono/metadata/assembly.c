@@ -2566,7 +2566,7 @@ mono_assembly_foreach (GFunc func, gpointer user_data)
 	copy = g_list_copy (loaded_assemblies);
 	mono_assemblies_unlock ();
 
-	g_list_foreach (loaded_assemblies, func, user_data);
+	g_list_foreach (copy, func, user_data);
 
 	g_list_free (copy);
 }
