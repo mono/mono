@@ -89,12 +89,23 @@ namespace System.Configuration
 				parameters = null;
 		}
 
-		[MonoTODO]
 		protected internal override void Unmerge (
 				ConfigurationElement source, ConfigurationElement parent,
 				ConfigurationSaveMode updateMode)
 		{
+			this.parameters = new ConfigNameValueCollection((ConfigNameValueCollection)((ProviderSettings)source).Parameters);
 			base.Unmerge (source, parent, updateMode);
+		}
+
+		protected internal override bool SerializeElement(XmlWriter writer, bool serializeCollectionKey)
+		{
+			base.SerializeElement(writer, serializeCollectionKey);
+
+			if (this.parameters != null)
+				foreach (var key in this.parameters.AllKeys)
+					writer.WriteAttributeString(key, this.parameters[key]);
+
+			return true;
 		}
 		
 		[ConfigurationProperty ("name", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
