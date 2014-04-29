@@ -189,10 +189,9 @@ namespace System.Data.Common {
 		}
 		
 #if NET_4_5
-		[MonoTODO]
 		public virtual T GetFieldValue<T> (int i)
 		{
-			throw new NotImplementedException ();
+			return (T) GetValue(i);
 		}
 
 		public Task<T> GetFieldValueAsync<T> (int ordinal)
