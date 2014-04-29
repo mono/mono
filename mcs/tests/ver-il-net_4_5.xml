@@ -62357,6 +62357,49 @@
       </method>
     </type>
   </test>
+  <test name="test-async-61.cs">
+    <type name="X">
+      <method name="Void Main()" attrs="150">
+        <size>17</size>
+      </method>
+      <method name="System.Threading.Tasks.Task Foo()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void Invoke(System.Action)" attrs="129">
+        <size>8</size>
+      </method>
+      <method name="System.Threading.Tasks.Task &lt;Foo&gt;m__0()" attrs="129">
+        <size>41</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X+&lt;Foo&gt;c__async0">
+      <method name="Void MoveNext()" attrs="486">
+        <size>173</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="X+&lt;Foo&gt;c__async6">
+      <method name="Void MoveNext()" attrs="486">
+        <size>100</size>
+      </method>
+      <method name="Void SetStateMachine(System.Runtime.CompilerServices.IAsyncStateMachine)" attrs="486">
+        <size>13</size>
+      </method>
+    </type>
+    <type name="X+&lt;Foo&gt;c__async6+&lt;Foo&gt;c__AnonStorey7">
+      <method name="Void &lt;&gt;m__0()" attrs="131">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()" attrs="6278">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-cls-00.cs">
     <type name="CLSCLass_6">
       <method name="Void add_Disposed(Delegate)" attrs="2182">

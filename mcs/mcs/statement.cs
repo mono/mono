@@ -3209,8 +3209,9 @@ namespace Mono.CSharp {
 
 						for (ExplicitBlock b = ref_block; b.AnonymousMethodStorey != storey; b = b.Parent.Explicit) {
 							ParametersBlock pb;
+							AnonymousMethodStorey b_storey = b.AnonymousMethodStorey;
 
-							if (b.AnonymousMethodStorey != null) {
+							if (b_storey != null) {
 								//
 								// Don't add storey cross reference for `this' when the storey ends up not
 								// beeing attached to any parent
@@ -3229,21 +3230,23 @@ namespace Mono.CSharp {
 										b.AnonymousMethodStorey.AddCapturedThisField (ec, parent);
 										break;
 									}
-								}
 
-								b.AnonymousMethodStorey.AddParentStoreyReference (ec, storey);
-								b.AnonymousMethodStorey.HoistedThis = storey.HoistedThis;
+								}
 
 								//
 								// Stop propagation inside same top block
 								//
-								if (b.ParametersBlock == ParametersBlock.Original)
+								if (b.ParametersBlock == ParametersBlock.Original) {
+									b_storey.AddParentStoreyReference (ec, storey);
+//									b_storey.HoistedThis = storey.HoistedThis;
 									break;
+								}
 
-								b = b.ParametersBlock;
+								b = pb = b.ParametersBlock;
+							} else {
+								pb = b as ParametersBlock;
 							}
 
-							pb = b as ParametersBlock;
 							if (pb != null && pb.StateMachine != null) {
 								if (pb.StateMachine == storey)
 									break;
@@ -3268,8 +3271,14 @@ namespace Mono.CSharp {
 
 								pb.StateMachine.AddParentStoreyReference (ec, storey);
 							}
-							
-							b.HasCapturedVariable = true;
+
+							//
+							// Add parent storey reference only when this is not captured directly
+							//
+							if (b_storey != null) {
+								b_storey.AddParentStoreyReference (ec, storey);
+								b_storey.HoistedThis = storey.HoistedThis;
+							}
 						}
 					}
 				}
