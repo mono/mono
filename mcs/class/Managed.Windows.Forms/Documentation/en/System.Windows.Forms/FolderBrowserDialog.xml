@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FolderBrowserDialog" FullName="System.Windows.Forms.FolderBrowserDialog">
   <TypeSignature Language="C#" Value="public sealed class FolderBrowserDialog : System.Windows.Forms.CommonDialog" />
   <AssemblyInfo>
@@ -21,8 +22,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class provides a way to prompt the user to browse, create, and eventually select a folder. Use this class when you only want to allow the user to select folders, not files. Browsing of the folders is done through a tree control. Only folders from the file system can be selected; virtual folders cannot.</para>
+      <para>Typically, after creating a new <see cref="T:System.Windows.Forms.FolderBrowserDialog" />, you set the <see cref="P:System.Windows.Forms.FolderBrowserDialog.RootFolder" /> to the location from which to start browsing. Optionally, you can set the <see cref="P:System.Windows.Forms.FolderBrowserDialog.SelectedPath" /> to an absolute path of a subfolder of <see cref="P:System.Windows.Forms.FolderBrowserDialog.RootFolder" /> that will initially be selected. You can also optionally set the <see cref="P:System.Windows.Forms.FolderBrowserDialog.Description" /> property to provide additional instructions to the user. Finally, call the <see cref="M:System.Windows.Forms.CommonDialog.ShowDialog" /> method to display the dialog box to the user. When the dialog box is closed and the dialog box result from <see cref="M:System.Windows.Forms.CommonDialog.ShowDialog" /> is <see cref="F:System.Windows.Forms.DialogResult.OK" />, the <see cref="P:System.Windows.Forms.FolderBrowserDialog.SelectedPath" /> will be a string containing the path to the selected folder.</para>
+      <para>You can use the <see cref="P:System.Windows.Forms.FolderBrowserDialog.ShowNewFolderButton" /> property to control if the user is able to create new folders with the <ui>New Folder</ui> button.</para>
+      <para>
+        <see cref="T:System.Windows.Forms.FolderBrowserDialog" /> is a modal dialog box; therefore, when shown, it blocks the rest of the application until the user has chosen a folder. When a dialog box is displayed modally, no input (keyboard or mouse click) can occur except to objects on the dialog box. The program must hide or close the dialog box (usually in response to some user action) before input to the calling program can occur.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Prompts the user to select a folder. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +41,18 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default constructor initializes properties to their default values.</para>
+          <para>When a new <see cref="T:System.Windows.Forms.FolderBrowserDialog" /> is created, the <see cref="P:System.Windows.Forms.FolderBrowserDialog.RootFolder" /> property is set to <see cref="F:System.Environment.SpecialFolder.Desktop" />, the <see cref="P:System.Windows.Forms.FolderBrowserDialog.Description" /> property is set to an empty string (""), the <see cref="P:System.Windows.Forms.FolderBrowserDialog.SelectedPath" /> property is set to an empty string, and the <see cref="P:System.Windows.Forms.FolderBrowserDialog.ShowNewFolderButton" /> property is set to true.</para>
+          <para>Typically, after creating a new <see cref="T:System.Windows.Forms.FolderBrowserDialog" />, you set the <see cref="P:System.Windows.Forms.FolderBrowserDialog.RootFolder" /> to the location from which to start browsing. Optionally, you can set the <see cref="P:System.Windows.Forms.FolderBrowserDialog.SelectedPath" /> to the path of a subfolder of <see cref="P:System.Windows.Forms.FolderBrowserDialog.RootFolder" /> that will initially be selected. You can also optionally set the <see cref="P:System.Windows.Forms.FolderBrowserDialog.Description" /> property to provide additional instructions to the user. Finally, call the <see cref="M:System.Windows.Forms.CommonDialog.ShowDialog" /> method to display the dialog box to the user. When the dialog box is closed and the dialog result from <see cref="M:System.Windows.Forms.CommonDialog.ShowDialog" /> is <see cref="F:System.Windows.Forms.DialogResult.OK" />, the <see cref="P:System.Windows.Forms.FolderBrowserDialog.SelectedPath" /> will be a string containing the path to the selected folder.</para>
+          <para>
+            <see cref="T:System.Windows.Forms.FolderBrowserDialog" /> is a modal dialog box; therefore, when shown, it blocks the rest of the application until the user has chosen a folder. When a dialog box is displayed modally, no input (keyboard or mouse click) can occur except to objects on the dialog box. The program must hide or close the dialog box (usually in response to some user action) before input to the calling program can occur.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.FolderBrowserDialog" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -56,9 +77,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.FolderBrowserDialog.Description" /> property can be used to specify additional information to the user, like instructions.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the descriptive text displayed above the tree view control in the dialog box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -80,8 +107,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the user clicks the <ui>Help</ui> button on the dialog box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -96,8 +126,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets the <see cref="P:System.Windows.Forms.FolderBrowserDialog.Description" />, <see cref="P:System.Windows.Forms.FolderBrowserDialog.ShowNewFolderButton" />, <see cref="P:System.Windows.Forms.FolderBrowserDialog.SelectedPath" /> and <see cref="P:System.Windows.Forms.FolderBrowserDialog.RootFolder" /> properties to their default values. For a list of default values, see the <see cref="M:System.Windows.Forms.FolderBrowserDialog.#ctor" /> constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Resets properties to their default values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -125,9 +161,15 @@
         <ReturnType>System.Environment+SpecialFolder</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Only the specified folder and any subfolders that are beneath it will appear in the dialog box and be selectable. The <see cref="P:System.Windows.Forms.FolderBrowserDialog.SelectedPath" /> property, along with <see cref="P:System.Windows.Forms.FolderBrowserDialog.RootFolder" />, determines what the selected folder will be when the dialog box is displayed, as long as <see cref="P:System.Windows.Forms.FolderBrowserDialog.SelectedPath" /> is an absolute path that is a subfolder of <see cref="P:System.Windows.Forms.FolderBrowserDialog.RootFolder" /> (or more accurately, points to a subfolder of the shell namespace represented by <see cref="P:System.Windows.Forms.FolderBrowserDialog.RootFolder" />).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the root folder where the browsing starts from.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -144,10 +186,17 @@
         <Parameter Name="hWndOwner" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="hWndOwner">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is called by the <see cref="M:System.Windows.Forms.CommonDialog.ShowDialog" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Displays the dialog box.</para>
+        </summary>
+        <param name="hWndOwner">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that represents the window handle of the owner window for the dialog box.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -175,9 +224,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.FolderBrowserDialog.SelectedPath" /> property is set before showing the dialog box, the folder with this path will be the selected folder, as long as <see cref="P:System.Windows.Forms.FolderBrowserDialog.SelectedPath" /> is set to an absolute path that is a subfolder of <see cref="P:System.Windows.Forms.FolderBrowserDialog.RootFolder" /> (or more accurately, points to a subfolder of the shell namespace represented by <see cref="P:System.Windows.Forms.FolderBrowserDialog.RootFolder" />).</para>
+          <para>If the <see cref="M:System.Windows.Forms.CommonDialog.ShowDialog" /> returns <see cref="F:System.Windows.Forms.DialogResult.OK" />, meaning the user clicked the <ui>OK</ui> button, the <see cref="P:System.Windows.Forms.FolderBrowserDialog.SelectedPath" /> property will return a string containing the path to the selected folder. If <see cref="M:System.Windows.Forms.CommonDialog.ShowDialog" /> returns <see cref="F:System.Windows.Forms.DialogResult.Cancel" />, meaning the user canceled out of the dialog box, this property will have the same value that it had prior to displaying the dialog box. If the user selects a folder that does not have a physical path (for example, My Computer), the <ui>OK</ui> button on the dialog box will be disabled.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path selected by the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -202,9 +258,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When <see cref="P:System.Windows.Forms.FolderBrowserDialog.ShowNewFolderButton" /> is true, the <ui>New Folder</ui> button is visible, giving the user a chance to create a folder. When the user clicks the <ui>New Folder</ui> button, a new folder is created and the user is prompted to specify the folder name. The selected node in the tree becomes the parent of the new folder. The actual caption of the <ui>New Folder</ui> button can vary depending upon the operating system</para>
+          <block subset="none" type="note">
+            <para>Setting <see cref="P:System.Windows.Forms.FolderBrowserDialog.ShowNewFolderButton" /> to false does not work on Windows 2000.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <ui>New Folder</ui> button appears in the folder browser dialog box.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

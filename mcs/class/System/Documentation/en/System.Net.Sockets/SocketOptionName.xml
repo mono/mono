@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SocketOptionName" FullName="System.Net.Sockets.SocketOptionName" FullNameSP="System_Net_Sockets_SocketOptionName" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable SocketOptionName extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum SocketOptionName" />
@@ -15,16 +16,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para> Specifies option names for use in the <see cref="M:System.Net.Sockets.Socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Int32)" qualify="true" /> and <see cref="M:System.Net.Sockets.Socket.GetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName)" qualify="true" /> 
-methods of the <see cref="T:System.Net.Sockets.Socket" /> class. </para>
-    </summary>
     <remarks>
-      <para>Socket options determine the behavior of an instance of
-      the <see cref="T:System.Net.Sockets.Socket" /> class. Some socket options apply only to specific protocols while others apply to
-      all types. Members of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration specify
-      which protocol applies to a specific socket option. </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.Sockets.SocketOptionName" /> enumeration defines the name of each <see cref="T:System.Net.Sockets.Socket" /> configuration option. Sockets can be configured with the <see cref="M:System.Net.Sockets.Socket.SetSocketOption(System.Net.Sockets.SocketOptionLevel,System.Net.Sockets.SocketOptionName,System.Int32)" /> method.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines configuration option names.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AcceptConnection">
@@ -44,11 +43,8 @@ methods of the <see cref="T:System.Net.Sockets.Socket" /> class. </para>
       <MemberValue>HeaderIncluded</MemberValue>
       <Docs>
         <summary>
-          <para>
-            <see cref="M:System.Net.Sockets.Socket.Listen(System.Int32)" qualify="true" /> has been called on the socket.</para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> 
-data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The socket is listening.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -70,10 +66,8 @@ data type.</para>
       <MemberValue>AddMembership</MemberValue>
       <Docs>
         <summary>
-          <para> Add an IP group membership.
- </para>
-          <para>The value associated with this option is an instance of the <see cref="T:System.Net.Sockets.MulticastOption" qualify="true" /> class. </para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Add an IP group membership.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -95,10 +89,8 @@ data type.</para>
       <MemberValue>AddSourceMembership</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Join a source group.</para>
-          <para>The value associated with this option is an instance of the <see cref="T:System.Net.IPAddress" qualify="true" />
-class. </para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -120,9 +112,8 @@ class. </para>
       <MemberValue>BlockSource</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Block data from a source.</para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -144,11 +135,8 @@ class. </para>
       <MemberValue>Broadcast</MemberValue>
       <Docs>
         <summary>
-          <para> Permit sending broadcast messages on the socket.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
- type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Permit sending broadcast messages on the socket.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -170,10 +158,8 @@ class. </para>
       <MemberValue>HeaderIncluded</MemberValue>
       <Docs>
         <summary>
-          <para>Use urgent data as defined by IETF RFC 1222. This option can
-      be set only once, and once set, cannot be turned off.</para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Tcp" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use urgent data as defined in RFC-1222. This option can be set only once; after it is set, it cannot be turned off.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -195,10 +181,8 @@ class. </para>
       <MemberValue>ChecksumCoverage</MemberValue>
       <Docs>
         <summary>
-          <para>Set or get UDP checksum coverage.</para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data
-   type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Udp" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set or get the UDP checksum coverage.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -220,10 +204,8 @@ class. </para>
       <MemberValue>Debug</MemberValue>
       <Docs>
         <summary>
-          <para>Record debugging information when available.</para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
- type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Record debugging information.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -245,9 +227,8 @@ class. </para>
       <MemberValue>DontFragment</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Do not fragment IP datagrams.</para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -269,11 +250,8 @@ class. </para>
       <MemberValue>DontLinger</MemberValue>
       <Docs>
         <summary>
-          <para> Close socket gracefully without lingering.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
- type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Close the socket gracefully without lingering.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -295,11 +273,8 @@ class. </para>
       <MemberValue>DropSourceMembership</MemberValue>
       <Docs>
         <summary>
-          <para> Do not route; send directly to interface addresses.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
- type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not route; send the packet directly to the interface addresses.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -321,10 +296,8 @@ class. </para>
       <MemberValue>DropMembership</MemberValue>
       <Docs>
         <summary>
-          <para> Drop an IP group membership.
- </para>
-          <para>The value associated with this option is an instance of the <see cref="T:System.Net.Sockets.MulticastOption" qualify="true" /> class. </para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Drop an IP group membership.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -346,10 +319,8 @@ class. </para>
       <MemberValue>DropSourceMembership</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Drop a source group.</para>
-          <para>The value associated with this option is an instance of the <see cref="T:System.Net.IPAddress" qualify="true" />
-class. </para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -371,10 +342,8 @@ class. </para>
       <MemberValue>Error</MemberValue>
       <Docs>
         <summary>
-          <para> Get the error status code, then clear the code.
-      </para>
-          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Get the error status and clear.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -396,11 +365,8 @@ class. </para>
       <MemberValue>ExclusiveAddressUse</MemberValue>
       <Docs>
         <summary>
-          <para> Enable a socket to be bound for exclusive access.
-      </para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data
-   type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables a socket to be bound for exclusive access.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -422,10 +388,8 @@ class. </para>
       <MemberValue>HeaderIncluded</MemberValue>
       <Docs>
         <summary>
-          <para>Use expedited data as defined by IETF RFC 1222. This option
-      can be set only once, and once set, cannot be turned off.</para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Tcp" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use expedited data as defined in RFC-1222. This option can be set only once; after it is set, it cannot be turned off.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -447,10 +411,8 @@ class. </para>
       <MemberValue>HeaderIncluded</MemberValue>
       <Docs>
         <summary>
-          <para> Application is providing the IP header for
- outgoing datagrams.</para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the application provides the IP header for outgoing datagrams.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -467,7 +429,10 @@ class. </para>
         <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the maximum number of router hops for an Internet Protocol version 6 (IPv6) packet. This is similar to Time to Live (TTL) for Internet Protocol version 4.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IPOptions">
@@ -487,10 +452,8 @@ class. </para>
       <MemberValue>Debug</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies IP options to be inserted into outgoing datagrams.</para>
-          <para>The value associated with this option is a <see cref="T:System.Byte" qualify="true" /> 
-array.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the IP options to be inserted into outgoing datagrams.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -512,9 +475,8 @@ array.</para>
       <MemberValue>ReuseAddress</MemberValue>
       <Docs>
         <summary>
-          <para>Set the IP header time-to-live field.</para>
-          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Set the IP header Time-to-Live field.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -536,11 +498,8 @@ array.</para>
       <MemberValue>KeepAlive</MemberValue>
       <Docs>
         <summary>
-          <para> Send keep-alives.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
- type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use keep-alives.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -562,11 +521,8 @@ array.</para>
       <MemberValue>Linger</MemberValue>
       <Docs>
         <summary>
-          <para> Linger on close if unsent data is present.
- </para>
-          <para>The value associated with this option is an instance of 
- the <see cref="T:System.Net.Sockets.LingerOption" qualify="true" /> class. </para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Linger on close if unsent data is present.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -588,9 +544,8 @@ array.</para>
       <MemberValue>MaxConnections</MemberValue>
       <Docs>
         <summary>
-          <para> Maximum queue length that can be specified by <see cref="M:System.Net.Sockets.Socket.Listen(System.Int32)" />.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported; will throw a <see cref="T:System.Net.Sockets.SocketException" /> if used.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -612,10 +567,8 @@ array.</para>
       <MemberValue>MulticastInterface</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Set the interface for outgoing multicast packets.</para>
-          <para>The value associated with this option is a <see cref="T:System.Byte" qualify="true" />
-array. </para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -637,9 +590,8 @@ array. </para>
       <MemberValue>MulticastLoopback</MemberValue>
       <Docs>
         <summary>
-          <para>IP multicast loopback.</para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An IP multicast loopback.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -661,10 +613,8 @@ array. </para>
       <MemberValue>MulticastTimeToLive</MemberValue>
       <Docs>
         <summary>
-          <para> IP multicast time to live.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An IP multicast Time to Live.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -686,9 +636,8 @@ array. </para>
       <MemberValue>Debug</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send UDP datagrams with checksum set to zero.</para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Udp" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -710,11 +659,8 @@ array. </para>
       <MemberValue>Debug</MemberValue>
       <Docs>
         <summary>
-          <para> Disable the Nagle algorithm for send coalescing.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
- type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Tcp" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disables the Nagle algorithm for send coalescing.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -736,11 +682,8 @@ array. </para>
       <MemberValue>OutOfBandInline</MemberValue>
       <Docs>
         <summary>
-          <para> Receive out-of-band data in the normal data stream.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
- type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Receives out-of-band data in the normal data stream.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -762,6 +705,7 @@ array. </para>
       <MemberValue>PacketInformation</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Return information about received packets.</para>
         </summary>
       </Docs>
@@ -784,10 +728,8 @@ array. </para>
       <MemberValue>ReceiveBuffer</MemberValue>
       <Docs>
         <summary>
-          <para>Specifies the total per-socket buffer space reserved for
- receives. This is unrelated to the maximum message size or the size of a TCP window. </para>
-          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the total per-socket buffer space reserved for receives. This is unrelated to the maximum message size or the size of a TCP window.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -809,9 +751,8 @@ array. </para>
       <MemberValue>ReceiveLowWater</MemberValue>
       <Docs>
         <summary>
-          <para> Receive low water mark.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the low water mark for <see cref="Overload:System.Net.Sockets.Socket.Receive" /> operations.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -833,12 +774,8 @@ array. </para>
       <MemberValue>ReceiveTimeout</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the 
-      maximum time, in milliseconds, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> and <see cref="M:System.Net.Sockets.Socket.ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@)" /> methods will block when attempting to
-      receive data. If data is not received within this time, a <see cref="T:System.Net.Sockets.SocketException" /> exception is thrown.
-      </para>
-          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Receive a time-out. This option applies only to synchronous methods; it has no effect on asynchronous methods such as the <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -860,11 +797,8 @@ array. </para>
       <MemberValue>ReuseAddress</MemberValue>
       <Docs>
         <summary>
-          <para> Allow the socket to be bound to an address that is already in use.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data 
- type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Allows the socket to be bound to an address that is already in use.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -886,11 +820,8 @@ array. </para>
       <MemberValue>SendBuffer</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the total per-socket buffer space reserved for sends. This is
- unrelated to the maximum message size or the size of a TCP window.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the total per-socket buffer space reserved for sends. This is unrelated to the maximum message size or the size of a TCP window.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -912,9 +843,8 @@ array. </para>
       <MemberValue>SendLowWater</MemberValue>
       <Docs>
         <summary>
-          <para> Send low water mark.
- </para>
-          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the low water mark for <see cref="Overload:System.Net.Sockets.Socket.Send" /> operations.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -936,12 +866,8 @@ array. </para>
       <MemberValue>SendTimeout</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the 
-      maximum time, in milliseconds, the <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> and <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> methods will block when attempting to
-      send data. If data is not sent within this time, a <see cref="T:System.Net.Sockets.SocketException" /> exception is thrown.
-      </para>
-          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> member of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Send a time-out. This option applies only to synchronous methods; it has no effect on asynchronous methods such as the <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -963,11 +889,8 @@ array. </para>
       <MemberValue>Type</MemberValue>
       <Docs>
         <summary>
-          <para> Get the socket type, one of the members of 
-      the <see cref="T:System.Net.Sockets.SocketType" qualify="true" /> enumeration.
-      </para>
-          <para>The value associated with this option is a <see cref="T:System.Int32" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.Socket" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Get the socket type.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -989,8 +912,8 @@ array. </para>
       <MemberValue>TypeOfService</MemberValue>
       <Docs>
         <summary>
-          <para>Change the IP header type of service field.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Change the IP header type of the service field.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -1012,9 +935,8 @@ array. </para>
       <MemberValue>UnblockSource</MemberValue>
       <Docs>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unblock a previously blocked source.</para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -1031,7 +953,10 @@ array. </para>
         <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates an accepted socket's properties by using those of an existing socket. This is equivalent to using the Winsock2 SO_UPDATE_ACCEPT_CONTEXT socket option and is supported only on connection-oriented sockets.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UpdateConnectContext">
@@ -1046,7 +971,10 @@ array. </para>
         <ReturnType>System.Net.Sockets.SocketOptionName</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates a connected socket's properties by using those of an existing socket. This is equivalent to using the Winsock2 SO_UPDATE_CONNECT_CONTEXT socket option and is supported only on connection-oriented sockets.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseLoopback">
@@ -1066,10 +994,8 @@ array. </para>
       <MemberValue>UseLoopback</MemberValue>
       <Docs>
         <summary>
-          <para> Bypass hardware when possible.
-      </para>
-          <para>The value associated with this option is a <see cref="T:System.Boolean" qualify="true" /> data type.</para>
-          <para>The <see cref="F:System.Net.Sockets.SocketOptionLevel.IP" /> value of the <see cref="T:System.Net.Sockets.SocketOptionLevel" /> enumeration applies to this option.</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Bypass hardware when possible.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>

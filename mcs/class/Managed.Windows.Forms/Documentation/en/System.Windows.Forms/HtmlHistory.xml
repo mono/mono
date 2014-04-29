@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlHistory" FullName="System.Windows.Forms.HtmlHistory">
   <TypeSignature Language="C#" Value="public sealed class HtmlHistory : IDisposable" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The managed HTML Document Object Model (DOM) keeps track of the sites that a user has visited within a given <newTerm>session</newTerm>. A <newTerm>session</newTerm> is defined as the length of time from when an application hosting the managed HTML DOM starts until the application closes. </para>
+      <para>When you use the <see cref="P:System.Windows.Forms.WebBrowser.Url" /> property or <see cref="Overload:System.Windows.Forms.WebBrowser.Navigate" /> method of the <see cref="T:System.Windows.Forms.WebBrowser" /> control to navigate to a new Web page, Internet Explorer may either retrieve the latest version of that page from the server or display the version that is currently in the Internet Explorer cache. By contrast, when you use <see cref="T:System.Windows.Forms.HtmlHistory" /> to navigate forward and backward in this stack, Internet Explorer will display the pages from the local computer's cache of downloaded Web content, unless the server indicates that the document's content should expire immediately. For more information on the history list and caching in Internet Explorer, see article 234067, "How To Prevent Caching in Internet Explorer," in the Microsoft Knowledge Base at <see cref="http://go.microsoft.com/fwlink/?linkid=37115">http://support.microsoft.com</see>.</para>
+      <para>The principal method of <see cref="T:System.Windows.Forms.HtmlHistory" /> is <see cref="Overload:System.Windows.Forms.HtmlHistory.Go" />, which navigates either to the specified position in the navigation stack or to a new Uniform Resource Locator (URL). The <see cref="M:System.Windows.Forms.HtmlHistory.Forward(System.Int32)" /> and <see cref="M:System.Windows.Forms.HtmlHistory.Back(System.Int32)" /> methods navigate down and up the navigation stack, respectively, by the required number of entries. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Manages the list of documents and Web sites the user has visited within the current session.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Back">
@@ -30,9 +39,17 @@
         <Parameter Name="numberBack" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="numberBack">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the number supplied to <paramref name="numBack" /> exceeds the number of previously visited entries in the history, the <see cref="T:System.Windows.Forms.WebBrowser" /> control will navigate to the first item in the history, for example, to the first Uniform Resource Locator (URL) visited during the current browser session.</para>
+          <para>If there are no entries behind the current page in the navigation stack, calling <see cref="M:System.Windows.Forms.HtmlHistory.Back(System.Int32)" /> will have no effect, but it will not raise an error.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Navigates backward in the navigation stack by the specified number of entries.</para>
+        </summary>
+        <param name="numberBack">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of entries to navigate backward in the navigation stack. This number must be a positive integer.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -46,8 +63,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call the <see cref="M:System.Windows.Forms.HtmlHistory.Dispose" /> method when you are finished using the <see cref="T:System.Windows.Forms.HtmlHistory" /> object. <see cref="M:System.Windows.Forms.HtmlHistory.Dispose" /> leaves the <see cref="T:System.Windows.Forms.HtmlHistory" /> object in an unusable state. After calling <see cref="M:System.Windows.Forms.HtmlHistory.Dispose" />, you must release all references to <see cref="T:System.Windows.Forms.HtmlHistory" /> so the garbage collector can reclaim the memory that <see cref="T:System.Windows.Forms.HtmlHistory" /> was occupying. For more information, see <format type="text/html"><a href="a17b0066-71c2-4ba4-9822-8e19332fc213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="eb4e1af0-3b48-4fbc-ad4e-fc2f64138bf9">Implementing a Dispose Method</a></format>. </para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Windows.Forms.HtmlHistory.Dispose" /> before you release your last reference to <see cref="T:System.Windows.Forms.HtmlHistory" />. Otherwise, the resources <see cref="T:System.Windows.Forms.HtmlHistory" /> is using will not be freed until the garbage collector calls the object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Windows.Forms.HtmlHistory" />. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DomHistory">
@@ -60,9 +86,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You will need to add a reference to the unmanaged MSHTML.dll in order to use <see cref="P:System.Windows.Forms.HtmlHistory.DomHistory" />. For more information, see <format type="text/html"><a href="d1898229-cd40-426e-a275-f3eb65fbc79f">Importing a Type Library as an Assembly</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the unmanaged interface wrapped by this class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Forward">
@@ -78,9 +110,17 @@
         <Parameter Name="numberForward" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="numberForward">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the number supplied to <paramref name="numForward" /> exceeds the number of previously visited entries in the history, the <see cref="T:System.Windows.Forms.WebBrowser" /> control will navigate to the last item in the history. </para>
+          <para>If there are no entries ahead of the current page in the navigation stack, calling <see cref="M:System.Windows.Forms.HtmlHistory.Forward(System.Int32)" /> will have no effect, but it will not raise an error. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Navigates forward in the navigation stack by the specified number of entries. </para>
+        </summary>
+        <param name="numberForward">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of entries to navigate forward in the navigation stack. This number must be a positive integer.</param>
       </Docs>
     </Member>
     <Member MemberName="Go">
@@ -96,9 +136,16 @@
         <Parameter Name="relativePosition" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="relativePosition">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using <see cref="M:System.Windows.Forms.HtmlHistory.Go(System.Int32)" /> with a negative argument is equivalent to using the <see cref="M:System.Windows.Forms.HtmlHistory.Back(System.Int32)" /> method; conversely, using <see cref="M:System.Windows.Forms.HtmlHistory.Go(System.Int32)" /> with a positive argument is equivalent to using the <see cref="M:System.Windows.Forms.HtmlHistory.Forward(System.Int32)" /> method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Navigates to the specified relative position in the browser's history. </para>
+        </summary>
+        <param name="relativePosition">
+          <attribution license="cc4" from="Microsoft" modified="false" />The entry in the navigation stack you want to display.</param>
       </Docs>
     </Member>
     <Member MemberName="Go">
@@ -114,9 +161,16 @@
         <Parameter Name="urlString" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="urlString">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using <see cref="M:System.Windows.Forms.HtmlHistory.Go(System.String)" /> is equivalent to using either the <see cref="P:System.Windows.Forms.WebBrowser.Url" /> property or the <see cref="Overload:System.Windows.Forms.WebBrowser.Navigate" /> method of the <see cref="T:System.Windows.Forms.WebBrowser" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Navigates to the specified Uniform Resource Locator (URL). </para>
+        </summary>
+        <param name="urlString">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL you want to display. This may be a relative or virtual URL (for example, page.html, path/page.html, or /path/to/page.html), in which case the current Web page's URL is used as a base. </param>
       </Docs>
     </Member>
     <Member MemberName="Go">
@@ -132,9 +186,16 @@
         <Parameter Name="url" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <param name="url">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Using <see cref="M:System.Windows.Forms.HtmlHistory.Go(System.Uri)" /> is equivalent to using either the <see cref="P:System.Windows.Forms.WebBrowser.Url" /> property or the <see cref="Overload:System.Windows.Forms.WebBrowser.Navigate" /> method of the <see cref="T:System.Windows.Forms.WebBrowser" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Navigates to the specified Uniform Resource Locator (URL). </para>
+        </summary>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL as a <see cref="T:System.Uri" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="Length">
@@ -147,9 +208,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If you want to determine how many entries exist before or after the current URL in the navigation stack, you will have to maintain this count yourself. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the size of the history stack.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BufferedGraphics" FullName="System.Drawing.BufferedGraphics">
   <TypeSignature Language="C#" Value="public sealed class BufferedGraphics : IDisposable" />
   <AssemblyInfo>
@@ -13,9 +14,23 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Drawing.BufferedGraphics" /> class allows you to implement custom double buffering for your graphics. It provides a wrapper for a graphics buffer, along with methods that you can use to write to the buffer and render its contents to an output device.</para>
+      <para>Graphics that use double buffering can reduce or eliminate flicker that is caused by redrawing a display surface. When you use double buffering, updated graphics are first drawn to a buffer in memory, and the contents of this buffer are then quickly written to some or all of the displayed surface. This relatively brief overwrite of the displayed graphics typically reduces or eliminates the flicker that sometimes occurs when graphics are updated.</para>
+      <block subset="none" type="note">
+        <para>The simplest way to use double buffering is to set the <see cref="F:System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer" /> control style flag on a control using the <see cref="M:System.Windows.Forms.Control.SetStyle(System.Windows.Forms.ControlStyles,System.Boolean)" /> method. Setting the <see cref="F:System.Windows.Forms.ControlStyles.OptimizedDoubleBuffer" /> flag for a control redirects all painting for the control through a default graphics buffer, without requiring any additional code. This flag is set to true by default.</para>
+      </block>
+      <para>The <see cref="T:System.Drawing.BufferedGraphics" /> class has no public constructor and must be created by the <see cref="T:System.Drawing.BufferedGraphicsContext" /> for an application domain using its <see cref="M:System.Drawing.BufferedGraphicsContext.Allocate(System.Drawing.Graphics,System.Drawing.Rectangle)" /> method. You can retrieve the <see cref="T:System.Drawing.BufferedGraphicsContext" /> for the current application domain from the static <see cref="P:System.Drawing.BufferedGraphicsManager.Current" /> property.</para>
+      <para>The <see cref="P:System.Drawing.BufferedGraphics.Graphics" /> property can be used for drawing to the graphics buffer. This property provides access to the <see cref="T:System.Drawing.Graphics" /> object that draws to the graphics buffer allocated for this <see cref="T:System.Drawing.BufferedGraphics" /> object.</para>
+      <para>The <see cref="M:System.Drawing.BufferedGraphics.Render" /> method with no arguments draws the contents of the graphics buffer to the surface specified when the buffer was allocated. Other overloads of the <see cref="M:System.Drawing.BufferedGraphics.Render" /> method allow you to specify a <see cref="T:System.Drawing.Graphics" /> object or an <see cref="T:System.IntPtr" /> object that points to a device context to which to draw the contents of the graphics buffer.</para>
+      <para>For more information about drawing double-buffered graphics, see <format type="text/html"><a href="4F6FEF99-0972-436E-9D73-0167E4033F71">Double Buffered Graphics</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a graphics buffer for double buffering.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Dispose">
@@ -26,9 +41,18 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.Drawing.BufferedGraphics.Dispose" /> when you are finished using the <see cref="T:System.Drawing.BufferedGraphics" /> object. The <see cref="M:System.Drawing.BufferedGraphics.Dispose" /> method leaves the <see cref="T:System.Drawing.BufferedGraphics" /> object in an unusable state. After calling <see cref="M:System.Drawing.BufferedGraphics.Dispose" />, you must release all references to the <see cref="T:System.Drawing.BufferedGraphics" /> object so the garbage collector can reclaim the memory that the <see cref="T:System.Drawing.BufferedGraphics" /> object was occupying. For more information, see <format type="text/html"><a href="A17B0066-71C2-4BA4-9822-8E19332FC213">Cleaning Up Unmanaged Resources</a></format> and <format type="text/html"><a href="EB4E1AF0-3B48-4FBC-AD4E-FC2F64138BF9">Implementing a Dispose Method</a></format>.</para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.Drawing.BufferedGraphics.Dispose" /> before you release your last reference to the <see cref="T:System.Drawing.BufferedGraphics" /> object. Otherwise, the resources it is using will not be freed until the garbage collector calls the <see cref="T:System.Drawing.BufferedGraphics" /> object's Finalize method.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases all resources used by the <see cref="T:System.Drawing.BufferedGraphics" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -57,10 +81,16 @@
         <ReturnType>System.Drawing.Graphics</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property provides a <see cref="T:System.Drawing.Graphics" /> object that draws to the graphics buffer allocated for this <see cref="T:System.Drawing.BufferedGraphics" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Drawing.Graphics" /> object that outputs to the graphics buffer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -74,9 +104,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method writes the contents of the graphics buffer to the device specified by calling the <see cref="M:System.Drawing.BufferedGraphicsContext.Allocate(System.Drawing.Graphics,System.Drawing.Rectangle)" /> method of the <see cref="T:System.Drawing.BufferedGraphicsContext" /> used to create this <see cref="T:System.Drawing.BufferedGraphics" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the contents of the graphics buffer to the default device.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -92,10 +128,17 @@
         <Parameter Name="target" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <param name="target">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method writes the contents of the graphics buffer to the specified <see cref="T:System.Drawing.Graphics" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the contents of the graphics buffer to the specified <see cref="T:System.Drawing.Graphics" /> object.</para>
+        </summary>
+        <param name="target">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Graphics" /> object to which to write the contents of the graphics buffer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -111,10 +154,17 @@
         <Parameter Name="targetDC" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="targetDC">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method writes the contents of the graphics buffer to the device context associated with the specified <see cref="T:System.IntPtr" /> handle.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the contents of the graphics buffer to the device context associated with the specified <see cref="T:System.IntPtr" /> handle.</para>
+        </summary>
+        <param name="targetDC">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> that points to the device context to which to write the contents of the graphics buffer. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

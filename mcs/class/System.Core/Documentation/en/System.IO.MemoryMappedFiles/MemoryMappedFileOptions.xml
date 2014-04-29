@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MemoryMappedFileOptions" FullName="System.IO.MemoryMappedFiles.MemoryMappedFileOptions">
   <TypeSignature Language="C#" Value="public enum MemoryMappedFileOptions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed MemoryMappedFileOptions extends System.Enum" />
@@ -14,8 +15,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides memory allocation options for memory-mapped files.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DelayAllocatePages">
@@ -29,7 +33,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Memory allocation is delayed until a view is created with either the <see cref="M:System.IO.MemoryMappedFiles.MemoryMappedFile.CreateViewAccessor" /> or <see cref="M:System.IO.MemoryMappedFiles.MemoryMappedFile.CreateViewStream" /> method.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -43,7 +50,10 @@
         <ReturnType>System.IO.MemoryMappedFiles.MemoryMappedFileOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No memory allocation options are applied.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

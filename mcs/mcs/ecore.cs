@@ -2780,6 +2780,17 @@ namespace Mono.CSharp {
 
 								ct = ct.DeclaringType;
 							} while (ct != null);
+						} else {
+							var cos = rc.CurrentMemberDefinition.Parent as ClassOrStruct;
+							if (cos != null && cos.PrimaryConstructorParameters != null) {
+								foreach (var p in cos.PrimaryConstructorParameters.FixedParameters) {
+									if (p.Name == Name) {
+										rc.Report.Error (9007, loc, "Primary constructor parameter `{0}' is not available in this context when using ref or out modifier",
+											Name);
+										return null;
+									}
+								}
+							}
 						}
 
 						if ((restrictions & MemberLookupRestrictions.InvocableOnly) == 0) {
@@ -3416,14 +3427,25 @@ namespace Mono.CSharp {
 
 			if (InstanceExpression == null || InstanceExpression is TypeExpr) {
 				if (InstanceExpression != null || !This.IsThisAvailable (rc, true)) {
-					if (rc.HasSet (ResolveContext.Options.FieldInitializerScope))
+					if (rc.HasSet (ResolveContext.Options.FieldInitializerScope)) {
 						rc.Report.Error (236, loc,
 							"A field initializer cannot reference the nonstatic field, method, or property `{0}'",
 							GetSignatureForError ());
-					else
-						rc.Report.Error (120, loc,
-							"An object reference is required to access non-static member `{0}'",
-							GetSignatureForError ());
+					} else {
+						var fe = this as FieldExpr;
+						if (fe != null && fe.Spec.MemberDefinition is PrimaryConstructorField) {
+							if (rc.HasSet (ResolveContext.Options.BaseInitializer)) {
+								rc.Report.Error (9005, loc, "Constructor initializer cannot access primary constructor parameters");
+							} else  {
+								rc.Report.Error (9006, loc, "An object reference is required to access primary constructor parameter `{0}'",
+									fe.Name);
+							}
+						} else {
+							rc.Report.Error (120, loc,
+								"An object reference is required to access non-static member `{0}'",
+								GetSignatureForError ());
+						}
+					}
 
 					InstanceExpression = new CompilerGeneratedThis (rc.CurrentType, loc).Resolve (rc);
 					return false;
@@ -4455,7 +4477,7 @@ namespace Mono.CSharp {
 			//
 			// We have not reached end of parameters list due to params or used default parameters
 			//
-			if (j < candidate_pd.Count && j < best_pd.Count) {
+			while (j < candidate_pd.Count && j < best_pd.Count) {
 				var cand_param = candidate_pd.FixedParameters [j];
 				var best_param = best_pd.FixedParameters [j];
 
@@ -4464,10 +4486,15 @@ namespace Mono.CSharp {
 					// LAMESPEC:
 					//
 					// void Foo (params int[]) is better than void Foo (int i = 0) for Foo ()
-					// void Foo (string[] s, string value = null) is better than Foo (string s, params string[]) for Foo (null)
+					// void Foo (string[] s, string value = null) is better than Foo (string s, params string[]) for Foo (null) or Foo ()
 					//
 					if (cand_param.HasDefaultValue != best_param.HasDefaultValue)
 						return !candidate_params;
+
+					if (cand_param.HasDefaultValue) {
+						++j;
+						continue;
+					}
 				} else {
 					//
 					// Neither is better when not all arguments are provided
@@ -4479,6 +4506,8 @@ namespace Mono.CSharp {
 					if (cand_param.HasDefaultValue && best_param.HasDefaultValue)
 						return false;
 				}
+
+				break;
 			}
 
 			if (candidate_pd.Count != best_pd.Count)

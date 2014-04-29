@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecuritySafeCriticalAttribute" FullName="System.Security.SecuritySafeCriticalAttribute">
   <TypeSignature Language="C#" Value="public sealed class SecuritySafeCriticalAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit SecuritySafeCriticalAttribute extends System.Attribute" />
@@ -16,8 +17,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Types or members that are marked with the <see cref="T:System.Security.SecuritySafeCriticalAttribute" /> attribute can be accessed by partially trusted types and members. These partially trusted types and members can be within any assembly that is marked with the <see cref="T:System.Security.SecurityTransparentAttribute" /> or <see cref="T:System.Security.AllowPartiallyTrustedCallersAttribute" /> (APTCA) attribute, or they are partially trusted for other reasons, such as being loaded into partial trust. Code that is marked with the <see cref="T:System.Security.SecuritySafeCriticalAttribute" /> must be subject to a rigorous security audit to ensure that it can be used safely in a secure execution environment. Security-safe-critical code must validate the permissions of callers to determine whether they have authority to access protected resources used by the code.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies types or members as security-critical and safely accessible by transparent code.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +37,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Security.SecuritySafeCriticalAttribute" /> class. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

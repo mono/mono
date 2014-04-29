@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpResponseSubstitutionCallback" FullName="System.Web.HttpResponseSubstitutionCallback">
   <TypeSignature Language="C#" Value="public delegate string HttpResponseSubstitutionCallback(HttpContext context);" />
   <AssemblyInfo>
@@ -15,9 +16,17 @@
   </ReturnValue>
   <Docs>
     <param name="context">To be added.</param>
-    <summary>To be added.</summary>
     <value>To be added.</value>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.HttpResponseSubstitutionCallback" /> delegate, in combination with the <see cref="M:System.Web.HttpResponse.WriteSubstitution(System.Web.HttpResponseSubstitutionCallback)" /> method, is used for rendering post-cache content for the <see cref="T:System.Web.UI.WebControls.Substitution" /> and <see cref="T:System.Web.UI.WebControls.AdRotator" /> controls.</para>
+      <para>For the <see cref="T:System.Web.UI.WebControls.Substitution" /> control, use the <see cref="P:System.Web.UI.WebControls.Substitution.MethodName" /> property to specify the name of the callback method to invoke when the <see cref="T:System.Web.UI.WebControls.Substitution" /> control executes. The callback method that you specify must be a static method on the page or on the user control that contains the <see cref="T:System.Web.UI.WebControls.Substitution" /> control. The signature for the callback method must match the signature for an <see cref="T:System.Web.HttpResponseSubstitutionCallback" /> delegate that takes an <see cref="T:System.Web.HttpContext" /> parameter and returns a string.</para>
+      <para>For the <see cref="T:System.Web.UI.WebControls.AdRotator" /> control, rendering is independent of the page caching unless an event handler is provided for the <see cref="E:System.Web.UI.WebControls.AdRotator.AdCreated" /> event. If no <see cref="E:System.Web.UI.WebControls.AdRotator.AdCreated" /> event handler is present, post-cache substitution is used to render the <see cref="T:System.Web.UI.WebControls.AdRotator" /> content.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that handles post-cache substitution.</para>
+    </summary>
   </Docs>
 </Type>

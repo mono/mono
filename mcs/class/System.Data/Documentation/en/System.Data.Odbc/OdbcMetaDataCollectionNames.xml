@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OdbcMetaDataCollectionNames" FullName="System.Data.Odbc.OdbcMetaDataCollectionNames">
   <TypeSignature Language="C#" Value="public static class OdbcMetaDataCollectionNames" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a list of constants for use with the GetSchema method to retrieve metadata collections.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Columns">
@@ -24,8 +28,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Columns collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Indexes">
@@ -39,8 +46,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Indexes collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcedureColumns">
@@ -54,8 +64,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the ProcedureColumns collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProcedureParameters">
@@ -69,8 +82,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the ProcedureParameters collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Procedures">
@@ -84,8 +100,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Procedures collection. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Tables">
@@ -99,8 +118,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Tables collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Views">
@@ -114,8 +136,11 @@
       </ReturnValue>
       <MemberValue>null</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant for use with the GetSchema method that represents the Views collection.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

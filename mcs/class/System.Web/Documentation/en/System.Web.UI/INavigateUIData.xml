@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="INavigateUIData" FullName="System.Web.UI.INavigateUIData">
   <TypeSignature Language="C#" Value="public interface INavigateUIData" />
   <AssemblyInfo>
@@ -6,9 +7,16 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.INavigateUIData" /> interface allows navigation controls, such as the <see cref="T:System.Web.UI.WebControls.TreeView" /> and <see cref="T:System.Web.UI.WebControls.Menu" /> controls, to automatically render data from a data source that represents hierarchical site navigation data. The <see cref="T:System.Web.UI.INavigateUIData" /> interface is implemented by the <see cref="T:System.Web.SiteMapNode" /> type that is returned from the <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control so that navigation controls can render data automatically without a page developer explicitly defining the data binding associations to the properties of <see cref="T:System.Web.SiteMapNode" />. For example, the <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control enables declarative data binding so that a page developer does not have to populate the <see cref="P:System.Web.UI.WebControls.TreeView.DataBindings" /> or <see cref="P:System.Web.UI.WebControls.Menu.DataBindings" /> properties explicitly for the <see cref="T:System.Web.UI.WebControls.TreeView" /> and <see cref="T:System.Web.UI.WebControls.Menu" /> controls, respectively.</para>
+      <para>The <see cref="T:System.Web.UI.INavigateUIData" /> interface can also be implemented on objects that are returned by an <see cref="T:System.Web.UI.WebControls.ObjectDataSource" /> control in order to enable automatic rendering of navigation control without explicit data binding.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface that classes implement to provide navigation user interface data and values to navigation controls. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Description">
@@ -18,10 +26,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.INavigateUIData.Description" /> property is rendered as the ToolTip text of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> and <see cref="T:System.Web.UI.WebControls.MenuItem" /> controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets text that represents the description of a navigation node of a navigation control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +48,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.INavigateUIData.Name" /> property is rendered as the <see cref="P:System.Web.UI.WebControls.TreeNode.Text" /> property of a <see cref="T:System.Web.UI.WebControls.TreeNode" /> control and the <see cref="P:System.Web.UI.WebControls.MenuItem.Text" /> property of a <see cref="T:System.Web.UI.WebControls.MenuItem" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the text that represents the name of a navigation node of a navigation control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -50,10 +70,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.INavigateUIData.NavigateUrl" /> property represents the URL to navigate to when a navigation node, such as <see cref="T:System.Web.UI.WebControls.TreeNode" /> or <see cref="T:System.Web.UI.WebControls.MenuItem" /> control, is clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URL to navigate to when the navigation node is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -66,10 +92,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.INavigateUIData.Value" /> property represents any additional data that is used by a navigation node, such as a <see cref="T:System.Web.UI.WebControls.TreeNode" /> or <see cref="T:System.Web.UI.WebControls.MenuItem" /> control, that is rendered as an HTML value attribute for the node.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a non-displayed value that is used to store any additional data about the navigation node.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

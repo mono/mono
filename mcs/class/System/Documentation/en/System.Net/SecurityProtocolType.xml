@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SecurityProtocolType" FullName="System.Net.SecurityProtocolType">
   <TypeSignature Language="C#" Value="public enum SecurityProtocolType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SecurityProtocolType extends System.Enum" />
@@ -16,8 +17,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration defines permissible values for the <see cref="P:System.Net.ServicePointManager.SecurityProtocol" /> property and specifies the security protocols that are used by instances of the <see cref="T:System.Net.Security.SslStream" /> class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the security protocols that are supported by the Schannel security package.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Ssl3">
@@ -34,8 +41,14 @@
       </ReturnValue>
       <MemberValue>Ssl3</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>SSL 3.0 has been superseded by the Transport Layer Security (TLS) protocol and is provided for backward compatibility only.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the Secure Socket Layer (SSL) 3.0 security protocol.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Tls">
@@ -52,8 +65,14 @@
       </ReturnValue>
       <MemberValue>Tls</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>TLS assumes that a connection-oriented protocol, typically TCP, is in use. The TLS protocol is defined in IETF RFC 2246.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the Transport Layer Security (TLS) 1.0 security protocol.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

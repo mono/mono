@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{342E1BD0-A935-4D49-B71E-ECDF0B42F90F}</ProjectGuid>
+    <ProjectGuid>{9ACDCB1D-5099-4091-A426-DBBA9B0976C2}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Microsoft.CSharp-net_4_0</OutputPath>
+    <OutputPath>./../../class/lib/net_4_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
@@ -81,21 +81,24 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_0.csproj">
-      <Project>{3874F10B-9AE4-4A7E-873B-42FFDCE80CB7}</Project>
+      <Project>{F42F5509-677F-4C93-A026-047AB6153801}</Project>
       <Name>corlib\corlib-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_0.csproj">
-      <Project>{D121EB80-19C6-4313-9BBE-6F66556CE8B7}</Project>
+      <Project>{8B53B0E9-E0CA-4378-8C57-F85D518871D3}</Project>
       <Name>System.Core\System.Core-net_4_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\Mono.CSharp\Mono.CSharp-net_4_0.csproj">
-      <Project>{F1E6D92C-D29F-47B0-876F-8C3C06584ABE}</Project>
+      <Project>{7F51AF6B-0658-41D2-9165-D9700122D4C9}</Project>
       <Name>Mono.CSharp\Mono.CSharp-net_4_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -103,3 +106,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

@@ -4,8 +4,9 @@ Mono is an open source implementation of Microsoft's .NET Framework based on the
 1. [Installation](#compilation-and-installation)
 2. [Using Mono](#using-mono)
 3. [Directory Roadmap](#directory-roadmap)
-4. [Git submodules maintenance](#git-submodules-maintenance)
-5. [Reporting bugs](#reporting-bugs)
+4. [Contributing to Mono] (#contributing-to-mono) 
+5. [Git submodules maintenance](#git-submodules-maintenance)
+6. [Reporting bugs](#reporting-bugs)
 
 Compilation and Installation
 ============================
@@ -515,6 +516,10 @@ mono/ and mcs/ build systems.
 independent checkout) from the Mono module, that
 directory is automatically configured to share the
 same prefix than this module gets.
+
+Contributing to Mono
+====================
+Before submitting changes to Mono, please review the contribution guidelines at http://mono-project.com/Contributing. Please pay particular attention to the [Important Rules](http://mono-project.com/Contributing#Important_Rules) section.
 
 
 Git submodules maintenance

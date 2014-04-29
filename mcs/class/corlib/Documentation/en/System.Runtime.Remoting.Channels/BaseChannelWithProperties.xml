@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BaseChannelWithProperties" FullName="System.Runtime.Remoting.Channels.BaseChannelWithProperties">
   <TypeSignature Maintainer="auto" Language="C#" Value="public abstract class BaseChannelWithProperties : System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract beforefieldinit BaseChannelWithProperties extends System.Runtime.Remoting.Channels.BaseChannelObjectWithProperties" />
@@ -20,8 +21,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.Channels.BaseChannelWithProperties" /> class handles the complexity of asking the sinks in a channel sink chain for their properties. After the channel constructs its sink chain (if applicable), it must set the <see cref="F:System.Runtime.Remoting.Channels.BaseChannelWithProperties.SinksWithProperties" /> property.</para>
+      <para>This class makes a link demand and an inheritance demand at the class level. A <see cref="T:System.Security.SecurityException" /> is thrown when either the immediate caller or the derived class does not have infrastructure permission. For details about security demands, see <format type="text/html"><a href="A33FD5F9-2DE9-4653-A4F0-D9DF25082C4D">Link Demands</a></format> and <format type="text/html"><a href="28B9ADBB-8F08-4F10-B856-DBF59EB932D9">Inheritance Demands</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a base implementation for channels that want to expose a dictionary interface to their properties.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,8 +44,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Remoting.Channels.BaseChannelWithProperties" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -53,9 +64,15 @@
         <ReturnType>System.Collections.IDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Channel properties are used to configure the channel at run time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Collections.IDictionary" /> of the channel properties associated with the current channel object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SinksWithProperties">
@@ -72,8 +89,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Channel sinks provide a plug-in point that allows access to the underlying messages that are flowing through the channel as well as the stream that is used by the transport mechanism to send messages to a remote object. Channel sinks are linked together in a chain of channel sink providers, and all channel messages flow through this chain of sinks before the messages are serialized and transported.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates the top channel sink in the channel sink stack.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

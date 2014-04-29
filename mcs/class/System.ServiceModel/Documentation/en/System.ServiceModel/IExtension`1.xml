@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IExtension&lt;T&gt;" FullName="System.ServiceModel.IExtension&lt;T&gt;">
   <TypeSignature Language="C#" Value="public interface IExtension&lt;T&gt; where T : IExtensibleObject&lt;T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IExtension`1&lt;(class System.ServiceModel.IExtensibleObject`1&lt;!T&gt;) T&gt;" />
@@ -15,8 +16,14 @@
   <Interfaces />
   <Docs>
     <typeparam name="T">To be added.</typeparam>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>indigo2 allows you to extend <see cref="T:System.ServiceModel.IExtensibleObject`1" /> objects (the <see cref="T:System.ServiceModel.IContextChannel" />, <see cref="T:System.ServiceModel.ServiceHost" />, <see cref="T:System.ServiceModel.InstanceContext" />, and <see cref="T:System.ServiceModel.OperationContext" /> classes) by adding a new state or behavior by using its extensible object pattern. The extensible object pattern is used in indigo2 to either extend existing run-time classes with new functionality or to add new state features to an object. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enables an object to extend another object through aggregation.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Attach">

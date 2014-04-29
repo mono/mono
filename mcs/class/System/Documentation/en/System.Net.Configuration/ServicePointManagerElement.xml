@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ServicePointManagerElement" FullName="System.Net.Configuration.ServicePointManagerElement">
   <TypeSignature Language="C#" Value="public sealed class ServicePointManagerElement : System.Configuration.ConfigurationElement" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed ServicePointManagerElement extends System.Configuration.ConfigurationElement" />
@@ -11,9 +12,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class corresponds to the servicePointManager attribute of the settings <format type="text/html"><a href="6e5def51-3646-4ef6-a7bd-c69151321bec">ServicePointManager Element (Network Settings)</a></format> configuration element.</para>
+      <para>This class is used to specify the values that are used to initialize new <see cref="T:System.Net.ServicePoint" /> objects. </para>
+      <para>This class provides programmatic access to information that can be stored in configuration files.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the default settings used to create connections to a remote computer. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +35,12 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Configuration.ServicePointManagerElement" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CheckCertificateName">
@@ -48,10 +60,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that controls checking host name information in an X509 certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CheckCertificateRevocationList">
@@ -71,10 +86,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to true, the certificate is checked against the certificate authority revocation list as part of the certificate validation process. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that indicates whether the certificate is checked against the certificate authority revocation list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DnsRefreshTimeout">
@@ -94,10 +115,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this property sets the <see cref="P:System.Net.ServicePointManager.DnsRefreshTimeout" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the amount of time after which address information is refreshed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnableDnsRoundRobin">
@@ -117,10 +144,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that controls using different IP addresses on connections to the same server.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Expect100Continue">
@@ -140,10 +170,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When this property is set to true, client requests that use the POST method expect to receive a 100-Continue response from the server to indicate that the client should send the data to be posted. This mechanism allows clients to avoid sending large amounts of data over the network when the server, based on the request headers, intends to reject the request.</para>
+          <para>For additional information, see <see cref="P:System.Net.ServicePointManager.Expect100Continue" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that determines whether 100-Continue behavior is used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PostDeserialize">
@@ -181,10 +218,18 @@
         <ReturnType>System.Configuration.ConfigurationPropertyCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection contains six elements, which correspond to the <see cref="P:System.Net.Configuration.ServicePointManagerElement.CheckCertificateName" />, <see cref="P:System.Net.Configuration.ServicePointManagerElement.DnsRefreshTimeout" />, <see cref="P:System.Net.Configuration.ServicePointManagerElement.EnableDnsRoundRobin" />, <see cref="P:System.Net.Configuration.ServicePointManagerElement.Expect100Continue" />,</para>
+          <para>
+            <see cref="P:System.Net.Configuration.ServicePointManagerElement.UseNagleAlgorithm" />, and <see cref="P:System.Net.Configuration.ServicePointManagerElement.CheckCertificateRevocationList" /> properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of properties for the current instance. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseNagleAlgorithm">
@@ -204,10 +249,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Nagle algorithm is used to reduce network traffic by buffering small packets of data and transmitting them as a single packet. This process is also referred to as "nagling"; it is widely used because it reduces the number of packets transmitted and lowers the overhead per packet.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a Boolean value that determines whether the Nagle algorithm is used.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

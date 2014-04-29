@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataSourceViewSchemaAccessor" FullName="System.Web.UI.IDataSourceViewSchemaAccessor">
   <TypeSignature Language="C#" Value="public interface IDataSourceViewSchemaAccessor" />
   <AssemblyInfo>
@@ -6,9 +7,15 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This interface is implemented by the <see cref="T:System.Web.UI.WebControls.TreeNodeBinding" />, <see cref="T:System.Web.UI.WebControls.MenuItemBinding" />, and <see cref="T:System.Web.UI.WebControls.DataControlField" /> classes. These implementations are used by the .NET Framework and are not intended for use in your code.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows a type converter to access schema information stored on an object.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DataSourceViewSchema">
@@ -18,10 +25,16 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This interface is implemented by the <see cref="T:System.Web.UI.WebControls.TreeNodeBinding" />, <see cref="T:System.Web.UI.WebControls.MenuItemBinding" />, and <see cref="T:System.Web.UI.WebControls.DataControlField" /> classes. These implementations are used by the .NET Framework and are not intended for use in your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented, gets or sets the schema associated with the object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

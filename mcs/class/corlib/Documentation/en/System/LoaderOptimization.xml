@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LoaderOptimization" FullName="System.LoaderOptimization">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum LoaderOptimization" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed LoaderOptimization extends System.Enum" />
@@ -18,12 +19,18 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>These values are used in <see cref="T:System.AppDomainSetup" /> to control the way code is JITed.
-
-<para>
-   As of Mono 1.1.9 the values are not used.
-</para></summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The meaning of <see cref="F:System.LoaderOptimization.MultiDomainHost" /> changed in the .NET Framework version 2.0. The loader now shares resources across application domains only for assemblies that have been added to the global assembly cache. </para>
+      <block subset="none" type="note">
+        <para>If custom code access security policy is set for the <see cref="T:System.AppDomain" />, by using the <see cref="M:System.AppDomain.SetAppDomainPolicy(System.Security.Policy.PolicyLevel)" /> property, and the <see cref="T:System.AppDomain" /> is created using the <see cref="F:System.LoaderOptimization.MultiDomain" /> flag, the effect is the same as specifying the <see cref="F:System.LoaderOptimization.MultiDomainHost" /> flag; that is, only assemblies in the GAC are shared. When this occurs, the loader does not throw an exception and the application does not experience the performance gains associated with the <see cref="F:System.LoaderOptimization.MultiDomain" /> flag.</para>
+      </block>
+      <para>For more information on assembly sharing and domain-neutral assembly loading, see <format type="text/html"><a href="433b04ae-4ba8-4849-9dbd-79194f240346">Application Domains and Assemblies</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An enumeration used with the <see cref="T:System.LoaderOptimizationAttribute" /> class to specify loader optimizations for an executable.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DisallowBindings">
@@ -45,8 +52,11 @@
       </ReturnValue>
       <MemberValue>DisallowBindings</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Ignored by the common language runtime.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DomainMask">
@@ -68,8 +78,11 @@
       </ReturnValue>
       <MemberValue>DomainMask</MemberValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Do not use. This mask selects the domain-related values, screening out the unused <see cref="F:System.LoaderOptimization.DisallowBindings" /> flag.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MultiDomain">
@@ -86,8 +99,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The code should be optimized for used across multiple domains.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the application will probably have many domains that use the same code, and the loader must share maximal internal resources across application domains. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MultiDomainHost">
@@ -104,8 +120,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the application will probably host unique code in multiple domains, and the loader must share resources across application domains only for globally available (strong-named) assemblies that have been added to the global assembly cache. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotSpecified">
@@ -122,8 +141,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that no optimizations for sharing internal resources are specified. If the default domain or hosting interface specified an optimization, then the loader uses that; otherwise, the loader uses <see cref="F:System.LoaderOptimization.SingleDomain" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SingleDomain">
@@ -140,8 +162,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>The code should be optimized for single domain use.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that the application will probably have a single domain, and loader must not share internal resources across application domains. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

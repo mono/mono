@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HostSecurityManagerOptions" FullName="System.Security.HostSecurityManagerOptions">
   <TypeSignature Language="C#" Value="public enum HostSecurityManagerOptions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed HostSecurityManagerOptions extends System.Enum" />
@@ -18,9 +19,12 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the security policy components to be used by the host security manager.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllFlags">
@@ -35,8 +39,11 @@
         <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use all security policy components.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HostAppDomainEvidence">
@@ -51,8 +58,11 @@
         <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the application domain evidence.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HostAssemblyEvidence">
@@ -67,8 +77,11 @@
         <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the assembly evidence.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HostDetermineApplicationTrust">
@@ -83,8 +96,11 @@
         <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Route calls to the <see cref="M:System.Security.Policy.ApplicationSecurityManager.DetermineApplicationTrust(System.ActivationContext,System.Security.Policy.TrustManagerContext)" /> method to the <see cref="M:System.Security.HostSecurityManager.DetermineApplicationTrust(System.Security.Policy.Evidence,System.Security.Policy.Evidence,System.Security.Policy.TrustManagerContext)" /> method first.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HostPolicyLevel">
@@ -99,8 +115,11 @@
         <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the policy level specified in the <see cref="P:System.Security.HostSecurityManager.DomainPolicy" /> property.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HostResolvePolicy">
@@ -115,8 +134,11 @@
         <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Security.HostSecurityManager.ResolvePolicy(System.Security.Policy.Evidence)" /> method to resolve the application evidence.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -131,8 +153,11 @@
         <ReturnType>System.Security.HostSecurityManagerOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use none of the security policy components.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

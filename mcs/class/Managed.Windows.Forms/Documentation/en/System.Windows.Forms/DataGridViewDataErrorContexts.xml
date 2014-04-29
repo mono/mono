@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewDataErrorContexts" FullName="System.Windows.Forms.DataGridViewDataErrorContexts">
   <TypeSignature Language="C#" Value="public enum DataGridViewDataErrorContexts" />
   <AssemblyInfo>
@@ -13,9 +14,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Members of this enumeration may be combined using the bitwise OR operation to represent the state of a data-bound <see cref="T:System.Windows.Forms.DataGridView" /> when a data error occurred. For example, if a user enters an invalid cell value (such as entering a name in a cell that expects a date) and then selects a different cell, the <see cref="T:System.Windows.Forms.DataGridView" /> will try to commit the invalid cell value. When the commit fails, the <see cref="T:System.Windows.Forms.DataGridView" /> will raise a <see cref="E:System.Windows.Forms.DataGridView.DataError" /> event whose <see cref="P:System.Windows.Forms.DataGridViewDataErrorEventArgs.Context" /> property will have a value of <see cref="F:System.Windows.Forms.DataGridViewDataErrorContexts.Commit" /> and <see cref="F:System.Windows.Forms.DataGridViewDataErrorContexts.CurrentCellChange" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the state of a data-bound <see cref="T:System.Windows.Forms.DataGridView" /> control when a data error occurred.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ClipboardContent">
@@ -25,8 +32,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data error occurred when copying content to the Clipboard. This value indicates that the cell value could not be converted to a string.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,8 +49,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data error occurred when committing changes to the data store. This value indicates that data entered in a cell could not be committed to the underlying data store.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,8 +66,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data error occurred when the selection cursor moved to another cell. This value indicates that a user selected a cell when the previously selected cell had an error condition.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -67,8 +83,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data error occurred when displaying a cell that was populated by a data source. This value indicates that the value from the data source cannot be displayed by the cell, or a mapping that translates the value from the data source to the cell is missing.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -81,8 +100,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data error occurred when trying to format data that is either being sent to a data store, or being loaded from a data store. This value indicates that a change to a cell failed to format correctly. Either the new cell value needs to be corrected or the cell's formatting needs to change.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -95,8 +117,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data error occurred when restoring a cell to its previous value. This value indicates that a cell tried to cancel an edit and the rollback to the initial value failed. This can occur if the cell formatting changed so that it is incompatible with the initial value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -109,8 +134,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data error occurred when the <see cref="T:System.Windows.Forms.DataGridView" /> lost focus. This value indicates that the <see cref="T:System.Windows.Forms.DataGridView" /> could not commit user changes after losing focus.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -123,8 +151,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data error occurred when parsing new data. This value indicates that the <see cref="T:System.Windows.Forms.DataGridView" /> could not parse new data that was entered by the user or loaded from the underlying data store.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -137,8 +168,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data error occurred when calculating the preferred size of a cell. This value indicates that the <see cref="T:System.Windows.Forms.DataGridView" /> failed to calculate the preferred width or height of a cell when programmatically resizing a column or row. This can occur if the cell failed to format its value.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -151,8 +185,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data error occurred when deleting a row. This value indicates that the underlying data store threw an exception when a data-bound <see cref="T:System.Windows.Forms.DataGridView" /> deleted a row.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -165,8 +202,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewDataErrorContexts</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A data error occurred when scrolling a new region into view. This value indicates that a cell with data errors scrolled into view programmatically or with the scroll bar.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

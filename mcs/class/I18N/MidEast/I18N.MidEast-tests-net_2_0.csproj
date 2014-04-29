@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{48C24919-3B2A-43E5-8DF2-A4A55258BA7E}</ProjectGuid>
+    <ProjectGuid>{6BC73CD0-ADAF-461D-B190-F1458D439314}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\I18N.MidEast-tests-net_2_0</OutputPath>
@@ -56,22 +56,25 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_2_0\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
-      <Project>{EB7444A6-C3E6-4224-BDB0-63CA3B4F2B87}</Project>
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
       <Name>corlib\corlib-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\Common\I18N-net_2_0.csproj">
-      <Project>{B4A11584-7362-47A0-9E27-0E4DE9539D77}</Project>
+      <Project>{90D1493C-4092-4A53-BBC1-5E79DFEF9AD1}</Project>
       <Name>Common\I18N-net_2_0</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\MidEast\I18N.MidEast-net_2_0.csproj">
-      <Project>{40C8B8E9-74A6-430C-B036-A09A06F795B4}</Project>
+      <Project>{81E84AE7-FF9C-499B-9CA1-02E438C233C6}</Project>
       <Name>MidEast\I18N.MidEast-net_2_0</Name>
     </ProjectReference>
   </ItemGroup>
@@ -79,3 +82,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

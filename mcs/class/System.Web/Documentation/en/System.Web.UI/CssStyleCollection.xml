@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CssStyleCollection" FullName="System.Web.UI.CssStyleCollection">
   <TypeSignature Language="C#" Value="public sealed class CssStyleCollection" Maintainer="auto" />
   <AssemblyInfo>
@@ -13,8 +14,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Any style declared for a particular HTML server control is added to the collection when the containing Web Forms page is parsed. It automatically parses and exposes CSS properties through a dictionary pattern API. You can manipulate any CSS property on a server control through the <see cref="P:System.Web.UI.HtmlControls.HtmlControl.Style" /> property. Simply use the CSS property's key and value in the indexed collection.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Contains the HTML cascading-style sheets (CSS) inline style attributes for a specified HTML server control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Add">
@@ -28,10 +35,18 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'string'</param>
-        <param name="value">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the style item to add exists in the <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> enumeration, use the overload of the <see cref="Overload:System.Web.UI.CssStyleCollection.Add" /> method that takes an <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> parameter because it is strongly typed. This means that items that are added will be included when viewing items with the get accessor of the <see cref="P:System.Web.UI.CssStyleCollection.Item(System.Web.UI.HtmlTextWriterStyle)" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a style item to the <see cref="T:System.Web.UI.CssStyleCollection" /> of a control using the specified name/value pair.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new style attribute to add to the collection. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the style attribute to add to the collection. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -52,10 +67,18 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <param name="value">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the style item to add exists in the <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> enumeration, use this <see cref="M:System.Web.UI.CssStyleCollection.Add(System.Web.UI.HtmlTextWriterStyle,System.String)" /> overload of the <see cref="Overload:System.Web.UI.CssStyleCollection.Add" /> method rather than the overload that does not take an <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> parameter.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a style item to the <see cref="T:System.Web.UI.CssStyleCollection" /> collection of a control using the specified <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> enumeration value and corresponding value.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> enumeration value to add to the collection.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the style attribute to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -66,8 +89,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all style items from the <see cref="T:System.Web.UI.CssStyleCollection" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -81,9 +107,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of items in the <see cref="T:System.Web.UI.CssStyleCollection" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -137,9 +166,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>a <see cref="T:System.Collections.ICollection" /></value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of keys to all the styles in the <see cref="T:System.Web.UI.CssStyleCollection" /> object for a specific HTML server control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -156,9 +188,13 @@
         <Parameter Name="key" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a style item from the <see cref="T:System.Web.UI.CssStyleCollection" /> of a control using the specified style key.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string literal of the style item to remove. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -178,9 +214,13 @@
         <Parameter Name="key" Type="System.Web.UI.HtmlTextWriterStyle" />
       </Parameters>
       <Docs>
-        <param name="key">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a style item from the <see cref="T:System.Web.UI.CssStyleCollection" /> collection of a control using the specified <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> enumeration value.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriterStyle" /> enumeration value to remove.</param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -193,9 +233,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the style attribute of the HTML server control.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

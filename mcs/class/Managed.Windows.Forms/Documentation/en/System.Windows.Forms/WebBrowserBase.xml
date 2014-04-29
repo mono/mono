@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebBrowserBase" FullName="System.Windows.Forms.WebBrowserBase">
   <TypeSignature Language="C#" Value="public class WebBrowserBase : System.Windows.Forms.Control" />
   <AssemblyInfo>
@@ -26,8 +27,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a wrapper for a generic ActiveX control for use as a base class by the <see cref="T:System.Windows.Forms.WebBrowser" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="ActiveXInstance">
@@ -48,9 +52,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information, see <see cref="http://go.microsoft.com/fwlink/?LinkId=198812">WebBrowser Control</see>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the underlying ActiveX WebBrowser control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AllowDrop">
@@ -74,9 +84,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AttachInterfaces">
@@ -92,9 +105,16 @@
         <Parameter Name="nativeActiveXObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="nativeActiveXObject">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the control when the underlying ActiveX control is created.</para>
+        </summary>
+        <param name="nativeActiveXObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that represents the underlying ActiveX control.</param>
       </Docs>
     </Member>
     <Member MemberName="BackColor">
@@ -118,9 +138,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not meaningful for this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackColorChanged">
@@ -141,8 +164,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImage">
@@ -166,9 +192,12 @@
         <ReturnType>System.Drawing.Image</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageChanged">
@@ -189,8 +218,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayout">
@@ -214,9 +246,12 @@
         <ReturnType>System.Windows.Forms.ImageLayout</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BackgroundImageLayoutChanged">
@@ -237,8 +272,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BindingContextChanged">
@@ -259,8 +297,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ChangeUICues">
@@ -281,8 +322,11 @@
         <ReturnType>System.Windows.Forms.UICuesEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the focus or keyboard user interface (UI) cues change.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Click">
@@ -303,8 +347,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateSink">
@@ -318,8 +365,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the control to prepare it for listening to events. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CreateWebBrowserSiteBase">
@@ -333,9 +386,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a reference to the unmanaged ActiveX control site.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Cursor">
@@ -359,9 +415,12 @@
         <ReturnType>System.Windows.Forms.Cursor</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CursorChanged">
@@ -382,8 +441,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DefaultSize">
@@ -396,9 +458,12 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default size of the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DetachInterfaces">
@@ -412,8 +477,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the control when the underlying ActiveX control is discarded.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DetachSink">
@@ -427,8 +498,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This implementation does nothing.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called by the control when it stops listening to events.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -444,9 +521,13 @@
         <Parameter Name="disposing" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="disposing">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases the unmanaged resources used by the <see cref="T:System.Windows.Forms.Control" /> and its child controls and optionally releases the managed resources.</para>
+        </summary>
+        <param name="disposing">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to release both managed and unmanaged resources; false to release only unmanaged resources.</param>
       </Docs>
     </Member>
     <Member MemberName="DoubleClick">
@@ -467,8 +548,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DragDrop">
@@ -489,8 +573,11 @@
         <ReturnType>System.Windows.Forms.DragEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DragEnter">
@@ -511,8 +598,11 @@
         <ReturnType>System.Windows.Forms.DragEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DragLeave">
@@ -533,8 +623,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DragOver">
@@ -555,8 +648,11 @@
         <ReturnType>System.Windows.Forms.DragEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DrawToBitmap">
@@ -573,10 +669,15 @@
         <Parameter Name="targetBounds" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <param name="bitmap">To be added.</param>
-        <param name="targetBounds">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported by this control.</para>
+        </summary>
+        <param name="bitmap">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Bitmap" />.</param>
+        <param name="targetBounds">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" />. </param>
       </Docs>
       <Attributes>
         <Attribute>
@@ -605,9 +706,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EnabledChanged">
@@ -628,8 +732,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Enter">
@@ -650,8 +757,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Font">
@@ -675,9 +785,12 @@
         <ReturnType>System.Drawing.Font</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not meaningful for this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FontChanged">
@@ -698,8 +811,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ForeColor">
@@ -723,9 +839,12 @@
         <ReturnType>System.Drawing.Color</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not meaningful for this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ForeColorChanged">
@@ -746,8 +865,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GiveFeedback">
@@ -768,8 +890,11 @@
         <ReturnType>System.Windows.Forms.GiveFeedbackEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HelpRequested">
@@ -790,8 +915,11 @@
         <ReturnType>System.Windows.Forms.HelpEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImeMode">
@@ -815,9 +943,12 @@
         <ReturnType>System.Windows.Forms.ImeMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not meaningful for this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImeModeChanged">
@@ -838,8 +969,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IsInputChar">
@@ -855,10 +989,14 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="charCode">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines if a character is an input character that the control recognizes.</para>
+        </summary>
+        <param name="charCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to test.</param>
       </Docs>
     </Member>
     <Member MemberName="KeyDown">
@@ -879,8 +1017,11 @@
         <ReturnType>System.Windows.Forms.KeyEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyPress">
@@ -901,8 +1042,11 @@
         <ReturnType>System.Windows.Forms.KeyPressEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyUp">
@@ -923,8 +1067,11 @@
         <ReturnType>System.Windows.Forms.KeyEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Layout">
@@ -945,8 +1092,11 @@
         <ReturnType>System.Windows.Forms.LayoutEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Leave">
@@ -967,8 +1117,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseCaptureChanged">
@@ -989,8 +1142,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseClick">
@@ -1011,8 +1167,11 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseDoubleClick">
@@ -1033,8 +1192,11 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseDown">
@@ -1055,8 +1217,11 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseEnter">
@@ -1077,8 +1242,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseHover">
@@ -1099,8 +1267,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseLeave">
@@ -1121,8 +1292,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseMove">
@@ -1143,8 +1317,11 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseUp">
@@ -1165,8 +1342,11 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseWheel">
@@ -1187,8 +1367,11 @@
         <ReturnType>System.Windows.Forms.MouseEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OnBackColorChanged">
@@ -1204,9 +1387,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.BackColorChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnFontChanged">
@@ -1222,9 +1409,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.FontChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnForeColorChanged">
@@ -1240,9 +1431,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.ForeColorChanged" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnGotFocus">
@@ -1258,9 +1453,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.GotFocus" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnHandleCreated">
@@ -1276,9 +1475,17 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Windows.Forms.WebBrowserBase.OnHandleCreated(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.HandleCreated" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
       <Attributes>
         <Attribute>
@@ -1299,9 +1506,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Windows.Forms.Control.LostFocus" /> event.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data.</param>
       </Docs>
     </Member>
     <Member MemberName="OnParentChanged">
@@ -1317,9 +1528,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member overrides <see cref="M:System.Windows.Forms.Control.OnParentChanged(System.EventArgs)" />.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnRightToLeftChanged">
@@ -1335,9 +1550,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not meaningful for this control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object.</param>
       </Docs>
     </Member>
     <Member MemberName="OnVisibleChanged">
@@ -1353,9 +1572,13 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member overrides <see cref="M:System.Windows.Forms.Control.OnVisibleChanged(System.EventArgs)" />.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="Paint">
@@ -1376,8 +1599,11 @@
         <ReturnType>System.Windows.Forms.PaintEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PreProcessMessage">
@@ -1412,10 +1638,14 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="charCode">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Processes a mnemonic character.</para>
+        </summary>
+        <param name="charCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character to process.</param>
       </Docs>
     </Member>
     <Member MemberName="QueryAccessibilityHelp">
@@ -1436,8 +1666,11 @@
         <ReturnType>System.Windows.Forms.QueryAccessibilityHelpEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="QueryContinueDrag">
@@ -1458,8 +1691,11 @@
         <ReturnType>System.Windows.Forms.QueryContinueDragEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeft">
@@ -1483,9 +1719,12 @@
         <ReturnType>System.Windows.Forms.RightToLeft</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeftChanged">
@@ -1506,8 +1745,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Site">
@@ -1520,9 +1762,12 @@
         <ReturnType>System.ComponentModel.ISite</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the site of the control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="status">
@@ -1557,8 +1802,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -1585,9 +1833,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TextChanged">
@@ -1608,8 +1859,11 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This event is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseWaitCursor">
@@ -1633,9 +1887,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is not supported by this control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WndProc">

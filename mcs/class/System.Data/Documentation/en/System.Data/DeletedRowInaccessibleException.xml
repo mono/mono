@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DeletedRowInaccessibleException" FullName="System.Data.DeletedRowInaccessibleException">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DeletedRowInaccessibleException : System.Data.DataException" />
   <AssemblyInfo>
@@ -14,8 +15,30 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>To delete a <see cref="T:System.Data.DataRow" />, use the <see cref="M:System.Data.DataRow.Delete" /> method of a <see cref="T:System.Data.DataRow" /> class. As soon as you have deleted a row, any attempts to modify it will generate the <see cref="T:System.Data.DeletedRowInaccessibleException" />.</para>
+      <para>The <see cref="T:System.Data.DeletedRowInaccessibleException" /> is thrown when you use one of the following properties or methods that try to get or set the value of a deleted <see cref="T:System.Data.DataRow" />:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.Data.DataRow.Item(System.Int32)" /> property </para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Data.DataRow.ItemArray" /> property </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.Data.DataRow.BeginEdit" /> method </para>
+        </item>
+      </list>
+      <para>Use the <see cref="P:System.Data.DataRow.RowState" /> of a <see cref="T:System.Data.DataRow" /> class to determine whether a row has been deleted. If it has been deleted, you can use the <see cref="M:System.Data.DataRow.Original" /> method to retrieve it because deleted rows have no values available for the <see cref="M:System.Data.DataRow.Current" /> state. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the exception that is thrown when an action is tried on a <see cref="T:System.Data.DataRow" /> that has been deleted.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,8 +47,14 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Data.DataRow.RowState" /> of a <see cref="T:System.Data.DataRow" /> class to determine whether a row has been deleted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DeletedRowInaccessibleException" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -40,9 +69,16 @@
         <Parameter Name="s" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="s">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Data.DataRow.RowState" /> of a <see cref="T:System.Data.DataRow" /> class to determine whether a row has been deleted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DeletedRowInaccessibleException" /> class with the specified string.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to display when the exception is thrown. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,10 +94,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added: an object of type 'Runtime.Serialization.SerializationInfo'</param>
-        <param name="context">To be added: an object of type 'Runtime.Serialization.StreamingContext'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DeletedRowInaccessibleException" /> class with serialization information.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data that is required to serialize or deserialize an object. </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />Description of the source and destination of the specified serialized stream. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -79,10 +120,17 @@
         <Parameter Name="inner" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
         <param name="inner">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Data.DataRow.RowState" /> of a <see cref="T:System.Data.DataRow" /> class to determine whether a row has been deleted.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Data.DeletedRowInaccessibleException" /> class with a specified error message and a reference to the inner exception that is the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception.</param>
       </Docs>
     </Member>
   </Members>

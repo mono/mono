@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SearchDirectionHint" FullName="System.Windows.Forms.SearchDirectionHint">
   <TypeSignature Language="C#" Value="public enum SearchDirectionHint" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by the <see cref="Overload:System.Windows.Forms.ListView.FindNearestItem" /> methods in the <see cref="T:System.Windows.Forms.ListView" /> and <see cref="T:System.Windows.Forms.ListViewItem" /> classes, as well as by the <see cref="T:System.Windows.Forms.SearchForVirtualItemEventArgs" /> class. Identifying the nearest item in a <see cref="T:System.Windows.Forms.ListView" /> control can vary depending on the operating system the application is running on; therefore, the search direction is a hint, and not an absolute guarantee of results.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a directional hint of where to search for a <see cref="T:System.Windows.Forms.ListViewItem" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Down">
@@ -20,8 +27,11 @@
         <ReturnType>System.Windows.Forms.SearchDirectionHint</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Below the current item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Windows.Forms.SearchDirectionHint</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To the left of the current item</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Windows.Forms.SearchDirectionHint</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To the right of the current item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +78,11 @@
         <ReturnType>System.Windows.Forms.SearchDirectionHint</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Above the current item.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

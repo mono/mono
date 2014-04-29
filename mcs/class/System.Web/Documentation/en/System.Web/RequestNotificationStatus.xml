@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RequestNotificationStatus" FullName="System.Web.RequestNotificationStatus">
   <TypeSignature Language="C#" Value="public enum RequestNotificationStatus" />
   <AssemblyInfo>
@@ -8,8 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Web.RequestNotificationStatus" /> is introduced in the .NET Framework version 3.5. For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the state of a notification in the request pipeline.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Continue">
@@ -22,7 +30,10 @@
         <ReturnType>System.Web.RequestNotificationStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member supports the vstecasp infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FinishRequest">
@@ -35,7 +46,10 @@
         <ReturnType>System.Web.RequestNotificationStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member supports the vstecasp infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pending">
@@ -48,7 +62,10 @@
         <ReturnType>System.Web.RequestNotificationStatus</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member supports the vstecasp infrastructure and is not intended to be used directly from your code.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

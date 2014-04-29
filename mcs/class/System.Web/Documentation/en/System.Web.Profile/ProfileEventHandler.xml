@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProfileEventHandler" FullName="System.Web.Profile.ProfileEventHandler">
   <TypeSignature Language="C#" Value="public delegate void ProfileEventHandler(object sender, ProfileEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Profile.ProfileEventHandler" /> delegate is defined for the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class. You can access the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event of the <see cref="T:System.Web.Profile.ProfileModule" /> class in the Global.asax file for your ASP.NET application using the Profile_Personalize global event, as shown in the example for this topic.</para>
+      <para>You can use the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event to specify a custom user profile. If the <see cref="P:System.Web.Profile.ProfileEventArgs.Profile" /> property of the <see cref="T:System.Web.Profile.ProfileEventArgs" /> parameter specified for the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event's <see cref="T:System.Web.Profile.ProfileEventHandler" /> is set to a non-null value when the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event completes, then the <see cref="T:System.Web.Profile.ProfileModule" /> will use that value for the <see cref="P:System.Web.HttpContext.Profile" /> property of the current <see cref="T:System.Web.HttpContext" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Web.Profile.ProfileModule.Personalize" /> event of a <see cref="T:System.Web.Profile.ProfileModule" />. </para>
+    </summary>
   </Docs>
 </Type>

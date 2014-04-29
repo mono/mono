@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConsoleKey" FullName="System.ConsoleKey">
   <TypeSignature Language="C#" Value="public enum ConsoleKey" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed ConsoleKey extends System.Enum" />
@@ -10,9 +11,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ConsoleKey" /> enumeration is typically used in the <see cref="T:System.ConsoleKeyInfo" /> structure, which is returned by the <see cref="M:System.Console.ReadKey" /> method to indicate which key on the console has been pressed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the standard keys on a console.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="A">
@@ -27,8 +34,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The A key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -43,8 +53,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Add key (the addition key on the numeric keypad).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Applications">
@@ -59,8 +72,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Application key (Microsoft Natural Keyboard).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Attention">
@@ -75,8 +91,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ATTN key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="B">
@@ -91,8 +110,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The B key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Backspace">
@@ -107,8 +129,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The BACKSPACE key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BrowserBack">
@@ -123,8 +148,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Back key (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BrowserFavorites">
@@ -139,8 +167,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Favorites key (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BrowserForward">
@@ -155,8 +186,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Forward key (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BrowserHome">
@@ -171,8 +205,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Home key (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BrowserRefresh">
@@ -187,8 +224,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Refresh key (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BrowserSearch">
@@ -203,8 +243,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Search key (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BrowserStop">
@@ -219,8 +262,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Browser Stop key (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="C">
@@ -235,8 +281,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The C key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -251,8 +300,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The CLEAR key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CrSel">
@@ -267,8 +319,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The CRSEL (CURSOR SELECT) key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="D">
@@ -283,8 +338,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The D key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="D0">
@@ -299,8 +357,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 0 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="D1">
@@ -315,8 +376,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 1 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="D2">
@@ -331,8 +395,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 2 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="D3">
@@ -347,8 +414,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 3 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="D4">
@@ -363,8 +433,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 4 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="D5">
@@ -379,8 +452,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 5 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="D6">
@@ -395,8 +471,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 6 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="D7">
@@ -411,8 +490,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 7 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="D8">
@@ -427,8 +509,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 8 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="D9">
@@ -443,8 +528,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 9 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Decimal">
@@ -459,8 +547,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Decimal key (the decimal key on the numeric keypad). </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Delete">
@@ -475,8 +566,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DEL (DELETE) key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Divide">
@@ -491,8 +585,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Divide key (the division key on the numeric keypad). </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DownArrow">
@@ -507,8 +604,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DOWN ARROW key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="E">
@@ -523,8 +623,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The E key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="End">
@@ -539,8 +642,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The END key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Enter">
@@ -555,8 +661,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ENTER key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EraseEndOfFile">
@@ -571,8 +680,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ERASE EOF key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Escape">
@@ -587,8 +699,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ESC (ESCAPE) key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Execute">
@@ -603,8 +718,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The EXECUTE key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExSel">
@@ -619,8 +737,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The EXSEL (EXTEND SELECTION) key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F">
@@ -635,8 +756,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F1">
@@ -651,8 +775,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F1 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F10">
@@ -667,8 +794,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F10 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F11">
@@ -683,8 +813,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F11 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F12">
@@ -699,8 +832,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F12 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F13">
@@ -715,8 +851,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F13 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F14">
@@ -731,8 +870,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F14 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F15">
@@ -747,8 +889,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F15 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F16">
@@ -763,8 +908,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F16 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F17">
@@ -779,8 +927,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F17 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F18">
@@ -795,8 +946,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F18 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F19">
@@ -811,8 +965,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F19 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F2">
@@ -827,8 +984,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F2 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F20">
@@ -843,8 +1003,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F20 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F21">
@@ -859,8 +1022,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F21 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F22">
@@ -875,8 +1041,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F22 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F23">
@@ -891,8 +1060,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F23 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F24">
@@ -907,8 +1079,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F24 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F3">
@@ -923,8 +1098,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F3 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F4">
@@ -939,8 +1117,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F4 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F5">
@@ -955,8 +1136,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F5 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F6">
@@ -971,8 +1155,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F6 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F7">
@@ -987,8 +1174,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F7 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F8">
@@ -1003,8 +1193,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F8 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="F9">
@@ -1019,8 +1212,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The F9 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="G">
@@ -1035,8 +1231,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The G key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="H">
@@ -1051,8 +1250,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The H key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Help">
@@ -1067,8 +1269,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HELP key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Home">
@@ -1083,8 +1288,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HOME key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="I">
@@ -1099,8 +1307,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The I key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Insert">
@@ -1115,8 +1326,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The INS (INSERT) key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="J">
@@ -1131,8 +1345,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The J key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="K">
@@ -1147,8 +1364,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The K key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="L">
@@ -1163,8 +1383,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The L key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LaunchApp1">
@@ -1179,8 +1402,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Start Application 1 key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LaunchApp2">
@@ -1195,8 +1421,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Start Application 2 key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LaunchMail">
@@ -1211,8 +1440,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Start Mail key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LaunchMediaSelect">
@@ -1227,8 +1459,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Select Media key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LeftArrow">
@@ -1243,8 +1478,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The LEFT ARROW key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="LeftWindows">
@@ -1259,8 +1497,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The left Windows logo key (Microsoft Natural Keyboard).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="M">
@@ -1275,8 +1516,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The M key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MediaNext">
@@ -1291,8 +1535,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Media Next Track key (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MediaPlay">
@@ -1307,8 +1554,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Media Play/Pause key (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MediaPrevious">
@@ -1323,8 +1573,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Media Previous Track key (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MediaStop">
@@ -1339,8 +1592,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Media Stop key (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Multiply">
@@ -1355,8 +1611,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Multiply key (the multiplication key on the numeric keypad).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="N">
@@ -1371,8 +1630,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The N key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoName">
@@ -1387,8 +1649,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A constant reserved for future use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumPad0">
@@ -1403,8 +1668,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 0 key on the numeric keypad.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumPad1">
@@ -1419,8 +1687,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 1 key on the numeric keypad.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumPad2">
@@ -1435,8 +1706,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 2 key on the numeric keypad.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumPad3">
@@ -1451,8 +1725,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 3 key on the numeric keypad.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumPad4">
@@ -1467,8 +1744,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 4 key on the numeric keypad.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumPad5">
@@ -1483,8 +1763,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 5 key on the numeric keypad.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumPad6">
@@ -1499,8 +1782,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 6 key on the numeric keypad.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumPad7">
@@ -1515,8 +1801,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 7 key on the numeric keypad.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumPad8">
@@ -1531,8 +1820,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 8 key on the numeric keypad.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NumPad9">
@@ -1547,8 +1839,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 9 key on the numeric keypad.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="O">
@@ -1563,8 +1858,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The O key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Oem1">
@@ -1579,8 +1877,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 1 key (OEM specific).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Oem102">
@@ -1595,8 +1896,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 102 key (OEM specific).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Oem2">
@@ -1611,8 +1915,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 2 key (OEM specific).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Oem3">
@@ -1627,8 +1934,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 3 key (OEM specific).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Oem4">
@@ -1643,8 +1953,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 4 key (OEM specific).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Oem5">
@@ -1659,8 +1972,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 5 (OEM specific).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Oem6">
@@ -1675,8 +1991,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 6 key (OEM specific).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Oem7">
@@ -1691,8 +2010,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 7 key (OEM specific).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Oem8">
@@ -1707,8 +2029,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM 8 key (OEM specific).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OemClear">
@@ -1723,8 +2048,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The CLEAR key (OEM specific).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OemComma">
@@ -1739,8 +2067,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM Comma key on any country/region keyboard (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OemMinus">
@@ -1755,8 +2086,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM Minus key on any country/region keyboard (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OemPeriod">
@@ -1771,8 +2105,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM Period key on any country/region keyboard (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OemPlus">
@@ -1787,8 +2124,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OEM Plus key on any country/region keyboard (Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="P">
@@ -1803,8 +2143,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The P key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pa1">
@@ -1819,8 +2162,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PA1 key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Packet">
@@ -1835,8 +2181,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PACKET key (used to pass Unicode characters with keystrokes).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PageDown">
@@ -1851,8 +2200,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PAGE DOWN key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PageUp">
@@ -1867,8 +2219,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PAGE UP key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pause">
@@ -1883,8 +2238,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PAUSE key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Play">
@@ -1899,8 +2257,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PLAY key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Print">
@@ -1915,8 +2276,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PRINT key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PrintScreen">
@@ -1931,8 +2295,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PRINT SCREEN key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Process">
@@ -1947,8 +2314,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The IME PROCESS key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Q">
@@ -1963,8 +2333,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Q key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="R">
@@ -1979,8 +2352,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The R key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightArrow">
@@ -1995,8 +2371,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RIGHT ARROW key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightWindows">
@@ -2011,8 +2390,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The right Windows logo key (Microsoft Natural Keyboard).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="S">
@@ -2027,8 +2409,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The S key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Select">
@@ -2043,8 +2428,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SELECT key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Separator">
@@ -2059,8 +2447,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Separator key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Sleep">
@@ -2075,8 +2466,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Computer Sleep key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Spacebar">
@@ -2091,8 +2485,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SPACEBAR key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Subtract">
@@ -2107,8 +2504,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Subtract key (the subtraction key on the numeric keypad).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="T">
@@ -2123,8 +2523,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The T key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Tab">
@@ -2139,8 +2542,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The TAB key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="U">
@@ -2155,8 +2561,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The U key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UpArrow">
@@ -2171,8 +2580,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The UP ARROW key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="V">
@@ -2187,8 +2599,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The V key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VolumeDown">
@@ -2203,8 +2618,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Volume Down key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VolumeMute">
@@ -2219,8 +2637,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Volume Mute key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="VolumeUp">
@@ -2235,8 +2656,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Volume Up key (Microsoft Natural Keyboard, Windows 2000 or later).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="W">
@@ -2251,8 +2675,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The W key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="X">
@@ -2267,8 +2694,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The X key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Y">
@@ -2283,8 +2713,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Y key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Z">
@@ -2299,8 +2732,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Z key.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Zoom">
@@ -2315,8 +2751,11 @@
         <ReturnType>System.ConsoleKey</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ZOOM key.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="OperandType" FullName="System.Reflection.Emit.OperandType">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum OperandType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed OperandType extends System.Enum" />
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes the operand type of Microsoft intermediate language (MSIL) instruction.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="InlineBrTarget">
@@ -36,8 +40,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is a 32-bit integer branch target.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineField">
@@ -54,8 +61,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is a 32-bit metadata token.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineI">
@@ -72,8 +82,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is a 32-bit integer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineI8">
@@ -90,8 +103,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is a 64-bit integer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineMethod">
@@ -108,8 +124,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is a 32-bit metadata token.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineNone">
@@ -126,8 +145,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No operand.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlinePhi">
@@ -149,8 +171,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is reserved and should not be used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineR">
@@ -167,8 +192,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is a 64-bit IEEE floating point number.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineSig">
@@ -185,8 +213,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is a 32-bit metadata signature token.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineString">
@@ -203,8 +234,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is a 32-bit metadata string token.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineSwitch">
@@ -221,8 +255,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is the 32-bit integer argument to a switch instruction.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineTok">
@@ -239,8 +276,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is a FieldRef, MethodRef, or TypeRef token.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineType">
@@ -257,8 +297,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is a 32-bit metadata token.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="InlineVar">
@@ -275,8 +318,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is 16-bit integer containing the ordinal of a local variable or an argument.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShortInlineBrTarget">
@@ -293,8 +339,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is an 8-bit integer branch target.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShortInlineI">
@@ -311,8 +360,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is an 8-bit integer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShortInlineR">
@@ -329,8 +381,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is a 32-bit IEEE floating point number.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShortInlineVar">
@@ -347,8 +402,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The operand is an 8-bit integer containing the ordinal of a local variable or an argumenta.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

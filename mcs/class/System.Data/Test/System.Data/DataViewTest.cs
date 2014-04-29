@@ -240,6 +240,38 @@ namespace MonoTests.System.Data
 			AssertEquals ("Deleted.Value", "1", v);
 		}
 
+		//xamarin bug #18898 # / novell bug #595899
+		[Test]
+		public void Bug18898 ()
+		{
+			var table = new DataTable();
+			table.Columns.Add("col1");
+			table.Columns.Add("col2");
+			
+			table.Rows.Add("1", "2");
+			table.Rows.Add("4", "3");
+
+			table.AcceptChanges();
+
+			table.Rows.Add("5", "6");
+
+			DataView dv = new DataView(table, string.Empty, string.Empty, DataViewRowState.Added);
+			dv.AllowNew = true;
+			var new_row = dv.AddNew();
+			new_row[0] = "7";
+			new_row[1] = "8";
+
+			var another_new_row = dv.AddNew();
+			another_new_row[0] = "9";
+			another_new_row[1] = "10";
+
+			AssertEquals ("#1", dv[2][0], "9");
+
+			//This should not throw a System.Data.VersionNotFoundException: "There is no Proposed data to accces"
+			AssertEquals ("#1", dv[1][0], "7");	
+
+		}
+
 		[Test]
 		public void NullTableGetItemPropertiesTest ()
 		{

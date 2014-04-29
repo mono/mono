@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PopupEventArgs" FullName="System.Windows.Forms.PopupEventArgs">
   <TypeSignature Language="C#" Value="public class PopupEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Windows.Forms.ToolTip.Popup" /> event of the <see cref="T:System.Windows.Forms.ToolTip" /> class is raised before a ToolTip is displayed. The handler for this event receives a parameter of type <see cref="T:System.Windows.Forms.PopupEventArgs" />. This parameter provides information about the ToolTip and enables you to modify the size of the ToolTip through the <see cref="P:System.Windows.Forms.PopupEventArgs.ToolTipSize" /> property. Because <see cref="E:System.Windows.Forms.ToolTip.Popup" /> derives from <see cref="T:System.ComponentModel.CancelEventArgs" />, the handler can also stop the ToolTip from being displayed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.ToolTip.Popup" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,13 +31,23 @@
         <Parameter Name="size" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <param name="associatedWindow">To be added.</param>
-        <param name="associatedControl">To be added.</param>
-        <param name="isBalloon">To be added.</param>
-        <param name="size">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameters to the <see cref="M:System.Windows.Forms.PopupEventArgs.#ctor(System.Windows.Forms.IWin32Window,System.Windows.Forms.Control,System.Boolean,System.Drawing.Size)" /> constructor are used to initialize the corresponding, similarly named properties. The <paramref name="associatedControl" /> parameter can be null if the owning window is not of type <see cref="T:System.Windows.Forms.Control" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes an instance of the <see cref="T:System.Windows.Forms.PopupEventArgs" /> class.</para>
+        </summary>
+        <param name="associatedWindow">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.IWin32Window" /> that the ToolTip is bound to.</param>
+        <param name="associatedControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> that the ToolTip is being created for.</param>
+        <param name="isBalloon">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the associated ToolTip window has a balloon-style appearance; otherwise, false to indicate that the ToolTip window has a standard rectangular appearance.</param>
+        <param name="size">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Size" /> of the ToolTip.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,10 +60,16 @@
         <ReturnType>System.Windows.Forms.Control</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Because you can associate the <see cref="T:System.Windows.Forms.ToolTip" /> with multiple controls through the <see cref="M:System.Windows.Forms.ToolTip.SetToolTip(System.Windows.Forms.Control,System.String)" /> method, you can use the <see cref="P:System.Windows.Forms.PopupEventArgs.AssociatedControl" /> property to determine which control the <see cref="E:System.Windows.Forms.ToolTip.Draw" /> event is associated with. This is helpful if you want to perform different ToolTip customization based on the associated control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the control for which the <see cref="T:System.Windows.Forms.ToolTip" /> is being drawn.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +82,16 @@
         <ReturnType>System.Windows.Forms.IWin32Window</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When a window is owned by another window, the owned window is minimized and closed with the owner window. Owned windows are also never displayed behind their owner form. In this case, the ToolTip is owned by the native Win32 window, represented by the <see cref="P:System.Windows.Forms.DrawToolTipEventArgs.AssociatedWindow" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the window to which this <see cref="T:System.Windows.Forms.ToolTip" /> is bound.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,10 +104,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of window used for the ToolTip is specified in the <see cref="P:System.Windows.Forms.ToolTip.IsBalloon" /> method of the <see cref="T:System.Windows.Forms.ToolTip" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the ToolTip is displayed as a standard rectangular or a balloon window.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -91,10 +126,16 @@
         <ReturnType>System.Drawing.Size</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.PopupEventArgs.ToolTipSize" /> property enables the <see cref="E:System.Windows.Forms.ToolTip.Popup" /> event handler to change the size of the ToolTip window. <see cref="P:System.Windows.Forms.PopupEventArgs.ToolTipSize" /> is often used in conjunction with the members of the <see cref="T:System.Windows.Forms.DrawToolTipEventArgs" /> class to customize the appearance of ToolTips.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the size of the ToolTip.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

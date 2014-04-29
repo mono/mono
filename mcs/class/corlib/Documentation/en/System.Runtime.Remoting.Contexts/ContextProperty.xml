@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ContextProperty" FullName="System.Runtime.Remoting.Contexts.ContextProperty">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class ContextProperty" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ContextProperty extends System.Object" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The properties that make up the context are provided by various automatic services and are set up by the activation services when a <see cref="T:System.Runtime.Remoting.Contexts.Context" /> class is created. Each property is itself a managed object. Depending on whether or not properties contribute message sinks, they are considered either active or passive.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Holds the name/value pair of the property name and the object representing the property of a context.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Name">
@@ -36,9 +43,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the T:System.Runtime.Remoting.Contexts.ContextProperty class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Property">
@@ -54,9 +64,12 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the object representing the property of a context.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

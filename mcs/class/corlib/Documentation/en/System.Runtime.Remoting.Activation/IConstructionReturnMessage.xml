@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IConstructionReturnMessage" FullName="System.Runtime.Remoting.Activation.IConstructionReturnMessage">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IConstructionReturnMessage : System.Runtime.Remoting.Messaging.IMethodReturnMessage" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IConstructionReturnMessage implements class System.Runtime.Remoting.Messaging.IMessage, class System.Runtime.Remoting.Messaging.IMethodMessage, class System.Runtime.Remoting.Messaging.IMethodReturnMessage" />
@@ -20,8 +21,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The message that implements <see cref="T:System.Runtime.Remoting.Activation.IConstructionReturnMessage" /> returns the result of the construction request sent with the <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a <see cref="T:System.Runtime.Remoting.Messaging.IMethodReturnMessage" /> that is returned after attempting to activate a remote object.</para>
+    </summary>
   </Docs>
   <Members />
 </Type>

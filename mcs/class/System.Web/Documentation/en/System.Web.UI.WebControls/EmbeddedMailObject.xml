@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EmbeddedMailObject" FullName="System.Web.UI.WebControls.EmbeddedMailObject">
   <TypeSignature Language="C#" Value="public sealed class EmbeddedMailObject" />
   <AssemblyInfo>
@@ -9,9 +10,48 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.EmbeddedMailObject" /> represents an item to embed in a mail message. These embedded items can be image files such as company logos. Each embedded item is specified by an identifier and a path.  </para>
+      <para>To ensure that an embedded object is displayed correctly within the e-mail message file, the following conditions must be met:</para>
+      <list type="bullet">
+        <item>
+          <para>The mail message is in HTML format. </para>
+        </item>
+        <item>
+          <para>The item is an image file (.jpg, .gif, .bmp, and so on).</para>
+        </item>
+        <item>
+          <para>The HTML-formatted body file specified in the <see cref="P:System.Web.UI.WebControls.MailDefinition.BodyFileName" /> property contains a reference to the image file using the following syntax: </para>
+          <code>&lt;img src="cid:identifier" alt="Alternate Text" /&gt;.</code>
+        </item>
+      </list>
+      <para>If an <see cref="T:System.Web.UI.WebControls.EmbeddedMailObject" /> is added to a mail message and does not fulfill all of the requirements specified previously, it will most likely be displayed as an attachment in the mail message. If an item is referenced by an identifier in the mail message but not included as an embedded item, it will appear as a broken attachment when the mail is viewed.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.EmbeddedMailObjectsCollection" /> stores a collection of <see cref="T:System.Web.UI.WebControls.EmbeddedMailObject" /> objects for a single mail message. The <see cref="T:System.Web.UI.WebControls.EmbeddedMailObjectsCollection" /> is used by the <see cref="P:System.Web.UI.WebControls.MailDefinition.EmbeddedObjects" /> property of the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> object to create the mail message.</para>
+      <para>Mail messages that allow embedded objects are configurable in the following Web controls by setting their <see cref="T:System.Web.UI.WebControls.MailDefinition" /> properties declaratively:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Web.UI.WebControls.CreateUserWizard" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Web.UI.WebControls.ChangePassword" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Web.UI.WebControls.PasswordRecovery" /> </para>
+        </item>
+      </list>
+      <block subset="none" type="note">
+        <para>The values in the <see cref="T:System.Web.UI.WebControls.EmbeddedMailObject" /> and <see cref="T:System.Web.UI.WebControls.EmbeddedMailObjectsCollection" /> objects are not stored in view state. This protects against malicious users discovering path information for your server.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an item to embed in an e-mail message constructed using the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +59,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>To get or set the identifier of the embedded item, use the <see cref="P:System.Web.UI.WebControls.EmbeddedMailObject.Name" /> property. To get or set the path to the embedded item, use the <see cref="P:System.Web.UI.WebControls.EmbeddedMailObject.Path" /> property. Both properties must be set to successfully embed the item in the mail message.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.EmbeddedMailObject" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -35,11 +81,16 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="path">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.EmbeddedMailObject" /> class, using the specified identifier name and path to populate the object.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name used as the identifier of the item to embed in the mail message. For more information, see <see cref="P:System.Web.UI.WebControls.EmbeddedMailObject.Name" />.</param>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The path used to retrieve an item to embed in the mail message. For more information, see <see cref="P:System.Web.UI.WebControls.EmbeddedMailObject.Path" />.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -60,10 +111,19 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.EmbeddedMailObject.Name" /> property specifies an identifier for an item to embed in a mail message constructed declaratively with the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> class. The identifier is used to map the item contained in the <see cref="P:System.Web.UI.WebControls.EmbeddedMailObject.Path" /> property to its appropriate location in the body of the file specified in the <see cref="P:System.Web.UI.WebControls.MailDefinition.BodyFileName" /> property, using the following syntax:</para>
+          <code>&lt;img src="cid:identifier" alt="Alternate Text" /&gt;</code>
+          <para>Typically, the item is an image file. The default for the <see cref="P:System.Web.UI.WebControls.EmbeddedMailObject.Name" /> property is an empty string.</para>
+          <para>It is a best practice for accessibility design to set the alternate text property in your mail message for any embedded images.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name that is used as the identifier of the item to be embedded in a mail message constructed with the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -84,10 +144,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.EmbeddedMailObject.Path" /> property specifies the path to the item you want to embed in the mail message constructed declaratively with the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> object. The file path in <see cref="P:System.Web.UI.WebControls.EmbeddedMailObject.Path" /> must be a path such as C:\MyServer\Banner.gif. Typically, the embedded item is an image file. If an image file is referenced by its identifier in the mail message but not included in the message, the image appears as a broken attachment when the e-mail message is viewed.</para>
+          <para>It is a best practice for accessibility design to set the alternate text property in your mail message for any embedded images.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path that is used to retrieve an item to embed in a mail message constructed with the <see cref="T:System.Web.UI.WebControls.MailDefinition" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

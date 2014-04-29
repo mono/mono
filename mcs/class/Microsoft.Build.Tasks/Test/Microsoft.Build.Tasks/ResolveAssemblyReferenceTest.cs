@@ -28,6 +28,7 @@
 using System;
 using System.Collections;
 using System.Linq;
+using System.Reflection;
 using Microsoft.Build.BuildEngine;
 using Microsoft.Build.Framework;
 using Microsoft.Build.Tasks;
@@ -46,6 +47,11 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		[Test]
 		public void TestGac1 ()
 		{
+			var gacDir = GetGacDir ();
+
+			if (gacDir == null || !System.IO.Directory.Exists (gacDir))
+				Assert.Ignore ("GAC not found.");
+
 			engine = new Engine (Consts.BinPath);
 			project = engine.CreateNewProject ();
 			project.LoadXml (ResolveAssembly ("System", null));
@@ -219,6 +225,18 @@ namespace MonoTests.Microsoft.Build.Tasks {
 					</Target>
 				</Project>
 			";
+		}
+
+		string GetGacDir ()
+		{
+			// copied from mcs/tools/gacutil/driver.cs
+			PropertyInfo gac = typeof (System.Environment).GetProperty ("GacPath", BindingFlags.Static|BindingFlags.NonPublic);
+
+			if (gac == null)
+				return null;
+
+			MethodInfo get_gac = gac.GetGetMethod (true);
+			return (string) get_gac.Invoke (null, null);
 		}
 	}
 } 

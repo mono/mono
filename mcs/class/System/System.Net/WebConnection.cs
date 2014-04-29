@@ -30,7 +30,7 @@
 
 #if SECURITY_DEP
 
-#if MONOTOUCH
+#if MONOTOUCH || MONODROID
 using Mono.Security.Protocol.Tls;
 #else
 extern alias MonoSecurity;
@@ -98,7 +98,7 @@ namespace System.Net
 		Exception connect_exception;
 		static object classLock = new object ();
 		static Type sslStream;
-#if !MONOTOUCH
+#if !MONOTOUCH && !MONODROID
 		static PropertyInfo piClient;
 		static PropertyInfo piServer;
 		static PropertyInfo piTrustFailure;
@@ -257,7 +257,7 @@ namespace System.Net
 					throw new NotSupportedException (msg);
 				}
 #endif
-#if !MONOTOUCH
+#if !MONOTOUCH && !MONODROID
 				piClient = sslStream.GetProperty ("SelectedClientCertificate");
 				piServer = sslStream.GetProperty ("ServerCertificate");
 				piTrustFailure = sslStream.GetProperty ("TrustFailure");
@@ -441,7 +441,7 @@ namespace System.Net
 								return false;
 						}
 #if SECURITY_DEP
-#if MONOTOUCH
+#if MONOTOUCH || MONODROID
 						nstream = new HttpsClientStream (serverStream, request.ClientCertificates, request, buffer);
 #else
 						object[] args = new object [4] { serverStream,
@@ -622,7 +622,7 @@ namespace System.Net
 		internal void GetCertificates (Stream stream) 
 		{
 			// here the SSL negotiation have been done
-#if SECURITY_DEP && MONOTOUCH
+#if SECURITY_DEP && (MONOTOUCH || MONODROID)
 			HttpsClientStream s = (stream as HttpsClientStream);
 			X509Certificate client = s.SelectedClientCertificate;
 			X509Certificate server = s.ServerCertificate;
@@ -1148,7 +1148,7 @@ namespace System.Net
 
 				// if SSL is in use then check for TrustFailure
 				if (ssl) {
-#if SECURITY_DEP && MONOTOUCH
+#if SECURITY_DEP && (MONOTOUCH || MONODROID)
 					HttpsClientStream https = (s as HttpsClientStream);
 					if (https.TrustFailure) {
 #else

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeMethodReferenceExpression" FullName="System.CodeDom.CodeMethodReferenceExpression">
   <TypeSignature Language="C#" Value="public class CodeMethodReferenceExpression : System.CodeDom.CodeExpression" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeMethodReferenceExpression extends System.CodeDom.CodeExpression" />
@@ -23,8 +24,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.CodeDom.CodeMethodReferenceExpression" /> can be used to represent an expression of the form Object.Method.</para>
+      <para>The <see cref="P:System.CodeDom.CodeMethodReferenceExpression.TargetObject" /> property indicates the object that contains the method. The <see cref="P:System.CodeDom.CodeMethodReferenceExpression.MethodName" /> property indicates the name of the method.</para>
+      <para>A <see cref="T:System.CodeDom.CodeMethodReferenceExpression" /> is used with a <see cref="T:System.CodeDom.CodeMethodInvokeExpression" /> to indicate the method to invoke, and with a <see cref="T:System.CodeDom.CodeDelegateCreateExpression" /> to indicate the method to handle the event.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a reference to a method.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +48,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeMethodReferenceExpression" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,10 +70,15 @@
         <Parameter Name="methodName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="targetObject">To be added: an object of type 'CodeExpression'</param>
-        <param name="methodName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeMethodReferenceExpression" /> class using the specified target object and method name.</para>
+        </summary>
+        <param name="targetObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the object to target. </param>
+        <param name="methodName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method to call. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -84,11 +101,20 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <param name="targetObject">To be added.</param>
-        <param name="methodName">To be added.</param>
-        <param name="typeParameters">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="typeParameters" /> parameter represents a collection of type references to be substituted for the type parameter references of the current generic method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeMethodReferenceExpression" /> class using the specified target object, method name, and generic type arguments.</para>
+        </summary>
+        <param name="targetObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the object to target. </param>
+        <param name="methodName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the method to call. </param>
+        <param name="typeParameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeTypeReference" /> values that specify the <see cref="P:System.CodeDom.CodeMethodReferenceExpression.TypeArguments" /> for this <see cref="T:System.CodeDom.CodeMethodReferenceExpression" />.</param>
       </Docs>
     </Member>
     <Member MemberName="MethodName">
@@ -106,9 +132,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the method to reference.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TargetObject">
@@ -126,9 +155,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the expression that indicates the method to reference.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TypeArguments">
@@ -148,9 +180,15 @@
         <ReturnType>System.CodeDom.CodeTypeReferenceCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.CodeDom.CodeMethodReferenceExpression.TypeArguments" /> property represents a collection of type references to be substituted for the type parameter references of the current generic method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type arguments for the current generic method reference expression.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

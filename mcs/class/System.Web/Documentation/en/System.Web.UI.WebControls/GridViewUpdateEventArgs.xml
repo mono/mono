@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GridViewUpdateEventArgs" FullName="System.Web.UI.WebControls.GridViewUpdateEventArgs">
   <TypeSignature Language="C#" Value="public class GridViewUpdateEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.GridView" /> control raises the <see cref="E:System.Web.UI.WebControls.GridView.RowUpdating" /> event when a row's Update button is clicked, but before the <see cref="T:System.Web.UI.WebControls.GridView" /> control updates the row. This allows you to provide an event-handling method that performs a custom routine, such as canceling the update operation, whenever this event occurs.</para>
+      <para>A <see cref="T:System.Web.UI.WebControls.GridViewUpdateEventArgs" /> object is passed to the event-handling method, which allows you to determine the index of the current row and to indicate that the update operation should be canceled. To cancel the update operation, set the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property of the <see cref="T:System.Web.UI.WebControls.GridViewUpdateEventArgs" /> object to true. You can also manipulate the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.Keys" />, <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.OldValues" />, and <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.NewValues" /> collections, if necessary, before the values are passed to the data source. A common way to use these collections is to HTML-encode the values supplied by the user before they are stored in the data source. This helps to prevent script injection attacks.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.GridViewUpdateEventArgs" />, see the <see cref="M:System.Web.UI.WebControls.GridViewSelectEventArgs.#ctor(System.Int32)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.GridView.RowUpdating" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +31,43 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewUpdateEventArgs" /> class using the specified row index.</para>
+          <para>The following table shows the initial property value for an instance of <see cref="T:System.Web.UI.WebControls.GridViewUpdateEventArgs" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.RowIndex" />
+                </para>
+              </term>
+              <description>
+                <para>The value contained in the <paramref name="rowIndex" /> parameter.</para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewUpdateEventArgs" /> class.</para>
+        </summary>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row being updated.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +80,21 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="P:System.Web.UI.WebControls.GridView.DataKeyNames" /> property of a <see cref="T:System.Web.UI.WebControls.GridView" /> control is set, use the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.Keys" /> property (dictionary) to access the value of the primary key in the row to update.</para>
+          <block subset="none" type="note">
+            <para>To access the values of the non-key fields, use the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.NewValues" /> or <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.OldValues" /> properties. The <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.NewValues" /> property contains the updated values, while the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.OldValues" /> property contains the original values.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.Keys" /> dictionary is automatically populated with the name/value pairs of the field or fields specified in the <see cref="P:System.Web.UI.WebControls.GridView.DataKeyNames" /> property. If multiple fields form the primary key, a separate entry is added to the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.Keys" /> dictionary for each key field.</para>
+          <para>To determine the name of a key field, use the <see cref="P:System.Collections.DictionaryEntry.Key" /> property of a <see cref="T:System.Collections.DictionaryEntry" /> object contained in the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.Keys" /> dictionary. To determine the value of a key field, use the <see cref="P:System.Collections.DictionaryEntry.Value" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary of field name/value pairs that represent the primary key of the row to update.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +107,21 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.NewValues" /> property (dictionary) to access the values of the revised non-key fields in the row to update.</para>
+          <block subset="none" type="note">
+            <para>The primary key field or fields are not included in this dictionary. To access the values of the primary key field or fields, use the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.Keys" /> property. To access the original values of the non-key fields in the row, use the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.OldValues" /> property.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.NewValues" /> property is automatically populated with the name/value pairs of the revised non-key fields in the row. A separate entry is added to the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.NewValues" /> property for each non-key field in the row.</para>
+          <para>To determine the field name of an entry, use the <see cref="P:System.Collections.DictionaryEntry.Key" /> property of a <see cref="T:System.Collections.DictionaryEntry" /> object contained in the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.NewValues" /> dictionary. To determine the value of an entry, use the <see cref="P:System.Collections.DictionaryEntry.Value" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary containing the revised values of the non-key field name/value pairs in the row to update.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +134,21 @@
         <ReturnType>System.Collections.Specialized.IOrderedDictionary</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.OldValues" /> property (dictionary) to access the original values of the fields in the row to update. This dictionary contains all fields in the row except the key fields. The key fields are defined in the <see cref="P:System.Web.UI.WebControls.GridView.DataKeyNames" /> property of a <see cref="T:System.Web.UI.WebControls.GridView" /> control.</para>
+          <block subset="none" type="note">
+            <para>You can access the key fields of the row by using the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.Keys" /> property. To access the revised values of the non-key fields in the row, use the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.NewValues" /> property.</para>
+          </block>
+          <para>The <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.OldValues" /> property is automatically populated with the original values of all the field name/value pairs in the row. A separate entry is added to the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.OldValues" /> property for each field in the row.</para>
+          <para>To determine the field name of an entry, use the <see cref="P:System.Collections.DictionaryEntry.Key" /> property of a <see cref="T:System.Collections.DictionaryEntry" /> object contained in the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.OldValues" /> dictionary. To determine the value of an entry, use the <see cref="P:System.Collections.DictionaryEntry.Value" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a dictionary containing the original field name/value pairs in the row to update.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,10 +161,16 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.GridViewUpdateEventArgs.RowIndex" /> property to determine the index of the row being updated. The row index is often used to retrieve the corresponding row from the <see cref="P:System.Web.UI.WebControls.GridView.Rows" /> collection of the <see cref="T:System.Web.UI.WebControls.GridView" /> control, which allows you to access the row's properties.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the index of the row being updated.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

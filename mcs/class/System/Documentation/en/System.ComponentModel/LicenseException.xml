@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LicenseException" FullName="System.ComponentModel.LicenseException">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class LicenseException : SystemException" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit LicenseException extends System.SystemException" />
@@ -16,8 +17,15 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="M:System.ComponentModel.LicenseManager.Validate(System.Type)" /> method throws <see cref="T:System.ComponentModel.LicenseException" /> when a component cannot obtain a valid license. This occurs when a component is either not licensed, or is licensed but cannot be granted a valid license.</para>
+      <para>For more information on licensing, see <format type="text/html"><a href="8e66c1ed-a445-4b26-8185-990b6e2bbd57">How to: License Components and Controls</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the exception thrown when a component cannot be granted a license.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -34,9 +42,13 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.LicenseException" /> class for the type of component that was denied a license. </para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type of component that was not granted a license. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -52,10 +64,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.LicenseException" /> class with the given <see cref="T:System.Runtime.Serialization.SerializationInfo" /> and <see cref="T:System.Runtime.Serialization.StreamingContext" />.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to be used for deserialization.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination to be used for deserialization.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -73,10 +90,15 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="instance">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.LicenseException" /> class for the type and the instance of the component that was denied a license.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type of component that was not granted a license. </param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instance of the component that was not granted a license. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -95,11 +117,17 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="instance">To be added: an object of type 'object'</param>
-        <param name="message">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.LicenseException" /> class for the type and the instance of the component that was denied a license, along with a message to display.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type of component that was not granted a license. </param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instance of the component that was not granted a license. </param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception message to display. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -119,12 +147,19 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="instance">To be added: an object of type 'object'</param>
-        <param name="message">To be added: an object of type 'string'</param>
-        <param name="innerException">To be added: an object of type 'Exception'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.LicenseException" /> class for the type and the instance of the component that was denied a license, along with a message to display and the original exception thrown.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type of component that was not granted a license. </param>
+        <param name="instance">
+          <attribution license="cc4" from="Microsoft" modified="false" />The instance of the component that was not granted a license. </param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception message to display. </param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Exception" /> that represents the original exception. </param>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -143,10 +178,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with information about the exception.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> to be used for deserialization.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The destination to be used for deserialization.</param>
       </Docs>
     </Member>
     <Member MemberName="LicensedType">
@@ -162,9 +202,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'Type'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type of the component that was not granted a license.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

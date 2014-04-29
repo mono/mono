@@ -1156,12 +1156,6 @@ namespace System.Net
 				throw e;
 
 			contentLength = -1;
-			//bodyBufferLength = 0;
-			//bodyBuffer = null;
-			if (sendChunked) {
-				sendChunked = false;
-				webHeaders.RemoveInternal ("Transfer-Encoding");
-			}
 			uriString = webResponse.Headers ["Location"];
 
 			if (uriString == null)
@@ -1191,7 +1185,10 @@ namespace System.Net
 			} else if (contentLength != -1) {
 				if (auth_state.NtlmAuthState == NtlmAuthState.Challenge || proxy_auth_state.NtlmAuthState == NtlmAuthState.Challenge) {
 					// We don't send any body with the NTLM Challenge request.
-					webHeaders.SetInternal ("Content-Length", "0");
+					if (haveContentLength || gotRequestStream || contentLength > 0)
+						webHeaders.SetInternal ("Content-Length", "0");
+					else
+						webHeaders.RemoveInternal ("Content-Length");
 				} else {
 					if (contentLength > 0)
 						continue100 = true;
@@ -1534,6 +1531,11 @@ namespace System.Net
 						r.SetCompleted (false, webResponse);
 						r.DoCallback ();
 					} else {
+						if (sendChunked) {
+							sendChunked = false;
+							webHeaders.RemoveInternal ("Transfer-Encoding");
+						}
+
 						if (webResponse != null) {
 							if (HandleNtlmAuth (r))
 								return;
@@ -1668,11 +1670,7 @@ namespace System.Net
 					if (!usedPreAuth && CheckAuthorization (webResponse, code)) {
 						// Keep the written body, so it can be rewritten in the retry
 						if (InternalAllowBuffering) {
-							// NTLM: This is to avoid sending data in the 'challenge' request
-							// We save it in the first request (first 401), don't send anything
-							// in the challenge request and send it in the response request along
-							// with the buffers kept form the first request.
-							if (auth_state.NtlmAuthState == NtlmAuthState.Challenge || proxy_auth_state.NtlmAuthState == NtlmAuthState.Challenge) {
+							if (writeStream.WriteBufferLength > 0) {
 								bodyBuffer = writeStream.WriteBuffer;
 								bodyBufferLength = writeStream.WriteBufferLength;
 							}

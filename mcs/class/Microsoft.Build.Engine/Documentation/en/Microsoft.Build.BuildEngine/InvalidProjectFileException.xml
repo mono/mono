@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="InvalidProjectFileException" FullName="Microsoft.Build.BuildEngine.InvalidProjectFileException">
   <TypeSignature Language="C#" Value="public sealed class InvalidProjectFileException : Exception" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This exception is thrown whenever there is a problem with the user's XML project file. The problem might be semantic or syntactical. If the problem is in the syntax, it can typically be caught by XSD validation. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +23,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:Microsoft.Build.BuildEngine.InvalidProjectFileException" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +41,14 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:Microsoft.Build.BuildEngine.InvalidProjectFileException" /> class using the specified message.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -51,11 +62,16 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerException">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:Microsoft.Build.BuildEngine.InvalidProjectFileException" /> class using the specified error message and inner exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception.</param>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception that is the cause of the current excpetion. If the <paramref name="innerException" /> parameter is not a null reference (Nothing in vbprvb), the current exception is raised in a catch block that handles the inner exception.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,14 +88,25 @@
         <Parameter Name="helpKeyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="xmlNode">To be added.</param>
-        <param name="message">To be added.</param>
-        <param name="errorSubcategory">To be added.</param>
-        <param name="errorCode">To be added.</param>
-        <param name="helpKeyword">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is preferred over the basic constructors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:Microsoft.Build.BuildEngine.InvalidProjectFileException" /> class using rich error information.</para>
+        </summary>
+        <param name="xmlNode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XML node where the error is located. Can be null.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message text for the exception.</param>
+        <param name="errorSubcategory">
+          <attribution license="cc4" from="Microsoft" modified="false" />A description for the error. This parameter can be a null reference (Nothing in vbprvb).</param>
+        <param name="errorCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error code. This parameter can be a null reference (Nothing).</param>
+        <param name="helpKeyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The F1-help keyword for the host IDE. Can be null.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -100,18 +127,33 @@
         <Parameter Name="helpKeyword" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="projectFile">To be added.</param>
-        <param name="lineNumber">To be added.</param>
-        <param name="columnNumber">To be added.</param>
-        <param name="endLineNumber">To be added.</param>
-        <param name="endColumnNumber">To be added.</param>
-        <param name="message">To be added.</param>
-        <param name="errorSubcategory">To be added.</param>
-        <param name="errorCode">To be added.</param>
-        <param name="helpKeyword">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version="2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is preferred over the basic constructors.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of <see cref="T:Microsoft.Build.BuildEngine.InvalidProjectFileException" /> class using rich error information.</para>
+        </summary>
+        <param name="projectFile">
+          <attribution license="cc4" from="Microsoft" modified="false" />The invalid project file. Can be an empty string.</param>
+        <param name="lineNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The invalid line number in the project. Set to zero if not available.</param>
+        <param name="columnNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The invalid column number in the project. Set to zero if not available.</param>
+        <param name="endLineNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end of a range of invalid lines in the project. Set to zero if not available.</param>
+        <param name="endColumnNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The end of a range of invalid columns in the project. Set to zero if not available.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message text for the exception.</param>
+        <param name="errorSubcategory">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of the error. This parameter can be a null reference (Nothing in vbprvb).</param>
+        <param name="errorCode">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error code. This parameter can be a null reference (Nothing).</param>
+        <param name="helpKeyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The F1-help keyword for the host IDE. This parameter can be a null reference (Nothing).</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -124,10 +166,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exception message, not including the project file.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -140,10 +185,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the invalid column number, if any, in the project.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -156,10 +204,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the last column number, if any, of a range of invalid columns in the project.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -172,10 +223,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the last line number, if any, of a range of invalid lines in the project.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -188,10 +242,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the error code, if any, associated with the exception message.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -204,10 +261,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the error sub-category, if any that describes the type of this error.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -227,10 +287,15 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <param name="info">To be added.</param>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> with information about the exception.</para>
+        </summary>
+        <param name="info">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.SerializationInfo" /> that holds the serialized object data about the exception being thrown.</param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> that contains contextual information about the source or destination.</param>
       </Docs>
     </Member>
     <Member MemberName="HelpKeyword">
@@ -240,10 +305,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the F1-help keyword, if any, associated with this error, for the host IDE.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -256,10 +324,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the invalid line number, if any, in the project.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -275,9 +346,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the exception message, including the affected project file, if any.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProjectFile">
@@ -287,10 +361,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the project file, if any, associated with this exception.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

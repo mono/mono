@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewCellFormattingEventHandler" FullName="System.Windows.Forms.DataGridViewCellFormattingEventHandler">
   <TypeSignature Language="C#" Value="public delegate void DataGridViewCellFormattingEventHandler(object sender, DataGridViewCellFormattingEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,23 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handle the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event to customize the conversion of a cell value into a format suitable for display or to customize the appearance of a cell depending on its state or value. </para>
+      <para>The <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event occurs every time each cell is painted, so you should avoid lengthy processing when handling this event. This event also occurs when the cell <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValue" /> is retrieved or its <see cref="M:System.Windows.Forms.DataGridViewCell.GetFormattedValue(System.Object,System.Int32,System.Windows.Forms.DataGridViewCellStyle@,System.ComponentModel.TypeConverter,System.ComponentModel.TypeConverter,System.Windows.Forms.DataGridViewDataErrorContexts)" /> method is called.</para>
+      <para>When you handle the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event, the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> property is initialized with the cell value. If you provide custom conversion from the cell value to the display value, set the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> property to the converted value, ensuring that the new value is of the type specified by the cell <see cref="P:System.Windows.Forms.DataGridViewCell.FormattedValueType" /> property. To indicate that no further value formatting is necessary, set the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.FormattingApplied" /> property to true. </para>
+      <para>When the event handler completes, if the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> is null or is not of the correct type, or the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.FormattingApplied" /> property is false, the <see cref="P:System.Windows.Forms.ConvertEventArgs.Value" /> is formatted using the <see cref="P:System.Windows.Forms.DataGridViewCellStyle.Format" />, <see cref="P:System.Windows.Forms.DataGridViewCellStyle.NullValue" />, <see cref="P:System.Windows.Forms.DataGridViewCellStyle.DataSourceNullValue" />, and <see cref="P:System.Windows.Forms.DataGridViewCellStyle.FormatProvider" /> properties of the cell style returned by the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.CellStyle" /> property, which is initialized using the cell <see cref="P:System.Windows.Forms.DataGridViewCell.InheritedStyle" /> property.</para>
+      <para>Regardless of the value of the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.FormattingApplied" /> property, the display properties of the object returned by the <see cref="P:System.Windows.Forms.DataGridViewCellFormattingEventArgs.CellStyle" /> property are used to render the cell. </para>
+      <para>For more information about custom formatting using the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event, see <format type="text/html"><a href="a6e72c70-ce18-425f-828d-d57be6f96ab6">How to: Customize Data Formatting in the Windows Forms DataGridView Control</a></format>.</para>
+      <para>To avoid performance penalties when handling this event, access the cell through the parameters of the event handler rather than accessing the cell directly.</para>
+      <para>To customize the conversion of a formatted, user-specified value into an actual cell value, handle the <see cref="E:System.Windows.Forms.DataGridView.CellParsing" /> event.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+      <para>When you create a <see cref="T:System.Windows.Forms.DataGridViewCellFormattingEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event-handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Windows.Forms.DataGridView.CellFormatting" /> event of a <see cref="T:System.Windows.Forms.DataGridView" />.</para>
+    </summary>
   </Docs>
 </Type>

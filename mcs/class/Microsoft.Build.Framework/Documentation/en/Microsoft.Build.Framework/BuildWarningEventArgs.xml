@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BuildWarningEventArgs" FullName="Microsoft.Build.Framework.BuildWarningEventArgs">
   <TypeSignature Language="C#" Value="public class BuildWarningEventArgs : Microsoft.Build.Framework.BuildEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version="2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>WARNING: marking a type [Serializable] without implementing ISerializable imposes a serialization contract -- it is a promise to never change the type's fields i.e. the type is immutable; adding new fields in the next version of the type without following certain special FX guidelines, can break both forward and backward compatibility</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:Microsoft.Build.Framework.IEventSource.WarningRaised" /> event. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.Framework.BuildWarningEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -43,19 +53,32 @@
         <Parameter Name="senderName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="subcategory">To be added.</param>
-        <param name="code">To be added.</param>
-        <param name="file">To be added.</param>
-        <param name="lineNumber">To be added.</param>
-        <param name="columnNumber">To be added.</param>
-        <param name="endLineNumber">To be added.</param>
-        <param name="endColumnNumber">To be added.</param>
-        <param name="message">To be added.</param>
-        <param name="helpKeyword">To be added.</param>
-        <param name="senderName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.Build.Framework.BuildWarningEventArgs" /> class with the specified <see cref="P:Microsoft.Build.Framework.BuildWarningEventArgs.SubCategory" />, <see cref="P:Microsoft.Build.Framework.BuildWarningEventArgs.Code" />, <see cref="P:Microsoft.Build.Framework.BuildWarningEventArgs.File" />, <see cref="P:Microsoft.Build.Framework.BuildWarningEventArgs.LineNumber" />, <see cref="P:Microsoft.Build.Framework.BuildWarningEventArgs.ColumnNumber" />, <see cref="P:Microsoft.Build.Framework.BuildWarningEventArgs.EndLineNumber" />, <see cref="P:Microsoft.Build.Framework.BuildWarningEventArgs.EndColumnNumber" />, <see cref="P:Microsoft.Build.Framework.BuildEventArgs.Message" />, <see cref="P:Microsoft.Build.Framework.BuildEventArgs.HelpKeyword" />, and <see cref="P:Microsoft.Build.Framework.BuildEventArgs.SenderName" /> values.</para>
+        </summary>
+        <param name="subcategory">
+          <attribution license="cc4" from="Microsoft" modified="false" />The custom subcategory of the event.</param>
+        <param name="code">
+          <attribution license="cc4" from="Microsoft" modified="false" />The warning code of the event.</param>
+        <param name="file">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the file associated with the event.</param>
+        <param name="lineNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line number that corresponds to the beginning of the section of code that raised the event.</param>
+        <param name="columnNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column number that corresponds to the beginning of the section of code that raised the event.</param>
+        <param name="endLineNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The line number that corresponds to the end of the section of code that raised the event.</param>
+        <param name="endColumnNumber">
+          <attribution license="cc4" from="Microsoft" modified="false" />The column number that corresponds to the end of the section of code that raised the event.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text of the event.</param>
+        <param name="helpKeyword">
+          <attribution license="cc4" from="Microsoft" modified="false" />The Help keyword associated with the event.</param>
+        <param name="senderName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the event.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -68,10 +91,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the warning code of the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -84,10 +110,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column number that corresponds to the beginning of the section of code that raised the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -100,10 +129,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the column number that corresponds to the end of the section of code that raised the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -116,10 +148,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the line number that corresponds to the end of the section of code that raised the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -132,10 +167,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the file that raised the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -148,10 +186,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the line number that corresponds to the beginning of the section of code that raised the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -164,10 +205,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the custom subcategory of the event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ICompositeControlDesignerAccessor" FullName="System.Web.UI.WebControls.ICompositeControlDesignerAccessor">
   <TypeSignature Language="C#" Value="public interface ICompositeControlDesignerAccessor" />
   <AssemblyInfo>
@@ -6,9 +7,16 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A class derived from <see cref="T:System.Web.UI.WebControls.CompositeControl" /> implements the <see cref="T:System.Web.UI.WebControls.ICompositeControlDesignerAccessor" /> interface to allow its associated designer to call the control's <see cref="M:System.Web.UI.WebControls.ICompositeControlDesignerAccessor.RecreateChildControls" /> method at design time. The associated designer must derive from <see cref="T:System.Web.UI.Design.WebControls.CompositeControlDesigner" />.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.ICompositeControlDesignerAccessor" /> interface is used primarily by control developers.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides an interface to allow a composite-control designer to recreate the child controls of its associated control at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="RecreateChildControls">
@@ -19,9 +27,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.ICompositeControlDesignerAccessor.RecreateChildControls" /> method allows a designer for a composite control to recreate the control's child controls at design time. </para>
+          <para>The <see cref="M:System.Web.UI.WebControls.ICompositeControlDesignerAccessor.RecreateChildControls" /> method is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In a control derived from <see cref="T:System.Web.UI.WebControls.CompositeControl" />, recreates the child controls at design time. Called by the control's associated designer.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

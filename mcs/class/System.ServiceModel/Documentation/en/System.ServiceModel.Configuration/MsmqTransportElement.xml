@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MsmqTransportElement" FullName="System.ServiceModel.Configuration.MsmqTransportElement">
   <TypeSignature Language="C#" Value="public sealed class MsmqTransportElement : System.ServiceModel.Configuration.MsmqElementBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MsmqTransportElement extends System.ServiceModel.Configuration.MsmqElementBase" />
@@ -10,8 +11,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.ServiceModel.Channels.MsmqTransportBindingElement" /> enables the user to set the properties of the queued communication channel. The queued communication channel uses MSMQ for its transport.</para>
+      <para>This binding element is the default binding element used by the MSMQ standard binding (<see cref="T:System.ServiceModel.NetMsmqBinding" />).</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the binding element used to specify the queuing communication properties for a indigo1 service that uses the native MSMQ protocol.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Configuration.MsmqTransportElement" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ApplyConfiguration">
@@ -41,9 +52,13 @@
         <Parameter Name="bindingElement" Type="System.ServiceModel.Channels.BindingElement" />
       </Parameters>
       <Docs>
-        <param name="bindingElement">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies the settings of this configuration element to the specified <see cref="T:System.ServiceModel.Channels.BindingElement" /> binding element.</para>
+        </summary>
+        <param name="bindingElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingElement" /> to which settings are applied.</param>
       </Docs>
     </Member>
     <Member MemberName="BindingElementType">
@@ -57,9 +72,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the binding type.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CopyFrom">
@@ -76,9 +94,13 @@
         <Parameter Name="from" Type="System.ServiceModel.Configuration.ServiceModelExtensionElement" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the settings from the specified <see cref="T:System.ServiceModel.Configuration.ServiceModelExtensionElement" /> to this configuration element.</para>
+        </summary>
+        <param name="from">
+          <attribution license="cc4" from="Microsoft" modified="false" />The element to copy settings from.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateDefaultBindingElement">
@@ -136,9 +158,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The internal MSMQ message object pool is used to avoid allocations of these objects when sending and receiving messages. The maximum pool size is a performance tuning parameter. The default value is 8.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an integer that specifies the maximum size of the pool that contains internal MSMQ message objects.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -173,9 +201,15 @@
         <ReturnType>System.ServiceModel.QueueTransferProtocol</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>MSMQ does not support Active Directory addressing when using SOAP Reliable Messaging Protocol, so do not set <see cref="P:System.ServiceModel.Channels.MsmqTransportBindingElement.QueueTransferProtocol" /> to <see cref="F:System.ServiceModel.QueueTransferProtocol.Srmp" /> or <see cref="F:System.ServiceModel.QueueTransferProtocol.SrmpSecure" /> when <see cref="P:System.ServiceModel.Channels.MsmqTransportBindingElement.UseActiveDirectory" /> is set to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets an enumeration value that indicates the queued communication channel transport that this binding uses.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseActiveDirectory">
@@ -194,9 +228,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>MSMQ queue addresses can consist of path names or direct format names. With a direct format name, MSMQ resolves the queue name using DNS, NetBIOS, or IP. With a path name, MSMQ resolves the queue name using Active Directory.</para>
+          <para>By default, the indigo1 queued transport converts the URI of a message queue to a direct format name. By setting the <see cref="P:System.ServiceModel.Channels.MsmqTransportBindingElement.UseActiveDirectory" /> property to true, an application can specify that the queued transport should resolve the computer name using Active Directory rather than DNS, NetBIOS, or IP.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a Boolean value that indicates whether queue addresses should be converted using Active Directory.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

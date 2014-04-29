@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="StandardToolWindows" FullName="System.ComponentModel.Design.StandardToolWindows">
   <TypeSignature Language="C#" Value="public class StandardToolWindows" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit StandardToolWindows extends System.Object" />
@@ -15,8 +16,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>These GUIDs can be used to access the standard tool windows that are available to the design-time environment.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines GUID identifiers that correspond to the standard set of tool windows that are available in the design environment.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +38,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.StandardToolWindows" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ObjectBrowser">
@@ -50,8 +60,11 @@
       <Parameters />
       <MemberValue>970d9861-ee83-11d0-a778-00a0c91110c3</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the GUID for the object browser. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OutputWindow">
@@ -69,8 +82,11 @@
       <Parameters />
       <MemberValue>34e76e81-ee4a-11d0-ae2e-00a0c90fffc3</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the GUID for the output window. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProjectExplorer">
@@ -88,8 +104,11 @@
       <Parameters />
       <MemberValue>3ae79031-e1bc-11d0-8f78-00a0c9110057</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the GUID for the solution explorer. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PropertyBrowser">
@@ -107,8 +126,11 @@
       <Parameters />
       <MemberValue>eefa5220-e298-11d0-8f78-00a0c9110057</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the GUID for the Properties window. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RelatedLinks">
@@ -126,8 +148,11 @@
       <Parameters />
       <MemberValue>66dba47c-61df-11d2-aa79-00c04f990343</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the GUID for the related links frame. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ServerExplorer">
@@ -145,8 +170,11 @@
       <Parameters />
       <MemberValue>74946827-37a0-11d2-a273-00c04f8ef4ff</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the GUID for the server explorer. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TaskList">
@@ -164,8 +192,11 @@
       <Parameters />
       <MemberValue>4a9b7e51-aa16-11d0-a8c5-00a0c921a4d2</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the GUID for the task list. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Toolbox">
@@ -183,8 +214,11 @@
       <Parameters />
       <MemberValue>b1e99781-ab81-11d0-b683-00aa00a3ee26</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the GUID for the Toolbox. This field is read-only.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

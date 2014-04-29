@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSortOrder" FullName="System.Xml.XPath.XmlSortOrder">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum XmlSortOrder" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed XmlSortOrder extends System.Enum" />
@@ -13,8 +14,11 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>The order in which a query is sorted.</summary>
     <remarks>This is used to control the sorting of an XPathExpression.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the sort order.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Ascending">
@@ -31,8 +35,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Sort from lowest to highest.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Nodes are sorted in ascending order. For example, if the numbers 1,2,3, and 4 are sorted in ascending order, they appear as 1,2,3,4.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Descending">
@@ -49,8 +56,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Sort from highest to lowest.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Nodes are sorted in descending order. For example, if the numbers 1,2,3, and 4 are sorted in descending order, they appear as, 4,3,2,1. </para>
+        </summary>
       </Docs>
     </Member>
   </Members>

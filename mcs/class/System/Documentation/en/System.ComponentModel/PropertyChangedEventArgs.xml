@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PropertyChangedEventArgs" FullName="System.ComponentModel.PropertyChangedEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class PropertyChangedEventArgs : EventArgs" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit PropertyChangedEventArgs extends System.EventArgs" />
@@ -15,8 +16,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="E:System.ComponentModel.INotifyPropertyChanged.PropertyChanged" /> event is raised when a property is changed on a component. A <see cref="T:System.ComponentModel.PropertyChangedEventArgs" /> object specifies the name of the property that changed.</para>
+      <para>
+        <see cref="T:System.ComponentModel.PropertyChangedEventArgs" /> provides the <see cref="P:System.ComponentModel.PropertyChangedEventArgs.PropertyName" /> property to get the name of the property that changed.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.ComponentModel.INotifyPropertyChanged.PropertyChanged" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -33,9 +42,16 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="propertyName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="F:System.String.Empty" /> value or null for the <paramref name="propertyName" /> parameter indicates that all of the properties have changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.PropertyChangedEventArgs" /> class.</para>
+        </summary>
+        <param name="propertyName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the property that changed. </param>
       </Docs>
     </Member>
     <Member MemberName="PropertyName">
@@ -51,9 +67,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="F:System.String.Empty" /> value or null for the <paramref name="propertyName" /> parameter indicates that all of the properties have changed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the property that changed.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebBrowserProgressChangedEventArgs" FullName="System.Windows.Forms.WebBrowserProgressChangedEventArgs">
   <TypeSignature Language="C#" Value="public class WebBrowserProgressChangedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can handle the <see cref="E:System.Windows.Forms.WebBrowser.ProgressChanged" /> event to implement a navigation progress bar for the <see cref="T:System.Windows.Forms.WebBrowser" /> control similar to the one in Internet Explorer. Use the <see cref="P:System.Windows.Forms.WebBrowserProgressChangedEventArgs.CurrentProgress" /> property to determine the number of bytes that have been downloaded successfully. Use the <see cref="P:System.Windows.Forms.WebBrowserProgressChangedEventArgs.MaximumProgress" /> property to determine the number of bytes available for downloading.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.WebBrowser.ProgressChanged" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +29,16 @@
         <Parameter Name="maximumProgress" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <param name="currentProgress">To be added.</param>
-        <param name="maximumProgress">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.WebBrowserProgressChangedEventArgs" /> class.</para>
+        </summary>
+        <param name="currentProgress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes that are loaded already. </param>
+        <param name="maximumProgress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The total number of bytes to be loaded. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +51,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to display the current navigation progress in a <see cref="T:System.Windows.Forms.ProgressBar" /> control. Use the <see cref="P:System.Windows.Forms.WebBrowserProgressChangedEventArgs.MaximumProgress" /> property to determine the total number of bytes available for downloading.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the number of bytes that have been downloaded.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +73,16 @@
         <ReturnType>System.Int64</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use this property to display the current navigation progress in a <see cref="T:System.Windows.Forms.ProgressBar" /> control. Use the <see cref="P:System.Windows.Forms.WebBrowserProgressChangedEventArgs.CurrentProgress" /> property to determine the number of bytes that have been downloaded successfully.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the total number of bytes in the document being loaded.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

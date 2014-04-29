@@ -325,7 +325,7 @@ namespace Mono.CSharp
 			}
 
 			if (bc.HasSet (ResolveContext.Options.CatchScope)) {
-				bc.Report.Error (1985, loc, "The `await' operator cannot be used in the body of a catch clause");
+				bc.Report.Error (1985, loc, "The `await' operator cannot be used in a catch clause");
 			}
 
 			if (!base.Resolve (bc))

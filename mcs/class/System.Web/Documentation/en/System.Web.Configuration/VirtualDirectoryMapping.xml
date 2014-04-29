@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="VirtualDirectoryMapping" FullName="System.Web.Configuration.VirtualDirectoryMapping">
   <TypeSignature Language="C#" Value="public sealed class VirtualDirectoryMapping" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies a custom virtual-directory hierarchy for a Web application. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +26,16 @@
         <Parameter Name="isAppRoot" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="physicalDirectory">To be added.</param>
-        <param name="isAppRoot">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.Configuration.VirtualDirectoryMapping" /> class based on supplied parameters.</para>
+        </summary>
+        <param name="physicalDirectory">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string value that specifies the absolute path to a physical directory.</param>
+        <param name="isAppRoot">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates whether the virtual directory is the application root of the Web application.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -41,12 +50,18 @@
         <Parameter Name="configFileBaseName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="physicalDirectory">To be added.</param>
-        <param name="isAppRoot">To be added.</param>
-        <param name="configFileBaseName">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.Web.Configuration.VirtualDirectoryMapping" /> class based on supplied parameters.</para>
+        </summary>
+        <param name="physicalDirectory">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string value that specifies the absolute path to a physical directory.</param>
+        <param name="isAppRoot">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates whether the virtual directory is the application root of the Web application.</param>
+        <param name="configFileBaseName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the configuration file.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -59,10 +74,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the name of the configuration file is not specified, Web.config is used.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the configuration file.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,10 +96,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the virtual directory should be treated as the application root.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -91,10 +115,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies the full server path of a Web application.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -107,10 +134,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that specifies the virtual directory relative to the root of the Web server.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ParallelEnumerable" FullName="System.Linq.ParallelEnumerable">
   <TypeSignature Language="C#" Value="public static class ParallelEnumerable" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit ParallelEnumerable extends System.Object" />
@@ -10,8 +11,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a set of methods for querying objects that implement ParallelQuery{TSource}. This is the parallel equivalent of <see cref="T:System.Linq.Enumerable" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Aggregate&lt;TSource&gt;">
@@ -290,10 +294,17 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery" RefType="this" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A natural tension exists between performance and preserving order in parallel processing. By default, a parallelized query behaves as if the ordering of the results is arbitrary unless AsOrdered is applied or there is an explicit OrderBy operator in the query. For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables treatment of a data source as if it were ordered, overriding the default of unordered. AsOrdered may only be invoked on non-generic sequences returned by AsParallel, ParallelEnumerable.Range, and ParallelEnumerable.Repeat.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The input sequence.</param>
       </Docs>
     </Member>
     <Member MemberName="AsOrdered&lt;TSource&gt;">
@@ -334,10 +345,17 @@
         <Parameter Name="source" Type="System.Collections.IEnumerable" RefType="this" />
       </Parameters>
       <Docs>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Linq.ParallelEnumerable.Cast``1(System.Linq.ParallelQuery)" /> operator can be used to convert a ParallelQuery to a ParallelQuery(T).</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables parallelization of a query.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to convert to a <see cref="T:System.Linq.ParallelQuery" />.</param>
       </Docs>
     </Member>
     <Member MemberName="AsParallel&lt;TSource&gt;">
@@ -914,10 +932,14 @@
       </Parameters>
       <Docs>
         <typeparam name="TResult">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts the elements of a ParallelQuery to the specified type.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence that contains the elements to be converted.</param>
       </Docs>
     </Member>
     <Member MemberName="Concat&lt;TSource&gt;">
@@ -1249,9 +1271,12 @@
       <Parameters />
       <Docs>
         <typeparam name="TResult">To be added.</typeparam>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an empty ParallelQuery{TResult} that has the specified type argument.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Except&lt;TSource&gt;">
@@ -3403,10 +3428,14 @@
       </Parameters>
       <Docs>
         <typeparam name="TResult">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Filters the elements of a ParallelQuery based on a specified type.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sequence whose elements to filter.</param>
       </Docs>
     </Member>
     <Member MemberName="OrderBy&lt;TSource,TKey&gt;">
@@ -3540,11 +3569,16 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="start">To be added.</param>
-        <param name="count">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Generates a parallel sequence of integral numbers within a specified range.</para>
+        </summary>
+        <param name="start">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the first integer in the sequence.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of sequential integers to generate.</param>
       </Docs>
     </Member>
     <Member MemberName="Repeat&lt;TResult&gt;">

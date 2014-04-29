@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LoginView" FullName="System.Web.UI.WebControls.LoginView">
   <TypeSignature Language="C#" Value="public class LoginView : System.Web.UI.Control, System.Web.UI.INamingContainer" />
   <AssemblyInfo>
@@ -33,9 +34,229 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#declarative_syntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>The <see cref="T:System.Web.UI.WebControls.LoginView" /> control displays different Web site content templates (or "views") for different users, based on whether the user is authenticated and, if so, which Web site roles he or she belongs to.</para>
+      <block subset="none" type="note">
+        <para>If you are not familiar with the set of login controls available in ASP.NET, see <format type="text/html"><a href="ac032230-6469-4b03-b68d-03ef2643a24d">ASP.NET Login Controls Overview</a></format> before continuing. For a list of other topics related to login controls and membership, see <format type="text/html"><a href="824c3a24-f0af-427c-a652-0d2d1e9397cd">Managing Users By Using Membership</a></format>.</para>
+      </block>
+      <para>The template stored in the <see cref="P:System.Web.UI.WebControls.LoginView.AnonymousTemplate" /> property is displayed to any visitor to the Web site who has not logged in. Once a user is logged in, the site displays either a template associated with one of the user's roles in the <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> property or the default template specified in the <see cref="P:System.Web.UI.WebControls.LoginView.LoggedInTemplate" /> property.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.LoginView" /> control manages switching among the various templates once you assign templates to any of the three template properties of the <see cref="T:System.Web.UI.WebControls.LoginView" /> class: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="P:System.Web.UI.WebControls.LoginView.AnonymousTemplate" /> - Specifies the template to display to users who are not logged in to the Web site. Users who are logged in will never see this template.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Web.UI.WebControls.LoginView.LoggedInTemplate" /> - Specifies the default template to display to users who are logged in to the Web site but do not belong to any role groups with defined templates.</para>
+        </item>
+        <item>
+          <para>
+            <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> - Specifies the template to display to logged-in users who are members of roles with defined role-group templates. Content templates are associated with particular sets of roles in <see cref="T:System.Web.UI.WebControls.RoleGroup" /> instances.</para>
+        </item>
+      </list>
+      <para>Role-group templates are searched in the order they are defined in the source. The first matching role-group template is displayed to the user. If a user is a member of more than one role, the first role-group template that matches any of the user's roles is used. If more than one template is associated with a single role, only the first defined template is used.</para>
+      <para>The following table describes the behavior of the <see cref="T:System.Web.UI.WebControls.LoginView" /> control when various combinations of templates are used.</para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>LoggedIn Template Property </para>
+            </term>
+            <description>
+              <para>Anonymous Template Property </para>
+            </description>
+            <description>
+              <para>RoleGroups Property </para>
+            </description>
+            <description>
+              <para>LoginView behavior </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>Not set </para>
+          </term>
+          <description>
+            <para>Not set </para>
+          </description>
+          <description>
+            <para>Not set </para>
+          </description>
+          <description>
+            <para>Displays no content. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Set </para>
+          </term>
+          <description>
+            <para>Not set </para>
+          </description>
+          <description>
+            <para>Not set </para>
+          </description>
+          <description>
+            <para>Displays content only when the user is logged in. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Not set </para>
+          </term>
+          <description>
+            <para>Set </para>
+          </description>
+          <description>
+            <para>Not set </para>
+          </description>
+          <description>
+            <para>Displays content only when the user is not logged in. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Not set </para>
+          </term>
+          <description>
+            <para>Not set </para>
+          </description>
+          <description>
+            <para>Set </para>
+          </description>
+          <description>
+            <para>Displays the first template in the <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> collection that matches one of the user's roles. If no match is found, displays no content. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Set </para>
+          </term>
+          <description>
+            <para>Set </para>
+          </description>
+          <description>
+            <para>Not set </para>
+          </description>
+          <description>
+            <para>If the user is logged in, displays the template specified in the <see cref="P:System.Web.UI.WebControls.LoginView.LoggedInTemplate" /> property. If the user in not logged in, displays the template specified in the <see cref="P:System.Web.UI.WebControls.LoginView.AnonymousTemplate" /> property. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Set </para>
+          </term>
+          <description>
+            <para>Set </para>
+          </description>
+          <description>
+            <para>Set </para>
+          </description>
+          <description>
+            <para>If the user is logged in, displays the first template in the <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> collection that matches one of the user's roles. If no match is found, displays the template specified in the <see cref="P:System.Web.UI.WebControls.LoginView.LoggedInTemplate" /> property. If the user is not logged in, displays the template specified in the <see cref="P:System.Web.UI.WebControls.LoginView.AnonymousTemplate" /> property. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Set </para>
+          </term>
+          <description>
+            <para>Not set </para>
+          </description>
+          <description>
+            <para>Set </para>
+          </description>
+          <description>
+            <para>If the user is logged in, displays the first template in the <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> collection that matches one of the user's roles. If no match is found, displays the template specified in the <see cref="P:System.Web.UI.WebControls.LoginView.LoggedInTemplate" /> property. If the user is not logged in, nothing is displayed. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>Not set </para>
+          </term>
+          <description>
+            <para>Set </para>
+          </description>
+          <description>
+            <para>Set </para>
+          </description>
+          <description>
+            <para>If the user is logged in, displays the first template in the <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> collection that matches one of the user's roles. If no match is found, nothing is displayed. If the user is not logged in, displays the template specified in the <see cref="P:System.Web.UI.WebControls.LoginView.AnonymousTemplate" /> property. </para>
+          </description>
+        </item>
+      </list>
+      <para>The <see cref="P:System.Web.UI.WebControls.LoginView.AnonymousTemplate" /> and <see cref="P:System.Web.UI.WebControls.LoginView.LoggedInTemplate" /> can be used with any authentication scheme that sets the <see cref="P:System.Security.Principal.IIdentity.Name" /> property of the <see cref="T:System.Web.UI.Page" /> object's <see cref="P:System.Web.UI.Page.User" /> property. You must configure role management to use the <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> property to define templates base on the user's role on the Web site. For more information, see <format type="text/html"><a href="a0d2f19d-a2a7-496d-88b6-30133f8ea3d6">Understanding ASP.NET Role Management</a></format>.</para>
+      <para>The <see cref="M:System.Web.UI.Control.Focus" /> method does not set the initial focus of the Web page to the <see cref="T:System.Web.UI.WebControls.LoginView" /> control, or any of its child controls. Controls contained in the <see cref="T:System.Web.UI.WebControls.LoginView" /> control are created after the <see cref="E:System.Web.UI.Control.PreRender" /> event. To set the focus to a child control contained by the <see cref="T:System.Web.UI.WebControls.LoginView" />, handle the On_PreRender and call its <see cref="M:System.Web.UI.Control.Focus" /> method.  You can also use the <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanging" /> and <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanged" /> events to programmatically access the controls in the <see cref="T:System.Web.UI.WebControls.LoginView" /> control templates.</para>
+      <format type="text/html">
+        <a href="#declarative_syntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:LoginView
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    ID="string"
+    OnDataBinding="DataBinding event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnUnload="Unload event handler"
+    OnViewChanged="ViewChanged event handler"
+    OnViewChanging="ViewChanging event handler"
+    runat="server"
+    SkinID="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+&gt;
+        &lt;AnonymousTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/AnonymousTemplate&gt;
+        &lt;LoggedInTemplate&gt;
+            &lt;!-- child controls --&gt;
+        &lt;/LoggedInTemplate&gt;
+        &lt;RoleGroups&gt;
+                &lt;asp:RoleGroup
+                    Roles="string"
+                &gt;
+                        &lt;ContentTemplate&gt;
+                            &lt;!-- child controls --&gt;
+                        &lt;/ContentTemplate&gt;
+                &lt;/asp:RoleGroup&gt;
+        &lt;/RoleGroups&gt;
+&lt;/asp:LoginView&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Displays the appropriate content template for a given user, based on the user's authentication status and role membership.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -43,9 +264,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.LoginView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -72,10 +296,17 @@
         <ReturnType>System.Web.UI.ITemplate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginView.AnonymousTemplate" /> property specifies the content template to display to Web site users when they are not logged in to the Web site. This template is displayed when the <see cref="P:System.Security.Principal.IIdentity.Name" /> property of the <see cref="T:System.Web.UI.Page" /> <see cref="P:System.Web.UI.Page.User" /> property is null.</para>
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginView.AnonymousTemplate" /> template is never displayed to authenticated users. If the <see cref="P:System.Web.UI.WebControls.LoginView.AnonymousTemplate" /> property is empty, no content is displayed to users who are not logged in.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template to display to users who are not logged in to the Web site.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -88,10 +319,13 @@
         <ReturnType>System.Web.UI.ControlCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.ControlCollection" /> object that contains the child controls for the <see cref="T:System.Web.UI.WebControls.LoginView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -108,8 +342,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginView.CreateChildControls" /> method creates the individual controls that make up the <see cref="T:System.Web.UI.WebControls.LoginView" /> control. The set of controls created varies according to the content template displayed for the user. For example, when a user is not logged in to the Web site, only the controls contained in the template specified in the <see cref="P:System.Web.UI.WebControls.LoginView.AnonymousTemplate" /> property are created.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates the child controls that make up the <see cref="T:System.Web.UI.WebControls.LoginView" /> control.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DataBind">
@@ -120,9 +360,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.LoginView.DataBind" /> method to bind data from a source to the <see cref="T:System.Web.UI.WebControls.LoginView" /> control and its children. This method resolves all data-binding expressions in the <see cref="T:System.Web.UI.WebControls.LoginView" /> control and any child controls in the active template.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds a data source to <see cref="T:System.Web.UI.WebControls.LoginView" /> and all its child controls.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -140,10 +386,17 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginView.EnableTheming" /> property indicates whether themes are enabled for the <see cref="T:System.Web.UI.WebControls.LoginView" /> control. The <see cref="P:System.Web.UI.WebControls.LoginView.EnableTheming" /> property also affects whether themes are enabled for the controls contained in its <see cref="P:System.Web.UI.WebControls.LoginView.Controls" /> collection. When the <see cref="P:System.Web.UI.WebControls.LoginView.EnableTheming" /> property is true, the application's theme directory is searched for control skins to apply. If no skin for the particular control exists in the theme directory, a skin is not applied. When the <see cref="P:System.Web.UI.WebControls.LoginView.EnableTheming" /> property is false, the theme directory is not searched and the contents of the <see cref="P:System.Web.UI.WebControls.LoginView.SkinID" /> property are not used.</para>
+          <para>A control can override the <see cref="P:System.Web.UI.WebControls.LoginView.EnableTheming" /> value set by its parent control, or the containing page. For example, if a parent control has <see cref="P:System.Web.UI.WebControls.LoginView.EnableTheming" /> set to false, you can selectively apply themes to child controls contained within the parent by setting the <see cref="P:System.Web.UI.WebControls.LoginView.EnableTheming" /> property to true on the individual child controls.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether themes can be applied to the <see cref="T:System.Web.UI.WebControls.LoginView" /> control. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -157,9 +410,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginView.Focus" /> method does not set the initial focus of the Web page to the <see cref="T:System.Web.UI.WebControls.LoginView" /> control or to any of its child controls. Controls that are contained in the <see cref="T:System.Web.UI.WebControls.LoginView" /> control are created after the <see cref="E:System.Web.UI.Control.PreRender" /> event. To set the focus to a child control contained by the <see cref="T:System.Web.UI.WebControls.LoginView" />, handle the On_PreRender and call its <see cref="M:System.Web.UI.Control.Focus" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets input focus to a control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -183,9 +442,13 @@
         <Parameter Name="savedState" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="savedState">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements <see cref="M:System.Web.UI.Control.LoadControlState(System.Object)" />.</para>
+        </summary>
+        <param name="savedState">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the control state to be restored.</param>
       </Docs>
     </Member>
     <Member MemberName="LoggedInTemplate">
@@ -209,10 +472,25 @@
         <ReturnType>System.Web.UI.ITemplate</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginView.LoggedInTemplate" /> property is displayed to Web site users when both of the following conditions are met: </para>
+          <list type="bullet">
+            <item>
+              <para>The <see cref="P:System.Security.Principal.IIdentity.Name" /> property of the <see cref="T:System.Web.UI.Page" /> <see cref="P:System.Web.UI.Page.User" /> property is not null </para>
+            </item>
+            <item>
+              <para>The user does not belong to a role group defined in the <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> property.</para>
+            </item>
+          </list>
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginView.LoggedInTemplate" /> property specifies a default template for authenticated Web site users. If you have not configured role management, the <see cref="P:System.Web.UI.WebControls.LoginView.LoggedInTemplate" /> is the only template available for authenticated users. For more information about configuring role management, see <format type="text/html"><a href="a0d2f19d-a2a7-496d-88b6-30133f8ea3d6">Understanding ASP.NET Role Management</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the template to display to Web site users who are logged in to the Web site but are not members of one of the role groups specified in the <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> property.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -231,9 +509,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginView.OnInit(System.EventArgs)" /> method performs initialization for the <see cref="T:System.Web.UI.WebControls.LoginView" /> control.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginView.OnInit(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.Control.Init" /> event. </para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnPreRender">
@@ -249,9 +536,18 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginView.OnPreRender(System.EventArgs)" /> method is called during the <see cref="E:System.Web.UI.Control.PreRender" /> event to determine which content template to display to the user. If the <see cref="P:System.Security.Principal.IIdentity.Name" /> property of the <see cref="T:System.Web.UI.Page" /> <see cref="P:System.Web.UI.Page.User" /> property is null, the template specified in the <see cref="P:System.Web.UI.WebControls.LoginView.AnonymousTemplate" /> property is displayed; otherwise, the template associated with the user's role is displayed. If the user does not belong to a defined role group, or if you have not configured role management, the <see cref="T:System.Web.UI.WebControls.LoginView" /> control displays the template specified in the <see cref="P:System.Web.UI.WebControls.LoginView.LoggedInTemplate" /> property. For more information about configuring role management, see <format type="text/html"><a href="71ddd651-5f91-471b-ad9f-61249b0bf0d5">Role Management Providers</a></format>.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginView.OnPreRender(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines which role-group template to display, based on the roles of the logged-in user.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data. </param>
       </Docs>
     </Member>
     <Member MemberName="OnViewChanged">
@@ -264,10 +560,20 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.LoginView" /> control switches views, it removes the controls from the previous template and creates new child controls from the new template. The <see cref="M:System.Web.UI.WebControls.LoginView.OnViewChanged(System.EventArgs)" /> method is called after the new child controls are created.</para>
+          <para>Use the <see cref="M:System.Web.UI.WebControls.LoginView.OnViewChanged(System.EventArgs)" /> method to perform any processing, such as data binding, necessary to initialize the controls on the new view.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginView.OnViewChanged(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanged" /> event after the <see cref="T:System.Web.UI.WebControls.LoginView" /> control switches views.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -283,10 +589,20 @@
         <Parameter Name="e" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.LoginView" /> controls switches views, it removes the controls from the previous template and creates new child controls from the new template. The <see cref="M:System.Web.UI.WebControls.LoginView.OnViewChanging(System.EventArgs)" /> method is called before the previous controls are removed.</para>
+          <para>Use the <see cref="M:System.Web.UI.WebControls.LoginView.OnViewChanging(System.EventArgs)" /> method to perform any necessary processing, such as saving control information, before the controls are removed.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="f2adaf01-1ed1-42e1-8c31-8d467e7e0ee2">Raising an Event</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginView.OnViewChanging(System.EventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanging" /> event before the <see cref="T:System.Web.UI.WebControls.LoginView" /> control switches views.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.EventArgs" /> object that contains the event data.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -305,9 +621,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.LoginView.Render(System.Web.UI.HtmlTextWriter)" /> method is used to render the server control content to the client's browser using the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+          <para>Note   This method is used primarily by control developers to extend the <see cref="T:System.Web.UI.WebControls.LoginView" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the Web server control content to the client's browser using the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.HtmlTextWriter" /> used to render the server control content on the client's browser.</param>
       </Docs>
     </Member>
     <Member MemberName="RoleGroups">
@@ -331,10 +655,19 @@
         <ReturnType>System.Web.UI.WebControls.RoleGroupCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> property contains the content templates associated with various roles on the Web site. The collection in the <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> property is searched in the order in which templates are defined in the source. The first matching role-group template is displayed to the user. If a user is a member of more than one role, the first role-group template that matches any of the user's roles is used. If more than one template is associated with a single role, only the first defined template will be used.</para>
+          <para>If a logged-in user does not belong to any role contained in the role-group collection, the site displays the content template specified in the <see cref="P:System.Web.UI.WebControls.LoginView.LoggedInTemplate" /> property. Anonymous users are never shown any template contained in the <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> collection.</para>
+          <para>You must configure role management to use the <see cref="P:System.Web.UI.WebControls.LoginView.RoleGroups" /> property to define templates based on the user's role on the Web site. For more information, see <format type="text/html"><a href="a0d2f19d-a2a7-496d-88b6-30133f8ea3d6">Understanding ASP.NET Role Management</a></format>.</para>
+          <para>This property cannot be set by themes or style sheet themes. For more information, see <see cref="T:System.Web.UI.ThemeableAttribute" /> and <format type="text/html"><a href="5df3ebbd-d46c-4502-9406-02f9df4ef2c3">ASP.NET Themes Overview</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of role groups that associate content templates with particular roles.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -351,9 +684,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method implements <see cref="M:System.Web.UI.Control.SaveControlState" />.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SetDesignModeState">
@@ -366,10 +702,11 @@
         <Parameter Name="data" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <param name="data">To be added.</param>
         <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <param name="data">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> object containing the state of the <see cref="T:System.Web.UI.WebControls.LoginView" /> control. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -387,10 +724,18 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Skins available to a control are contained in one or more skin files in a theme directory. The <see cref="P:System.Web.UI.WebControls.LoginView.SkinID" /> property specifies which of these skins to apply to the control. A skin is specific to a particular control; you cannot share skin settings between controls of different types.</para>
+          <para>If you do not set the <see cref="P:System.Web.UI.WebControls.LoginView.SkinID" /> property, a control uses the default skin if one is defined. For example, if a skin without an ID is defined for an <see cref="T:System.Web.UI.WebControls.Image" /> control, then that skin applies to all <see cref="T:System.Web.UI.WebControls.Image" /> controls that do not explicitly reference a skin by ID and that are not set to disable theming. If a skin with an ID is defined for an <see cref="T:System.Web.UI.WebControls.Image" /> control, then that skin applies only to <see cref="T:System.Web.UI.WebControls.Image" /> controls whose <see cref="P:System.Web.UI.WebControls.WebControl.SkinID" /> is set to that ID.</para>
+          <para>If the skin files in a theme directory do not contain a skin with the specified <see cref="P:System.Web.UI.WebControls.LoginView.SkinID" />, an <see cref="T:System.ArgumentException" /> exception is thrown at run time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the skin to apply to the <see cref="T:System.Web.UI.WebControls.LoginView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -403,9 +748,20 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.LoginView" /> control switches views, it removes the controls from the previous template and creates new child controls from the new template. The <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanged" /> event is raised after the new child controls are created.</para>
+          <para>Use the <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanged" /> event to perform any processing, such as data binding, necessary to initialize the controls on the new view.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanged" /> event is only raised if the login status for a user changes during a postback to the page. The <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanged" /> event will not be raised if a user logs in using the <see cref="T:System.Web.UI.WebControls.Login" /> control, or if the user logs out using the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control. The <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanged" /> event will also not occur if a user is logged in or out followed by a redirect. An example of when the <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanged" /> event will occur is when a user is logged out by calling the <see cref="M:System.Web.Security.FormsAuthentication.SignOut" /> method without being redirected to another page. During the next postback to the page, the <see cref="T:System.Web.UI.WebControls.LoginView" /> control will detect the change in the login status for the user, and then raise the <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanged" /> event.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs after the view is changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -418,9 +774,20 @@
         <ReturnType>System.EventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="T:System.Web.UI.WebControls.LoginView" /> control switches views, it removes the controls from the previous template and creates new child controls from the new template. The <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanging" /> event is raised before the previous controls are removed.</para>
+          <para>Use the <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanging" /> event to perform any processing, such as saving control information, necessary before the controls are removed.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanging" /> event is only raised if the login status for a user changes during a postback to the page. The <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanging" /> event will not be raised if a user logs in using the <see cref="T:System.Web.UI.WebControls.Login" /> control, or if the user logs out using the <see cref="T:System.Web.UI.WebControls.LoginStatus" /> control. The <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanging" /> event will also not occur if a user is logged in or out followed by a redirect. An example of when the <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanging" /> event will occur is when a user is logged out by calling the <see cref="M:System.Web.Security.FormsAuthentication.SignOut" /> method without being redirected to another page. During the next postback to the page, the <see cref="T:System.Web.UI.WebControls.LoginView" /> control will detect the change in the login status for the user, and then raise the <see cref="E:System.Web.UI.WebControls.LoginView.ViewChanging" /> event.</para>
+          </block>
+          <para>For more information about handling events, see <format type="text/html"><a href="b6f65241-e0ad-4590-a99f-200ce741bb1f">Handling and Raising Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs before the view is changed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

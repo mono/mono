@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PropertyValueUIHandler" FullName="System.Drawing.Design.PropertyValueUIHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void PropertyValueUIHandler(ITypeDescriptorContext context, PropertyDescriptor propDesc, ArrayList valueUIItemList);" />
   <AssemblyInfo>
@@ -15,8 +16,14 @@
     <param name="context">To be added.</param>
     <param name="propDesc">To be added.</param>
     <param name="valueUIItemList">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When this delegate is invoked, it can add a <see cref="T:System.Drawing.Design.PropertyValueUIItem" /> containing UI items for the specified property to the <see cref="T:System.Collections.ArrayList" /> passed as the <paramref name="valueUIItemList" /> parameter.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that adds a delegate to an implementation of <see cref="T:System.Drawing.Design.IPropertyValueUIService" />.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

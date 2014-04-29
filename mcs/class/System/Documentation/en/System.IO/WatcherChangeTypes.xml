@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WatcherChangeTypes" FullName="System.IO.WatcherChangeTypes">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum WatcherChangeTypes" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed WatcherChangeTypes extends System.Enum" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each <see cref="T:System.IO.WatcherChangeTypes" /> member is associated with an event in <see cref="T:System.IO.FileSystemWatcher" />. For more information on the events, see <see cref="E:System.IO.FileSystemWatcher.Created" />, <see cref="E:System.IO.FileSystemWatcher.Deleted" />, <see cref="E:System.IO.FileSystemWatcher.Changed" />, and <see cref="E:System.IO.FileSystemWatcher.Renamed" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Changes that might occur to a file or directory.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -37,8 +44,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The creation, deletion, change, or renaming of a file or folder.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Changed">
@@ -55,8 +65,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The change of a file or folder. The types of changes include: changes to size, attributes, security settings, last write, and last access time.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Created">
@@ -73,8 +86,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The creation of a file or folder.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Deleted">
@@ -91,8 +107,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The deletion of a file or folder.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Renamed">
@@ -109,8 +128,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The renaming of a file or folder.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

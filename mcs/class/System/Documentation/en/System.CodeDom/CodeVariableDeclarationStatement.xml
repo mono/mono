@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeVariableDeclarationStatement" FullName="System.CodeDom.CodeVariableDeclarationStatement">
   <TypeSignature Language="C#" Value="public class CodeVariableDeclarationStatement : System.CodeDom.CodeStatement" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeVariableDeclarationStatement extends System.CodeDom.CodeStatement" />
@@ -23,8 +24,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeVariableDeclarationStatement" /> can be used to represent code that declares a variable.</para>
+      <para>The <see cref="P:System.CodeDom.CodeVariableDeclarationStatement.Type" /> property specifies the type of the variable to declare. The <see cref="P:System.CodeDom.CodeVariableDeclarationStatement.Name" /> property specifies the name of the variable to declare. The <see cref="P:System.CodeDom.CodeVariableDeclarationStatement.InitExpression" /> property is optional, and specifies an initialization expression to assign to the variable after it is created.</para>
+      <block subset="none" type="note">
+        <para>Some languages can implement the optional variable initialization expression by making a separate assignment statement after the variable declaration.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a variable declaration.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +51,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeVariableDeclarationStatement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,10 +73,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'CodeTypeReference'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeVariableDeclarationStatement" /> class using the specified type and name.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeReference" /> that indicates the data type of the variable. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the variable. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -79,10 +99,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'string'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeVariableDeclarationStatement" /> class using the specified data type name and variable name.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the data type of the variable. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the variable. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -100,10 +125,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeVariableDeclarationStatement" /> class using the specified data type and variable name.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data type for the variable. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the variable. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -122,11 +152,17 @@
         <Parameter Name="initExpression" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'CodeTypeReference'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="initExpression">To be added: an object of type 'CodeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeVariableDeclarationStatement" /> class using the specified data type, variable name, and initialization expression.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeReference" /> that indicates the type of the variable. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the variable. </param>
+        <param name="initExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the initialization expression for the variable. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -145,11 +181,17 @@
         <Parameter Name="initExpression" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'string'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="initExpression">To be added: an object of type 'CodeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeVariableDeclarationStatement" /> class using the specified data type, variable name, and initialization expression.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the data type of the variable. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the variable. </param>
+        <param name="initExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the initialization expression for the variable. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -168,11 +210,17 @@
         <Parameter Name="initExpression" Type="System.CodeDom.CodeExpression" />
       </Parameters>
       <Docs>
-        <param name="type">To be added: an object of type 'Type'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="initExpression">To be added: an object of type 'CodeExpression'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeVariableDeclarationStatement" /> class using the specified data type, variable name, and initialization expression.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The data type of the variable. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the variable. </param>
+        <param name="initExpression">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeExpression" /> that indicates the initialization expression for the variable. </param>
       </Docs>
     </Member>
     <Member MemberName="InitExpression">
@@ -190,9 +238,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeExpression'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the initialization expression for the variable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -210,9 +261,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the variable.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -230,9 +284,12 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeTypeReference'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the data type of the variable.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

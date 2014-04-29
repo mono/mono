@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDataParameter" FullName="System.Data.IDataParameter">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IDataParameter" />
   <AssemblyInfo>
@@ -10,8 +11,16 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Data.IDataParameter" /> interface allows an inheriting class to implement a Parameter class, which represents a parameter to a Command object. For more information about Parameter classes, see <format type="text/html"><a href="537D8A2C-D40B-4000-83EB-BC1FCC93F707">[&lt;topic://cpconusingstoredprocedureswithcommand&gt;]</a></format>. </para>
+      <para>An application does not create an instance of the <see cref="T:System.Data.IDataParameter" /> interface directly, but creates an instance of a class that inherits <see cref="T:System.Data.IDataParameter" />.</para>
+      <para>Classes that inherit <see cref="T:System.Data.IDataParameter" /> must implement the inherited members, and typically define additional members to add provider-specific functionality. For example, the <see cref="T:System.Data.IDataParameter" /> interface defines the <see cref="P:System.Data.IDataParameter.DbType" /> property. In turn, the <see cref="T:System.Data.OleDb.OleDbParameter" /> class inherits this property, and also defines the <see cref="P:System.Data.OleDb.OleDbParameter.OleDbType" /> property.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a parameter to a Command object, and optionally, its mapping to <see cref="T:System.Data.DataSet" /> columns; and is implemented by .NET Framework data providers that access data sources.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="DbType">
@@ -23,9 +32,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DbType'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PrvDbType (where Prv represents the provider-specific prefix) and <see cref="P:System.Data.SqlClient.SqlParameter.DbType" /> are linked. Therefore, setting the <see cref="P:System.Data.SqlClient.SqlParameter.DbType" /> changes the PrvDbType to a supporting PrvDbType.</para>
+          <para>For a list of the supported data types, see the appropriate .NET Framework data provider PrvDbType member. For more information, see <format type="text/html"><a href="F21E6ABA-B76D-46AD-A83E-2AD8E0AF1E12">[&lt;topic://cpconUsingParametersWithDataAdapters&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.DbType" /> of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -41,9 +57,16 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'ParameterDirection'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="T:System.Data.ParameterDirection" /> is output, and execution of the associated <see cref="T:System.Data.SqlClient.SqlCommand" /> does not return a value, the <see cref="T:System.Data.IDataParameter" /> contains a null value.</para>
+          <para>After the last row from the last resultset is read, Output, InputOut, and ReturnValue parameters are updated.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the parameter is input-only, output-only, bidirectional, or a stored procedure return value parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -57,9 +80,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Null values are handled using the <see cref="T:System.DBNull" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the parameter accepts null values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -75,9 +104,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Data.IDataParameter.ParameterName" /> is specified in the form @paramname. You must set <see cref="P:System.Data.IDataParameter.ParameterName" /> before executing a command that relies on parameters.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the <see cref="T:System.Data.IDataParameter" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -93,9 +128,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The link betwen the value of the <see cref="T:System.Data.IDataParameter" /> and the <see cref="T:System.Data.DataTable" /> may be bidirectional depending on the value of the <see cref="P:System.Data.IDataParameter.Direction" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the source column that is mapped to the <see cref="T:System.Data.DataSet" /> and used for loading or returning the <see cref="P:System.Data.IDataParameter.Value" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -111,9 +152,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'DataRowVersion'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This property is used by the <see cref="P:System.Data.IDbDataAdapter.UpdateCommand" /> during the <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> to determine whether the original or current value is used for a parameter value. This allows primary keys to be updated. This property is ignored by the <see cref="P:System.Data.IDbDataAdapter.InsertCommand" /> and <see cref="P:System.Data.IDbDataAdapter.DeleteCommand" />. This property is set to the version of the <see cref="T:System.Data.DataRow" /> used by the <see cref="P:System.Data.DataRow.Item(System.Int32)" /> property, or the <see cref="M:System.Data.DataRow.GetChildRows(System.String)" /> method of the <see cref="T:System.Data.DataRow" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="T:System.Data.DataRowVersion" /> to use when loading <see cref="P:System.Data.IDataParameter.Value" />.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -129,9 +176,18 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For input parameters, the value is bound to the <see cref="T:System.Data.IDbCommand" /> that is sent to the server. For output and return value parameters, the value is set on completion of the <see cref="T:System.Data.IDbCommand" /> and after the <see cref="T:System.Data.IDataReader" /> is closed.</para>
+          <para>When sending a null parameter value to the server, the user must specify DBNull, not null. The null value in the system is an empty object that has no value. DBNull is used to represent null values.</para>
+          <para>If the application specifies the database type, the bound value is converted to that type when the provider sends the data to the server. The provider attempts to convert any type of value if it supports the <see cref="T:System.IConvertible" /> interface. Conversion errors may result if the specified type is not compatible with the value.</para>
+          <para>The <see cref="P:System.Data.SqlClient.SqlParameter.Value" /> property is overwritten by <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the parameter.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

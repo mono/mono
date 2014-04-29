@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CacheItemRemovedCallback" FullName="System.Web.Caching.CacheItemRemovedCallback">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void CacheItemRemovedCallback(string key, object value, CacheItemRemovedReason reason);" />
   <AssemblyInfo>
@@ -15,8 +16,11 @@
     <param name="key">To be added.</param>
     <param name="value">To be added.</param>
     <param name="reason">To be added.</param>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines a callback method for notifying applications when a cached item is removed from the <see cref="T:System.Web.Caching.Cache" />.</para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

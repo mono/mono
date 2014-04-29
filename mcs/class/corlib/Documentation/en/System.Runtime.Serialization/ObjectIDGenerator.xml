@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ObjectIDGenerator" FullName="System.Runtime.Serialization.ObjectIDGenerator">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class ObjectIDGenerator" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit ObjectIDGenerator extends System.Object" />
@@ -19,8 +20,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> keeps track of previously identified objects. When you ask for the ID of an object, the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> knows whether to return the existing ID, or generate and remember a new ID.</para>
+      <para>The IDs are unique for the life of the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> instance. Generally, a <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> life lasts as long as the <see cref="T:System.Runtime.Serialization.Formatter" /> that created it. Object IDs have meaning only within a given serialized stream, and are used for tracking which objects have references to others within the serialized object graph.</para>
+      <para>Using a hash table, the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> retains which ID is assigned to which object. The object references, which uniquely identify each object, are addresses in the runtime garbage-collected heap. Object reference values can change during serialization, but the table is updated automatically so the information is correct.</para>
+      <para>Object IDs are 64-bit numbers. Allocation starts from one, so zero is never a valid object ID. A formatter can choose a zero value to represent an object reference whose value is null.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Generates IDs for objects.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +45,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.ObjectIDGenerator" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="GetId">

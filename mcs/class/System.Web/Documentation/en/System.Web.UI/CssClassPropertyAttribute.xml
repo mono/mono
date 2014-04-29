@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CssClassPropertyAttribute" FullName="System.Web.UI.CssClassPropertyAttribute">
   <TypeSignature Language="C#" Value="public sealed class CssClassPropertyAttribute : Attribute" />
   <AssemblyInfo>
@@ -14,8 +15,16 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.CssClassPropertyAttribute" /> class is used by developers to add design time Cascading Style Sheet (CSS) editing capabilities to a property in a property grid.</para>
+      <para>
+        <see cref="T:System.Web.UI.CssClassPropertyAttribute" /> is introduced in the .NET Framework version 3.5.  For more information, see <format type="text/html"><a href="f75a72de-e2f2-4a7a-9574-3f278684ea90">The .NET Framework 3.5 Architecture</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Adds Cascading Style Sheet (CSS) editing capabilities to a property at design time.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,8 +35,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.CssClassPropertyAttribute" /> class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

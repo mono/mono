@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{6977FA25-AB73-4DE7-B535-19C04DB9C29A}</ProjectGuid>
+    <ProjectGuid>{FB1F5992-FA12-4ABF-9614-43CC917A588F}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
     <OutputPath>bin\Debug\I18N.West-tests-net_4_5</OutputPath>
@@ -56,22 +56,25 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\Common\I18N-net_4_5.csproj">
-      <Project>{8A8D5677-ACBD-40B4-916D-B9B5451F713D}</Project>
+      <Project>{C337A9A4-3797-4339-AD23-493DF062CD76}</Project>
       <Name>Common\I18N-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\I18N\West\I18N.West-net_4_5.csproj">
-      <Project>{5532F6F2-B136-4D85-9500-5D1C9E1D9335}</Project>
+      <Project>{C95AC6B1-7D75-40D5-8B6D-F62278587227}</Project>
       <Name>West\I18N.West-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -79,3 +82,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

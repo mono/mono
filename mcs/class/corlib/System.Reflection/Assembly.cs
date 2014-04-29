@@ -980,8 +980,9 @@ namespace System.Reflection {
 #if NET_4_5
 		public virtual IEnumerable<TypeInfo> DefinedTypes {
 			get {
-				foreach (var type in GetTypes ())
-					yield return new TypeDelegator (type);
+				foreach (var type in GetTypes ()) {
+					yield return type.GetTypeInfo ();
+				}
 			}
 		}
 

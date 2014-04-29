@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LinkLabelLinkClickedEventHandler" FullName="System.Windows.Forms.LinkLabelLinkClickedEventHandler">
   <TypeSignature Language="C#" Value="public delegate void LinkLabelLinkClickedEventHandler(object sender, LinkLabelLinkClickedEventArgs e);" />
   <AssemblyInfo>
@@ -18,7 +19,13 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When you create a <see cref="T:System.Windows.Forms.LinkLabelLinkClickedEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, until you remove the delegate. For more information about delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Windows.Forms.LinkLabel.LinkClicked" /> event of a <see cref="T:System.Windows.Forms.LinkLabel" />.</para>
+    </summary>
   </Docs>
 </Type>

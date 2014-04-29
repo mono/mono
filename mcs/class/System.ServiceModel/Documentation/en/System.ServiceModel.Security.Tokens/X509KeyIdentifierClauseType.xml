@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="X509KeyIdentifierClauseType" FullName="System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType">
   <TypeSignature Language="C#" Value="public enum X509KeyIdentifierClauseType" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed X509KeyIdentifierClauseType extends System.Enum" />
@@ -9,8 +10,11 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An enumeration listing the possible types of X.509 key identifier clauses.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Any">
@@ -24,7 +28,11 @@
         <ReturnType>System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType.SubjectKeyIdentifier" /> is used if present in the X.509 certificate, otherwise <see cref="F:System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType.IssuerSerial" /> is used.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IssuerSerial">
@@ -38,7 +46,10 @@
         <ReturnType>System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The IssuerSerial reference is used: the issuer identifier plus a serial number that is unique for an issuer.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RawDataKeyIdentifier">
@@ -52,7 +63,10 @@
         <ReturnType>System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reference contains the raw data for the entire X.509 certificate.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SubjectKeyIdentifier">
@@ -66,7 +80,10 @@
         <ReturnType>System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Reference is based on the subject key identifier extension of an X.509 certificate (not all certificates have one, it is an optional property).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Thumbprint">
@@ -80,7 +97,10 @@
         <ReturnType>System.ServiceModel.Security.Tokens.X509KeyIdentifierClauseType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The X.509 Thumbprint is used.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

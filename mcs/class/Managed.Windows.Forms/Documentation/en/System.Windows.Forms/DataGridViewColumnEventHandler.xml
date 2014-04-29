@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewColumnEventHandler" FullName="System.Windows.Forms.DataGridViewColumnEventHandler">
   <TypeSignature Language="C#" Value="public delegate void DataGridViewColumnEventHandler(object sender, DataGridViewColumnEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,72 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Forms.DataGridViewColumnEventArgs" /> provides data for the following <see cref="T:System.Windows.Forms.DataGridView" /> events:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.ColumnContextMenuStripChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.ColumnDataPropertyNameChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.ColumnDefaultCellStyleChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.ColumnDisplayIndexChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.ColumnDividerWidthChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.ColumnHeaderCellChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.ColumnMinimumWidthChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.ColumnNameChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.ColumnSortModeChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.ColumnToolTipTextChanged" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.ColumnWidthChanged" />
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle column-related events of a <see cref="T:System.Windows.Forms.DataGridView" />. </para>
+    </summary>
   </Docs>
 </Type>

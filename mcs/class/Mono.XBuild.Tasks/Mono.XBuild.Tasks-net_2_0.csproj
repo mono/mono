@@ -5,13 +5,16 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{F5F84165-0541-4828-A81E-0AA1836E50C1}</ProjectGuid>
+    <ProjectGuid>{8C54606D-305D-45B0-9932-380FE021BEFE}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699</NoWarn>
-    <OutputPath>bin\Debug\Mono.XBuild.Tasks-net_2_0</OutputPath>
+    <OutputPath>./../../class/lib/net_2_0</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
+    
     <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>Mono.XBuild.Tasks</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -19,16 +22,19 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
+    <NoWarn>1699</NoWarn>
     <Optimize>false</Optimize>
-    <DefineConstants>DEBUG;TRACE;NET_2_0</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <NoWarn>1699</NoWarn>
     <Optimize>true</Optimize>
+    <DefineConstants>NET_1_1;NET_2_0</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <DefineConstants>NET_2_0</DefineConstants>
   </PropertyGroup>
   <!-- Set AddAdditionalExplicitAssemblyReferences to false, otherwise if targetting .NET4.0, 
   Microsoft.NETFramework.props will force a dependency on the assembly System.Core. This
@@ -41,10 +47,9 @@
     <Compile Include="..\..\build\common\Consts.cs" />
     <Compile Include="..\..\build\common\MonoTODOAttribute.cs" />
     <Compile Include="..\Microsoft.Build.Utilities\Mono.XBuild.Utilities\MSBuildUtils.cs" />
-    <Compile Include="Mono.XBuild.Tasks\LibraryPcFileCache.cs" />
-    <Compile Include="Mono.XBuild.Tasks\PcFileCache.cs" />
     <Compile Include="Assembly\AssemblyInfo.cs" />
-  </ItemGroup>
+    <Compile Include="Mono.XBuild.Tasks\LibraryPcFileCache.cs" />
+    <Compile Include="Mono.XBuild.Tasks\PcFileCache.cs" />  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -54,23 +59,31 @@
   -->
   <PropertyGroup>
     <PreBuildEvent>
+
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_2_0\ /Y /R /D
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
     </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Assembly\" />
+    <ProjectReference Include="..\corlib\corlib-net_2_0.csproj">
+      <Project>{5A00133C-6D08-48F7-A164-8B796CE6DB83}</Project>
+      <Name>corlib\corlib-net_2_0</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System\System-net_2_0-2.csproj">
+      <Project>{1F3B168C-A4D0-44AA-B116-792D8804971F}</Project>
+      <Name>System\System-net_2_0-2</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\System.XML\System.Xml-net_2_0-1.csproj">
+      <Project>{080698DE-8AF0-496E-9AD7-58B6C605328A}</Project>
+      <Name>System.XML\System.Xml-net_2_0-1</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="mscorlib">
-      <HintPath>..\lib\net_2_0\mscorlib.dll</HintPath>
-    </Reference>
-    <Reference Include="System">
-      <HintPath>..\lib\net_2_0\System.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml">
-      <HintPath>..\lib\net_2_0\System.Xml.dll</HintPath>
-    </Reference>
+    <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

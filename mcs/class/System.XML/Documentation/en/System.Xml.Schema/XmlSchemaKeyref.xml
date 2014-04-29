@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XmlSchemaKeyref" FullName="System.Xml.Schema.XmlSchemaKeyref">
   <TypeSignature Maintainer="auto" Language="C#" Value="public class XmlSchemaKeyref : System.Xml.Schema.XmlSchemaIdentityConstraint" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit XmlSchemaKeyref extends System.Xml.Schema.XmlSchemaIdentityConstraint" />
@@ -14,8 +15,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies that an attribute or element value (or set of values) has a correspondence with those of the specified key or unique element. The constraint name must be unique within a schema.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class represents the keyref element from XMLSchema as specified by the <format type="text/html"><a href="">World Wide Web Consortium (W3C)</a></format>.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -30,8 +37,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Schema.XmlSchemaKeyref" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Refer">
@@ -53,9 +63,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'System.Xml.XmlQualifiedName'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Name of a key or unique element defined in this schema (or another schema indicated by the specified namespace). The Refer value must be a QName. The Refer value can include a namespace prefix.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the key that this constraint refers to in another simple or complex type.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

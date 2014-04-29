@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HierarchicalDataBoundControlAdapter" FullName="System.Web.UI.WebControls.Adapters.HierarchicalDataBoundControlAdapter">
   <TypeSignature Language="C#" Value="public class HierarchicalDataBoundControlAdapter : System.Web.UI.WebControls.Adapters.WebControlAdapter" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.Adapters.HierarchicalDataBoundControlAdapter" /> class adapts the associated <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> control to modify the default markup or behavior for a specific browser. You can extend the <see cref="T:System.Web.UI.WebControls.Adapters.HierarchicalDataBoundControlAdapter" /> class to further customize rendering of the <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> control. </para>
+      <para>A <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> control is bound to a data source and generates its user interface (or child control hierarchy, typically), by enumerating the items in the data source to which it is bound. For more information on hierarchical data-bound controls, see <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" />.</para>
+      <para>Control adapters are.NET components that manage one or more stages in the life cycle of a control for a specific browser. Extending the <see cref="T:System.Web.UI.WebControls.Adapters.HierarchicalDataBoundControlAdapter" /> class provides access to the life-cycle stages of the <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> control. For more information, see <format type="text/html"><a href="4ff05ae9-4109-4352-929e-ad893895dbff">Architectural Overview of Adaptive Control Behavior</a></format>.</para>
+      <para>The initial request for an adapter causes the .NET Framework to search for a mapped adapter for the control, given the characteristics of the requesting browser. Browser definition files are used by the <see cref="T:System.Web.HttpBrowserCapabilities" /> class to identify the characteristics of the client browser and map the adapter to the browser type. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Customizes the behavior of a <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> object with which this control adapter is associated, for specific browser requests.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +29,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework constructs an instance of the <see cref="T:System.Web.UI.WebControls.Adapters.HierarchicalDataBoundControlAdapter" /> class. The initial request for an adapter causes the .NET Framework to search for a mapped adapter for the control given the characteristics of the requesting browser. After the adapter is found, the control holds a reference to the mapped adapter instance in its <see cref="P:System.Web.UI.Control.Adapter" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.Adapters.HierarchicalDataBoundControlAdapter" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,10 +50,16 @@
         <ReturnType>System.Web.UI.WebControls.HierarchicalDataBoundControl</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.Adapters.HierarchicalDataBoundControlAdapter.Control" /> property provides access to the corresponding control, including its properties and methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves a strongly typed reference to the <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> control associated with this <see cref="T:System.Web.UI.WebControls.Adapters.HierarchicalDataBoundControlAdapter" /> object.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -54,8 +76,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.Adapters.HierarchicalDataBoundControlAdapter.PerformDataBinding" /> method binds the data in the specified data source of the associated <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> control to the <see cref="T:System.Web.UI.WebControls.Adapters.HierarchicalDataBoundControlAdapter" /> object. You can override <see cref="M:System.Web.UI.WebControls.Adapters.HierarchicalDataBoundControlAdapter.PerformDataBinding" /> to replace the standard data-binding functionality of the associated <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> control or to provide additional data-binding functionality if the associated <see cref="T:System.Web.UI.WebControls.HierarchicalDataBoundControl" /> control has been extended. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Binds the data in the data source of the associated hierarchical data-bound control to the adapter.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

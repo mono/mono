@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IComponentDesignerDebugService" FullName="System.ComponentModel.Design.IComponentDesignerDebugService">
   <TypeSignature Language="C#" Value="public interface IComponentDesignerDebugService" />
   <AssemblyInfo>
@@ -6,8 +7,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides debugging services in a design-time environment.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Assert">
@@ -24,10 +28,18 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="condition">To be added.</param>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.IComponentDesignerDebugService.Assert(System.Boolean,System.String)" /> method enables a designer to assert on a condition inside a design-time environment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Asserts on a condition inside a design-time environment.</para>
+        </summary>
+        <param name="condition">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to prevent <paramref name="message" /> from being displayed; otherwise, false.</param>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to display.</param>
       </Docs>
     </Member>
     <Member MemberName="Fail">
@@ -43,9 +55,16 @@
         <Parameter Name="message" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.IComponentDesignerDebugService.Fail(System.String)" /> method enables a designer to log failure messages inside a design-time environment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Logs a failure message inside a design-time environment.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to log.</param>
       </Docs>
     </Member>
     <Member MemberName="IndentLevel">
@@ -58,9 +77,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.IComponentDesignerDebugService.IndentLevel" /> property enables a designer to change the indent level for debug output.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the indent level for debug output.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Listeners">
@@ -73,9 +98,15 @@
         <ReturnType>System.Diagnostics.TraceListenerCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.Design.IComponentDesignerDebugService.Listeners" /> property enables objects to monitor design-time debugging output.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of trace listeners for monitoring design-time debugging output.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Trace">
@@ -92,10 +123,18 @@
         <Parameter Name="category" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="category">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.ComponentModel.Design.IComponentDesignerDebugService.Trace(System.String,System.String)" /> method enables a designer to log debug messages inside a design-time environment.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Logs a debug message inside a design-time environment.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The message to log.</param>
+        <param name="category">
+          <attribution license="cc4" from="Microsoft" modified="false" />The category of <paramref name="message" />.</param>
       </Docs>
     </Member>
   </Members>

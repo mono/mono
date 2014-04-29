@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridSortCommandEventArgs" FullName="System.Web.UI.WebControls.DataGridSortCommandEventArgs">
   <TypeSignature Language="C#" Maintainer="auto" Value="public class DataGridSortCommandEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -13,8 +14,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When sorting is enabled by setting the <see cref="P:System.Web.UI.WebControls.DataGrid.AllowSorting" /> property of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control to true, <see cref="T:System.Web.UI.WebControls.LinkButton" /> controls are rendered in the header of each column that has the <see cref="P:System.Web.UI.WebControls.DataGridColumn.SortExpression" /> property set. (For automatically generated columns, the <see cref="P:System.Web.UI.WebControls.DataGridColumn.SortExpression" /> property contains the same value as the data field.) These links allow you to sort the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control by the selected column. The <see cref="E:System.Web.UI.WebControls.DataGrid.SortCommand" /> event is raised when a <see cref="T:System.Web.UI.WebControls.LinkButton" /> control is clicked.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.DataGridSortCommandEventArgs" />, see the <see cref="M:System.Web.UI.WebControls.DataGridSortCommandEventArgs.#ctor(System.Object,System.Web.UI.WebControls.DataGridCommandEventArgs)" /> constructor.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.DataGrid.SortCommand" /> event of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +37,45 @@
       <Docs>
         <param name="source">To be added.</param>
         <param name="args">To be added.</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to create and initialize a new instance of the <see cref="T:System.Web.UI.WebControls.DataGridSortCommandEventArgs" /> class.</para>
+          <para>When an instance of <see cref="T:System.Web.UI.WebControls.DataGridSortCommandEventArgs" /> is created by a call to this constructor, the following properties are initialized to the specified values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DataGridSortCommandEventArgs.CommandSource" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="commandSource" /> parameter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.DataGridSortCommandEventArgs.SortExpression" /> </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="dce.CommandArgument" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.DataGridSortCommandEventArgs" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -43,9 +89,15 @@
         <ReturnType>System.Object</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'object'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridSortCommandEventArgs.CommandSource" /> property to get the command source that raises the <see cref="E:System.Web.UI.WebControls.DataGrid.SortCommand" /> event. Because this event is raised only when a link is clicked in the header of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control, the returned source is a <see cref="T:System.Web.UI.WebControls.DataGridItem" /> object that represents the header. This property can be used to programmatically control the header.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the source of the command.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,9 +111,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridSortCommandEventArgs.SortExpression" /> property to determine which column the user selected to sort the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the expression used to sort the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="GridViewSortEventArgs" FullName="System.Web.UI.WebControls.GridViewSortEventArgs">
   <TypeSignature Language="C#" Value="public class GridViewSortEventArgs : System.ComponentModel.CancelEventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,21 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.GridView" /> control raises the <see cref="E:System.Web.UI.WebControls.GridView.Sorting" /> event when a Sort button (a button with its CommandName property set to "Sort") is clicked, but before the <see cref="T:System.Web.UI.WebControls.GridView" /> control handles the sort operation. This allows you to provide an event-handling method that performs a custom routine, such as canceling the sorting operation, whenever this event occurs.</para>
+      <block subset="none" type="note">
+        <para>Although any button within a <see cref="T:System.Web.UI.WebControls.GridView" /> control with its CommandName property set to "Sort" will raise the <see cref="E:System.Web.UI.WebControls.GridView.Sorting" /> event, Sort buttons typically appear in the header row of a <see cref="T:System.Web.UI.WebControls.GridView" /> control.</para>
+      </block>
+      <para>A <see cref="T:System.Web.UI.WebControls.GridViewSortEventArgs" /> object is passed to the event-handling method, which allows you to specify or determine the sort expression and sort direction in which to sort the <see cref="T:System.Web.UI.WebControls.GridView" /> control. To determine the sort expression, use the <see cref="P:System.Web.UI.WebControls.GridViewSortEventArgs.SortExpression" /> property. To determine the sort direction, use the <see cref="P:System.Web.UI.WebControls.GridViewSortEventArgs.SortDirection" /> property. You can also cancel a sorting operation by setting the <see cref="P:System.ComponentModel.CancelEventArgs.Cancel" /> property to true.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+      <para>For a list of initial property values for an instance of <see cref="T:System.Web.UI.WebControls.GridViewSortEventArgs" />, see the <see cref="M:System.Web.UI.WebControls.GridViewSelectEventArgs.#ctor(System.Int32)" /> constructor.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Web.UI.WebControls.GridView.Sorting" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,10 +36,53 @@
       </Parameters>
       <Docs>
         <param name="expression">To be added.</param>
-        <param name="sortDirection">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewSortEventArgs" /> class.</para>
+          <para>The following table shows the initial property values for an instance of <see cref="T:System.Web.UI.WebControls.GridViewSortEventArgs" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Property </para>
+                </term>
+                <description>
+                  <para>Initial value </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.GridViewSortEventArgs.SortDirection" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="sortDirection" /> parameter.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="P:System.Web.UI.WebControls.GridViewSortEventArgs.SortExpression" />
+                </para>
+              </term>
+              <description>
+                <para>The value of the <paramref name="sortExpression" /> parameter. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>This constructor is used primarily by control developers when raising events.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.GridViewSortEventArgs" /> class.</para>
+        </summary>
+        <param name="sortDirection">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.SortDirection" /> that indicates the direction in which to sort the items in the control.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +95,16 @@
         <ReturnType>System.Web.UI.WebControls.SortDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="E:System.Web.UI.WebControls.GridView.Sorting" /> event is raised, you can use the <see cref="P:System.Web.UI.WebControls.GridViewSortEventArgs.SortDirection" /> property to determine the order in which the <see cref="T:System.Web.UI.WebControls.GridView" /> control will sort its items (based on the sort expression) when the sort operation is performed. Because the <see cref="E:System.Web.UI.WebControls.GridView.Sorting" /> event occurs before the sort operation, you can also use the <see cref="P:System.Web.UI.WebControls.GridViewSortEventArgs.SortDirection" /> property to programmatically set the sort direction.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the direction in which to sort the <see cref="T:System.Web.UI.WebControls.GridView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +117,16 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When the <see cref="E:System.Web.UI.WebControls.GridView.Sorting" /> event is raised, you can use the <see cref="P:System.Web.UI.WebControls.GridViewSortEventArgs.SortExpression" /> property to determine the sort expression that will be used to sort the <see cref="T:System.Web.UI.WebControls.GridView" /> control when sort operation is performed. By default, the <see cref="T:System.Web.UI.WebControls.GridView" /> control sorts a single column at a time. The sort expression simply contains the name of the field to sort. You can also sort multiple columns at a time by programmatically setting this property to a comma-separated list of field names.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the expression used to sort the items in the <see cref="T:System.Web.UI.WebControls.GridView" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

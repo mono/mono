@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PathDirection" FullName="System.Web.UI.WebControls.PathDirection">
   <TypeSignature Language="C#" Value="public enum PathDirection" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.PathDirection" /> enumeration is used by the <see cref="T:System.Web.UI.WebControls.SiteMapPath" /> control to specify the ordering used to render site map nodes. If the <see cref="P:System.Web.UI.WebControls.SiteMapPath.PathDirection" /> property is set to <see cref="F:System.Web.UI.WebControls.PathDirection.RootToCurrent" />, the navigation path is displayed in the most common way, from the top-most node to the current node, from left to right. If the <see cref="P:System.Web.UI.WebControls.SiteMapPath.PathDirection" /> is set to <see cref="F:System.Web.UI.WebControls.PathDirection.CurrentToRoot" />, the navigation path is displayed from the current node to the top-most node, from left to right.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the hierarchical order in which navigation nodes are rendered for site-navigation controls.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CurrentToRoot">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.UI.WebControls.PathDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Nodes are rendered in a hierarchical order from the current node to the top-most node, from left to right.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.UI.WebControls.PathDirection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Nodes are rendered in a hierarchical order from the top-most node to the current node, from left to right.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

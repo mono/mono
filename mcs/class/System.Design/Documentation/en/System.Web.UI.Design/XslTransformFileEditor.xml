@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="XslTransformFileEditor" FullName="System.Web.UI.Design.XslTransformFileEditor">
   <TypeSignature Language="C#" Value="public class XslTransformFileEditor : System.Web.UI.Design.UrlEditor" />
   <AssemblyInfo>
@@ -9,8 +10,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>An <see cref="T:System.Web.UI.Design.XslTransformFileEditor" /> object is used at design time to select and edit a URL for a XML transform file (.xsl) and to assign the URL to a control property. For example, the <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> control uses the <see cref="T:System.Web.UI.Design.XslTransformFileEditor" /> class at design time to set the value of the <see cref="P:System.Web.UI.WebControls.XmlDataSource.TransformFile" /> property.</para>
+      <para>Use the <see cref="T:System.ComponentModel.EditorAttribute" /> attribute to associate the <see cref="T:System.Web.UI.Design.XslTransformFileEditor" /> with a property. When the associated property is edited on the design surface, the designer host calls the <see cref="Overload:System.Web.UI.Design.UrlEditor.EditValue" /> method. The <see cref="Overload:System.Web.UI.Design.UrlEditor.EditValue" /> method uses the <see cref="Overload:System.Web.UI.Design.UrlBuilder.BuildUrl" /> method, which in turn displays a user interface for selecting the URL, and then returns the URL that is selected by the user. The <see cref="Overload:System.Web.UI.Design.UrlEditor.GetEditStyle" /> method indicates the display style of the user interface.</para>
+      <para>Derive a class from the <see cref="T:System.Web.UI.Design.XslTransformFileEditor" /> to define a custom editor for an XML transform file URL property. For example, a derived class can override the <see cref="Overload:System.Web.UI.Design.UrlEditor.EditValue" /> method, and then call the <see cref="Overload:System.Web.UI.Design.UrlBuilder.BuildUrl" /> method with a custom <see cref="P:System.Web.UI.Design.XslTransformFileEditor.Filter" /> or <see cref="P:System.Web.UI.Design.XslTransformFileEditor.Caption" /> value.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a design-time user interface for selecting an XML transform file.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +30,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.XslTransformFileEditor" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Caption">
@@ -35,9 +47,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.XslTransformFileEditor.Caption" /> property is used by the <see cref="Overload:System.Web.UI.Design.UrlEditor.EditValue" /> method when calling the <see cref="Overload:System.Web.UI.Design.UrlBuilder.BuildUrl" /> method, which displays the URL selection dialog box to the user at design time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the caption to display on the selection dialog box.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Filter">
@@ -50,9 +68,22 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.Design.XslTransformFileEditor.Filter" /> property is used by the <see cref="Overload:System.Web.UI.Design.UrlEditor.EditValue" /> method when calling the <see cref="Overload:System.Web.UI.Design.UrlBuilder.BuildUrl" /> method, which displays the URL selection dialog box to the user at design time.</para>
+          <para>The <see cref="P:System.Web.UI.Design.XslTransformFileEditor.Filter" /> property default value indicates two URL filters for the dialog box: one for XML transform files (*.xsl) and another for all files (*.*).</para>
+          <para>To specify a custom filter string, derive a class from the <see cref="T:System.Web.UI.Design.XslTransformFileEditor" /> class, and then override the <see cref="P:System.Web.UI.Design.XslTransformFileEditor.Filter" /> property to return the custom filter string.</para>
+          <para>A filter string contains one or more filter options. Each filter option contains a description of the filter, followed by the vertical bar (|) and the filter pattern. The strings for different filtering options are separated by the vertical bar. </para>
+          <para>Following is an example of a filter string that contains two filter options: </para>
+          <para>"XML Transform Files (*.xsl)|*.xsl|All Files (*.*)|*.*".</para>
+          <para>You can specify several filter patterns in a filter option by separating the filter patterns with semicolons. Following is an example of a filter string in which the first filter option specifies two filter patterns: </para>
+          <para>"Custom XML Transform Files (*.xs1; *.xs2)|*.xs1;*.xs2|All Files (*.*)|*.*".</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the URL filter options for the editor, which is used to filter the items that appear in the URL selection dialog box.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

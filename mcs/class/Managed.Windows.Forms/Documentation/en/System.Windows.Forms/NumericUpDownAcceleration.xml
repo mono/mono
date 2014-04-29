@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="NumericUpDownAcceleration" FullName="System.Windows.Forms.NumericUpDownAcceleration">
   <TypeSignature Language="C#" Value="public class NumericUpDownAcceleration" />
   <AssemblyInfo>
@@ -9,8 +10,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.NumericUpDownAcceleration" /> object is used by the <see cref="T:System.Windows.Forms.NumericUpDown" /> control to optionally provide acceleration when incrementing or decrementing the control through a large quantity of numbers.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides information specifying how acceleration should be performed on a spin box (also known as an up-down control) when the up or down button is pressed for specified time period.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,10 +31,15 @@
         <Parameter Name="increment" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <param name="seconds">To be added.</param>
-        <param name="increment">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.NumericUpDownAcceleration" /> class.</para>
+        </summary>
+        <param name="seconds">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of seconds the up or down button is pressed before the acceleration starts. </param>
+        <param name="increment">
+          <attribution license="cc4" from="Microsoft" modified="false" />The quantity the value displayed in the control should be incremented or decremented during acceleration.</param>
       </Docs>
     </Member>
     <Member MemberName="Increment">
@@ -40,9 +52,12 @@
         <ReturnType>System.Decimal</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the quantity to increment or decrement the displayed value during acceleration.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Seconds">
@@ -55,9 +70,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of seconds the up or down button must be pressed before the acceleration starts.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

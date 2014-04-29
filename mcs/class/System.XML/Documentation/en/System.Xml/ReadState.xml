@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ReadState" FullName="System.Xml.ReadState" FullNameSP="System_Xml_ReadState" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable ReadState extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum ReadState" />
@@ -14,10 +15,6 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para>Specifies the read state of an instance of a class derived
-      from the <see cref="T:System.Xml.XmlReader" /> class.</para>
-    </summary>
     <remarks>
       <para>When a reader is instantiated, the read state is set to
    <see langword="Initial" />. When the <see cref="M:System.Xml.XmlReader.Read" /> method is called, the read state is
@@ -27,6 +24,10 @@
    <see cref="M:System.Xml.XmlReader.Close" /> method
       is called, the read state is set to <see langword="Closed" />.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the state of the reader.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Closed">
@@ -45,10 +46,11 @@
       <Parameters />
       <MemberValue>Closed</MemberValue>
       <Docs>
+        <remarks>To be added.</remarks>
         <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.XmlReader.Close" /> method has been called.</para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -68,11 +70,11 @@
       <Parameters />
       <MemberValue>EndOfFile</MemberValue>
       <Docs>
-        <summary>
-          <para> The end of the XML data has been
-      reached.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The end of the file has been reached successfully.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -92,11 +94,11 @@
       <Parameters />
       <MemberValue>Error</MemberValue>
       <Docs>
-        <summary>
-    An error occurred that prevents the
-    read operation from continuing.
- </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An error occurred that prevents the read operation from continuing.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -116,10 +118,11 @@
       <Parameters />
       <MemberValue>Initial</MemberValue>
       <Docs>
-        <summary>
-          <para>The <see cref="M:System.Xml.XmlReader.Read" /> method has not been called.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Read method has not been called.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -139,12 +142,11 @@
       <Parameters />
       <MemberValue>Interactive</MemberValue>
       <Docs>
-        <summary>
-          <para>The <see cref="M:System.Xml.XmlReader.Read" /> method 
-   has
-   been called. Additional methods can now be called on the reader.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Read method has been called. Additional methods may be called on the reader.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

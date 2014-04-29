@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UpDownEventHandler" FullName="System.Windows.Forms.UpDownEventHandler">
   <TypeSignature Language="C#" Value="public delegate void UpDownEventHandler(object source, UpDownEventArgs e);" />
   <AssemblyInfo>
@@ -18,7 +19,10 @@
   <Docs>
     <param name="source">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle an event for an internal class.</para>
+    </summary>
   </Docs>
 </Type>

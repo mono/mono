@@ -913,7 +913,7 @@ namespace System.Xml
 				XmlElement element = CreateElement (reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.NameTable == this.NameTable);
 #if NET_2_0
 				if (reader.SchemaInfo != null)
-					SchemaInfo = reader.SchemaInfo;
+					element.SchemaInfo = reader.SchemaInfo;
 #endif
 				element.IsEmpty = reader.IsEmptyElement;
 

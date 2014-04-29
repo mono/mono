@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="VirtualDirectory" FullName="System.Web.Hosting.VirtualDirectory">
   <TypeSignature Language="C#" Value="public abstract class VirtualDirectory : System.Web.Hosting.VirtualFileBase" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Hosting.VirtualDirectory" /> class is the base class for objects that represent directories in a virtual file system. Typically, you would implement a descendent of the <see cref="T:System.Web.Hosting.VirtualDirectory" /> class for each <see cref="T:System.Web.Hosting.VirtualPathProvider" /> class descendent in your Web application.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a directory object in a virtual file or resource space.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +28,14 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="virtualPath">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Hosting.VirtualDirectory" /> class. </para>
+        </summary>
+        <param name="virtualPath">
+          <attribution license="cc4" from="Microsoft" modified="false" />The virtual path to the resource represented by this instance.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +48,16 @@
         <ReturnType>System.Collections.IEnumerable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Hosting.VirtualDirectory.Children" /> property contains both <see cref="T:System.Web.Hosting.VirtualFile" /> and <see cref="T:System.Web.Hosting.VirtualDirectory" /> objects that represent the files and directories contained in this virtual directory. To return only the <see cref="T:System.Web.Hosting.VirtualFile" /> objects, use the <see cref="P:System.Web.Hosting.VirtualDirectory.Files" /> property. To return only the <see cref="T:System.Web.Hosting.VirtualDirectory" /> objects, use the <see cref="P:System.Web.Hosting.VirtualDirectory.Directories" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of the files and subdirectories contained in this virtual directory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +70,16 @@
         <ReturnType>System.Collections.IEnumerable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Hosting.VirtualDirectory.Directories" /> property contains <see cref="T:System.Web.Hosting.VirtualDirectory" /> objects that represent the directories contained in this virtual directory. To return the <see cref="T:System.Web.Hosting.VirtualFile" /> objects, use the <see cref="P:System.Web.Hosting.VirtualDirectory.Files" /> property. To return both <see cref="T:System.Web.Hosting.VirtualFile" /> and <see cref="T:System.Web.Hosting.VirtualDirectory" /> objects, use the <see cref="P:System.Web.Hosting.VirtualDirectory.Children" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of all the subdirectories contained in this directory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +92,16 @@
         <ReturnType>System.Collections.IEnumerable</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.Hosting.VirtualDirectory.Files" /> property contains <see cref="T:System.Web.Hosting.VirtualFile" /> objects that represent the files contained in this virtual directory. To return the <see cref="T:System.Web.Hosting.VirtualDirectory" /> objects, use the <see cref="P:System.Web.Hosting.VirtualDirectory.Directories" /> property. To return both <see cref="T:System.Web.Hosting.VirtualFile" /> and <see cref="T:System.Web.Hosting.VirtualDirectory" /> objects, use the <see cref="P:System.Web.Hosting.VirtualDirectory.Children" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a list of all files contained in this directory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,10 +114,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates that this is a virtual resource that should be treated as a directory.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

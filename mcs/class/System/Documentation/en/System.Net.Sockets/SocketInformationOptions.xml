@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SocketInformationOptions" FullName="System.Net.Sockets.SocketInformationOptions">
   <TypeSignature Language="C#" Value="public enum SocketInformationOptions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SocketInformationOptions extends System.Enum" />
@@ -15,8 +16,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Describes states for a <see cref="T:System.Net.Sockets.Socket" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Connected">
@@ -31,7 +35,10 @@
         <ReturnType>System.Net.Sockets.SocketInformationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.Sockets.Socket" /> is connected.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Listening">
@@ -46,7 +53,10 @@
         <ReturnType>System.Net.Sockets.SocketInformationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.Sockets.Socket" /> is listening for new connections.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NonBlocking">
@@ -61,7 +71,10 @@
         <ReturnType>System.Net.Sockets.SocketInformationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.Sockets.Socket" /> is nonblocking.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="UseOnlyOverlappedIO">
@@ -76,7 +89,10 @@
         <ReturnType>System.Net.Sockets.SocketInformationOptions</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.Sockets.Socket" /> uses overlapped I/O.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

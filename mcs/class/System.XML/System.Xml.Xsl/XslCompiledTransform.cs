@@ -230,7 +230,7 @@ namespace System.Xml.Xsl
 		private void Load (XPathNavigator stylesheet,
 			XsltSettings settings, XmlResolver stylesheetResolver)
 		{
-			s = new Compiler (debugger).Compile (stylesheet, stylesheetResolver, null);
+			s = new Compiler (debugger, false).Compile (stylesheet, stylesheetResolver, null);
 		}
 
 		#endregion

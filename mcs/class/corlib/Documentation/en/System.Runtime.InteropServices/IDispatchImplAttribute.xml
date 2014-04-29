@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDispatchImplAttribute" FullName="System.Runtime.InteropServices.IDispatchImplAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class IDispatchImplAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit IDispatchImplAttribute extends System.Attribute" />
@@ -25,8 +26,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to classes or assemblies.</para>
+      <para>This attribute should only be set when an explicit implementation is required. When you set the attribute to <see cref="F:System.Runtime.InteropServices.IDispatchImplType.CompatibleImpl" />, the IDispatch implementation is supplied by passing the type information for the object to COM's CreateStdDispatch API. When you set the attribute to <see cref="F:System.Runtime.InteropServices.IDispatchImplType.InternalImpl" />, the IDispatch implementation is supplied by the common language runtime. Setting the attribute to <see cref="F:System.Runtime.InteropServices.IDispatchImplType.SystemDefinedImpl" /> allows the runtime to choose the appropriate implementation. When using the attribute on an assembly, the attribute applies to all classes defined within the assembly. When using the attribute on an individual class, the attribute applies only to the interfaces exposed by that class and overrides any assembly-level setting.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates which IDispatch implementation the common language runtime uses when exposing dual interfaces and dispinterfaces to COM.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -43,9 +51,16 @@
         <Parameter Name="implType" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="implType">To be added: an object of type 'short'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor takes an underlying 16-bit signed integer that represents each <see cref="T:System.Runtime.InteropServices.IDispatchImplType" /> enumeration member. The Type Library Importer (TlbImp.exe) uses this constructor to avoid generating a typeref to the IDispatchImplType value that <paramref name="value" /> represents, and then builds the signature with that token.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the IDispatchImplAttribute class with specified <see cref="T:System.Runtime.InteropServices.IDispatchImplType" /> value.</para>
+        </summary>
+        <param name="implType">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates which <see cref="T:System.Runtime.InteropServices.IDispatchImplType" /> enumeration will be used. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -62,9 +77,16 @@
         <Parameter Name="implType" Type="System.Runtime.InteropServices.IDispatchImplType" />
       </Parameters>
       <Docs>
-        <param name="implType">To be added: an object of type 'IDispatchImplType'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For readable code that is less prone to error, always use this constructor.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the IDispatchImplAttribute class with specified <see cref="T:System.Runtime.InteropServices.IDispatchImplType" /> value.</para>
+        </summary>
+        <param name="implType">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates which <see cref="T:System.Runtime.InteropServices.IDispatchImplType" /> enumeration will be used. </param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -80,9 +102,12 @@
         <ReturnType>System.Runtime.InteropServices.IDispatchImplType</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IDispatchImplType'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Runtime.InteropServices.IDispatchImplType" /> value used by the class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

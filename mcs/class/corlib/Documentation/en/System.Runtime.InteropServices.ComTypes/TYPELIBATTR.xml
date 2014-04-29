@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TYPELIBATTR" FullName="System.Runtime.InteropServices.ComTypes.TYPELIBATTR">
   <TypeSignature Language="C#" Value="public struct TYPELIBATTR" />
   <TypeSignature Language="ILAsm" Value=".class public sequential serializable sealed beforefieldinit TYPELIBATTR extends System.ValueType" />
@@ -11,9 +12,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about the TLIBATTR structure, see the MSDN Library.</para>
+      <para>The common language runtime throws an exception when a COM method in native code returns an HRESULT. For more information, see <format type="text/html"><a href="610b364b-2761-429d-9c4a-afbc3e66f1b9">How to: Map HRESULTs and Exceptions</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies a particular type library and provides localization support for member names.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="guid">
@@ -28,9 +36,15 @@
         <ReturnType>System.Guid</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about the TLIBATTR structure, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a globally unique library ID of a type library.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="lcid">
@@ -45,9 +59,15 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about the TLIBATTR structure, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a locale ID of a type library.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="syskind">
@@ -62,9 +82,15 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.SYSKIND</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about the TLIBATTR structure, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the target hardware platform of a type library.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="wLibFlags">
@@ -79,9 +105,15 @@
         <ReturnType>System.Runtime.InteropServices.ComTypes.LIBFLAGS</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about the TLIBATTR structure, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents library flags.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="wMajorVerNum">
@@ -96,9 +128,15 @@
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about the TLIBATTR structure, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the major version number of a type library.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="wMinorVerNum">
@@ -113,9 +151,15 @@
         <ReturnType>System.Int16</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about the TLIBATTR structure, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the minor version number of a type library.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

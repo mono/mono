@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IsolatedStorageScope" FullName="System.IO.IsolatedStorage.IsolatedStorageScope">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum IsolatedStorageScope" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed IsolatedStorageScope extends System.Enum" />
@@ -21,8 +22,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.IO.IsolatedStorage.IsolatedStorageScope" /> to specify a degree of scope for an isolated store. You can specify combinations of these levels that are supported by <see cref="T:System.IO.IsolatedStorage.IsolatedStorage" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Enumerates the levels of isolated storage scope that are supported by <see cref="T:System.IO.IsolatedStorage.IsolatedStorage" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Application">
@@ -37,8 +44,11 @@
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Isolated storage scoped to the application.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Assembly">
@@ -55,8 +65,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Isolated storage scoped to the identity of the assembly.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Domain">
@@ -73,8 +86,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Isolated storage scoped to the application domain identity.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Machine">
@@ -89,8 +105,11 @@
         <ReturnType>System.IO.IsolatedStorage.IsolatedStorageScope</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Isolated storage scoped to the machine.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -107,8 +126,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>No isolated storage usage.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Roaming">
@@ -125,8 +147,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The isolated store can be placed in a location on the file system that might roam (if roaming user data is enabled on the underlying operating system).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="User">
@@ -143,8 +168,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Isolated storage scoped by user identity.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

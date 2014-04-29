@@ -1355,9 +1355,51 @@ namespace MonoTests.System.Runtime.Caching
 
 				Assert.AreEqual (200, mc.GetCount (), "#CEO3");
 
-				global::System.Threading.Thread.Sleep (2 * 1000);
+				global::System.Threading.Thread.Sleep (4 * 1000);
 
 				Assert.AreEqual (100, mc.GetCount (), "#CEO4");
+			}
+		}
+
+		[Test]
+		public void TestCacheSliding ()
+		{    
+			var config = new NameValueCollection ();
+			config["cacheMemoryLimitMegabytes"] = 0.ToString ();
+			config["physicalMemoryLimitPercentage"] = 100.ToString ();
+			config["__MonoEmulateOneCPU"] = true.ToString ();
+
+			// it appears that pollingInterval does nothing, so we set the Mono timer as well
+			config["pollingInterval"] = new TimeSpan (0, 0, 1).ToString ();
+			config["__MonoTimerPeriod"] = 1.ToString ();
+
+			using (var mc = new MemoryCache ("TestCacheSliding",  config)) {
+				Assert.AreEqual (0, mc.GetCount (), "#CSL1");
+
+				var cip = new CacheItemPolicy();
+				cip.SlidingExpiration = new TimeSpan (0, 0, 1);
+				mc.Add("slidingtest", "42", cip);
+
+				mc.Add("expire1", "1", cip);
+				mc.Add("expire2", "2", cip);
+				mc.Add("expire3", "3", cip);
+				mc.Add("expire4", "4", cip);
+				mc.Add("expire5", "5", cip);
+
+				Assert.AreEqual (6, mc.GetCount (), "#CSL2");
+
+				for (int i = 0; i < 50; i++) {
+					global::System.Threading.Thread.Sleep (100);
+
+					var item = mc.Get ("slidingtest");
+					Assert.AreNotEqual (null, item, "#CSL3-" + i);
+				}
+
+				Assert.AreEqual (1, mc.GetCount (), "#CSL4");
+
+				global::System.Threading.Thread.Sleep (4 * 1000);
+
+				Assert.AreEqual (0, mc.GetCount (), "#CSL5");
 			}
 		}
 	}

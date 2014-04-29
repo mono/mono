@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ProfileProviderCollection" FullName="System.Web.Profile.ProfileProviderCollection">
   <TypeSignature Language="C#" Value="public sealed class ProfileProviderCollection : System.Configuration.SettingsProviderCollection" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The profile providers for an application are exposed as a read-only <see cref="T:System.Web.Profile.ProfileProviderCollection" /> through the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property of the <see cref="T:System.Web.Profile.ProfileManager" /> class. You can access a specific profile provider in the collection by name and cast it as the specific provider type, such as <see cref="T:System.Web.Profile.SqlProfileProvider" />. This enables you to manage user profile properties from multiple data stores in a single application. It also allows you to access members of a specific profile provider that are not members of the <see cref="T:System.Web.Profile.ProfileProvider" /> abstract class.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A collection of objects that inherit the <see cref="T:System.Web.Profile.ProfileProvider" /> abstract class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor is not intended to be used from your code. The profile providers for an application are exposed as a read-only <see cref="T:System.Web.Profile.ProfileProviderCollection" /> through the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property of the <see cref="T:System.Web.Profile.ProfileManager" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new, empty profile provider collection.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +50,18 @@
         <Parameter Name="provider" Type="System.Configuration.Provider.ProviderBase" />
       </Parameters>
       <Docs>
-        <param name="provider">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not intended to be used from your code.</para>
+          <para>Profile provider instances are added to the ProfileProviderCollection for an application using the <format type="text/html"><a href="9e998377-b07f-44c1-ad9b-20a60e83c18f">providers</a></format> section of the <format type="text/html"><a href="ccb9bf3a-a044-464d-b89b-5cb5a3d389dd">profile</a></format> configuration element. You can access the profile provider collection using the <see cref="P:System.Web.Profile.ProfileManager.Providers" /> property of the <see cref="T:System.Web.Profile.ProfileManager" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a profile provider to the collection.</para>
+        </summary>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />The profile provider to add to the collection.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

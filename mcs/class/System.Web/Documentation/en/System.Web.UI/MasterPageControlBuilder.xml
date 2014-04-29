@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MasterPageControlBuilder" FullName="System.Web.UI.MasterPageControlBuilder">
   <TypeSignature Language="C#" Value="public class MasterPageControlBuilder : System.Web.UI.UserControlControlBuilder" />
   <AssemblyInfo>
@@ -9,9 +10,15 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.MasterPageControlBuilder" /> class is used to create a master page that does not inherit from the <see cref="T:System.Web.UI.UserControl" /> class. The classes that you derive from the <see cref="T:System.Web.UI.MasterPageControlBuilder" /> class function as other master pages do, provided that you specify your new class in the Inherits attribute of the .master file that you create in your Web application.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Acts as a merging class and container for content pages that are composed only of <see cref="T:System.Web.UI.WebControls.Content" /> controls and their respective child controls. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -19,9 +26,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.MasterPageControlBuilder.#ctor" /> constructor is used internally by the ASP.NET page framework and is not intended to be called from your code.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.MasterPageControlBuilder" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

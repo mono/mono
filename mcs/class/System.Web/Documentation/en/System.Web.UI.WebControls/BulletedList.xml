@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="BulletedList" FullName="System.Web.UI.WebControls.BulletedList">
   <TypeSignature Language="C#" Value="public class BulletedList : System.Web.UI.WebControls.ListControl, System.Web.UI.IPostBackEventHandler" />
   <AssemblyInfo>
@@ -27,9 +28,238 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>In this topic:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#Introduction">Introduction</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#Accessibility">Accessibility</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="#DeclarativeSyntax">Declarative Syntax</a>
+            </format>
+          </para>
+        </item>
+      </list>
+      <format type="text/html">
+        <a href="#Introduction" />
+      </format>
+      <format type="text/html">
+        <h2>Introduction</h2>
+      </format>
+      <para>Use the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control to create a list of items that are formatted with bullets. To specify the individual list items that you want to appear in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control, place a <see cref="T:System.Web.UI.WebControls.ListItem" /> object for each entry between the opening and closing tags of the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+      <para>To specify the bullet type to use to display list items in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control, set the <see cref="P:System.Web.UI.WebControls.BulletedList.BulletStyle" /> property to one of the bullet types that are defined by the <see cref="T:System.Web.UI.WebControls.BulletStyle" /> enumeration. The following table lists the available bullet styles. </para>
+      <list type="table">
+        <listheader>
+          <item>
+            <term>
+              <para>Bullet style </para>
+            </term>
+            <description>
+              <para>Description </para>
+            </description>
+          </item>
+        </listheader>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.BulletStyle.NotSet" />
+            </para>
+          </term>
+          <description>
+            <para>Not set. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.BulletStyle.Numbered" />
+            </para>
+          </term>
+          <description>
+            <para>A number. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.BulletStyle.LowerAlpha" />
+            </para>
+          </term>
+          <description>
+            <para>A lowercase letter. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.BulletStyle.UpperAlpha" />
+            </para>
+          </term>
+          <description>
+            <para>An uppercase letter. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.BulletStyle.LowerRoman" />
+            </para>
+          </term>
+          <description>
+            <para>A lowercase Roman numeral. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.BulletStyle.UpperRoman" /> </para>
+          </term>
+          <description>
+            <para>An uppercase Roman numeral. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.BulletStyle.Disc" />
+            </para>
+          </term>
+          <description>
+            <para>A filled circle. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.BulletStyle.Circle" />
+            </para>
+          </term>
+          <description>
+            <para>An empty circle. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.BulletStyle.Square" />
+            </para>
+          </term>
+          <description>
+            <para>A filled square. </para>
+          </description>
+        </item>
+        <item>
+          <term>
+            <para>
+              <see cref="F:System.Web.UI.WebControls.BulletStyle.CustomImage" />
+            </para>
+          </term>
+          <description>
+            <para>A custom image. </para>
+          </description>
+        </item>
+      </list>
+      <para>Use the <see cref="P:System.Web.UI.WebControls.BulletedList.FirstBulletNumber" /> property to specify the value that starts the numbering of list items in an ordered <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. The value that is assigned to the <see cref="P:System.Web.UI.WebControls.BulletedList.FirstBulletNumber" /> property is ignored, if the <see cref="P:System.Web.UI.WebControls.BulletedList.BulletStyle" /> property is set to the <see cref="F:System.Web.UI.WebControls.BulletStyle.Disc" />, <see cref="F:System.Web.UI.WebControls.BulletStyle.Square" />, <see cref="F:System.Web.UI.WebControls.BulletStyle.Circle" />, or <see cref="F:System.Web.UI.WebControls.BulletStyle.CustomImage" /> field. If you set the <see cref="P:System.Web.UI.WebControls.BulletedList.BulletStyle" /> property to the value of <see cref="F:System.Web.UI.WebControls.BulletStyle.CustomImage" /> to specify a custom image for the bullet, you must set the <see cref="P:System.Web.UI.WebControls.BulletedList.BulletImageUrl" /> property also to specify the location of the image file.</para>
+      <para>To specify the display behavior of the list items in a <see cref="T:System.Web.UI.WebControls.BulletedList" />, set the <see cref="P:System.Web.UI.WebControls.BulletedList.DisplayMode" /> property to one of the values that are defined by the <see cref="T:System.Web.UI.WebControls.BulletedListDisplayMode" /> enumeration. The defined display behaviors are <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.Text" />, <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.HyperLink" />, and <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.LinkButton" />.</para>
+      <para>When a hyperlink is clicked, it navigates to a URL. Use the <see cref="P:System.Web.UI.WebControls.ListItem.Value" /> property to specify the URL that a hyperlink navigates to. Use the <see cref="P:System.Web.UI.WebControls.BulletedList.Target" /> property to specify the frame or window that displays the Web page that is navigated to when a hyperlink is clicked.</para>
+      <para>When the <see cref="P:System.Web.UI.WebControls.BulletedList.DisplayMode" /> property is set to <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.LinkButton" />, the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control displays list items as links that post back to the server when clicked. To programmatically control the actions that are performed when a link button is clicked, provide an event handler for the <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event. Note that the <see cref="P:System.Web.UI.WebControls.BulletedList.SelectedIndex" /> and <see cref="P:System.Web.UI.WebControls.BulletedList.SelectedItem" /> properties are inherited from the <see cref="T:System.Web.UI.WebControls.ListControl" /> class and are not applicable to the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. Use the event data of the <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> class to determine the index of the link button in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> that was clicked.</para>
+      <para>The <see cref="T:System.Web.UI.WebControls.BulletedList" /> control also supports data binding. To bind the <see cref="T:System.Web.UI.WebControls.BulletedList" /> to a data source, you can use any of the provided data-binding mechanisms. For more information, see <format type="text/html"><a href="ab7b2846-975b-4057-a948-45527497c742">Binding to Databases</a></format>. </para>
+      <format type="text/html">
+        <a href="#Accessibility" />
+      </format>
+      <format type="text/html">
+        <h2>Accessibility</h2>
+      </format>
+      <para>The markup rendered by default for this control might not conform to accessibility standards such as the Web Content Accessibility Guidelines 1.0 (WCAG) priority 1 guidelines. For details about accessibility support for this control, see <format type="text/html"><a href="847a37e3-ce20-41da-b0d3-7dfb0fdae9a0">ASP.NET Controls and Accessibility</a></format>.</para>
+      <format type="text/html">
+        <a href="#DeclarativeSyntax" />
+      </format>
+      <format type="text/html">
+        <h2>Declarative Syntax</h2>
+      </format>
+      <code>&lt;asp:BulletedList
+    AccessKey="string"
+    AppendDataBoundItems="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    AutoPostBack="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    BackColor="color name|#dddddd"
+    BorderColor="color name|#dddddd"
+    BorderStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|None|Dotted|Dashed|Solid|Double|Groove|Ridge|
+        Inset|Outset"
+    BorderWidth="size"
+    BulletImageUrl="uri"
+    BulletStyle="<codeFeaturedElement>NotSet</codeFeaturedElement>|Numbered|LowerAlpha|UpperAlpha|LowerRoman|
+        UpperRoman|Disc|Circle|Square|CustomImage"
+    CausesValidation="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    CssClass="string"
+    DataMember="string"
+    DataSource="string"
+    DataSourceID="string"
+    DataTextField="string"
+    DataTextFormatString="string"
+    DataValueField="string"
+    DisplayMode="<codeFeaturedElement>Text</codeFeaturedElement>|HyperLink|LinkButton"
+    Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableTheming="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    EnableViewState="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    FirstBulletNumber="integer"
+    Font-Bold="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Italic="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Names="string"
+    Font-Overline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Size="string|Smaller|Larger|XX-Small|X-Small|Small|
+        Medium|Large|X-Large|XX-Large"
+    Font-Strikeout="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    Font-Underline="True|<codeFeaturedElement>False</codeFeaturedElement>"
+    ForeColor="color name|#dddddd"
+    Height="size"
+    ID="string"
+    OnClick="Click event handler"
+    OnDataBinding="DataBinding event handler"
+    OnDataBound="DataBound event handler"
+    OnDisposed="Disposed event handler"
+    OnInit="Init event handler"
+    OnLoad="Load event handler"
+    OnPreRender="PreRender event handler"
+    OnSelectedIndexChanged="SelectedIndexChanged event handler"
+    OnTextChanged="TextChanged event handler"
+    OnUnload="Unload event handler"
+    runat="server"
+    SkinID="string"
+    Style="string"
+    TabIndex="integer"
+    Target="string|_blank|_parent|_search|_self|<codeFeaturedElement>_top</codeFeaturedElement>"
+    ToolTip="string"
+    ValidationGroup="string"
+    Visible="<codeFeaturedElement>True</codeFeaturedElement>|False"
+    Width="size"
+&gt;
+            &lt;asp:ListItem
+                Enabled="<codeFeaturedElement>True</codeFeaturedElement>|False"
+                Selected="True|<codeFeaturedElement>False</codeFeaturedElement>"
+                Text="string"
+                Value="string"
+            /&gt;
+&lt;/asp:BulletedList&gt;</code>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates a control that generates a list of items in a bulleted format.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -37,9 +267,15 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.BulletedList.#ctor" /> constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.BulletedList" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.WebControls.BulletedList" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +291,17 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.BulletedList.AddAttributesToRender(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers to insert the appropriate attributes and styles into the <see cref="T:System.Web.UI.HtmlTextWriter" /> output stream for a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the HTML attributes and styles for a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control to render to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client.  </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -79,10 +322,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.BulletedList.AutoPostBack" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.ListControl" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. Do not assign a value to the <see cref="P:System.Web.UI.WebControls.BulletedList.AutoPostBack" /> property. If you do assign a value to the <see cref="P:System.Web.UI.WebControls.BulletedList.AutoPostBack" />, a <see cref="T:System.NotSupportedException" /> exception is thrown.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the <see cref="P:System.Web.UI.WebControls.ListControl.AutoPostBack" /> property for the base class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -106,10 +355,31 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.BulletedList.BulletImageUrl" /> property to specify the path to an image to display as each bullet in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. To specify a custom image for the bullets, you must also set the <see cref="P:System.Web.UI.WebControls.BulletedList.BulletStyle" /> property to the value <see cref="F:System.Web.UI.WebControls.BulletStyle.CustomImage" />.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.UI.WebControls.BulletedList" /> control does not support the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property because the bullets are inherently decorative and do not provide additional information that needs to be conveyed via assistive technology. However, if you want to use a custom image to convey a concept to the user, you should add additional text to each of the bulleted list items or use a control that allows you to specify alternate text for each image.</para>
+          </block>
+          <para>You can specify either a relative or an absolute path to the image. A relative path relates the location of the image to the location of the Web page without specifying a complete path on the server. The path is relative to the location of the Web page. This makes it easier to move the entire site to another directory on the server without updating the code. </para>
+          <para>The following code example shows a relative path to an image file:</para>
+          <para>[C#]</para>
+          <code>\\Images\\image1.jpg</code>
+          <para>[Visual Basic]</para>
+          <code>"Images\image1.jpg"</code>
+          <para>The following code example shows an absolute path to an image file:</para>
+          <para>[C#]</para>
+          <code>"c:\\MyImagesDir\\image1.jpg" </code>
+          <para>[Visual Basic]</para>
+          <code>"c"\MyImagesDir\image1.jpg"</code>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the path to an image to display for each bullet in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -127,10 +397,132 @@
         <ReturnType>System.Web.UI.WebControls.BulletStyle</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="T:System.Web.UI.WebControls.BulletStyle" /> property to specify the bullet style to apply to the list items in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. The <see cref="T:System.Web.UI.WebControls.BulletStyle" /> property is set using one of the <see cref="T:System.Web.UI.WebControls.BulletStyle" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Bullet style </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletStyle.NotSet" />
+                </para>
+              </term>
+              <description>
+                <para>Not set. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletStyle.Numbered" />
+                </para>
+              </term>
+              <description>
+                <para>A number. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletStyle.LowerAlpha" />
+                </para>
+              </term>
+              <description>
+                <para>A lowercase letter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletStyle.UpperAlpha" />
+                </para>
+              </term>
+              <description>
+                <para>An uppercase letter. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletStyle.LowerRoman" />
+                </para>
+              </term>
+              <description>
+                <para>A lowercase Roman numeral. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletStyle.UpperRoman" /> </para>
+              </term>
+              <description>
+                <para>An uppercase Roman numeral. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletStyle.Disc" />
+                </para>
+              </term>
+              <description>
+                <para>A filled circle. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletStyle.Circle" />
+                </para>
+              </term>
+              <description>
+                <para>An empty circle. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletStyle.Square" />
+                </para>
+              </term>
+              <description>
+                <para>A filled square. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletStyle.CustomImage" />
+                </para>
+              </term>
+              <description>
+                <para>A custom image. </para>
+              </description>
+            </item>
+          </list>
+          <para>Specifying the <see cref="F:System.Web.UI.WebControls.BulletStyle.CustomImage" /> value allows you to supply your own image for the bullet. If you specify the <see cref="F:System.Web.UI.WebControls.BulletStyle.CustomImage" /> value, you must also set the <see cref="P:System.Web.UI.WebControls.BulletedList.BulletImageUrl" /> property to the URL of the custom image to use.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Web.UI.WebControls.BulletedList" /> control does not support the <see cref="P:System.Web.UI.WebControls.Image.AlternateText" /> property because the bullets are inherently decorative and do not provide additional information that needs to be conveyed via assistive technology. However, if you want to use a custom image to convey a concept to the user, you should add additional text to each of the bulleted list items or use a control that allows you to specify alternate text for each image.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the bullet style for the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -143,9 +535,16 @@
         <ReturnType>System.Web.UI.WebControls.BulletedListEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event is raised when a list item in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control is clicked. To enable list items in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control to raise the <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event, the <see cref="P:System.Web.UI.WebControls.BulletedList.DisplayMode" /> property first must be set to the value <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.LinkButton" />.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information about handling events, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when a link button in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -158,10 +557,16 @@
         <ReturnType>System.Web.UI.ControlCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.BulletedList.Controls" /> property is inherited from the <see cref="T:System.Web.UI.Control" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. The <see cref="P:System.Web.UI.WebControls.BulletedList.Controls" /> collection is overridden from the base class to always return the <see cref="T:System.Web.UI.EmptyControlCollection" /> collection.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.UI.ControlCollection" /> collection for the control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -179,10 +584,61 @@
         <ReturnType>System.Web.UI.WebControls.BulletedListDisplayMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.BulletedList.DisplayMode" /> property to specify the display behavior to apply to the content of list items in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. The <see cref="P:System.Web.UI.WebControls.BulletedList.DisplayMode" /> property is set using one of the <see cref="T:System.Web.UI.WebControls.BulletedListDisplayMode" /> enumeration values. The following table lists the possible values.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Displayed as</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.Text" />
+                </para>
+              </term>
+              <description>
+                <para>Text. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.HyperLink" />
+                </para>
+              </term>
+              <description>
+                <para>Hyperlinks. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>
+                  <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.LinkButton" />
+                </para>
+              </term>
+              <description>
+                <para>Link buttons. </para>
+              </description>
+            </item>
+          </list>
+          <para>The <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.HyperLink" /> value allows you to display list content as hyperlinks. When clicked, a hyperlink navigates to a URL. Use the <see cref="P:System.Web.UI.WebControls.ListItem.Value" /> property to specify the URL that a hyperlink navigates to.</para>
+          <para>The <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.LinkButton" /> field allows you to display list content as links. Use the <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event to post back to the server when a link button is clicked.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the display mode of the list content in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -200,10 +656,17 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.BulletedList.FirstBulletNumber" /> property to specify the value that starts the numbering of list items in an ordered <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. The value that is assigned to the <see cref="P:System.Web.UI.WebControls.BulletedList.FirstBulletNumber" /> property is ignored, if the <see cref="P:System.Web.UI.WebControls.BulletedList.BulletStyle" /> property is set to the <see cref="F:System.Web.UI.WebControls.BulletStyle.Disc" />, <see cref="F:System.Web.UI.WebControls.BulletStyle.Square" />, <see cref="F:System.Web.UI.WebControls.BulletStyle.Circle" />, or <see cref="F:System.Web.UI.WebControls.BulletStyle.CustomImage" /> values. Although the value of the <see cref="P:System.Web.UI.WebControls.BulletedList.FirstBulletNumber" /> property is an integer, it does not always cause a bullet to render as a number. For example, if you set the <see cref="P:System.Web.UI.WebControls.BulletedList.FirstBulletNumber" /> property to 4 and set the <see cref="P:System.Web.UI.WebControls.BulletedList.BulletStyle" /> property to the value <see cref="F:System.Web.UI.WebControls.BulletStyle.LowerAlpha" />, the first bullet number will render as a lowercase d.</para>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value that starts the numbering of list items in an ordered <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -219,10 +682,19 @@
         <Parameter Name="e" Type="System.Web.UI.WebControls.BulletedListEventArgs" />
       </Parameters>
       <Docs>
-        <param name="e">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event is raised when a list item in the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control is clicked. To enable list items in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control to raise the <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event, you must first set the <see cref="P:System.Web.UI.WebControls.BulletedList.DisplayMode" /> property to the value <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.LinkButton" />.</para>
+          <para>Raising an event invokes the event handler through a delegate. For more information, see <format type="text/html"><a href="01e4f1bc-e55e-413f-98c7-6588493e5f67">Consuming Events</a></format>.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.BulletedList.OnClick(System.Web.UI.WebControls.BulletedListEventArgs)" /> method also allows derived classes to handle the event without attaching a delegate. This is the preferred technique for handling the event in a derived class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises the <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event for the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+        </summary>
+        <param name="e">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> that contains the event data. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -238,10 +710,18 @@
         <Parameter Name="eventArgument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventArgument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.BulletedList.RaisePostBackEvent(System.String)" /> method is used internally by the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control when a link button within the item list is clicked. The containing page specifies the index of the clicked link button in the <paramref name="eventArgument" /> parameter, which is used to initialize the <see cref="P:System.Web.UI.WebControls.BulletedListEventArgs.Index" /> property of a <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> object. The <see cref="M:System.Web.UI.WebControls.BulletedList.RaisePostBackEvent(System.String)" /> method raises a <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event by passing the initialized <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> object to the <see cref="M:System.Web.UI.WebControls.BulletedList.OnClick(System.Web.UI.WebControls.BulletedListEventArgs)" /> method.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.BulletedList.RaisePostBackEvent(System.String)" /> method optionally can perform validation before raising the <see cref="E:System.Web.UI.WebControls.BulletedList.Click" /> event for the control. To validate a group of controls on the page when a link button within the <see cref="T:System.Web.UI.WebControls.BulletedList" /> is clicked, set the <see cref="P:System.Web.UI.WebControls.ListControl.CausesValidation" /> property to true and specify the group of controls to be validated in the <see cref="P:System.Web.UI.WebControls.ListControl.ValidationGroup" /> property. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Raises events for the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control when a form is posted back to the server.</para>
+        </summary>
+        <param name="eventArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string representation for the index of the list item that raised the event.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -260,9 +740,18 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.BulletedList.Render(System.Web.UI.HtmlTextWriter)" /> method is used primarily by control developers.</para>
+          <para>The <see cref="M:System.Web.UI.WebControls.BulletedList.Render(System.Web.UI.HtmlTextWriter)" /> method writes the rendered content of the <see cref="T:System.Web.UI.WebControls.BulletedList" /> items to the client using the supplied <see cref="T:System.Web.UI.HtmlTextWriter" /> object. Each <see cref="T:System.Web.UI.WebControls.BulletedList" /> item is represented by an element in the <see cref="P:System.Web.UI.WebControls.ListControl.Items" /> collection.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.ListControl.Items" /> property of the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control is empty, no content is rendered to the <see cref="T:System.Web.UI.HtmlTextWriter" />. If there is at least one list item in the <see cref="P:System.Web.UI.WebControls.ListControl.Items" /> collection, the <see cref="M:System.Web.UI.WebControls.BulletedList.Render(System.Web.UI.HtmlTextWriter)" /> method writes the HTML content for the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control using the <see cref="M:System.Web.UI.WebControls.WebControl.RenderBeginTag(System.Web.UI.HtmlTextWriter)" />, <see cref="M:System.Web.UI.WebControls.BulletedList.RenderContents(System.Web.UI.HtmlTextWriter)" />, and <see cref="M:System.Web.UI.WebControls.WebControl.RenderEndTag(System.Web.UI.HtmlTextWriter)" /> methods.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Writes the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control content to the specified <see cref="T:System.Web.UI.HtmlTextWriter" /> object for display on the client.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client.</param>
       </Docs>
     </Member>
     <Member MemberName="RenderBulletText">
@@ -277,12 +766,21 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="item">To be added.</param>
-        <param name="index">To be added.</param>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Web.UI.WebControls.BulletedList.RenderBulletText(System.Web.UI.WebControls.ListItem,System.Int32,System.Web.UI.HtmlTextWriter)" /> method renders the bulleted text for each list item in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control using the specified <see cref="P:System.Web.UI.WebControls.BulletedList.DisplayMode" /> property.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the bulleted text for each list item in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+        </summary>
+        <param name="item">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.Web.UI.WebControls.ListItem" /> objects in a <see cref="T:System.Web.UI.WebControls.BulletedList" />. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the <see cref="T:System.Web.UI.WebControls.ListItem" /> to retrieve from the collection. </param>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The output stream that renders HTML content to the client. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -301,9 +799,16 @@
         <Parameter Name="writer" Type="System.Web.UI.HtmlTextWriter" />
       </Parameters>
       <Docs>
-        <param name="writer">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method renders the list items of a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control as bullets into the specified <see cref="T:System.Web.UI.HtmlTextWriter" />. This method is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Renders the list items of a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control as bullets into the specified <see cref="T:System.Web.UI.HtmlTextWriter" />.</para>
+        </summary>
+        <param name="writer">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.UI.HtmlTextWriter" /> that represents the output stream to render HTML content on the client. </param>
       </Docs>
     </Member>
     <Member MemberName="SelectedIndex">
@@ -321,10 +826,19 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the base class, <see cref="T:System.Web.UI.WebControls.ListControl" />, the <see cref="P:System.Web.UI.WebControls.ListControl.SelectedIndex" /> property returns a zero-based index of the currently selected item. The default is -1, which indicates that nothing is selected. The <see cref="P:System.Web.UI.WebControls.BulletedList.SelectedIndex" /> property is not applicable to the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+          <para>Note   When you use the get accessor for the <see cref="P:System.Web.UI.WebControls.BulletedList.SelectedIndex" /> property, it always returns -1. An attempt to use the set accessor for the <see cref="P:System.Web.UI.WebControls.BulletedList.SelectedIndex" /> property raises a <see cref="T:System.NotSupportedException" />.</para>
+          <para>Use the event data of the <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> class to determine the index of the link button in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control that was clicked.</para>
+          <para>This property is not bindable in visual designers, but is bindable at runtime. For more information, see <see cref="T:System.ComponentModel.BindableAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the zero-based index of the currently selected item in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -342,10 +856,20 @@
         <ReturnType>System.Web.UI.WebControls.ListItem</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>In the base class, <see cref="T:System.Web.UI.WebControls.ListControl" />, the <see cref="P:System.Web.UI.WebControls.ListControl.SelectedItem" /> property returns a <see cref="T:System.Web.UI.WebControls.ListItem" /> object that represents the currently selected item in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. The default is null. The <see cref="P:System.Web.UI.WebControls.BulletedList.SelectedItem" /> property is not applicable to the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+          <block subset="none" type="note">
+            <para> If you use the get accessor for the <see cref="P:System.Web.UI.WebControls.BulletedList.SelectedItem" /> property to return the selected item for a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control, it always returns null.</para>
+          </block>
+          <para>Use the event data of the <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> class to determine the index of the link button in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> that was clicked.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the currently selected item in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -366,10 +890,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.BulletedList.SelectedValue" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.ListControl" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.BulletedList.SelectedValue" /> property is set internally based on the selected list item in the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. If you set the <see cref="P:System.Web.UI.WebControls.BulletedList.SelectedValue" /> property directly, a <see cref="T:System.NotSupportedException" /> exception is thrown.</para>
+          </block>
+          <para>This property is not bindable in visual designers, but is bindable at runtime. For more information, see <see cref="T:System.ComponentModel.BindableAttribute" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <see cref="P:System.Web.UI.WebControls.ListItem.Value" /> property of the selected <see cref="T:System.Web.UI.WebControls.ListItem" /> object in the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -388,9 +922,16 @@
         <Parameter Name="eventArgument" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="eventArgument">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.BulletedList" /> instance is cast to an <see cref="T:System.Web.UI.IPostBackEventHandler" /> interface.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For a description of this method, see <see cref="M:System.Web.UI.IPostBackEventHandler.RaisePostBackEvent(System.String)" />.</para>
+        </summary>
+        <param name="eventArgument">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents an optional event argument to pass to the event handler. </param>
       </Docs>
     </Member>
     <Member MemberName="TagKey">
@@ -400,10 +941,16 @@
         <ReturnType>System.Web.UI.HtmlTextWriterTag</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.BulletedList.TagKey" /> property to determine the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value that is associated with the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. The <see cref="P:System.Web.UI.WebControls.BulletedList.TagKey" /> property is used primarily by control developers.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.UI.HtmlTextWriterTag" /> value for the specified <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -424,10 +971,78 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Values must begin with a letter in the range of A through Z (case-insensitive), except for the special values that are listed in the following table, which begin with an underscore.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>_blank </para>
+              </term>
+              <description>
+                <para>Renders the content in a new window without frames. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_parent </para>
+              </term>
+              <description>
+                <para>Renders the content in the immediate frame-set parent. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_search</para>
+              </term>
+              <description>
+                <para>Renders the content in the search pane.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_self </para>
+              </term>
+              <description>
+                <para>Renders the content in the frame with focus. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>_top </para>
+              </term>
+              <description>
+                <para>Renders the content in the full window without frames. </para>
+              </description>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>Check your browser documentation to determine if the _search value is supported.  For example, Microsoft Internet Explorer 5.0 and later support the _search target value.</para>
+          </block>
+          <para>Use the <see cref="P:System.Web.UI.WebControls.BulletedList.Target" /> property to specify the frame or window that displays the Web page that is linked to when a hyperlink in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control is clicked. To display the content of the list items as hyperlinks in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control, set the <see cref="T:System.Web.UI.WebControls.BulletedListDisplayMode" /> property to the value <see cref="F:System.Web.UI.WebControls.BulletedListDisplayMode.HyperLink" />. Then, set the <see cref="P:System.Web.UI.WebControls.ListItem.Value" /> property of each list item to the URL of the Web page to navigate to.</para>
+          <para>If the <see cref="P:System.Web.UI.WebControls.BulletedList.Target" /> property is not set, the browser or window with focus refreshes when the hyperlink is clicked.</para>
+          <block subset="none" type="note">
+            <para> The <see cref="P:System.Web.UI.WebControls.BulletedList.Target" /> property renders as a target attribute. The target attribute on anchor elements is not allowed in the XHTML 1.1 document type definition. Do not set the <see cref="P:System.Web.UI.WebControls.BulletedList.Target" /> property if the rendered output for the <see cref="T:System.Web.UI.WebControls.BulletedList" /> must be XHTML 1.1 compliant. For more information, refer to the topic <format type="text/html"><a href="1b78d416-66bb-43a5-ac77-c703aab55b97">ASP.NET and XHTML Compliance</a></format>. </para>
+            <para>When creating accessible Web pages, it is strongly recommended you avoid using the <see cref="P:System.Web.UI.WebControls.BulletedList.Target" /> property to target another window. For more information, see <format type="text/html"><a href="7e3ce9c4-6b7d-4fb1-94b5-72cf2a44fe13">ASP.NET Accessibility</a></format>.</para>
+          </block>
+          <para>The value of this property is stored in view state.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the target window or frame in which to display the Web page content that is linked to when a hyperlink in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> control is clicked.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -445,10 +1060,20 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Web.UI.WebControls.BulletedList.Text" /> property is inherited from the <see cref="T:System.Web.UI.WebControls.ListControl" /> class and is not applicable to the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="P:System.Web.UI.WebControls.BulletedList.Text" /> property is set internally based on the selected list item in the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control. If you set the <see cref="P:System.Web.UI.WebControls.BulletedList.Text" /> property directly, a <see cref="T:System.NotSupportedException" /> exception is thrown.</para>
+          </block>
+          <para>While you cannot access the <see cref="P:System.Web.UI.WebControls.BulletedList.Text" /> property of <see cref="T:System.Web.UI.WebControls.BulletedList" /> control, you can use the event data of the <see cref="T:System.Web.UI.WebControls.BulletedListEventArgs" /> class to determine the index of the link button in a <see cref="T:System.Web.UI.WebControls.BulletedList" /> that was clicked. You can then access the <see cref="P:System.Web.UI.WebControls.LinkButton.Text" /> property of the <see cref="T:System.Web.UI.WebControls.LinkButton" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text for the <see cref="T:System.Web.UI.WebControls.BulletedList" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="FontProperty" FullName="System.Windows.Forms.VisualStyles.FontProperty">
   <TypeSignature Language="C#" Value="public enum FontProperty" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.VisualStyles.FontProperty" /> enumeration represents a set of font properties that describe visual style elements. The <see cref="T:System.Windows.Forms.VisualStyles.FontProperty" /> values are used as an argument in the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.GetFont(System.Drawing.IDeviceContext,System.Windows.Forms.VisualStyles.FontProperty)" /> method to specify which property value to retrieve for the element that the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> currently represents.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Identifies the font properties of a visual style element.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="GlyphFont">
@@ -20,8 +27,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.FontProperty</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The font that a glyph is drawn with.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

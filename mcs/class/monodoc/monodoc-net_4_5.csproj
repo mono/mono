@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{46C0366B-72E7-4482-A6C4-4C8CE8318BDA}</ProjectGuid>
+    <ProjectGuid>{141D4A4E-C16C-4FF6-9E35-54AF58BE6080}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>618,612,672,809,1699,169,164,162,168,219,618,612</NoWarn>
-    <OutputPath>bin\Debug\monodoc-net_4_5</OutputPath>
+    <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -516,7 +516,8 @@
     <Compile Include="Monodoc\storage\UncompiledDocStorage.cs" />
     <Compile Include="Monodoc\storage\ZipStorage.cs" />
     <Compile Include="Monodoc\Tree.cs" />
-    <Compile Include="Monodoc\TypeUtils.cs" />  </ItemGroup>
+    <Compile Include="Monodoc\TypeUtils.cs" />
+  </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">
@@ -528,37 +529,40 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\ICSharpCode.SharpZipLib\ICSharpCode.SharpZipLib-net_4_5.csproj">
-      <Project>{039AD56A-E91B-4803-8328-287F70B61D14}</Project>
+      <Project>{0B587DBA-BA92-4B92-821A-AA200C612A7E}</Project>
       <Name>ICSharpCode.SharpZipLib\ICSharpCode.SharpZipLib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{4ED6CCE8-8E8A-4D82-8BCA-3EA4D4203AA4}</Project>
+      <Project>{2534ADE0-05E4-490F-933D-1E39310A0CB9}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Xml.Linq\System.Xml.Linq-net_4_5.csproj">
-      <Project>{A581C8A4-F031-43BA-A744-042ECD6EA6FE}</Project>
+      <Project>{8328796E-8A15-4972-8F1E-2F15E7D57C42}</Project>
       <Name>System.Xml.Linq\System.Xml.Linq-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
-      <Project>{CA2CD67B-1308-460D-BDBA-498F63DEAA31}</Project>
+      <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>
       <Name>System.Configuration\System.Configuration-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -586,6 +590,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Resources/home.html">
       <LogicalName>home.html</LogicalName>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Resources/creativecommons.png">
+      <LogicalName>creativecommons.png</LogicalName>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources/Lminus.gif">
       <LogicalName>Lminus.gif</LogicalName>
@@ -745,3 +752,5 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+</Project>
+

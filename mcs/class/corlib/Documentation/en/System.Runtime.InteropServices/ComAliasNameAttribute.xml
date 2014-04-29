@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComAliasNameAttribute" FullName="System.Runtime.InteropServices.ComAliasNameAttribute">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class ComAliasNameAttribute : Attribute" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ComAliasNameAttribute extends System.Attribute" />
@@ -22,8 +23,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can apply this attribute to parameters, fields, properties, or return values.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the COM alias for a parameter or field type.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -40,9 +47,13 @@
         <Parameter Name="alias" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="alias">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.InteropServices.ComAliasNameAttribute" /> class with the alias for the attributed field or parameter.</para>
+        </summary>
+        <param name="alias">
+          <attribution license="cc4" from="Microsoft" modified="false" />The alias for the field or parameter as found in the type library when it was imported. </param>
       </Docs>
     </Member>
     <Member MemberName="Value">
@@ -58,9 +69,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the alias for the field or parameter as found in the type library when it was imported.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

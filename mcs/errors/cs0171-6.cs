@@ -5,7 +5,7 @@ using System;
 
 struct S
 {
-	string value;
+	internal string value;
 
 	public S (int arg)
 	{

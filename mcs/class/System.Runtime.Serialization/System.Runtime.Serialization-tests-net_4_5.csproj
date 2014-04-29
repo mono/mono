@@ -5,7 +5,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DC1A3B5B-AFAC-4EE0-B9B8-6664F9E744B7}</ProjectGuid>
+    <ProjectGuid>{4EC3A502-D982-45B0-80F5-AC9873D03434}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,168,169,219,414</NoWarn>
     <OutputPath>bin\Debug\System.Runtime.Serialization-tests-net_4_5</OutputPath>
@@ -53,6 +53,7 @@
     <Compile Include="Test\System.Runtime.Serialization\Bug695203Test.cs" />
     <Compile Include="Test\System.Runtime.Serialization\CollectionSerialization.cs" />
     <Compile Include="Test\System.Runtime.Serialization\DataContractResolverTest.cs" />
+    <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest.cs" />
     <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_DuplicateQName.cs" />
     <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_InvalidCharacters.cs" />
     <Compile Include="Test\System.Runtime.Serialization\DataContractSerializerTest_NullableWithDictionary.cs" />
@@ -86,46 +87,49 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="..\lib\net_4_5\nunit.framework.dll" />
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Runtime.Serialization\System.Runtime.Serialization-net_4_5.csproj">
-      <Project>{E90544E8-C031-49EE-BB6F-8688382E8618}</Project>
+      <Project>{08FF4C26-9C12-433D-AE90-43370046387A}</Project>
       <Name>System.Runtime.Serialization\System.Runtime.Serialization-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System\System-net_4_5-2.csproj">
-      <Project>{38FCD731-0E11-46F7-A31B-DCBE853AD8D7}</Project>
+      <Project>{5C605B73-19DA-4FB7-AB39-C7EF9A8B19FE}</Project>
       <Name>System\System-net_4_5-2</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.XML\System.Xml-net_4_5-1.csproj">
-      <Project>{4ED6CCE8-8E8A-4D82-8BCA-3EA4D4203AA4}</Project>
+      <Project>{2534ADE0-05E4-490F-933D-1E39310A0CB9}</Project>
       <Name>System.XML\System.Xml-net_4_5-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Core\System.Core-net_4_5.csproj">
-      <Project>{D8260595-C32F-4AC3-9C01-2CD2528CFA1D}</Project>
+      <Project>{D92530F4-3F2B-4351-BD21-9D6BEE6D2A4E}</Project>
       <Name>System.Core\System.Core-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Data\System.Data-net_4_5.csproj">
-      <Project>{663D8C81-B74E-4D44-8C59-2264C6942B30}</Project>
+      <Project>{9A33954F-57A8-4D75-B1D8-0F81808A0DD4}</Project>
       <Name>System.Data\System.Data-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Configuration\System.Configuration-net_4_5.csproj">
-      <Project>{CA2CD67B-1308-460D-BDBA-498F63DEAA31}</Project>
+      <Project>{D52A2CEA-245E-4877-950E-3EAC5F541B8E}</Project>
       <Name>System.Configuration\System.Configuration-net_4_5</Name>
     </ProjectReference>
-    <ProjectReference Include="..\System.ServiceModel\System.ServiceModel-net_4_0.csproj">
-      <Project>{3353D8EA-FB17-4A46-B7B6-82D55B12BD5D}</Project>
-      <Name>System.ServiceModel\System.ServiceModel-net_4_0</Name>
+    <ProjectReference Include="..\System.ServiceModel\System.ServiceModel-net_4_0-1.csproj">
+      <Project>{CB54BC7B-F3CD-43DC-B983-3FFFF41D01E1}</Project>
+      <Name>System.ServiceModel\System.ServiceModel-net_4_0-1</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Web.Services\System.Web.Services-net_4_5.csproj">
-      <Project>{1CD96FCF-0288-4FA4-9451-47B0C2206186}</Project>
+      <Project>{251DB111-FEE1-4080-8411-0AD1CC9BA94B}</Project>
       <Name>System.Web.Services\System.Web.Services-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -144,3 +148,4 @@
     </EmbeddedResource>
   </ItemGroup>
 </Project>
+

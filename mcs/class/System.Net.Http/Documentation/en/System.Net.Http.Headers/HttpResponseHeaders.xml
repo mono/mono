@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpResponseHeaders" FullName="System.Net.Http.Headers.HttpResponseHeaders">
   <TypeSignature Language="C#" Value="public sealed class HttpResponseHeaders : System.Net.Http.Headers.HttpHeaders" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit HttpResponseHeaders extends System.Net.Http.Headers.HttpHeaders" />
@@ -10,8 +11,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This type is derived from <see cref="T:System.Net.Http.Headers.HttpHeaders" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the collection of Response Headers as defined in RFC 2616.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AcceptRanges">
@@ -25,9 +32,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Accept-Ranges header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Age">
@@ -41,9 +51,12 @@
         <ReturnType>System.Nullable&lt;System.TimeSpan&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the Age header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CacheControl">
@@ -57,9 +70,12 @@
         <ReturnType>System.Net.Http.Headers.CacheControlHeaderValue</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the Cache-Control header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Connection">
@@ -73,9 +89,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Connection header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConnectionClose">
@@ -89,9 +108,12 @@
         <ReturnType>System.Nullable&lt;System.Boolean&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates if the Connection header for an HTTP response contains Close.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Date">
@@ -105,9 +127,12 @@
         <ReturnType>System.Nullable&lt;System.DateTimeOffset&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the Date header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ETag">
@@ -121,9 +146,12 @@
         <ReturnType>System.Net.Http.Headers.EntityTagHeaderValue</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the ETag header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Location">
@@ -137,9 +165,12 @@
         <ReturnType>System.Uri</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the Location header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Pragma">
@@ -153,9 +184,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.Net.Http.Headers.NameValueHeaderValue&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Pragma header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProxyAuthenticate">
@@ -169,9 +203,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.Net.Http.Headers.AuthenticationHeaderValue&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Proxy-Authenticate header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RetryAfter">
@@ -185,9 +222,12 @@
         <ReturnType>System.Net.Http.Headers.RetryConditionHeaderValue</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the value of the Retry-After header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Server">
@@ -201,9 +241,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.Net.Http.Headers.ProductInfoHeaderValue&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Server header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Trailer">
@@ -217,9 +260,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Trailer header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransferEncoding">
@@ -233,9 +279,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.Net.Http.Headers.TransferCodingHeaderValue&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Transfer-Encoding header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TransferEncodingChunked">
@@ -249,9 +298,12 @@
         <ReturnType>System.Nullable&lt;System.Boolean&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates if the Transfer-Encoding header for an HTTP response contains chunked.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Upgrade">
@@ -265,9 +317,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.Net.Http.Headers.ProductHeaderValue&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Upgrade header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Vary">
@@ -281,9 +336,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.String&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Vary header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Via">
@@ -297,9 +355,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.Net.Http.Headers.ViaHeaderValue&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Via header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Warning">
@@ -313,9 +374,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.Net.Http.Headers.WarningHeaderValue&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the Warning header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="WwwAuthenticate">
@@ -329,9 +393,12 @@
         <ReturnType>System.Net.Http.Headers.HttpHeaderValueCollection&lt;System.Net.Http.Headers.AuthenticationHeaderValue&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the value of the WWW-Authenticate header for an HTTP response.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Format" FullName="Microsoft.SqlServer.Server.Format">
   <TypeSignature Language="C#" Value="public enum Format" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used by <see cref="T:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute" /> and <see cref="T:Microsoft.SqlServer.Server.SqlUserDefinedAggregateAttribute" /> to indicate the serialization format of a user-defined type (UDT) or aggregate.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Used by <see cref="T:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute" /> and <see cref="T:Microsoft.SqlServer.Server.SqlUserDefinedAggregateAttribute" /> to indicate the serialization format of a user-defined type (UDT) or aggregate.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Native">
@@ -20,8 +27,38 @@
         <ReturnType>Microsoft.SqlServer.Server.Format</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requirements for this format are:    </para>
+          <list type="bullet">
+            <item>
+              <para>The StructLayout.LayoutKindSequential attribute must be applied to the aggregate or UDT if it is defined in a class and not a structure. This controls the physical layout of the data fields, and is used to force the members to be laid out sequentially in the order they appear. SQL Server uses this attribute to determine the field order for UDTs with multiple fields.</para>
+            </item>
+            <item>
+              <para>The type must contain at least one member (serialized values cannot be zero bytes in size).</para>
+            </item>
+            <item>
+              <para>All the fields of the aggregate must be <newTerm>blittable</newTerm>, that is, they must have a common representation in both managed and unmanaged memory and not require special handling by the interop marshaler.</para>
+            </item>
+            <item>
+              <para>All the fields of the UDT should be of one of the following types that can be serialized: bool, byte,sbyte,short,ushort, int, uint, long, ulong, float, double, <see cref="T:System.Data.SqlTypes.SqlByte" />, <see cref="T:System.Data.SqlTypes.SqlInt16" />, <see cref="T:System.Data.SqlTypes.SqlInt32" />, <see cref="T:System.Data.SqlTypes.SqlInt64" />, <see cref="T:System.Data.SqlTypes.SqlDateTime" />, <see cref="T:System.Data.SqlTypes.SqlSingle" />, <see cref="T:System.Data.SqlTypes.SqlDouble" />, <see cref="T:System.Data.SqlTypes.SqlMoney" />, or other value types defined by the user that contain fields of one of these types.</para>
+            </item>
+            <item>
+              <para>The aggregate must not specify a value for MaxByteSize.</para>
+            </item>
+            <item>
+              <para>The aggregate must not have any [NonSerialized] fields.</para>
+            </item>
+            <item>
+              <para>Fields must not be marked as an explicit layout (<see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" />).</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Native serialization format uses a very simple algorithm that enables SQL Server to store an efficient representation of the UDT on disk. Types marked for Native serialization can only have value types (structs in Microsoft Visual C# and structures in Microsoft Visual Basic .NET) as members. Members of reference types (such as classes in Visual C# and Visual Basic), either user-defined or those existing in the framework (such as <see cref="T:System.String" />), are not supported.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +71,11 @@
         <ReturnType>Microsoft.SqlServer.Server.Format</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The serialization format is unknown.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +88,17 @@
         <ReturnType>Microsoft.SqlServer.Server.Format</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The aggregate must specify a value for MaxByteSize.</para>
+          <para>Specify the <see cref="P:Microsoft.SqlServer.Server.SqlUserDefinedTypeAttribute.IsByteOrdered" /> attribute property. The default value is false.</para>
+          <para>If you omit any field in the <see cref="M:Microsoft.SqlServer.Server.IBinarySerialize.Read(System.IO.BinaryReader)" /> or <see cref="M:Microsoft.SqlServer.Server.IBinarySerialize.Write(System.IO.BinaryWriter)" /> methods, the state of that field is not serialized.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The UserDefined serialization format gives the developer full control over the binary format through the <see cref="T:Microsoft.SqlServer.Server.IBinarySerialize" />.Write and <see cref="T:Microsoft.SqlServer.Server.IBinarySerialize" />.Read methods.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebPartEventHandler" FullName="System.Web.UI.WebControls.WebParts.WebPartEventHandler">
   <TypeSignature Language="C#" Value="public delegate void WebPartEventHandler(object source, WebPartEventArgs e);" />
   <AssemblyInfo>
@@ -17,8 +18,15 @@
   <Docs>
     <param name="source">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The method specified in the <see cref="T:System.Web.UI.WebControls.WebParts.WebPartEventHandler" /> delegate will be called when a <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartAdded" /> event, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartDeleted" /> event, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartClosed" /> event, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartMoved" /> event, or <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.SelectedWebPartChanged" /> event is raised.</para>
+      <para>Page developers can provide custom handlers for Web Parts events by adding an OnWebPartAdded attribute, OnWebPartDeleted attribute, OnWebPartClosed attribute, OnWebPartMoved attribute, or OnSelectedWebPartChanged attribute to the &lt;asp:webpartmanager&gt; element in a page, and assigning a custom method name to the attribute. A custom handler can also be assigned programmatically. For more information on programmatically assigning an event handler, see <format type="text/html"><a href="348e9600-22e3-49a2-8864-11c5bb3e98fc">How to: Connect Event Handler Methods to Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartAdded" /> event, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartDeleted" /> event, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartClosed" /> event, <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.WebPartMoved" /> event, or <see cref="E:System.Web.UI.WebControls.WebParts.WebPartManager.SelectedWebPartChanged" /> event of a <see cref="T:System.Web.UI.WebControls.WebParts.WebPartManager" /> object. </para>
+    </summary>
   </Docs>
 </Type>

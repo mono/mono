@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ComponentResourceManager" FullName="System.ComponentModel.ComponentResourceManager">
   <TypeSignature Language="C#" Value="public class ComponentResourceManager : System.Resources.ResourceManager" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ComponentResourceManager extends System.Resources.ResourceManager" />
@@ -12,8 +13,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides simple functionality for enumerating resources for a component or object. The <see cref="T:System.ComponentModel.ComponentResourceManager" /> class is a <see cref="T:System.Resources.ResourceManager" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -27,8 +31,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.ComponentResourceManager" /> class with default values.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -44,9 +51,13 @@
         <Parameter Name="t" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="t">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.ComponentModel.ComponentResourceManager" /> that looks up resources in satellite assemblies based on information from the specified <see cref="T:System.Type" />.</para>
+        </summary>
+        <param name="t">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> from which the <see cref="T:System.ComponentModel.ComponentResourceManager" /> derives all information for finding resource files. </param>
       </Docs>
     </Member>
     <Member MemberName="ApplyResources">
@@ -66,10 +77,18 @@
         <Parameter Name="objectName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="objectName">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method examines all the resources for the current culture used in the development environment. It attempts to find a resource with a key in the format of <paramref name="objectName" />.propertyName, where <paramref name="objectName" /> is passed in as a parameter and propertyName is the name of a property. It will then apply that resource's <paramref name="value" /> to the corresponding property of the object. If there is no matching property, the resource will be ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a resource's value to the corresponding property of the object.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that contains the property value to be applied. </param>
+        <param name="objectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the name of the object to look up in the resources. </param>
       </Docs>
     </Member>
     <Member MemberName="ApplyResources">
@@ -90,11 +109,21 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="objectName">To be added.</param>
-        <param name="culture">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method examines all the resources for the provided culture. If <paramref name="culture" /> is null, the current culture is assumed. </para>
+          <para>The <see cref="M:System.ComponentModel.ComponentResourceManager.ApplyResources(System.Object,System.String,System.Globalization.CultureInfo)" /> method attempts to find a resource with a key in the format of <paramref name="objectName" />.propertyName, where <paramref name="objectName" /> is passed in as a parameter and propertyName is the name of a property. It will then apply that resource's <paramref name="value" /> to the corresponding property of the object. If there is no matching property, the resource will be ignored.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Applies a resource's value to the corresponding property of the object.</para>
+        </summary>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that contains the property value to be applied. </param>
+        <param name="objectName">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains the name of the object to look up in the resources.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The culture for which to apply resources.</param>
       </Docs>
     </Member>
   </Members>

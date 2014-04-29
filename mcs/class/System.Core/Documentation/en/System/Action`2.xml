@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Action&lt;T1,T2&gt;" FullName="System.Action&lt;T1,T2&gt;">
   <TypeSignature Language="C#" Value="public delegate void Action&lt;T1,T2&gt;(T1 arg1, T2 arg2);" />
   <AssemblyInfo>
@@ -23,7 +24,24 @@
     <typeparam name="T2">To be added.</typeparam>
     <param name="arg1">To be added.</param>
     <param name="arg2">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can use the <see cref="T:System.Action`2" /> delegate to pass a method as a parameter without explicitly declaring a custom delegate. The encapsulated method must correspond to the method signature that is defined by this delegate. This means that the encapsulated method must have two parameters that are both passed to it by value, and it must not return a value. (In C#, the method must return void. In Visual Basic, it must be defined by the Sub…End Sub construct. It can also be a method that returns a value that is ignored.) Typically, such a method is used to perform an operation.</para>
+      <block subset="none" type="note">
+        <para>To reference a method that has two parameters and returns a value, use the generic <see cref="T:System.Func`3" /> delegate instead.</para>
+      </block>
+      <para>When you use the <see cref="T:System.Action`2" /> delegate, you do not have to explicitly define a delegate that encapsulates a method with two parameters. For example, the following code explicitly declares a delegate named ConcatStrings. It then assigns a reference to either of two methods to its delegate instance. One method writes two strings to the console; the second writes two strings to a file. </para>
+      <para>code reference: System.Action~2#1</para>
+      <para>The following example simplifies this code by instantiating the <see cref="T:System.Action`2" /> delegate instead of explicitly defining a new delegate and assigning a named method to it.</para>
+      <para>code reference: System.Action~2#2</para>
+      <para>You can also use the <see cref="T:System.Action`2" /> delegate with anonymous methods in C#, as the following example illustrates. (For an introduction to anonymous methods, see <format type="text/html"><a href="a62441fa-f0a3-4acb-9aa6-93762a635275">Anonymous Methods (C# Programming Guide)</a></format>.)</para>
+      <para>code reference: System.Action~2#3</para>
+      <para>You can also assign a lambda expression to an <see cref="T:System.Action`2" /> delegate instance, as the following example illustrates. (For an introduction to lambda expressions, see <format type="text/html"><a href="57e3ba27-9a82-4067-aca7-5ca446b7bf93">Lambda Expressions (C# Programming Guide)</a></format>.)</para>
+      <para>code reference: System.Action~2#4</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Encapsulates a method that has two parameters and does not return a value.</para>
+    </summary>
   </Docs>
 </Type>

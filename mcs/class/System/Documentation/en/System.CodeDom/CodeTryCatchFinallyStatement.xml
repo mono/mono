@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeTryCatchFinallyStatement" FullName="System.CodeDom.CodeTryCatchFinallyStatement">
   <TypeSignature Language="C#" Value="public class CodeTryCatchFinallyStatement : System.CodeDom.CodeStatement" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeTryCatchFinallyStatement extends System.CodeDom.CodeStatement" />
@@ -23,8 +24,19 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeTryCatchFinallyStatement" /> can be used to represent a try/ catch block of code.</para>
+      <para>The <see cref="P:System.CodeDom.CodeTryCatchFinallyStatement.TryStatements" /> property contains the statements to execute within a try block. The <see cref="P:System.CodeDom.CodeTryCatchFinallyStatement.CatchClauses" /> property contains the catch clauses to handle caught exceptions. The <see cref="P:System.CodeDom.CodeTryCatchFinallyStatement.FinallyStatements" /> property contains the statements to execute within a finally block.</para>
+      <block subset="none" type="note">
+        <para>Not all languages support try/catch blocks. Call the <see cref="M:System.CodeDom.Compiler.ICodeGenerator.Supports(System.CodeDom.Compiler.GeneratorSupport)" /> method with the <see cref="F:System.CodeDom.Compiler.GeneratorSupport.TryCatchStatements" /> flag to determine whether a code generator supports try/catch blocks.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a try block with any number of catch clauses and, optionally, a finally block.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +51,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTryCatchFinallyStatement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -58,10 +73,15 @@
         <Parameter Name="catchClauses" Type="System.CodeDom.CodeCatchClause[]" />
       </Parameters>
       <Docs>
-        <param name="tryStatements">To be added: an object of type 'CodeStatement []'</param>
-        <param name="catchClauses">To be added: an object of type 'CodeCatchClause []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTryCatchFinallyStatement" /> class using the specified statements for try and catch clauses.</para>
+        </summary>
+        <param name="tryStatements">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeStatement" /> objects that indicate the statements to try. </param>
+        <param name="catchClauses">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeCatchClause" /> objects that indicate the clauses to catch. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -80,11 +100,17 @@
         <Parameter Name="finallyStatements" Type="System.CodeDom.CodeStatement[]" />
       </Parameters>
       <Docs>
-        <param name="tryStatements">To be added: an object of type 'CodeStatement []'</param>
-        <param name="catchClauses">To be added: an object of type 'CodeCatchClause []'</param>
-        <param name="finallyStatements">To be added: an object of type 'CodeStatement []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeTryCatchFinallyStatement" /> class using the specified statements for try, catch clauses, and finally statements.</para>
+        </summary>
+        <param name="tryStatements">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeStatement" /> objects that indicate the statements to try. </param>
+        <param name="catchClauses">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeCatchClause" /> objects that indicate the clauses to catch. </param>
+        <param name="finallyStatements">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.CodeDom.CodeStatement" /> objects that indicate the finally statements to use. </param>
       </Docs>
     </Member>
     <Member MemberName="CatchClauses">
@@ -100,9 +126,12 @@
         <ReturnType>System.CodeDom.CodeCatchClauseCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeCatchClauseCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the catch clauses to use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FinallyStatements">
@@ -118,9 +147,12 @@
         <ReturnType>System.CodeDom.CodeStatementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeStatementCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the finally statements to use.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="TryStatements">
@@ -136,9 +168,12 @@
         <ReturnType>System.CodeDom.CodeStatementCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'CodeStatementCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the statements to try.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

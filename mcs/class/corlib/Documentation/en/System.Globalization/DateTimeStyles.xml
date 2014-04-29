@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DateTimeStyles" FullName="System.Globalization.DateTimeStyles" FullNameSP="System_Globalization_DateTimeStyles" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable DateTimeStyles extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum DateTimeStyles" />
@@ -22,19 +23,59 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>
-      <para>Defines the formatting options that customize how the
-   <see cref="M:System.DateTime.Parse(System.String)" />
-   and <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> methods parse a string.</para>
-    </summary>
     <remarks>
-      <block subset="none" type="note">
-        <para>See the <see cref="T:System.String" /> class for the list of white space characters.</para>
-        <para>Only the <see cref="F:System.Globalization.DateTimeStyles.NoCurrentDateDefault" /> option affects the <see cref="M:System.DateTime.Parse(System.String)" /> method.
-<see cref="M:System.DateTime.Parse(System.String)" /> always 
-   ignores leading, inner, and trailing white spaces.</para>
-      </block>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Globalization.DateTimeStyles" /> values can be used with any of the following date and time parsing methods that include a <paramref name="styles" /> parameter to define the interpretation of the style elements that may be present in the string to be parsed:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="M:System.DateTime.Parse(System.String)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.DateTimeOffset.Parse(System.String)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.DateTime.TryParse(System.String,System.DateTime@)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.DateTimeOffset.TryParse(System.String,System.DateTimeOffset@)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.DateTimeOffset.ParseExact(System.String,System.String,System.IFormatProvider)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.DateTime.TryParseExact(System.String,System.String,System.IFormatProvider,System.Globalization.DateTimeStyles,System.DateTime@)" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="M:System.DateTimeOffset.TryParseExact(System.String,System.String,System.IFormatProvider,System.Globalization.DateTimeStyles,System.DateTimeOffset@)" />
+          </para>
+        </item>
+      </list>
+      <para>The ParseExact and TryParseExact methods can use any of the <see cref="T:System.Globalization.DateTimeStyles" /> values. However, if none of the Allow* values is selected, the input string must have exactly the same white-space characters as the format string.</para>
+      <para>If the input string does not contain any indication of the time zone, the date and time parsing methods interpret the value of the date and time string based on the time zone setting for the operating system. To convert the date and time to the Universal Time or Greenwich Mean Time (GMT), the application should use the <see cref="F:System.Globalization.DateTimeStyles.AdjustToUniversal" /> value. The same effect can be achieved by calling the <see cref="M:System.DateTime.ToUniversalTime" /> or <see cref="M:System.DateTimeOffset.ToUniversalTime" /> method. However, using the <see cref="F:System.Globalization.DateTimeStyles.AdjustToUniversal" /> value with the date and time parsing method is more efficient.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the formatting options that customize string parsing for some date and time parsing methods.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AdjustToUniversal">
@@ -53,11 +94,14 @@
       <Parameters />
       <MemberValue>AdjustToUniversal</MemberValue>
       <Docs>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value cannot be used with <see cref="F:System.Globalization.DateTimeStyles.RoundtripKind" />.</para>
+        </remarks>
         <summary>
-          <para>Specifies that the date and time must be converted to 
-      universal time coordinate time or Greenwich mean time (GMT)</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Date and time are returned as a Coordinated Universal Time (UTC). If the input string denotes a local time, through a time zone specifier or <see cref="F:System.Globalization.DateTimeStyles.AssumeLocal" />, the date and time are converted from the local time to UTC. If the input string denotes a UTC time, through a time zone specifier or <see cref="F:System.Globalization.DateTimeStyles.AssumeUniversal" />, no conversion occurs. If the input string does not denote a local or UTC time, no conversion occurs and the resulting <see cref="P:System.DateTime.Kind" /> property is <see cref="F:System.DateTimeKind.Unspecified" />. </para>
         </summary>
-        <remarks>To be added.</remarks>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -77,11 +121,11 @@
       <Parameters />
       <MemberValue>AllowInnerWhite</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that extra white space characters not specified
-      in the <see cref="T:System.Globalization.DateTimeFormatInfo" /> format patterns are allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Extra white-space characters in the middle of the string must be ignored during parsing, except if they occur in the <see cref="T:System.Globalization.DateTimeFormatInfo" /> format patterns.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -101,10 +145,11 @@
       <Parameters />
       <MemberValue>AllowLeadingWhite</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that leading white space characters are allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Leading white-space characters must be ignored during parsing, except if they occur in the <see cref="T:System.Globalization.DateTimeFormatInfo" /> format patterns.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -124,10 +169,11 @@
       <Parameters />
       <MemberValue>AllowTrailingWhite</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that trailing white space characters are allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Trailing white-space characters must be ignored during parsing, except if they occur in the <see cref="T:System.Globalization.DateTimeFormatInfo" /> format patterns.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -147,11 +193,11 @@
       <Parameters />
       <MemberValue>AllowWhiteSpaces</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that white space characters anywhere in the
-      string are allowed.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Extra white-space characters anywhere in the string must be ignored during parsing, except if they occur in the <see cref="T:System.Globalization.DateTimeFormatInfo" /> format patterns. This value is a combination of the <see cref="F:System.Globalization.DateTimeStyles.AllowLeadingWhite" />, <see cref="F:System.Globalization.DateTimeStyles.AllowTrailingWhite" />, and <see cref="F:System.Globalization.DateTimeStyles.AllowInnerWhite" /> values.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -167,8 +213,15 @@
         <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value cannot be used with <see cref="F:System.Globalization.DateTimeStyles.AssumeUniversal" /> or <see cref="F:System.Globalization.DateTimeStyles.RoundtripKind" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no time zone is specified in the parsed string, the string is assumed to denote a local time. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AssumeUniversal">
@@ -183,8 +236,15 @@
         <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This value cannot be used with <see cref="F:System.Globalization.DateTimeStyles.AssumeLocal" /> or <see cref="F:System.Globalization.DateTimeStyles.RoundtripKind" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If no time zone is specified in the parsed string, the string is assumed to denote a UTC. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NoCurrentDateDefault">
@@ -203,13 +263,11 @@
       <Parameters />
       <MemberValue>NoCurrentDateDefault</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that there is no current date default. If a
-      string contains only the time and not the date, and this option is used with the
-   <see cref="M:System.DateTime.Parse(System.String)" /> or <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" /> methods, a Gregorian year 1, month 1, day
-      1 date is assumed. In all other cases the methods assume the current local system date.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the parsed string contains only the time and not the date, the parsing methods assume the Gregorian date with year = 1, month = 1, and day = 1. If this value is not used, the current date is assumed.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -229,10 +287,11 @@
       <Parameters />
       <MemberValue>None</MemberValue>
       <Docs>
-        <summary>
-          <para>Specifies that the default formatting options are to be used.</para>
-        </summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Default formatting options must be used. This value represents the default style for the <see cref="M:System.DateTime.Parse(System.String)" />, <see cref="M:System.DateTime.ParseExact(System.String,System.String,System.IFormatProvider)" />, and <see cref="M:System.DateTime.TryParse(System.String,System.DateTime@)" /> methods.</para>
+        </summary>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -248,8 +307,11 @@
         <ReturnType>System.Globalization.DateTimeStyles</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTimeKind" /> field of a date is preserved when a <see cref="T:System.DateTime" /> object is converted to a string using the "o" or "r" standard format specifier, and the string is then converted back to a <see cref="T:System.DateTime" /> object.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

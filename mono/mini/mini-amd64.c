@@ -1428,6 +1428,10 @@ mono_arch_compute_omit_fp (MonoCompile *cfg)
 	cfg->arch.omit_fp = FALSE;
 #endif
 
+#ifdef HOST_WIN32
+	cfg->arch.omit_fp = FALSE;
+#endif
+
 	if (cfg->disable_omit_fp)
 		cfg->arch.omit_fp = FALSE;
 
@@ -3417,7 +3421,9 @@ mono_emit_stack_alloc (MonoCompile *cfg, guchar *code, MonoInst* tree)
 	int sreg = tree->sreg1;
 	int need_touch = FALSE;
 
-#if defined(HOST_WIN32) || defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
+#if defined(HOST_WIN32)
+		need_touch = TRUE;
+#elif defined(MONO_ARCH_SIGSEGV_ON_ALTSTACK)
 	if (!tree->flags & MONO_INST_INIT)
 		need_touch = TRUE;
 #endif
@@ -4819,10 +4825,6 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 		case OP_TAILCALL: {
 			MonoCallInst *call = (MonoCallInst*)ins;
 			int i, save_area_offset;
-
-			/* FIXME: no tracing support... */
-			if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
-				code = mono_arch_instrument_epilog_full (cfg, mono_profiler_method_leave, code, FALSE, TRUE);
 
 			g_assert (!cfg->method->save_lmf);
 

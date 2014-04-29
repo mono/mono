@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LoadedEventArgs" FullName="System.ComponentModel.Design.LoadedEventArgs">
   <TypeSignature Language="C#" Value="public sealed class LoadedEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,8 +10,11 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.ComponentModel.Design.DesignSurface.Loaded" /> event. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,10 +28,15 @@
         <Parameter Name="errors" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <param name="succeeded">To be added.</param>
-        <param name="errors">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Design.LoadedEventArgs" /> class.</para>
+        </summary>
+        <param name="succeeded">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that the designer load was successful; otherwise, false.</param>
+        <param name="errors">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of errors that occurred while the designer was loading.</param>
       </Docs>
     </Member>
     <Member MemberName="Errors">
@@ -40,9 +49,12 @@
         <ReturnType>System.Collections.ICollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a collection of errors that occurred while the designer was loading.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HasSucceeded">
@@ -55,9 +67,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Even successful loads can have errors if the errors were not too severe to prevent the designer from loading.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the designer load was successful.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

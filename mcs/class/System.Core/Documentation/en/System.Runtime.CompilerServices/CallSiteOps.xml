@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CallSiteOps" FullName="System.Runtime.CompilerServices.CallSiteOps">
   <TypeSignature Language="C#" Value="public static class CallSiteOps" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi abstract sealed beforefieldinit CallSiteOps extends System.Object" />
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Creates and caches binding rules.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddRule&lt;T&gt;">
@@ -121,9 +125,13 @@
         <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite" />
       </Parameters>
       <Docs>
-        <param name="site">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Clears the match flag on the matchmaker call site.</para>
+        </summary>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateMatchmaker&lt;T&gt;">
@@ -220,10 +228,14 @@
         <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite" />
       </Parameters>
       <Docs>
-        <param name="site">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks whether the executed rule matched</para>
+        </summary>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
       </Docs>
     </Member>
     <Member MemberName="GetRuleCache&lt;T&gt;">
@@ -359,10 +371,14 @@
         <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite" />
       </Parameters>
       <Docs>
-        <param name="site">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Checks if a dynamic site requires an update.</para>
+        </summary>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
       </Docs>
     </Member>
     <Member MemberName="UpdateRules&lt;T&gt;">

@@ -30,7 +30,7 @@ namespace Mono.CSharp {
 		V_5 = 5,
 		Future = 100,
 
-		Default = LanguageVersion.V_5,
+		Default = LanguageVersion.Future,
 	}
 
 	public enum RuntimeVersion

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HtmlElementEventArgs" FullName="System.Windows.Forms.HtmlElementEventArgs">
   <TypeSignature Language="C#" Value="public sealed class HtmlElementEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,8 +10,17 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.Windows.Forms.HtmlElementEventArgs" /> encapsulates the same information found on the window.event object when programming against the unmanaged HTML DOM or when writing Active Script for HTML pages. </para>
+      <para>In most cases, you can use <see cref="P:System.Windows.Forms.HtmlElementEventArgs.ToElement" /> to find the HTML element that is receiving the event action, and <see cref="P:System.Windows.Forms.HtmlElementEventArgs.FromElement" /> to find the HTML element that the current event is causing us to leave. However, not every event supplies a value for these properties; see the managed documentation for an event, or the corresponding documentation in the Internet Explorer SDK documentation, to discover if the event supplies it. </para>
+      <para>Many events in the HTML DOM are sent to their parent elements unless they are cancelled. This is known as event bubbling. If a SPAN inside of a DIV receives a click, then a click event is raised for the SPAN first, then for the DIV, and finally for the HTML page's BODY element. <see cref="P:System.Windows.Forms.HtmlElementEventArgs.BubbleEvent" /> controls whether an event will behave in this manner or not.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the events defined on <see cref="T:System.Windows.Forms.HtmlDocument" /> and <see cref="T:System.Windows.Forms.HtmlElement" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AltKeyPressed">
@@ -23,9 +33,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the ALT key was pressed when this event occurred.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BubbleEvent">
@@ -38,9 +51,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not all events in the Document Object Model bubble. All of the events exposed by the <see cref="T:System.Windows.Forms.HtmlDocument" /> managed wrapper bubble with the exception of <see cref="E:System.Windows.Forms.HtmlDocument.Stop" />. For <see cref="T:System.Windows.Forms.HtmlElement" />, the Error and Load events do not bubble. Setting BubbleEvent to true during any of these events will have no effect.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the current event bubbles up through the element hierarchy of the HTML Document Object Model.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ClientMousePosition">
@@ -53,9 +72,15 @@
         <ReturnType>System.Drawing.Point</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ClientMousePosition gives the mouse position of the cursor relative to the upper-left corner of the document. Use <see cref="P:System.Windows.Forms.HtmlElementEventArgs.MousePosition" /> if you need the mouse coordinates relative to the element that raised the event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the position of the mouse cursor in the document's client area. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CtrlKeyPressed">
@@ -68,9 +93,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the CTRL key was pressed when this event occurred.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="EventType">
@@ -83,9 +111,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the name of the event that was raised.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="FromElement">
@@ -106,9 +137,16 @@
         <ReturnType>System.Windows.Forms.HtmlElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.HtmlElementEventArgs.FromElement" /> will have a valid value during mouse events such as <see cref="E:System.Windows.Forms.HtmlElement.MouseEnter" /> and <see cref="E:System.Windows.Forms.HtmlElement.MouseLeave" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.HtmlElement" /> the mouse pointer is moving away from.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="KeyPressedCode">
@@ -121,9 +159,12 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the ASCII value of the keyboard character typed in a <see cref="E:System.Windows.Forms.HtmlElement.KeyPress" />, <see cref="E:System.Windows.Forms.HtmlElement.KeyDown" />, or <see cref="E:System.Windows.Forms.HtmlElement.KeyUp" /> event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MouseButtonsPressed">
@@ -136,9 +177,12 @@
         <ReturnType>System.Windows.Forms.MouseButtons</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the mouse button that was clicked during a <see cref="E:System.Windows.Forms.HtmlElement.MouseDown" /> or <see cref="E:System.Windows.Forms.HtmlElement.MouseUp" /> event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="MousePosition">
@@ -151,9 +195,16 @@
         <ReturnType>System.Drawing.Point</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Relative positioning is used in HTML to place an element on a page in relation to its parent. </para>
+          <para>If an element is relatively positioned, this property will return the same result as <see cref="P:System.Windows.Forms.HtmlElementEventArgs.ClientMousePosition" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the position of the mouse cursor relative to a relatively positioned parent element.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OffsetMousePosition">
@@ -166,9 +217,12 @@
         <ReturnType>System.Drawing.Point</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the position of the mouse cursor relative to the element that raises the event.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReturnValue">
@@ -181,9 +235,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the return value of the handled event. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ShiftKeyPressed">
@@ -196,9 +253,12 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the SHIFT key was pressed when this event occurred.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ToElement">
@@ -219,9 +279,16 @@
         <ReturnType>System.Windows.Forms.HtmlElement</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="P:System.Windows.Forms.HtmlElementEventArgs.ToElement" /> will have a valid value during mouse events such as <see cref="E:System.Windows.Forms.HtmlElement.MouseEnter" /> and <see cref="E:System.Windows.Forms.HtmlElement.MouseLeave" />. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Windows.Forms.HtmlElement" /> toward which the user is moving the mouse pointer.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RegexOptions" FullName="System.Text.RegularExpressions.RegexOptions">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum RegexOptions" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed RegexOptions extends System.Enum" />
@@ -19,8 +20,36 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>The various options that can be applied to a regular expression are listed below along with a brief explanation.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Text.RegularExpressions.RegexOptions" /> value can be provided as a parameter to the following members of the <see cref="T:System.Text.RegularExpressions.Regex" /> class:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="M:System.Text.RegularExpressions.Regex.#ctor(System.String,System.Text.RegularExpressions.RegexOptions)" /> class constructor.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String,System.String,System.Text.RegularExpressions.RegexOptions)" /> method.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Text.RegularExpressions.Regex.IsMatch(System.String,System.String,System.Text.RegularExpressions.RegexOptions)" /> method.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String,System.String,System.Text.RegularExpressions.RegexOptions)" /> method.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Text.RegularExpressions.Regex.Matches(System.String,System.String,System.Text.RegularExpressions.RegexOptions)" /> method.</para>
+        </item>
+        <item>
+          <para>The <see cref="M:System.Text.RegularExpressions.Regex.Replace(System.String,System.String,System.String,System.Text.RegularExpressions.RegexOptions)" /> and <see cref="M:System.Text.RegularExpressions.Regex.Replace(System.String,System.String,System.Text.RegularExpressions.MatchEvaluator,System.Text.RegularExpressions.RegexOptions)" /> methods.</para>
+        </item>
+      </list>
+      <para>A <see cref="T:System.Text.RegularExpressions.RegexOptions" /> value can also be supplied as a parameter to the <see cref="M:System.Text.RegularExpressions.RegexCompilationInfo.#ctor(System.String,System.Text.RegularExpressions.RegexOptions,System.String,System.String,System.Boolean)" /> constructor, or it can be assigned directly to the <see cref="P:System.Text.RegularExpressions.RegexCompilationInfo.Options" /> property. The resulting <see cref="T:System.Text.RegularExpressions.RegexCompilationInfo" /> object is then used in the call to the <see cref="M:System.Text.RegularExpressions.Regex.CompileToAssembly(System.Text.RegularExpressions.RegexCompilationInfo[],System.Reflection.AssemblyName,System.Reflection.Emit.CustomAttributeBuilder[],System.String)" /> method.</para>
+      <para>Several options provided by members of the <see cref="T:System.Text.RegularExpressions.RegexOptions" /> enumeration (in particular, by its <see cref="F:System.Text.RegularExpressions.RegexOptions.ExplicitCapture" />, <see cref="F:System.Text.RegularExpressions.RegexOptions.IgnoreCase" />, <see cref="F:System.Text.RegularExpressions.RegexOptions.Multiline" />, and <see cref="F:System.Text.RegularExpressions.RegexOptions.Singleline" /> members) can instead be provided by using an inline option character in the regular expression pattern. For details, see <format type="text/html"><a href="c82dc689-7e82-4767-a18d-cd24ce5f05e9">Regular Expression Options</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides enumerated values to use to set regular expression options.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Compiled">
@@ -37,8 +66,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Precompiles the regular expression into an assembly.  Although this will speed up the execution time, the startup time will be increased.  This is very useful for a static regular expression used constantly.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the regular expression is compiled to an assembly. This yields faster execution but increases startup time. This value should not be assigned to the <see cref="P:System.Text.RegularExpressions.RegexCompilationInfo.Options" /> property when calling the <see cref="M:System.Text.RegularExpressions.Regex.CompileToAssembly(System.Text.RegularExpressions.RegexCompilationInfo[],System.Reflection.AssemblyName)" /> method. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CultureInvariant">
@@ -55,8 +87,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Enables the regular expression to ignore cultural differences in language when matching.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that cultural differences in language is ignored. See <format type="text/html"><a href="c82dc689-7e82-4767-a18d-cd24ce5f05e9">Regular Expression Options</a></format> for more information.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ECMAScript">
@@ -73,8 +108,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Enables EMCAScript compliant behavior for the regular expression.  It must be enabled in conjuction with <b>IgnoreCase</b>, <b>Multiline</b>, and <b>Compiled</b> or else it will raise an exception.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enables ECMAScript-compliant behavior for the expression. This value can be used only in conjunction with the <see cref="F:System.Text.RegularExpressions.RegexOptions.IgnoreCase" />, <see cref="F:System.Text.RegularExpressions.RegexOptions.Multiline" />, and <see cref="F:System.Text.RegularExpressions.RegexOptions.Compiled" /> values. The use of this value with any other values results in an exception.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExplicitCapture">
@@ -91,8 +129,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>This mode will change the behavior of the regular expression such that only captures which are explicitly named will be remembered.  As a result, unnamed groups become noncapturing groups without the use of the (?:) style.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the only valid captures are explicitly named or numbered groups of the form (?&lt;name&gt;…). This allows unnamed parentheses to act as noncapturing groups without the syntactic clumsiness of the expression (?:…).</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnoreCase">
@@ -109,8 +150,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Enables case insensitive matching of the regular expression.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies case-insensitive matching.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="IgnorePatternWhitespace">
@@ -127,8 +171,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Removes any unescaped whitespace in the pattern.  It also enables comments which are identified by the '#' character.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Eliminates unescaped white space from the pattern and enables comments marked with #. However, the <see cref="F:System.Text.RegularExpressions.RegexOptions.IgnorePatternWhitespace" /> value does not affect or eliminate white space in <format type="text/html"><a href="0f8bffab-ee0d-4e0e-9a96-2b4a252bb7e4">character classes</a></format>. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Multiline">
@@ -145,8 +192,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Changes the behavior of the metacharacters ^ and $.  With this mode ^ matches the beginning of any line, and $ matches the end of any line.  The default behavior is to mach the beginning and ending of the entire string.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Multiline mode. Changes the meaning of ^ and $ so they match at the beginning and end, respectively, of any line, and not just the beginning and end of the entire string.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -163,8 +213,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>This specifies that no options are set for the regular expression.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that no options are set.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="RightToLeft">
@@ -181,8 +234,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>Specifies that the regular expression be run right to left rather than left to right.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the search will be from right to left instead of from left to right.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Singleline">
@@ -199,8 +255,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>This changes the behavior of the metacharacter . to mean any character rather than any character other than \n.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies single-line mode. Changes the meaning of the dot (.) so it matches every character (instead of every character except \n).</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

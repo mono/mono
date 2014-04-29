@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HorizontalAlignment" FullName="System.Windows.Forms.HorizontalAlignment">
   <TypeSignature Language="C#" Value="public enum HorizontalAlignment" />
   <AssemblyInfo>
@@ -14,8 +15,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used in numerous classes. A partial list of these classes is <see cref="T:System.Windows.Forms.CheckedListBox" />, <see cref="T:System.Windows.Forms.ColumnHeader" />, <see cref="T:System.Windows.Forms.ComboBox" />, <see cref="T:System.Windows.Forms.ControlPaint" />, <see cref="T:System.Windows.Forms.Label" />, <see cref="T:System.Windows.Forms.ListBox" />, <see cref="T:System.Windows.Forms.Control" />, <see cref="T:System.Windows.Forms.RichTextBox" />, and <see cref="T:System.Windows.Forms.TextBox" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies how an object or text in a control is horizontally aligned relative to an element of the control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Center">
@@ -25,7 +32,10 @@
         <ReturnType>System.Windows.Forms.HorizontalAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object or text is aligned in the center of the control element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -39,7 +49,10 @@
         <ReturnType>System.Windows.Forms.HorizontalAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object or text is aligned on the left of the control element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -53,7 +66,10 @@
         <ReturnType>System.Windows.Forms.HorizontalAlignment</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object or text is aligned on the right of the control element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

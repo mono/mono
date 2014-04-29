@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="KeyPressEventArgs" FullName="System.Windows.Forms.KeyPressEventArgs">
   <TypeSignature Language="C#" Value="public class KeyPressEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -15,8 +16,21 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> specifies the character that is composed when the user presses a key. For example, when the user presses SHIFT + K, the <see cref="P:System.Windows.Forms.KeyPressEventArgs.KeyChar" /> property returns an uppercase K.</para>
+      <para>A <see cref="E:System.Windows.Forms.Control.KeyPress" /> event occurs when the user presses a key. Two events that are closely related to the <see cref="E:System.Windows.Forms.Control.KeyPress" /> event are <see cref="E:System.Windows.Forms.Control.KeyUp" /> and <see cref="E:System.Windows.Forms.Control.KeyDown" />. The <see cref="E:System.Windows.Forms.Control.KeyDown" /> event precedes each <see cref="E:System.Windows.Forms.Control.KeyPress" /> event when the user presses a key, and a <see cref="E:System.Windows.Forms.Control.KeyUp" /> event occurs when the user releases a key. When the user holds down a key, duplicate <see cref="E:System.Windows.Forms.Control.KeyDown" /> and <see cref="E:System.Windows.Forms.Control.KeyPress" /> events occur each time the character repeats. One <see cref="E:System.Windows.Forms.Control.KeyUp" /> event is generated upon release.</para>
+      <para>With each <see cref="E:System.Windows.Forms.Control.KeyPress" /> event, a <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> is passed. A <see cref="T:System.Windows.Forms.KeyEventArgs" /> is passed with each <see cref="E:System.Windows.Forms.Control.KeyDown" /> and <see cref="E:System.Windows.Forms.Control.KeyUp" /> event. A <see cref="T:System.Windows.Forms.KeyEventArgs" /> specifies whether any modifier keys (CTRL, SHIFT, or ALT) were pressed along with another key. (This modifier information can also be obtained through the <see cref="P:System.Windows.Forms.Control.ModifierKeys" /> property of the <see cref="T:System.Windows.Forms.Control" /> class.) </para>
+      <para>Set <see cref="P:System.Windows.Forms.KeyPressEventArgs.Handled" /> to true to cancel the KeyPress event. This keeps the control from processing the key press.</para>
+      <block subset="none" type="note">
+        <para>Some controls will process certain key strokes on <see cref="E:System.Windows.Forms.Control.KeyDown" />. For example, <see cref="T:System.Windows.Forms.RichTextBox" /> processes the Enter key before <see cref="E:System.Windows.Forms.Control.KeyPress" /> is called. In such cases, you cannot cancel the <see cref="E:System.Windows.Forms.Control.KeyPress" /> event, and must cancel the key stroke from <see cref="E:System.Windows.Forms.Control.KeyDown" /> instead.</para>
+      </block>
+      <para>For information about the event model, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.Control.KeyPress" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -26,9 +40,16 @@
         <Parameter Name="keyChar" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="keyChar">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.Control.ModifierKeys" /> property to get the current state of the modifier keys.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.KeyPressEventArgs" /> class.</para>
+        </summary>
+        <param name="keyChar">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ASCII character corresponding to the key the user pressed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,9 +63,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the event is not handled, it will be sent to the operating system for default processing. Set <see cref="P:System.Windows.Forms.KeyPressEventArgs.Handled" /> to true to cancel the KeyPress event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the <see cref="E:System.Windows.Forms.Control.KeyPress" /> event was handled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -58,9 +85,68 @@
         <ReturnType>System.Char</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Windows.Forms.KeyPressEventArgs.KeyChar" /> property to sample keystrokes at run time and to modify keystrokes under special run-time circumstances. For example, you can use <see cref="P:System.Windows.Forms.KeyPressEventArgs.KeyChar" /> to disable non-numeric keypresses when the user enters a ZIP code, change all alphabetical keypresses to uppercase in a data entry field, or monitor the keyboard or other key input device for specific key combinations.</para>
+          <para>You can get or set the following keys: </para>
+          <list type="bullet">
+            <item>
+              <para>a-z, A-Z.</para>
+            </item>
+            <item>
+              <para>CTRL.</para>
+            </item>
+            <item>
+              <para>Punctuation marks.</para>
+            </item>
+            <item>
+              <para>Number keys, both across the top of the keyboard and on the numeric keypad.</para>
+            </item>
+            <item>
+              <para>ENTER.</para>
+            </item>
+          </list>
+          <para>You cannot get or set the following keys: </para>
+          <list type="bullet">
+            <item>
+              <para>The TAB key.</para>
+            </item>
+            <item>
+              <para>INSERT and DELETE.</para>
+            </item>
+            <item>
+              <para>HOME.</para>
+            </item>
+            <item>
+              <para>END.</para>
+            </item>
+            <item>
+              <para>PAGE UP and PAGE DOWN.</para>
+            </item>
+            <item>
+              <para>F1-F2.</para>
+            </item>
+            <item>
+              <para>ALT.</para>
+            </item>
+            <item>
+              <para>Arrow keys.</para>
+            </item>
+          </list>
+          <block subset="none" type="note">
+            <para>For information about how to detect any of the non-character keys mentioned above, see the <see cref="T:System.Windows.Forms.KeyEventArgs" /> class.</para>
+          </block>
+          <list type="bullet">
+            <item>
+              <para />
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the character corresponding to the key pressed.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

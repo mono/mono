@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SchemaImporterExtensionElement" FullName="System.Xml.Serialization.Configuration.SchemaImporterExtensionElement">
   <TypeSignature Language="C#" Value="public sealed class SchemaImporterExtensionElement : System.Configuration.ConfigurationElement" />
   <AssemblyInfo>
@@ -9,8 +10,38 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class is used by the serialization infrastructure to handle the configuration elements and cannot be used directly. For more information about configuration files, see <format type="text/html"><a href="69003d39-dc8a-460c-a6be-e6d93e690b38">Configuration File Schema for the .NET Framework</a></format>.</para>
+      <para>Instead, to configure the <see cref="T:System.Xml.Serialization.XmlSchemaImporter" />, create an application configuration file and use the following XML elements to specify types used by the class when mapping XSD types to .Net Framework types:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="3ce45919-388a-418c-8968-6df0372c73ec">&lt;system.xml.serialization&gt; Element</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="465ef2a0-f909-4ac1-9a56-0ead5c849698">&lt;schemaImporterExtensions&gt; Element</a>
+            </format>
+          </para>
+        </item>
+        <item>
+          <para>
+            <format type="text/html">
+              <a href="c828a558-094b-441e-9065-790b87315fa0">&lt;add&gt; Element for &lt;xmlSchemaImporterExtensions&gt;</a>
+            </format>
+          </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Handles the configuration for the <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> class. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,8 +52,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.Configuration.SchemaImporterExtensionElement" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -36,10 +70,15 @@
         <Parameter Name="type" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.Configuration.SchemaImporterExtensionElement" /> class and specifies the name and type of the extension.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new extension. The name must be unique.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the new extension, specified as a string.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -53,10 +92,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="type">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Xml.Serialization.Configuration.SchemaImporterExtensionElement" /> class using the specified name and type.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the new extension. The name must be unique.</param>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the new extension.</param>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -74,9 +118,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name must be unique.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the extension.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Properties">
@@ -112,9 +162,12 @@
         <ReturnType>System.Type</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the type of the extension.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

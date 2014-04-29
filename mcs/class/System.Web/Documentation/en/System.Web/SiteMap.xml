@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SiteMap" FullName="System.Web.SiteMap">
   <TypeSignature Language="C#" Value="public static class SiteMap" />
   <AssemblyInfo>
@@ -9,9 +10,31 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Site maps are used in conjunction with the <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" />, <see cref="T:System.Web.UI.WebControls.SiteMapPath" />, and other controls to render an effective navigation interface for users to navigate a Web site. A <see cref="T:System.Web.SiteMap" /> object is a component of the ASP.NET site navigation infrastructure that provides access to read-only site map information for page and control developers using navigation and <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> controls. Other components of the ASP.NET site navigation infrastructure include the <see cref="T:System.Web.SiteMapProvider" /> and <see cref="T:System.Web.XmlSiteMapProvider" /> classes, the Web.sitemap file, and the various controls that work with the <see cref="T:System.Web.SiteMap" /> class, such as the <see cref="T:System.Web.UI.WebControls.SiteMapPath" /> control, to render content and menus.</para>
+      <para>The <see cref="T:System.Web.SiteMap" /> has several functions: </para>
+      <list type="bullet">
+        <item>
+          <para>It provides the root node of the site navigation hierarchy (there can be only one root node).</para>
+        </item>
+        <item>
+          <para>It identifies which site map provider is the principal, or default, provider. </para>
+        </item>
+        <item>
+          <para>It keeps track of all the provider objects that are used to create the <see cref="T:System.Web.SiteMap" />.</para>
+        </item>
+      </list>
+      <para>Fundamentally, the <see cref="T:System.Web.SiteMap" /> is a container for a hierarchical collection of <see cref="T:System.Web.SiteMapNode" /> objects. However, the <see cref="T:System.Web.SiteMap" /> does not maintain the relationships between the nodes; rather, it delegates this to the site map providers. The <see cref="T:System.Web.SiteMap" /> acts as an interface to the site navigation information (in the form of <see cref="T:System.Web.SiteMapNode" /> objects) that is held by these site map providers. It keeps track of the providers from which it can access site navigation data and exposes its <see cref="P:System.Web.SiteMap.Providers" /> collection. A provider can store its site map information in any way—as long as it extends the <see cref="T:System.Web.SiteMapProvider" /> abstract class, the <see cref="T:System.Web.SiteMap" /> class can be initialized successfully from it.</para>
+      <para>The default provider for the <see cref="T:System.Web.SiteMap" /> class is the <see cref="T:System.Web.XmlSiteMapProvider" /> class, which works with an XML configuration file, Web.sitemap. However, you can write your own <see cref="T:System.Web.SiteMapProvider" /> object, and use it to initialize the site map for your site. For an example of a custom site map provider, see <see cref="T:System.Web.SiteMapProvider" />.</para>
+      <para>A default site map configuration is specified that manages the site navigation configuration. You can override this configuration in the Web.config file, should you choose to write your own site map provider. </para>
+      <para>The <see cref="T:System.Web.SiteMap" /> class offers only static members for performance and it can be accessed at any time in a given site from a Web Form or Web server control.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.SiteMap" /> class is an in-memory representation of the navigation structure for a site, which is provided by one or more site map providers. This class cannot be inherited. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CurrentNode">
@@ -21,10 +44,19 @@
         <ReturnType>System.Web.SiteMapNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SiteMap" /> class retrieves the <see cref="P:System.Web.SiteMap.CurrentNode" /> property by requesting it from the provider. </para>
+          <para>If no representative node exists for the page in the site map information, or if security trimming is enabled and the node cannot be returned for the current user, null is returned.  </para>
+          <para>The <see cref="E:System.Web.SiteMap.SiteMapResolve" /> event is raised by the default site map provider if one or more subscriptions exist. </para>
+          <para>If you implement your own <see cref="T:System.Web.SiteMapProvider" /> object, you might create your own mechanism to find and retrieve the <see cref="P:System.Web.SiteMapProvider.CurrentNode" />. However, if you extend the <see cref="T:System.Web.StaticSiteMapProvider" /> class and use a URL-based scheme to identify pages, you can override the <see cref="M:System.Web.StaticSiteMapProvider.FindSiteMapNode(System.String)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.SiteMapNode" /> control that represents the currently requested page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +69,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A default site map configuration is specified that manages the site navigation configuration. You can override this configuration in the Web.config file, should you choose to write your own site map provider. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a Boolean value indicating if a site map provider is specified in the Web.config file and if the site map provider is enabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +91,16 @@
         <ReturnType>System.Web.SiteMapProvider</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>By default, the <see cref="T:System.Web.XmlSiteMapProvider" /> object is used and site navigation data is loaded from the Web.sitemap file that is located in the root directory of the site. This is identified in the management classes that manage the site navigation configuration and the site map configuration section of the Web.config files. By default, it is an instance of the <see cref="T:System.Web.XmlSiteMapProvider" /> class, which uses the Web.sitemap file as its persistent store. However, you can implement your own site map storage and configuration scheme by writing a class that implements the abstract <see cref="T:System.Web.SiteMapProvider" /> class. For more information on writing your own provider, see <see cref="T:System.Web.SiteMapProvider" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the default <see cref="T:System.Web.SiteMapProvider" /> object for the current site map.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +113,16 @@
         <ReturnType>System.Web.SiteMapProviderCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The site map providers that are listed in the <see cref="P:System.Web.SiteMap.Providers" /> collection are those that are specified in the configuration hierarchy to initialize the <see cref="T:System.Web.SiteMap" /> class. Only the default provider (identified by the <see cref="P:System.Web.SiteMap.Provider" /> property) is guaranteed to be used by the <see cref="T:System.Web.SiteMap" /> during initialization; the presence of a provider in the <see cref="P:System.Web.SiteMap.Providers" /> collection means that it was specified in the configuration and was available during initialization.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a read-only collection of named <see cref="T:System.Web.SiteMapProvider" /> objects that are available to the <see cref="T:System.Web.SiteMap" /> class.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -85,10 +135,19 @@
         <ReturnType>System.Web.SiteMapNode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.SiteMap" /> class retrieves the <see cref="P:System.Web.SiteMap.RootNode" /> property by requesting it from the provider. If there is a provider hierarchy, the <see cref="T:System.Web.SiteMap" /> class retrieves the root node of the root provider in the hierarchy. To access the root node of the default provider, call the <see cref="P:System.Web.SiteMap.Provider" /> property, which retrieves both the default provider and its <see cref="P:System.Web.SiteMapProvider.RootNode" /> property.</para>
+          <para>The <see cref="T:System.Web.XmlSiteMapProvider" /> object, which is the default provider for the <see cref="T:System.Web.SiteMap" /> class, supports only one <see cref="P:System.Web.XmlSiteMapProvider.RootNode" />.</para>
+          <para>If you implement your own <see cref="T:System.Web.SiteMapProvider" /> class and override the abstract <see cref="P:System.Web.SiteMapProvider.RootNode" /> property, you must provide your own implementation to track the <see cref="P:System.Web.SiteMapProvider.RootNode" /> property of the <see cref="T:System.Web.SiteMapNode" /> instance.</para>
+          <para>The root node must be visible to all users, by design. If the root node is not visible to all users when security trimming is enabled, accessing the <see cref="P:System.Web.SiteMap.RootNode" /> property might result in an <see cref="T:System.InvalidOperationException" /> exception.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Web.SiteMapNode" /> object that represents the top-level page of the navigation structure for the site.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -101,9 +160,16 @@
         <ReturnType>System.Web.SiteMapResolveEventHandler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Subscribers attach a <see cref="T:System.Web.SiteMapResolveEventHandler" /> object to the static <see cref="E:System.Web.SiteMap.SiteMapResolve" /> event to receive notification when the <see cref="P:System.Web.SiteMap.CurrentNode" /> property is accessed. This enables the user to implement custom logic when creating a <see cref="T:System.Web.SiteMapNode" /> representation of the currently executing page without requiring a custom provider implementation.</para>
+          <para>If you subscribe to the <see cref="E:System.Web.SiteMap.SiteMapResolve" /> event, you also subscribe to the <see cref="E:System.Web.SiteMapProvider.SiteMapResolve" /> event on the default site map provider.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Occurs when the <see cref="P:System.Web.SiteMap.CurrentNode" /> property is accessed. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

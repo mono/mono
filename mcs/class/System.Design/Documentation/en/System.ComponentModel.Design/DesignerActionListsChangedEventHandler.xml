@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DesignerActionListsChangedEventHandler" FullName="System.ComponentModel.Design.DesignerActionListsChangedEventHandler">
   <TypeSignature Language="C#" Value="public delegate void DesignerActionListsChangedEventHandler(object sender, DesignerActionListsChangedEventArgs e);" />
   <AssemblyInfo>
@@ -22,7 +23,22 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The event model in the dnprdnshort is based on having an event delegate that connects an event with its handler. To raise a <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event, two elements are needed:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="T:System.ComponentModel.Design.DesignerActionListsChangedEventArgs" /> class, derived from <see cref="T:System.EventArgs" />, which holds the event data.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.ComponentModel.Design.DesignerActionListsChangedEventHandler" /> delegate, which points to a method that provides the response to the event.</para>
+        </item>
+      </list>
+      <para>When you create a <see cref="T:System.ComponentModel.Design.DesignerActionListsChangedEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event-handler delegates, see <format type="text/html"><a href="d98fd58b-fa4f-4598-8378-addf4355a115">Events and Delegates</a></format>. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.ComponentModel.Design.DesignerActionService.DesignerActionListsChanged" /> event of a <see cref="T:System.ComponentModel.Design.DesignerActionService" />. This class cannot be inherited.</para>
+    </summary>
   </Docs>
 </Type>

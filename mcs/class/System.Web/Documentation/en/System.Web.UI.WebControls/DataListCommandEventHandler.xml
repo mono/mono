@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataListCommandEventHandler" FullName="System.Web.UI.WebControls.DataListCommandEventHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void DataListCommandEventHandler(object sender, DataListCommandEventArgs e);" />
   <AssemblyInfo>
@@ -14,8 +15,19 @@
   <Docs>
     <param name="sender">To be added.</param>
     <param name="e">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="E:System.Web.UI.WebControls.DataList.CancelCommand" /> event is raised when the Cancel button for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control is clicked.</para>
+      <para>The <see cref="E:System.Web.UI.WebControls.DataList.DeleteCommand" /> event is raised when the Delete button for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control is clicked.</para>
+      <para>The <see cref="E:System.Web.UI.WebControls.DataList.EditCommand" /> event is raised when the Edit button for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control is clicked.</para>
+      <para>The <see cref="E:System.Web.UI.WebControls.DataList.ItemCommand" /> event is raised when any button for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control is clicked. This allows you to programmatically test for when a specific command button is clicked and take appropriate action. This event is commonly used to handle custom command buttons for the <see cref="T:System.Web.UI.WebControls.DataList" /> control.</para>
+      <para>The <see cref="E:System.Web.UI.WebControls.DataList.UpdateCommand" /> event is raised when the Update button for an item in the <see cref="T:System.Web.UI.WebControls.DataList" /> control is clicked.</para>
+      <para>When you create a <see cref="T:System.Web.UI.WebControls.DataListCommandEventHandler" /> delegate, you identify the method that will handle the event. To associate the event with your event handler, add an instance of the delegate to the event. The event handler is called whenever the event occurs, unless you remove the delegate. For more information about event handler delegates, see <format type="text/html"><a href="D98FD58B-FA4F-4598-8378-ADDF4355A115">[&lt;topic://cpconEventsDelegates&gt;]</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the method that will handle the <see cref="E:System.Web.UI.WebControls.DataList.CancelCommand" />, <see cref="E:System.Web.UI.WebControls.DataList.DeleteCommand" />, <see cref="E:System.Web.UI.WebControls.DataList.EditCommand" />, <see cref="E:System.Web.UI.WebControls.DataList.ItemCommand" />, and <see cref="E:System.Web.UI.WebControls.DataList.UpdateCommand" /> events of a <see cref="T:System.Web.UI.WebControls.DataList" /> control. </para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

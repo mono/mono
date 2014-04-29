@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="RenamedEventArgs" FullName="System.IO.RenamedEventArgs">
   <TypeSignature Language="C#" Value="public class RenamedEventArgs : System.IO.FileSystemEventArgs" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit RenamedEventArgs extends System.IO.FileSystemEventArgs" />
@@ -15,8 +16,14 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class inherits from <see cref="T:System.IO.FileSystemEventArgs" /> and extends it by adding an old name field and an old full path field to specify the previous name and full path of the affected file or directory.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.IO.FileSystemWatcher.Renamed" /> event.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -36,12 +43,22 @@
         <Parameter Name="oldName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="changeType">To be added: an object of type 'WatcherChangeTypes'</param>
-        <param name="directory">To be added: an object of type 'string'</param>
-        <param name="name">To be added: an object of type 'string'</param>
-        <param name="oldName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This class inherits from the <see cref="T:System.IO.FileSystemEventArgs" /> class and extends it by adding an old name field to specify the previous name of the file or directory affected.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.IO.RenamedEventArgs" /> class.</para>
+        </summary>
+        <param name="changeType">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.IO.WatcherChangeTypes" /> values. </param>
+        <param name="directory">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the affected file or directory. </param>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the affected file or directory. </param>
+        <param name="oldName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The old name of the affected file or directory. </param>
       </Docs>
     </Member>
     <Member MemberName="OldFullPath">
@@ -57,9 +74,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the previous fully qualified path of the affected file or directory.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="OldName">
@@ -75,9 +95,12 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the old name of the affected file or directory.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

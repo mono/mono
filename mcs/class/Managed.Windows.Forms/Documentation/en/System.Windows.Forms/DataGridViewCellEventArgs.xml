@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewCellEventArgs" FullName="System.Windows.Forms.DataGridViewCellEventArgs">
   <TypeSignature Language="C#" Value="public class DataGridViewCellEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,82 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> class provides data for the following <see cref="T:System.Windows.Forms.DataGridView" /> events: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellClick" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellContentClick" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellContextMenuStripChanged" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellEndEdit" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellEnter" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellErrorTextChanged" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellLeave" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellMouseEnter" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellMouseLeave" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellStyleChanged" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellToolTipTextChanged" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellValidated" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.CellValueChanged" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.RowEnter" /> </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.RowLeave" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="E:System.Windows.Forms.DataGridView.RowValidated" /> </para>
+        </item>
+      </list>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for <see cref="T:System.Windows.Forms.DataGridView" /> events related to cell and row operations.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -22,11 +96,16 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="columnIndex">To be added.</param>
-        <param name="rowIndex">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.DataGridViewCellEventArgs" /> class. </para>
+        </summary>
+        <param name="columnIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the column containing the cell that the event occurs for.</param>
+        <param name="rowIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the row containing the cell that the event occurs for.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +118,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the column index of the cell that the event occurs for.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +137,13 @@
         <ReturnType>System.Int32</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating the row index of the cell that the event occurs for.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

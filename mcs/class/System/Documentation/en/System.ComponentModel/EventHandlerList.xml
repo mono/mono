@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="EventHandlerList" FullName="System.ComponentModel.EventHandlerList">
   <TypeSignature Language="C#" Value="public sealed class EventHandlerList : IDisposable" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit EventHandlerList extends System.Object implements class System.IDisposable" />
@@ -19,8 +20,14 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class uses a linear search algorithm to find entries in the list of delegates. A linear search algorithm is inefficient when working with a large number of entries. Therefore, when you have a large list, finding entries is slow.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a simple list of delegates. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -35,8 +42,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.EventHandlerList" /> class. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AddHandler">
@@ -56,10 +66,15 @@
         <Parameter Name="value" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'object'</param>
-        <param name="value">To be added: an object of type 'Delegate'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a delegate to the list.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that owns the event. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to add to the list. </param>
       </Docs>
     </Member>
     <Member MemberName="AddHandlers">
@@ -77,9 +92,13 @@
         <Parameter Name="listToAddFrom" Type="System.ComponentModel.EventHandlerList" />
       </Parameters>
       <Docs>
-        <param name="listToAddFrom">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a list of delegates to the current list.</para>
+        </summary>
+        <param name="listToAddFrom">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list to add.</param>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -96,8 +115,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Call <see cref="M:System.ComponentModel.EventHandlerList.Dispose" /> when you are finished using the <see cref="T:System.ComponentModel.EventHandlerList" />. The <see cref="M:System.ComponentModel.EventHandlerList.Dispose" /> method leaves the <see cref="T:System.ComponentModel.EventHandlerList" /> in an unusable state. After calling <see cref="M:System.ComponentModel.EventHandlerList.Dispose" />, you must release all references to the <see cref="T:System.ComponentModel.EventHandlerList" /> so the memory it was occupying can be reclaimed by garbage collection.</para>
+          <block subset="none" type="note">
+            <para>Always call <see cref="M:System.ComponentModel.EventHandlerList.Dispose" /> before you release your last reference to the <see cref="T:System.ComponentModel.EventHandlerList" />. Otherwise, the resources the <see cref="T:System.ComponentModel.EventHandlerList" /> is using will not be freed until garbage collection calls the <see cref="T:System.ComponentModel.EventHandlerList" /> object's destructor.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Disposes the delegate list.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -139,10 +167,15 @@
         <Parameter Name="value" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <param name="key">To be added: an object of type 'object'</param>
-        <param name="value">To be added: an object of type 'Delegate'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a delegate from the list.</para>
+        </summary>
+        <param name="key">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that owns the event. </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate to remove from the list. </param>
       </Docs>
     </Member>
   </Members>

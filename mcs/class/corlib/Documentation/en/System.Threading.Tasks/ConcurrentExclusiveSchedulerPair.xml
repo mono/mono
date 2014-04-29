@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ConcurrentExclusiveSchedulerPair" FullName="System.Threading.Tasks.ConcurrentExclusiveSchedulerPair">
   <TypeSignature Language="C#" Value="public class ConcurrentExclusiveSchedulerPair" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi beforefieldinit ConcurrentExclusiveSchedulerPair extends System.Object" />
@@ -18,8 +19,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides task schedulers that coordinate to execute tasks while ensuring that concurrent tasks may run concurrently and exclusive tasks never do.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -31,8 +35,11 @@
       </AssemblyInfo>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Tasks.ConcurrentExclusiveSchedulerPair" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -46,9 +53,13 @@
         <Parameter Name="taskScheduler" Type="System.Threading.Tasks.TaskScheduler" />
       </Parameters>
       <Docs>
-        <param name="taskScheduler">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Tasks.ConcurrentExclusiveSchedulerPair" /> class that targets the specified scheduler.</para>
+        </summary>
+        <param name="taskScheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target scheduler on which this pair should execute.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -63,10 +74,15 @@
         <Parameter Name="maxConcurrencyLevel" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="taskScheduler">To be added.</param>
-        <param name="maxConcurrencyLevel">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Tasks.ConcurrentExclusiveSchedulerPair" /> class that targets the specified scheduler with a maximum concurrency level.</para>
+        </summary>
+        <param name="taskScheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target scheduler on which this pair should execute.</param>
+        <param name="maxConcurrencyLevel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of tasks to run concurrently.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -82,11 +98,17 @@
         <Parameter Name="maxItemsPerTask" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="taskScheduler">To be added.</param>
-        <param name="maxConcurrencyLevel">To be added.</param>
-        <param name="maxItemsPerTask">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Tasks.ConcurrentExclusiveSchedulerPair" /> class that targets the specified scheduler with a maximum concurrency level and a maximum number of scheduled tasks that may be processed as a unit.</para>
+        </summary>
+        <param name="taskScheduler">
+          <attribution license="cc4" from="Microsoft" modified="false" />The target scheduler on which this pair should execute.</param>
+        <param name="maxConcurrencyLevel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of tasks to run concurrently.</param>
+        <param name="maxItemsPerTask">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of tasks to process for each underlying scheduled task used by the pair.</param>
       </Docs>
     </Member>
     <Member MemberName="Complete">
@@ -101,8 +123,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Calling <see cref="M:System.Threading.Tasks.ConcurrentExclusiveSchedulerPair.Complete" /> is optional. It is necessary only if you're relying on the <see cref="P:System.Threading.Tasks.ConcurrentExclusiveSchedulerPair.Completion" /> property for notification that all processing has been completed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Informs the scheduler pair that it should not accept any more tasks.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Completion">
@@ -116,9 +144,12 @@
         <ReturnType>System.Threading.Tasks.Task</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Threading.Tasks.Task" /> that will complete when the scheduler has completed processing.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ConcurrentScheduler">
@@ -132,9 +163,12 @@
         <ReturnType>System.Threading.Tasks.TaskScheduler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Threading.Tasks.TaskScheduler" /> that can be used to schedule tasks to this pair that may run concurrently with other tasks on this pair.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ExclusiveScheduler">
@@ -148,9 +182,12 @@
         <ReturnType>System.Threading.Tasks.TaskScheduler</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a <see cref="T:System.Threading.Tasks.TaskScheduler" /> that can be used to schedule tasks to this pair that must run exclusively with regards to other tasks on this pair.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

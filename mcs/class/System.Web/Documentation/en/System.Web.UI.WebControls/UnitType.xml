@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="UnitType" FullName="System.Web.UI.WebControls.UnitType">
   <TypeSignature Language="C#" Maintainer="auto" Value="public enum UnitType" />
   <AssemblyInfo>
@@ -12,8 +13,19 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.UI.WebControls.UnitType" /> enumeration represents the different supported measurement units. Measurements can be represented in pixels, points, picas, inches, millimeters, centimeters, percentages, em, or ex.</para>
+      <para>A <see cref="F:System.Web.UI.WebControls.UnitType.Point" /> is a unit of measurement that represents 1/72 of an inch.</para>
+      <para>A <see cref="F:System.Web.UI.WebControls.UnitType.Pica" /> is a unit that equals 12 points.</para>
+      <para>A <see cref="F:System.Web.UI.WebControls.UnitType.Percentage" /> is a unit of measurement that is relative to a parent element. For example, if the font size of a paragraph is 10 pixels, you can place a phrase inside the paragraph with a font size specified as 200%. The font size of the phrase becomes twice the font size of the paragraph, or 20 pixels.</para>
+      <para>An <see cref="F:System.Web.UI.WebControls.UnitType.Em" /> is a unit of measurement that is relative to the height of a parent element's font. For example, if the font size of a paragraph is 10 pixels, you can place a phrase inside the paragraph with a font size specified as 2 em. The font size of the phrase becomes twice the font size of the paragraph, or 20 pixels.</para>
+      <para>An <see cref="F:System.Web.UI.WebControls.UnitType.Ex" /> is a unit of measurement that is relative to the height of the lowercase letter x of the parent element's font. For example if the font size of a paragraph is 10 pixels, you can place a phrase inside the paragraph with a font size specified as 2 ex. The font size of the phrase becomes twice the font size of a lowercase letter x in the paragraph.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the unit of measurement.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Cm">
@@ -25,8 +37,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Measurement is in centimeters.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -42,8 +57,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Measurement is relative to the height of the parent element's font.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,8 +77,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Measurement is relative to the height of the lowercase letter x of the parent element's font.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -76,8 +97,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Measurement is in inches.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -93,8 +117,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Measurement is in millimeters.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -110,8 +137,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Measurement is a percentage relative to the parent element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -127,8 +157,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Measurement is in picas. A pica represents 12 points.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -144,8 +177,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Measurement is in pixels.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -161,8 +197,11 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Measurement is in points. A point represents 1/72 of an inch.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

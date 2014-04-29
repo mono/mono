@@ -2405,6 +2405,8 @@ register_opcode_emulation (int opcode, const char *name, const char *sigstr, gpo
 /*
  * For JIT icalls implemented in C.
  * NAME should be the same as the name of the C function whose address is FUNC.
+ * If SAVE is TRUE, no wrapper is generated. This is for perf critical icalls which
+ * can't throw exceptions.
  */
 static void
 register_icall (gpointer func, const char *name, const char *sigstr, gboolean save)
@@ -4100,9 +4102,6 @@ mono_codegen (MonoCompile *cfg)
 
 	code = mono_arch_emit_prolog (cfg);
 
-	if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE)
-		code = mono_arch_instrument_prolog (cfg, mono_profiler_method_enter, code, FALSE);
-
 	cfg->code_len = code - cfg->native_code;
 	cfg->prolog_end = cfg->code_len;
 
@@ -4118,14 +4117,6 @@ mono_codegen (MonoCompile *cfg)
 
 		if (bb == cfg->bb_exit) {
 			cfg->epilog_begin = cfg->code_len;
-
-			if (cfg->prof_options & MONO_PROFILE_ENTER_LEAVE) {
-				code = cfg->native_code + cfg->code_len;
-				code = mono_arch_instrument_epilog (cfg, mono_profiler_method_leave, code, FALSE);
-				cfg->code_len = code - cfg->native_code;
-				g_assert (cfg->code_len < cfg->code_size);
-			}
-
 			mono_arch_emit_epilog (cfg);
 		}
 	}
@@ -5775,59 +5766,55 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, JitFl
 
 #endif /* DISABLE_JIT */
 
-MonoJitInfo*
-mono_domain_lookup_shared_generic (MonoDomain *domain, MonoMethod *method)
+/*
+ * LOCKING: Acquires the jit code hash lock.
+ */
+static MonoJitInfo*
+lookup_method_inner (MonoDomain *domain, MonoMethod *method, MonoMethod *shared)
 {
+	MonoJitInfo *ji;
 	static gboolean inited = FALSE;
 	static int lookups = 0;
 	static int failed_lookups = 0;
-	MonoJitInfo *ji;
 
-	ji = mono_internal_hash_table_lookup (&domain->jit_code_hash, mini_get_shared_method (method));
-	if (ji && !ji->has_generic_jit_info)
-		ji = NULL;
+	mono_domain_jit_code_hash_lock (domain);
+	ji = mono_internal_hash_table_lookup (&domain->jit_code_hash, method);
+	if (!ji && shared) {
+		/* Try generic sharing */
+		ji = mono_internal_hash_table_lookup (&domain->jit_code_hash, shared);
+		if (ji && !ji->has_generic_jit_info)
+			ji = NULL;
+		if (!inited) {
+			mono_counters_register ("Shared generic lookups", MONO_COUNTER_INT|MONO_COUNTER_GENERICS, &lookups);
+			mono_counters_register ("Failed shared generic lookups", MONO_COUNTER_INT|MONO_COUNTER_GENERICS, &failed_lookups);
+			inited = TRUE;
+		}
 
-	if (!inited) {
-		mono_counters_register ("Shared generic lookups", MONO_COUNTER_INT|MONO_COUNTER_GENERICS, &lookups);
-		mono_counters_register ("Failed shared generic lookups", MONO_COUNTER_INT|MONO_COUNTER_GENERICS, &failed_lookups);
-		inited = TRUE;
+		++lookups;
+		if (!ji)
+			++failed_lookups;
 	}
-
-	++lookups;
-	if (!ji)
-		++failed_lookups;
+	mono_domain_jit_code_hash_unlock (domain);
 
 	return ji;
-}
-
-/*
- * LOCKING: Assumes domain->jit_code_hash_lock is held.
- */
-static MonoJitInfo*
-lookup_method_inner (MonoDomain *domain, MonoMethod *method)
-{
-	MonoJitInfo *ji = mono_internal_hash_table_lookup (&domain->jit_code_hash, method);
-
-	if (ji)
-		return ji;
-
-	if (!mono_method_is_generic_sharable (method, FALSE))
-		return NULL;
-	return mono_domain_lookup_shared_generic (domain, method);
 }
 
 static MonoJitInfo*
 lookup_method (MonoDomain *domain, MonoMethod *method)
 {
-	MonoJitInfo *info;
+	MonoJitInfo *ji;
+	MonoMethod *shared;
 
-	mono_loader_lock (); /*FIXME lookup_method_inner acquired it*/
-	mono_domain_jit_code_hash_lock (domain);
-	info = lookup_method_inner (domain, method);
-	mono_domain_jit_code_hash_unlock (domain);
-	mono_loader_unlock ();
+	ji = lookup_method_inner (domain, method, NULL);
 
-	return info;
+	if (!ji) {
+		if (!mono_method_is_generic_sharable (method, FALSE))
+			return NULL;
+		shared = mini_get_shared_method (method);
+		ji = lookup_method_inner (domain, method, shared);
+	}
+
+	return ji;
 }
 
 #if ENABLE_JIT_MAP
@@ -5879,7 +5866,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	MonoException *ex = NULL;
 	guint32 prof_options;
 	GTimer *jit_timer;
-	MonoMethod *prof_method;
+	MonoMethod *prof_method, *shared;
 
 #ifdef MONO_USE_AOT_COMPILER
 	if (opt & MONO_OPT_AOT) {
@@ -5914,7 +5901,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 			else
 				mono_lookup_pinvoke_call (method, NULL, NULL);
 		}
-		nm = mono_marshal_get_native_wrapper (method, check_for_pending_exc, FALSE);
+		nm = mono_marshal_get_native_wrapper (method, check_for_pending_exc, mono_aot_only);
 		code = mono_get_addr_from_ftnptr (mono_compile_method (nm));
 		jinfo = mono_jit_info_table_find (target_domain, code);
 		if (!jinfo)
@@ -6103,7 +6090,16 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 		return NULL;
 	}
 
-	mono_loader_lock (); /*FIXME lookup_method_inner requires the loader lock*/
+	if (mono_method_is_generic_sharable (method, FALSE))
+		shared = mini_get_shared_method (method);
+	else
+		shared = NULL;
+
+	/*
+	 * FIXME: lookup_method_inner requires the loader lock.
+	 * FIXME: This is no longer true, can this be dropped ?
+	 */
+	mono_loader_lock ();
 	mono_domain_lock (target_domain);
 
 	/* Check if some other thread already did the job. In this case, we can
@@ -6111,7 +6107,7 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 
 	mono_domain_jit_code_hash_lock (target_domain);
 
-	info = lookup_method_inner (target_domain, method);
+	info = lookup_method_inner (target_domain, method, shared);
 	if (info) {
 		/* We can't use a domain specific method in another domain */
 		if ((target_domain == mono_domain_get ()) || info->domain_neutral) {
@@ -7422,8 +7418,17 @@ mini_init (const char *filename, const char *runtime_version)
 	mono_marshal_init ();
 
 	mono_arch_register_lowlevel_calls ();
-	register_icall (mono_profiler_method_enter, "mono_profiler_method_enter", NULL, TRUE);
-	register_icall (mono_profiler_method_leave, "mono_profiler_method_leave", NULL, TRUE);
+
+	/*
+	 * It's important that we pass `TRUE` as the last argument here, as
+	 * it causes the JIT to omit a wrapper for these icalls. If the JIT
+	 * *did* emit a wrapper, we'd be looking at infinite recursion since
+	 * the wrapper would call the icall which would call the wrapper and
+	 * so on.
+	 */
+	register_icall (mono_profiler_method_enter, "mono_profiler_method_enter", "void ptr", TRUE);
+	register_icall (mono_profiler_method_leave, "mono_profiler_method_leave", "void ptr", TRUE);
+
 	register_icall (mono_trace_enter_method, "mono_trace_enter_method", NULL, TRUE);
 	register_icall (mono_trace_leave_method, "mono_trace_leave_method", NULL, TRUE);
 	register_icall (mono_get_lmf_addr, "mono_get_lmf_addr", "ptr", TRUE);
@@ -7617,7 +7622,7 @@ mini_init (const char *filename, const char *runtime_version)
 #endif
 
 #ifdef TARGET_IOS
-	register_icall (pthread_getspecific, "pthread_getspecific", NULL, TRUE);
+	register_icall (pthread_getspecific, "pthread_getspecific", "ptr ptr", TRUE);
 #endif
 
 	mono_generic_sharing_init ();
@@ -7774,7 +7779,7 @@ mini_cleanup (MonoDomain *domain)
 
 	mono_trace_cleanup ();
 
-	mono_counters_dump (-1, stdout);
+	mono_counters_dump (MONO_COUNTER_SECTION_MASK | MONO_COUNTER_MONOTONIC, stdout);
 
 	if (mono_inject_async_exc_method)
 		mono_method_desc_free (mono_inject_async_exc_method);

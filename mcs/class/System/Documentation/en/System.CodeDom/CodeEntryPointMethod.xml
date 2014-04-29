@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeEntryPointMethod" FullName="System.CodeDom.CodeEntryPointMethod">
   <TypeSignature Language="C#" Value="public class CodeEntryPointMethod : System.CodeDom.CodeMemberMethod" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeEntryPointMethod extends System.CodeDom.CodeMemberMethod" />
@@ -23,8 +24,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>A <see cref="T:System.CodeDom.CodeEntryPointMethod" /> is a <see cref="T:System.CodeDom.CodeMemberMethod" /> that represents the entry point method of an executable.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents the entry point method of an executable.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +46,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeEntryPointMethod" /> class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

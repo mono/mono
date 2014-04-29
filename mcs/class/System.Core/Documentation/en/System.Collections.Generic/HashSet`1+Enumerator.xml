@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HashSet&lt;T&gt;+Enumerator" FullName="System.Collections.Generic.HashSet&lt;T&gt;+Enumerator">
   <TypeSignature Language="C#" Value="public struct HashSet&lt;T&gt;.Enumerator : System.Collections.Generic.IEnumerator&lt;T&gt;" />
   <TypeSignature Language="ILAsm" Value=".class nested public sequential ansi serializable sealed beforefieldinit HashSet`1/Enumerator&lt;T&gt; extends System.ValueType implements class System.Collections.Generic.IEnumerator`1&lt;!T&gt;, class System.Collections.IEnumerator, class System.IDisposable" />
@@ -18,8 +19,17 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Collections.Generic.HashSet`1" /> class provides high-performance set operations. A set is a collection that contains no duplicate elements, and whose elements are in no particular order.</para>
+      <para>The capacity of a <see cref="T:System.Collections.Generic.HashSet`1" /> object is the number of elements that the object can hold. A <see cref="T:System.Collections.Generic.HashSet`1" /> object's capacity automatically increases as elements are added to the object.</para>
+      <para>For very large <see cref="T:System.Collections.Generic.HashSet`1" /> objects, you can increase the maximum capacity to 2 billion elements on a 64-bit system by setting the enabled attribute of the <format type="text/html"><a href="5c7ea24a-39ac-4e5f-83b7-b9f9a1b556ab">gcAllowVeryLargeObjects</a></format> configuration element to true in the run-time environment.</para>
+      <para>Starting with the net_v40_long, the <see cref="T:System.Collections.Generic.HashSet`1" /> class implements the <see cref="T:System.Collections.Generic.ISet`1" /> interface.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a set of values.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Current">

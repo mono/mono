@@ -73,6 +73,8 @@ namespace Mono.Debugger.Soft
 					else
 						res = stack [--sp];
 					break;
+				} else {
+					throw new NotSupportedException ();
 				}
 				ins = next;
 			}

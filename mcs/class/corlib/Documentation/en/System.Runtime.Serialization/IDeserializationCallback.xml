@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IDeserializationCallback" FullName="System.Runtime.Serialization.IDeserializationCallback">
   <TypeSignature Maintainer="auto" Language="C#" Value="public interface IDeserializationCallback" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IDeserializationCallback" />
@@ -16,8 +17,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates that a class is to be notified when deserialization of the entire object graph has been completed. Note that this interface is not called when deserializing with the XmlSerializer (System.Xml.Serialization.XmlSerializer).</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="OnDeserialization">
@@ -36,9 +40,13 @@
         <Parameter Name="sender" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="sender">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Runs when the entire object graph has been deserialized.</para>
+        </summary>
+        <param name="sender">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object that initiated the callback. The functionality for this parameter is not currently implemented. </param>
       </Docs>
     </Member>
   </Members>

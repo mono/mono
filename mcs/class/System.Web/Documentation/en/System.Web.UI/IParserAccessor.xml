@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IParserAccessor" FullName="System.Web.UI.IParserAccessor">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface IParserAccessor" />
   <AssemblyInfo>
@@ -10,8 +11,15 @@
   <ThreadSafetyStatement>Gtk# is thread aware, but not thread safe; See the &lt;link location="node:gtk-sharp/programming/threads"&gt;Gtk# Thread Programming&lt;/link&gt; for details.</ThreadSafetyStatement>
   <Interfaces />
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>When elements are parsed, they are recognized as child controls of the server control that implements this interface. These elements are converted to objects. When you implement this interface, the control you create defines what processing occurs once it has been notified that an element has been parsed.</para>
+      <para>Because the <see cref="T:System.Web.UI.Control" /> class implements this interface, it is easier to extend that class and override its implementation of the <see cref="M:System.Web.UI.IParserAccessor.AddParsedSubObject(System.Object)" /> method than to implement this interface yourself.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines the method that ASP.NET server controls must implement to recognize when elements, either HTML or XML, are parsed.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddParsedSubObject">
@@ -24,9 +32,13 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added: an object of type 'object'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>When implemented by an ASP.NET server control, notifies the server control that an element, either XML or HTML, was parsed.</para>
+        </summary>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> that was parsed. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

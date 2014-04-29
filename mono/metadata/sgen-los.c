@@ -548,14 +548,47 @@ sgen_los_scan_card_table (gboolean mod_union, SgenGrayQueue *queue)
 	LOSObject *obj;
 
 	for (obj = los_object_list; obj; obj = obj->next) {
-		guint8 *cards = NULL;
+		guint8 *cards;
+
+		if (!SGEN_OBJECT_HAS_REFERENCES (obj->data))
+			continue;
+
 		if (mod_union) {
 			cards = obj->cardtable_mod_union;
 			g_assert (cards);
+		} else {
+			cards = NULL;
 		}
 
 		sgen_cardtable_scan_object (obj->data, obj->size, cards, mod_union, queue);
 	}
+}
+
+void
+sgen_los_count_cards (long long *num_total_cards, long long *num_marked_cards)
+{
+	LOSObject *obj;
+	long long total_cards = 0;
+	long long marked_cards = 0;
+
+	for (obj = los_object_list; obj; obj = obj->next) {
+		int i;
+		guint8 *cards = sgen_card_table_get_card_scan_address ((mword) obj->data);
+		guint8 *cards_end = sgen_card_table_get_card_scan_address ((mword) obj->data + obj->size - 1);
+		mword num_cards = (cards_end - cards) + 1;
+
+		if (!SGEN_OBJECT_HAS_REFERENCES (obj->data))
+			continue;
+
+		total_cards += num_cards;
+		for (i = 0; i < num_cards; ++i) {
+			if (cards [i])
+				++marked_cards;
+		}
+	}
+
+	*num_total_cards = total_cards;
+	*num_marked_cards = marked_cards;
 }
 
 void
@@ -564,6 +597,8 @@ sgen_los_update_cardtable_mod_union (void)
 	LOSObject *obj;
 
 	for (obj = los_object_list; obj; obj = obj->next) {
+		if (!SGEN_OBJECT_HAS_REFERENCES (obj->data))
+			continue;
 		obj->cardtable_mod_union = sgen_card_table_update_mod_union (obj->cardtable_mod_union,
 				obj->data, obj->size, NULL);
 	}

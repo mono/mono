@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TabItemState" FullName="System.Windows.Forms.VisualStyles.TabItemState">
   <TypeSignature Language="C#" Value="public enum TabItemState" />
   <AssemblyInfo>
@@ -8,9 +9,48 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.VisualStyles.TabItemState" /> values correspond to the states of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> objects exposed by the following classes:</para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.Tab.TabItem" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.Tab.TabItemLeftEdge" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.Tab.TabItemRightEdge" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.Tab.TopTabItem" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.Tab.TopTabItemLeftEdge" />
+          </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.Tab.TopTabItemRightEdge" />
+          </para>
+        </item>
+      </list>
+      <para>The <see cref="T:System.Windows.Forms.VisualStyles.TabItemState" /> values are also used as an argument in the <see cref="Overload:System.Windows.Forms.TabRenderer.DrawTabItem" /> method.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the visual state of a tab item that is drawn with visual styles.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Disabled">
@@ -20,8 +60,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.TabItemState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tab item is disabled.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +77,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.TabItemState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tab item is hot.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +94,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.TabItemState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tab item is normal.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +111,11 @@
         <ReturnType>System.Windows.Forms.VisualStyles.TabItemState</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The tab item is selected.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

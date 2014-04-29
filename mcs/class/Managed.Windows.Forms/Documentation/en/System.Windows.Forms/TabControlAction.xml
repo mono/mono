@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TabControlAction" FullName="System.Windows.Forms.TabControlAction">
   <TypeSignature Language="C#" Value="public enum TabControlAction" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This enumeration is used by event handlers for the <see cref="E:System.Windows.Forms.TabControl.Deselecting" />, <see cref="E:System.Windows.Forms.TabControl.Deselected" />, <see cref="E:System.Windows.Forms.TabControl.Selecting" />, and <see cref="E:System.Windows.Forms.TabControl.Selected" /> events of a <see cref="T:System.Windows.Forms.TabControl" /> to determine which of the four events is being handled. This enables one event handler to handle multiple event types. </para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines values representing <see cref="T:System.Windows.Forms.TabControl" /> events.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Deselected">
@@ -20,8 +27,11 @@
         <ReturnType>System.Windows.Forms.TabControlAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the <see cref="E:System.Windows.Forms.TabControl.Deselected" /> event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Windows.Forms.TabControlAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the <see cref="E:System.Windows.Forms.TabControl.Deselecting" /> event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Windows.Forms.TabControlAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the <see cref="E:System.Windows.Forms.TabControl.Selected" /> event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +78,11 @@
         <ReturnType>System.Windows.Forms.TabControlAction</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents the <see cref="E:System.Windows.Forms.TabControl.Selecting" /> event.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

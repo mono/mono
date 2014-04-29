@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpUrlEncodedBinding" FullName="System.Web.Services.Description.HttpUrlEncodedBinding">
   <TypeSignature Language="C#" Value="public sealed class HttpUrlEncodedBinding : System.Web.Services.Description.ServiceDescriptionFormatExtension" Maintainer="auto" />
   <AssemblyInfo>
@@ -18,8 +19,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>This class specifies that the incoming data will be in the format"name=value&amp;name=value", encoded from an HTML form, regardless of whether the value of the Method attribute of the form is POST or GET.</para>
+      <para>Note that this encoding is derived from a feature of HTML and is not specific to the <see cref="T:System.Web.UI.HtmlControls.HtmlForm" /> class, although the HtmlForm class does support it. For more information about specifying protocols for XML Web services, see <format type="text/html"><a href="01DFC27C-C68E-4910-A0AA-5E4C2A766B0C">[&lt;topic://cpconbuildingaspnetwebservices&gt;]</a></format>. For more information about Web Services Description Language (WSDL), see the specification at http://www.w3.org/TR/wsdl/.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an extensibility element added to an <see cref="T:System.Web.Services.Description.InputBinding" /> within an XML Web service. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -28,8 +36,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Services.Description.HttpUrlEncodedBinding" /> class. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+from __future__ import print_function
 from optparse import OptionParser
 import subprocess
 import re
@@ -19,7 +20,7 @@ def git (command, *args):
     popen = subprocess.Popen (["git", command] + list (args), stdout = subprocess.PIPE)
     output = popen.communicate () [0]
     if popen.returncode != 0:
-        print >> sys.stderr, "Error: git failed"
+        print ("Error: git failed", file=sys.stderr)
         exit (1)
     return output
 
@@ -96,7 +97,7 @@ def format_changelog_entries (commit, changed_files, prefix, file_entries, all_p
         for (filename, entity) in files:
             entry_changelogs = changelogs_for_file_pattern (filename, changed_files)
             if len (entry_changelogs) == 0:
-                print "Warning: could not match file %s in commit %s" % (filename, commit)
+                print ("Warning: could not match file {0} in commit {1}".format (filename, commit))
             for changelog in entry_changelogs:
                 if changelog not in changelog_entries:
                     changelog_entries [changelog] = []
@@ -111,7 +112,7 @@ def format_changelog_entries (commit, changed_files, prefix, file_entries, all_p
     unmarked_changelogs = changelogs - marked_changelogs
     for changelog in unmarked_changelogs:
         if len (prefix) == 0:
-            print "Warning: empty entry in %s for commit %s" % (changelog_path (changelog), commit)
+            print ("Warning: empty entry in {0} for commit {1}".format (changelog_path (changelog), commit))
             insert_paragraphs = all_paragraphs
         else:
             insert_paragraphs = prefix
@@ -121,14 +122,14 @@ def format_changelog_entries (commit, changed_files, prefix, file_entries, all_p
     return paragraphs
 
 def debug_print_commit (commit, raw_message, prefix, file_entries, changed_files, changelog_entries):
-    print "===================== Commit"
-    print commit
-    print "--------------------- RAW"
-    print raw_message
-    print "--------------------- Prefix"
+    print ("===================== Commit")
+    print (commit)
+    print ("--------------------- RAW")
+    print (raw_message)
+    print ("--------------------- Prefix")
     for line in prefix:
-        print line
-    print "--------------------- File entries"
+        print (line)
+    print ("--------------------- File entries")
     for (files, comments) in file_entries:
         files_str = ""
         for (filename, entity) in files:
@@ -139,15 +140,15 @@ def debug_print_commit (commit, raw_message, prefix, file_entries, changed_files
                 files_str = files_str + " (" + entity + ")"
         print files_str
         for line in comments:
-            print "  " + line
-    print "--------------------- Files touched"
+            print ("  " + line)
+    print ("--------------------- Files touched")
     for f in changed_files:
-        print f
-    print "--------------------- ChangeLog entries"
+        print (f)
+    print ("--------------------- ChangeLog entries")
     for ((dirname, filename), lines) in changelog_entries.items ():
-        print "%s/%s:" % (dirname, filename)
+        print ("{0}/{1}:".format (dirname, filename))
         for line in lines:
-            print line
+            print (line)
 
 def process_commit (commit):
     changed_files = map (lambda l: l.split () [2], git ("diff-tree", "--numstat", commit).splitlines () [1:])
@@ -258,7 +259,7 @@ def main ():
     #see if git supports %B in --format
     output = git ("log", "-n1", "--format=%B", HEAD)
     if output.startswith ("%B"):
-        print >> sys.stderr, "Error: git doesn't support %B in --format - install version 1.7.2 or newer"
+        print ("Error: git doesn't support %B in --format - install version 1.7.2 or newer", file=sys.stderr)
         exit (1)
 
     for filename in git ("ls-tree", "-r", "--name-only", HEAD).splitlines ():
@@ -266,7 +267,7 @@ def main ():
             (path, name) = os.path.split (filename)
             all_changelogs [path] = name
 
-    commits = git ("rev-list", "--no-merges", HEAD, "^%s" % start_commit).splitlines ()
+    commits = git ("rev-list", "--no-merges", HEAD, "^{0}".format (start_commit)).splitlines ()
 
     touched_changelogs = {}
     for commit in commits:

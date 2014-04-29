@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SqlMethodAttribute" FullName="Microsoft.SqlServer.Server.SqlMethodAttribute">
   <TypeSignature Language="C#" Value="public sealed class SqlMethodAttribute : Microsoft.SqlServer.Server.SqlFunctionAttribute" />
   <AssemblyInfo>
@@ -14,9 +15,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For a property, the <see cref="T:Microsoft.SqlServer.Server.SqlMethodAttribute" /> should be used on the setter or the getter directly. </para>
+      <para>
+        <see cref="T:Microsoft.SqlServer.Server.SqlMethodAttribute" /> inherits from a <see cref="T:Microsoft.SqlServer.Server.SqlFunctionAttribute" />, so <see cref="T:Microsoft.SqlServer.Server.SqlMethodAttribute" /> inherits the FillRowMethodName and TableDefinition fields from <see cref="T:Microsoft.SqlServer.Server.SqlFunctionAttribute" />. Note that it is not possible to write a table-valued method, although the names of these fields might suggest that it is possible.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Indicates the determinism and data access properties of a method or property on a user-defined type (UDT). The properties on the attribute reflect the physical characteristics that are used when the type is registered with SQL Server.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -24,9 +33,12 @@
       <MemberType>Constructor</MemberType>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An attribute on a user-defined type (UDT), used to indicate the determinism and data access properties of a method or a property on a UDT.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -39,10 +51,18 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:Microsoft.SqlServer.Server.SqlMethodAttribute.IsMutator" /> property is set to true and the return type of the method is void, SQL Server marks the method as a mutator. A mutator method is one that causes a state change in the UDT instance. Mutator methods can be called in assignment statements or data modification statements, but cannot be used in queries. If a method is marked as a mutator but does not return void, then CREATE TYPE does not fail with an error. Even though a returned value other than void does not raise an error, the returned value is not accessible and cannot be used. </para>
+          <para>The default value of the <see cref="P:Microsoft.SqlServer.Server.SqlMethodAttribute.IsMutator" /> property is false. </para>
+          <para>A property can be a mutator if <see cref="T:Microsoft.SqlServer.Server.SqlMethodAttribute" /> is used on the setter and <see cref="P:Microsoft.SqlServer.Server.SqlMethodAttribute.IsMutator" /> is set to true. However, a property setter is implicitly treated as a mutator, so it is not necessary to set the <see cref="P:Microsoft.SqlServer.Server.SqlMethodAttribute.IsMutator" /> property of the <see cref="T:Microsoft.SqlServer.Server.SqlMethodAttribute" /> to true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether a method on a user-defined type (UDT) is a mutator.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -55,10 +75,16 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default value of the <see cref="P:Microsoft.SqlServer.Server.SqlMethodAttribute.OnNullCall" /> property is true.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates whether the method on a user-defined type (UDT) is called when null input arguments are specified in the method invocation.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

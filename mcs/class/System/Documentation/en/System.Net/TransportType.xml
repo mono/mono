@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TransportType" FullName="System.Net.TransportType" FullNameSP="System_Net_TransportType" Maintainer="ecma">
   <TypeSignature Language="ILASM" Value=".class public sealed serializable TransportType extends System.Enum" />
   <TypeSignature Language="C#" Value="public enum TransportType" />
@@ -15,16 +16,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>
-      <para> Specifies transport types.
-      </para>
-    </summary>
     <remarks>
-      <para>
-        <block subset="none" type="note">The <see cref="T:System.Net.TransportType" /> enumeration defines transport types
-   for the <see cref="T:System.Net.SocketPermission" /> and <see cref="T:System.Net.Sockets.Socket" /> classes.</block>
-      </para>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Net.TransportType" /> enumeration defines transport types for the <see cref="T:System.Net.SocketPermission" /> and <see cref="T:System.Net.Sockets.Socket" /> classes.</para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines transport types for the <see cref="T:System.Net.SocketPermission" /> and <see cref="T:System.Net.Sockets.Socket" /> classes.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="All">
@@ -44,8 +43,8 @@
       <MemberValue>All</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies any transport type.
- </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>All transport types.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -67,7 +66,8 @@
       <MemberValue>Udp</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies any connectionless transport, such as User Datagram Protocol (UDP).</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transport type is connectionless, such as UDP. Specifying this value has the same effect as specifying <see cref="F:System.Net.TransportType.Udp" />.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -89,7 +89,8 @@
       <MemberValue>Tcp</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies any connection-oriented transport, such as Transmission Control Protocol (TCP).</para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transport is connection oriented, such as TCP. Specifying this value has the same effect as specifying <see cref="F:System.Net.TransportType.Tcp" />.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -111,8 +112,8 @@
       <MemberValue>Tcp</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the Transmission Control Protocol (TCP) transport as defined by IETF RFC 793.
-      </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>TCP transport.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>
@@ -134,8 +135,8 @@
       <MemberValue>Udp</MemberValue>
       <Docs>
         <summary>
-          <para> Specifies the User Datagram Protocol (UDP) transport as defined by IETF RFC 768.
-      </para>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>UDP transport.</para>
         </summary>
       </Docs>
       <Excluded>0</Excluded>

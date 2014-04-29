@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ClientScriptItemCollection" FullName="System.Web.UI.Design.ClientScriptItemCollection">
   <TypeSignature Language="C#" Value="public sealed class ClientScriptItemCollection : System.Collections.ReadOnlyCollectionBase" />
   <AssemblyInfo>
@@ -9,8 +10,19 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Each <see cref="T:System.Web.UI.Design.ClientScriptItem" /> object in the <see cref="T:System.Web.UI.Design.ClientScriptItemCollection" /> class represents a script block that is contained in a document (a Web Form, Web server control, a content page, or a master page) at design time.</para>
+      <para>Use the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> class to set or examine client script elements that are contained in a Web Forms document on the design surface. Retrieve the collection of client script elements that are contained within the Web document by using the <see cref="M:System.Web.UI.Design.WebFormsRootDesigner.GetClientScriptsInDocument" /> method. Add a client script element to the Web document by using the <see cref="M:System.Web.UI.Design.WebFormsRootDesigner.AddClientScriptToDocument(System.Web.UI.Design.ClientScriptItem)" /> method.</para>
+      <para>To add client script elements at run time, use the <see cref="T:System.Web.UI.ClientScriptManager" /> class.</para>
+      <block subset="none" type="note">
+        <para>The <see cref="T:System.Web.UI.Design.ClientScriptItemCollection" /> class represents script elements at design time that execute on the client. Because the script elements that are generated for <see cref="T:System.Web.UI.Design.ClientScriptItemCollection" /> objects are not run on the server, the elements do not contain the runat="server" attribute.</para>
+      </block>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a read-only collection of client script blocks that are contained within a Web Form or user control at design time. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -23,9 +35,17 @@
         <Parameter Name="clientScriptItems" Type="System.Web.UI.Design.ClientScriptItem[]" />
       </Parameters>
       <Docs>
-        <param name="clientScriptItems">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="clientScriptItems" /> is null (Nothing in Visual Basic) or does not contain any elements, the constructor initializes an empty <see cref="T:System.Web.UI.Design.ClientScriptItemCollection" /> object. Otherwise, the items in the <paramref name="clientScriptItems" /> array are used to set the items for the <see cref="T:System.Web.UI.Design.ClientScriptItemCollection" />.</para>
+          <para>The <see cref="M:System.Web.UI.Design.ClientScriptItemCollection.#ctor(System.Web.UI.Design.ClientScriptItem[])" /> constructor is typically used in classes that are derived from the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> class. Visual designers implement the <see cref="M:System.Web.UI.Design.WebFormsRootDesigner.GetClientScriptsInDocument" /> method to return a <see cref="T:System.Web.UI.Design.ClientScriptItemCollection" /> object for the client script elements in a Web document at design time.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.UI.Design.ClientScriptItemCollection" /> class. </para>
+        </summary>
+        <param name="clientScriptItems">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Web.UI.Design.ClientScriptItem" /> elements used to initialize the collection.</param>
       </Docs>
     </Member>
   </Members>

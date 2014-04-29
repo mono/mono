@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridViewAutoSizeColumnsMode" FullName="System.Windows.Forms.DataGridViewAutoSizeColumnsMode">
   <TypeSignature Language="C#" Value="public enum DataGridViewAutoSizeColumnsMode" />
   <AssemblyInfo>
@@ -8,9 +9,19 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Windows.Forms.DataGridView" /> control can resize its columns to make them fill the available horizontal width of the control or to make them display the full contents of all cells or of specified cells. </para>
+      <para>With <see cref="F:System.Windows.Forms.DataGridViewAutoSizeColumnMode.Fill" /> mode, the preferred width of a column is determined by resizing all columns in that mode so that all visible columns in the control exactly fill the horizontal width of the available display area. With other modes, the preferred column width is the minimum width required to display the largest cell value from all cells or a subset of cells in that column, such as the subset of cells that are in currently displayed rows. Using a subset of cells to determine the new width is useful to avoid a performance penalty when working with many rows of data. </para>
+      <para>Content-based automatic resizing prevents users from adjusting column widths with the mouse. User resizing is enabled in fill mode, however. </para>
+      <para>This enumeration is used by the <see cref="T:System.Windows.Forms.DataGridView" /> control <see cref="P:System.Windows.Forms.DataGridView.AutoSizeColumnsMode" /> property and <see cref="Overload:System.Windows.Forms.DataGridView.AutoResizeColumns" /> method. </para>
+      <para>For more information about sizing modes, see <format type="text/html"><a href="a5620a9c-0d06-41e3-8934-c25ddb16c9e6">Sizing Options in the Windows Forms DataGridView Control</a></format>. For more information about column fill mode in particular, see <format type="text/html"><a href="b4ef7411-ebf4-4e26-bb33-aecec90de80c">Column Fill Mode in the Windows Forms DataGridView Control</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Defines values for specifying how the widths of columns are adjusted. </para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AllCells">
@@ -20,8 +31,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeColumnsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column widths adjust to fit the contents of all cells in the columns, including header cells. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +48,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeColumnsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column widths adjust to fit the contents of all cells in the columns, excluding header cells. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +65,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeColumnsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column widths adjust to fit the contents of the column header cells. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -62,8 +82,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeColumnsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column widths adjust to fit the contents of all cells in the columns that are in rows currently displayed onscreen, including header cells. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -76,8 +99,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeColumnsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column widths adjust to fit the contents of all cells in the columns that are in rows currently displayed onscreen, excluding header cells. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -90,8 +116,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeColumnsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column widths adjust so that the widths of all columns exactly fill the display area of the control, requiring horizontal scrolling only to keep column widths above the <see cref="P:System.Windows.Forms.DataGridViewColumn.MinimumWidth" /> property values. Relative column widths are determined by the relative <see cref="P:System.Windows.Forms.DataGridViewColumn.FillWeight" /> property values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -104,8 +133,11 @@
         <ReturnType>System.Windows.Forms.DataGridViewAutoSizeColumnsMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The column widths do not automatically adjust. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="CodeComment" FullName="System.CodeDom.CodeComment">
   <TypeSignature Language="C#" Value="public class CodeComment : System.CodeDom.CodeObject" Maintainer="auto" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable beforefieldinit CodeComment extends System.CodeDom.CodeObject" />
@@ -23,8 +24,17 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>Represents a comment in the CodeDOM.</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>
+        <see cref="T:System.CodeDom.CodeComment" /> can be used to represent a single line comment.</para>
+      <para>A <see cref="T:System.CodeDom.CodeCommentStatement" /> can contain a <see cref="T:System.CodeDom.CodeComment" /> and allows it to be treated as a statement and generated as code within a collection of statements. Multi-line comments can be represented with multiple <see cref="T:System.CodeDom.CodeCommentStatement" /> objects.</para>
+      <para>To include a comment in a CodeDOM graph that can be generated to source code, add a <see cref="T:System.CodeDom.CodeComment" /> to a <see cref="T:System.CodeDom.CodeCommentStatement" />, and add this to the statements collection of a <see cref="T:System.CodeDom.CodeMemberMethod" /> or to the comments collection of a <see cref="T:System.CodeDom.CodeNamespace" /> or any object that derives from <see cref="T:System.CodeDom.CodeTypeMember" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a comment.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -39,8 +49,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>Generates a CodeComment with an uninitialized <see cref="P:System.CodeDom.CodeComment.Text" /> property.</summary>
         <remarks>Because the Text property is uninitialized with this constructor, it should be set before the code is generated for it.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeComment" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -57,9 +70,13 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">String the Text property of this object is to be initialized to.</param>
-        <summary>Creates a <see cref="T:System.CodeDom.CodeComment" /> with the <see cref="P:System.CodeDom.CodeComment.Text" /> property initialized to the specified string.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeComment" /> class with the specified text as contents.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contents of the comment. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -77,10 +94,15 @@
         <Parameter Name="docComment" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="text">String the Comment property of this object is to be initialized to.</param>
-        <param name="docComment">If true, specifies a documentation comment; otherwise a regular comment is produced.</param>
-        <summary>Creates a <see cref="T:System.CodeDom.CodeComment" /> with the <see cref="P:System.CodeDom.CodeComment.Text" /> property initialized to the specified string. The docComment argument signifies whether the comment should be a regular comment or a document line.</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.CodeDom.CodeComment" /> class using the specified text and documentation comment flag.</para>
+        </summary>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contents of the comment. </param>
+        <param name="docComment">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the comment is a documentation comment; otherwise, false. </param>
       </Docs>
     </Member>
     <Member MemberName="DocComment">
@@ -98,9 +120,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>If true, specifies a documentation comment; otherwise a regular comment is produced.</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Some languages support a special type of comment that can be automatically extracted from the source code for documentation purposes. This property can be used to designate whether the comment is a documentation comment, which may generate a different syntax. An example of this is C#, which uses "//" for regular comments and "///" for documentation comments.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that indicates whether the comment is a documentation comment.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Text">
@@ -118,9 +146,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>String to be used in the comment generated.</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text of this property should not contain line breaks. If multiple lines are required, multiple <see cref="T:System.CodeDom.CodeComment" /> objects should be defined.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text of the comment.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

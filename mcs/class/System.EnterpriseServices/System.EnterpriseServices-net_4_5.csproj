@@ -5,10 +5,10 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{20B32D23-8DD0-4291-A98F-C52A3E99DFE8}</ProjectGuid>
+    <ProjectGuid>{773D8BA7-9A88-49AC-81C9-740436270588}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoWarn>1699,168,162</NoWarn>
-    <OutputPath>bin\Debug\System.EnterpriseServices-net_4_5</OutputPath>
+    <OutputPath>./../../class/lib/net_4_5</OutputPath>
     <NoStdLib>True</NoStdLib>
     <NoConfig>True</NoConfig>
     
@@ -168,17 +168,20 @@
     <PreBuildEvent>
 
     </PreBuildEvent>
-    <PostBuildEvent>
-      xcopy $(TargetName).* $(ProjectDir)..\lib\net_4_5\ /Y /R /D
-  </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' != 'Windows_NT' ">
+
+    </PostBuildEvent>
+    <PostBuildEvent Condition=" '$(OS)' == 'Windows_NT' ">
+
+    </PostBuildEvent>
   </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\corlib\corlib-net_4_5.csproj">
-      <Project>{07C1F58B-9E99-47F8-A847-79EDA5157DA8}</Project>
+      <Project>{33BF0182-AC5C-464C-995B-C9CFE74E1A95}</Project>
       <Name>corlib\corlib-net_4_5</Name>
     </ProjectReference>
     <ProjectReference Include="..\System.Transactions\System.Transactions-net_4_5.csproj">
-      <Project>{9C3F8EFB-4A3A-4BD1-9072-881F1F558781}</Project>
+      <Project>{AF2BBF50-AB57-4CA1-8EF5-2B54C7418434}</Project>
       <Name>System.Transactions\System.Transactions-net_4_5</Name>
     </ProjectReference>
   </ItemGroup>
@@ -186,3 +189,4 @@
     <Folder Include="Properties\" />
   </ItemGroup>
 </Project>
+

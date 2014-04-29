@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DataGridPagerStyle" FullName="System.Web.UI.WebControls.DataGridPagerStyle">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class DataGridPagerStyle : System.Web.UI.WebControls.TableItemStyle" />
   <AssemblyInfo>
@@ -14,8 +15,15 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The pager is an element on the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control that allows you to link to other pages when paging is enabled. The <see cref="P:System.Web.UI.WebControls.DataGrid.PagerStyle" /> property of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control uses an instance of this class to represent the style properties for the pager.</para>
+      <para>For more information on paging, see <see cref="P:System.Web.UI.WebControls.DataGrid.AllowPaging" /> and <see cref="P:System.Web.UI.WebControls.DataGrid.AllowCustomPaging" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the style for the pager of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="CopyFrom">
@@ -28,9 +36,16 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.Web.UI.WebControls.Style" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataGridPagerStyle.CopyFrom(System.Web.UI.WebControls.Style)" /> method to copy the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object into this instance of the <see cref="T:System.Web.UI.WebControls.DataGridPagerStyle" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Copies the style of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object into this instance of the <see cref="T:System.Web.UI.WebControls.DataGridPagerStyle" /> class.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.Style" /> to copy from. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -47,9 +62,16 @@
         <Parameter Name="s" Type="System.Web.UI.WebControls.Style" />
       </Parameters>
       <Docs>
-        <param name="s">a <see cref="T:System.Web.UI.WebControls.Style" /></param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataGridPagerStyle.MergeWith(System.Web.UI.WebControls.Style)" /> method to combine the style properties of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object with this instance of the <see cref="T:System.Web.UI.WebControls.DataGridPagerStyle" /> class. If a property from this instance is already set to a value, the property is unchanged. If a property is not set, this method sets that property with the value from the corresponding property of the <see cref="T:System.Web.UI.WebControls.Style" /> object.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Merges the style of the specified <see cref="T:System.Web.UI.WebControls.Style" /> object with this instance of the <see cref="T:System.Web.UI.WebControls.DataGridPagerStyle" /> class.</para>
+        </summary>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.Style" /> to merge with. </param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -64,9 +86,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PagerMode'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridPagerStyle.Mode" /> property to specify which set of pager buttons to use on the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. You can specify buttons that link to the next and previous page, or numeric buttons that link directly to a page.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value that specifies whether the pager element displays buttons that link to the next and previous page, or numeric buttons that link directly to a page.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -89,9 +117,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridPagerStyle.NextPageText" /> property to provide custom text for the next page button. The <see cref="P:System.Web.UI.WebControls.DataGridPagerStyle.Mode" /> property must be set to PagerMode.NextPrev for this property to have any effect.</para>
+          <para>This property is used along with the <see cref="P:System.Web.UI.WebControls.DataGridPagerStyle.PrevPageText" /> property to create a custom set of controls for the next and previous buttons of the pager on the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+          <block subset="none" type="note">
+            <para>This property does not automatically encode special characters to HTML. You need to convert these characters to the appropriate HTML value. For example the greater than sign (&gt;) will not automatically convert to &amp;gt;.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text displayed for the next page button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -117,9 +156,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'int'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridPagerStyle.PageButtonCount" /> property to specify the number of numeric buttons to display concurrently in the pager element of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. The <see cref="P:System.Web.UI.WebControls.DataGridPagerStyle.Mode" /> property must be set to PagerMode.NumericPages for this property to have any effect.</para>
+          <para>If there are more pages in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control than specified in this property, ellipsis buttons (...) are displayed in the pager element. When clicked, these buttons display the next or previous set of numeric buttons.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the number of numeric buttons to display concurrently in the pager element of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -142,9 +188,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PagerPosition'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridPagerStyle.Position" /> property to specify the location where the pager element is displayed in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control. The pager element can be displayed at the upper edge, the lower edge, or at both the upper and lower edges of the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the position of the pager element in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -167,9 +219,20 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridPagerStyle.PrevPageText" /> property to provide custom text for the next page button. The <see cref="P:System.Web.UI.WebControls.DataGridPagerStyle.Mode" /> property must be set to PagerMode.NextPrev for this property to have any effect.</para>
+          <para>This property is used along with the <see cref="P:System.Web.UI.WebControls.DataGridPagerStyle.NextPageText" /> property to create a custom appearance for the next and previous buttons of the pager on the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+          <block subset="none" type="note">
+            <para>This property does not automatically encode special characters to HTML. You need to convert special characters to the appropriate HTML value. For example, the greater than sign (&gt;) will not automatically convert to &amp;gt;.</para>
+          </block>
+          <para>The value of this property, when set, can be saved automatically to a resource file by using a designer tool. For more information, see <see cref="T:System.ComponentModel.LocalizableAttribute" /> and <format type="text/html"><a href="8ef3838e-9d05-4236-9dd0-ceecff9df80d">ASP.NET Globalization and Localization</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the text displayed for the previous page button.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -195,8 +258,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="M:System.Web.UI.WebControls.DataGridPagerStyle.Reset" /> method to restore the <see cref="T:System.Web.UI.WebControls.DataGridPagerStyle" /> object to its default values.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Restores the <see cref="T:System.Web.UI.WebControls.DataGridPagerStyle" /> object to its default values.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -211,9 +280,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use the <see cref="P:System.Web.UI.WebControls.DataGridPagerStyle.Visible" /> property to specify whether the pager is displayed in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets a value indicating whether the pager is displayed in the <see cref="T:System.Web.UI.WebControls.DataGrid" /> control.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

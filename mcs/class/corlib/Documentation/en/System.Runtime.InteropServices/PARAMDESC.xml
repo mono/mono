@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PARAMDESC" FullName="System.Runtime.InteropServices.PARAMDESC">
   <TypeSignature Maintainer="auto" Language="C#" Value="public struct PARAMDESC" />
   <TypeSignature Language="ILAsm" Value=".class public sequential sealed beforefieldinit PARAMDESC extends System.ValueType" />
@@ -19,8 +20,14 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>For additional information about PARAMDESC, see the MSDN Library.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.PARAMDESC" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="lpVarValue">
@@ -37,8 +44,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about PARAMDESC, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents a pointer to a value that is being passed between processes.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="wParamFlags">
@@ -55,8 +68,14 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For additional information about PARAMDESC, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Represents bitmask values that describe the structure element, parameter, or return value.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

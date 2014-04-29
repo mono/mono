@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="LayoutEventArgs" FullName="System.Windows.Forms.LayoutEventArgs">
   <TypeSignature Language="C#" Value="public sealed class LayoutEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -10,8 +11,16 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Changes to a control such as resizing, showing or hiding child controls, and adding or removing child controls make it necessary for a control to layout its child controls. A <see cref="T:System.Windows.Forms.LayoutEventArgs" /> specifies the child control that has been changed and its affected property. For example, if a control has been made visible since the last layout operation, the <see cref="P:System.Windows.Forms.Control.Visible" /> property is affected.</para>
+      <para>The <see cref="P:System.Windows.Forms.LayoutEventArgs.AffectedControl" /> and <see cref="P:System.Windows.Forms.LayoutEventArgs.AffectedProperty" /> properties are set to null if no values were provided when the <see cref="M:System.Windows.Forms.Control.PerformLayout" /> method was called.</para>
+      <para>For more information about handling events, see <format type="text/html"><a href="01E4F1BC-E55E-413F-98C7-6588493E5F67">Consuming Events</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <see cref="E:System.Windows.Forms.Control.Layout" /> event. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -25,10 +34,15 @@
         <Parameter Name="affectedProperty" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="affectedComponent">To be added.</param>
-        <param name="affectedProperty">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.LayoutEventArgs" /> class with the specified component and property affected.</para>
+        </summary>
+        <param name="affectedComponent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Component" /> affected by the layout change. </param>
+        <param name="affectedProperty">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property affected by the layout change. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -39,10 +53,15 @@
         <Parameter Name="affectedProperty" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="affectedControl">To be added.</param>
-        <param name="affectedProperty">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Windows.Forms.LayoutEventArgs" /> class with the specified control and property affected.</para>
+        </summary>
+        <param name="affectedControl">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> affected by the layout change.</param>
+        <param name="affectedProperty">
+          <attribution license="cc4" from="Microsoft" modified="false" />The property affected by the layout change.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -59,9 +78,12 @@
         <ReturnType>System.ComponentModel.IComponent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.Component" /> affected by the layout change.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="AffectedControl">
@@ -71,9 +93,15 @@
         <ReturnType>System.Windows.Forms.Control</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.Windows.Forms.LayoutEventArgs.AffectedControl" /> property is set to null if no value was provided when the <see cref="M:System.Windows.Forms.Control.PerformLayout" /> method was called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the child control affected by the change.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -87,9 +115,15 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If a child control has been made visible since the last layout operation, the <see cref="P:System.Windows.Forms.Control.Visible" /> property is affected. The <see cref="P:System.Windows.Forms.LayoutEventArgs.AffectedProperty" /> property is set to null if no value was provided when the <see cref="M:System.Windows.Forms.Control.PerformLayout" /> method was called.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the property affected by the change.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AnonymousIdentificationEventArgs" FullName="System.Web.Security.AnonymousIdentificationEventArgs">
   <TypeSignature Language="C#" Value="public sealed class AnonymousIdentificationEventArgs : EventArgs" />
   <AssemblyInfo>
@@ -9,9 +10,18 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Web.Security.AnonymousIdentificationEventArgs" /> class is used to supply event values to the <see cref="E:System.Web.Security.AnonymousIdentificationModule.Creating" /> event and to enable you to specify a custom Windows identity for the current request. You can access the <see cref="E:System.Web.Security.AnonymousIdentificationModule.Creating" /> event of the <see cref="T:System.Web.Security.AnonymousIdentificationModule" /> class by specifying a subroutine named <system>AnonymousIdentification_Creating</system> in the Global.asax file for your ASP.NET application.</para>
+      <para>The <see cref="T:System.Web.Security.AnonymousIdentificationModule" /> constructs a <see cref="T:System.Web.Security.AnonymousIdentificationEventArgs" /> object using the current <see cref="T:System.Web.HttpContext" /> and passes it to the <system>AnonymousIdentification_Creating</system> event.</para>
+      <para>You can use the <see cref="P:System.Web.Security.AnonymousIdentificationEventArgs.AnonymousID" /> property of the <see cref="T:System.Web.Security.AnonymousIdentificationEventArgs" /> object supplied to the <system>AnonymousIdentification_Creating</system> event to set the anonymous identifier to a custom value. If you do not specify a value for the <see cref="P:System.Web.Security.AnonymousIdentificationEventArgs.AnonymousID" /> property during the <system>AnonymousIdentification_Creating</system> event, a <see cref="T:System.Guid" /> is used.</para>
+      <para>The <system>AnonymousIdentification_Creating</system> event is only raised when the anonymous identification is <see cref="P:System.Web.Security.AnonymousIdentificationModule.Enabled" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides data for the <system>AnonymousIdentification_Creating</system> event. This class cannot be inherited.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -21,10 +31,17 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <param name="context">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Security.AnonymousIdentificationModule" /> constructs a <see cref="T:System.Web.Security.AnonymousIdentificationEventArgs" /> object using the current <see cref="T:System.Web.HttpContext" />. It then passes the <see cref="T:System.Web.Security.AnonymousIdentificationEventArgs" /> object to the <system>AnonymousIdentification_Creating</system> event.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Web.Security.AnonymousIdentificationEventArgs" /> class.</para>
+        </summary>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The context for the event.</param>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +54,17 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You can use the <see cref="P:System.Web.Security.AnonymousIdentificationEventArgs.AnonymousID" /> property to set the anonymous identifier to a custom value during the <system>AnonymousIdentification_Creating</system> event. If you do not specify a value for the <see cref="P:System.Web.Security.AnonymousIdentificationEventArgs.AnonymousID" /> property during the <system>AnonymousIdentification_Creating</system> event, a <see cref="T:System.Guid" /> is used.</para>
+          <para>The <system>AnonymousIdentification_Creating</system> event is only raised when the anonymous identification is <see cref="P:System.Web.Security.AnonymousIdentificationModule.Enabled" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the anonymous identifier for the user.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +77,16 @@
         <ReturnType>System.Web.HttpContext</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
-        <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.HttpContext" /> provides access to <see cref="P:System.Web.HttpContext.Request" />, <see cref="P:System.Web.HttpContext.Response" />, and <see cref="P:System.Web.HttpContext.User" /> objects for the current request.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.Web.HttpContext" /> object for the current HTTP request.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

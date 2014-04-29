@@ -544,6 +544,7 @@ namespace Mono.CSharp {
 		{
 			bestCandidate = null;
 			var container = member.Parent.PartialContainer.Definition;
+			var nested = container.IsNested;
 			if (!container.IsInterface) {
 				container = container.BaseType;
 
@@ -566,7 +567,7 @@ namespace Mono.CSharp {
 					for (int i = 0; i < applicable.Count; ++i) {
 						var entry = applicable [i];
 
-						if ((entry.Modifiers & Modifiers.PRIVATE) != 0)
+						if ((entry.Modifiers & Modifiers.PRIVATE) != 0 && !nested)
 							continue;
 
 						if ((entry.Modifiers & Modifiers.AccessibilityMask) == Modifiers.INTERNAL &&
@@ -699,6 +700,14 @@ namespace Mono.CSharp {
 						continue;
 
 					if ((name_entry.Modifiers & Modifiers.STATIC) != 0)
+						continue;
+
+					//
+					// Ignore user private fields for definite assignment. This is sort of unexpected but
+					// rationale is to have consistent results when using reference assemblies which don't
+					// include any private fields and full assemblies
+					//
+					if ((name_entry.Modifiers & (Modifiers.PRIVATE | Modifiers.BACKING_FIELD)) == Modifiers.PRIVATE)
 						continue;
 
 					//

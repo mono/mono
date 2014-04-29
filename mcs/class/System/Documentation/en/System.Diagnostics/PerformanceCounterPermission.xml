@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PerformanceCounterPermission" FullName="System.Diagnostics.PerformanceCounterPermission">
   <TypeSignature Language="C#" Maintainer="auto" Value="public sealed class PerformanceCounterPermission : System.Security.Permissions.ResourcePermissionBase" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed beforefieldinit PerformanceCounterPermission extends System.Security.Permissions.ResourcePermissionBase" />
@@ -16,8 +17,11 @@
   <Interfaces>
   </Interfaces>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Allows control of code access permissions for <see cref="T:System.Diagnostics.PerformanceCounter" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName=".ctor">
@@ -32,8 +36,11 @@
       <ReturnValue />
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.PerformanceCounterPermission" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -50,9 +57,13 @@
         <Parameter Name="permissionAccessEntries" Type="System.Diagnostics.PerformanceCounterPermissionEntry[]" />
       </Parameters>
       <Docs>
-        <param name="permissionAccessEntries">To be added: an object of type 'PerformanceCounterPermissionEntry []'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.PerformanceCounterPermission" /> class with the specified permission access level entries.</para>
+        </summary>
+        <param name="permissionAccessEntries">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Diagnostics.PerformanceCounterPermissionEntry" /> objects. The <see cref="P:System.Diagnostics.PerformanceCounterPermission.PermissionEntries" /> property is set to this value. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -69,9 +80,13 @@
         <Parameter Name="state" Type="System.Security.Permissions.PermissionState" />
       </Parameters>
       <Docs>
-        <param name="state">To be added: an object of type 'Security.Permissions.PermissionState'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.PerformanceCounterPermission" /> class with the specified permission state.</para>
+        </summary>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Security.Permissions.PermissionState" /> values. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -90,11 +105,17 @@
         <Parameter Name="categoryName" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="permissionAccess">To be added: an object of type 'PerformanceCounterPermissionAccess'</param>
-        <param name="machineName">To be added: an object of type 'string'</param>
-        <param name="categoryName">To be added: an object of type 'string'</param>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Diagnostics.PerformanceCounterPermission" /> class with the specified access levels, the name of the computer to use, and the category associated with the performance counter.</para>
+        </summary>
+        <param name="permissionAccess">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Diagnostics.PerformanceCounterPermissionAccess" /> values. </param>
+        <param name="machineName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The server on which the performance counter and its associate category reside. </param>
+        <param name="categoryName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the performance counter category (performance object) with which the performance counter is associated. </param>
       </Docs>
     </Member>
     <Member MemberName="PermissionEntries">
@@ -110,9 +131,12 @@
         <ReturnType>System.Diagnostics.PerformanceCounterPermissionEntryCollection</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'PerformanceCounterPermissionEntryCollection'</value>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of permission entries for this permissions request.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="Import" FullName="Microsoft.Build.BuildEngine.Import">
   <TypeSignature Language="C#" Value="public class Import" />
   <AssemblyInfo>
@@ -9,9 +10,12 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a single <format type="text/html"><a href="3bfecaf1-69fd-4008-b651-c9dafd4389d9">Import</a></format> element in an vstecmsbuild project.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Condition">
@@ -21,10 +25,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <unmanagedCodeEntityReference>Condition</unmanagedCodeEntityReference> attribute value of the <format type="text/html"><a href="3bfecaf1-69fd-4008-b651-c9dafd4389d9">Import</a></format> element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -37,10 +44,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the fully qualified path of the file specified in the <unmanagedCodeEntityReference>Name</unmanagedCodeEntityReference> attribute of the <format type="text/html"><a href="3bfecaf1-69fd-4008-b651-c9dafd4389d9">Import</a></format> element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -53,10 +63,13 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value indicating whether the <format type="text/html"><a href="3bfecaf1-69fd-4008-b651-c9dafd4389d9">Import</a></format> element was imported into the project.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -69,10 +82,13 @@
         <ReturnType>System.String</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the <unmanagedCodeEntityReference>Project</unmanagedCodeEntityReference> attribute value of the <format type="text/html"><a href="3bfecaf1-69fd-4008-b651-c9dafd4389d9">Import</a></format> element.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

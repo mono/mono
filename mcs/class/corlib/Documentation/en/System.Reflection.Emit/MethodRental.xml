@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="MethodRental" FullName="System.Reflection.Emit.MethodRental">
   <TypeSignature Maintainer="auto" Language="C#" Value="public sealed class MethodRental : System.Runtime.InteropServices._MethodRental" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit MethodRental extends System.Object implements class System.Runtime.InteropServices._MethodRental" />
@@ -29,8 +30,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides a fast way to swap method body implementation given a method of a class.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="JitImmediate">
@@ -48,8 +52,11 @@
       <Parameters />
       <MemberValue>1</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method should be just-in-time (JIT) compiled immediately.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="JitOnDemand">
@@ -67,8 +74,11 @@
       <Parameters />
       <MemberValue>0</MemberValue>
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies that the method should be just-in-time (JIT) compiled when needed.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="SwapMethodBody">
@@ -91,13 +101,25 @@
         <Parameter Name="flags" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="cls">To be added: an object of type 'Type'</param>
-        <param name="methodtoken">To be added: an object of type 'int'</param>
-        <param name="rgIL">To be added: an object of type 'IntPtr'</param>
-        <param name="methodSize">To be added: an object of type 'int'</param>
-        <param name="flags">To be added: an object of type 'int'</param>
-        <summary>To be added</summary>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>You cannot use this method to swap the body of a global method.</para>
+          <para>The method can only be called by the client that created the dynamic module that contains the type whose method's body is being swapped.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Swaps the body of a method.</para>
+        </summary>
+        <param name="cls">
+          <attribution license="cc4" from="Microsoft" modified="false" />The class containing the method. </param>
+        <param name="methodtoken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The token for the method. </param>
+        <param name="rgIL">
+          <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the method. This should include the method header. </param>
+        <param name="methodSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size of the new method body in bytes. </param>
+        <param name="flags">
+          <attribution license="cc4" from="Microsoft" modified="false" />Flags that control the swapping. See the definitions of the constants. </param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._MethodRental.GetIDsOfNames">
@@ -147,11 +169,20 @@
         <Parameter Name="ppTInfo" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <param name="iTInfo">To be added.</param>
-        <param name="lcid">To be added.</param>
-        <param name="ppTInfo">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code. For more information about <unmanagedCodeEntityReference>IDispatch::GetTypeInfo</unmanagedCodeEntityReference>, see the MSDN Library.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves the type information for an object, which can then be used to get the type information for an interface.</para>
+        </summary>
+        <param name="iTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type information to return.</param>
+        <param name="lcid">
+          <attribution license="cc4" from="Microsoft" modified="false" />The locale identifier for the type information.</param>
+        <param name="ppTInfo">
+          <attribution license="cc4" from="Microsoft" modified="false" />Receives a pointer to the requested type information object.</param>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._MethodRental.GetTypeInfoCount">

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="TargetDotNetFrameworkVersion" FullName="Microsoft.Build.Utilities.TargetDotNetFrameworkVersion">
   <TypeSignature Language="C#" Value="public enum TargetDotNetFrameworkVersion" />
   <AssemblyInfo>
@@ -8,9 +9,12 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
     <since version="2.0" />
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the version of the dnprdnshort to use with the methods in <see cref="T:Microsoft.Build.Utilities.ToolLocationHelper" />.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Version11">
@@ -20,8 +24,11 @@
         <ReturnType>Microsoft.Build.Utilities.TargetDotNetFrameworkVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies dnprdnshort version 1.1.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +41,11 @@
         <ReturnType>Microsoft.Build.Utilities.TargetDotNetFrameworkVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies dnprdnshort version 2.0.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +58,11 @@
         <ReturnType>Microsoft.Build.Utilities.TargetDotNetFrameworkVersion</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version="2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies the most recent released version of the dnprdnshort.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

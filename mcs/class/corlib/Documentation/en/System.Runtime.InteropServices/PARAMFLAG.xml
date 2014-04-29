@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="PARAMFLAG" FullName="System.Runtime.InteropServices.PARAMFLAG">
   <TypeSignature Maintainer="auto" Language="C#" Value="public enum PARAMFLAG" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed PARAMFLAG extends System.Enum" />
@@ -21,8 +22,11 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
     <remarks>To be added</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Use <see cref="T:System.Runtime.InteropServices.ComTypes.PARAMFLAG" /> instead.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="PARAMFLAG_FHASCUSTDATA">
@@ -39,8 +43,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter has custom data.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PARAMFLAG_FHASDEFAULT">
@@ -57,8 +64,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter has default behaviors defined.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PARAMFLAG_FIN">
@@ -75,8 +85,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter passes information from the caller to the callee.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PARAMFLAG_FLCID">
@@ -93,8 +106,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter is the local identifier of a client application.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PARAMFLAG_FOPT">
@@ -111,8 +127,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter is optional.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PARAMFLAG_FOUT">
@@ -129,8 +148,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter returns information from the callee to the caller.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PARAMFLAG_FRETVAL">
@@ -147,8 +169,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter is the return value of the member.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="PARAMFLAG_NONE">
@@ -165,8 +190,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added</summary>
         <remarks>To be added</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Whether the parameter passes or receives information is unspecified.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

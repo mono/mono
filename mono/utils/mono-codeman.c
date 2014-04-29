@@ -42,7 +42,7 @@ static gulong dynamic_code_frees_count;
 
 #define MIN_PAGES 16
 
-#if defined(__ia64__) || defined(__x86_64__)
+#if defined(__ia64__) || defined(__x86_64__) || defined (_WIN64)
 /*
  * We require 16 byte alignment on amd64 so the fp literals embedded in the code are 
  * properly aligned for SSE2.
@@ -487,6 +487,9 @@ mono_code_manager_foreach (MonoCodeManager *cman, MonoCodeManagerFunc func, void
 #define BIND_ROOM 4
 #endif
 #if defined(__arm__)
+#define BIND_ROOM 8
+#endif
+#if defined(TARGET_ARM64)
 #define BIND_ROOM 8
 #endif
 

@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ISite" FullName="System.ComponentModel.ISite">
   <TypeSignature Language="C#" Maintainer="auto" Value="public interface ISite : IServiceProvider" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract ISite implements class System.IServiceProvider" />
@@ -21,8 +22,15 @@
     </Attribute>
   </Attributes>
   <Docs>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Sites bind a <see cref="T:System.ComponentModel.Component" /> to a <see cref="T:System.ComponentModel.Container" /> and enable communication between them, as well as provide a way for the container to manage its components.</para>
+      <para>Sites can also serve as a repository for container-specific, per-component information, such as the component name. For more information about components, see <format type="text/html"><a href="d4d4fcb4-e0b8-46b3-b679-7ee0026eb9e3">Programming with Components</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Provides functionality required by sites.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Component">
@@ -38,9 +46,15 @@
         <ReturnType>System.ComponentModel.IComponent</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IComponent'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid value for this property (that is, the value is not null) indicates that the component has been added to a container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the component associated with the <see cref="T:System.ComponentModel.ISite" /> when implemented by a class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Container">
@@ -56,9 +70,15 @@
         <ReturnType>System.ComponentModel.IContainer</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'IContainer'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>null for the <see cref="P:System.ComponentModel.ISite.Container" /> property indicates that the <see cref="T:System.ComponentModel.IComponent" /> instance does not have an <see cref="T:System.ComponentModel.ISite" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the <see cref="T:System.ComponentModel.IContainer" /> associated with the <see cref="T:System.ComponentModel.ISite" /> when implemented by a class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="DesignMode">
@@ -74,9 +94,15 @@
         <ReturnType>System.Boolean</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'bool'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The design mode indicator is stored in the <see cref="T:System.ComponentModel.ISite" />; therefore, if the <see cref="T:System.ComponentModel.Component" /> does not have an <see cref="T:System.ComponentModel.ISite" /> associated with it, this property is always false.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the component is in design mode when implemented by a class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Name">
@@ -94,9 +120,15 @@
       <Parameters>
       </Parameters>
       <Docs>
-        <summary>To be added</summary>
         <value>To be added: an object of type 'string'</value>
-        <remarks>To be added</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The components within a container might or might not be named. If a component is given a name, the name must be unique among all the components within the container.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets or sets the name of the component associated with the <see cref="T:System.ComponentModel.ISite" /> when implemented by a class.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

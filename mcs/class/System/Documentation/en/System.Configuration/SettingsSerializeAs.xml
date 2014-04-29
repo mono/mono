@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="SettingsSerializeAs" FullName="System.Configuration.SettingsSerializeAs">
   <TypeSignature Language="C#" Value="public enum SettingsSerializeAs" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed SettingsSerializeAs extends System.Enum" />
@@ -10,9 +11,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Configuration.SettingsSerializeAs" /> enumeration is used to specify the serialization mechanism used by the application settings provider to persist the values of application settings properties. For example, the <see cref="T:System.Configuration.SettingsSerializeAsAttribute" /> uses this enumeration in its constructor to request that a property or group of properties be persisted using the specified serialization mechanism.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Determines the serialization scheme used to store application settings.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Binary">
@@ -27,8 +34,11 @@
         <ReturnType>System.Configuration.SettingsSerializeAs</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The settings property is serialized using binary object serialization.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ProviderSpecific">
@@ -43,8 +53,11 @@
         <ReturnType>System.Configuration.SettingsSerializeAs</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The settings provider has implicit knowledge of the property or its type and picks an appropriate serialization mechanism. Often used for custom serialization.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="String">
@@ -59,8 +72,11 @@
         <ReturnType>System.Configuration.SettingsSerializeAs</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The settings property is serialized as plain text.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Xml">
@@ -75,8 +91,11 @@
         <ReturnType>System.Configuration.SettingsSerializeAs</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The settings property is serialized as XML using XML serialization.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

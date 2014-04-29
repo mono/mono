@@ -15,6 +15,7 @@
 #   When attaching to a mono process, make sure you are in the same directory.
 #
 
+from __future__ import print_function
 import os
 
 class StringPrinter:
@@ -35,7 +36,7 @@ class StringPrinter:
         while i < len:
             val = (chars.cast(gdb.lookup_type ("gint64")) + (i * 2)).cast(gdb.lookup_type ("gunichar2").pointer ()).dereference ()
             if val >= 256:
-                c = "\u%X" % val
+                c = "\u%X".format (val)
             else:
                 c = chr (val)
             res.append (c)
@@ -52,7 +53,7 @@ def stringify_class_name(ns, name):
     if ns == "":
         return name
     else:
-        return "%s.%s" % (ns, name)
+        return "%s.%s".format (ns, name)
 
 class ArrayPrinter:
     "Print a C# array"
@@ -65,7 +66,7 @@ class ArrayPrinter:
     def to_string(self):
         obj = self.val.cast (gdb.lookup_type ("MonoArray").pointer ()).dereference ()
         length = obj ['max_length']
-        return "%s [%d]" % (stringify_class_name (self.class_ns, self.class_name [0:len(self.class_name) - 2]), int(length))
+        return "%s [%d]".format (stringify_class_name (self.class_ns, self.class_name [0:len (self.class_name) - 2]), int (length))
         
 class ObjectPrinter:
     "Print a C# object"
@@ -95,7 +96,7 @@ class ObjectPrinter:
                     return (field.name, self.obj [field.name])
             except:
                 # Superclass
-                return (field.name, self.obj.cast (gdb.lookup_type ("%s" % (field.name))))
+                return (field.name, self.obj.cast (gdb.lookup_type ("%s".format (field.name))))
 
     def children(self):
         # FIXME: It would be easier if gdb.Value would support iteration itself
@@ -108,11 +109,11 @@ class ObjectPrinter:
             class_name = obj ['vtable'].dereference ()['klass'].dereference ()['name'].string ()
             if class_name [-2:len(class_name)] == "[]":
                 return {}.__iter__ ()
-            gdb_type = gdb.lookup_type ("struct %s_%s" % (class_ns.replace (".", "_"), class_name))
+            gdb_type = gdb.lookup_type ("struct %s_%s".format (class_ns.replace (".", "_"), class_name))
             return self._iterator(obj.cast (gdb_type))
         except:
-            print sys.exc_info ()[0]
-            print sys.exc_info ()[1]
+            print (sys.exc_info ()[0])
+            print (sys.exc_info ()[1])
             return {}.__iter__ ()
 
     def to_string(self):
@@ -128,16 +129,16 @@ class ObjectPrinter:
                 return ArrayPrinter (self.val,class_ns,class_name).to_string ()
             if class_ns != "":
                 try:
-                    gdb_type = gdb.lookup_type ("struct %s.%s" % (class_ns, class_name))
+                    gdb_type = gdb.lookup_type ("struct %s.%s".format (class_ns, class_name))
                 except:
                     # Maybe there is no debug info for that type
-                    return "%s.%s" % (class_ns, class_name)
+                    return "%s.%s".format (class_ns, class_name)
                 #return obj.cast (gdb_type)
-                return "%s.%s" % (class_ns, class_name)
+                return "%s.%s".format (class_ns, class_name)
             return class_name
         except:
-            print sys.exc_info ()[0]
-            print sys.exc_info ()[1]
+            print (sys.exc_info ()[0])
+            print (sys.exc_info ()[1])
             # FIXME: This can happen because we don't have liveness information
             return self.val.cast (gdb.lookup_type ("guint64"))
         
@@ -153,9 +154,9 @@ class MonoMethodPrinter:
         val = self.val.dereference ()
         klass = val ["klass"].dereference ()
         class_name = stringify_class_name (klass ["name_space"].string (), klass ["name"].string ())
-        return "\"%s:%s ()\"" % (class_name, val ["name"].string ())
+        return "\"%s:%s ()\"".format (class_name, val ["name"].string ())
         # This returns more info but requires calling into the inferior
-        #return "\"%s\"" % (gdb.parse_and_eval ("mono_method_full_name (%s, 1)" % (str (int (self.val.cast (gdb.lookup_type ("guint64")))))).string ())
+        #return "\"%s\"".format (gdb.parse_and_eval ("mono_method_full_name (%s, 1)".format (str (int (self.val.cast (gdb.lookup_type ("guint64")))))).string ())
 
 class MonoClassPrinter:
     "Print a MonoClass structure"
@@ -168,9 +169,9 @@ class MonoClassPrinter:
             return "0x0"
         klass = self.val.dereference ()
         class_name = stringify_class_name (klass ["name_space"].string (), klass ["name"].string ())
-        return "\"%s\"" % (class_name)
+        return "\"%s\"".format (class_name)
         # This returns more info but requires calling into the inferior
-        #return "\"%s\"" % (gdb.parse_and_eval ("mono_type_full_name (&((MonoClass*)%s)->byval_arg)" % (str (int ((self.val).cast (gdb.lookup_type ("guint64")))))))
+        #return "\"%s\"".format (gdb.parse_and_eval ("mono_type_full_name (&((MonoClass*)%s)->byval_arg)".format (str (int ((self.val).cast (gdb.lookup_type ("guint64")))))))
 
 def lookup_pretty_printer(val):
     t = str (val.type)
@@ -216,9 +217,9 @@ class MonoSupport(object):
             new_size = os.stat ("xdb.s").st_size
             if new_size > self.s_size:
                 sofile = "xdb.so"
-                gdb.execute ("shell as -o xdb.o xdb.s && ld -shared -o %s xdb.o" % sofile)
+                gdb.execute ("shell as -o xdb.o xdb.s && ld -shared -o %s xdb.o".format (sofile))
                 # FIXME: This prints messages which couldn't be turned off
-                gdb.execute ("add-symbol-file %s 0" % sofile)
+                gdb.execute ("add-symbol-file %s 0".format (sofile))
                 self.s_size = new_size
 
 class RunHook (gdb.Command):
@@ -229,7 +230,7 @@ class RunHook (gdb.Command):
     def invoke(self, arg, from_tty):
         mono_support.run_hook ()
 
-print "Mono support loaded."
+print ("Mono support loaded.")
 
 mono_support = MonoSupport ()
 
@@ -244,4 +245,4 @@ exec_file = gdb.current_objfile ().filename
 if os.stat (exec_file).st_size != os.lstat (exec_file).st_size:
     exec_file = os.readlink (exec_file)
 exec_dir = os.path.dirname (exec_file)
-gdb.execute ("source %s/%s-gdbinit" % (exec_dir, os.path.basename (exec_file)))
+gdb.execute ("source %s/%s-gdbinit".format (exec_dir, os.path.basename (exec_file)))

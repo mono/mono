@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="AspNetHostingPermissionLevel" FullName="System.Web.AspNetHostingPermissionLevel">
   <TypeSignature Language="C#" Value="public enum AspNetHostingPermissionLevel" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi serializable sealed AspNetHostingPermissionLevel extends System.Enum" />
@@ -11,8 +12,16 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>See <format type="text/html"><a href="0001d062-f5cd-44e5-bb07-35155569fdb8">ASP.NET Code Access Security</a></format> for detailed information about the permissions that are granted to each trust level.</para>
+      <para>The members of this enumeration define application security levels ranging from full trust (the application is unconstrained by code access security) to minimal trust (the application has permission only to execute). You set the trust level for an ASP.NET resource with the <format type="text/html"><a href="eeed0fd3-5aaa-4196-94af-e6baea70dded">trust</a></format> configuration element in a Web.config or Machine.config file.</para>
+      <para>If you want to lock security policy for a specific server or Web site, use the <format type="text/html"><a href="922ef7d5-da38-4661-b1c6-5b9e5ceda1d5">location</a></format> element in conjunction with the allowOverride=false attribute to ensure that trust policy settings cannot be overridden locally.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the trust level that is granted to an ASP.NET Web application.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="High">
@@ -28,7 +37,10 @@
         <ReturnType>System.Web.AspNetHostingPermissionLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that features protected with a demand for any level less than or equal to the High trust level will succeed. This level is intended for highly trusted managed-code applications that need to use most of the managed permissions that support semi-trusted access. It does not grant some of the highest permissions (for example, the ability to call into native code), but it does provide a way to run trusted applications with least privilege or to provide some level of constraints for highly trusted applications. This level is granted by configuring at least the <see cref="F:System.Web.AspNetHostingPermissionLevel.High" /> trust level in the <format type="text/html"><a href="eeed0fd3-5aaa-4196-94af-e6baea70dded">trust</a></format> section in a configuration file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Low">
@@ -44,7 +56,10 @@
         <ReturnType>System.Web.AspNetHostingPermissionLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that features protected with a demand for any level less than or equal to the <see cref="F:System.Web.AspNetHostingPermissionLevel.Low" /> level will succeed. This level is intended to allow read-only access to limited resources in a constrained environment. This level is granted by specifying the <see cref="F:System.Web.AspNetHostingPermissionLevel.Low" /> trust level in the <format type="text/html"><a href="eeed0fd3-5aaa-4196-94af-e6baea70dded">trust</a></format> section in a configuration file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Medium">
@@ -60,7 +75,10 @@
         <ReturnType>System.Web.AspNetHostingPermissionLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that features protected with a demand for any level less than or equal to the <see cref="F:System.Web.AspNetHostingPermissionLevel.Medium" /> level will succeed. This level is granted by configuring at least the <see cref="F:System.Web.AspNetHostingPermissionLevel.Medium" /> trust level in the <format type="text/html"><a href="eeed0fd3-5aaa-4196-94af-e6baea70dded">trust</a></format> section in a configuration file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Minimal">
@@ -76,7 +94,10 @@
         <ReturnType>System.Web.AspNetHostingPermissionLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that features protected with a demand for the <see cref="F:System.Web.AspNetHostingPermissionLevel.Minimal" /> level will succeed. This level allows code to execute but not to interact with resources present on the system. This level is granted by configuring at least the <see cref="F:System.Web.AspNetHostingPermissionLevel.Minimal" /> trust level using the <format type="text/html"><a href="eeed0fd3-5aaa-4196-94af-e6baea70dded">trust</a></format> section in a configuration file.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="None">
@@ -92,7 +113,10 @@
         <ReturnType>System.Web.AspNetHostingPermissionLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that no permission is granted. All demands for <see cref="T:System.Web.AspNetHostingPermission" /> will fail.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unrestricted">
@@ -108,7 +132,10 @@
         <ReturnType>System.Web.AspNetHostingPermissionLevel</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Indicates that all demands for permission to use all features of an application will be granted. This is equivalent to granting Full trust level in the <format type="text/html"><a href="eeed0fd3-5aaa-4196-94af-e6baea70dded">trust</a></format> section in a configuration file.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

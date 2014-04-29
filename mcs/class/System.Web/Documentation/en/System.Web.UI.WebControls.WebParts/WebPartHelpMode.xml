@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="WebPartHelpMode" FullName="System.Web.UI.WebControls.WebParts.WebPartHelpMode">
   <TypeSignature Language="C#" Value="public enum WebPartHelpMode" />
   <AssemblyInfo>
@@ -8,9 +9,15 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
     <since version=".NET 2.0" />
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.HelpMode" /> property is used to determine how a browser will display Help content for a control. The <see cref="T:System.Web.UI.WebControls.WebParts.WebPartHelpMode" /> enumeration contains values that can be applied to the <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.HelpMode" /> property. The default value for the <see cref="P:System.Web.UI.WebControls.WebParts.WebPart.HelpMode" /> property is <see cref="F:System.Web.UI.WebControls.WebParts.WebPartHelpMode.Modal" />.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the available types of user interfaces (UIs) for displaying Help content for a <see cref="T:System.Web.UI.WebControls.WebParts.WebPart" /> control.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="Modal">
@@ -20,8 +27,11 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.WebPartHelpMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a separate browser window, if the browser has this capability. A user must close the window before returning to the Web Parts page. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -34,8 +44,11 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.WebPartHelpMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Opens a separate browser window, if the browser has this capability. A user does not have to close the window before returning to the Web page. </para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -48,8 +61,11 @@
         <ReturnType>System.Web.UI.WebControls.WebParts.WebPartHelpMode</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <since version=".NET 2.0" />
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Replaces the Web Parts page in the browser window.</para>
+        </summary>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

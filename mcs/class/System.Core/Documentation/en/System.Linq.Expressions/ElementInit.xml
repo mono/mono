@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="ElementInit" FullName="System.Linq.Expressions.ElementInit">
   <TypeSignature Language="C#" Value="public sealed class ElementInit : System.Linq.Expressions.IArgumentProvider" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed beforefieldinit ElementInit extends System.Object implements class System.Linq.Expressions.IArgumentProvider" />
@@ -15,8 +16,11 @@
     </Interface>
   </Interfaces>
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents an initializer for a single element of an <see cref="T:System.Collections.IEnumerable" /> collection.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AddMethod">
@@ -31,9 +35,12 @@
         <ReturnType>System.Reflection.MethodInfo</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the instance method that is used to add an element to an <see cref="T:System.Collections.IEnumerable" /> collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Arguments">
@@ -48,9 +55,12 @@
         <ReturnType>System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.Expression&gt;</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
         <value>To be added.</value>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the collection of arguments that are passed to a method that adds an element to an <see cref="T:System.Collections.IEnumerable" /> collection.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="System.Linq.Expressions.IArgumentProvider.ArgumentCount">
@@ -102,9 +112,12 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a textual representation of an <see cref="T:System.Linq.Expressions.ElementInit" /> object.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Update">

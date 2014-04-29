@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="HttpCacheValidateHandler" FullName="System.Web.HttpCacheValidateHandler">
   <TypeSignature Language="C#" Maintainer="auto" Value="public delegate void HttpCacheValidateHandler(HttpContext context, object data, ref HttpValidationStatus validationStatus);" />
   <AssemblyInfo>
@@ -15,8 +16,14 @@
     <param name="context">To be added.</param>
     <param name="data">To be added.</param>
     <param name="validationStatus">To be added.</param>
-    <summary>To be added</summary>
-    <remarks>To be added</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>If a cached item is invalidated within the scope of the <see cref="T:System.Web.HttpCacheValidateHandler" /> method, it is evicted from the cache and the request for the item is treated as a cache miss.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Represents a method that is called to validate a cached item before the item is served from the cache. </para>
+    </summary>
   </Docs>
   <Members />
   <Parameters>

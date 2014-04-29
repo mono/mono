@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="IPartImportsSatisfiedNotification" FullName="System.ComponentModel.Composition.IPartImportsSatisfiedNotification">
   <TypeSignature Language="C#" Value="public interface IPartImportsSatisfiedNotification" />
   <TypeSignature Language="ILAsm" Value=".class public interface auto ansi abstract IPartImportsSatisfiedNotification" />
@@ -7,8 +8,11 @@
   </AssemblyInfo>
   <Interfaces />
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Notifies a part when its imports have been satisfied.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="OnImportsSatisfied">
@@ -23,8 +27,11 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Called when a part's imports have been satisfied and it is safe to use.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>

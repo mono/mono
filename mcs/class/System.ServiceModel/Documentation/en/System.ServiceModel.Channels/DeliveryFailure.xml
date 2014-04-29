@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Type Name="DeliveryFailure" FullName="System.ServiceModel.Channels.DeliveryFailure">
   <TypeSignature Language="C#" Value="public enum DeliveryFailure" />
   <TypeSignature Language="ILAsm" Value=".class public auto ansi sealed DeliveryFailure extends System.Enum" />
@@ -9,8 +10,14 @@
     <BaseTypeName>System.Enum</BaseTypeName>
   </Base>
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>You can get the <see cref="P:System.ServiceModel.Channels.MsmqMessageProperty.DeliveryFailure" /> property to determine why a message failed delivery and was sent to the dead-letter queue. For additional information about message processing in a dead-letter queue, see <format type="text/html"><a href="9e891c6a-d960-45ea-904f-1a00e202d61a">Using Dead-Letter Queues to Handle Message Transfer Failures</a></format>.</para>
+    </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>Specifies the possible types of delivery failure for a message read from the queue.</para>
+    </summary>
   </Docs>
   <Members>
     <Member MemberName="AccessDenied">
@@ -24,7 +31,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sender does not have access rights to place messages in the destination queue.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BadDestinationQueue">
@@ -38,7 +48,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination queue was not found.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BadEncryption">
@@ -52,7 +65,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination queue manager cannot decrypt the message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="BadSignature">
@@ -66,7 +82,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination queue manager cannot authenticate the message because the attached signature is invalid.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CouldNotEncrypt">
@@ -80,7 +99,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source queue manager cannot encrypt the message.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="HopCountExceeded">
@@ -94,7 +116,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message hop count was exceeded, which indicates the number of intermediate servers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotTransactionalMessage">
@@ -108,7 +133,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A nontransactional message was sent to a transactional queue.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="NotTransactionalQueue">
@@ -122,7 +150,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A transactional message was sent to a nontransactional queue.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Purged">
@@ -136,7 +167,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message was purged before reaching the destination queue.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="QueueDeleted">
@@ -150,7 +184,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The destination queue was deleted before the message could be delivered to the application.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="QueueExceedMaximumSize">
@@ -164,7 +201,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message was not delivered because the destination queue is full.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="QueuePurged">
@@ -178,7 +218,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The queue was purged and the message no longer exists.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReachQueueTimeout">
@@ -192,7 +235,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message did not reach the destination queue before timing out.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ReceiveTimeout">
@@ -206,7 +252,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message was not delivered to the application on time. </para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="Unknown">
@@ -220,7 +269,10 @@
         <ReturnType>System.ServiceModel.Channels.DeliveryFailure</ReturnType>
       </ReturnValue>
       <Docs>
-        <summary>To be added.</summary>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An unknown error occurred.</para>
+        </summary>
       </Docs>
     </Member>
   </Members>
