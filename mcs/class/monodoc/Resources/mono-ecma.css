@@ -3,7 +3,7 @@ body
     font-family: "Lucida Grande", Geneva, Helvetica, Arial, Verdana, Sans-Serif;
     margin: 0;
     padding: 0;
-    color: #333333;
+    color: #555;
 }
 
 a:link
@@ -31,7 +31,7 @@ pre
     border: 1px solid #CCCCCC;
     background-color: #F7F7F7;
     padding: 7px;
-    margin: 0 20px 0 20px;
+    /*margin: 0 20px 0 20px;*/
     line-height: 1.3em;
     -moz-border-radius: 3px;
     -webkit-border-radius: 3px;
@@ -47,7 +47,7 @@ img
 ----------------------------------------------------------*/
 h1, h2, h3, h4, h5, h6
 {
-    color: #000;
+    color: #333;
     font-family: Arial, Helvetica, sans-serif;
 }
 
@@ -62,17 +62,19 @@ h2
     font-size: 14pt;
     padding: 0 0 1px 0;
     border-bottom: 1px solid #DDDDDD;
-    margin-top: 20px;
+    margin-top: .3em;
+    margin-bottom: .5em;
 }
 h3
 {
     font-size: 12pt;
-    margin-top: 20px;
+    /*margin-top: 20px;*/
     margin-bottom: 5px;
 }
 h4
 {
     font-size: 11pt;
+    margin-bottom: 5px;
 }
 h5, h6
 {
@@ -177,7 +179,6 @@ page width. Or, you can specify an exact pixel width. */
     background-color: #FAFBFD;
     font-size: 16pt;
     font-weight: bold;
-    padding: 8px 0 0 10px;
     font-family: 'Segoe UI',Verdana,Arial, sans-serif;
 }
 
@@ -548,15 +549,20 @@ div.Signature {
   border: 1px solid #C0C0C0;
   background: #F2F2F2;
   padding: 1em;
-  margin-left: 1em;
+  /* margin-left: 1em; */
 }
 
 div.Content {
-    margin-left: 1em;
+    /*margin-left: 1em;*/
+}
+
+div.msummary {
+    font-size: 24px;
+    color: #38689b;
 }
 
 .SectionBox {
-    margin-left: 1em;
+    /*margin-left: 1em;*/
 }
 
 /* Salvaged from the old style */
@@ -593,4 +599,9 @@ table.TypeMembers tr td {
 span.NotEntered /* Documentation for this section has not yet been entered */ {
 	font-style: italic;
 	color: #aaa;	
+}
+
+.SubsectionBox {
+    margin-top: 0;
+    margin-bottom: 0;
 }

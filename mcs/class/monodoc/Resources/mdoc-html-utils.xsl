@@ -54,8 +54,10 @@
 			<xsl:text>:Summary</xsl:text>
 		</xsl:attribute>
 		<!-- summary -->
+		<div class="msummary">
 		<xsl:apply-templates select="Docs/summary" mode="notoppara"/>
 		<xsl:apply-templates select="Docs/summary" mode="editlink"/>
+		</div>
 
 		<xsl:if test="$implemented">
 			<p><b>Mono Implementation Note: </b></p>
@@ -359,11 +361,11 @@
 	<xsl:template name="CreateMemberOverview">
 		<xsl:param name="implemented" />
 
-		<p class="Summary">
+		<div class="msummary">
 			<xsl:apply-templates select="Docs/summary" mode="notoppara"/>
 			<xsl:apply-templates select="Docs/summary" mode="editlink"/>
-		</p>
-
+		</div>
+		
 		<xsl:if test="$implemented">
 			<p><b>Mono Implementation Note: </b></p>
 			<blockquote>
