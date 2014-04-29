@@ -56,6 +56,8 @@ test-local:
 run-test-local: clean-local
 	$(MAKE) run-mcs-tests
 
+check: run-test-local
+
 # Required to test parser correctly
 # -compiler-options:-v
 
