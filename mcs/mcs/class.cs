@@ -2035,10 +2035,10 @@ namespace Mono.CSharp
 				foreach (var member in members) {
 					if (member is Event) {
 						//
-						// An event can be assigned from same class only, so we can report
+						// An event can be assigned from same class only, report
 						// this warning for all accessibility modes
 						//
-						if (!member.IsUsed)
+						if (!member.IsUsed && !PartialContainer.HasStructLayout)
 							Report.Warning (67, 3, member.Location, "The event `{0}' is never used", member.GetSignatureForError ());
 
 						continue;
@@ -2056,12 +2056,15 @@ namespace Mono.CSharp
 						continue;
 
 					if (!member.IsUsed) {
-						if ((member.caching_flags & Flags.IsAssigned) == 0) {
-							Report.Warning (169, 3, member.Location, "The private field `{0}' is never used", member.GetSignatureForError ());
-						} else {
-							Report.Warning (414, 3, member.Location, "The private field `{0}' is assigned but its value is never used",
-								member.GetSignatureForError ());
+						if (!PartialContainer.HasStructLayout) {
+							if ((member.caching_flags & Flags.IsAssigned) == 0) {
+								Report.Warning (169, 3, member.Location, "The private field `{0}' is never used", member.GetSignatureForError ());
+							} else {
+								Report.Warning (414, 3, member.Location, "The private field `{0}' is assigned but its value is never used",
+									member.GetSignatureForError ());
+							}
 						}
+
 						continue;
 					}
 
