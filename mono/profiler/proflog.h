@@ -1,6 +1,8 @@
 #ifndef __MONO_PROFLOG_H__
 #define __MONO_PROFLOG_H__
 
+#include <mono/utils/mono-compiler.h>
+
 #define BUF_ID 0x4D504C01
 #define LOG_HEADER_ID 0x4D505A01
 #define LOG_VERSION_MAJOR 0
@@ -74,5 +76,10 @@ enum {
 	SAMPLE_LAST
 };
 
-#endif /* __MONO_PROFLOG_H__ */
+typedef struct _LogBuffer LogBuffer;
 
+int enter_log (LogBuffer *lb, const char str[]) MONO_INTERNAL;
+void exit_log (LogBuffer *lb) MONO_INTERNAL;
+
+
+#endif /* __MONO_PROFLOG_H__ */
