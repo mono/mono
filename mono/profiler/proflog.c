@@ -376,7 +376,7 @@ static pthread_key_t tlsbuffer;
 #endif
 
 int
-enter_log (LogBuffer *lb, const char str[])
+enter_log (LogBuffer *lb, const char *str)
 {
 	if (lb->locked) {
 		write (2, str, strlen (str));
@@ -729,7 +729,8 @@ gc_event (MonoProfiler *profiler, MonoGCEvent ev, int generation) {
 	uint64_t now;
 	LogBuffer *logbuffer = ensure_logbuf (10);
 	now = current_time ();
-	if (!enter_log (logbuffer, "gcevent")) return;
+	if (!enter_log (logbuffer, "gcevent"))
+		return;
 	emit_byte (logbuffer, TYPE_GC_EVENT | TYPE_GC);
 	emit_time (logbuffer, now);
 	emit_value (logbuffer, ev);
@@ -753,7 +754,8 @@ gc_resize (MonoProfiler *profiler, int64_t new_size) {
 	uint64_t now;
 	LogBuffer *logbuffer = ensure_logbuf (10);
 	now = current_time ();
-	if (!enter_log (logbuffer, "gcresize")) return;
+	if (!enter_log (logbuffer, "gcresize"))
+		return;
 	emit_byte (logbuffer, TYPE_GC_RESIZE | TYPE_GC);
 	emit_time (logbuffer, now);
 	emit_value (logbuffer, new_size);
@@ -824,7 +826,8 @@ gc_alloc (MonoProfiler *prof, MonoObject *obj, MonoClass *klass)
 		collect_bt (&data);
 	logbuffer = ensure_logbuf (32 + MAX_FRAMES * 8);
 	now = current_time ();
-	if (!enter_log (logbuffer, "gcalloc")) return;
+	if (!enter_log (logbuffer, "gcalloc"))
+		return;
 	emit_byte (logbuffer, do_bt | TYPE_ALLOC);
 	emit_time (logbuffer, now);
 	emit_ptr (logbuffer, klass);
@@ -846,7 +849,8 @@ gc_moves (MonoProfiler *prof, void **objects, int num)
 	uint64_t now;
 	LogBuffer *logbuffer = ensure_logbuf (10 + num * 8);
 	now = current_time ();
-	if (!enter_log (logbuffer, "gcmove")) return;
+	if (!enter_log (logbuffer, "gcmove"))
+		return;
 	emit_byte (logbuffer, TYPE_GC_MOVE | TYPE_GC);
 	emit_time (logbuffer, now);
 	emit_value (logbuffer, num);
@@ -861,7 +865,8 @@ gc_roots (MonoProfiler *prof, int num, void **objects, int *root_types, uintptr_
 {
 	int i;
 	LogBuffer *logbuffer = ensure_logbuf (5 + num * 18);
-	if (!enter_log (logbuffer, "gcroots")) return;
+	if (!enter_log (logbuffer, "gcroots"))
+		return;
 	emit_byte (logbuffer, TYPE_HEAP_ROOT | TYPE_HEAP);
 	emit_value (logbuffer, num);
 	emit_value (logbuffer, mono_gc_collection_count (mono_gc_max_generation ()));
@@ -879,7 +884,8 @@ gc_handle (MonoProfiler *prof, int op, int type, uintptr_t handle, MonoObject *o
 	uint64_t now;
 	LogBuffer *logbuffer = ensure_logbuf (16);
 	now = current_time ();
-	if (!enter_log (logbuffer, "gchandle")) return;
+	if (!enter_log (logbuffer, "gchandle"))
+		return;
 	if (op == MONO_PROFILER_GC_HANDLE_CREATED)
 		emit_byte (logbuffer, TYPE_GC_HANDLE_CREATED | TYPE_GC);
 	else if (op == MONO_PROFILER_GC_HANDLE_DESTROYED)
@@ -944,7 +950,8 @@ image_loaded (MonoProfiler *prof, MonoImage *image, int result)
 	nlen = strlen (name) + 1;
 	logbuffer = ensure_logbuf (16 + nlen);
 	now = current_time ();
-	if (!enter_log (logbuffer, "image")) return;
+	if (!enter_log (logbuffer, "image"))
+		return;
 	emit_byte (logbuffer, TYPE_END_LOAD | TYPE_METADATA);
 	emit_time (logbuffer, now);
 	emit_byte (logbuffer, TYPE_IMAGE);
@@ -977,7 +984,8 @@ class_loaded (MonoProfiler *prof, MonoClass *klass, int result)
 	image = mono_class_get_image (klass);
 	logbuffer = ensure_logbuf (24 + nlen);
 	now = current_time ();
-	if (!enter_log (logbuffer, "class")) return;
+	if (!enter_log (logbuffer, "class"))
+		return;
 	emit_byte (logbuffer, TYPE_END_LOAD | TYPE_METADATA);
 	emit_time (logbuffer, now);
 	emit_byte (logbuffer, TYPE_CLASS);
@@ -1005,7 +1013,8 @@ method_enter (MonoProfiler *prof, MonoMethod *method)
 	if (logbuffer->call_depth++ > max_call_depth)
 		return;
 	now = current_time ();
-	if (!enter_log (logbuffer, "enter")) return;
+	if (!enter_log (logbuffer, "enter"))
+		return;
 	emit_byte (logbuffer, TYPE_ENTER | TYPE_METHOD);
 	emit_time (logbuffer, now);
 	emit_method (logbuffer, method);
@@ -1021,7 +1030,8 @@ method_leave (MonoProfiler *prof, MonoMethod *method)
 	if (--logbuffer->call_depth > max_call_depth)
 		return;
 	now = current_time ();
-	if (!enter_log (logbuffer, "leave")) return;
+	if (!enter_log (logbuffer, "leave"))
+		return;
 	emit_byte (logbuffer, TYPE_LEAVE | TYPE_METHOD);
 	emit_time (logbuffer, now);
 	emit_method (logbuffer, method);
@@ -1042,7 +1052,8 @@ method_exc_leave (MonoProfiler *prof, MonoMethod *method)
 	if (--logbuffer->call_depth > max_call_depth)
 		return;
 	now = current_time ();
-	if (!enter_log (logbuffer, "eleave")) return;
+	if (!enter_log (logbuffer, "eleave"))
+		return;
 	emit_byte (logbuffer, TYPE_EXC_LEAVE | TYPE_METHOD);
 	emit_time (logbuffer, now);
 	emit_method (logbuffer, method);
@@ -1063,7 +1074,8 @@ method_jitted (MonoProfiler *prof, MonoMethod *method, MonoJitInfo* jinfo, int r
 	nlen = strlen (name) + 1;
 	logbuffer = ensure_logbuf (32 + nlen);
 	now = current_time ();
-	if (!enter_log (logbuffer, "jit")) return;
+	if (!enter_log (logbuffer, "jit"))
+		return;
 	emit_byte (logbuffer, TYPE_JIT | TYPE_METHOD);
 	emit_time (logbuffer, now);
 	emit_method (logbuffer, method);
@@ -1089,7 +1101,8 @@ throw_exc (MonoProfiler *prof, MonoObject *object)
 		collect_bt (&data);
 	logbuffer = ensure_logbuf (16 + MAX_FRAMES * 8);
 	now = current_time ();
-	if (!enter_log (logbuffer, "throw")) return;
+	if (!enter_log (logbuffer, "throw"))
+		return;
 	emit_byte (logbuffer, do_bt | TYPE_EXCEPTION);
 	emit_time (logbuffer, now);
 	emit_obj (logbuffer, object);
@@ -1105,7 +1118,8 @@ clause_exc (MonoProfiler *prof, MonoMethod *method, int clause_type, int clause_
 	uint64_t now;
 	LogBuffer *logbuffer = ensure_logbuf (16);
 	now = current_time ();
-	if (!enter_log (logbuffer, "clause")) return;
+	if (!enter_log (logbuffer, "clause"))
+		return;
 	emit_byte (logbuffer, TYPE_EXCEPTION | TYPE_CLAUSE);
 	emit_time (logbuffer, now);
 	emit_value (logbuffer, clause_type);
@@ -1125,7 +1139,8 @@ monitor_event (MonoProfiler *profiler, MonoObject *object, MonoProfilerMonitorEv
 		collect_bt (&data);
 	logbuffer = ensure_logbuf (16 + MAX_FRAMES * 8);
 	now = current_time ();
-	if (!enter_log (logbuffer, "monitor")) return;
+	if (!enter_log (logbuffer, "monitor"))
+		return;
 	emit_byte (logbuffer, (event << 4) | do_bt | TYPE_MONITOR);
 	emit_time (logbuffer, now);
 	emit_obj (logbuffer, object);
@@ -1160,7 +1175,8 @@ thread_name (MonoProfiler *prof, uintptr_t tid, const char *name)
 	LogBuffer *logbuffer;
 	logbuffer = ensure_logbuf (10 + len);
 	now = current_time ();
-	if (!enter_log (logbuffer, "tname")) return;
+	if (!enter_log (logbuffer, "tname"))
+		return;
 	emit_byte (logbuffer, TYPE_METADATA);
 	emit_time (logbuffer, now);
 	emit_byte (logbuffer, TYPE_THREAD);

@@ -80,7 +80,7 @@ typedef struct _LogBuffer LogBuffer;
 
 LogBuffer* ensure_logbuf (int bytes) MONO_INTERNAL;
 
-int enter_log (LogBuffer *lb, const char str[]) MONO_INTERNAL;
+int enter_log (LogBuffer *lb, const char *str) MONO_INTERNAL;
 void exit_log (LogBuffer *lb) MONO_INTERNAL;
 
 void emit_byte (LogBuffer *logbuffer, int value) MONO_INTERNAL;
