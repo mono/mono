@@ -78,8 +78,19 @@ enum {
 
 typedef struct _LogBuffer LogBuffer;
 
+LogBuffer* ensure_logbuf (int bytes) MONO_INTERNAL;
+
 int enter_log (LogBuffer *lb, const char str[]) MONO_INTERNAL;
 void exit_log (LogBuffer *lb) MONO_INTERNAL;
 
+void emit_byte (LogBuffer *logbuffer, int value) MONO_INTERNAL;
+void emit_value (LogBuffer *logbuffer, int value) MONO_INTERNAL;
+void emit_time (LogBuffer *logbuffer, uint64_t value) MONO_INTERNAL;
+void emit_svalue (LogBuffer *logbuffer, int64_t value) MONO_INTERNAL;
+void emit_uvalue (LogBuffer *logbuffer, uint64_t value) MONO_INTERNAL;
+void emit_ptr (LogBuffer *logbuffer, void *ptr) MONO_INTERNAL;
+void emit_method (LogBuffer *logbuffer, void *method) MONO_INTERNAL;
+void emit_obj (LogBuffer *logbuffer, void *ptr) MONO_INTERNAL;
+void emit_string (LogBuffer *logbuffer, const char *str) MONO_INTERNAL;
 
 #endif /* __MONO_PROFLOG_H__ */

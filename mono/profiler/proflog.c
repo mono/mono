@@ -439,7 +439,7 @@ init_thread (void)
 	//printf ("thread %p at time %llu\n", (void*)logbuffer->thread_id, logbuffer->time_base);
 }
 
-static LogBuffer*
+LogBuffer*
 ensure_logbuf (int bytes)
 {
 	LogBuffer *old = TLS_GET (tlsbuffer);
@@ -454,7 +454,7 @@ ensure_logbuf (int bytes)
 	return TLS_GET (tlsbuffer);
 }
 
-static void
+void
 emit_byte (LogBuffer *logbuffer, int value)
 {
 	logbuffer->data [0] = value;
@@ -462,14 +462,14 @@ emit_byte (LogBuffer *logbuffer, int value)
 	assert (logbuffer->data <= logbuffer->data_end);
 }
 
-static void
+void
 emit_value (LogBuffer *logbuffer, int value)
 {
 	encode_uleb128 (value, logbuffer->data, &logbuffer->data);
 	assert (logbuffer->data <= logbuffer->data_end);
 }
 
-static void
+void
 emit_time (LogBuffer *logbuffer, uint64_t value)
 {
 	uint64_t tdiff = value - logbuffer->last_time;
@@ -486,21 +486,21 @@ emit_time (LogBuffer *logbuffer, uint64_t value)
 	assert (logbuffer->data <= logbuffer->data_end);
 }
 
-static void
+void
 emit_svalue (LogBuffer *logbuffer, int64_t value)
 {
 	encode_sleb128 (value, logbuffer->data, &logbuffer->data);
 	assert (logbuffer->data <= logbuffer->data_end);
 }
 
-static void
+void
 emit_uvalue (LogBuffer *logbuffer, uint64_t value)
 {
 	encode_uleb128 (value, logbuffer->data, &logbuffer->data);
 	assert (logbuffer->data <= logbuffer->data_end);
 }
 
-static void
+void
 emit_ptr (LogBuffer *logbuffer, void *ptr)
 {
 	if (!logbuffer->ptr_base)
@@ -509,7 +509,7 @@ emit_ptr (LogBuffer *logbuffer, void *ptr)
 	assert (logbuffer->data <= logbuffer->data_end);
 }
 
-static void
+void
 emit_method (LogBuffer *logbuffer, void *method)
 {
 	if (!logbuffer->method_base) {
@@ -521,13 +521,24 @@ emit_method (LogBuffer *logbuffer, void *method)
 	assert (logbuffer->data <= logbuffer->data_end);
 }
 
-static void
+void
 emit_obj (LogBuffer *logbuffer, void *ptr)
 {
 	if (!logbuffer->obj_base)
 		logbuffer->obj_base = (uintptr_t)ptr >> 3;
 	emit_svalue (logbuffer, ((uintptr_t)ptr >> 3) - logbuffer->obj_base);
 	assert (logbuffer->data <= logbuffer->data_end);
+}
+
+void
+emit_string (LogBuffer *logbuffer, const char *str)
+{
+	int i, len;
+	if (str) {
+		for (i = 0, len = strlen (str); i < len; i++)
+			emit_byte (logbuffer, str [i]);
+	}
+	emit_byte (logbuffer, '\0');
 }
 
 static char*
