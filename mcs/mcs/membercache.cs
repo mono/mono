@@ -544,7 +544,6 @@ namespace Mono.CSharp {
 		{
 			bestCandidate = null;
 			var container = member.Parent.PartialContainer.Definition;
-			var nested = container.IsNested;
 			if (!container.IsInterface) {
 				container = container.BaseType;
 
@@ -567,11 +566,7 @@ namespace Mono.CSharp {
 					for (int i = 0; i < applicable.Count; ++i) {
 						var entry = applicable [i];
 
-						if ((entry.Modifiers & Modifiers.PRIVATE) != 0 && !nested)
-							continue;
-
-						if ((entry.Modifiers & Modifiers.AccessibilityMask) == Modifiers.INTERNAL &&
-							!entry.DeclaringType.MemberDefinition.IsInternalAsPublic (member.Module.DeclaringAssembly))
+						if ((entry.Modifiers & Modifiers.PUBLIC) == 0 && !entry.IsAccessible (member))
 							continue;
 
 						//
