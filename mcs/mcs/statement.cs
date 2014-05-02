@@ -6849,7 +6849,7 @@ namespace Mono.CSharp {
 			{
 				var type = li.Type;
 
-				if (type.BuiltinType != BuiltinTypeSpec.Type.IDisposable && !type.ImplementsInterface (bc.BuiltinTypes.IDisposable, false)) {
+				if (type.BuiltinType != BuiltinTypeSpec.Type.IDisposable && !CanConvertToIDisposable (bc, type)) {
 					if (type.IsNullableType) {
 						// it's handled in CreateDisposeCall
 						return;
@@ -6864,6 +6864,16 @@ namespace Mono.CSharp {
 
 					return;
 				}
+			}
+
+			static bool CanConvertToIDisposable (BlockContext bc, TypeSpec type)
+			{
+				var target = bc.BuiltinTypes.IDisposable;
+				var tp = type as TypeParameterSpec;
+				if (tp != null)
+					return Convert.ImplicitTypeParameterConversion (null, tp, target) != null;
+
+				return type.ImplementsInterface (target, false);
 			}
 
 			protected virtual Statement CreateDisposeCall (BlockContext bc, LocalVariable lv)
@@ -6886,7 +6896,7 @@ namespace Mono.CSharp {
 				Statement dispose = new StatementExpression (new Invocation (dispose_mg, null), Location.Null);
 
 				// Add conditional call when disposing possible null variable
-				if (!type.IsStruct || type.IsNullableType)
+				if (!TypeSpec.IsValueType (type) || type.IsNullableType)
 					dispose = new If (new Binary (Binary.Operator.Inequality, lvr, new NullLiteral (loc)), dispose, dispose.loc);
 
 				return dispose;
