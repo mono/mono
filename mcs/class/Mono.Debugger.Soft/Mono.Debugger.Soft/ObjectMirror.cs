@@ -74,9 +74,11 @@ namespace Mono.Debugger.Soft
 			try {
 				return vm.DecodeValues (vm.conn.Object_GetValues (id, ids));
 			} catch (CommandException ex) {
-				if (ex.ErrorCode == ErrorCode.INVALID_FIELDID)
+				if (ex.ErrorCode == ErrorCode.INVALID_FIELDID) {
+					if (fields.Count == 1)
+						throw new ArgumentException (string.Format ("The field '{0}' is not valid for this type.", fields[0].Name));
 					throw new ArgumentException ("One of the fields is not valid for this type.", "fields");
-				else
+				} else
 					throw;
 			}
 		}
