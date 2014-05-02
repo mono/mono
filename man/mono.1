@@ -1356,6 +1356,8 @@ loader in subtle ways.
 Directories are separated by the platform path separator (colons on unix). Example:
 .B /home/username/lib:/usr/local/mono/lib
 .Sp
+Relative paths are resolved based on the launch-time current directory.
+.Sp
 Alternative solutions to MONO_PATH include: installing libraries into
 the Global Assembly Cache (see gacutil(1)) or having the dependent
 libraries side-by-side with the main executable.
