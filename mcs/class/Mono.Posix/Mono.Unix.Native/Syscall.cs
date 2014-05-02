@@ -2842,7 +2842,7 @@ namespace Mono.Unix.Native {
 			ee.events = events;
 			ee.fd = fd;
 
-			return sys_epoll_ctl (epfd, op, fd, ref ee);
+			return epoll_ctl (epfd, op, fd, ref ee);
 		}
 
 		public static int epoll_wait (int epfd, EpollEvent [] events, int max_events, int timeout)
@@ -2860,7 +2860,7 @@ namespace Mono.Unix.Native {
 		private static extern int sys_epoll_create1 (EpollFlags flags);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_ctl")]
-		private static extern int sys_epoll_ctl (int epfd, EpollOp op, int fd, ref EpollEvent ee);
+		public static extern int epoll_ctl (int epfd, EpollOp op, int fd, ref EpollEvent ee);
 
 		[DllImport (LIBC, SetLastError=true, EntryPoint="epoll_wait")]
 		private static extern int sys_epoll_wait (int epfd, EpollEvent [] ee, int maxevents, int timeout);
