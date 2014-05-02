@@ -204,9 +204,12 @@ namespace Mono.CSharp
 		protected StateMachine (ParametersBlock block, TypeDefinition parent, MemberBase host, TypeParameters tparams, string name, MemberKind kind)
 			: base (block, parent, host, tparams, name, kind)
 		{
+			OriginalTypeParameters = tparams;
 		}
 
 		#region Properties
+
+		public TypeParameters OriginalTypeParameters { get; private set; }
 
 		public StateMachineMethod StateMachineMethod {
 			get {
