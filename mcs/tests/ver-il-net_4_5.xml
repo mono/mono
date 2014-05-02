@@ -1378,6 +1378,11 @@
         <size>14</size>
       </method>
     </type>
+    <type name="Tester">
+      <method name="Void IsTest()" attrs="129">
+        <size>69</size>
+      </method>
+    </type>
   </test>
   <test name="dtest-007.cs">
     <type name="D">

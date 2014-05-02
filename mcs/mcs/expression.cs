@@ -1604,12 +1604,15 @@ namespace Mono.CSharp
 							return CreateConstantResult (ec, !c.IsNull);
 
 						//
-						// Do not optimize for imported type
+						// Do not optimize for imported type or dynamic type
 						//
 						if (d.MemberDefinition.IsImported && d.BuiltinType != BuiltinTypeSpec.Type.None &&
 							d.MemberDefinition.DeclaringAssembly != t.MemberDefinition.DeclaringAssembly) {
 							return this;
 						}
+
+						if (d.BuiltinType == BuiltinTypeSpec.Type.Dynamic)
+							return this;
 						
 						//
 						// Turn is check into simple null check for implicitly convertible reference types
