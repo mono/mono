@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Test\System.Configuration.Provider\ProviderBaseTest.cs" />
     <Compile Include="Test\System.Configuration.Provider\ProviderCollectionTest.cs" />
+    <Compile Include="Test\System.Configuration\AppSettingsSectionTest.cs" />    
     <Compile Include="Test\System.Configuration\CallbackValidatorTest.cs" />
     <Compile Include="Test\System.Configuration\CommaDelimitedStringCollectionConverterTest.cs" />
     <Compile Include="Test\System.Configuration\CommaDelimitedStringCollectionTest.cs" />
