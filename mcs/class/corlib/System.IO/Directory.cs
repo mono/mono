@@ -72,8 +72,6 @@ namespace System.IO
 			if (File.Exists(path))
 				throw new IOException ("Cannot create " + path + " because a file with the same name already exists.");
 			
-			// LAMESPEC: with .net 1.0 version this throw NotSupportedException and msdn says so too
-			// but v1.1 throws ArgumentException.
 			if (Environment.IsRunningOnWindows && path == ":")
 				throw new ArgumentException ("Only ':' In path");
 			
