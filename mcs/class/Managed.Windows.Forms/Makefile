@@ -100,7 +100,7 @@ TEST_DISTFILES = \
 
 EXTRA_DISTFILES = \
 	README System.Windows.Forms.dll.resources \
-	$(RESX_RESOURCES:.resources=.resx) $(CUR_RESOURCES) $(PREBUILT) build-csproj build-csproj2k5 \
+	$(RESX_RESOURCES:.resources=.resx) $(CUR_RESOURCES) $(PREBUILT) \
 	$(IMAGES_RESOURCES) \
 	$(TEST_DISTFILES)
 
