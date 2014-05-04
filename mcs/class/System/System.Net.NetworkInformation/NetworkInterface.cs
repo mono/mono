@@ -93,6 +93,8 @@ namespace System.Net.NetworkInformation {
 		[MonoTODO("Only works on Linux. Returns 0 on other systems.")]
 		public static int LoopbackInterfaceIndex {
 			get {
+				// Disable warning for code not reachable, due to runningOnUnix being always true on Monotouch
+#pragma warning disable 162
 				if (runningOnUnix) {
 					try {
 						return UnixNetworkInterface.IfNameToIndex ("lo");
@@ -101,6 +103,7 @@ namespace System.Net.NetworkInformation {
 					}
 				} else
 					return 0;
+#pragma warning restore 162
 			}
 		}
 
