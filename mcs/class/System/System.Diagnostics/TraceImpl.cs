@@ -41,6 +41,10 @@ namespace System.Diagnostics {
 	internal class TraceImplSettings {
 		public const string Key = ".__TraceInfoSettingsKey__.";
 
+	// Disable warning that AutoFlush is not used
+#pragma warning disable 649
+		public bool AutoFlush;
+#pragma warning restore
 		//public int IndentLevel;
 		public int IndentSize = 4;
 		public TraceListenerCollection Listeners = new TraceListenerCollection (false);
@@ -179,7 +183,7 @@ namespace System.Diagnostics {
 
 						d.Remove (TraceImplSettings.Key);
 
-//						autoFlush   = s.AutoFlush;
+						autoFlush   = s.AutoFlush;
 //						indentLevel = s.IndentLevel;
 						indentSize  = s.IndentSize;
 						listeners   = s.Listeners;
