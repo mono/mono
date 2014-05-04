@@ -699,7 +699,8 @@ namespace System.Net
 			if (!allowBuffering || writeBuffer == null)
 				return null;
 
-			byte[] bytes = writeBuffer.GetBuffer ();
+			// Keep the call for a potential side-effect of GetBuffer
+			writeBuffer.GetBuffer ();
 			int length = (int)writeBuffer.Length;
 			if (request.ContentLength != -1 && request.ContentLength < length) {
 				nextReadCalled = true;
