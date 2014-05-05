@@ -22,6 +22,7 @@ enum {
 	TYPE_MONITOR,
 	TYPE_HEAP,
 	TYPE_SAMPLE,
+	TYPE_COUNTERS,
 	/* extended type for TYPE_HEAP */
 	TYPE_HEAP_START  = 0 << 4,
 	TYPE_HEAP_END    = 1 << 4,
@@ -61,6 +62,9 @@ enum {
 	TYPE_SAMPLE_HIT    = 0 << 4,
 	TYPE_SAMPLE_USYM   = 1 << 4,
 	TYPE_SAMPLE_UBIN   = 2 << 4,
+	/* extended type for TYPE_COUNTERS */
+	TYPE_COUNTERS_INIT   = 0 << 4,
+	TYPE_COUNTERS_SAMPLE = 1 << 4,
 	TYPE_END
 };
 
