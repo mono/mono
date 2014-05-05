@@ -2087,6 +2087,10 @@ helper_thread (void* arg)
 	int len;
 	char buf [64];
 	MonoThread *thread = NULL;
+	uint64_t now, timeout;
+	uint64_t last_counters_tick = 0, first_counters_tick = 0;
+	uint64_t last_default_tick = 0;
+	unsigned long default_interval = 1000;
 
 	//fprintf (stderr, "Server listening\n");
 	command_socket = -1;
@@ -2117,8 +2121,15 @@ helper_thread (void* arg)
 			}
 		}
 #endif
-		tv.tv_sec = 1;
-		tv.tv_usec = 0;
+		now = current_time ();
+
+		/* timeout to next tick */
+		timeout = MIN (timeout, MIN (counters_interval, (now - last_counters_tick) / 1000000)); // counters
+		timeout = MIN (timeout, MIN (default_interval, (now - last_default_tick) / 1000000)); // default
+
+		tv.tv_sec = timeout / 1000;
+		tv.tv_usec = timeout % 1000 * 1000;
+
 		len = select (max_fd + 1, &rfds, NULL, NULL, &tv);
 		
 		if (len < 0) {
@@ -2128,7 +2139,21 @@ helper_thread (void* arg)
 			g_warning ("Error in proflog server: %s", strerror (errno));
 			return NULL;
 		}
-		
+		/* timeouts */
+		if (len == 0) {
+			if (now > last_counters_tick + counters_interval * 1000000) {
+				last_counters_tick = now;
+				if (first_counters_tick == 0)
+					first_counters_tick = now;
+				counters_sample (prof, (uint64_t)(now - first_counters_tick) / 1000000);
+				safe_dump (prof, ensure_logbuf (0));
+			}
+			if (now > last_default_tick + default_interval * 1000000) {
+				last_default_tick = now;
+			} else {
+				continue;
+			}
+		}
 		if (FD_ISSET (prof->pipes [0], &rfds)) {
 			char c;
 			int r = read (prof->pipes [0], &c, 1);
