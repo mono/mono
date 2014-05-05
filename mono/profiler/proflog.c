@@ -516,6 +516,28 @@ emit_obj (LogBuffer *logbuffer, void *ptr)
 	assert (logbuffer->data <= logbuffer->data_end);
 }
 
+static void
+emit_string (LogBuffer *logbuffer, const char *str)
+{
+	int i, len;
+	if (str) {
+		for (i = 0, len = strlen (str); i < len; i++)
+			emit_byte (logbuffer, str [i]);
+	}
+	emit_byte (logbuffer, '\0');
+}
+
+static void
+emit_double (LogBuffer *logbuffer, double value)
+{
+	int i;
+	unsigned char *buffer = calloc (1, sizeof (double));
+	memcpy (buffer, &value, sizeof (double));
+	for (i = 0; i < sizeof (double); i++)
+		emit_byte (logbuffer, *(buffer + i));
+	free (buffer);
+}
+
 static char*
 write_int16 (char *buf, int32_t value)
 {
