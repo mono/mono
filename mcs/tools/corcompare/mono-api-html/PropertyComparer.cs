@@ -74,8 +74,7 @@ namespace Xamarin.ApiDiff {
 				}
 			}
 
-			var sb = GetObsoleteMessage (e);
-			bool obsolete = sb.Length > 0;
+			var sb = new StringBuilder ();
 
 			sb.Append (family ? "protected " : "public ");
 			if (virt)
@@ -89,8 +88,6 @@ namespace Xamarin.ApiDiff {
 				sb.Append ("set; ");
 			sb.Append ("}");
 
-			if (obsolete)
-				sb.AppendLine (); // more readable output
 			return sb.ToString ();
 		}
 	}

@@ -35,6 +35,7 @@ namespace Xamarin.ApiDiff {
 	public abstract class Comparer {
 
 		protected List<XElement> removed = new List<XElement> ();
+		protected List<XElement> obsoleted = new List<XElement> ();
 
 		public TextWriter Output {
 			get { return State.Output; }

@@ -73,6 +73,7 @@ namespace Xamarin.ApiDiff {
 		public override void Compare (IEnumerable<XElement> source, IEnumerable<XElement> target)
 		{
 			removed.Clear ();
+			obsoleted.Clear ();
 
 			foreach (var s in source) {
 				SetContext (s);
@@ -84,6 +85,9 @@ namespace Xamarin.ApiDiff {
 				} else {
 					// possibly modified
 					if (Equals (s, t)) {
+						if (IsNowObsoleted (s, t)) {
+							obsoleted.Add (t);
+						}
 						t.Remove ();
 						continue;
 					}
@@ -119,6 +123,21 @@ namespace Xamarin.ApiDiff {
 			}
 			if (a)
 				AfterAdding ();
+
+			//
+			bool o = false;
+			foreach (var item in obsoleted) {
+				SetContext (item);
+				if (State.IgnoreAdded.Any (re => re.IsMatch (GetDescription (item))))
+					continue;
+				if (!o) {
+					BeforeObsoleting ();
+					o = true;
+				}
+				Obsoleted (item);
+			}
+			if (o)
+				AfterObsoleting ();
 		}
 
 		public abstract string GetDescription (XElement e);
@@ -143,6 +162,14 @@ namespace Xamarin.ApiDiff {
 			return GetDescription (source) == GetDescription (target);
 		}
 
+		bool IsNowObsoleted (XElement source, XElement target)
+		{
+			var s = GetObsoleteMessage (source).ToString ();
+			var t = GetObsoleteMessage (target).ToString ();
+			// true if it was no [Obsolete] in the source but now is [Obsolete] in the target
+			return (s.Length == 0 && t.Length > 0);
+		}
+
 		public virtual void BeforeAdding ()
 		{
 			Output.WriteLine ("<p>Added {0}:</p><pre>", GroupName);
@@ -154,6 +181,21 @@ namespace Xamarin.ApiDiff {
 		}
 
 		public virtual void AfterAdding ()
+		{
+			Output.WriteLine ("</pre>");
+		}
+
+		public virtual void BeforeObsoleting ()
+		{
+			Output.WriteLine ("<p>Obsoleted {0}:</p><pre>", GroupName);
+		}
+
+		public void Obsoleted (XElement target)
+		{
+			Indent ().WriteLine ("\t{0}{1}{2}", GetObsoleteMessage (target), GetDescription (target), Environment.NewLine);
+		}
+
+		public virtual void AfterObsoleting ()
 		{
 			Output.WriteLine ("</pre>");
 		}

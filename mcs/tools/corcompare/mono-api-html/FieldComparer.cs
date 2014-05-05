@@ -43,8 +43,7 @@ namespace Xamarin.ApiDiff {
 
 		public override string GetDescription (XElement e)
 		{
-			var sb = GetObsoleteMessage (e);
-			bool obsolete = sb.Length > 0;
+			var sb = new StringBuilder ();
 
 			string name = e.GetAttribute ("name");
 			string value = e.GetAttribute ("value");
@@ -80,8 +79,6 @@ namespace Xamarin.ApiDiff {
 				sb.Append (';');
 			}
 
-			if (obsolete)
-				sb.AppendLine (); // more readable output
 			return sb.ToString ();
 		}
 
