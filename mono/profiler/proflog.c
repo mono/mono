@@ -532,11 +532,10 @@ static void
 emit_double (LogBuffer *logbuffer, double value)
 {
 	int i;
-	unsigned char *buffer = calloc (1, sizeof (double));
-	memcpy (buffer, &value, sizeof (double));
-	for (i = 0; i < sizeof (double); i++)
+	unsigned char buffer[8];
+	memcpy (buffer, &value, 8);
+	for (i = 0; i < 8; i++)
 		emit_byte (logbuffer, *(buffer + i));
-	free (buffer);
 }
 
 static char*
@@ -2087,10 +2086,10 @@ helper_thread (void* arg)
 	int len;
 	char buf [64];
 	MonoThread *thread = NULL;
-	uint64_t now, timeout;
+	unsigned long default_interval = 1000;
+	uint64_t now, timeout = default_interval;
 	uint64_t last_counters_tick = 0, first_counters_tick = 0;
 	uint64_t last_default_tick = 0;
-	unsigned long default_interval = 1000;
 
 	//fprintf (stderr, "Server listening\n");
 	command_socket = -1;
