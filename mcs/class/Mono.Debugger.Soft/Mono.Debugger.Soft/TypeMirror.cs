@@ -816,10 +816,22 @@ namespace Mono.Debugger.Soft
 #endif
 
 		public Value NewInstance (ThreadMirror thread, MethodMirror method, IList<Value> arguments) {
+			if (method == null)
+				throw new ArgumentNullException ("method");
+
+			if (!method.IsConstructor)
+				throw new ArgumentException ("The method must be a constructor.", "method");
+
 			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, InvokeOptions.None);
 		}			
 
 		public Value NewInstance (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options) {
+			if (method == null)
+				throw new ArgumentNullException ("method");
+
+			if (!method.IsConstructor)
+				throw new ArgumentException ("The method must be a constructor.", "method");
+
 			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, options);
 		}
 
