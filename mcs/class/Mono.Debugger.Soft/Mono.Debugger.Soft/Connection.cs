@@ -411,7 +411,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 30;
+		internal const int MINOR_VERSION = 31;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -561,7 +561,8 @@ namespace Mono.Debugger.Soft
 			CMD_TYPE_GET_METHODS_BY_NAME_FLAGS = 15,
 			GET_INTERFACES = 16,
 			GET_INTERFACE_MAP = 17,
-			IS_INITIALIZED = 18
+			IS_INITIALIZED = 18,
+			CREATE_INSTANCE = 19
 		}
 
 		enum CmdField {
@@ -2152,6 +2153,11 @@ namespace Mono.Debugger.Soft
 		internal bool Type_IsInitialized (long id) {
 			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.IS_INITIALIZED, new PacketWriter ().WriteId (id));
 			return r.ReadInt () == 1;
+		}
+
+		internal long Type_CreateInstance (long id) {
+			PacketReader r = SendReceive (CommandSet.TYPE, (int)CmdType.CREATE_INSTANCE, new PacketWriter ().WriteId (id));
+			return r.ReadId ();
 		}
 
 		/*

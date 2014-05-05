@@ -3505,6 +3505,16 @@ public class DebuggerTests
 				e.Thread.SetIP (invalid_loc);
 			});
 	}
+
+	[Test]
+	public void NewInstanceNoCtor () {
+		var bevent = run_until ("Main");
+
+		var stype = bevent.Method.DeclaringType.Assembly.GetType ("AStruct");
+		var obj = stype.NewInstance ();
+		Assert.IsTrue (obj is ObjectMirror);
+		Assert.AreEqual ("AStruct", (obj as ObjectMirror).Type.Name);
+	}
 }
 
 }
