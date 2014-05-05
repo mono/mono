@@ -704,10 +704,7 @@ namespace Microsoft.Scripting.Interpreter {
                 _instructions.EmitBranchNull(nullValue);
                 CompileConvertToType (typeFrom, typeTo, isChecked);
                 _instructions.EmitWrap (typeTo);
-                _instructions.EmitBranch (end);                
                 _instructions.MarkLabel(nullValue);
-                _instructions.EmitDup (); // Keep null on the stack
-                _instructions.MarkLabel(end);
                 return;
             }
 
