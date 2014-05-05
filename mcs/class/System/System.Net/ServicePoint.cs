@@ -353,8 +353,11 @@ namespace System.Net
 					groups = null;
 
 				if (firstGroup == null) {
-					idleTimer.Dispose ();
-					idleTimer = null;
+					if (idleTimer != null) {
+						idleTimer.Dispose ();
+						idleTimer = null;
+					}
+
 					return true;
 				}
 
