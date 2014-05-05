@@ -698,7 +698,6 @@ namespace Microsoft.Scripting.Interpreter {
                 typeTo = TypeUtils.GetNonNullableType (typeTo);
 
                 var nullValue = _instructions.MakeLabel();
-                var end = _instructions.MakeLabel();
 
                 _instructions.EmitDup ();
                 _instructions.EmitBranchNull(nullValue);
