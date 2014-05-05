@@ -1,6 +1,8 @@
 #ifndef __MONO_PROFLOG_H__
 #define __MONO_PROFLOG_H__
 
+#include <mono/utils/mono-compiler.h>
+
 #define BUF_ID 0x4D504C01
 #define LOG_HEADER_ID 0x4D505A01
 #define LOG_VERSION_MAJOR 0
@@ -74,5 +76,21 @@ enum {
 	SAMPLE_LAST
 };
 
-#endif /* __MONO_PROFLOG_H__ */
+typedef struct _LogBuffer LogBuffer;
 
+LogBuffer* ensure_logbuf (int bytes) MONO_INTERNAL;
+
+int enter_log (LogBuffer *lb, const char *str) MONO_INTERNAL;
+void exit_log (LogBuffer *lb) MONO_INTERNAL;
+
+void emit_byte (LogBuffer *logbuffer, int value) MONO_INTERNAL;
+void emit_value (LogBuffer *logbuffer, int value) MONO_INTERNAL;
+void emit_time (LogBuffer *logbuffer, uint64_t value) MONO_INTERNAL;
+void emit_svalue (LogBuffer *logbuffer, int64_t value) MONO_INTERNAL;
+void emit_uvalue (LogBuffer *logbuffer, uint64_t value) MONO_INTERNAL;
+void emit_ptr (LogBuffer *logbuffer, void *ptr) MONO_INTERNAL;
+void emit_method (LogBuffer *logbuffer, void *method) MONO_INTERNAL;
+void emit_obj (LogBuffer *logbuffer, void *ptr) MONO_INTERNAL;
+void emit_string (LogBuffer *logbuffer, const char *str) MONO_INTERNAL;
+
+#endif /* __MONO_PROFLOG_H__ */
