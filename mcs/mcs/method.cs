@@ -2468,6 +2468,11 @@ namespace Mono.CSharp {
 			return false;
 		}
 
+		public void PrepareEmit ()
+		{
+			method_data.DefineMethodBuilder (Parent.PartialContainer, ParameterInfo);
+		}
+
 		public override void WriteDebugSymbol (MonoSymbolFile file)
 		{
 			if (method_data != null)
