@@ -147,7 +147,10 @@ namespace Xamarin.ApiDiff {
 			var sb = new StringBuilder ();
 			string o = e.GetObsoleteMessage ();
 			if (o != null) {
-				sb.Append ("[Obsolete (\"").Append (o).AppendLine ("\")]");
+				sb.Append ("[Obsolete");
+				if (o.Length > 0)
+					sb.Append (" \"").Append (o).Append ("\")");
+				sb.AppendLine ("]");
 				for (int i = 0; i < State.Indent + 1; i++)
 					sb.Append ('\t');
 			}
