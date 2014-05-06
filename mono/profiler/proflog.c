@@ -641,11 +641,11 @@ static void
 runtime_initialized (MonoProfiler *profiler)
 {
 	runtime_inited = 1;
-	/* ensure the main thread data and startup are available soon */
-	safe_dump (profiler, ensure_logbuf (0));
 #ifndef DISABLE_HELPER_THREAD
 	counters_init (profiler);
 #endif
+	/* ensure the main thread data and startup are available soon */
+	safe_dump (profiler, ensure_logbuf (0));
 }
 
 /*
@@ -2077,6 +2077,8 @@ new_filename (const char* filename)
 	return res;
 }
 
+#define GTIMEVAL_TO_USEC(gtimeval) ((gtimeval).tv_sec * 1000000 + (gtimeval).tv_usec)
+
 #ifndef DISABLE_HELPER_THREAD
 static void*
 helper_thread (void* arg)
@@ -2086,10 +2088,13 @@ helper_thread (void* arg)
 	int len;
 	char buf [64];
 	MonoThread *thread = NULL;
-	unsigned long default_interval = 1000;
-	uint64_t now, timeout = default_interval;
-	uint64_t last_counters_tick = 0, first_counters_tick = 0;
-	uint64_t last_default_tick = 0;
+	gint64 default_interval = 1000;
+	gint64 last_counters_tick = 0, first_counters_tick = 0;
+	gint64 last_default_tick = 0;
+	gint64 timeout = default_interval;
+
+	GTimeVal now;
+	g_get_current_time (&now);
 
 	//fprintf (stderr, "Server listening\n");
 	command_socket = -1;
@@ -2120,11 +2125,9 @@ helper_thread (void* arg)
 			}
 		}
 #endif
-		now = current_time ();
-
 		/* timeout to next tick */
-		timeout = MIN (timeout, MIN (counters_interval, (now - last_counters_tick) / 1000000)); // counters
-		timeout = MIN (timeout, MIN (default_interval, (now - last_default_tick) / 1000000)); // default
+		timeout = MIN (timeout, MIN (counters_interval, (GTIMEVAL_TO_USEC (now) - last_counters_tick) / 100000)); // counters
+		timeout = MIN (timeout, MIN (default_interval, (GTIMEVAL_TO_USEC (now) - last_default_tick) / 100000)); // default
 
 		tv.tv_sec = timeout / 1000;
 		tv.tv_usec = timeout % 1000 * 1000;
@@ -2138,17 +2141,20 @@ helper_thread (void* arg)
 			g_warning ("Error in proflog server: %s", strerror (errno));
 			return NULL;
 		}
+
+		g_get_current_time (&now);
+
 		/* timeouts */
 		if (len == 0) {
-			if (now > last_counters_tick + counters_interval * 1000000) {
-				last_counters_tick = now;
+			if (GTIMEVAL_TO_USEC (now) > last_counters_tick + counters_interval * 1000) {
+				last_counters_tick = GTIMEVAL_TO_USEC (now);
 				if (first_counters_tick == 0)
-					first_counters_tick = now;
-				counters_sample (prof, (uint64_t)(now - first_counters_tick) / 1000000);
+					first_counters_tick = last_counters_tick;
+				counters_sample (prof, (last_counters_tick - first_counters_tick) / 1000);
 				safe_dump (prof, ensure_logbuf (0));
 			}
-			if (now > last_default_tick + default_interval * 1000000) {
-				last_default_tick = now;
+			if (GTIMEVAL_TO_USEC (now) > last_default_tick + default_interval * 1000) {
+				last_default_tick = GTIMEVAL_TO_USEC (now);
 			} else {
 				continue;
 			}
