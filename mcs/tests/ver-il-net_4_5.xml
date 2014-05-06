@@ -39598,6 +39598,9 @@
       <method name="Void .ctor()" attrs="6278">
         <size>7</size>
       </method>
+      <method name="Void P̀ः०‿()" attrs="145">
+        <size>2</size>
+      </method>
     </type>
   </test>
   <test name="test-445.cs">

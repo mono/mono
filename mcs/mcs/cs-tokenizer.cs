@@ -934,7 +934,27 @@ namespace Mono.CSharp
 			if (c < 0x80)
 				return false;
 
-			return Char.IsLetter (c) || Char.GetUnicodeCategory (c) == UnicodeCategory.ConnectorPunctuation;
+			return is_identifier_part_character_slow_part (c);
+		}
+
+		static bool is_identifier_part_character_slow_part (char c)
+		{
+			if (Char.IsLetter (c))
+				return true;
+
+			switch (Char.GetUnicodeCategory (c)) {
+				case UnicodeCategory.ConnectorPunctuation:
+
+				// combining-character: A Unicode character of classes Mn or Mc
+				case UnicodeCategory.NonSpacingMark:
+				case UnicodeCategory.SpacingCombiningMark:
+
+				// decimal-digit-character: A Unicode character of the class Nd 
+				case UnicodeCategory.DecimalDigitNumber:
+				return true;
+			}
+
+			return false;
 		}
 
 		public static bool IsKeyword (string s)
@@ -3039,7 +3059,7 @@ namespace Mono.CSharp
 
 							continue;
 						}
-					} else if (Char.IsLetter ((char) c) || Char.GetUnicodeCategory ((char) c) == UnicodeCategory.ConnectorPunctuation) {
+					} else if (is_identifier_part_character_slow_part ((char) c)) {
 						id_builder [pos++] = (char) c;
 						continue;
 					}
