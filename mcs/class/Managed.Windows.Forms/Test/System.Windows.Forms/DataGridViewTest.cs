@@ -23,8 +23,6 @@
 //	Pedro Martínez Juliá <pedromj@gmail.com>
 //	Daniel Nauck    (dna(at)mono-project(dot)de)
 //	Ivan N. Zlatev  <contact@i-nz.net>
-
-
 #if NET_2_0
 
 using System;
@@ -2462,6 +2460,29 @@ namespace MonoTests.System.Windows.Forms
 			}
 			catch (ArgumentOutOfRangeException) {
 			}
+		}
+
+		private class MyDataGridView: DataGridView
+		{
+			public void SetCurrentCell ()
+			{
+				CurrentCell = Rows [1].Cells [1];
+			}
+		}
+
+		[Test]
+		public void TestDisposeWhenInEditMode_Xamarin19567 ()
+		{
+			var dgv = new MyDataGridView ();
+			dgv.EditMode = DataGridViewEditMode.EditOnEnter;
+			dgv.Columns.Add ("TestColumn", "Test column");
+			dgv.Columns.Add ("Column2", "Second column");
+			dgv.Rows.Add ();
+			dgv.Rows.Add ();
+			dgv.SetCurrentCell ();
+
+			// The Dispose() call will fail if #19567 is not fixed
+			dgv.Dispose ();
 		}
 
 		[Test] // Xamarin bug 3125
