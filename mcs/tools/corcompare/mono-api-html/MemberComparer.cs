@@ -72,6 +72,11 @@ namespace Xamarin.ApiDiff {
 			return e.GetAttribute ("name") == Source.GetAttribute ("name");
 		}
 
+		XElement Find (IEnumerable<XElement> target)
+		{
+			return State.Lax ? target.FirstOrDefault (Find) : target.SingleOrDefault (Find);
+		}
+
 		public override void Compare (IEnumerable<XElement> source, IEnumerable<XElement> target)
 		{
 			removed.Clear ();
@@ -80,7 +85,7 @@ namespace Xamarin.ApiDiff {
 			foreach (var s in source) {
 				SetContext (s);
 				Source = s;
-				var t = target.SingleOrDefault (Find);
+				var t = Find (target);
 				if (t == null) {
 					// not in target, it was removed
 					removed.Add (s);

@@ -9,7 +9,7 @@
 // Authors
 //    Sebastien Pouliot  <sebastien@xamarin.com>
 //
-// Copyright 2013 Xamarin Inc. http://www.xamarin.com
+// Copyright 2013-2014 Xamarin Inc. http://www.xamarin.com
 // 
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -63,6 +63,8 @@ namespace Xamarin.ApiDiff {
 		public static List<Regex> IgnoreAdded {
 			get { return ignoreAdded; }
 		}
+
+		public static bool Lax;
 	}
 
 	class Program {
@@ -78,7 +80,8 @@ namespace Xamarin.ApiDiff {
 				{ "d|diff=", "HTML diff file out output (omit for stdout)", v => diff = v },
 				{ "i|ignore-added=", "Ignore added members whose description matches a given C# regular expression (see below).",
 					v => State.IgnoreAdded.Add (new Regex (v))
-				}
+				},
+				{ "lax", "Ignore duplicate XML entries", v => State.Lax = true }
 			};
 
 			try {
