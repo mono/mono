@@ -71,19 +71,14 @@ namespace Mono.CSharp {
 			// From T to a type parameter U, provided T depends on U
 			//
 			if (target_type.IsGenericParameter) {
-				if (expr_type.TypeArguments != null) {
-					foreach (var targ in expr_type.TypeArguments) {
-						if (!TypeSpecComparer.Override.IsEqual (target_type, targ))
-							continue;
+				if (expr_type.TypeArguments != null && expr_type.HasDependencyOn (target_type)) {
+					if (expr == null)
+						return EmptyExpression.Null;
 
-						if (expr == null)
-							return EmptyExpression.Null;
+					if (expr_type.IsReferenceType && !((TypeParameterSpec) target_type).IsReferenceType)
+						return new BoxedCast (expr, target_type);
 
-						if (expr_type.IsReferenceType && !((TypeParameterSpec)target_type).IsReferenceType)
-							return new BoxedCast (expr, target_type);
-
-						return new ClassCast (expr, target_type);
-					}
+					return new ClassCast (expr, target_type);
 				}
 
 				return null;
@@ -135,14 +130,10 @@ namespace Mono.CSharp {
 		{
 			var target_tp = target_type as TypeParameterSpec;
 			if (target_tp != null) {
-				if (target_tp.TypeArguments != null) {
-					foreach (var targ in target_tp.TypeArguments) {
-						if (!TypeSpecComparer.Override.IsEqual (source_type, targ))
-							continue;
-
-						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
-					}
+				if (target_tp.TypeArguments != null && target_tp.HasDependencyOn (source_type)) {
+					return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
 				}
+
 /*
 				if (target_tp.Interfaces != null) {
 					foreach (TypeSpec iface in target_tp.Interfaces) {
