@@ -529,6 +529,11 @@ namespace Mono.CSharp.Nullable
 				return null;
 
 			Expression res = base.ResolveOperator (ec, unwrap);
+			if (res == null) {
+				Error_OperatorCannotBeApplied (ec, loc, OperName (Oper), Expr.Type);
+				return null;
+			}
+
 			if (res != this) {
 				if (user_operator == null)
 					return res;
