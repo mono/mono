@@ -73,8 +73,13 @@ namespace Xamarin.ApiDiff {
 			if (type == null)
 				return null;
 
-			// inner types
-			return GetTypeName (type.Replace ('+', '.'));
+			bool is_ref = (type [type.Length - 1] == '&');
+			if (is_ref)
+				type = type.Substring (0, type.Length - 1);
+			type = GetTypeName (type.Replace ('+', '.'));
+			if (is_ref)
+				return self.GetAttribute ("direction") + " " + type;
+			return type;
 		}
 
 		static string GetTypeName (string type)
