@@ -3399,6 +3399,7 @@ namespace System.Windows.Forms {
 		protected override void Dispose (bool disposing) {
 			if (disposing) {
 				ClearSelection();
+				currentCell = null;
 				foreach (DataGridViewColumn column in Columns)
 					column.Dispose();
 				Columns.Clear();
