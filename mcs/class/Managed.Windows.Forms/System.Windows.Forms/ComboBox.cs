@@ -2315,7 +2315,16 @@ namespace System.Windows.Forms
 					return owner.Focused;
 				}
 			}
-			
+			protected override void Dispose(bool disposing)
+			{
+				if (disposing ) {
+					// Prevents corruption of combobox text by disposed object
+					owner.EnabledChanged -= OwnerEnabledChangedHandler;
+					owner.LostFocus -= OwnerLostFocusHandler;
+				}
+				base.Dispose(disposing);
+			}
+
 			internal override bool ActivateOnShow { get { return false; } }
 		}
 
