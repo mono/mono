@@ -660,9 +660,9 @@ namespace Mono.CSharp {
 					} else {
 						builder.SetConstant (c.GetValue ());
 					}
-				} else if (default_expr.Type.IsStruct) {
+				} else if (default_expr.Type.IsStruct || default_expr.Type.IsGenericParameter) {
 					//
-					// Handles special case where default expression is used with value-type
+					// Handles special case where default expression is used with value-type or type parameter
 					//
 					// void Foo (S s = default (S)) {}
 					//
