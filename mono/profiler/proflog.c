@@ -518,14 +518,21 @@ emit_obj (LogBuffer *logbuffer, void *ptr)
 }
 
 static void
-emit_string (LogBuffer *logbuffer, const char *str)
+emit_string (LogBuffer *logbuffer, const char *str, size_t size)
 {
-	int i, len;
-	if (str) {
-		for (i = 0, len = strlen (str); i < len; i++)
+	size_t i;
+	int strend = 0;
+	if (!str) {
+		emit_byte (logbuffer, '\0');
+	} else {
+		for (i = 0; i < size && !strend; i++) {
 			emit_byte (logbuffer, str [i]);
+			if (str[i] == '\0')
+				strend = 1;
+		}
+		if (!strend)
+			emit_byte (logbuffer, '\0');
 	}
-	emit_byte (logbuffer, '\0');
 }
 
 static void
@@ -1824,6 +1831,7 @@ typedef struct MonoCounterAgent {
 	MonoCounter *counter;
 	// MonoCounterAgent specific data :
 	void *value;
+	size_t value_size;
 	short index;
 	struct MonoCounterAgent *next;
 } MonoCounterAgent;
@@ -1855,6 +1863,7 @@ counters_init_add_counter (MonoCounter *counter, gpointer data)
 	agent = malloc (sizeof (MonoCounterAgent));
 	agent->counter = counter;
 	agent->value = NULL;
+	agent->value_size = 0;
 	agent->index = counters_index++;
 	agent->next = NULL;
 
@@ -1883,8 +1892,9 @@ counters_init (MonoProfiler *profiler)
 	emit_byte (logbuffer, TYPE_COUNTERS_INIT | TYPE_COUNTERS);
 	emit_value (logbuffer, len);
 	for (agent = counters; agent; agent = agent->next) {
+		const char *name = mono_counter_get_name (agent->counter);
 		emit_value (logbuffer, mono_counter_get_section (agent->counter));
-		emit_string (logbuffer, mono_counter_get_name (agent->counter));
+		emit_string (logbuffer, name, strlen (name) + 1);
 		emit_value (logbuffer, mono_counter_get_type (agent->counter));
 		emit_value (logbuffer, mono_counter_get_unit (agent->counter));
 		emit_value (logbuffer, mono_counter_get_variance (agent->counter));
@@ -1916,10 +1926,6 @@ counters_sample (MonoProfiler *profiler, uint64_t timestamp)
 	for (agent = counters; agent; agent = agent->next) {
 		counter = agent->counter;
 
-		// FIXME : mono counters API does not *yet* support strings
-		if (mono_counter_get_type (counter) == MONO_COUNTER_STRING)
-			continue;
-
 		size_t size = mono_counter_get_size (counter);
 		if (size < 0) {
 			continue; // FIXME error
@@ -1930,15 +1936,23 @@ counters_sample (MonoProfiler *profiler, uint64_t timestamp)
 
 		memset (buffer, 0, buffer_size);
 
-		if (mono_counters_sample (counter, buffer, size) != size)
+		if (mono_counters_sample (counter, buffer, size) < 0)
 			continue; // FIXME error
 
-		if (!agent->value)
-			agent->value = calloc (1, size);
-		else if (memcmp (agent->value, buffer, size) == 0)
-			continue;
-
 		type = mono_counter_get_type (counter);
+
+		if (agent->value == NULL) {
+			agent->value = calloc (1, size);
+			agent->value_size = size;
+		} else {
+			if (type == MONO_COUNTER_STRING) {
+				if (strncmp (agent->value, buffer, size) == 0)
+					continue;
+			} else {
+				if (agent->value_size == size && memcmp (agent->value, buffer, size) == 0)
+					continue;
+			}
+		}
 
 		emit_uvalue (logbuffer, agent->index);
 		emit_uvalue (logbuffer, type);
@@ -1966,13 +1980,22 @@ counters_sample (MonoProfiler *profiler, uint64_t timestamp)
 			emit_double (logbuffer, *(double*)buffer);
 			break;
 		case MONO_COUNTER_STRING:
-			emit_string (logbuffer, (char*)buffer);
+			if (size == 0)
+				emit_string (logbuffer, "(null)", 7);
+			else
+				emit_string (logbuffer, (char*)buffer, size);
 			break;
 		default:
 			assert (0);
 		}
 
-		memcpy (agent->value, buffer, size);
+		if (type == MONO_COUNTER_STRING && size > agent->value_size) {
+			agent->value = realloc (agent->value, size);
+			agent->value_size = size;
+		}
+
+		if (size > 0)
+			memcpy (agent->value, buffer, size);
 	}
 	free (buffer);
 
