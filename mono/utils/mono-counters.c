@@ -12,11 +12,20 @@ struct _MonoCounter {
 	const char *name;
 	void *addr;
 	int type;
+	size_t size;
 };
 
 static MonoCounter *counters = NULL;
 static int valid_mask = 0;
 static int set_mask = 0;
+
+typedef int (*IntFunc) (void);
+typedef guint (*UIntFunc) (void);
+typedef gint64 (*LongFunc) (void);
+typedef guint64 (*ULongFunc) (void);
+typedef gssize (*PtrFunc) (void);
+typedef double (*DoubleFunc) (void);
+typedef char* (*StrFunc) (void);
 
 int
 mono_counter_get_variance (MonoCounter *counter)
@@ -51,25 +60,7 @@ mono_counter_get_name (MonoCounter *counter)
 size_t
 mono_counter_get_size (MonoCounter *counter)
 {
-	switch (mono_counter_get_type (counter)) {
-	case MONO_COUNTER_INT:
-		return sizeof (int);
-	case MONO_COUNTER_UINT:
-		return sizeof (guint);
-	case MONO_COUNTER_LONG:
-	case MONO_COUNTER_TIME_INTERVAL:
-		return sizeof (gint64);
-	case MONO_COUNTER_ULONG:
-		return sizeof (guint64);
-	case MONO_COUNTER_WORD:
-		return sizeof (gssize);
-	case MONO_COUNTER_DOUBLE:
-		return sizeof (double);
-	case MONO_COUNTER_STRING:
-		return -1; // FIXME
-	default:
-		g_assert_not_reached ();
-	}
+	return counter->size;
 }
 
 /**
@@ -100,6 +91,39 @@ mono_counters_enable (int section_mask)
 void 
 mono_counters_register (const char* name, int type, void *addr)
 {
+	int size;
+	switch (type & MONO_COUNTER_TYPE_MASK) {
+	case MONO_COUNTER_INT:
+		size = sizeof (int);
+		break;
+	case MONO_COUNTER_UINT:
+		size = sizeof (guint);
+		break;
+	case MONO_COUNTER_LONG:
+	case MONO_COUNTER_TIME_INTERVAL:
+		size = sizeof (gint64);
+		break;
+	case MONO_COUNTER_ULONG:
+		size = sizeof (guint64);
+		break;
+	case MONO_COUNTER_WORD:
+		size = sizeof (gssize);
+		break;
+	case MONO_COUNTER_DOUBLE:
+		size = sizeof (double);
+		break;
+	case MONO_COUNTER_STRING:
+		size = 0;
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+	mono_counters_register_with_size (name, type, addr, size);
+}
+
+void
+mono_counters_register_with_size (const char *name, int type, void *addr, int size)
+{
 	MonoCounter *counter;
 
 	if ((type & MONO_COUNTER_VARIANCE_MASK) == 0)
@@ -112,6 +136,7 @@ mono_counters_register (const char* name, int type, void *addr)
 	counter->type = type;
 	counter->addr = addr;
 	counter->next = NULL;
+	counter->size = size;
 
 	set_mask |= type;
 
@@ -125,14 +150,6 @@ mono_counters_register (const char* name, int type, void *addr)
 		counters = counter;
 	}
 }
-
-typedef int (*IntFunc) (void);
-typedef guint (*UIntFunc) (void);
-typedef gint64 (*LongFunc) (void);
-typedef guint64 (*ULongFunc) (void);
-typedef gssize (*PtrFunc) (void);
-typedef double (*DoubleFunc) (void);
-typedef char* (*StrFunc) (void);
 
 #define ENTRY_FMT "%-36s: "
 static void
@@ -194,7 +211,7 @@ dump_counter (MonoCounter *counter, FILE *outfile) {
 	      if (counter->type & MONO_COUNTER_CALLBACK)
 		      str = ((StrFunc)counter->addr) ();
 	      else
-		      str = *(char**)counter->addr;
+		      str = (char*)counter->addr;
 	      fprintf (outfile, ENTRY_FMT "%s\n", counter->name, str);
 	      break;
 	case MONO_COUNTER_TIME_INTERVAL:
@@ -237,10 +254,12 @@ mono_counters_foreach (CountersEnumCallback cb, gpointer user_data)
 	} while (0);
 
 int
-mono_counters_sample (MonoCounter *counter, void *buffer, int buffer_size)
+mono_counters_sample (MonoCounter *counter, void *buffer, size_t buffer_size)
 {
 	int cb = counter->type & MONO_COUNTER_CALLBACK;
 	int size = -1;
+
+	char *strval;
 
 	switch (mono_counter_get_type (counter)) {
 	case MONO_COUNTER_INT:
@@ -263,8 +282,13 @@ mono_counters_sample (MonoCounter *counter, void *buffer, int buffer_size)
 		COPY_COUNTER (double, DoubleFunc);
 		break;
 	case MONO_COUNTER_STRING:
-		// FIXME : add support for string sampling
-		break;
+		if (buffer_size < counter->size)
+			return -1;
+		strval = cb ? ((StrFunc)counter->addr) () : (char*)counter->addr;
+		if (!strval)
+			return 0;
+		size = buffer_size;
+		strncpy (buffer, strval, size);
 	}
 
 	return size;
