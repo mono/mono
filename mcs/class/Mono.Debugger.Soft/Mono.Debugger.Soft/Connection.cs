@@ -44,6 +44,8 @@ namespace Mono.Debugger.Soft
 		public int[] il_offsets;
 		public int[] line_numbers;
 		public int[] column_numbers;
+		public int[] end_line_numbers;
+		public int[] end_column_numbers;
 		public SourceInfo[] source_files;
 	}
 
@@ -411,7 +413,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 31;
+		internal const int MINOR_VERSION = 32;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1755,6 +1757,8 @@ namespace Mono.Debugger.Soft
 			info.line_numbers = new int [n_il_offsets];
 			info.source_files = new SourceInfo [n_il_offsets];
 			info.column_numbers = new int [n_il_offsets];
+			info.end_line_numbers = new int [n_il_offsets];
+			info.end_column_numbers = new int [n_il_offsets];
 			for (int i = 0; i < n_il_offsets; ++i) {
 				info.il_offsets [i] = res.ReadInt ();
 				info.line_numbers [i] = res.ReadInt ();
@@ -1768,6 +1772,13 @@ namespace Mono.Debugger.Soft
 					info.column_numbers [i] = res.ReadInt ();
 				else
 					info.column_numbers [i] = 0;
+				if (Version.AtLeast (2, 32)) {
+					info.end_line_numbers [i] = res.ReadInt ();
+					info.end_column_numbers [i] = res.ReadInt ();
+				} else {
+					info.end_column_numbers [i] = -1;
+					info.end_column_numbers [i] = -1;
+				}
 			}
 
 			return info;
