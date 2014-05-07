@@ -951,7 +951,8 @@ namespace Microsoft.Build.BuildEngine {
 						AddChoose (xe, ip);
 						break;
 					default:
-						throw new InvalidProjectFileException (String.Format ("Invalid element '{0}' in project file '{1}'.", xe.Name, ip.FullFileName));
+						var pf = ip == null ? null : string.Format (" '{0}'", ip.FullFileName);
+						throw new InvalidProjectFileException (String.Format ("Invalid element '{0}' in project file{1}.", xe.Name, pf));
 					}
 				}
 			}
