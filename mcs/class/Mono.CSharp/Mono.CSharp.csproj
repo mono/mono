@@ -60,9 +60,6 @@
     <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\class\corlib\Mono.Security.Cryptography\CryptoConvert.cs">
-      <Link>CryptoConvert.cs</Link>
-    </Compile>
     <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs">
       <Link>MonoSymbolFile.cs</Link>
     </Compile>
@@ -231,6 +228,9 @@
     <Compile Include="..\..\tools\monop\outline.cs">
       <Link>outline.cs</Link>
     </Compile>
+    <Compile Include="..\Mono.Security\Mono.Security.Cryptography\CryptoConvert.cs">
+      <Link>CryptoConvert.cs</Link>
+    </Compile>
     <Compile Include="cs-parser.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -262,6 +262,7 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>"$(ProjectDir)..\..\jay\jay" -cvt &lt; "$(ProjectDir)..\..\jay\skeleton.cs" "$(ProjectDir)..\..\mcs\cs-parser.jay" &gt; "$(ProjectDir)cs-parser.cs"</PreBuildEvent>
+    <PreBuildEvent>
+    </PreBuildEvent>
   </PropertyGroup>
 </Project>

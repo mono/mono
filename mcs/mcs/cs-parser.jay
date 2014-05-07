@@ -3615,6 +3615,10 @@ anonymous_type_expression
 		// TODO: lbag comma location
 		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
 	  }
+	| NEW OPEN_BRACE GENERATE_COMPLETION
+	  {
+		$$ = new EmptyCompletion ();
+	  }
 	;
 
 anonymous_type_parameters_opt_comma
@@ -3639,6 +3643,14 @@ anonymous_type_parameters
 	  	var a = (List<AnonymousTypeParameter>) $1;
 	  	a.Add ((AnonymousTypeParameter) $3);
 	  	$$ = a;
+	  }
+	| COMPLETE_COMPLETION
+	  {
+		$$ = new EmptyCompletion ();
+	  }
+	| anonymous_type_parameter COMPLETE_COMPLETION
+	  {
+	  	$$ = $1;
 	  }
 	;
 
