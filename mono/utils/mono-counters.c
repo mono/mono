@@ -18,6 +18,14 @@ static MonoCounter *counters = NULL;
 static int valid_mask = 0;
 static int set_mask = 0;
 
+typedef int (*IntFunc) (void);
+typedef guint (*UIntFunc) (void);
+typedef gint64 (*LongFunc) (void);
+typedef guint64 (*ULongFunc) (void);
+typedef gssize (*PtrFunc) (void);
+typedef double (*DoubleFunc) (void);
+typedef char* (*StrFunc) (void);
+
 int
 mono_counter_get_variance (MonoCounter *counter)
 {
@@ -51,6 +59,8 @@ mono_counter_get_name (MonoCounter *counter)
 size_t
 mono_counter_get_size (MonoCounter *counter)
 {
+	char *strval;
+
 	switch (mono_counter_get_type (counter)) {
 	case MONO_COUNTER_INT:
 		return sizeof (int);
@@ -66,7 +76,12 @@ mono_counter_get_size (MonoCounter *counter)
 	case MONO_COUNTER_DOUBLE:
 		return sizeof (double);
 	case MONO_COUNTER_STRING:
-		return -1; // FIXME
+		strval = (counter->type & MONO_COUNTER_CALLBACK) ?
+				((StrFunc)counter->addr) () : *(char**)counter->addr;
+		if (!strval)
+			return 0;
+		else
+			return sizeof (char) * (strlen (strval) + 1);
 	default:
 		g_assert_not_reached ();
 	}
@@ -125,14 +140,6 @@ mono_counters_register (const char* name, int type, void *addr)
 		counters = counter;
 	}
 }
-
-typedef int (*IntFunc) (void);
-typedef guint (*UIntFunc) (void);
-typedef gint64 (*LongFunc) (void);
-typedef guint64 (*ULongFunc) (void);
-typedef gssize (*PtrFunc) (void);
-typedef double (*DoubleFunc) (void);
-typedef char* (*StrFunc) (void);
 
 #define ENTRY_FMT "%-36s: "
 static void
@@ -237,10 +244,12 @@ mono_counters_foreach (CountersEnumCallback cb, gpointer user_data)
 	} while (0);
 
 int
-mono_counters_sample (MonoCounter *counter, void *buffer, int buffer_size)
+mono_counters_sample (MonoCounter *counter, void *buffer, size_t buffer_size)
 {
 	int cb = counter->type & MONO_COUNTER_CALLBACK;
 	int size = -1;
+
+	char *strval;
 
 	switch (mono_counter_get_type (counter)) {
 	case MONO_COUNTER_INT:
@@ -263,7 +272,13 @@ mono_counters_sample (MonoCounter *counter, void *buffer, int buffer_size)
 		COPY_COUNTER (double, DoubleFunc);
 		break;
 	case MONO_COUNTER_STRING:
-		// FIXME : add support for string sampling
+		strval = cb ? ((StrFunc)counter->addr) () : *(char**)counter->addr;
+		if (!strval)
+			return 0;
+		size = strlen (strval) + 1;
+		if (buffer_size < size)
+			return -1;
+		strncpy (buffer, strval, buffer_size);
 		break;
 	}
 
