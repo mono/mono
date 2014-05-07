@@ -125,8 +125,17 @@ namespace System.IO.MemoryMappedFiles
 					UnixMarshal.ThrowExceptionForLastError ();
 
 				if (capacity == 0) {
-					if (buf.st_size == 0)
+					// Special files such as FIFOs, sockets, and devices can
+					// have a size of 0. Specifying a capacity for these
+					// also makes little sense, so don't do the check if the
+					// file is one of these.
+					if (buf.st_size == 0 &&
+						(buf.st_mode & (FilePermissions.S_IFCHR |
+						                FilePermissions.S_IFBLK |
+						                FilePermissions.S_IFIFO |
+						                FilePermissions.S_IFSOCK)) == 0) {
 						throw new ArgumentException ("A positive capacity must be specified for a Memory Mapped File backed by an empty file.");
+					}
 
 					capacity = buf.st_size;
 				} else if (capacity < buf.st_size) {
