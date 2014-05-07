@@ -74,6 +74,10 @@ public class MdbDump
 					writer.WriteAttributeString ("il", IntToHex (entry.Offset));
 					writer.WriteAttributeString ("row", entry.Row.ToString ());
 					writer.WriteAttributeString ("col", entry.Column.ToString ());
+					if (entry.EndRow != -1 || entry.EndColumn != -1) {
+						writer.WriteAttributeString ("end_row", entry.EndRow.ToString ());
+						writer.WriteAttributeString ("end_col", entry.EndColumn.ToString ());
+					}
 					writer.WriteAttributeString ("file_ref", entry.File.ToString ());
 					writer.WriteEndElement ();
 				}
