@@ -379,7 +379,7 @@ namespace System.IO.MemoryMappedFiles
 			}
 		}
 
-		internal static int Open (string path, FileMode mode, long capacity, MemoryMappedFileAccess access)
+		internal static int Open (string path, FileMode mode, ref long capacity, MemoryMappedFileAccess access)
 		{
 			long file_size = mono_filesize_from_path (path);
 			if (file_size < 0)
