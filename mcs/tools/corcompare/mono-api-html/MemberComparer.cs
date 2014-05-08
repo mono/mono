@@ -45,17 +45,9 @@ namespace Xamarin.ApiDiff {
 				return;
 
 			if (s == null) {
-				var items = t.Elements (ElementName);
-				BeforeAdding (items);
-				foreach (var item in items)
-					Added (item);
-				AfterAdding ();
+				Add (t.Elements (ElementName));
 			} else if (t == null) {
-				var items = s.Elements (ElementName);
-				BeforeRemoving (items);
-				foreach (var item in items)
-					Removed (item);
-				AfterRemoving ();
+				Remove (s.Elements (ElementName));
 			} else {
 				Compare (s.Elements (ElementName), t.Elements (ElementName));
 			}
@@ -105,33 +97,12 @@ namespace Xamarin.ApiDiff {
 				}
 			}
 			// delayed, that way we show "Modified", "Added" and then "Removed"
-			bool r = false;
-			foreach (var item in removed) {
-				SetContext (item);
-				if (!r) {
-					BeforeRemoving (removed);
-					r = true;
-				}
-				Removed (item);
-			}
-			if (r)
-				AfterRemoving ();
-			// remaining == newly added in target
-			bool a = false;
-			foreach (var item in target) {
-				SetContext (item);
-				if (State.IgnoreAdded.Any (re => re.IsMatch (GetDescription (item))))
-					continue;
-				if (!a) {
-					BeforeAdding (target);
-					a = true;
-				}
-				Added (item);
-			}
-			if (a)
-				AfterAdding ();
+			Remove (removed);
 
-			//
+			// remaining == newly added in target
+			Add (target);
+
+			// obsolete (considering as added, they were not obsolete before, wrt regex)
 			bool o = false;
 			foreach (var item in obsoleted) {
 				SetContext (item);
@@ -145,6 +116,40 @@ namespace Xamarin.ApiDiff {
 			}
 			if (o)
 				AfterObsoleting ();
+		}
+
+		void Add (IEnumerable<XElement> elements)
+		{
+			bool a = false;
+			foreach (var item in elements) {
+				SetContext (item);
+				if (State.IgnoreAdded.Any (re => re.IsMatch (GetDescription (item))))
+					continue;
+				if (!a) {
+					BeforeAdding (elements);
+					a = true;
+				}
+				Added (item);
+			}
+			if (a)
+				AfterAdding ();
+		}
+
+		void Remove (IEnumerable<XElement> elements)
+		{
+			bool r = false;
+			foreach (var item in elements) {
+				if (State.IgnoreRemoved.Any (re => re.IsMatch (GetDescription (item))))
+					continue;
+				SetContext (item);
+				if (!r) {
+					BeforeRemoving (elements);
+					r = true;
+				}
+				Removed (item);
+			}
+			if (r)
+				AfterRemoving ();
 		}
 
 		public abstract string GetDescription (XElement e);
