@@ -33,11 +33,8 @@ common_dirs := \
 	Mono.Posix			\
 	System.Core			\
 	Mono.Security			\
-	System				\
 	System.Security			\
 	System.Configuration		\
-	System				\
-	System.XML			\
 	I18N				\
 	$(resgen_dir)			\
 	System.Drawing			\
@@ -60,7 +57,6 @@ common_dirs := \
 	System.Data.OracleClient	\
 	Microsoft.VisualC		\
 	Cscompmgd			\
-	System.Design			\
 	PEAPI				\
 	Npgsql				\
 	Commons.Xml.Relaxng		\
