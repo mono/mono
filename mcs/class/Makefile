@@ -172,8 +172,7 @@ monotouch_runtime_dirs := \
 monotouch_dirs := \
 	Mono.CSharp	\
 	Microsoft.CSharp \
-	Mono.Dynamic.Interpreter \
-	System.Core
+	Mono.Dynamic.Interpreter
 
 net_4_0_dirs := \
 	System.Numerics		\
