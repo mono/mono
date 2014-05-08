@@ -192,6 +192,14 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		public bool IsNested {
+			get {
+				var masked = (Attributes & TypeAttributes.VisibilityMask);
+
+				return masked >= TypeAttributes.NestedPublic && masked <= TypeAttributes.NestedFamORAssem;
+			}
+		}
+
 		public bool IsNestedAssembly {
 			get {
 				return (Attributes & TypeAttributes.VisibilityMask) == TypeAttributes.NestedAssembly;
