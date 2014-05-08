@@ -361,10 +361,6 @@
         <Parameter Name="byteIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="charIndex">To be added.</param>
-        <param name="charCount">To be added.</param>
-        <param name="bytes">To be added.</param>
-        <param name="byteIndex">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Int32" /> whose
    value equals the number of bytes encoded into <paramref name="bytes" /> as ASCII-encoded
@@ -395,6 +391,14 @@
           <para>
             <paramref name="byteIndex " /> &gt;= <paramref name="bytes" />.Length.</para>
         </exception>
+        <param name="charIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the first character to encode.</param>
+        <param name="charCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to encode.</param>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array to contain the resulting sequence of bytes.</param>
+        <param name="byteIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which to start writing the resulting sequence of bytes.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To calculate the exact array size required by <see cref="M:System.Text.ASCIIEncoding.GetBytes(System.String,System.Int32,System.Int32,System.Byte[],System.Int32)" /> to store the resulting bytes, the application uses <see cref="M:System.Text.ASCIIEncoding.GetByteCount(System.Char[],System.Int32,System.Int32)" />. To calculate the maximum array size, the application should use <see cref="M:System.Text.ASCIIEncoding.GetMaxByteCount(System.Int32)" />. The <see cref="M:System.Text.ASCIIEncoding.GetByteCount(System.Char[],System.Int32,System.Int32)" /> method generally allows allocation of less memory, while the <see cref="M:System.Text.ASCIIEncoding.GetMaxByteCount(System.Int32)" /> method generally executes faster.</para>
@@ -851,7 +855,6 @@ decoding <paramref name="byteCount" /> bytes as ASCII-encoded characters. </para
         <Parameter Name="byteCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="bytes">To be added.</param>
         <returns>
           <para>A <see cref="T:System.String" /> object containing
    the decoded representation of the range in <paramref name="bytes" /> from
@@ -869,6 +872,8 @@ decoding <paramref name="byteCount" /> bytes as ASCII-encoded characters. </para
           <para> -or-</para>
           <para>(<paramref name="bytes" />.Length - <paramref name="byteIndex" />) &lt; <paramref name="byteCount" />. </para>
         </exception>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Data to be converted, such as data read from a stream, can be available only in sequential blocks. In this case, or if the amount of data is so large that it needs to be divided into smaller blocks, the application should use the <see cref="T:System.Text.Decoder" /> or the <see cref="T:System.Text.Encoder" /> provided by the <see cref="M:System.Text.ASCIIEncoding.GetDecoder" /> method or the <see cref="M:System.Text.ASCIIEncoding.GetEncoder" /> method, respectively.</para>

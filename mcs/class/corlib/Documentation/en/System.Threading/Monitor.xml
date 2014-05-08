@@ -396,7 +396,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="millisecondsTimeout">To be added.</param>
         <returns>
           <para>
             <see langword="true " />if the current thread acquired the lock; otherwise, <see langword="false" />.</para>
@@ -405,6 +404,8 @@
           <paramref name="obj " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="millisecondsTimeout " />is negative, and not equal to <see cref="F:System.Threading.Timeout.Infinite" /> . </exception>
+        <param name="millisecondsTimeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait for the lock. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="millisecondsTimeout" /> parameter equals <see cref="F:System.Threading.Timeout.Infinite" />, this method is equivalent to <see cref="M:System.Threading.Monitor.Enter(System.Object)" />. If <paramref name="millisecondsTimeout" /> equals 0, this method is equivalent to <see cref="M:System.Threading.Monitor.TryEnter(System.Object)" />.</para>
@@ -441,7 +442,6 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="timeout">To be added.</param>
         <returns>
           <para>
             <see langword="true " />if the current thread acquires the lock; otherwise, <see langword="false" />.</para>
@@ -449,6 +449,8 @@
         <exception cref="T:System.ArgumentNullException">
           <paramref name="obj " />is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">The value of <paramref name="timeout " />in milliseconds is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> , or is greater than <see cref="F:System.Int32.MaxValue" /> .</exception>
+        <param name="timeout">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> representing the amount of time to wait for the lock. A value of –1 millisecond specifies an infinite wait.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value of the <paramref name="timeout" /> parameter converted to milliseconds equals –1, this method is equivalent to <see cref="M:System.Threading.Monitor.Enter(System.Object)" />. If the value of <paramref name="timeout" /> equals 0, this method is equivalent to <see cref="M:System.Threading.Monitor.TryEnter(System.Object)" />.</para>

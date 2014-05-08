@@ -1744,10 +1744,11 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <paramref name="localName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>WriteAttributeString does the following: </para>
@@ -1794,11 +1795,13 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <paramref name="localName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI to associate with the attribute.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method writes out the attribute with a user defined namespace prefix and associates it with the given namespace. If <paramref name="localName" /> is "xmlns" then this method also treats this as a namespace declaration. In this case, the <paramref name="ns" /> argument can be null.</para>
@@ -1849,12 +1852,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="ns">To be added.</param>
-        <param name="value">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <paramref name="localName" /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" /> .</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the attribute.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method writes out the attribute with a user defined namespace prefix and associates it with the given namespace. If the prefix is "xmlns" then this method also treats this as a namespace declaration and associates the declared prefix with the namespace URI provided in the given attribute value. In this case the <paramref name="ns" /> argument can be null.</para>
@@ -2436,8 +2442,9 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the element.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For the asynchronous version of this method, see <see cref="M:System.Xml.XmlWriter.WriteElementStringAsync(System.String,System.String)" />.</para>
@@ -2472,8 +2479,9 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value of the element.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For the asynchronous version of this method, see <see cref="M:System.Xml.XmlWriter.WriteElementStringAsync(System.String,System.String,System.String)" />.</para>
@@ -3353,7 +3361,6 @@ while (!reader.EOF){
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="text">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para> The text would result in a non-well formed XML document.</para>
           <para> - or -</para>
@@ -3363,6 +3370,8 @@ while (!reader.EOF){
           <para>This method is being used to create an XML declaration after <see cref="M:System.Xml.XmlWriter.WriteStartDocument" /> has already been called. </para>
         </exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="text">
+          <attribution license="cc4" from="Microsoft" modified="false" />The text to include in the processing instruction.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to write the XML declaration (rather than <see cref="M:System.Xml.XmlWriter.WriteStartDocument" />). This could result in the encoding attribute being incorrectly written. For example, the following C# code would result in an invalid XML document because the default encoding is UTF-8.</para>
@@ -3433,7 +3442,6 @@ writer.Close();</code>
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="localName" /> is <see langword="null" />, is <see cref="F:System.String.Empty" qualify="true" />, or is not a valid XML name.</para>
@@ -3441,6 +3449,8 @@ writer.Close();</code>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="localName" /> is not a valid XML name.</exception>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI for the name.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="ns" /> maps to the current default namespace, no prefix is generated.</para>
@@ -3679,8 +3689,9 @@ writer.Close();</code>
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="ns">To be added.</param>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a more advanced version of <see cref="M:System.Xml.XmlWriter.WriteAttributeString(System.String,System.String,System.String)" /> that allows you to write an attribute value using multiple write methods, such as <see cref="M:System.Xml.XmlWriter.WriteString(System.String)" />, <see cref="M:System.Xml.XmlWriter.WriteQualifiedName(System.String,System.String)" />, and so on.</para>
@@ -3716,9 +3727,11 @@ writer.Close();</code>
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="localName">To be added.</param>
-        <param name="ns">To be added.</param>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is not one of the following:<see cref="F:System.Xml.WriteState.Attribute" qualify="true" /> or <see cref="F:System.Xml.WriteState.Element" qualify="true" />.</exception>
+        <param name="localName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute.</param>
+        <param name="ns">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI for the attribute.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method enables you to write a value using multiple Write methods.</para>
@@ -4164,9 +4177,10 @@ writer.Close();</code>
         <Parameter Name="highChar" Type="System.Char" />
       </Parameters>
       <Docs>
-        <param name="highChar">To be added.</param>
         <exception cref="T:System.ArgumentException">An invalid surrogate character pair was passed.</exception>
         <exception cref="T:System.InvalidOperationException">The <see cref="P:System.Xml.XmlWriter.WriteState" /> is <see cref="F:System.Xml.WriteState.Closed" qualify="true" />.</exception>
+        <param name="highChar">
+          <attribution license="cc4" from="Microsoft" modified="false" />The high surrogate. This must be a value between 0xD800 and 0xDBFF.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is only applicable on systems that use UTF-16 encoding.</para>

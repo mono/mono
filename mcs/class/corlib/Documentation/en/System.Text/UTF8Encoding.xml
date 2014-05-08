@@ -119,7 +119,8 @@
         <Parameter Name="throwOnInvalidBytes" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="throwOnInvalidBytes">To be added.</param>
+        <param name="throwOnInvalidBytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to specify that an exception be thrown when an invalid encoding is detected; otherwise, false. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="throwOnInvalidBytes" /> is true, a method that detects an invalid byte sequence throws <see cref="T:System.ArgumentException" />. Otherwise, the method does not throw an exception, and the invalid sequence is ignored.</para>
@@ -511,11 +512,6 @@
         <Parameter Name="byteIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="charIndex">To be added.</param>
-        <param name="charCount">To be added.</param>
-        <param name="bytes">To be added.</param>
-        <param name="byteIndex">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Int32" /> that indicates the number of bytes encoded into <paramref name="bytes" /> as a <see cref="T:System.Text.UTF8Encoding" /> . </para>
         </returns>
@@ -536,6 +532,16 @@
           <para>
             <paramref name="byteIndex" /> &gt;= <paramref name="bytes" />.Length.</para>
         </exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> containing the set of characters to encode. </param>
+        <param name="charIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index of the first character to encode. </param>
+        <param name="charCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to encode. </param>
+        <param name="bytes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The byte array to contain the resulting sequence of bytes. </param>
+        <param name="byteIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The index at which to start writing the resulting sequence of bytes. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To calculate the exact array size required by <see cref="M:System.Text.UTF8Encoding.GetBytes(System.String,System.Int32,System.Int32,System.Byte[],System.Int32)" /> to store the resulting bytes, the application uses <see cref="M:System.Text.UTF8Encoding.GetByteCount(System.Char[],System.Int32,System.Int32)" />. To calculate the maximum array size, the application should use <see cref="M:System.Text.UTF8Encoding.GetMaxByteCount(System.Int32)" />. The <see cref="M:System.Text.UTF8Encoding.GetByteCount(System.Char[],System.Int32,System.Int32)" /> method generally allows allocation of less memory, while the <see cref="M:System.Text.UTF8Encoding.GetMaxByteCount(System.Int32)" /> method generally executes faster.</para>

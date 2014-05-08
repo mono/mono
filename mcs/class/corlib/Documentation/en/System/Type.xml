@@ -5247,7 +5247,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <param name="returnType">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Reflection.PropertyInfo" /> object reflecting the public property defined 
    on the type represented by the current instance that matches the specified
@@ -5258,6 +5257,8 @@ permission, returns <see langword="null" />.</para>
           <para>
             <paramref name="name" /> is <see langword="null" />.</para>
         </exception>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the property. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A property is considered public to reflection if it has at least one accessor that is public. Otherwise the property is considered private, and you must use <see cref="F:System.Reflection.BindingFlags.NonPublic" /> | <see cref="F:System.Reflection.BindingFlags.Instance" /> | <see cref="F:System.Reflection.BindingFlags.Static" /> (in Visual Basic, combine the values using Or) to get it.</para>
@@ -5359,7 +5360,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="types" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <param name="returnType">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Reflection.PropertyInfo" /> object
    reflecting the public property defined in the type represented by
@@ -5373,6 +5373,8 @@ permission, returns <see langword="null" />.</para>
         </exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="types" /> has more than one dimension.</exception>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the property. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A property is considered public to reflection if it has at least one accessor that is public. Otherwise the property is considered private, and you must use <see cref="F:System.Reflection.BindingFlags.NonPublic" /> | <see cref="F:System.Reflection.BindingFlags.Instance" /> | <see cref="F:System.Reflection.BindingFlags.Static" /> (in Visual Basic, combine the values using Or) to get it.</para>
@@ -5470,7 +5472,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <param name="returnType">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Reflection.PropertyInfo" /> object
    reflecting the property that is defined in the type represented by the
@@ -5490,6 +5491,8 @@ permission, returns <see langword="null" />.</para>
             <paramref name="types" /> has more than one dimension.</para>
         </exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the property. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A property is considered public to reflection if it has at least one accessor that is public. Otherwise the property is considered private, and you must use <see cref="F:System.Reflection.BindingFlags.NonPublic" /> | <see cref="F:System.Reflection.BindingFlags.Instance" /> | <see cref="F:System.Reflection.BindingFlags.Static" /> (in Visual Basic, combine the values using Or) to get it.</para>
@@ -5663,7 +5666,6 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="modifiers" Type="System.Reflection.ParameterModifier[]" />
       </Parameters>
       <Docs>
-        <param name="returnType">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Reflection.PropertyInfo" /> object representing the property that matches the
    specified search criteria, if found; otherwise, <see langword="null" />. If the type reflected by the current
@@ -5681,6 +5683,8 @@ permission, returns <see langword="null" />.</para>
             <paramref name="types" /> has more than one dimension.</para>
         </exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to retrieve information on non-public members of types in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.TypeInformation" />.</permission>
+        <param name="returnType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The return type of the property. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although the default binder does not process <see cref="T:System.Reflection.ParameterModifier" /> (the <paramref name="modifiers" /> parameter), you can use the abstract <see cref="T:System.Reflection.Binder" /> class to write a custom binder that does process <paramref name="modifiers" />. ParameterModifier is only used when calling through COM interop, and only parameters that are passed by reference are handled.</para>

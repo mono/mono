@@ -1212,8 +1212,6 @@ public class TimeSpanPropertiesExampleOne {
         <Parameter Name="t2" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <param name="t1">To be added.</param>
-        <param name="t2">To be added.</param>
         <returns>
           <para>
             <see langword="true" /> if the values of <paramref name="t1" /> and
@@ -1221,6 +1219,10 @@ public class TimeSpanPropertiesExampleOne {
           <see langword="" />
         </returns>
         <remarks>To be added.</remarks>
+        <param name="t1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first time interval to compare. </param>
+        <param name="t2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second time interval to compare. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.TimeSpan" /> instances are equal.</para>

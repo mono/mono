@@ -353,9 +353,10 @@
         <Parameter Name="input" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <param name="input">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="input" /> is <see langword="null" />.</exception>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The stream containing the XML data to read. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -389,7 +390,8 @@
         <Parameter Name="input" Type="System.IO.TextReader" />
       </Parameters>
       <Docs>
-        <param name="input">To be added.</param>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TextReader containing the XML data to read. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -462,12 +464,14 @@
         <Parameter Name="context" Type="System.Xml.XmlParserContext" />
       </Parameters>
       <Docs>
-        <param name="fragType">To be added.</param>
-        <param name="context">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="xmlFragment" /> is <see langword="null" />.</exception>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="fragType" /> is not an <see langword="Element" />, <see langword="Attribute" />, or <see langword="Document" /><see cref="T:System.Xml.XmlNodeType" />.</exception>
+        <param name="fragType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNodeType" /> of the XML fragment. This also determines what the fragment can contain. (See table below.) </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlParserContext" /> in which the <paramref name="xmlFragment" /> is to be parsed. This includes the <see cref="T:System.Xml.XmlNameTable" /> to use, encoding, namespace scope, the current xml:lang, and the xml:space scope. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -555,10 +559,12 @@
         <Parameter Name="nt" Type="System.Xml.XmlNameTable" />
       </Parameters>
       <Docs>
-        <param name="url">To be added.</param>
-        <param name="nt">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="input" /> or <paramref name="nt" /> is <see langword="null" />.</exception>
+        <param name="url">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URL to use for resolving external resources. The <see cref="P:System.Xml.XmlTextReader.BaseURI" /> is set to this value. If <paramref name="url" /> is null, BaseURI is set to String.Empty. </param>
+        <param name="nt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlNameTable to use. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -595,10 +601,12 @@
         <Parameter Name="nt" Type="System.Xml.XmlNameTable" />
       </Parameters>
       <Docs>
-        <param name="input">To be added.</param>
-        <param name="nt">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="nt" /> is <see langword="null" />.</exception>
+        <param name="input">
+          <attribution license="cc4" from="Microsoft" modified="false" />The TextReader containing the XML data to read. </param>
+        <param name="nt">
+          <attribution license="cc4" from="Microsoft" modified="false" />The XmlNameTable to use. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -636,12 +644,14 @@
         <Parameter Name="context" Type="System.Xml.XmlParserContext" />
       </Parameters>
       <Docs>
-        <param name="fragType">To be added.</param>
-        <param name="context">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="xmlFragment" /> is <see langword="null" />.</exception>
         <exception cref="T:System.Xml.XmlException">
           <paramref name="fragType" /> is not an <see langword="Element" />, <see langword="Attribute" />, or <see langword="Document" /><see cref="T:System.Xml.XmlNodeType" />.</exception>
+        <param name="fragType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNodeType" /> of the XML fragment. This also determines what the fragment string can contain. (See table below.) </param>
+        <param name="context">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlParserContext" /> in which the <paramref name="xmlFragment" /> is to be parsed. This includes the <see cref="T:System.Xml.XmlNameTable" /> to use, encoding, namespace scope, the current xml:lang, and the xml:space scope. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1206,7 +1216,6 @@ otherwise, <see langword="false" />. </para>
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="namespaceURI">To be added.</param>
         <returns>
           <para>A <see cref="T:System.String" qualify="true" />
 containing the value of the specified attribute, or <see langword="null" />
@@ -1259,6 +1268,8 @@ public class Reader {
           <para> urn:datatypes</para>
           <para> int - int - int</para>
         </example>
+        <param name="namespaceURI">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace URI of the attribute. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2528,7 +2539,6 @@ have a name (like <see langword="Text" />, <see langword="Comment" /> , and so o
         <Parameter Name="len" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Int32" qualify="true" />
 containing the number of bytes written to <paramref name="array" />, or zero if the current
@@ -2544,6 +2554,8 @@ instance is not positioned on an element.</para>
             <paramref name="len" /> &gt; <paramref name="array" />.<see langword="Length" /> - <paramref name="offset" />.</para>
         </exception>
         <exception cref="T:System.Xml.XmlException">The Base64 sequence is not valid.</exception>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index into the array specifying where the method can begin to write to the buffer. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -2583,7 +2595,6 @@ instance is not positioned on an element.</para>
         <Parameter Name="len" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="offset">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Int32" qualify="true" />
 containing the number of bytes written to <paramref name="array" />, or zero if the current
@@ -2599,6 +2610,8 @@ instance is not positioned on an element.</para>
             <paramref name="len" /> &gt; <paramref name="array" />.<see langword="Length" /> - <paramref name="offset" />.</para>
         </exception>
         <exception cref="T:System.Xml.XmlException">The BinHex sequence is not valid.</exception>
+        <param name="offset">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index into the array specifying where the method can begin to write to the buffer. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">

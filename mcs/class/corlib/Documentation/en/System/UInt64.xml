@@ -473,8 +473,6 @@ public class UInt64ParseClass {
         <Parameter Name="style" Type="System.Globalization.NumberStyles" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
         <returns>
           <para>The <see cref="T:System.UInt64" /> value obtained from <paramref name="s" />.</para>
         </returns>
@@ -486,6 +484,10 @@ public class UInt64ParseClass {
           <para>
             <paramref name="s" /> represents a number greater than <see cref="F:System.UInt64.MaxValue" /> or less than <see cref="F:System.UInt64.MinValue" />.</para>
         </exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the number to convert. The string is interpreted by using the style specified by the <paramref name="style" /> parameter. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that specifies the permitted format of <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space, the positive or negative sign symbol, the group separator symbol, or the decimal point symbol) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. <paramref name="style" /> must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. The <paramref name="style" /> parameter makes this method overload useful when <paramref name="s" /> contains the string representation of a hexadecimal value, when the number system (decimal or hexadecimal) represented by <paramref name="s" /> is known only at run time, or when you want to disallow white space or a sign symbol in <paramref name="s" />.</para>
@@ -765,8 +767,6 @@ public class UInt64ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="provider">To be added.</param>
         <returns>
           <para>The <see cref="T:System.UInt64" /> value obtained from <paramref name="s" />.</para>
         </returns>
@@ -776,6 +776,10 @@ public class UInt64ParseClass {
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.UInt64.MaxValue" /> or less than <see cref="F:System.UInt64.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the number to convert. </param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information about <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload of the <see cref="M:System.UInt64.Parse(System.String,System.IFormatProvider)" /> method is typically used to convert text that can be formatted in a variety of ways to a <see cref="T:System.UInt64" /> value. For example, it can be used to convert the text entered by a user into an HTML text box to a numeric value.</para>
@@ -868,8 +872,6 @@ public class UInt64ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
         <returns>
           <para>The <see cref="T:System.UInt64" /> value obtained from <paramref name="s" />.</para>
         </returns>
@@ -881,6 +883,10 @@ public class UInt64ParseClass {
           <para>
             <paramref name="s" /> represents a number greater than <see cref="F:System.UInt64.MaxValue" /> or less than <see cref="F:System.UInt64.MinValue" />.</para>
         </exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the number to convert. The string is interpreted by using the style specified by the <paramref name="style" /> parameter.</param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that indicates the style elements that can be present in <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space or the positive or negative sign symbol) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. It must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration.</para>
@@ -1874,7 +1880,6 @@ public class UInt64ToStringExample {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
         <returns>
           <para>A <see cref="T:System.String" /> representation of the current instance formatted as
    specified by <paramref name="format" />. The string takes into account the formatting
@@ -1882,6 +1887,8 @@ public class UInt64ToStringExample {
         </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric format string.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.UInt64.ToString(System.String,System.IFormatProvider)" /> method formats a <see cref="T:System.UInt64" /> value in a specified format by using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of a specified culture. If you want to use default format or culture settings, use the other overloads of the <see cref="M:System.UInt64.ToString(System.String)" /> method, as follows:</para>

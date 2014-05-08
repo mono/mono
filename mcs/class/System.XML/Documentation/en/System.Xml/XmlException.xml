@@ -117,7 +117,6 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <param name="innerException">To be added.</param>
         <remarks>
           <para>This constructor initializes the <see cref="P:System.Xml.XmlException.Message" /> property
    of the new instance using <paramref name="message" /> and the <see cref="!:System.Xml.XmlException.InnerException" /> property using
@@ -130,6 +129,8 @@
    exceptions, see <see cref="P:System.Exception.InnerException" />.</block>
           </para>
         </remarks>
+        <param name="innerException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Exception" /> that threw the XmlException, if any. This value can be null. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the XmlException class.</para>

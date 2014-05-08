@@ -471,8 +471,6 @@ public class UInt32ParseClass {
         <Parameter Name="style" Type="System.Globalization.NumberStyles" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
         <returns>
           <para>The <see cref="T:System.UInt32" /> value obtained from <paramref name="s" />.</para>
         </returns>
@@ -484,6 +482,10 @@ public class UInt32ParseClass {
           <para>
             <paramref name="s" /> represents a number greater than <see cref="F:System.UInt32.MaxValue" /> or less than <see cref="F:System.UInt32.MinValue" />.</para>
         </exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string representing the number to convert. The string is interpreted by using the style specified by the <paramref name="style" /> parameter.</param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that specify the permitted format of <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space, the positive or negative sign symbol, the group separator symbol, or the decimal point symbol) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. <paramref name="style" /> must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. The <paramref name="style" /> parameter makes this method overload useful when <paramref name="s" /> contains the string representation of a hexadecimal value, when the number system (decimal or hexadecimal) represented by <paramref name="s" /> is known only at run time, or when you want to disallow white space or a sign symbol in <paramref name="s" />.</para>

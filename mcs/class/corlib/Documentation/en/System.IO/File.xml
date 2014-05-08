@@ -1167,7 +1167,6 @@
         <Parameter Name="mode" Type="System.IO.FileMode" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added.</param>
         <returns>
           <para>A <see cref="T:System.IO.FileStream" /> that provides read/write access to the specified file.</para>
         </returns>
@@ -1187,6 +1186,8 @@
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
         <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and write the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="path" /> parameter is permitted to specify relative or absolute path information. Relative path information is interpreted as relative to the current working directory. To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" />.</para>
@@ -1222,8 +1223,6 @@
         <Parameter Name="access" Type="System.IO.FileAccess" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added.</param>
-        <param name="access">To be added.</param>
         <returns>
           <para>A <see cref="T:System.IO.FileStream" />
 that provides access to the specified file.</para>
@@ -1248,6 +1247,10 @@ that provides access to the specified file.</para>
           <paramref name="path" /> specified a read-only file and <paramref name="access" /> is not <see langword="Read" />, or <paramref name="path" /> specified a directory.</exception>
         <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and might also require permission to write to the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileAccess" /> value that specifies the operations that can be performed on the file. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="path" /> parameter is permitted to specify relative or absolute path information. Relative path information is interpreted as relative to the current working directory. To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" />.</para>
@@ -1285,9 +1288,6 @@ that provides access to the specified file.</para>
         <Parameter Name="share" Type="System.IO.FileShare" />
       </Parameters>
       <Docs>
-        <param name="mode">To be added.</param>
-        <param name="access">To be added.</param>
-        <param name="share">To be added.</param>
         <returns>
           <para>A <see cref="T:System.IO.FileStream" />
 that provides access to the specified file.</para>
@@ -1311,6 +1311,12 @@ that provides access to the specified file.</para>
         <exception cref="T:System.UnauthorizedAccessException">The caller does not have the required permission.</exception>
         <exception cref="T:System.IO.PathTooLongException">The length of <paramref name="path" /> or the absolute path information for <paramref name="path" /> exceeds the system-defined maximum length.</exception>
         <permission cref="T:System.Security.Permissions.FileIOPermission">Requires permission to read and might also require permission to write the file. See <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Read" qualify="true" /> and <see cref="F:System.Security.Permissions.FileIOPermissionAccess.Write" qualify="true" />.</permission>
+        <param name="mode">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileMode" /> value that specifies whether a file is created if one does not exist, and determines whether the contents of existing files are retained or overwritten. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileAccess" /> value that specifies the operations that can be performed on the file. </param>
+        <param name="share">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.FileShare" /> value specifying the type of access other threads have to the file. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="path" /> parameter is permitted to specify relative or absolute path information. Relative path information is interpreted as relative to the current working directory. To obtain the current working directory, see <see cref="M:System.IO.Directory.GetCurrentDirectory" />.</para>

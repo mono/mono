@@ -252,7 +252,7 @@
           <para>Gets the typed object requested, if present, from the appropriate layer in the binding stack.</para>
         </summary>
         <param name="context">
-          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> </param>
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /></param>
       </Docs>
     </Member>
     <Member MemberName="TransactionProtocol">

@@ -173,7 +173,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
         <returns>
           <para>
             <see langword="true" /> if <paramref name="obj" /> is a <see cref="T:System.UIntPtr" /> instance and has the same value as the 
@@ -187,6 +186,8 @@
             <block subset="none" type="note">The method overrides <see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</block>
           </para>
         </remarks>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance or null. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified object.</para>
@@ -282,7 +283,6 @@ containing the hash code for the current instance.</para>
         <Parameter Name="value2" Type="System.UIntPtr" />
       </Parameters>
       <Docs>
-        <param name="value2">To be added.</param>
         <returns>
           <para>
             <see langword="true" /> if <paramref name="value1" /> represents the same value as 
@@ -290,6 +290,8 @@ containing the hash code for the current instance.</para>
         </returns>
         <remarks>To be added.</remarks>
         <altmember cref="M:System.UIntPtr.Equals(System.Object)" />
+        <param name="value2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second pointer or handle to compare. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified instances of <see cref="T:System.UIntPtr" /> are equal.</para>
@@ -461,7 +463,6 @@ containing the hash code for the current instance.</para>
         <Parameter Name="value2" Type="System.UIntPtr" />
       </Parameters>
       <Docs>
-        <param name="value2">To be added.</param>
         <returns>
           <para>
             <see langword="true" /> if <paramref name="value1" /> represents a different value than 
@@ -469,6 +470,8 @@ containing the hash code for the current instance.</para>
         </returns>
         <remarks>To be added.</remarks>
         <altmember cref="M:System.UIntPtr.Equals(System.Object)" />
+        <param name="value2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second pointer or handle to compare. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two specified instances of <see cref="T:System.UIntPtr" /> are not equal.</para>

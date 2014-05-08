@@ -204,8 +204,6 @@ Version is 6.1.2.4</para>
         <Parameter Name="minor" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="major">To be added.</param>
-        <param name="minor">To be added.</param>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="major" /> or <paramref name="minor" /> is less than zero. </exception>
@@ -226,6 +224,10 @@ public class Vers {
           <para>
 Version is 6.1</para>
         </example>
+        <param name="major">
+          <attribution license="cc4" from="Microsoft" modified="false" />The major version number. </param>
+        <param name="minor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The minor version number. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Version" /> class using the specified major and minor values.</para>
@@ -254,9 +256,6 @@ Version is 6.1</para>
         <Parameter Name="build" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="major">To be added.</param>
-        <param name="minor">To be added.</param>
-        <param name="build">To be added.</param>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="major" />, <paramref name="minor" />, or <paramref name="build" /> is less than zero. </exception>
@@ -277,6 +276,12 @@ public class Vers {
           <para>
 Version is 6.1.2</para>
         </example>
+        <param name="major">
+          <attribution license="cc4" from="Microsoft" modified="false" />The major version number. </param>
+        <param name="minor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The minor version number. </param>
+        <param name="build">
+          <attribution license="cc4" from="Microsoft" modified="false" />The build number. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Version" /> class using the specified major, minor, and build values.</para>
@@ -308,10 +313,6 @@ Version is 6.1.2</para>
         <Parameter Name="revision" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="major">To be added.</param>
-        <param name="minor">To be added.</param>
-        <param name="build">To be added.</param>
-        <param name="revision">To be added.</param>
         <remarks>To be added.</remarks>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="major" />, <paramref name="minor" />, <paramref name="build" />, or <paramref name="revision" /> is less than zero. </exception>
@@ -332,6 +333,14 @@ public class Vers {
           <para>
 Version is 6.1.2.4</para>
         </example>
+        <param name="major">
+          <attribution license="cc4" from="Microsoft" modified="false" />The major version number. </param>
+        <param name="minor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The minor version number. </param>
+        <param name="build">
+          <attribution license="cc4" from="Microsoft" modified="false" />The build number. </param>
+        <param name="revision">
+          <attribution license="cc4" from="Microsoft" modified="false" />The revision number. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Version" /> class with the specified major, minor, build, and revision numbers.</para>
@@ -654,7 +663,6 @@ class VersionTest {
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" />
 indicates <paramref name="obj" /> is
@@ -690,6 +698,8 @@ class VersionEqualsExample {
             <para>It is False that version 6.1.2.4 is equal to 6.1.</para>
           </c>
         </example>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with the current <see cref="T:System.Version" /> object, or null. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the current <see cref="T:System.Version" /> object is equal to a specified object.</para>

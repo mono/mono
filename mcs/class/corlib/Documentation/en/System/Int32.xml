@@ -858,8 +858,6 @@ public class Int32ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
         <returns>
           <para>The <see cref="T:System.Int32" /> value obtained from <paramref name="s" />.</para>
         </returns>
@@ -869,6 +867,10 @@ public class Int32ParseClass {
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.Int32.MaxValue" /> or less than <see cref="F:System.Int32.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a number to convert. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that indicates the style elements that can be present in <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space or the positive sign) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. It must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. Depending on the value of <paramref name="style" />, the <paramref name="s" /> parameter may include the following elements: </para>

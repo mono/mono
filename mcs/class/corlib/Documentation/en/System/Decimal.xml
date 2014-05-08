@@ -3505,7 +3505,6 @@ public static void Main() {
         <Parameter Name="d2" Type="System.Decimal" />
       </Parameters>
       <Docs>
-        <param name="d2">To be added.</param>
         <returns>
           <para>The remainder after dividing d1 by d2 to give an integer
       result. The sign of the result, if non-zero, is the same as the sign of d1, and
@@ -3518,6 +3517,8 @@ public static void Main() {
           <paramref name="d2" /> is zero.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="d1" /> divided by <paramref name="d2" /> is greater than <see cref="F:System.Decimal.MaxValue" /> or less than <see cref="F:System.Decimal.MinValue" />.</exception>
+        <param name="d2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The divisor. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the remainder after dividing two <see cref="T:System.Decimal" /> values.</para>

@@ -604,9 +604,10 @@
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="formatProvider">To be added.</param>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="sb" /> is <see langword="null" />.</exception>
+        <param name="formatProvider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IFormatProvider" /> object that controls formatting. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table lists examples of other typical or related I/O tasks.</para>

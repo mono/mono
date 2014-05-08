@@ -1524,14 +1524,16 @@ is equal to <see cref="F:System.Double.PositiveInfinity" />.</term>
         <Parameter Name="val2" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <param name="val1">To be added.</param>
-        <param name="val2">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Int16" /> that 
    is equal to <paramref name="val1 " />if <paramref name="val1" /> is greater than or equal to <paramref name="val2" />; otherwise, the return value is equal
    to <paramref name="val2" />.</para>
         </returns>
         <remarks>To be added.</remarks>
+        <param name="val1">
+          <attribution license="cc4" from="Microsoft" modified="false" />The first of two 16-bit signed integers to compare. </param>
+        <param name="val2">
+          <attribution license="cc4" from="Microsoft" modified="false" />The second of two 16-bit signed integers to compare. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two 16-bit signed integers.</para>
@@ -2878,7 +2880,6 @@ public class MathRoundExample
         <Parameter Name="digits" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="digits">To be added.</param>
         <returns>
           <para> A <see cref="T:System.Double" /> containing the value of the number
    nearest <paramref name="value" /> with a precision
@@ -2927,6 +2928,8 @@ public class MathRoundExample
             <para>Math.Round(3.55, 1) returns 3.6</para>
           </c>
         </example>
+        <param name="digits">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of fractional digits in the return value. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">

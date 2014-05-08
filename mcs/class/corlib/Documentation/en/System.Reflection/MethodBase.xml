@@ -526,7 +526,6 @@ class MethodAttributesExample
         <Parameter Name="parameters" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="parameters">To be added.</param>
         <returns>
           <para> A <see cref="T:System.Object" /> that contains the return
    value of the invoked method, or a re-initialized object if a constructor was invoked.</para>
@@ -539,6 +538,8 @@ class MethodAttributesExample
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to invoke non-public members of loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
         <exception cref="T:System.MemberAccessException">The caller does not have permission to execute the method or constructor.</exception>
         <exception cref="T:System.InvalidOperationException">The type that declares the method is an open generic type. That is, <see cref="P:System.Type.ContainsGenericParameters" /> returns <see langword="true" /> for the declaring type.</exception>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument list for the invoked method or constructor. This is an array of objects with the same number, order, and type as the parameters of the method or constructor to be invoked. If there are no parameters, <paramref name="parameters" /> should be null.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenience method that calls the <see cref="M:System.Reflection.MethodBase.Invoke(System.Object,System.Reflection.BindingFlags,System.Reflection.Binder,System.Object[],System.Globalization.CultureInfo)" /> method overload, passing <see cref="F:System.Reflection.BindingFlags.Default" /> for <paramref name="invokeAttr" /> and null for <paramref name="binder" /> and <paramref name="culture" />. </para>
@@ -585,10 +586,6 @@ class MethodAttributesExample
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <param name="culture">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Object" /> that
    contains the return value of the invoked method, or a re-initialized object if a
@@ -602,6 +599,14 @@ class MethodAttributesExample
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to invoke non-public members of loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
         <exception cref="T:System.MemberAccessException">The caller does not have permission to execute the method or constructor.</exception>
         <exception cref="T:System.InvalidOperationException">The type that declares the method is an open generic type. That is, <see cref="P:System.Type.ContainsGenericParameters" /> returns <see langword="true" /> for the declaring type.</exception>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitmask that is a combination of 0 or more bit flags from <see cref="T:System.Reflection.BindingFlags" />. If <paramref name="binder" /> is null, this parameter is assigned the value <see cref="F:System.Reflection.BindingFlags.Default" />; thus, whatever you pass in is ignored. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that enables the binding, coercion of argument types, invocation of members, and retrieval of MemberInfo objects via reflection. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An argument list for the invoked method or constructor. This is an array of objects with the same number, order, and type as the parameters of the method or constructor to be invoked. If there are no parameters, this should be null.</param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of CultureInfo used to govern the coercion of types. If this is null, the CultureInfo for the current thread is used. (This is necessary to convert a String that represents 1000 to a Double value, for example, since 1000 is represented differently by different cultures.) </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Dynamically invokes the method reflected by this instance on <paramref name="obj" />, and passes along the specified parameters. If the method is static, the <paramref name="obj" /> parameter is ignored. For non-static methods, <paramref name="obj" /> should be an instance of a class that inherits or declares the method and must be the same type as this class. If the method has no parameters, the value of <paramref name="parameters" /> should be null. Otherwise, the number, type, and order of elements in <paramref name="parameters" /> should be identical to the number, type, and order of parameters for the method reflected by this instance.</para>

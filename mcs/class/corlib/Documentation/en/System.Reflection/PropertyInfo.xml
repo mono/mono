@@ -684,7 +684,6 @@ reflected by the current instance, returns <see langword="null" /> .</para>
         <Parameter Name="index" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="index">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Object" /> that contains the property value for <paramref name="obj" /> .</para>
         </returns>
@@ -698,6 +697,8 @@ reflected by the current instance, returns <see langword="null" /> .</para>
         <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
         <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional index values for indexed properties. This value should be null for non-indexed properties. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To determine whether a property is indexed, use the <see cref="M:System.Reflection.PropertyInfo.GetIndexParameters" /> method. If the resulting array has 0 (zero) elements, the property is not indexed.</para>
@@ -745,10 +746,6 @@ Console.WriteLine("CurrCult: " +
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="index">To be added.</param>
-        <param name="culture">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Object" /> that
    contains the property value for <paramref name="obj" /> .</para>
@@ -763,6 +760,14 @@ Console.WriteLine("CurrCult: " +
         <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
         <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the following enumeration members that specify the invocation attribute: InvokeMethod, CreateInstance, Static, GetField, SetField, GetProperty, and SetProperty. You must specify a suitable invocation attribute. For example, to invoke a static member, set the Static flag. </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that enables the binding, coercion of argument types, invocation of members, and retrieval of <see cref="T:System.Reflection.MemberInfo" /> objects through reflection. If <paramref name="binder" /> is null, the default binder is used. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional index values for indexed properties. This value should be null for non-indexed properties. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The culture for which the resource is to be localized. If the resource is not localized for this culture, the <see cref="P:System.Globalization.CultureInfo.Parent" /> property will be called successively in search of a match. If this value is null, the culture-specific information is obtained from the <see cref="P:System.Globalization.CultureInfo.CurrentUICulture" /> property. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To determine whether a property is indexed, use the <see cref="M:System.Reflection.PropertyInfo.GetIndexParameters" /> method. If the resulting array has 0 (zero) elements, the property is not indexed.</para>
@@ -1006,8 +1011,6 @@ Console.WriteLine("CurrCult: " +
         <Parameter Name="index" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
-        <param name="index">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="index " /> does not contain the exact type of arguments needed.</para>
@@ -1018,6 +1021,10 @@ Console.WriteLine("CurrCult: " +
         <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
         <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new property value. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />Optional index values for indexed properties. This value should be null for non-indexed properties. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If this <see cref="T:System.Reflection.PropertyInfo" /> object is a value type and <paramref name="value" /> is null, then the property will be set to the default value for that type.</para>
@@ -1064,12 +1071,13 @@ Console.WriteLine("CurrCult: " +
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
         <exception cref="T:System.ArgumentException">The <paramref name="index " /> array does not contain the exact type of arguments needed. <para>The <see langword="Set" /> accessor of the property reflected by the current instance is not found.</para></exception>
         <exception cref="T:System.Reflection.TargetException">The property reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> or is of a type that does not implement the property reflected by the current instance.</exception>
         <exception cref="T:System.MethodAccessException">The <see langword="Set" /> accessor of the property reflected by the current instance is non-public and the caller does not have <see cref="T:System.Security.Permissions.ReflectionPermission" /> to reflect on non-public methods.</exception>
         <exception cref="T:System.Reflection.TargetParameterCountException">The current instance reflects an indexer and <paramref name="index" />.Length does not equal the rank of the indexer.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to reflect non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The new property value. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If this <see cref="T:System.Reflection.PropertyInfo" /> object is a value type and <paramref name="value" /> is null, then the property will be set to the default value for that type.</para>

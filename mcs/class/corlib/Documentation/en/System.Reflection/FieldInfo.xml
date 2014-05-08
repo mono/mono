@@ -1150,7 +1150,6 @@ class FieldAttributesExample
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="value">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para>The field reflected by the current instance is declared neither directly in <paramref name="obj" /> nor in any class from which <paramref name="obj" /> derives.</para>
           <para>
@@ -1159,6 +1158,8 @@ class FieldAttributesExample
         <exception cref="T:System.FieldAccessException">The field reflected by the current instance is non-public, and the caller does not have permission to access non-public members.</exception>
         <exception cref="T:System.Reflection.TargetException">The field reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> .</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to access non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The value to assign to the field. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method will assign <paramref name="value" /> to the field reflected by this instance on object <paramref name="obj" />. If the field is static, <paramref name="obj" /> will be ignored. For non-static fields, <paramref name="obj" /> should be an instance of a class that inherits or declares the field. The new value is passed as an Object. For example, if the field's type is Boolean, an instance of Object with the appropriate Boolean value is passed. Before setting the value, SetValue checks to see if the user has access permission. This final method is a convenience method for calling the following SetValue method.</para>
@@ -1202,9 +1203,6 @@ class FieldAttributesExample
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="invokeAttr">To be added.</param>
-        <param name="binder">To be added.</param>
-        <param name="culture">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <para>The field reflected by the current instance is declared neither directly in <paramref name="obj" /> nor in any class from which <paramref name="obj" /> derives.</para>
           <para>
@@ -1213,6 +1211,12 @@ class FieldAttributesExample
         <exception cref="T:System.FieldAccessException">The field reflected by the current instance is non-public, and the caller does not have permission to access non-public members.</exception>
         <exception cref="T:System.Reflection.TargetException">The field reflected by the current instance is non-static, and <paramref name="obj" /> is <see langword="null" /> .</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to access non-public members of a type in loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="invokeAttr">
+          <attribution license="cc4" from="Microsoft" modified="false" />A field of Binder that specifies the type of binding that is desired (for example, Binder.CreateInstance or Binder.ExactBinding). </param>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A set of properties that enables the binding, coercion of argument types, and invocation of members through reflection. If <paramref name="binder" /> is null, then Binder.DefaultBinding is used. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />The software preferences of a particular culture. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method will assign <paramref name="value" /> to the field reflected by this instance on <paramref name="obj" />. If the field is static, <paramref name="obj" /> will be ignored. For non-static fields, <paramref name="obj" /> should be an instance of a class that inherits or declares the field. The new value is passed as an Object. For example, if the field's type is Boolean, an instance of Object with the appropriate Boolean value is passed. Before setting the value, SetValue checks to see if the user has access permission.</para>

@@ -124,7 +124,6 @@
         <Parameter Name="type" Type="System.Runtime.InteropServices.GCHandleType" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
         <returns>
           <para> A new <see cref="T:System.Runtime.InteropServices.GCHandle" /> instance
    that protects the object.</para>
@@ -138,6 +137,8 @@
         <permission cref="T:System.Security.Permissions.SecurityPermission">
           <para>Requires permission to call unmanaged code. See <see cref="F:System.Security.Permissions.SecurityPermissionFlag.UnmanagedCode" qualify="true" /> .</para>
         </permission>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Runtime.InteropServices.GCHandleType" /> values, indicating the type of <see cref="T:System.Runtime.InteropServices.GCHandle" /> to create. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Allocates a handle of the specified type for the specified object.</para>

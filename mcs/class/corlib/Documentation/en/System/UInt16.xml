@@ -472,8 +472,6 @@ public class UInt16ParseClass {
         <Parameter Name="style" Type="System.Globalization.NumberStyles" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
         <returns>
           <para>The <see cref="T:System.UInt16" /> value obtained from <paramref name="s" />.</para>
         </returns>
@@ -483,6 +481,10 @@ public class UInt16ParseClass {
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.UInt16.MaxValue" /> or less than <see cref="F:System.UInt16.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the number to convert. The string is interpreted by using the style specified by the <paramref name="style" /> parameter.</param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that specify the permitted format of <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space, the positive or negative sign symbol, the group separator symbol, or the decimal point symbol) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. <paramref name="style" /> must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. The <paramref name="style" /> parameter makes this method overload useful when <paramref name="s" /> contains the string representation of a hexadecimal value, when the number system (decimal or hexadecimal) represented by <paramref name="s" /> is known only at run time, or when you want to disallow white space or a sign symbol in <paramref name="s" />.</para>
@@ -762,8 +764,6 @@ public class UInt16ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="provider">To be added.</param>
         <returns>
           <para>The <see cref="T:System.UInt16" /> value obtained from <paramref name="s" />.</para>
         </returns>
@@ -773,6 +773,10 @@ public class UInt16ParseClass {
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.UInt16.MaxValue" /> or less than <see cref="F:System.UInt16.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the number to convert. </param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information about <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="s" /> parameter contains a number of the form: </para>
@@ -864,9 +868,6 @@ public class UInt16ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
-        <param name="provider">To be added.</param>
         <returns>
           <para>The <see cref="T:System.UInt16" /> value obtained from <paramref name="s" />.</para>
         </returns>
@@ -876,6 +877,12 @@ public class UInt16ParseClass {
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.UInt16.MaxValue" /> or less than <see cref="F:System.UInt16.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the number to convert. The string is interpreted by using the style specified by the <paramref name="style" /> parameter.</param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that indicate the style elements that can be present in <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information about <paramref name="s" />. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space or the positive or negative sign symbol) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. It must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration.</para>
@@ -1867,7 +1874,6 @@ public class UInt16ToStringExample {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
         <returns>
           <para>A <see cref="T:System.String" />
 representation of the current instance formatted as specified by
@@ -1877,6 +1883,8 @@ instance supplied by <paramref name="provider" />.</para>
         </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric format string.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.UInt16.ToString(System.String,System.IFormatProvider)" /> method formats a <see cref="T:System.UInt16" /> value in a specified format by using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of a specified culture. If you want to use default format or culture settings, use the other overloads of the <see cref="M:System.UInt16.ToString(System.String)" /> method, as follows:</para>

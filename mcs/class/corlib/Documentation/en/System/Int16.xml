@@ -452,8 +452,6 @@ public class Int16ParseClass {
         <Parameter Name="style" Type="System.Globalization.NumberStyles" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
         <returns>
           <para>The <see cref="T:System.Int16" /> value obtained from <paramref name="s" />.</para>
         </returns>
@@ -463,6 +461,10 @@ public class Int16ParseClass {
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.Int16.MaxValue" /> or less than <see cref="F:System.Int16.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a number to convert. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values that indicates the style elements that can be present in <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space or a sign symbol) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. It must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. Depending on the value of <paramref name="style" />, the <paramref name="s" /> parameter may include the following elements: </para>
@@ -699,7 +701,6 @@ public class Int16ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
         <returns>
           <para>The <see cref="T:System.Int16" /> value obtained from <paramref name="s" />.</para>
         </returns>
@@ -709,6 +710,8 @@ public class Int16ParseClass {
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.Int16.MaxValue" /> or less than <see cref="F:System.Int16.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a number to convert. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="s" /> parameter contains a number of the form: </para>
@@ -783,8 +786,6 @@ public class Int16ParseClass {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
         <returns>
           <para>The <see cref="T:System.Int16" /> value obtained from <paramref name="s" />.</para>
         </returns>
@@ -794,6 +795,10 @@ public class Int16ParseClass {
           <paramref name="s" /> is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.Int16.MaxValue" /> or less than <see cref="F:System.Int16.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string containing a number to convert. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that indicates the style elements that can be present in <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space or the positive sign) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. It must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. Depending on the value of <paramref name="style" />, the <paramref name="s" /> parameter may include the following elements: </para>
@@ -1788,7 +1793,6 @@ public class Int16ToStringExample {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
         <returns>
           <para>A <see cref="T:System.String" /> representation of the current instance formatted as
    specified by <paramref name="format" />. The string takes into account the formatting
@@ -1796,6 +1800,8 @@ public class Int16ToStringExample {
         </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A numeric format string.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Int16.ToString(System.String,System.IFormatProvider)" /> method formats an <see cref="T:System.Int16" /> value in a specified format by using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of a specified culture. If you want to use default format or culture settings, use the other overloads of the <see cref="M:System.Int16.ToString(System.String)" /> method, as follows:</para>

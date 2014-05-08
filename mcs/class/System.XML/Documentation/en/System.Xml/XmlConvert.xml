@@ -672,7 +672,6 @@ public class App {
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
         <returns>
           <para>The <see cref="T:System.DateTime" /> equivalent of <paramref name="s" />.</para>
         </returns>
@@ -689,6 +688,8 @@ public class App {
           <para>
             <paramref name="s" /> does not contain a date and time that corresponds to <paramref name="format" />.</para>
         </exception>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format structure to apply to the converted DateTime. Valid formats include "yyyy-MM-ddTHH:mm:sszzzzzz" and its subsets. The string is validated against this format. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the <see cref="T:System.String" /> to a <see cref="T:System.DateTime" /> equivalent.</para>
@@ -718,7 +719,6 @@ public class App {
         <Parameter Name="formats" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <param name="formats">To be added.</param>
         <returns>
           <para>The <see cref="T:System.DateTime" /> equivalent of <paramref name="s" />.</para>
         </returns>
@@ -753,6 +753,8 @@ public class App {
           <para>The output is</para>
           <para>9/18/1966 8:45:11 PM</para>
         </example>
+        <param name="formats">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array containing the format structures to apply to the converted DateTime. Valid formats include "yyyy-MM-ddTHH:mm:sszzzzzz" and its subsets. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method allows multiple formats for the string to be validated against.</para>
@@ -1806,13 +1808,14 @@ public class App {
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
         <returns>
           <para>The <see cref="T:System.String" /> representation of <paramref name="value" /> in the specified format..</para>
         </returns>
         <remarks>
           <para> This method calls <paramref name="value" />.ToString(<paramref name="format" />, <see cref="P:System.Globalization.DateTimeFormatInfo.InvariantInfo" />).</para>
         </remarks>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />The format structure that defines how to display the converted string. Valid formats include "yyyy-MM-ddTHH:mm:sszzzzzz" and its subsets. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the <see cref="T:System.DateTime" /> to a <see cref="T:System.String" />.</para>

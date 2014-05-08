@@ -244,9 +244,6 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <param name="binder">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <param name="culture">To be added.</param>
         <returns>
           <para>An instance of the class that declared the constructor reflected by the current instance.</para>
         </returns>
@@ -256,6 +253,12 @@
         <exception cref="T:System.Reflection.TargetParameterCountException">
           <paramref name="parameters" />.Length does not equal the number of parameters required by the contract of the constructor reflected by the current instance.</exception>
         <permission cref="T:System.Security.Permissions.ReflectionPermission">Requires permission to invoke non-public members of loaded assemblies. See <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.MemberAccess" />.</permission>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Binder that defines a set of properties and enables the binding, coercion of argument types, and invocation of members using reflection. If <paramref name="binder" /> is null, then Binder.DefaultBinding is used. </param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type Object used to match the number, order and type of the parameters for this constructor, under the constraints of <paramref name="binder" />. If this constructor does not require parameters, pass an array with zero elements, as in Object[] parameters = new Object[0]. Any object in this array that is not explicitly initialized with a value will contain the default value for that object type. For reference-type elements, this value is null. For value-type elements, this value is 0, 0.0, or false, depending on the specific element type. </param>
+        <param name="culture">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.CultureInfo" /> used to govern the coercion of types. If this is null, the <see cref="T:System.Globalization.CultureInfo" /> for the current thread is used. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The number, type, and order of elements in the <paramref name="parameters" /> array should be identical to the number, type, and order of parameters for the constructor reflected by this instance.</para>

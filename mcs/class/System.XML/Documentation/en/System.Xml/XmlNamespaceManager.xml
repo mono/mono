@@ -218,13 +218,14 @@ while (reader.Read())
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
         <exception cref="T:System.ArgumentException">
           <paramref name="prefix" /> is "xml" or "xmlns".</exception>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="prefix" /> is <see langword="null" />, or <paramref name="uri" /> is <see langword="null" />.</para>
         </exception>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to add. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -659,7 +660,6 @@ value is supplied, then
         <Parameter Name="uri" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="uri">To be added.</param>
         <remarks>
           <para>
             <block subset="none" type="behaviors"> As described above. </block>
@@ -680,6 +680,8 @@ value is supplied, then
         </remarks>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="prefix" /> is <see langword="null" />, or <paramref name="uri" /> is <see langword="null" />.</exception>
+        <param name="uri">
+          <attribution license="cc4" from="Microsoft" modified="false" />The namespace to remove for the given prefix. The namespace removed is from the current namespace scope. Namespaces outside the current scope are ignored. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the given namespace for the given prefix.</para>

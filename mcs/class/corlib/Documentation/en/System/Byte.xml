@@ -254,7 +254,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
         <returns>
           <para>
             <see langword="true" /> if <paramref name="obj" /> represents the 
@@ -267,6 +266,8 @@
  overrides <see cref="M:System.Object.Equals(System.Object)" />.</block>
           </para>
         </remarks>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance is equal to a specified object.</para>
@@ -498,8 +499,6 @@ public static void Main() {
         <Parameter Name="style" Type="System.Globalization.NumberStyles" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
         <returns>
           <para>The <see cref="T:System.Byte" /> value obtained from <paramref name="s" />
 .</para>
@@ -510,6 +509,10 @@ public static void Main() {
           <paramref name="s " />is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.Byte.MaxValue" /> or less than <see cref="F:System.Byte.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a number to convert. The string is interpreted using the style specified by <paramref name="style" />. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that indicates the style elements that can be present in <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space or the positive sign) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. It must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. Depending on the value of <paramref name="style" />, the <paramref name="s" /> parameter may include the following elements: </para>
@@ -738,8 +741,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="provider">To be added.</param>
         <returns>
           <para>The <see cref="T:System.Byte" /> value obtained from <paramref name="s" />
 .</para>
@@ -750,6 +751,10 @@ public static void Main() {
           <paramref name="s" /> represents a number greater than <see cref="F:System.Byte.MaxValue" /> or less than <see cref="F:System.Byte.MinValue" />.</exception>
         <exception cref="T:System.FormatException">
           <paramref name="s" /> is not in the correct style.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a number to convert. The string is interpreted using the <see cref="F:System.Globalization.NumberStyles.Integer" /> style. </param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific parsing information about <paramref name="s" />. If <paramref name="provider" /> is null, the thread current culture is used. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="s" /> parameter contains a number of the form: </para>
@@ -824,9 +829,6 @@ public static void Main() {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="s">To be added.</param>
-        <param name="style">To be added.</param>
-        <param name="provider">To be added.</param>
         <returns>
           <para>The <see cref="T:System.Byte" /> value obtained from <paramref name="s" />
 .</para>
@@ -837,6 +839,12 @@ public static void Main() {
           <paramref name="s " />is not in the correct style.</exception>
         <exception cref="T:System.OverflowException">
           <paramref name="s" /> represents a number greater than <see cref="F:System.Byte.MaxValue" /> or less than <see cref="F:System.Byte.MinValue" />.</exception>
+        <param name="s">
+          <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a number to convert. The string is interpreted using the style specified by <paramref name="style" />. </param>
+        <param name="style">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that indicates the style elements that can be present in <paramref name="s" />. A typical value to specify is <see cref="F:System.Globalization.NumberStyles.Integer" />.</param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific information about the format of <paramref name="s" />. If <paramref name="provider" /> is null, the thread current culture is used. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space or the positive sign) that are allowed in the <paramref name="s" /> parameter for the parse operation to succeed. It must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. Depending on the value of <paramref name="style" />, the <paramref name="s" /> parameter may include the following elements: </para>
@@ -1672,8 +1680,6 @@ public class ByteToStringExample {
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <param name="format">To be added.</param>
-        <param name="provider">To be added.</param>
         <returns>
           <para>A <see cref="T:System.String" /> representation of the current instance formatted as
    specified by <paramref name="format" />. The string takes into account the information in
@@ -1681,6 +1687,10 @@ public class ByteToStringExample {
         </returns>
         <exception cref="T:System.FormatException">
           <paramref name="format" /> is invalid.</exception>
+        <param name="format">
+          <attribution license="cc4" from="Microsoft" modified="false" />A standard or custom numeric format string.</param>
+        <param name="provider">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Byte.ToString(System.String,System.IFormatProvider)" /> method formats a <see cref="T:System.Byte" /> value in a specified format of a specified culture. To format a number by using the default ("G") format of the current culture, call the <see cref="M:System.Byte.ToString" /> method. To format a number by using a specified format of the current culture, call the <see cref="M:System.Byte.ToString(System.String)" /> method. </para>

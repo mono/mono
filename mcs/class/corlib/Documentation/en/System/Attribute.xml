@@ -171,7 +171,6 @@ class AuthorInfo
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="obj">To be added.</param>
         <returns>
           <para>A <see cref="T:System.Boolean" qualify="true" /> where <see langword="true" /> indicates <paramref name="obj" />
 represents the same type and value as the current instance. If <paramref name="obj" /> is a null reference or is not an instance of
@@ -182,6 +181,8 @@ represents the same type and value as the current instance. If <paramref name="o
             <para>This method overrides <see cref="M:System.Object.Equals(System.Object)" qualify="true" />.</para>
           </block>
         </remarks>
+        <param name="obj">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to compare with this instance or null. </param>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to a specified object.</para>

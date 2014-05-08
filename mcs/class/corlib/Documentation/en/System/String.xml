@@ -794,7 +794,6 @@ class EmptyStringSearch {
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <param name="count">To be added.</param>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="count" /> is less than zero.</exception>
         <example>
@@ -815,6 +814,8 @@ public class StringExample {
             <c>aaaaaaaaaa</c>
           </para>
         </example>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of times <paramref name="c" /> occurs. </param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -985,7 +986,6 @@ public class StringExample {
         <Parameter Name="enc" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="enc">To be added.</param>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <para>
             <paramref name="startIndex" /> or <paramref name="length" /> is less than zero.</para>
@@ -993,6 +993,8 @@ public class StringExample {
           <para>
             <paramref name="value" /> is a null pointer and <paramref name="length" /> is not zero.</para>
         </exception>
+        <param name="enc">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that specifies how the array referenced by <paramref name="value" /> is encoded. If <paramref name="enc" /> is null, ANSI encoding is assumed.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -1506,7 +1508,6 @@ public class StringCompareExample {
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="ignoreCase">To be added.</param>
         <returns>
           <para>The return value is a negative number, zero, or a positive number reflecting the sort order of the specified substrings. For non-zero return values, the exact value returned by this method is unspecified. The following table defines the return value:</para>
           <list type="table">
@@ -1569,6 +1570,9 @@ public class StringCompareExample {
          of 'string b' in a case-sensitive manner, the return value is 1.</para>
           </c>
         </example>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />
+                                                                                                                                                                                                                                        true to ignore case during the comparison; otherwise, false.</param>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The substrings to compare start in <paramref name="strA" /> at <paramref name="indexA" />, and in <paramref name="strB" /> at <paramref name="indexB" />. Both <paramref name="indexA" /> and <paramref name="indexB" /> are zero-based; that is, the first character in <paramref name="strA" /> and <paramref name="strB" /> is at position zero. The length of the first substring is equal to the length of <paramref name="strA" /> minus <paramref name="indexA" /> plus one. The length of the second substring is equal to the length of <paramref name="strB" /> minus <paramref name="indexB" /> plus one.</para>
