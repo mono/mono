@@ -52,7 +52,6 @@ common_dirs := \
 	Mono.Data.Sqlite		\
 	System.Web.ApplicationServices	\
 	System.Web			\
-	Mono.Web			\
 	System.Web.Services		\
 	System.Web			\
 	System.Runtime.Remoting		\
@@ -211,7 +210,7 @@ net_4_0_dirs := \
 	System.Data.Services \
 	System.Json.Microsoft \
 	monodoc
-	
+
 net_4_0_only_dirs := \
 	System.ComponentModel.Composition
 

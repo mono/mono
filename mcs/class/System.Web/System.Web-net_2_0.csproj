@@ -1329,11 +1329,6 @@
       <HintPath>System.Web.Services.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Mono.Web.dll">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>Mono.Web.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <ProjectReference Include="..\System.Core\System.Core-net_2_0.csproj">
       <Project>{FBEC45AD-4493-41EA-9BCC-F3F29A08EB9E}</Project>
       <Name>System.Core\System.Core-net_2_0</Name>
