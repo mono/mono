@@ -944,7 +944,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <typeparam name="TSyndicationItem">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -956,6 +955,8 @@
         </summary>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <typeparam name="TSyndicationItem">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Syndication.SyndicationItem" />-derived class to load.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="PublishDate">

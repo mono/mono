@@ -1025,7 +1025,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <typeparam name="TSyndicationFeed">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1037,6 +1036,8 @@
         </summary>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
+        <typeparam name="TSyndicationFeed">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication feed type.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="SaveAsAtom10">

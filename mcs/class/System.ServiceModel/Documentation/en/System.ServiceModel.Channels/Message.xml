@@ -513,7 +513,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -524,6 +523,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the body of this <see cref="T:System.ServiceModel.Channels.Message" /> instance.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The body of the message.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetBody&lt;T&gt;">
@@ -543,7 +544,6 @@
         <Parameter Name="xmlFormatter" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <param name="xmlFormatter">To be added.</param>
         <returns>To be added.</returns>
         <remarks>
@@ -555,6 +555,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the body of this <see cref="T:System.ServiceModel.Channels.Message" /> using the specified serializer.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The body of the message.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetBodyAttribute">
@@ -849,7 +851,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlDictionaryReader" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -858,6 +859,8 @@
         </summary>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlDictionaryReader)" /> object used to read the body of the message.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the message body.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="OnGetBodyAttribute">

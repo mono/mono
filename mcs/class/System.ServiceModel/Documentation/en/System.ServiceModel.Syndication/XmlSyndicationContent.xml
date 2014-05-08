@@ -217,7 +217,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TContent">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -227,6 +226,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the content of the specified type into the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" />.</para>
         </summary>
+        <typeparam name="TContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content to read.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ReadContent&lt;TContent&gt;">
@@ -246,7 +247,6 @@
         <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TContent">To be added.</typeparam>
         <param name="serializer">To be added.</param>
         <returns>To be added.</returns>
         <remarks>
@@ -257,6 +257,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the content of the specified type into the <see cref="T:System.ServiceModel.Syndication.XmlSyndicationContent" /> using the specified serializer.</para>
         </summary>
+        <typeparam name="TContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content to read.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ReadContent&lt;TContent&gt;">
@@ -276,7 +278,6 @@
         <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TContent">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -288,6 +289,8 @@
         </summary>
         <param name="serializer">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSerializer" /> to use.</param>
+        <typeparam name="TContent">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of content to read.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Type">

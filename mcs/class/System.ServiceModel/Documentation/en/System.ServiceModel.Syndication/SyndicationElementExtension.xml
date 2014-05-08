@@ -205,13 +205,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the object that represents the element extension.</para>
         </summary>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetObject&lt;TExtension&gt;">
@@ -231,7 +232,6 @@
         <Parameter Name="serializer" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -240,6 +240,8 @@
         </summary>
         <param name="serializer">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.XmlObjectSerializer" /> to use.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetObject&lt;TExtension&gt;">
@@ -259,7 +261,6 @@
         <Parameter Name="serializer" Type="System.Xml.Serialization.XmlSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="TExtension">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -268,6 +269,8 @@
         </summary>
         <param name="serializer">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Serialization.XmlSerializer" /> to use.</param>
+        <typeparam name="TExtension">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the extension to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetReader">

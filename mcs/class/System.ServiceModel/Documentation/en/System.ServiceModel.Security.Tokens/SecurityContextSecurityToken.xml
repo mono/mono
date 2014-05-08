@@ -184,13 +184,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified key identifier clause type can be created.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified key identifier clause type.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ContextId">
@@ -301,13 +302,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a key identifier clause of a specified type.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The specified type.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Id">

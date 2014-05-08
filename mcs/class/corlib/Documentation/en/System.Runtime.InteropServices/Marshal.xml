@@ -991,7 +991,6 @@
         <Parameter Name="ptr" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method to free reference type fields, such as strings, of an unmanaged structure. Unlike its fields, a structure can be a value type or a reference type. Value type structures that contain value type fields (all blittable) have no references whose memory must be freed. The <see cref="M:System.Runtime.InteropServices.Marshal.StructureToPtr(System.Object,System.IntPtr,System.Boolean)" /> method uses this method to prevent memory leaks when reusing memory occupied by a structure.</para>
@@ -1005,6 +1004,8 @@
         </summary>
         <param name="ptr">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to an unmanaged block of memory. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the formatted structure. This provides the layout information necessary to delete the buffer in the <paramref name="ptr" /> parameter. </typeparam>
       </Docs>
     </Member>
     <Member MemberName="FinalReleaseComObject">
@@ -1450,7 +1451,6 @@
         <Parameter Name="ptr" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <typeparam name="TDelegate">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1478,6 +1478,8 @@
         </summary>
         <param name="ptr">
           <attribution license="cc4" from="Microsoft" modified="false" />The unmanaged function pointer to convert. </param>
+        <typeparam name="TDelegate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate to return. </typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetEndComSlot">
@@ -2167,7 +2169,6 @@
         <Parameter Name="pSrcNativeVariant" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2183,6 +2184,8 @@
         </summary>
         <param name="pSrcNativeVariant">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to a COM VARIANT. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to which to convert the COM VARIANT. </typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetObjectsForNativeVariants">
@@ -2237,7 +2240,6 @@
         <Parameter Name="cVars" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2254,6 +2256,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first element of an array of COM VARIANTs. </param>
         <param name="cVars">
           <attribution license="cc4" from="Microsoft" modified="false" />The count of COM VARIANTs in <paramref name="aSrcNativeVariant" />. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the array to return. </typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetStartComSlot">
@@ -2903,7 +2907,6 @@
         <Parameter Name="fieldName" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2920,6 +2923,8 @@
         </summary>
         <param name="fieldName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the field in the <paramref name="T" /> type. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />A managed value type or formatted reference type. You must apply the <see cref="T:System.Runtime.InteropServices.StructLayoutAttribute" /> attribute to the class. </typeparam>
       </Docs>
     </Member>
     <Member MemberName="Prelink">
@@ -3307,7 +3312,6 @@
         <Parameter Name="ptr" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3321,6 +3325,8 @@
         </summary>
         <param name="ptr">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to an unmanaged block of memory. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the object to which the data is to be copied. This must be a formatted class or a structure. </typeparam>
       </Docs>
     </Member>
     <Member MemberName="PtrToStructure&lt;T&gt;">
@@ -4350,7 +4356,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -4362,6 +4367,8 @@
           <para>[Supported in the .NET Framework 4.5.1 only] </para>
           <para>Returns the size of an unmanaged type in bytes. </para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type whose size is to be returned. </typeparam>
       </Docs>
     </Member>
     <Member MemberName="SizeOf&lt;T&gt;">

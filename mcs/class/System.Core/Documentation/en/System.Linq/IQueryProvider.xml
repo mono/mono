@@ -70,7 +70,6 @@
         <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <typeparam name="TElement">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -86,6 +85,8 @@
         </summary>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />An expression tree that represents a vbteclinq query.</param>
+        <typeparam name="TElement">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the <see cref="T:System.Linq.IQueryable`1" /> that is returned.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Execute">
@@ -134,7 +135,6 @@
         <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -147,6 +147,8 @@
         </summary>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />An expression tree that represents a vbteclinq query.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the value that results from executing the query.</typeparam>
       </Docs>
     </Member>
   </Members>

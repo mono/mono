@@ -134,13 +134,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds the inner channel factory for channels of a specified type below the current channel factory.</para>
         </summary>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.ServiceModel.Channels.IChannel" /> object the inner channel factory produces.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="BuildInnerChannelListener&lt;TChannel&gt;">
@@ -163,13 +164,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds an inner channel listener that listens for a specified type of channel.</para>
         </summary>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.ServiceModel.Channels.IChannel" /> object for which the inner channel listener listens.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CanBuildInnerChannelFactory&lt;TChannel&gt;">
@@ -187,13 +189,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the inner channel factory can produce a specified type of channel.</para>
         </summary>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.ServiceModel.Channels.IChannel" /> object the inner channel factory produces.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="CanBuildInnerChannelListener&lt;TChannel&gt;">
@@ -216,13 +219,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TChannel">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the inner channel listener can be built to listen for a specified type of channel.</para>
         </summary>
+        <typeparam name="TChannel">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of <see cref="T:System.ServiceModel.Channels.IChannel" /> object for which the inner channel listener listens.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Clone">
@@ -267,7 +271,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -277,6 +280,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a typed object requested, if present, from the appropriate layer in the binding stack.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The typed object for which the method is querying.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ListenUriBaseAddress">

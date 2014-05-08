@@ -719,7 +719,6 @@
         <Parameter Name="source" Type="System.Collections.IEnumerable" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -736,6 +735,8 @@
         </summary>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IEnumerable" /> that contains the elements to be cast to type <paramref name="TResult" />.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to cast the elements of <paramref name="source" /> to.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Concat&lt;TSource&gt;">
@@ -1047,7 +1048,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1058,6 +1058,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an empty <see cref="T:System.Collections.Generic.IEnumerable`1" /> that has the specified type argument.</para>
         </summary>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to assign to the type parameter of the returned generic <see cref="T:System.Collections.Generic.IEnumerable`1" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Except&lt;TSource&gt;">
@@ -2950,7 +2952,6 @@
         <Parameter Name="source" Type="System.Collections.IEnumerable" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2965,6 +2966,8 @@
         </summary>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.IEnumerable" /> whose elements to filter.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to filter the elements of the sequence on.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="OrderBy&lt;TSource,TKey&gt;">

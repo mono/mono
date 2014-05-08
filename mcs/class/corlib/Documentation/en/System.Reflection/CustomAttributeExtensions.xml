@@ -225,7 +225,6 @@
         <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -237,6 +236,8 @@
         </summary>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttribute&lt;T&gt;">
@@ -260,7 +261,6 @@
         <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -272,6 +272,8 @@
         </summary>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttribute&lt;T&gt;">
@@ -295,7 +297,6 @@
         <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -307,6 +308,8 @@
         </summary>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The module to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttribute&lt;T&gt;">
@@ -330,7 +333,6 @@
         <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -342,6 +344,8 @@
         </summary>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttribute&lt;T&gt;">
@@ -366,7 +370,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -380,6 +383,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttribute&lt;T&gt;">
@@ -404,7 +409,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -418,6 +422,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
@@ -759,7 +765,6 @@
         <Parameter Name="element" Type="System.Reflection.Assembly" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -768,6 +773,8 @@
         </summary>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The assembly to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes&lt;T&gt;">
@@ -791,7 +798,6 @@
         <Parameter Name="element" Type="System.Reflection.MemberInfo" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -800,6 +806,8 @@
         </summary>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes&lt;T&gt;">
@@ -823,7 +831,6 @@
         <Parameter Name="element" Type="System.Reflection.Module" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -832,6 +839,8 @@
         </summary>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The module to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes&lt;T&gt;">
@@ -855,7 +864,6 @@
         <Parameter Name="element" Type="System.Reflection.ParameterInfo" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -864,6 +872,8 @@
         </summary>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes&lt;T&gt;">
@@ -888,7 +898,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -899,6 +908,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />The member to inspect.</param>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes&lt;T&gt;">
@@ -923,7 +934,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -934,6 +944,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />The parameter to inspect.</param>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />true to inspect the ancestors of <paramref name="element" />; otherwise, false. </param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="IsDefined">

@@ -239,7 +239,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -250,6 +249,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the information item from the current address header to an object of a specified type.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />A class of type <paramref name="T" /> with its fields and properties set to the values supplied by the current address header object.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetValue&lt;T&gt;">
@@ -269,7 +270,6 @@
         <Parameter Name="formatter" Type="System.Runtime.Serialization.XmlObjectSerializer" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <param name="formatter">To be added.</param>
         <returns>To be added.</returns>
         <remarks>
@@ -281,6 +281,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the information item from the current address header to an object of a specified type that uses a specified formatter to serialize this information.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />A class of type <paramref name="T" /> with its fields and properties set to the values supplied by the current address header object.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Name">

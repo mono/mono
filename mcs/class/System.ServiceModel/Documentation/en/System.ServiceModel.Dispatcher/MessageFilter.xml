@@ -100,7 +100,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="FilterData">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -110,6 +109,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a filter table for a filter that has a specified type of data associated with it.</para>
         </summary>
+        <typeparam name="FilterData">
+          <attribution license="cc4" from="Microsoft" modified="false" />Data associated with the filters in the table.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Match">

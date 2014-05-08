@@ -362,7 +362,6 @@
         <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -371,6 +370,8 @@
         </summary>
         <param name="part">
           <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetContractName">
@@ -543,7 +544,6 @@
         <Parameter Name="part" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -552,6 +552,8 @@
         </summary>
         <param name="part">
           <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Imports&lt;T&gt;">
@@ -572,7 +574,6 @@
         <Parameter Name="importCardinality" Type="System.ComponentModel.Composition.Primitives.ImportCardinality" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -583,6 +584,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />The part to search.</param>
         <param name="importCardinality">
           <attribution license="cc4" from="Microsoft" modified="false" />The import cardinality.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The contract type.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="SatisfyImportsOnce">

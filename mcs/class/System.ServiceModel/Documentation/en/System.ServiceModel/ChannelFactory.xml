@@ -260,7 +260,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -272,6 +271,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the typed object requested, if present, from the appropriate layer in the channel stack, or null if not present.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The typed object for which the method is querying.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="InitializeEndpoint">

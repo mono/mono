@@ -931,7 +931,6 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -940,6 +939,8 @@
         </summary>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence that contains the elements to be converted.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to convert the elements of <paramref name="source" /> to.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Concat&lt;TSource&gt;">
@@ -1270,13 +1271,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an empty ParallelQuery{TResult} that has the specified type argument.</para>
         </summary>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to assign to the type parameter of the returned generic sequence.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Except&lt;TSource&gt;">
@@ -3427,7 +3429,6 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery" RefType="this" />
       </Parameters>
       <Docs>
-        <typeparam name="TResult">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -3436,6 +3437,8 @@
         </summary>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence whose elements to filter.</param>
+        <typeparam name="TResult">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type to filter the elements of the sequence on.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="OrderBy&lt;TSource,TKey&gt;">

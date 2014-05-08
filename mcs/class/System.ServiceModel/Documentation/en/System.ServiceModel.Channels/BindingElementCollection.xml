@@ -160,13 +160,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the first item of a specified type from the collection of binding elements.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of item to find.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FindAll&lt;T&gt;">
@@ -184,13 +185,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all of the items of a specified type from the collection of binding elements.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of item to find.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="InsertItem">
@@ -234,13 +236,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes a binding element of a specified type from the collection of binding elements.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of item to find.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="RemoveAll&lt;T&gt;">
@@ -258,13 +261,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes all of the binding elements of a specified type from the collection of binding elements.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of item to find.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="SetItem">

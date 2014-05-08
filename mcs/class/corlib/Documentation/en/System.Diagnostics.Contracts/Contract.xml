@@ -355,7 +355,6 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">The exception type that causes this postcondition to be verified.</typeparam>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="condition" /> parameter specifies a postcondition that is expected to be true when the enclosing method or property terminates abnormally and an exception of type <paramref name="TException" /> is thrown.</para>
@@ -377,6 +376,8 @@
         </summary>
         <param name="condition">
           <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of exception that invokes the postcondition check.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="EnsuresOnThrow&lt;TException&gt;">
@@ -409,7 +410,6 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">The exception type that causes this postcondition to be verified.</typeparam>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="condition" /> parameter specifies a postcondition that is expected to be true when the enclosing method or property terminates abnormally and an exception of type <paramref name="TException" /> is thrown. The <paramref name="message" /> parameter specifies a message to display if the condition is false.</para>
@@ -436,6 +436,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
         <param name="userMessage">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to display if the expression is false.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of exception that invokes the postcondition check.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Exists">
@@ -808,7 +810,6 @@
         <Parameter Name="condition" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">To be added.</typeparam>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -832,6 +833,8 @@
         </summary>
         <param name="condition">
           <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to throw if the condition is false.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Requires&lt;TException&gt;">
@@ -956,7 +959,6 @@
         <Parameter Name="userMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="TException">To be added.</typeparam>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <list type="bullet">
@@ -982,6 +984,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />The conditional expression to test.</param>
         <param name="userMessage">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to display if the condition is false.</param>
+        <typeparam name="TException">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exception to throw if the condition is false.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Requires&lt;TException&gt;">
@@ -1105,7 +1109,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">The type of the return value.</typeparam>
         <returns>The return value.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1115,6 +1118,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Represents the return value of a method or property.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of return value of the enclosing method or property.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ValueAtReturn&lt;T&gt;">

@@ -5465,7 +5465,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <typeparam name="TDelegate">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -5481,6 +5480,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.Expressions.Expression" /> to set the <see cref="P:System.Linq.Expressions.LambdaExpression.Body" /> property equal to.</param>
         <param name="parameters">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Linq.Expressions.ParameterExpression" /> objects to use to populate the <see cref="P:System.Linq.Expressions.LambdaExpression.Parameters" /> collection.</param>
+        <typeparam name="TDelegate">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate type.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Lambda&lt;TDelegate&gt;">
@@ -5536,7 +5537,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <typeparam name="TDelegate">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
@@ -5549,6 +5549,8 @@
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Boolean" /> that indicates if tail call optimization will be applied when compiling the created expression.</param>
         <param name="parameters">
           <attribution license="cc4" from="Microsoft" modified="false" />An array that contains <see cref="T:System.Linq.Expressions.ParameterExpression" /> objects to use to populate the <see cref="P:System.Linq.Expressions.LambdaExpression.Parameters" /> collection.</param>
+        <typeparam name="TDelegate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The delegate type. </typeparam>
       </Docs>
     </Member>
     <Member MemberName="Lambda&lt;TDelegate&gt;">

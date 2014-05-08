@@ -95,13 +95,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Get the first annotation object of the specified type from this <see cref="T:System.Xml.Linq.XObject" />. </para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the annotation to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Annotations">
@@ -147,13 +148,14 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of annotations of the specified type for this <see cref="T:System.Xml.Linq.XObject" />.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the annotations to retrieve.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="BaseUri">
@@ -334,12 +336,13 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the annotations of the specified type from this <see cref="T:System.Xml.Linq.XObject" />.</para>
         </summary>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of annotations to remove.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.IXmlLineInfo.HasLineInfo">
