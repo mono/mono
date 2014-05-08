@@ -7,6 +7,7 @@ namespace Mono.Debugger.Soft
 	public class ThreadMirror : ObjectMirror
 	{
 		string name;
+		ThreadInfo info;
 
 		internal ThreadMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
@@ -53,8 +54,8 @@ namespace Mono.Debugger.Soft
 
 		public bool IsThreadPoolThread {
 			get {
-				ThreadInfo info = vm.conn.Thread_GetInfo (id);
-
+				if (info == null)
+					info = vm.conn.Thread_GetInfo (id);
 				return info.is_thread_pool;
 			}
 		}
