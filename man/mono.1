@@ -937,11 +937,11 @@ Override the automatic cpu detection mechanism. Currently used only on arm.
 The format of the value is as follows:
 .nf
 
-	"armvV [thumb]"
+	"armvV [thumb[2]]"
 
 .fi
 where V is the architecture number 4, 5, 6, 7 and the options can be currently be
-"thunb". Example:
+"thumb" or "thumb2". Example:
 .nf
 
 	MONO_CPU_ARCH="armv4 thumb" mono ...
