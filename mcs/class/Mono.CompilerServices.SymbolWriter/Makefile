@@ -21,3 +21,5 @@ $(build_lib): $(bare_libdir)/System.dll
 
 $(bare_libdir)/System.dll:
 	(cd ../System; make $@)
+
+.NOTPARALLEL: $(bare_libdir)/System.dll

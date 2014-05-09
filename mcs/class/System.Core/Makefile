@@ -53,6 +53,8 @@ include ../../build/library.make
 
 $(the_libdir_base)System.Core.dll: $(system_core_library_deps)
 
+.NOTPARALLEL: $(system_core_plain_libdir)/System.Core.dll $(the_libdir_base)Mono.Dynamic.Interpreter.dll
+
 ifneq (plaincore/,$(intermediate))
 $(system_core_plain_libdir)/System.Core.dll:
 	$(MAKE) intermediate=plaincore/ $(system_core_plain_libdir)/System.Core.dll

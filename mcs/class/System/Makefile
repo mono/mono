@@ -74,16 +74,22 @@ include ../../build/library.make
 
 system_library_deps := \
 	$(secxml_libdir)/System.dll 		\
-	$(the_libdir_base)System.Xml.dll		\
-	$(the_libdir_base)Mono.Security.dll
+	$(the_libdir_base)System.Xml.dll	\
+	$(the_libdir_base)Mono.Security.dll	\
+	$(bare_libdir)/System.dll
 
 ifndef PROFILE_ANY_MOBILE
 system_library_deps += $(the_libdir_base)System.Configuration.dll	
 endif
 
-build-test-dep-xml: $(the_libdir_base)System.Xml.dll 
+artifacts = $(system_library_deps) 			\
+	$(bare_libdir)/System.Xml.dll			\
+	$(the_libdir_base)Mono.Security.dll		\
+	$(the_libdir_base)System.Configuration.dll
 
-$(the_libdir_base)System.dll: $(system_library_deps)
+.NOTPARALLEL: $(system_library_deps)
+
+$(the_libdir_base)System.dll: $(system_library_deps) 
 
 ifeq (bare/,$(intermediate))
 build-bare:

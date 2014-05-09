@@ -16,6 +16,8 @@ configuration_library_deps = \
 
 $(build_lib): $(configuration_library_deps)
 
+.NOTPARALLEL: $(configuration_library_deps)
+
 $(secxml_libdir)/System.dll:
 	@echo System.Configuration: GETTING: $@
 	(cd ../System; $(MAKE) $@)

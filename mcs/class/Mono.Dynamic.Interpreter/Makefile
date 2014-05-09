@@ -20,3 +20,5 @@ $(the_libdir_base)Mono.Dynamic.Interpreter.dll: $(mono_dynamic_interpreter_deps)
 
 $(the_libdir_base)plaincore/System.Core.dll:
 	(cd ../System.Core; $(MAKE) $@)
+
+.NOTPARALLEL: $(the_libdir_base)plaincore/System.Core.dll

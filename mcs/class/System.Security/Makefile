@@ -32,6 +32,8 @@ $(secxml_libdir)/System.dll:
 $(bare_libdir)/Mono.Security.dll:
 	(cd ../Mono.Security; $(MAKE))
 
+.NOTPARALLEL: $(secxml_libdir)/System.dll $(bare_libdir)/Mono.Security.dll
+
 # run the PKITS tests only if the data was installed/activated, otherwise ignore them
 ifeq (net_2_0, $(PROFILE))
 pkits_files := $(wildcard ../System/Test/System.Security.Cryptography.X509Certificates/pkits/hint)

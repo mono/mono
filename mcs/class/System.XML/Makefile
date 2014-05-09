@@ -97,7 +97,6 @@ build-bare:
 else
 $(bare_libdir)/System.Xml.dll:
 	$(MAKE) intermediate=bare/ $(bare_libdir)/System.Xml.dll
-	echo DONE
 endif
 
 system_xml_library_deps := 				\
@@ -107,6 +106,11 @@ system_xml_library_deps := 				\
 ifndef PROFILE_ANY_MOBILE
 system_xml_library_deps += $(the_libdir_base)System.Configuration.dll
 endif
+
+artifacts = $(system_xml_library_deps)	\
+	$(the_libdir_base)System.Configuration.dll
+
+.NOTPARALLEL: $(artifacts)
 
 CLEAN_FILES = $(bare_libdir)/System.Xml.dll $(bare_libdir)/System.Xml.dll.pdb
 $(the_libdir_base)System.Xml.dll: $(system_xml_library_deps) 
