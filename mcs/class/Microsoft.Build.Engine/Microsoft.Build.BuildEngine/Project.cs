@@ -950,6 +950,9 @@ namespace Microsoft.Build.BuildEngine {
 					case  "Choose":
 						AddChoose (xe, ip);
 						break;
+					case "ItemDefinitionGroup":
+						AddItemDefinitionGroup (xe);
+						break;
 					default:
 						var pf = ip == null ? null : string.Format (" '{0}'", ip.FullFileName);
 						throw new InvalidProjectFileException (String.Format ("Invalid element '{0}' in project file{1}.", xe.Name, pf));
@@ -1156,6 +1159,17 @@ namespace Microsoft.Build.BuildEngine {
 						throw new InvalidProjectFileException(String.Format("Invalid element '{0}' inside ImportGroup in project file '{1}'.", xe.Name, importedProject.FullFileName));
 					}
 				}
+			}
+		}
+
+		void AddItemDefinitionGroup (XmlElement xmlElement)
+		{
+			string condition_attribute = xmlElement.GetAttribute ("Condition");
+			if (!ConditionParser.ParseAndEvaluate (condition_attribute, this))
+				return;
+
+			foreach (XmlNode xn in xmlElement.ChildNodes) {
+				// TODO: Add all nodes to some internal dictionary?
 			}
 		}
 
