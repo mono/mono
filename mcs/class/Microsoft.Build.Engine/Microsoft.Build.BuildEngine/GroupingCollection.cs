@@ -2,10 +2,12 @@
 // GroupingCollection.cs: Represents group of BuildItemGroup,
 // BuildPropertyGroup and BuildChoose.
 //
-// Author:
+// Authors:
 //   Marek Sieradzki (marek.sieradzki@gmail.com)
+//   Marek Safar (marek.safar@gmail.com)
 // 
 // (C) 2005 Marek Sieradzki
+// Copyright (c) 2014 Xamarin Inc. (http://www.xamarin.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -160,88 +162,89 @@ namespace Microsoft.Build.BuildEngine {
 
 		internal void Evaluate ()
 		{
-			Evaluate (EvaluationType.Property);
+			Evaluate (EvaluationType.Property | EvaluationType.Choose);
 			Evaluate (EvaluationType.Item);
-			Evaluate (EvaluationType.Choose);
 		}
 
 		internal void Evaluate (EvaluationType type)
 		{
-			BuildItemGroup big;
-			BuildPropertyGroup bpg;
-			LinkedListNode <object> evaluate_iterator;
+			add_iterator = list.First;
 
-			if (type == EvaluationType.Property) {
-				evaluate_iterator = list.First;
-				add_iterator = list.First;
+			for (var evaluate_iterator = list.First; evaluate_iterator != null; evaluate_iterator = evaluate_iterator.Next) {
+				var bpg = evaluate_iterator.Value as BuildPropertyGroup;
+				if (bpg != null) {
+					if ((type & EvaluationType.Property) != 0) {
+						EvaluateBuildPropertyGroup (bpg);
 
-				while (evaluate_iterator != null) {
-					if (evaluate_iterator.Value is BuildPropertyGroup) {
-						bpg = (BuildPropertyGroup) evaluate_iterator.Value;
-						project.PushThisFileProperty (bpg.DefinedInFileName);
-						try {
-							if (ConditionParser.ParseAndEvaluate (bpg.Condition, project))
-								bpg.Evaluate ();
-						} finally {
-							project.PopThisFileProperty ();
-						}
+						// if it wasn't moved by adding anything because of evaluating a Import shift it
+						if (add_iterator == evaluate_iterator)
+							add_iterator = add_iterator.Next;
 					}
 
-					// if it wasn't moved by adding anything because of evaluating a Import shift it
-					if (add_iterator == evaluate_iterator)
-						add_iterator = add_iterator.Next;
-
-					evaluate_iterator = evaluate_iterator.Next;
+					continue;
 				}
-			} else if (type == EvaluationType.Item) {
-				evaluate_iterator = list.First;
-				add_iterator = list.First;
 
-				while (evaluate_iterator != null) {
-					if (evaluate_iterator.Value is BuildItemGroup) {
-						big = (BuildItemGroup) evaluate_iterator.Value;
-						project.PushThisFileProperty (big.DefinedInFileName);
-						try {
-							if (ConditionParser.ParseAndEvaluate (big.Condition, project))
-								big.Evaluate ();
-						} finally {
-							project.PopThisFileProperty ();
-						}
-					}
-
-					evaluate_iterator = evaluate_iterator.Next;
+				var big = evaluate_iterator.Value as BuildItemGroup;
+				if (big != null) {
+					if ((type & EvaluationType.Item) != 0)
+						EvaluateBuildItemGroup (big);
+					continue;
 				}
-			} else if (type == EvaluationType.Choose) {
-				evaluate_iterator = list.First;
-				add_iterator = list.First;
 
-				while (evaluate_iterator != null) {
-					if (evaluate_iterator.Value is BuildChoose) {
-						BuildChoose bc = (BuildChoose)evaluate_iterator.Value;
-						project.PushThisFileProperty (bc.DefinedInFileName);
-						try {
-							bool whenUsed = false;
-							foreach (BuildWhen bw in bc.Whens) {
-								if (ConditionParser.ParseAndEvaluate (bw.Condition, project)) {
-									bw.Evaluate ();
-									whenUsed = true;
-									break;
-								}
-							}
-							if (!whenUsed && bc.Otherwise != null &&
-								ConditionParser.ParseAndEvaluate (bc.Otherwise.Condition, project)) {
-								bc.Otherwise.Evaluate ();
-							}
-						} finally {
-							project.PopThisFileProperty ();
-						}
-					}
-
-					evaluate_iterator = evaluate_iterator.Next;
+				var bc = evaluate_iterator.Value as BuildChoose;
+				if (bc != null) {
+					if ((type & EvaluationType.Choose) != 0)
+						EvaluateBuildChoose (bc);
+					continue;
 				}
+
+				// Should not be reached
 			}
 
 			add_iterator = null;
+		}
+
+		void EvaluateBuildPropertyGroup (BuildPropertyGroup bpg)
+		{
+			project.PushThisFileProperty (bpg.DefinedInFileName);
+			try {
+				if (ConditionParser.ParseAndEvaluate (bpg.Condition, project))
+					bpg.Evaluate ();
+			} finally {
+				project.PopThisFileProperty ();
+			}
+		}
+
+		void EvaluateBuildItemGroup (BuildItemGroup big)
+		{
+			project.PushThisFileProperty (big.DefinedInFileName);
+			try {
+				if (ConditionParser.ParseAndEvaluate (big.Condition, project))
+					big.Evaluate ();
+			} finally {
+				project.PopThisFileProperty ();
+			}
+		}
+
+		void EvaluateBuildChoose (BuildChoose bc)
+		{
+			project.PushThisFileProperty (bc.DefinedInFileName);
+			try {
+				bool whenUsed = false;
+				foreach (BuildWhen bw in bc.Whens) {
+					if (ConditionParser.ParseAndEvaluate (bw.Condition, project)) {
+						bw.Evaluate ();
+						whenUsed = true;
+						break;
+					}
+				}
+				if (!whenUsed && bc.Otherwise != null &&
+					ConditionParser.ParseAndEvaluate (bc.Otherwise.Condition, project)) {
+					bc.Otherwise.Evaluate ();
+				}
+			} finally {
+				project.PopThisFileProperty ();
+			}
 		}
 
 		internal int Imports {
@@ -261,9 +264,12 @@ namespace Microsoft.Build.BuildEngine {
 		} 
 	}
 
+	[Flags]
 	enum EvaluationType {
-		Property,
-		Item,
-		Choose
+		Property = 1 << 0,
+		Item = 1 << 1,
+		Choose = 1 << 2,
+
+		Any = Property | Item | Choose
 	}
 }

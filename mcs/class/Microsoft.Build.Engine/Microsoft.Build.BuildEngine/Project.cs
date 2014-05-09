@@ -1120,8 +1120,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			// eval all the properties etc till the import
 			if (evaluate_properties) {
-				groupingCollection.Evaluate (EvaluationType.Property);
-				groupingCollection.Evaluate (EvaluationType.Choose);
+				groupingCollection.Evaluate (EvaluationType.Property | EvaluationType.Choose);
 			}
 			try {
 				PushThisFileProperty (importingProject != null ? importingProject.FullFileName : FullFileName);
@@ -1141,8 +1140,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			// eval all the properties etc till the import group
 			if (evaluate_properties) {
-				groupingCollection.Evaluate (EvaluationType.Property);
-				groupingCollection.Evaluate (EvaluationType.Choose);
+				groupingCollection.Evaluate (EvaluationType.Property | EvaluationType.Choose);
 			}
 			string condition_attribute = xmlElement.GetAttribute ("Condition");
 			if (!ConditionParser.ParseAndEvaluate (condition_attribute, this))
