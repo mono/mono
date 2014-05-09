@@ -655,9 +655,11 @@ namespace Mono.Debugger.Soft
 					break;
 				case EventType.AssemblyLoad:
 					l.Add (new AssemblyLoadEvent (vm, req_id, thread_id, id));
+					vm.GetThread (thread_id).Domain.InvalidateAssembliesCache ();
 					break;
 				case EventType.AssemblyUnload:
 					l.Add (new AssemblyUnloadEvent (vm, req_id, thread_id, id));
+					vm.GetThread (thread_id).Domain.InvalidateAssembliesCache ();
 					break;
 				case EventType.TypeLoad:
 					l.Add (new TypeLoadEvent (vm, req_id, thread_id, id));

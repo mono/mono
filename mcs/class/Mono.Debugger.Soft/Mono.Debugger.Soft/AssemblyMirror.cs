@@ -2,6 +2,7 @@ using System;
 using System.Reflection;
 using Mono.Debugger;
 using Mono.Cecil;
+using System.Collections.Generic;
 
 namespace Mono.Debugger.Soft
 {
@@ -13,6 +14,8 @@ namespace Mono.Debugger.Soft
 		ModuleMirror main_module;
 		AssemblyName aname;
 		AssemblyDefinition meta;
+		Dictionary<string, long> typeCacheIgnoreCase = new Dictionary<string, long> (StringComparer.InvariantCultureIgnoreCase);
+		Dictionary<string, long> typeCache = new Dictionary<string, long> ();
 
 		internal AssemblyMirror (VirtualMachine vm, long id) : base (vm, id) {
 		}
@@ -62,13 +65,30 @@ namespace Mono.Debugger.Soft
 		public TypeMirror GetType (string name, bool throwOnError, bool ignoreCase)
 		{
 			if (name == null)
-				throw new ArgumentNullException (name);
+				throw new ArgumentNullException ("name");
 			if (name.Length == 0)
 				throw new ArgumentException ("name", "Name cannot be empty");
 
 			if (throwOnError)
 				throw new NotImplementedException ();
-			return vm.GetType (vm.conn.Assembly_GetType (id, name, ignoreCase));
+			long typeId;
+			if (ignoreCase) {
+				if (!typeCacheIgnoreCase.TryGetValue (name, out typeId)) {
+					typeId = vm.conn.Assembly_GetType (id, name, ignoreCase);
+					typeCacheIgnoreCase.Add (name, typeId);
+					var type = vm.GetType (typeId);
+					if (type != null) {
+						typeCache.Add (type.FullName, typeId);
+					}
+					return type;
+				}
+			} else {
+				if (!typeCache.TryGetValue (name, out typeId)) {
+					typeId = vm.conn.Assembly_GetType (id, name, ignoreCase);
+					typeCache.Add (name, typeId);
+				}
+			}
+			return vm.GetType (typeId);
 		}
 
 		public TypeMirror GetType (String name, Boolean throwOnError)
