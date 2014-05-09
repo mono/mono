@@ -1,6 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Windows.Forms.VisualStyles">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Windows.Forms.VisualStyles" /> namespace contains classes for rendering controls and other Windows user interface (UI) elements with visual styles in operating systems that support them. </para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Windows.Forms.VisualStyles" /> namespace contains the following main classes: </para>
+      <list type="bullet">
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> is a foundation class for identifying any control or UI element supported by visual styles. In addition to <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> itself, the <see cref="N:System.Windows.Forms.VisualStyles" /> namespace includes many nested classes of <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> with static properties that return a <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> for every state of a control, control part, or other UI element supported by visual styles. For example, the <see cref="P:System.Windows.Forms.VisualStyles.VisualStyleElement.Button.PushButton.Pressed" /> property of the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement.Button.PushButton" /> class returns a <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> that identifies a button in the pressed state with visual styles. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> provides methods that draw and get information about each <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleElement" /> defined by the current visual style of the operating system. Information that can be retrieved about an element includes its default size, background type, and color definitions. </para>
+        </item>
+        <item>
+          <para>
+            <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleInformation" /> provides a set of static properties that provide information about the current visual style of the operating system.</para>
+        </item>
+      </list>
+      <para>The <see cref="N:System.Windows.Forms.VisualStyles" /> namespace also includes a set of enumerations. Some of these enumerations, such as <see cref="T:System.Windows.Forms.VisualStyles.PushButtonState" /> and <see cref="T:System.Windows.Forms.VisualStyles.ComboBoxState" />, provide state definitions for related visual style elements. Most of the other enumerations support <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleRenderer" /> methods that return information about a particular element. For example, the <see cref="T:System.Windows.Forms.VisualStyles.EnumProperty" /> enumeration provides the possible argument values for the <see cref="M:System.Windows.Forms.VisualStyles.VisualStyleRenderer.GetEnumValue(System.Windows.Forms.VisualStyles.EnumProperty)" /> method. Finally, the <see cref="T:System.Windows.Forms.VisualStyles.VisualStyleState" /> enumeration provides values that define how visual styles are currently applied to the application.</para>
+    </remarks>
   </Docs>
 </Namespace>

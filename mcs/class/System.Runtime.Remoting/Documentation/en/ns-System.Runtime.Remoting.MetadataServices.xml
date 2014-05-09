@@ -1,6 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Runtime.Remoting.MetadataServices">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Runtime.Remoting.MetadataServices" /> namespace contains the classes that are used by the <format type="text/html"><a href="40F6F8C8-B80C-4E9F-A920-31BCD0CF45C5">Soapsuds.exe</a></format> command-line tool and the user code to convert metadata to and from XML schema for the remoting infrastructure. Some of the most important classes of this namespace are the <see cref="T:System.Runtime.Remoting.MetadataServices.SdlChannelSink" /> class and the <see cref="T:System.Runtime.Remoting.MetadataServices.MetaData" /> class.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="T:System.Runtime.Remoting.MetadataServices.SdlChannelSink" /> class is used by the remoting infrastructure to generate Web Services Description Language (WSDL) on the server side.</para>
+      <para>The <see cref="T:System.Runtime.Remoting.MetadataServices.MetaData" /> class provides the functionality of the <format type="text/html"><a href="40F6F8C8-B80C-4E9F-A920-31BCD0CF45C5">Soapsuds.exe</a></format> command-line tool, and can be used programmatically to achieve the same outcome. The methods of the <see cref="T:System.Runtime.Remoting.MetadataServices.MetaData" /> class can be used to create XML schemas that describe services that are exposed in source code, and to create C# code from XML schema.</para>
+    </remarks>
   </Docs>
 </Namespace>

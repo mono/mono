@@ -1,10 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Xml.Schema" FullName="System.Xml.Schema" FullNameSP="System.Xml.Schema" Maintainer="Mono">
   <Docs>
-    <summary>
-    </summary>
     <remarks>
       <para>
       </para>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Xml.Schema" /> namespace contains the XML classes that provide standards-based support for XML schema definition language (XSD) schemas.</para>
+    </summary>
   </Docs>
 </Namespace>

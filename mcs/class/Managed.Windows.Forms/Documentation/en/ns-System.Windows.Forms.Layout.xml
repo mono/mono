@@ -1,6 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Windows.Forms.Layout">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Windows.Forms.Layout" /> namespace contains classes for implementing layout behaviors in your form or control.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The following list shows the classes included in this namespace:</para>
+      <list type="bullet">
+        <item>
+          <para>The <see cref="T:System.Windows.Forms.Layout.LayoutEngine" /> abstract base class is used by the <see cref="T:System.Windows.Forms.TableLayoutPanel" /> and <see cref="T:System.Windows.Forms.FlowLayoutPanel" /> controls for building custom layout engines.</para>
+        </item>
+        <item>
+          <para>The <see cref="T:System.Windows.Forms.Layout.ArrangedElementCollection" /> class collects objects that participate in a layout managed by a <see cref="T:System.Windows.Forms.Layout.LayoutEngine" />. </para>
+        </item>
+      </list>
+    </remarks>
   </Docs>
 </Namespace>

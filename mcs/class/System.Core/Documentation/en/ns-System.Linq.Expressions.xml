@@ -1,6 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Linq.Expressions">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Linq.Expressions" /> namespace contains classes, interfaces and enumerations that enable language-level code expressions to be represented as objects in the form of expression trees.</para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The abstract class <see cref="T:System.Linq.Expressions.Expression" /> provides the root of a class hierarchy used to model expression trees.</para>
+      <para>The classes in this namespace that derive from <see cref="T:System.Linq.Expressions.Expression" />, for example <see cref="T:System.Linq.Expressions.MemberExpression" /> and <see cref="T:System.Linq.Expressions.ParameterExpression" />, are used to represent nodes in an expression tree. The <see cref="T:System.Linq.Expressions.Expression" /> class contains static (Shared in Visual Basic) factory methods to create expression tree nodes of the various types.</para>
+      <para>The enumeration type <see cref="T:System.Linq.Expressions.ExpressionType" /> specifies the unique node types.</para>
+    </remarks>
   </Docs>
 </Namespace>

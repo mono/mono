@@ -1,9 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Diagnostics.SymbolStore" FullName="System.Diagnostics.SymbolStore" FullNameSP="System.Diagnostics.SymbolStore" Maintainer="Mono">
   <Docs>
-    <summary>
-        To be added.
-    </summary>
     <remarks>
     </remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Diagnostics.SymbolStore" /> namespace provides classes that allow you to read and write debug symbol information, such as source line to Microsoft intermediate language (MSIL) maps. Compilers targeting the.NET Framework can store the debug symbol information into programmer's database (PDB) files. Debuggers and code profiler tools can read the debug symbol information at run time.</para>
+    </summary>
   </Docs>
 </Namespace>

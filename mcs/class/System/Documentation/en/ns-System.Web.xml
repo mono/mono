@@ -1,6 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.Web">
   <Docs>
-    <summary>To be added.</summary>
     <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.Web" /> namespace supplies classes and interfaces that enable browser-server communication. This namespace includes the <see cref="T:System.Web.HttpRequest" /> class, which provides extensive information about the current HTTP request; the <see cref="T:System.Web.HttpResponse" /> class, which manages HTTP output to the client; and the <see cref="T:System.Web.HttpServerUtility" /> class, which provides access to server-side utilities and processes. <see cref="N:System.Web" /> also includes classes for cookie manipulation, file transfer, exception information, and output cache control.</para>
+    </summary>
   </Docs>
 </Namespace>

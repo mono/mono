@@ -1,6 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Namespace Name="System.IO.Ports">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The <see cref="N:System.IO.Ports" /> namespace contains classes for controlling serial ports. The most important class, <see cref="T:System.IO.Ports.SerialPort" />, provides a framework for synchronous and event-driven I/O, access to pin and break states, and access to serial driver properties. It can be used to wrap a <see cref="T:System.IO.Stream" /> objects, allowing the serial port to be accessed by classes that use streams.  </para>
+    </summary>
+    <remarks>
+      <attribution license="cc4" from="Microsoft" modified="false" />
+      <para>The namespace includes enumerations that simplify the control of serial ports, such as <see cref="T:System.IO.Ports.Handshake" />, <see cref="T:System.IO.Ports.Parity" />, <see cref="T:System.IO.Ports.SerialPinChange" />, and <see cref="T:System.IO.Ports.StopBits" />.</para>
+    </remarks>
   </Docs>
 </Namespace>
