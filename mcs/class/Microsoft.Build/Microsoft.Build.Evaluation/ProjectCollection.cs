@@ -348,9 +348,9 @@ namespace Microsoft.Build.Evaluation
 		{
 			var ext = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath") ?? DefaultExtensionsPath;
 			yield return create ("MSBuildExtensionsPath", ext);
-			var ext32 = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath32") ?? DefaultExtensionsPath;
+			var ext32 = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath32") ?? ext;
 			yield return create ("MSBuildExtensionsPath32", ext32);
-			var ext64 = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath64") ?? DefaultExtensionsPath;
+			var ext64 = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath64") ?? ext;
 			yield return create ("MSBuildExtensionsPath64", ext64);
 		}
 
