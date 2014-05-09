@@ -27,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#if NET_2_0
-
 using System;
 using System.Diagnostics;
 using System.Collections;
@@ -244,33 +242,38 @@ namespace Microsoft.Build.Utilities
 				singleLine.StartsWith ("Compilation failed"))
 				return;
 
-			Match match = CscErrorRegex.Match (singleLine);
-			if (!match.Success) {
+			var result = MSBuildErrorParser.TryParseLine (singleLine);
+			if (result == null) {
 				Log.LogMessage (importance, singleLine);
 				return;
 			}
 
-			string filename = match.Result ("${file}") ?? "";
-			string line = match.Result ("${line}");
-			int lineNumber = !string.IsNullOrEmpty (line) ? Int32.Parse (line) : 0;
+			string filename = result.Origin ?? GetType ().Name.ToUpper ();
 
-			string col = match.Result ("${column}");
-			int columnNumber = 0;
-			if (!string.IsNullOrEmpty (col))
-				columnNumber = col.IndexOf ("+") >= 0 ? -1 : Int32.Parse (col);
-
-			string category = match.Result ("${level}");
-			string code = match.Result ("${number}");
-			string text = match.Result ("${message}");
-
-			if (String.Compare (category, "warning", StringComparison.OrdinalIgnoreCase) == 0) {
-				Log.LogWarning (null, code, null, filename, lineNumber, columnNumber, -1,
-					-1, text, null);
-			} else if (String.Compare (category, "error", StringComparison.OrdinalIgnoreCase) == 0) {
-				Log.LogError (null, code, null, filename, lineNumber, columnNumber, -1,
-					-1, text, null);
+			if (result.IsError) {
+				Log.LogError (
+					result.Subcategory,
+					result.Code,
+					null,
+					filename,
+					result.Line,
+					result.Column,
+					result.EndLine,
+					result.EndColumn,
+					result.Message
+				);
 			} else {
-				Log.LogMessage (importance, singleLine);
+				Log.LogWarning (
+					result.Subcategory,
+					result.Code,
+					null,
+					filename,
+					result.Line,
+					result.Column,
+					result.EndLine,
+					result.EndColumn,
+					result.Message
+				);
 			}
 		}
 
@@ -457,30 +460,5 @@ namespace Microsoft.Build.Utilities
 			get { return toolPath; }
 			set { toolPath  = value; }
 		}
-
-		// Keep in sync with mcs/class/System/Microsoft.CSharp/CSharpCodeCompiler.cs
-		const string ErrorRegexPattern = @"
-			^
-			(\s*(?<file>[^\(]+)                         # filename (optional)
-			 (\((?<line>\d*)(,(?<column>\d*[\+]*))?\))? # line+column (optional)
-			 :\s+)?
-			(?<level>\w+)                               # error|warning
-			\s+
-			(?<number>[^:]*\d)                          # CS1234
-			:
-			\s*
-			(?<message>.*)$";
-
-		static Regex errorRegex;
-		static Regex CscErrorRegex {
-			get {
-				if (errorRegex == null)
-					errorRegex = new Regex (ErrorRegexPattern,
-							RegexOptions.Compiled | RegexOptions.ExplicitCapture | RegexOptions.IgnorePatternWhitespace);
-				return errorRegex;
-			}
-		}
 	}
 }
-
-#endif
