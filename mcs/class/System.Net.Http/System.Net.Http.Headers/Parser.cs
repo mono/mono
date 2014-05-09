@@ -153,6 +153,8 @@ namespace System.Net.Http.Headers
 					return false;
 				}
 			}
+			
+			public new static readonly Func<object, string> ToString = l => Convert.ToBase64String((byte[]) l);
 		}
 
 		public static class TimeSpanSeconds

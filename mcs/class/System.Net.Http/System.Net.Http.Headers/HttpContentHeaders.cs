@@ -102,7 +102,7 @@ namespace System.Net.Http.Headers
 				return GetValue<byte[]> ("Content-MD5");
 			}
 			set {
-				AddOrRemove ("Content-MD5", value);
+				AddOrRemove ("Content-MD5", value, Parser.MD5.ToString);
 			}
 		}
 
