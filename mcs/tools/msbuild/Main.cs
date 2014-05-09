@@ -165,6 +165,7 @@ namespace Mono.XBuild.CommandLine {
 						projectInstances.Add (p.CreateProjectInstance ());
 				} else {
 					project = ProjectRootElement.Create (XmlReader.Create (projectFile, settings), project_collection);
+					project.FullPath = projectFile;
 					var pi = new ProjectInstance (project, parameters.Properties, parameters.ToolsVersion, project_collection);
 					projectInstances.Add (pi);
 				}
