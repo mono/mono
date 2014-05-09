@@ -8,7 +8,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -nowarn:169,219,618,672
 
 include ../../build/library.make
 
-$(build_lib): $(the_libdir_base)/bare/System.dll
+$(build_lib): $(the_libdir_base)bare/System.dll
 
-$(the_libdir_base)/bare/System.dll:
+$(the_libdir_base)bare/System.dll:
 	(cd ../System; $(MAKE) $@)
