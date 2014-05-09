@@ -34,6 +34,9 @@ namespace Xamarin.ApiDiff {
 
 	public abstract class MemberComparer : Comparer {
 
+		// true if this is the first element being added or removed in the group being rendered
+		protected bool first;
+
 		public abstract string GroupName { get; }
 		public abstract string ElementName { get; }
 
@@ -187,12 +190,17 @@ namespace Xamarin.ApiDiff {
 
 		public virtual void BeforeAdding (IEnumerable<XElement> list)
 		{
+			first = true;
 			Output.WriteLine ("<p>Added {0}:</p><pre>", list.Count () > 1 ? GroupName : ElementName);
 		}
 
 		public override void Added (XElement target)
 		{
-			Indent ().WriteLine ("\t{0}", GetDescription (target));
+			var o = GetObsoleteMessage (target);
+			if (!first && (o.Length > 0))
+				Output.WriteLine ();
+			Indent ().WriteLine ("\t{0}{1}", o, GetDescription (target));
+			first = false;
 		}
 
 		public virtual void AfterAdding ()
@@ -221,12 +229,17 @@ namespace Xamarin.ApiDiff {
 
 		public virtual void BeforeRemoving (IEnumerable<XElement> list)
 		{
+			first = true;
 			Output.WriteLine ("<p>Removed {0}:</p><pre>", list.Count () > 1 ? GroupName : ElementName);
 		}
 
 		public override void Removed (XElement source)
 		{
-			Indent ().WriteLine ("\t{0}", GetDescription (source));
+			var o = GetObsoleteMessage (source);
+			if (!first && (o.Length > 0))
+				Output.WriteLine ();
+			Indent ().WriteLine ("\t{0}{1}", o, GetDescription (source));
+			first = false;
 		}
 
 		public virtual void AfterRemoving ()

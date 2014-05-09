@@ -86,6 +86,7 @@ namespace Xamarin.ApiDiff {
 
 		public override void BeforeAdding (IEnumerable<XElement> list)
 		{
+			first = true;
 			if (State.BaseType == "System.Enum")
 				Output.WriteLine ("<p>Added value{0}:</p><pre>", list.Count () > 1 ? "s" : String.Empty);
 			else
@@ -94,6 +95,7 @@ namespace Xamarin.ApiDiff {
 
 		public override void BeforeRemoving (IEnumerable<XElement> list)
 		{
+			first = true;
 			if (State.BaseType == "System.Enum")
 				Output.WriteLine ("<p>Removed value{0}:</p><pre>", list.Count () > 1 ? "s" : String.Empty);
 			else
