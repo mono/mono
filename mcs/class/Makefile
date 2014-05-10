@@ -50,7 +50,6 @@ common_dirs := \
 	System.Web.ApplicationServices	\
 	System.Web			\
 	System.Web.Services		\
-	System.Web			\
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
