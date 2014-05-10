@@ -4,7 +4,6 @@ include ../../build/rules.make
 export __SECURITY_BOOTSTRAP_DB=$(topdir)/class/lib/$(PROFILE)
 
 LIBRARY = System.dll
-#LIBRARY_USE_INTERMEDIATE_FILE = yes
 
 ifneq (2.1, $(FRAMEWORK_VERSION))
 RESOURCE_FILES = \
@@ -144,8 +143,6 @@ endif
 regex-check:
 	$(MAKE) check FIXTURE=System.Text.RegularExpressions.PerlTest
 
-foo:
-	echo $(FRAMEWORK_VERSION)
-
+#Debuging target
 fresh: clean
 	rm -rf ../../class/lib/$(PROFILE)/bare ../../class/lib/$(PROFILE)/bare/ $(system_library_deps)
