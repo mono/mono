@@ -23,8 +23,7 @@ namespace Mono.Debugger.Soft
 			}
 	    }
 
-		internal void InvalidateAssembliesCache ()
-		{
+		internal void InvalidateAssembliesCache () {
 			assembliesCacheIsInvalid = true;
 		}
 
