@@ -410,10 +410,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> 
-representation of the current exception.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.ToString" />.</para>
@@ -423,6 +419,10 @@ representation of the current exception.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the fully qualified name of the current exception, and possibly the error message, the name of the inner exception, and the stack trace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the fully qualified name of this exception, and possibly the error message, the name of the inner exception, and the stack trace, depending on which <see cref="T:System.IO.FileLoadException" /> constructor is used.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

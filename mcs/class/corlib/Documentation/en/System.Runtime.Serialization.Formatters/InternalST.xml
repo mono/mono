@@ -81,13 +81,16 @@
         <Parameter Name="assemblyString" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a specified assembly to debug.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Reflection.Assembly" /> to debug.</para>
+        </returns>
         <param name="assemblyString">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the assembly to load.</param>
       </Docs>
@@ -205,13 +208,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks if SOAP tracing is enabled.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if tracing is enabled; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

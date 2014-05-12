@@ -58,13 +58,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Security.Cryptography.Pkcs.RecipientInfoEnumerator.MoveNext" /> method advances the enumeration to the next <see cref="T:System.Security.Cryptography.Pkcs.RecipientInfo" /> object in the <see cref="T:System.Security.Cryptography.Pkcs.RecipientInfoCollection" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns a bool that specifies whether the enumeration successfully advanced. If the enumeration successfully moved to the next <see cref="T:System.Security.Cryptography.Pkcs.RecipientInfo" /> object, the method returns true. If the enumeration moved past the last item in the enumeration, it returns false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Reset">

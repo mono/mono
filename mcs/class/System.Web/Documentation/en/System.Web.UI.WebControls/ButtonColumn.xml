@@ -316,7 +316,6 @@
         <Parameter Name="dataTextValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.ButtonColumn.FormatDataTextValue(System.Object)" /> method to convert the specified value to the format that is indicated by the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextFormatString" /> property.</para>
@@ -328,6 +327,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified value to the format that is indicated by the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextFormatString" /> property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="dataTextValue" /> converted to the format indicated by the <see cref="P:System.Web.UI.WebControls.ButtonColumn.DataTextFormatString" />.</para>
+        </returns>
         <param name="dataTextValue">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to format. </param>
       </Docs>

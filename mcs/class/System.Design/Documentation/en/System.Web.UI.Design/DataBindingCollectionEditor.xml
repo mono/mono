@@ -49,12 +49,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Edits the value of the specified data-binding collection using the specified service provider and context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new collection.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> object that identifies the component or control the collection belongs to. </param>
         <param name="provider">
@@ -77,7 +80,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This editor provides a modal editor style.</para>
@@ -86,6 +88,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the editor style used by the <see cref="M:System.Web.UI.Design.DataBindingCollectionEditor.EditValue(System.ComponentModel.ITypeDescriptorContext,System.IServiceProvider,System.Object)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Design.UITypeEditorEditStyle" /> object that specifies the editor style of the component or control.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> object that identifies the component or control to retrieve the edit style for. </param>
       </Docs>

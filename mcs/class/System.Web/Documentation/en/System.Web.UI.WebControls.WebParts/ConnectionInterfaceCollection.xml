@@ -91,13 +91,16 @@
       </Parameters>
       <Docs>
         <param name="t">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> object contains a specific value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is found in the <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" />; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -158,13 +161,16 @@
       </Parameters>
       <Docs>
         <param name="t">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified object and returns the zero-based index of the first occurrence within the entire <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" /> collection. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" /> within the entire <see cref="T:System.Web.UI.WebControls.WebParts.ConnectionInterfaceCollection" />, if found; otherwise, -1.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

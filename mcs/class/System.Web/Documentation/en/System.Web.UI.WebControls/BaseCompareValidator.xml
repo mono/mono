@@ -94,7 +94,6 @@
         <Parameter Name="type" Type="System.Web.UI.WebControls.ValidationDataType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.BaseCompareValidator.CanConvert(System.String,System.Web.UI.WebControls.ValidationDataType)" /> method to determine whether the specified string can be converted to the specified data type. This method is commonly used to test whether a string can be converted to a compatible data type before performing an operation that depends on that data type.</para>
@@ -104,6 +103,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified string can be converted to the specified data type. This version of the overloaded method tests currency, double, and date values using the format used by the current culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified data string can be converted to the specified data type; otherwise, false.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to test.</param>
         <param name="type">
@@ -129,7 +132,6 @@
         <Parameter Name="cultureInvariant" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.BaseCompareValidator.CanConvert(System.String,System.Web.UI.WebControls.ValidationDataType,System.Boolean)" /> method to determine whether the specified string can be converted to the specified data type. This method is commonly used to test whether a string can be converted to a compatible data type before performing an operation that depends on that data type. To indicate that values should be tested using a culture-neutral format, pass in true for the <paramref name="cultureInvariant" /> parameter; otherwise, values are tested using the format used by the current culture. When testing a value using the format used by the current culture, consider using the <see cref="M:System.Web.UI.WebControls.BaseCompareValidator.CanConvert(System.String,System.Web.UI.WebControls.ValidationDataType)" /> overloaded version of this method.</para>
@@ -138,6 +140,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified string can be converted to the specified data type. This version of the overloaded method allows you to specify whether values are tested using a culture-neutral format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified data string can be converted to the specified data type; otherwise, false.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to test.</param>
         <param name="type">
@@ -161,7 +167,6 @@
       <Docs>
         <param name="left">To be added.</param>
         <param name="right">To be added.</param>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.BaseCompareValidator.Compare(System.String,System.String,System.Web.UI.WebControls.ValidationCompareOperator,System.Web.UI.WebControls.ValidationDataType)" /> method is used to test whether the value of the <paramref name="leftText" /> parameter relates to the value of the <paramref name="rightText" /> parameter in the manner specified by the <paramref name="op" /> parameter. The <paramref name="type" /> parameter specifies the data type of the values being compared.</para>
@@ -174,6 +179,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two strings using the specified operator and data type. This version of the overloaded method compares currency, double, and date values using the format used by the current culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="leftValue" /> parameter relates to the <paramref name="rightValue" /> parameter in the manner specified by the <paramref name="op" /> parameter; otherwise, false.</para>
+        </returns>
         <param name="op">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.UI.WebControls.ValidationCompareOperator" /> values. </param>
         <param name="type">
@@ -204,7 +213,6 @@
       <Docs>
         <param name="left">To be added.</param>
         <param name="right">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.BaseCompareValidator.Compare(System.String,System.Boolean,System.String,System.Boolean,System.Web.UI.WebControls.ValidationCompareOperator,System.Web.UI.WebControls.ValidationDataType)" /> method is used to test whether the value of the <paramref name="leftText" /> parameter relates to the value of the <paramref name="rightText" /> parameter in the manner specified by the <paramref name="op" /> parameter. The <paramref name="type" /> parameter specifies the data type of the values being compared.</para>
@@ -217,6 +225,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two strings using the specified operator and validation data type. This version of the overload allows you to specify whether values are compared using a culture-neutral format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="leftValue" /> parameter relates to the <paramref name="rightValue" /> parameter in the manner specified by the <paramref name="op" /> parameter; otherwise, false.</para>
+        </returns>
         <param name="cultureInvariantLeftText">
           <attribution license="cc4" from="Microsoft" modified="false" />true to convert the left side value to a culture-neutral format; otherwise, false.</param>
         <param name="cultureInvariantRightText">
@@ -336,7 +348,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.BaseCompareValidator.DetermineRenderUplevel" /> method is a helper function used primarily by the <see cref="P:System.Web.UI.WebControls.BaseValidator.RenderUplevel" /> property to determine whether the client's browser supports "uplevel" rendering (rendering on a newer browser). The <see cref="T:System.Web.UI.WebControls.BaseCompareValidator" /> class overrides this method to return false if the current culture uses a non-Gregorian calendar.</para>
@@ -348,6 +359,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the validation control can be rendered for a newer ("uplevel") browser.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the validation control can be rendered for an "uplevel" browser; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -362,7 +377,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The month, day, and year of a date value can appear in different orders depending on the current culture settings. The <see cref="M:System.Web.UI.WebControls.BaseCompareValidator.GetDateElementOrder" /> method is used to determine the order in which these values appear. The following table shows the different values returned by this method.</para>
@@ -407,6 +421,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the order in which the month, day, and year appear in a date value for the current culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the order in which the month, day, and year appear in a date value for the current culture.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -424,7 +442,6 @@
       </Parameters>
       <Docs>
         <param name="two_digit_year">To be added: an object of type 'int'</param>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.BaseCompareValidator.GetFullYear(System.Int32)" /> method to generate the four-digit year representation of the specified two-digit year. The four-digit year representation depends on the value of the <see cref="P:System.Web.UI.WebControls.BaseCompareValidator.CutoffYear" /> property, which contains the maximum year that can be represented by a two-digit year in a 100-year range. For example, if the <see cref="P:System.Web.UI.WebControls.BaseCompareValidator.CutoffYear" /> property contains the value 2029, the <see cref="M:System.Web.UI.WebControls.BaseCompareValidator.GetFullYear(System.Int32)" /> method returns a year between 1930 and 2029. The two-digit year 30 is interpreted as 1930, while 29 is interpreted as 2029. You can change the maximum year that can be represented by a two-digit year by setting the <see cref="P:System.Globalization.Calendar.TwoDigitYearMax" /> property.</para>
@@ -436,6 +453,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates the four-digit year representation of the specified two-digit year.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The four-digit year representation of the specified two-digit year.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

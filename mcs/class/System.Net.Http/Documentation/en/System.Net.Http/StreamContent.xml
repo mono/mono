@@ -73,7 +73,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after all of the content has been written to the memory stream.</para>
@@ -83,6 +82,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Write the HTTP stream content to a memory stream as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -126,7 +130,6 @@
         <Parameter Name="context" Type="System.Net.TransportContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task" /> object will complete after all of the content has been serialized to the target stream.</para>
@@ -135,6 +138,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serialize the HTTP content to a stream as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The target stream.</param>
         <param name="context">

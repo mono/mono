@@ -262,7 +262,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -272,6 +271,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new node that is a copy of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new node that is a copy of the current node.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -287,7 +290,6 @@
         <Parameter Name="cloneParentNodes" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -298,6 +300,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new copy that is a copy of the current node, optionally cloning all parent and ancestor nodes of the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new node that is a copy of the current node.</para>
+        </returns>
         <param name="cloneParentNodes">
           <attribution license="cc4" from="Microsoft" modified="false" />true to clone all parent and ancestor nodes of the current node; otherwise, false.</param>
       </Docs>
@@ -344,7 +350,6 @@
       </Parameters>
       <Docs>
         <param name="ob">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -362,6 +367,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the current <see cref="T:System.Web.SiteMapNode" /> is identical to the specified object. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is both a <see cref="T:System.Web.SiteMapNode" /> and identical to the current <see cref="T:System.Web.SiteMapNode" />; otherwise, false. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -375,7 +384,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -385,6 +393,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a read-only collection of all <see cref="T:System.Web.SiteMapNode" /> objects that are descendants of the calling node, regardless of the degree of separation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Web.SiteMapNodeCollection" /> that represents all the descendants of a <see cref="T:System.Web.SiteMapNode" /> within the scope of the current provider.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -401,13 +413,16 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> object that is associated with the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A named <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> for the current node.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control that the view is associated with.</param>
         <param name="viewName">
@@ -429,7 +444,6 @@
         <Parameter Name="throwIfNotFound" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -444,6 +458,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a localized string based on a <see cref="T:System.Web.SiteMapNode" /> attribute to localize, a default string to return if no resource is found, and a Boolean value indicating whether to throw an exception if no resource is found. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the localized attribute.</para>
+        </returns>
         <param name="attributeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> attribute to localize. </param>
         <param name="defaultValue">
@@ -463,7 +481,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -473,6 +490,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code of the <see cref="T:System.Web.SiteMapNode" /> object. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer representing the hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -486,13 +507,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> object that is associated with the current node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> for the current node.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -508,7 +532,6 @@
         <Parameter Name="attributeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -523,6 +546,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a localized string based on the attribute name and <see cref="P:System.Web.SiteMapProvider.ResourceKey" /> property that is specified by the <see cref="T:System.Web.SiteMapProvider" /> by which the <see cref="T:System.Web.SiteMapNode" /> is tracked.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the localized attribute. The default is null.</para>
+        </returns>
         <param name="attributeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> attribute to localize.</param>
       </Docs>
@@ -563,7 +590,6 @@
       </Parameters>
       <Docs>
         <param name="ctx">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -573,6 +599,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified site map node can be viewed by the user in the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if any one of the following conditions is met: the security trimming is enabled and the current user is a member of at least one of the roles allowing access to view the site map node; the current user is authorized specifically for the requested node's URL in the authorization element for the current application and the URL is located within the directory structure for the application; the current thread has an associated <see cref="T:System.Security.Principal.WindowsIdentity" /> that has file access to the requested node's URL and the URL is located within the directory structure for the application; or security trimming is not enabled and therefore any user is allowed to view the site map node; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -588,13 +618,16 @@
         <Parameter Name="node" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the current site map node is a child or a direct descendant of the specified node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current node is a child or descendant of the specified node; otherwise, false.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> to check if the current node is a child or descendant of.</param>
       </Docs>
@@ -837,7 +870,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="P:System.Web.SiteMapNode.Roles" /> and <see cref="P:System.Web.SiteMapNode.Attributes" /> collections are copied to new collections.</para>
@@ -846,6 +878,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new node that is a copy of the current node. For a description of this member, see <see cref="M:System.ICloneable.Clone" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new node that is a copy of the current node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IHierarchyData.GetChildren">
@@ -859,7 +895,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.SiteMapNode.System.Web.UI.IHierarchyData.GetChildren" /> method delegates to the <see cref="P:System.Web.SiteMapNode.ChildNodes" /> property.</para>
@@ -869,6 +904,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the hierarchical children data items of the current item. For a description of this member, see <see cref="M:System.Web.UI.IHierarchyData.GetChildren" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> that represents the immediate children of the current item in the hierarchy.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IHierarchyData.GetParent">
@@ -882,7 +921,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.SiteMapNode.System.Web.UI.IHierarchyData.GetParent" /> method delegates to the <see cref="P:System.Web.SiteMapNode.ParentNode" /> property.</para>
@@ -892,6 +930,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the hierarchical parent of the current item. For a description of this member, see <see cref="M:System.Web.UI.IHierarchyData.GetParent" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchicalEnumerable" /> that represents the parent of the current item in the hierarchy.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IHierarchyData.HasChildren">
@@ -1082,7 +1124,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1092,6 +1133,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance of the <see cref="T:System.Web.SiteMapNode" /> class to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of this <see cref="T:System.Web.SiteMapNode" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

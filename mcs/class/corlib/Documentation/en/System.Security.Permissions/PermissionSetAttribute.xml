@@ -72,7 +72,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not used; it is included only to support inheritance from <see cref="T:System.Security.Permissions.SecurityAttribute" />.</para>
@@ -81,6 +80,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not used.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A null reference (nothing in Visual Basic) in all cases.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreatePermissionSet">
@@ -97,7 +100,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Security.PermissionSet'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method should be called only by the security system, never by application code.</para>
@@ -107,6 +109,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a new permission set based on this permission set attribute object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission set.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="File">

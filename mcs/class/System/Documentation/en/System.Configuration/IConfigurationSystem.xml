@@ -41,12 +41,15 @@
         <Parameter Name="configKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the specified configuration.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object representing the configuration.</para>
+        </returns>
         <param name="configKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The configuration key.</param>
       </Docs>

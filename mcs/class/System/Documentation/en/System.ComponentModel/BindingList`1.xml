@@ -165,7 +165,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.BindingList`1.AddNew" /> method adds a new item to the collection represented by the <see cref="P:System.Collections.ObjectModel.Collection`1.Items" /> property. To add a new item, the following logic is used:</para>
@@ -194,6 +193,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new item to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item added to the list.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AddNewCore">
@@ -209,7 +212,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.BindingList`1.AddNewCore" /> method adds a new item to the collection represented by the <see cref="P:System.Collections.ObjectModel.Collection`1.Items" /> property. <see cref="M:System.ComponentModel.BindingList`1.AddNewCore" /> raises the <see cref="E:System.ComponentModel.BindingList`1.AddingNew" /> event. This allows you to add a new item by setting the <see cref="P:System.ComponentModel.AddingNewEventArgs.NewObject" /> property of the <see cref="T:System.ComponentModel.AddingNewEventArgs" /> parameter to the new item. Otherwise, the new item is automatically created through its public default constructor.</para>
@@ -218,6 +220,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new item to the end of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item that was added to the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="AllowEdit">
@@ -430,7 +436,6 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.ComponentModel.BindingList`1" /> class does not provide a base implementation of searching, and so <see cref="M:System.ComponentModel.BindingList`1.FindCore(System.ComponentModel.PropertyDescriptor,System.Object)" /> always throws a <see cref="T:System.NotSupportedException" /> by default. To enable searching, derive from <see cref="T:System.ComponentModel.BindingList`1" /> and perform the following tasks:</para>
@@ -447,6 +452,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the index of the item that has the specified property descriptor with the specified value, if searching is implemented in a derived class; otherwise, a <see cref="T:System.NotSupportedException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the item that matches the property descriptor and contains the specified value.</para>
+        </returns>
         <param name="prop">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.PropertyDescriptor" /> to search for.</param>
         <param name="key">
@@ -908,7 +917,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
@@ -918,6 +926,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new item to the list. For more information, see <see cref="M:System.ComponentModel.IBindingList.AddNew" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item added to the list.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.IBindingList.AllowEdit">
@@ -1029,7 +1041,6 @@
       </Parameters>
       <Docs>
         <param name="property">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.ComponentModel.BindingList`1" /> instance is cast to an <see cref="T:System.ComponentModel.IBindingList" /> interface.</para>
@@ -1038,6 +1049,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.ComponentModel.IBindingList.Find(System.ComponentModel.PropertyDescriptor,System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the row that has the given <see cref="T:System.ComponentModel.PropertyDescriptor" /> .</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The value of the <paramref name="property" /> parameter to search for.</param>
       </Docs>

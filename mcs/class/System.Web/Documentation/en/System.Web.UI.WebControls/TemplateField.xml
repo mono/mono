@@ -268,7 +268,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -278,6 +277,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Web.UI.WebControls.TemplateField" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns a new <see cref="T:System.Web.UI.WebControls.TemplateField" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

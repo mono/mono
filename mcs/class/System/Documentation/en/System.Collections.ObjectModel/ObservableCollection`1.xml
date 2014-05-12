@@ -133,12 +133,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Disallows reentrant attempts to change this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that can be used to dispose of the object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CheckReentrancy">

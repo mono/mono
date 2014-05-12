@@ -56,7 +56,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To access any objects in the <see cref="T:System.ServiceModel.Security.SecurityMessageProperty" />, such as <see cref="P:System.ServiceModel.Security.SecurityMessageProperty.ServiceSecurityContext" />, <see cref="P:System.ServiceModel.Security.SecurityMessageProperty.TransportToken" />, or <see cref="P:System.ServiceModel.Security.SecurityMessageProperty.IncomingSupportingTokens" />), a copy must be created because these properties are undefined after the message is disposed of.</para>
@@ -65,6 +64,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clones the current instance of this class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.IMessageProperty" /> cloned from the current instance of this class.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -123,12 +126,15 @@
       </Parameters>
       <Docs>
         <param name="message">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets or creates an instance of this class from the specified message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of <see cref="T:System.ServiceModel.Security.SecurityMessageProperty" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasIncomingSupportingTokens">

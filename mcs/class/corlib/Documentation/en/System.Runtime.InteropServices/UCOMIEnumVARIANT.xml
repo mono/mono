@@ -79,7 +79,6 @@
         <Parameter Name="pceltFetched" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information about IEnumVARIANT::Next, see the MSDN Library.</para>
@@ -88,6 +87,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a specified number of items in the enumeration sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>S_OK if the <paramref name="pceltFetched" /> parameter equals the <paramref name="celt" /> parameter; otherwise, S_FALSE.</para>
+        </returns>
         <param name="celt">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of elements to return in <paramref name="rgelt" />. </param>
         <param name="rgvar">
@@ -110,7 +113,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information about IEnumVARIANT::Reset, see the MSDN Library.</para>
@@ -119,6 +121,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resets the enumeration sequence to the beginning.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HRESULT with the value S_OK.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Skip">
@@ -137,7 +143,6 @@
         <Parameter Name="celt" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information about IEnumVARIANT::Skip, see the MSDN Library.</para>
@@ -146,6 +151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Skips over a specified number of items in the enumeration sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>S_OK if the number of elements skipped equals <paramref name="celt" /> parameter; otherwise, S_FALSE.</para>
+        </returns>
         <param name="celt">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of elements to skip in the enumeration. </param>
       </Docs>

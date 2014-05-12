@@ -57,7 +57,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -67,6 +66,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the XML representation of the <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlElement" /> that represents the &lt;EncryptedData&gt; element in XML encryption.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoadXml">

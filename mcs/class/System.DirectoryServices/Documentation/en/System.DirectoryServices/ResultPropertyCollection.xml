@@ -85,12 +85,15 @@
       </Parameters>
       <Docs>
         <param name="key">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the property that has the specified name belongs to this collection.          </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value is true if the specified property belongs to this collection; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CopyTo">

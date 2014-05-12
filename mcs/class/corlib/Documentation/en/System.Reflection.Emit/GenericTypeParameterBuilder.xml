@@ -196,12 +196,15 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether the given object is an instance of EventToken and is equal to the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if <paramref name="o" /> is an instance of EventToken and equals the current instance; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to be compared with the current instance.</param>
       </Docs>
@@ -338,7 +341,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -348,6 +350,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
@@ -367,7 +373,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -377,6 +382,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether to search this member's inheritance chain to find the attributes.</param>
       </Docs>
@@ -397,7 +406,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -407,6 +415,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for. Only attributes that are assignable to this type are returned.</param>
         <param name="inherit">
@@ -426,7 +438,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -436,6 +447,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Throws a <see cref="T:System.NotSupportedException" /> in all cases. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type referred to by the current array type, pointer type, or ByRef type; or null if the current type is not an array type, is not a pointer type, and is not passed by reference.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEvent">
@@ -454,7 +469,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -464,6 +478,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
         <param name="bindingAttr">
@@ -483,7 +501,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
@@ -492,6 +509,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEvents">
@@ -509,7 +530,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -519,6 +539,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
@@ -539,7 +563,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -549,6 +572,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
         <param name="bindingAttr">
@@ -570,7 +597,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -580,6 +606,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
@@ -597,7 +627,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -607,6 +636,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not valid for generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not valid for generic type parameters.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetGenericParameterConstraints">
@@ -641,7 +674,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -651,6 +683,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not valid for generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not valid for generic type parameters.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -666,12 +702,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a 32-bit integer hash code for the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetInterface">
@@ -690,7 +729,6 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -700,6 +738,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the interface.</param>
         <param name="ignoreCase">
@@ -726,7 +768,6 @@
         <Parameter Name="interfaceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
@@ -735,6 +776,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="interfaceType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that represents the interface type for which the mapping is to be retrieved.</param>
       </Docs>
@@ -752,7 +797,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -762,6 +806,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMember">
@@ -781,7 +829,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
@@ -790,6 +837,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
         <param name="type">
@@ -813,7 +864,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -823,6 +873,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
@@ -874,7 +928,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -884,6 +937,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
@@ -904,7 +961,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -914,6 +970,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
         <param name="bindingAttr">
@@ -935,7 +995,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -945,6 +1004,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
@@ -964,7 +1027,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -974,6 +1036,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
@@ -1075,7 +1141,6 @@
         <Parameter Name="namedParameters" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1085,6 +1150,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported. </param>
         <param name="invokeAttr">
@@ -1137,7 +1206,6 @@
         <Parameter Name="c" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not supported for incomplete generic type parameters. Retrieve the type parameter from the completed generic type definition and then use reflection on the retrieved type.</para>
@@ -1146,6 +1214,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Throws a <see cref="T:System.NotSupportedException" /> exception in all cases.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Throws a <see cref="T:System.NotSupportedException" /> exception in all cases.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to test.</param>
       </Docs>
@@ -1204,7 +1276,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1214,6 +1285,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
         <param name="inherit">
@@ -1366,7 +1441,6 @@
         <Parameter Name="c" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1376,6 +1450,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not supported for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Not supported for incomplete generic type parameters.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />Not supported.</param>
       </Docs>
@@ -1412,7 +1490,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Type.MakeArrayType" /> method provides a way to generate array types for parameter lists. </para>
@@ -1421,6 +1498,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type of a one-dimensional array whose element type is the generic type parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the type of a one-dimensional array whose element type is the generic type parameter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MakeArrayType">
@@ -1438,7 +1519,6 @@
         <Parameter Name="rank" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Type.MakeArrayType" /> method provides a way to generate array types for parameter lists.</para>
@@ -1447,6 +1527,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type of an array whose element type is the generic type parameter, with the specified number of dimensions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the type of an array whose element type is the generic type parameter, with the specified number of dimensions.</para>
+        </returns>
         <param name="rank">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of dimensions for the array.</param>
       </Docs>
@@ -1464,7 +1548,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Reflection.Emit.GenericTypeParameterBuilder.MakeByRefType" /> method provides a way to generate ref types (ByRef in Visual Basic) for parameter lists.</para>
@@ -1473,6 +1556,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object that represents the current generic type parameter when passed as a reference parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the current generic type parameter when passed as a reference parameter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MakeGenericType">
@@ -1496,12 +1583,15 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Not valid for incomplete generic type parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is invalid for incomplete generic type parameters.</para>
+        </returns>
         <param name="typeArguments">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type arguments.</param>
       </Docs>
@@ -1519,7 +1609,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Reflection.Emit.GenericTypeParameterBuilder.MakePointerType" /> method provides a way to generate pointer types for parameter lists.</para>
@@ -1528,6 +1617,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object that represents a pointer to the current generic type parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents a pointer to the current generic type parameter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Module">
@@ -1782,13 +1875,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the current generic type parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the name of the generic type parameter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TypeHandle">

@@ -48,13 +48,16 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts a new <see cref="T:System.String" /> into the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position in the collection where the <see cref="T:System.String" /> was added.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to add to the collection.</param>
       </Docs>
@@ -132,13 +135,16 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the <see cref="T:System.String" /> exists within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.String" /> exists within the collection; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> for which to search.</param>
       </Docs>
@@ -199,13 +205,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the <see cref="T:System.Windows.Forms.AutoCompleteStringCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that iterates through the collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -221,7 +230,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -231,6 +239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the position of the specified string within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index for the specified item.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> for which to search.</param>
       </Docs>
@@ -451,7 +463,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.AutoCompleteStringCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -460,6 +471,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a string to the collection. For a description of this member, see <see cref="M:System.Collections.IList.Add(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the <paramref name="value" /> has been added. </para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to be added to the collection</param>
       </Docs>
@@ -477,7 +492,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.AutoCompleteStringCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -486,6 +500,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines where the collection contains a specified string. For a description of this member, see <see cref="M:System.Collections.IList.Contains(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is found in the collection; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to locate in the collection.</param>
       </Docs>
@@ -503,7 +521,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.AutoCompleteStringCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -512,6 +529,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the index of a specified string in the collection. For a description of this member, see <see cref="M:System.Collections.IList.IndexOf(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of <paramref name="value" /> if found in the list; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to locate in the collection.</param>
       </Docs>

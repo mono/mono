@@ -44,12 +44,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ISymbolNamespace'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the namespace that the current method is defined within.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace that the current method is defined within.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOffset">
@@ -70,7 +73,6 @@
         <Parameter Name="column" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The parameters are returned in the order that they are defined within the signature of the method.</para>
@@ -79,6 +81,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the Microsoft intermediate language (MSIL) offset within the method that corresponds to the specified position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The offset within the specified document.</para>
+        </returns>
         <param name="document">
           <attribution license="cc4" from="Microsoft" modified="false" />The document for which the offset is requested. </param>
         <param name="line">
@@ -101,7 +107,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ISymbolVariable []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The parameters are returned in the order that they are defined within the signature of the method.</para>
@@ -110,6 +115,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parameters for the current method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The array of parameters for the current method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRanges">
@@ -130,7 +139,6 @@
         <Parameter Name="column" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The array is an array of integers in the format {{start1, end1}, {start2, end2}...}. The number of range pairs is the length of the array divided by 2.</para>
@@ -139,6 +147,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an array of start and end offset pairs that correspond to the ranges of Microsoft intermediate language (MSIL) that a given position covers within this method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of start and end offset pairs.</para>
+        </returns>
         <param name="document">
           <attribution license="cc4" from="Microsoft" modified="false" />The document for which the offset is requested. </param>
         <param name="line">
@@ -163,7 +175,6 @@
         <Parameter Name="offset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ISymbolScope'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <see cref="M:System.Diagnostics.SymbolStore.ISymbolMethod.GetScope(System.Int32)" /> method to start local variable searches.</para>
@@ -172,6 +183,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the most enclosing lexical scope when given an offset within a method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The most enclosing lexical scope for the given byte offset within the method.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte offset within the method of the lexical scope. </param>
       </Docs>
@@ -239,7 +254,6 @@
         <Parameter Name="columns" Type="System.Int32[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The first array position is the start, and the second is the end.</para>
@@ -248,6 +262,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the start and end positions for the source of the current method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the positions were defined; otherwise, false.</para>
+        </returns>
         <param name="docs">
           <attribution license="cc4" from="Microsoft" modified="false" />The starting and ending source documents. </param>
         <param name="lines">

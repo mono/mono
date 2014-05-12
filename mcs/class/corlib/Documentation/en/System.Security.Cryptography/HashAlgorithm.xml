@@ -140,12 +140,15 @@
         <Parameter Name="buffer" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>The hash value of the processed buffer.</returns>
         <remarks>A copy of the return value is kept in the <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> property until the <see cref="M:System.Security.Cryptography.HashAlgorithm.Initialize" /> method is called.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the hash value for the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed hash code.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input to compute the hash code for. </param>
       </Docs>
@@ -166,12 +169,15 @@
         <Parameter Name="inputStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>The hash value of the processed stream.</returns>
         <remarks>A copy of the return value is kept in the <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> property until the <see cref="M:System.Security.Cryptography.HashAlgorithm.Initialize" /> method is called.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the hash value for the specified <see cref="T:System.IO.Stream" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed hash code.</para>
+        </returns>
         <param name="inputStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The input to compute the hash code for. </param>
       </Docs>
@@ -194,12 +200,15 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>The hash value of the processed buffer.</returns>
         <remarks>A copy of the return value is kept in the <see cref="P:System.Security.Cryptography.HashAlgorithm.Hash" /> property until the <see cref="M:System.Security.Cryptography.HashAlgorithm.Initialize" /> method is called.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the hash value for the specified region of the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed hash code.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input to compute the hash code for. </param>
         <param name="offset">
@@ -222,7 +231,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>An instance of the default HashAlgorithm implementation, <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" />.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>By default, this overload uses the <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" /> implementation of a hash algorithm. If you want to specify a different implementation, use the <see cref="M:System.Security.Cryptography.HashAlgorithm.Create(System.String)" /> overload, which lets you specify an algorithm name, instead. The cryptography configuration system defines the default implementation of <see cref="T:System.Security.Cryptography.HashAlgorithm" />. </para>
@@ -231,6 +239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the default implementation of a hash algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" /> instance, unless the default settings have been changed using the <format type="text/html"><a href="03db52ef-010e-44ea-b6fd-b9c900ecad50">&lt;cryptoClass&gt; Element</a></format>.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -249,12 +261,15 @@
         <Parameter Name="hashName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>An instance of the specified HashAlgorithm or null if the name isn't a well known name or defined in machine.config. </returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified implementation of a hash algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the specified hash algorithm, or null if <paramref name="hashName" /> is not a valid hash algorithm.</para>
+        </returns>
         <param name="hashName">
           <attribution license="cc4" from="Microsoft" modified="false" />The hash algorithm implementation to use. The following table shows the valid values for the <paramref name="hashName" /> parameter and the algorithms they map to. </param>
       </Docs>
@@ -387,7 +402,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method finalizes any partial computation and returns the correct hash value for the data stream.</para>
@@ -396,6 +410,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, finalizes the hash computation after the last data is processed by the cryptographic stream object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The computed hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HashSize">
@@ -604,7 +622,6 @@
         <Parameter Name="outputOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must call the <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformBlock(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32)" /> method before calling the <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformFinalBlock(System.Byte[],System.Int32,System.Int32)" /> method. You must call both methods before you retrieve the final hash value.</para>
@@ -615,6 +632,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the hash value for the specified region of the input byte array and copies the specified region of the input byte array to the specified region of the output byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes written.</para>
+        </returns>
         <param name="inputBuffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input to compute the hash code for. </param>
         <param name="inputOffset">
@@ -645,7 +666,6 @@
         <Parameter Name="inputCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>Return a byte array containing the last processed block. </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must call the <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformFinalBlock(System.Byte[],System.Int32,System.Int32)" /> method after calling the <see cref="M:System.Security.Cryptography.HashAlgorithm.TransformBlock(System.Byte[],System.Int32,System.Int32,System.Byte[],System.Int32)" /> method but before you retrieve the final hash value. </para>
@@ -655,6 +675,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the hash value for the specified region of the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that is a copy of the part of the input that is hashed.</para>
+        </returns>
         <param name="inputBuffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The input to compute the hash code for. </param>
         <param name="inputOffset">

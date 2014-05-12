@@ -70,7 +70,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a <see cref="T:System.Data.DataColumn" /> object has its <see cref="P:System.Data.DataColumn.AutoIncrement" /> set to True, null should be passed to get the default value for that column.</para>
@@ -80,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a row using specified values and adds it to the <see cref="T:System.Data.DataRowCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None.</para>
+        </returns>
         <param name="values">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of values that are used to create the new row. </param>
       </Docs>
@@ -117,7 +120,6 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To use the <see cref="M:System.Data.DataRowCollection.Contains(System.Object)" /> method, the <see cref="T:System.Data.DataTable" /> object to which the <see cref="T:System.Data.DataRowCollection" /> object belongs to must have at least one column designated as a primary key column. See the <see cref="P:System.Data.DataTable.PrimaryKey" /> property for more information about how to create a primary key column.</para>
@@ -127,6 +129,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the primary key of any row in the collection contains the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains a <see cref="T:System.Data.DataRow" /> with the specified primary key value; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The value of the primary key to test for. </param>
       </Docs>
@@ -145,7 +151,6 @@
         <Parameter Name="keys" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To use the <see cref="M:System.Data.DataRowCollection.Contains(System.Object)" /> method with an array of values, the <see cref="T:System.Data.DataTable" /> object to which the <see cref="T:System.Data.DataRowCollection" /> object belongs must have an array of columns designated as primary keys. See the <see cref="P:System.Data.DataTable.PrimaryKey" /> property for more information about how to create an array of primary key columns. The number of array elements must correspond to the number of primary key columns in the <see cref="T:System.Data.DataTable" />.</para>
@@ -155,6 +160,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the primary key columns of any row in the collection contain the values specified in the object array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Data.DataRowCollection" /> contains a <see cref="T:System.Data.DataRow" /> with the specified key values; otherwise, false.</para>
+        </returns>
         <param name="keys">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of primary key values to test for. </param>
       </Docs>
@@ -241,7 +250,6 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To use the Find method, the <see cref="T:System.Data.DataTable" /> object to which the <see cref="T:System.Data.DataRowCollection" /> object belongs must have at least one column designated as a primary key column. See the <see cref="P:System.Data.DataTable.PrimaryKey" /> property for more information about how to create a primary key column.</para>
@@ -250,6 +258,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the row specified by the primary key value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataRow" /> that contains the primary key value specified; otherwise a null value if the primary key value does not exist in the <see cref="T:System.Data.DataRowCollection" />.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The primary key value of the <see cref="T:System.Data.DataRow" /> to find. </param>
       </Docs>
@@ -268,7 +280,6 @@
         <Parameter Name="keys" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataRow'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To use the <see cref="M:System.Data.DataRowCollection.Find(System.Object)" /> method, the <see cref="T:System.Data.DataTable" /> object to which the <see cref="T:System.Data.DataRowCollection" /> object belongs must have at least one column designated as a primary key column. When two or more rows have the same primary key value, then the first row found is returned. This occurs when <see cref="P:System.Data.DataSet.EnforceConstraints" /> is set to false. See the <see cref="P:System.Data.DataTable.PrimaryKey" /> property for more information about how to create a <see cref="P:System.Data.DataTable.PrimaryKey" /> column, or an array of <see cref="T:System.Data.DataColumn" /> objects when the table has more than one primary key.</para>
@@ -277,6 +288,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the row that contains the specified primary key values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataRow" /> object that contains the primary key values specified; otherwise a null value if the primary key value does not exist in the <see cref="T:System.Data.DataRowCollection" />.</para>
+        </returns>
         <param name="keys">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of primary key values to find. The type of the array is Object. </param>
       </Docs>
@@ -296,12 +311,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.Collections.IEnumerator" /> for this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for this collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -317,12 +335,15 @@
         <Parameter Name="row" Type="System.Data.DataRow" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the index of the specified <see cref="T:System.Data.DataRow" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the row, or -1 if the row is not found in the collection.</para>
+        </returns>
         <param name="row">
           <attribution license="cc4" from="Microsoft" modified="false" />The DataRow to search for.</param>
       </Docs>

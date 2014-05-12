@@ -85,12 +85,15 @@
         <Parameter Name="arg" Type="System.Dynamic.DynamicMetaObject" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic binary operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.BinaryOperationBinder" /> that represents the details of the dynamic operation.</param>
         <param name="arg">
@@ -111,7 +114,6 @@
         <Parameter Name="binder" Type="System.Dynamic.ConvertBinder" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In Visual Basic, only explicit conversion is supported. If you override this method, it is called by using the <see cref="M:Microsoft.VisualBasic.Conversion.CTypeDynamic``1(System.Object)" /> or <see cref="M:Microsoft.VisualBasic.Conversion.CTypeDynamic(System.Object,System.Type)" /> functions.</para>
@@ -120,6 +122,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic conversion operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.ConvertBinder" /> that represents the details of the dynamic operation.</param>
       </Docs>
@@ -139,12 +145,15 @@
         <Parameter Name="args" Type="System.Dynamic.DynamicMetaObject[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic create instance operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.CreateInstanceBinder" /> that represents the details of the dynamic operation.</param>
         <param name="args">
@@ -166,12 +175,15 @@
         <Parameter Name="indexes" Type="System.Dynamic.DynamicMetaObject[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic delete index operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.DeleteIndexBinder" /> that represents the details of the dynamic operation.</param>
         <param name="indexes">
@@ -192,12 +204,15 @@
         <Parameter Name="binder" Type="System.Dynamic.DeleteMemberBinder" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic delete member operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.DeleteMemberBinder" /> that represents the details of the dynamic operation.</param>
       </Docs>
@@ -217,12 +232,15 @@
         <Parameter Name="indexes" Type="System.Dynamic.DynamicMetaObject[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic get index operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.GetIndexBinder" /> that represents the details of the dynamic operation.</param>
         <param name="indexes">
@@ -243,12 +261,15 @@
         <Parameter Name="binder" Type="System.Dynamic.GetMemberBinder" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic get member operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.GetMemberBinder" /> that represents the details of the dynamic operation.</param>
       </Docs>
@@ -268,12 +289,15 @@
         <Parameter Name="args" Type="System.Dynamic.DynamicMetaObject[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic invoke operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.InvokeBinder" /> that represents the details of the dynamic operation.</param>
         <param name="args">
@@ -295,12 +319,15 @@
         <Parameter Name="args" Type="System.Dynamic.DynamicMetaObject[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic invoke member operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.InvokeMemberBinder" /> that represents the details of the dynamic operation.</param>
         <param name="args">
@@ -323,12 +350,15 @@
         <Parameter Name="value" Type="System.Dynamic.DynamicMetaObject" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic set index operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.SetIndexBinder" /> that represents the details of the dynamic operation.</param>
         <param name="indexes">
@@ -352,12 +382,15 @@
         <Parameter Name="value" Type="System.Dynamic.DynamicMetaObject" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic set member operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.SetMemberBinder" /> that represents the details of the dynamic operation.</param>
         <param name="value">
@@ -378,12 +411,15 @@
         <Parameter Name="binder" Type="System.Dynamic.UnaryOperationBinder" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic unary operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the <see cref="T:System.Dynamic.UnaryOperationBinder" /> that represents the details of the dynamic operation.</param>
       </Docs>
@@ -403,12 +439,15 @@
         <Parameter Name="expression" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a meta-object for the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the given object implements <see cref="T:System.Dynamic.IDynamicMetaObjectProvider" /> and is not a remote object from outside the current AppDomain, returns the object's specific meta-object returned by <see cref="M:System.Dynamic.IDynamicMetaObjectProvider.GetMetaObject(System.Linq.Expressions.Expression)" />. Otherwise a plain new meta-object with no restrictions is created and returned.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to get a meta-object for.</param>
         <param name="expression">
@@ -464,12 +503,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the enumeration of all dynamic member names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The list of dynamic member names.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasValue">

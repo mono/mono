@@ -193,7 +193,6 @@
         <Parameter Name="value" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -203,6 +202,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a single <see cref="T:System.Web.SiteMapNode" /> object to the  collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the <see cref="P:System.Collections.CollectionBase.InnerList" /> where the <see cref="T:System.Web.SiteMapNode" /> was inserted.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> to add to the <see cref="T:System.Web.SiteMapNodeCollection" />. </param>
       </Docs>
@@ -297,7 +300,6 @@
         <Parameter Name="value" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -307,6 +309,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the collection contains a specific <see cref="T:System.Web.SiteMapNode" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.SiteMapNodeCollection" /> contains the specified <see cref="T:System.Web.SiteMapNode" />; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> to locate in the <see cref="T:System.Web.SiteMapNodeCollection" />. </param>
       </Docs>
@@ -373,13 +379,16 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> object that is associated with the nodes in the current collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A named <see cref="T:System.Web.UI.WebControls.SiteMapDataSourceView" /> for the <see cref="T:System.Web.SiteMapNode" /> objects in the current <see cref="T:System.Web.SiteMapNodeCollection" />.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.SiteMapDataSource" /> control that the view is associated with.</param>
         <param name="viewName">
@@ -397,13 +406,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a reference to an enumerator object, which is used to iterate over the collection. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the <see cref="T:System.Collections.IEnumerator" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -417,13 +429,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> object that is associated with the nodes in the current collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.SiteMapHierarchicalDataSourceView" /> for the <see cref="T:System.Web.SiteMapNode" /> objects in the current <see cref="T:System.Web.SiteMapNodeCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -439,13 +454,16 @@
         <Parameter Name="enumeratedItem" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hierarchical data item for the specified enumerated item.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchyData" /> that represents the object passed to the <see cref="M:System.Web.SiteMapNodeCollection.GetHierarchyData(System.Object)" />.</para>
+        </returns>
         <param name="enumeratedItem">
           <attribution license="cc4" from="Microsoft" modified="false" />The object for which to return an <see cref="T:System.Web.UI.IHierarchyData" />.</param>
       </Docs>
@@ -463,7 +481,6 @@
         <Parameter Name="value" Type="System.Web.SiteMapNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -473,6 +490,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified <see cref="T:System.Web.SiteMapNode" /> object, and then returns the zero-based index of the first occurrence within the entire collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="value" /> within the entire <see cref="T:System.Web.SiteMapNodeCollection" />, if found; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNode" /> to locate in the <see cref="T:System.Web.SiteMapNodeCollection" />. </param>
       </Docs>
@@ -619,7 +640,6 @@
         <Parameter Name="collection" Type="System.Web.SiteMapNodeCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -629,6 +649,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a read-only collection that contains the nodes in the specified <see cref="T:System.Web.SiteMapNodeCollection" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only <see cref="T:System.Web.SiteMapNodeCollection" /> with the same <see cref="T:System.Web.SiteMapNode" /> elements and structure as the original <see cref="T:System.Web.SiteMapNodeCollection" />.</para>
+        </returns>
         <param name="collection">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.SiteMapNodeCollection" /> that contains the <see cref="T:System.Web.SiteMapNode" /> objects to add to the read-only <see cref="T:System.Web.SiteMapNodeCollection" />. </param>
       </Docs>
@@ -802,12 +826,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through a collection. For a description of this member, see <see cref="M:System.Collections.IEnumerable.GetEnumerator" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the <see cref="T:System.Web.SiteMapNodeCollection" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Add">
@@ -823,12 +850,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an item to the collection in the <see cref="T:System.Collections.IList" /> interface. For a description of this member, see <see cref="M:System.Collections.IList.Add(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position into which the new element was inserted.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to add to the <see cref="T:System.Collections.IList" />.</param>
       </Docs>
@@ -864,12 +894,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the collection in the <see cref="T:System.Collections.IList" /> interface contains the specified Boolean value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is found in the <see cref="T:System.Collections.IList" />; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to locate in the <see cref="T:System.Collections.IList" />.</param>
       </Docs>
@@ -887,12 +920,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the index of the specific item in the collection that is returned by the <see cref="T:System.Collections.IList" /> interface. For a description of this member, see <see cref="M:System.Collections.IList.IndexOf(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the value, in the list, if found; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to locate in the <see cref="T:System.Collections.IList" />.</param>
       </Docs>
@@ -1034,12 +1070,15 @@
         <Parameter Name="enumeratedItem" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hierarchical data item for the specified enumerated item. For a description of this member, see <see cref="M:System.Web.UI.IHierarchicalEnumerable.GetHierarchyData(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchyData" /> that represents the object passed to the <see cref="M:System.Web.SiteMapNodeCollection.System.Web.UI.IHierarchicalEnumerable.GetHierarchyData(System.Object)" />.</para>
+        </returns>
         <param name="enumeratedItem">
           <attribution license="cc4" from="Microsoft" modified="false" />The object for which to return an <see cref="T:System.Web.UI.IHierarchyData" />. </param>
       </Docs>

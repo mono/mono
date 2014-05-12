@@ -933,7 +933,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -943,6 +942,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a collection to store child controls.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns an <see cref="T:System.Web.UI.EmptyControlCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -959,7 +962,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.TreeView.CreateNode" /> method is a helper method that returns a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class.</para>
@@ -969,6 +971,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" /> class. The <see cref="M:System.Web.UI.WebControls.TreeView.CreateNode" /> is a helper method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Web.UI.WebControls.TreeNode" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DataBind">
@@ -1216,7 +1222,6 @@
         <Parameter Name="valuePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1226,6 +1231,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the <see cref="T:System.Web.UI.WebControls.TreeNode" /> object in the <see cref="T:System.Web.UI.WebControls.TreeView" /> control at the specified value path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.WebControls.TreeNode" /> at the specified value path.</para>
+        </returns>
         <param name="valuePath">
           <attribution license="cc4" from="Microsoft" modified="false" />The value path of a node. </param>
       </Docs>
@@ -1241,7 +1250,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1251,6 +1259,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the result of a callback event that targets a control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of the callback.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1835,7 +1847,6 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1845,6 +1856,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes postback data for the <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the <see cref="T:System.Web.UI.WebControls.TreeView" /> control's state changes as a result of the postback event; otherwise, false.</para>
+        </returns>
         <param name="postDataKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control. </param>
         <param name="postCollection">
@@ -2501,6 +2516,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Raises the callback event using the specified arguments. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The argument for the callback handler in the <see cref="M:System.Web.UI.ClientScriptManager.GetCallbackEventReference(System.String,System.String,System.String,System.String,System.String,System.Boolean)" /> method.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -2695,13 +2714,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves the state of the <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The server control's current view state; otherwise, null, if there is no view state associated with the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -3230,7 +3252,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.WebControls.TreeView" /> control implements the <see cref="T:System.Web.UI.ICallbackEventHandler" /> interface and uses the <see cref="M:System.Web.UI.WebControls.TreeView.RaisePostBackEvent(System.String)" /> to retrieve data and the <see cref="M:System.Web.UI.WebControls.TreeView.GetCallbackResult" /> method to return the retrieved data to the control.</para>
@@ -3239,6 +3260,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the result of a callback event that targets a control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of the callback.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.ICallbackEventHandler.RaiseCallbackEvent">
@@ -3263,6 +3288,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Raises the callback event using the specified arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The argument for the callback handler in the <see cref="M:System.Web.UI.ClientScriptManager.GetCallbackEventReference(System.String,System.String,System.String,System.String,System.String,System.Boolean)" /> method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.LoadPostData">
@@ -3279,7 +3308,6 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Control developers should override the <see cref="M:System.Web.UI.WebControls.TreeView.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method.</para>
@@ -3288,6 +3316,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes postback data for the <see cref="T:System.Web.UI.WebControls.TreeView" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the <see cref="T:System.Web.UI.WebControls.TreeView" /> control's state changes as a result of the postback event; otherwise, false.</para>
+        </returns>
         <param name="postDataKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The key identifier for the control. </param>
         <param name="postCollection">

@@ -385,7 +385,6 @@
         <Parameter Name="value" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The absolute value of a number is that number without its sign, as shown in the following table.</para>
@@ -429,6 +428,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the absolute value of a <see cref="T:System.Numerics.BigInteger" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The absolute value of <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number.</param>
       </Docs>
@@ -448,7 +451,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Languages that do not support operator overloading or custom operators can use the <see cref="M:System.Numerics.BigInteger.Add(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method to perform addition using <see cref="T:System.Numerics.BigInteger" /> values.</para>
@@ -459,6 +461,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds two <see cref="T:System.Numerics.BigInteger" /> values and returns the result.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of <paramref name="left" /> and <paramref name="right" />.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to add.</param>
         <param name="right">
@@ -480,7 +486,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although the <see cref="T:System.Numerics.BigInteger" /> type has no fixed range, comparisons of <see cref="T:System.Numerics.BigInteger" /> values are not characterized by the lack of precision that characterizes the comparison of floating-point numbers. The following example compares two <see cref="T:System.Numerics.BigInteger" /> values that differ by one and that each have 1,896 digits. The <see cref="M:System.Numerics.BigInteger.Compare(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method correctly reports that the two values are not equal.</para>
@@ -490,6 +495,49 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two <see cref="T:System.Numerics.BigInteger" /> values and returns an integer that indicates whether the first value is less than, equal to, or greater than the second value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative values of <paramref name="left" /> and <paramref name="right" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Value</para>
+                </term>
+                <description>
+                  <para>Condition</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="left" /> is less than <paramref name="right" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="left" /> equals <paramref name="right" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>
+                  <paramref name="left" /> is greater than <paramref name="right" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -510,7 +558,6 @@
         <Parameter Name="other" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="other" /> is a <see cref="T:System.Byte" />, <see cref="T:System.Int16" />, <see cref="T:System.Int32" />, <see cref="T:System.SByte" />, <see cref="T:System.UInt16" />, or <see cref="T:System.UInt32" /> value, it is implicitly converted to an <see cref="T:System.Int64" /> value when the <see cref="M:System.Numerics.BigInteger.CompareTo(System.Int64)" /> method is called.</para>
@@ -519,6 +566,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a signed 64-bit integer and returns an integer that indicates whether the value of this instance is less than, equal to, or greater than the value of the signed 64-bit integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer value that indicates the relationship of this instance to <paramref name="other" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>The current instance is less than <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>The current instance equals <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>The current instance is greater than <paramref name="other" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The signed 64-bit integer to compare.</param>
       </Docs>
@@ -537,7 +624,6 @@
         <Parameter Name="other" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload of the <see cref="Overload:System.Numerics.BigInteger.CompareTo" /> method implements the <see cref="M:System.IComparable`1.CompareTo(`0)" /> method. It is used by generic collection objects to order the items in the collection.</para>
@@ -546,6 +632,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a second <see cref="T:System.Numerics.BigInteger" /> and returns an integer that indicates whether the value of this instance is less than, equal to, or greater than the value of the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer value that indicates the relationship of this instance to <paramref name="other" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>The current instance is less than <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>The current instance equals <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>The current instance is greater than <paramref name="other" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare.</param>
       </Docs>
@@ -564,7 +690,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload of the <see cref="Overload:System.Numerics.BigInteger.CompareTo" /> method implements the <see cref="M:System.IComparable.CompareTo(System.Object)" /> method. It is used by non-generic collection objects to order the items in the collection.</para>
@@ -582,6 +707,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified object and returns an integer that indicates whether the value of this instance is less than, equal to, or greater than the value of the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relationship of the current instance to the <paramref name="obj" /> parameter, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>The current instance is less than <paramref name="obj" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>The current instance equals <paramref name="obj" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>The current instance is greater than <paramref name="obj" />, or the <paramref name="obj" /> parameter is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare.</param>
       </Docs>
@@ -605,12 +770,51 @@
         <Parameter Name="other" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to an unsigned 64-bit integer and returns an integer that indicates whether the value of this instance is less than, equal to, or greater than the value of the unsigned 64-bit integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed integer that indicates the relative value of this instance and <paramref name="other" />, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero</para>
+              </term>
+              <description>
+                <para>The current instance is less than <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero</para>
+              </term>
+              <description>
+                <para>The current instance equals <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero</para>
+              </term>
+              <description>
+                <para>The current instance is greater than <paramref name="other" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The unsigned 64-bit integer to compare.</param>
       </Docs>
@@ -630,7 +834,6 @@
         <Parameter Name="divisor" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.Divide(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method performs integer division; any remainder that results from the division is discarded. To perform integer division while preserving the remainder, call the <see cref="M:System.Numerics.BigInteger.DivRem(System.Numerics.BigInteger,System.Numerics.BigInteger,System.Numerics.BigInteger@)" /> method. To retrieve only the remainder, call the <see cref="M:System.Numerics.BigInteger.Remainder(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method.</para>
@@ -640,6 +843,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Divides one <see cref="T:System.Numerics.BigInteger" /> value by another and returns the result.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The quotient of the division.</para>
+        </returns>
         <param name="dividend">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to be divided.</param>
         <param name="divisor">
@@ -684,7 +891,6 @@
         <Parameter Name="other" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="other" /> is a <see cref="T:System.Byte" />, <see cref="T:System.Int16" />, <see cref="T:System.Int32" />, <see cref="T:System.SByte" />, <see cref="T:System.UInt16" />, or <see cref="T:System.UInt32" /> value, it is implicitly converted to an <see cref="T:System.Int64" /> value when the method is called.</para>
@@ -694,6 +900,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the current instance and a signed 64-bit integer have the same value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signed 64-bit integer and the current instance have the same value; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The signed 64-bit integer value to compare.</param>
       </Docs>
@@ -712,7 +922,6 @@
         <Parameter Name="other" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method implements the <see cref="T:System.IEquatable`1" /> interface and performs slightly better than <see cref="M:System.Numerics.BigInteger.Equals(System.Object)" /> because it does not have to convert the <paramref name="other" /> parameter to a <see cref="T:System.Numerics.BigInteger" /> object.</para>
@@ -722,6 +931,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the current instance and a specified <see cref="T:System.Numerics.BigInteger" /> object have the same value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this <see cref="T:System.Numerics.BigInteger" /> object and <paramref name="other" /> have the same value; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare.</param>
       </Docs>
@@ -740,7 +953,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="obj" /> parameter is not a <see cref="T:System.Numerics.BigInteger" /> value, but it is a data type for which an implicit conversion is defined, the <see cref="M:System.Numerics.BigInteger.Equals(System.Object)" /> method converts <paramref name="obj" /> to a <see cref="T:System.Numerics.BigInteger" /> value before it performs the comparison. If <paramref name="obj" /> is not a <see cref="T:System.Numerics.BigInteger" /> value and cannot be implicitly converted to <see cref="T:System.Numerics.BigInteger" />, the method returns false. If no conversion from <paramref name="obj" /> to a <see cref="T:System.Numerics.BigInteger" /> value exists, the method does not throw an exception; instead, it returns false.</para>
@@ -750,6 +962,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the current instance and a specified object have the same value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="obj" /> parameter is a <see cref="T:System.Numerics.BigInteger" /> object or a type capable of implicit conversion to a <see cref="T:System.Numerics.BigInteger" /> value, and its value is equal to the value of the current <see cref="T:System.Numerics.BigInteger" /> object; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare. </param>
       </Docs>
@@ -773,7 +989,6 @@
         <Parameter Name="other" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To determine the relationship between the two objects instead of just testing for equality, call the <see cref="M:System.Numerics.BigInteger.CompareTo(System.UInt64)" /> method.</para>
@@ -782,6 +997,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the current instance and an unsigned 64-bit integer have the same value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current instance and the unsigned 64-bit integer have the same value; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The unsigned 64-bit integer to compare.</param>
       </Docs>
@@ -798,12 +1017,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for the current <see cref="T:System.Numerics.BigInteger" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GreatestCommonDivisor">
@@ -821,7 +1043,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The greatest common divisor is the largest number into which the two <see cref="T:System.Numerics.BigInteger" /> values can be divided without returning a remainder.</para>
@@ -835,6 +1056,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds the greatest common divisor of two <see cref="T:System.Numerics.BigInteger" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The greatest common divisor of <paramref name="left" /> and <paramref name="right" />.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value.</param>
         <param name="right">
@@ -948,7 +1173,6 @@
         <Parameter Name="value" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="value" /> parameter is specified as a base 10 number.</para>
@@ -1000,6 +1224,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the natural (base e) logarithm of a specified number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The natural (base e) logarithm of <paramref name="value" />, as shown in the table in the Remarks section.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number whose logarithm is to be found.</param>
       </Docs>
@@ -1019,7 +1247,6 @@
         <Parameter Name="baseValue" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="value" /> and <paramref name="baseValue" /> parameters are specified as base 10 numbers.</para>
@@ -1200,6 +1427,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the logarithm of a specified number in a specified base.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base <paramref name="baseValue" /> logarithm of <paramref name="value" />, as shown in the table in the Remarks section.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number whose logarithm is to be found.</param>
         <param name="baseValue">
@@ -1220,7 +1451,6 @@
         <Parameter Name="value" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="value" /> parameter is specified as a base 10 number.</para>
@@ -1270,6 +1500,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the base 10 logarithm of a specified number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The base 10 logarithm of <paramref name="value" />, as shown in the table in the Remarks section.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A number whose logarithm is to be found.</param>
       </Docs>
@@ -1289,7 +1523,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method corresponds to the <see cref="M:System.Math.Max(System.Int32,System.Int32)" /> method for primitive numeric types.</para>
@@ -1298,6 +1531,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the larger of two <see cref="T:System.Numerics.BigInteger" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="left" /> or <paramref name="right" /> parameter, whichever is larger.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1319,7 +1556,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method corresponds to the <see cref="M:System.Math.Min(System.Int32,System.Int32)" /> method for primitive numeric types.</para>
@@ -1328,6 +1564,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the smaller of two <see cref="T:System.Numerics.BigInteger" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="left" /> or <paramref name="right" /> parameter, whichever is smaller.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1372,7 +1612,6 @@
         <Parameter Name="modulus" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.ModPow(System.Numerics.BigInteger,System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method evaluates the following expression:</para>
@@ -1385,6 +1624,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs modulus division on a number raised to the power of another number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The remainder after dividing <paramref name="value" /><superscript>exponent</superscript> by <paramref name="modulus" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to raise to the <paramref name="exponent" /> power.</param>
         <param name="exponent">
@@ -1408,7 +1651,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.Multiply(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method is implemented for languages that do not support operator overloading. Its behavior is identical to multiplication using the multiplication operator. In addition, the <see cref="M:System.Numerics.BigInteger.Multiply(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method is a useful substitute for the multiplication operator when instantiating a <see cref="T:System.Numerics.BigInteger" /> variable by assigning it a product that results from multiplication, as shown in the following example.</para>
@@ -1419,6 +1661,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the product of two <see cref="T:System.Numerics.BigInteger" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The product of the <paramref name="left" /> and <paramref name="right" /> parameters.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first number to multiply.</param>
         <param name="right">
@@ -1439,7 +1685,6 @@
         <Parameter Name="value" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Negation obtains the additive inverse of a number. The additive inverse of a number is a number that produces a value of zero when it is added to the original number.</para>
@@ -1450,6 +1695,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Negates a specified <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the <paramref name="value" /> parameter multiplied by negative one (-1).</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to negate.</param>
       </Docs>
@@ -1491,7 +1740,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Addition(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the addition operation for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -1502,6 +1750,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the values of two specified <see cref="T:System.Numerics.BigInteger" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of <paramref name="left" /> and <paramref name="right" />.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to add.</param>
         <param name="right">
@@ -1523,7 +1775,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_BitwiseAnd(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the bitwise And operation for <see cref="T:System.Numerics.BigInteger" /> values. The bitwise And operation sets a result bit only if the corresponding bits in <paramref name="left" /> and <paramref name="right" /> are also set, as shown in the following table.</para>
@@ -1594,6 +1845,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a bitwise And operation on two <see cref="T:System.Numerics.BigInteger" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the bitwise And operation.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value.</param>
         <param name="right">
@@ -1615,7 +1870,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_BitwiseOr(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the bitwise Or operation for <see cref="T:System.Numerics.BigInteger" /> values. The bitwise Or operation sets a result bit only if either or both of the corresponding bits in <paramref name="left" /> and <paramref name="right" /> are set, as shown in the following table.</para>
@@ -1686,6 +1940,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a bitwise Or operation on two <see cref="T:System.Numerics.BigInteger" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the bitwise Or operation.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value.</param>
         <param name="right">
@@ -1706,7 +1964,6 @@
         <Parameter Name="value" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Decrement(System.Numerics.BigInteger)" /> method defines the decrement operation for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -1719,6 +1976,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decrements a <see cref="T:System.Numerics.BigInteger" /> value by 1.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <paramref name="value" /> parameter decremented by 1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to decrement.</param>
       </Docs>
@@ -1738,7 +1999,6 @@
         <Parameter Name="divisor" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Division(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the division operation for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -1749,6 +2009,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Divides a specified <see cref="T:System.Numerics.BigInteger" /> value by another specified <see cref="T:System.Numerics.BigInteger" /> value by using integer division.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The integral result of the division.</para>
+        </returns>
         <param name="dividend">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to be divided.</param>
         <param name="divisor">
@@ -1770,7 +2034,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Equality(System.Int64,System.Numerics.BigInteger)" /> method defines the equality comparison operation for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -1782,6 +2045,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a signed long integer value and a <see cref="T:System.Numerics.BigInteger" /> value are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1803,7 +2070,6 @@
         <Parameter Name="right" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Equality(System.Numerics.BigInteger,System.Int64)" /> method defines the equality comparison operation for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -1815,6 +2081,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value and a signed long integer value are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1836,7 +2106,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Equality(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the operation of the equality operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -1847,6 +2116,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the values of two <see cref="T:System.Numerics.BigInteger" /> objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1873,7 +2146,6 @@
         <Parameter Name="right" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Equality(System.Numerics.BigInteger,System.UInt64)" /> method defines the equality comparison operation for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -1884,6 +2156,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value and an unsigned long integer value are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1910,7 +2186,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Equality(System.UInt64,System.Numerics.BigInteger)" /> method defines the equality comparison operation for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -1921,6 +2196,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether an unsigned long integer value and a <see cref="T:System.Numerics.BigInteger" /> value are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="left" /> and <paramref name="right" /> parameters have the same value; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -1942,7 +2221,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The result of a bitwise exclusive Or operation is true if the values of the two bits are different; otherwise, it is false. The following table illustrates the exclusive Or operation.</para>
@@ -2013,6 +2291,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a bitwise exclusive Or (XOr) operation on two <see cref="T:System.Numerics.BigInteger" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the bitwise Or operation.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value.</param>
         <param name="right">
@@ -2334,7 +2616,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_GreaterThan(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the greater than operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2347,6 +2628,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a 64-bit signed integer is greater than a <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2368,7 +2653,6 @@
         <Parameter Name="right" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_GreaterThan(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the greater than operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2381,6 +2665,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> is greater than a 64-bit signed integer value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2402,7 +2690,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_GreaterThan(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the operation of the greater than operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2414,6 +2701,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is greater than another <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2440,7 +2731,6 @@
         <Parameter Name="right" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_GreaterThan(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the greater than operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2452,6 +2742,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is greater than a 64-bit unsigned integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2478,7 +2772,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_GreaterThan(System.UInt64,System.Numerics.BigInteger)" /> method defines the operation of the greater than operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2490,6 +2783,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is greater than a 64-bit unsigned integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2511,7 +2808,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_GreaterThanOrEqual(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the operation of the greater than or equal to operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2524,6 +2820,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a 64-bit signed integer is greater than or equal to a <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2545,7 +2845,6 @@
         <Parameter Name="right" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_GreaterThanOrEqual(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the operation of the greater than or equal to operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2558,6 +2857,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is greater than or equal to a 64-bit signed integer value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2579,7 +2882,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_GreaterThanOrEqual(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the operation of the greater than or equal to operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2591,6 +2893,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is greater than or equal to another <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2617,7 +2923,6 @@
         <Parameter Name="right" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_GreaterThanOrEqual(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the operation of the greater than or equal to operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2629,6 +2934,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is greater than or equal to a 64-bit unsigned integer value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2655,7 +2964,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_GreaterThanOrEqual(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the operation of the greater than or equal to operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2667,6 +2975,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a 64-bit unsigned integer is greater than or equal to a <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is greater than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2867,7 +3179,6 @@
         <Parameter Name="value" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Increment(System.Numerics.BigInteger)" /> method defines the increment operation for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2880,6 +3191,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Increments a <see cref="T:System.Numerics.BigInteger" /> value by 1.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <paramref name="value" /> parameter incremented by 1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to increment.</param>
       </Docs>
@@ -2899,7 +3214,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Inequality(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the inequality operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2919,6 +3233,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a 64-bit signed integer and a <see cref="T:System.Numerics.BigInteger" /> value are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2940,7 +3258,6 @@
         <Parameter Name="right" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Inequality(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the inequality operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -2960,6 +3277,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value and a 64-bit signed integer are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -2981,7 +3302,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Inequality(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the inequality operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3000,6 +3320,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether two <see cref="T:System.Numerics.BigInteger" /> objects have different values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3026,7 +3350,6 @@
         <Parameter Name="right" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Inequality(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the inequality operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3045,6 +3368,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value and a 64-bit unsigned integer are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3071,7 +3398,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Inequality(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the inequality operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3090,6 +3416,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a 64-bit unsigned integer and a <see cref="T:System.Numerics.BigInteger" /> value are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3111,7 +3441,6 @@
         <Parameter Name="shift" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_LeftShift(System.Numerics.BigInteger,System.Int32)" /> method defines the operation of the bitwise left-shift operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3126,6 +3455,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Shifts a <see cref="T:System.Numerics.BigInteger" /> value a specified number of bits to the left.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that has been shifted to the left by the specified number of bits.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value whose bits are to be shifted.</param>
         <param name="shift">
@@ -3147,7 +3480,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_LessThan(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the less than operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3160,6 +3492,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a 64-bit signed integer is less than a <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3181,7 +3517,6 @@
         <Parameter Name="right" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_LessThan(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the less than operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3194,6 +3529,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is less than a 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3215,7 +3554,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_LessThan(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the less than operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3227,6 +3565,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is less than another <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3253,7 +3595,6 @@
         <Parameter Name="right" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_LessThan(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the less than operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3265,6 +3606,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is less than a 64-bit unsigned integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3291,7 +3636,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_LessThan(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the less than operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3303,6 +3647,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a 64-bit unsigned integer is less than a <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3324,7 +3672,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_LessThanOrEqual(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the less than or equal to operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3337,6 +3684,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a 64-bit signed integer is less than or equal to a <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than or equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3358,7 +3709,6 @@
         <Parameter Name="right" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_LessThanOrEqual(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the less than or equal to operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3371,6 +3721,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is less than or equal to a 64-bit signed integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than or equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3392,7 +3746,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_LessThanOrEqual(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the less than or equal to operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3404,6 +3757,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is less than or equal to another <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than or equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3430,7 +3787,6 @@
         <Parameter Name="right" Type="System.UInt64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_LessThanOrEqual(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the less than or equal to operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3442,6 +3798,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a <see cref="T:System.Numerics.BigInteger" /> value is less than or equal to a 64-bit unsigned integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than or equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3468,7 +3828,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_LessThanOrEqual(System.Int64,System.Numerics.BigInteger)" /> method defines the operation of the less than or equal to operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3480,6 +3839,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether a 64-bit unsigned integer is less than or equal to a <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is less than or equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to compare.</param>
         <param name="right">
@@ -3501,7 +3864,6 @@
         <Parameter Name="divisor" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Modulus(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the operation of the modulus operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3513,6 +3875,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the remainder that results from division with two specified <see cref="T:System.Numerics.BigInteger" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The remainder that results from the division.</para>
+        </returns>
         <param name="dividend">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to be divided.</param>
         <param name="divisor">
@@ -3534,7 +3900,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Multiply(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the operation of the multiplication operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3544,6 +3909,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Multiplies two specified <see cref="T:System.Numerics.BigInteger" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The product of <paramref name="left" /> and <paramref name="right" />.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first value to multiply.</param>
         <param name="right">
@@ -3564,7 +3933,6 @@
         <Parameter Name="value" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_OnesComplement(System.Numerics.BigInteger)" /> method defines the operation of the bitwise one's complement operator for <see cref="T:System.Numerics.BigInteger" /> values. The bitwise one's complement operator reverses each bit in a numeric value. That is, bits in <paramref name="value" /> that are 0 are set to 1 in the result, and bits that are 1 are set to 0 in the result. The <see cref="M:System.Numerics.BigInteger.op_OnesComplement(System.Numerics.BigInteger)" /> method enables code such as the following:</para>
@@ -3576,6 +3944,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the bitwise one's complement of a <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The bitwise one's complement of <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer value.</param>
       </Docs>
@@ -3595,7 +3967,6 @@
         <Parameter Name="shift" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_RightShift(System.Numerics.BigInteger,System.Int32)" /> method defines the operation of the bitwise right-shift operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3608,6 +3979,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Shifts a <see cref="T:System.Numerics.BigInteger" /> value a specified number of bits to the right.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that has been shifted to the right by the specified number of bits.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value whose bits are to be shifted.</param>
         <param name="shift">
@@ -3629,7 +4004,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_Subtraction(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method defines the operation of the subtraction operator for <see cref="T:System.Numerics.BigInteger" /> values. It enables code such as the following:</para>
@@ -3640,6 +4014,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts a <see cref="T:System.Numerics.BigInteger" /> value from another <see cref="T:System.Numerics.BigInteger" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of subtracting <paramref name="right" /> from <paramref name="left" />.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to subtract from (the minuend).</param>
         <param name="right">
@@ -3660,7 +4038,6 @@
         <Parameter Name="value" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_UnaryNegation(System.Numerics.BigInteger)" /> method defines the operation of the unary negation operator (or the additive inverse operator) for <see cref="T:System.Numerics.BigInteger" /> values. The operation produces a value that results in 0 (zero) when it is added to the original number. Languages that do not support custom operators can call the <see cref="M:System.Numerics.BigInteger.Negate(System.Numerics.BigInteger)" /> method instead.</para>
@@ -3669,6 +4046,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Negates a specified BigInteger value. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the <paramref name="value" /> parameter multiplied by negative one (-1).</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to negate.</param>
       </Docs>
@@ -3687,7 +4068,6 @@
         <Parameter Name="value" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.op_UnaryPlus(System.Numerics.BigInteger)" /> method defines the operation of the unary positive operator for <see cref="T:System.Numerics.BigInteger" /> values.</para>
@@ -3696,6 +4076,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the <see cref="T:System.Numerics.BigInteger" /> operand. (The sign of the operand is unchanged.)</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <paramref name="value" /> operand.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer value.</param>
       </Docs>
@@ -3714,7 +4098,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="value" /> parameter should be the string representation of a number in the following form.  </para>
@@ -3768,6 +4151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number to its <see cref="T:System.Numerics.BigInteger" /> equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that is equivalent to the number specified in the <paramref name="value" /> parameter.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains the number to convert.</param>
       </Docs>
@@ -3787,7 +4174,6 @@
         <Parameter Name="style" Type="System.Globalization.NumberStyles" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space, the positive or negative sign symbol, the group separator symbol, or the decimal point symbol) that are allowed in the <paramref name="value" /> parameter for the parse operation to succeed. <paramref name="styles" /> must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. The <paramref name="style" /> parameter makes this method overload useful when <paramref name="value" /> contains the string representation of a hexadecimal value, when the number system (decimal or hexadecimal) represented by <paramref name="value" /> is known only at run time, or when you want to disallow white space or a sign symbol in <paramref name="value" />.</para>
@@ -4042,6 +4428,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number in a specified style to its <see cref="T:System.Numerics.BigInteger" /> equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that is equivalent to the number specified in the <paramref name="value" /> parameter.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a number to convert. </param>
         <param name="style">
@@ -4063,7 +4453,6 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="value" /> parameter should be the string representation of a number in the following form:</para>
@@ -4129,6 +4518,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number in a specified culture-specific format to its <see cref="T:System.Numerics.BigInteger" /> equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that is equivalent to the number specified in the <paramref name="value" /> parameter.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a number to convert.</param>
         <param name="provider">
@@ -4151,7 +4544,6 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="style" /> parameter defines the style elements (such as white space, the positive or negative sign symbol, the group separator symbol, or the decimal point symbol) that are allowed in the <paramref name="value" /> parameter for the parse operation to succeed. <paramref name="styles" /> must be a combination of bit flags from the <see cref="T:System.Globalization.NumberStyles" /> enumeration. The <paramref name="style" /> parameter makes this method overload useful when <paramref name="value" /> contains the string representation of a hexadecimal value, when the number system (decimal or hexadecimal) represented by <paramref name="value" /> is known only at run time, or when you want to disallow white space or a sign symbol in <paramref name="value" />.</para>
@@ -4418,6 +4810,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a number in a specified style and culture-specific format to its <see cref="T:System.Numerics.BigInteger" /> equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that is equivalent to the number specified in the <paramref name="value" /> parameter.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that contains a number to convert.</param>
         <param name="style">
@@ -4441,7 +4837,6 @@
         <Parameter Name="exponent" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.Pow(System.Numerics.BigInteger,System.Int32)" /> method returns 1 if the value of the exponent parameter is 0, or if the values of both the <paramref name="value" /> and <paramref name="exponent" /> parameters are 0. If <paramref name="exponent" /> is 1, the <see cref="M:System.Numerics.BigInteger.Pow(System.Numerics.BigInteger,System.Int32)" /> method returns <paramref name="value" />. If <paramref name="value" /> is negative, the method returns a negative result.</para>
@@ -4451,6 +4846,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Raises a <see cref="T:System.Numerics.BigInteger" /> value to the power of a specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of raising <paramref name="value" /> to the <paramref name="exponent" /> power.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The number to raise to the <paramref name="exponent" /> power.</param>
         <param name="exponent">
@@ -4472,7 +4871,6 @@
         <Parameter Name="divisor" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The sign of the remainder is the sign of the <paramref name="dividend" /> parameter.</para>
@@ -4483,6 +4881,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs integer division on two <see cref="T:System.Numerics.BigInteger" /> values and returns the remainder.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The remainder after dividing <paramref name="dividend" /> by <paramref name="divisor" />.</para>
+        </returns>
         <param name="dividend">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to be divided.</param>
         <param name="divisor">
@@ -4526,7 +4928,6 @@
         <Parameter Name="right" Type="System.Numerics.BigInteger" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Languages that do not support custom operators can use the <see cref="M:System.Numerics.BigInteger.Subtract(System.Numerics.BigInteger,System.Numerics.BigInteger)" /> method to perform subtraction using <see cref="T:System.Numerics.BigInteger" /> values. </para>
@@ -4537,6 +4938,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Subtracts one <see cref="T:System.Numerics.BigInteger" /> value from another and returns the result.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of subtracting <paramref name="right" /> from <paramref name="left" />.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to subtract from (the minuend).</param>
         <param name="right">
@@ -4555,7 +4960,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The individual bytes in the array returned by this method appear in little-endian order. That is, the lower-order bytes of the value precede the higher-order bytes. The first byte of the array reflects the first eight bits of the <see cref="T:System.Numerics.BigInteger" /> value, the second byte reflects the next eight bits, and so on. For example, the value 1024, or 0x0400, is stored as the following array of two bytes:</para>
@@ -4598,6 +5002,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a <see cref="T:System.Numerics.BigInteger" /> value to a byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the current <see cref="T:System.Numerics.BigInteger" /> object converted to an array of bytes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -4612,7 +5020,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.ToString" /> method formats a <see cref="T:System.Numerics.BigInteger" /> value in the default ("G", or general) format of the current culture. If you want to specify a different format or culture, use the other overloads of the <see cref="M:System.Numerics.BigInteger.ToString(System.String)" /> method, as follows:</para>
@@ -4678,6 +5085,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of the current <see cref="T:System.Numerics.BigInteger" /> object to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current <see cref="T:System.Numerics.BigInteger" /> value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -4694,7 +5105,6 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.ToString(System.IFormatProvider)" /> method formats a <see cref="T:System.Numerics.BigInteger" /> value in the default ("G", or general) format by using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of a specified culture. If you want to specify a different format or the current culture, use the other overloads of the <see cref="M:System.Numerics.BigInteger.ToString(System.String)" /> method, as follows:</para>
@@ -4772,6 +5182,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of the current <see cref="T:System.Numerics.BigInteger" /> object to its equivalent string representation by using the specified culture-specific formatting information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current <see cref="T:System.Numerics.BigInteger" /> value in the format specified by the <paramref name="provider" /> parameter.</para>
+        </returns>
         <param name="provider">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that supplies culture-specific formatting information.</param>
       </Docs>
@@ -4790,7 +5204,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.ToString(System.String)" /> method formats a <see cref="T:System.Numerics.BigInteger" /> value in a specified format by using a <see cref="T:System.Globalization.NumberFormatInfo" /> object that represents the conventions of the current culture. If you want to use the default ("G", or general) format or specify a different culture, use the other overloads of the <see cref="M:System.Numerics.BigInteger.ToString(System.String)" /> method, as follows:</para>
@@ -4867,6 +5280,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of the current <see cref="T:System.Numerics.BigInteger" /> object to its equivalent string representation by using the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current <see cref="T:System.Numerics.BigInteger" /> value in the format specified by the <paramref name="format" /> parameter.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A standard or custom numeric format string.</param>
       </Docs>
@@ -4886,7 +5303,6 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Numerics.BigInteger.ToString(System.String,System.IFormatProvider)" /> method formats a <see cref="T:System.Numerics.BigInteger" /> value in a specified format by using the <see cref="T:System.Globalization.NumberFormatInfo" /> object of a specified culture. If you want to use default format or culture settings, use the other overloads of the <see cref="M:System.Numerics.BigInteger.ToString(System.String)" /> method, as follows:</para>
@@ -4974,6 +5390,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the numeric value of the current <see cref="T:System.Numerics.BigInteger" /> object to its equivalent string representation by using the specified format and culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the current <see cref="T:System.Numerics.BigInteger" /> value as specified by the <paramref name="format" /> and <paramref name="provider" /> parameters.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A standard or custom numeric format string.</param>
         <param name="provider">

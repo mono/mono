@@ -76,7 +76,6 @@
         <Parameter Name="viewPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -86,6 +85,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> object that the data-bound control uses to perform data operations.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> object that the data-bound control uses to perform data operations. </para>
+        </returns>
         <param name="viewPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The hierarchical path of the view to retrieve.</param>
       </Docs>
@@ -101,7 +104,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -111,6 +113,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the <see cref="T:System.Web.UI.IHierarchicalDataSource" /> that the data-bound control is associated with, if any.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.IHierarchicalDataSource" /> instance that represents the data source identified by the <see cref="P:System.Web.UI.WebControls.DataBoundControl.DataSourceID" /> property. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

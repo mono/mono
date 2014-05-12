@@ -340,7 +340,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>No conversions are performed. Therefore, the data retrieved must already be a Boolean; otherwise an exception is generated.</para>
@@ -349,6 +348,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the specified column as a Boolean.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
@@ -367,12 +370,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'byte'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the 8-bit unsigned integer value of the specified column.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 8-bit unsigned integer value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
@@ -395,7 +401,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -407,6 +412,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a stream of bytes from the specified column offset into the buffer as an array, starting at the given buffer offset.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of bytes read.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
         <param name="fieldOffset">
@@ -433,12 +442,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'char'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the character value of the specified column.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The character value of the specified column.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
       </Docs>
@@ -461,7 +473,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -473,6 +484,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a stream of characters from the specified column offset into the buffer as an array, starting at the given buffer offset.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters read.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based column ordinal. </param>
         <param name="fieldoffset">
@@ -499,12 +514,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IDataReader'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Data.IDataReader" /> for the specified column ordinal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.IDataReader" /> for the specified column ordinal.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -523,7 +541,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The data type information can differ from the type information returned by GetFieldType, especially where the underlying data types do not map one for one to the runtime types supported by the language. (for example, DataTypeName may be "integer", while Type.Name may be "Int32".) </para>
@@ -532,6 +549,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the data type information for the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The data type information for the specified field.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -550,12 +571,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the date and time data value of the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date and time data value of the specified field.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -574,12 +598,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'decimal'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the fixed-position numeric value of the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The fixed-position numeric value of the specified field.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -598,12 +625,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'double'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the double-precision floating point number of the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The double-precision floating point number of the specified field.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -622,7 +652,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This information can be used to increase performance by indicating the strongly-typed accessor to call. (for example, using GetInt32 is roughly ten times faster than using GetValue.) </para>
@@ -631,6 +660,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Type" /> information corresponding to the type of <see cref="T:System.Object" /> that would be returned from <see cref="M:System.Data.IDataRecord.GetValue(System.Int32)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> information corresponding to the type of <see cref="T:System.Object" /> that would be returned from <see cref="M:System.Data.IDataRecord.GetValue(System.Int32)" />.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -649,12 +682,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the single-precision floating point number of the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single-precision floating point number of the specified field.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -673,12 +709,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Guid'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the GUID value of the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The GUID value of the specified field.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -697,12 +736,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'short'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the 16-bit signed integer value of the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 16-bit signed integer value of the specified field.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -721,12 +763,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the 32-bit signed integer value of the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 32-bit signed integer value of the specified field.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -745,12 +790,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the 64-bit signed integer value of the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 64-bit signed integer value of the specified field.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -769,12 +817,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name for the field to find.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the field or the empty string (""), if there is no value to return.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -793,7 +844,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>GetOrdinal performs a case-sensitive lookup first. If it fails, a second case-insensitive search is made. GetOrdinal is kana-width insensitive. If the index of the named field is not found, an IndexOutOfRangeException is thrown. </para>
@@ -803,6 +853,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Return the index of the named field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the named field.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the field to find. </param>
       </Docs>
@@ -821,12 +875,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the string value of the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string value of the specified field.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -845,12 +902,15 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Return the value of the specified field.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> which will contain the field value upon return.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>
@@ -869,7 +929,6 @@
         <Parameter Name="values" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For most applications, the <see cref="M:System.Data.IDataRecord.GetValues(System.Object[])" /> method provides an efficient means for retrieving all columns, instead of retrieving each column individually.</para>
@@ -879,6 +938,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Populates an array of objects with the column values of the current record.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of instances of <see cref="T:System.Object" /> in the array.</para>
+        </returns>
         <param name="values">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Object" /> to copy the attribute fields into. </param>
       </Docs>
@@ -897,7 +960,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call this method to see if there are null column values before calling the typed get methods (for example, <see cref="M:System.Data.SqlClient.SqlDataReader.GetByte(System.Int32)" />, <see cref="M:System.Data.SqlClient.SqlDataReader.GetChar(System.Int32)" />, and so on) to avoid raising an error.</para>
@@ -906,6 +968,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Return whether the specified field is set to null.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified field is set to null; otherwise, false.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the field to find. </param>
       </Docs>

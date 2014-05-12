@@ -163,7 +163,6 @@
         <Parameter Name="parameters" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Collections.Generic.IDictionary{System.String,System.String}" /> parameter contains a collection of parameter name and value pairs. The parameters are matched up against the variables within the template by a case-insensitive comparison.</para>
@@ -178,6 +177,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new URI from the template and the collection of parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A URI.</para>
+        </returns>
         <param name="baseAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The base address.</param>
         <param name="parameters">
@@ -199,7 +202,6 @@
         <Parameter Name="parameters" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Collections.Specialized.NameValueCollection" /> parameter contains a collection of parameter name/value pairs. The parameters are matched up against the variables within the template by a case-insensitive comparison. Values passed in this collection are escaped.</para>
@@ -214,6 +216,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new URI from the template and the collection of parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance.</para>
+        </returns>
         <param name="baseAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The base address.</param>
         <param name="parameters">
@@ -236,12 +242,15 @@
         <Parameter Name="omitDefaults" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new URI from the template and the collection of parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A URI.</para>
+        </returns>
         <param name="baseAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />A URI that contains the base address.</param>
         <param name="parameters">
@@ -266,12 +275,15 @@
         <Parameter Name="omitDefaults" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new URI from the template and the collection of parameters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A URI.</para>
+        </returns>
         <param name="baseAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The base address.</param>
         <param name="parameters">
@@ -301,7 +313,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The parameter values are bound by position left to right. The first parameter value replaces the first variable found in the template, the second parameter value replaces the second variable, and so on. Variables passed to this method are escaped.</para>
@@ -323,6 +334,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new URI from the template and an array of parameter values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Uri" /> instance.</para>
+        </returns>
         <param name="baseAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> that contains the base address.</param>
         <param name="values">
@@ -381,7 +396,6 @@
         <Parameter Name="other" Type="System.UriTemplate" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Two <see cref="T:System.UriTemplate" /> instances are equivalent if their literal strings are identical and the variables appear in the same segments. For example "weather/{state}/{city}" is equivalent to "weather/{country}/{village}".</para>
@@ -390,6 +404,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a <see cref="T:System.UriTemplate" /> is structurally equivalent to another.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.UriTemplate" /> is structurally equivalent to another; otherwise false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.UriTemplate" /> to compare.</param>
       </Docs>
@@ -409,7 +427,6 @@
         <Parameter Name="candidate" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the match is successful the <see cref="T:System.UriTemplateMatch" /> is populated with the URI segments, variable values, query string values, and wildcard segments from the candidate URI. If the match is unsuccessful, null is returned.</para>
@@ -418,6 +435,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to match a <see cref="T:System.URI" /> to a <see cref="T:System.UriTemplate" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance.</para>
+        </returns>
         <param name="baseAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The base address.</param>
         <param name="candidate">
@@ -480,12 +501,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the <see cref="T:System.UriTemplate" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The representation of the <see cref="T:System.UriTemplate" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

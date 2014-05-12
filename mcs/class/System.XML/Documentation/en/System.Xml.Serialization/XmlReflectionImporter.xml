@@ -173,7 +173,6 @@
         <Parameter Name="hasWrapperElement" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlMembersMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.XmlReflectionImporter.ImportMembersMapping(System.String,System.String,System.Xml.Serialization.XmlReflectionMember[],System.Boolean)" /> method is called while initializing a Web service or client, or reflecting a Web service. It is not necessary to call it directly.</para>
@@ -197,6 +196,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mappings for information from a Web service method. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> with mappings to the element parts of a WSDL message definition.</para>
+        </returns>
         <param name="elementName">
           <attribution license="cc4" from="Microsoft" modified="false" />An XML element name produced from the Web service method.</param>
         <param name="ns">
@@ -226,13 +229,16 @@
         <Parameter Name="rpc" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns internal type mappings using information from a Web service method, and allows you to specify an XML element name, XML namespace, and other options.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> that contains the mappings.</para>
+        </returns>
         <param name="elementName">
           <attribution license="cc4" from="Microsoft" modified="false" />An XML element name produced from the Web service method.</param>
         <param name="ns">
@@ -265,13 +271,16 @@
         <Parameter Name="openModel" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns internal type mappings using information from a Web service method, and allows you to specify an XML element name, XML namespace, and other options.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> that contains the mappings.</para>
+        </returns>
         <param name="elementName">
           <attribution license="cc4" from="Microsoft" modified="false" />An XML element name produced from the Web service method.</param>
         <param name="ns">
@@ -307,13 +316,16 @@
         <Parameter Name="access" Type="System.Xml.Serialization.XmlMappingAccess" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mappings for information from a Web service method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> that contains the mappings.</para>
+        </returns>
         <param name="elementName">
           <attribution license="cc4" from="Microsoft" modified="false" />An XML element name produced from the Web service method.</param>
         <param name="ns">
@@ -346,7 +358,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlTypeMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>It is not necessary to call the <see cref="M:System.Xml.Serialization.XmlReflectionImporter.ImportTypeMapping(System.Type)" /> method directly.</para>
@@ -355,6 +366,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a mapping to an XML Schema element for a specified .NET Framework type. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internal .NET Framework mapping of a type to an XML Schema element.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The .NET Framework type for which to generate a type mapping.</param>
       </Docs>
@@ -376,7 +391,6 @@
         <Parameter Name="defaultNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlTypeMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>It is not necessary to call the <see cref="M:System.Xml.Serialization.XmlReflectionImporter.ImportTypeMapping(System.Type,System.String)" /> method directly.</para>
@@ -385,6 +399,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a mapping to an XML Schema element for a .NET Framework type, using the specified type and namespace. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Internal .NET Framework mapping of a type to an XML Schema element.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The .NET Framework type for which to generate a type mapping.</param>
         <param name="defaultNamespace">
@@ -408,7 +426,6 @@
         <Parameter Name="root" Type="System.Xml.Serialization.XmlRootAttribute" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlTypeMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>It is not necessary to call the <see cref="M:System.Xml.Serialization.XmlReflectionImporter.ImportTypeMapping(System.Type,System.Xml.Serialization.XmlRootAttribute)" /> method directly.</para>
@@ -417,6 +434,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a mapping to an XML Schema element for a .NET Framework type, using the specified type and attribute. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> that represents a mapping of a .NET Framework type to an XML Schema element.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The .NET Framework type for which to generate a type mapping.</param>
         <param name="root">
@@ -441,7 +462,6 @@
         <Parameter Name="defaultNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlTypeMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>It is not necessary to call the <see cref="M:System.Xml.Serialization.XmlReflectionImporter.ImportTypeMapping(System.Type,System.Xml.Serialization.XmlRootAttribute,System.String)" /> method directly.</para>
@@ -450,6 +470,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a mapping to an XML Schema element for a .NET Framework type, using the specified type, attribute, and namespace. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> that contains the internal .NET Framework mapping of a type to an XML Schema element.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The .NET Framework type for which to generate a type mapping.</param>
         <param name="root">

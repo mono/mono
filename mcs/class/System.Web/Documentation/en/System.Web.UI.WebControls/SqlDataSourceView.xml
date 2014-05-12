@@ -309,7 +309,6 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -319,6 +318,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a delete operation using the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.DeleteCommand" /> SQL string, any parameters that are specified in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.DeleteParameters" /> collection, and the values that are in the specified <paramref name="keys" /> and <paramref name="oldValues" /> collections.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows deleted from the underlying database.</para>
+        </returns>
         <param name="keys">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> of object or row key values for the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.ExecuteDelete(System.Collections.IDictionary,System.Collections.IDictionary)" /> operation to delete.</param>
         <param name="oldValues">
@@ -466,7 +469,6 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -479,6 +481,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a delete operation using the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.DeleteCommand" /> SQL string, any parameters that are specified in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.DeleteParameters" /> collection, and the values that are in the specified <paramref name="keys" /> and <paramref name="oldValues" /> collections.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows deleted from the underlying database.</para>
+        </returns>
         <param name="keys">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> of object or row key values for the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.ExecuteDelete(System.Collections.IDictionary,System.Collections.IDictionary)" /> operation to delete.</param>
         <param name="oldValues">
@@ -498,7 +504,6 @@
         <Parameter Name="values" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -510,6 +515,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs an insert operation using the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.InsertCommand" /> SQL string, any parameters that are specified in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.InsertParameters" /> collection, and the values that are in the specified <paramref name="values" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows inserted into the underlying database.</para>
+        </returns>
         <param name="values">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> of values used with the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.InsertCommand" /> property to perform the insert database operation. If there are no parameters associated with the query or if the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.InsertCommand" /> property is not a parameterized SQL query, pass null.</param>
       </Docs>
@@ -530,7 +539,6 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> class implements the inherited <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method to retrieve data from a database. Page developers and data-bound control authors do not call the <see cref="M:System.Web.UI.WebControls.SqlDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method directly; instead, use the publicly exposed <see cref="M:System.Web.UI.WebControls.SqlDataSource.Select(System.Web.UI.DataSourceSelectArguments)" /> method.</para>
@@ -547,6 +555,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves data from the underlying database using the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectCommand" /> SQL string and any parameters that are in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectParameters" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of data rows.</para>
+        </returns>
         <param name="arguments">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> object used to request operations on the data beyond basic data retrieval.</param>
       </Docs>
@@ -563,7 +575,6 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -576,6 +587,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs an update operation using the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.UpdateCommand" /> SQL string, any parameters that are in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.UpdateParameters" /> collection, and the values that are in the specified <paramref name="keys" />, <paramref name="values" />, and <paramref name="oldValues" /> collections.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows updated in the underlying database.</para>
+        </returns>
         <param name="keys">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> of primary keys to use with the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.UpdateCommand" /> property to perform the update database operation. If there are no keys associated with the query or if the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.UpdateCommand" /> property is not a parameterized SQL query, pass null.</param>
         <param name="values">
@@ -686,7 +701,6 @@
         <Parameter Name="values" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -696,6 +710,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs an insert operation using the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.InsertCommand" /> SQL string, any parameters that are specified in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.InsertParameters" /> collection, and the values that are in the specified <paramref name="values" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows inserted into the underlying database.</para>
+        </returns>
         <param name="values">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> of parameters for the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.InsertCommand" /> property to use to perform the insert database operation. If there are no parameters associated with the query or if the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.InsertCommand" /> is not a parameterized SQL query, pass null. </param>
       </Docs>
@@ -1177,7 +1195,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1189,6 +1206,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves the changes to the view state for the  <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> control since the time that the page was posted back to the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that contains the changes to the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> view state; otherwise, null, if there is no view state associated with the object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1204,7 +1225,6 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1215,6 +1235,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves data from the underlying database using the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectCommand" /> SQL string and any parameters that are in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.SelectParameters" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of data rows.</para>
+        </returns>
         <param name="arguments">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> used to request operations on the data beyond basic data retrieval.</param>
       </Docs>
@@ -1419,7 +1443,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> instance is cast to the <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
@@ -1428,6 +1451,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Web.UI.IStateManager.SaveViewState" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that contains the changes to the <see cref="T:System.Web.UI.WebControls.SqlDataSourceView" /> view state; otherwise, null, if there is no view state associated with the object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -1482,7 +1509,6 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1492,6 +1518,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs an update operation using the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.UpdateCommand" /> SQL string, any parameters that are in the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.UpdateParameters" /> collection, and the values that are in the specified <paramref name="keys" />, <paramref name="values" />, and <paramref name="oldValues" /> collections.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value that represents the number of rows updated in the underlying database.</para>
+        </returns>
         <param name="keys">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> of primary keys to use with the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.UpdateCommand" /> property to perform the update database operation. If there are no keys associated with the query or if the <see cref="P:System.Web.UI.WebControls.SqlDataSourceView.UpdateCommand" /> is not a parameterized SQL query, pass null.</param>
         <param name="values">

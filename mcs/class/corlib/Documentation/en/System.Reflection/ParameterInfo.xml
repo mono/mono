@@ -238,7 +238,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method ignores the <paramref name="inherit" /> parameter. To search the inheritance chain for attributes on parameters, use the appropriate overloads of the <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.Assembly)" /> method. </para>
@@ -247,6 +246,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets all the custom attributes defined on this parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains all the custom attributes applied to this parameter.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />This argument is ignored for objects of this type. See Remarks.</param>
       </Docs>
@@ -268,7 +271,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method ignores the <paramref name="inherit" /> parameter. To search the inheritance chain for attributes on parameters, use the appropriate overloads of the <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.Assembly)" /> method. </para>
@@ -277,6 +279,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the custom attributes of the specified type or its derived types that are applied to this parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the custom attributes of the specified type or its derived types.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The custom attributes identified by type. </param>
         <param name="inherit">
@@ -295,7 +301,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to examine the custom attributes of code in the reflection-only context, in cases where the custom attributes themselves are defined in code that is loaded into the reflection-only context. Methods such as <see cref="Overload:System.Attribute.GetCustomAttributes" /> and <see cref="Overload:System.Reflection.ParameterInfo.GetCustomAttributes" /> cannot be used in such cases, because they create instances of the attributes. Code in the reflection-only context cannot be executed. For more information and example code, see the <see cref="T:System.Reflection.CustomAttributeData" /> class.</para>
@@ -304,6 +309,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a list of <see cref="T:System.Reflection.CustomAttributeData" /> objects for the current parameter, which can be used in the reflection-only context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic list of <see cref="T:System.Reflection.CustomAttributeData" /> objects representing data about the attributes that have been applied to the current parameter.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOptionalCustomModifiers">
@@ -319,7 +328,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -329,6 +337,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the optional custom modifiers of the parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that identify the optional custom modifiers of the current parameter, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsImplicitlyDereferenced" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRequiredCustomModifiers">
@@ -344,7 +356,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -354,6 +365,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the required custom modifiers of the parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects that identify the required custom modifiers of the current parameter, such as <see cref="T:System.Runtime.CompilerServices.IsConst" /> or <see cref="T:System.Runtime.CompilerServices.IsImplicitlyDereferenced" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasDefaultValue">
@@ -392,7 +407,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method ignores the <paramref name="inherit" /> parameter. To search the inheritance chain for attributes on parameters, use the appropriate overloads of the <see cref="M:System.Attribute.IsDefined(System.Reflection.MemberInfo,System.Type,System.Boolean)" /> method. </para>
@@ -401,6 +415,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the custom attribute of the specified type or its derived types is applied to this parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more instances of <paramref name="attributeType" /> or its derived types are applied to this parameter; otherwise, false.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The Type object to search for. </param>
         <param name="inherit">
@@ -909,12 +927,15 @@ instance.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parameter type and name represented as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the type and the name of the parameter.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

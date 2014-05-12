@@ -36,7 +36,6 @@
         <Parameter Name="source" Type="System.Xml.Linq.XAttribute" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <see cref="T:System.Xml.Schema.IXmlSchemaInfo" /> returned by this method to determine certain characteristics of a validated attribute. For example, you can determine if the attribute came from a default attribute value in an XSD.</para>
@@ -47,6 +46,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the post-schema-validation infoset (PSVI) of a validated attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.Schema.IXmlSchemaInfo" /> that contains the post-schema-validation infoset for an <see cref="T:System.Xml.Linq.XAttribute" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XAttribute" /> that has been previously validated.</param>
       </Docs>
@@ -65,7 +68,6 @@
         <Parameter Name="source" Type="System.Xml.Linq.XElement" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <see cref="T:System.Xml.Schema.IXmlSchemaInfo" /> returned by this method to determine certain characteristics of a validated element. For example, you can determine the dynamic schema type of the element.</para>
@@ -76,6 +78,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the post-schema-validation infoset (PSVI) of a validated element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.Schema.IXmlSchemaInfo" /> that contains the post-schema-validation infoset (PSVI) for an <see cref="T:System.Xml.Linq.XElement" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XElement" /> that has been previously validated.</param>
       </Docs>

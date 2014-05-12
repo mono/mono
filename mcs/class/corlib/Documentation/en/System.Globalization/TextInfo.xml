@@ -81,7 +81,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -91,6 +90,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new object that is a copy of the current <see cref="T:System.Globalization.TextInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Object" /> that is the memberwise clone of the current <see cref="T:System.Globalization.TextInfo" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CultureName">
@@ -161,7 +164,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.Equals(System.Object)" />.</para>
@@ -170,6 +172,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object represents the same writing system as the current <see cref="T:System.Globalization.TextInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> represents the same writing system as the current <see cref="T:System.Globalization.TextInfo" />; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current <see cref="T:System.Globalization.TextInfo" />. </param>
       </Docs>
@@ -188,7 +194,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.GetHashCode" />.</para>
@@ -198,6 +203,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serves as a hash function for the current <see cref="T:System.Globalization.TextInfo" />, suitable for hashing algorithms and data structures, such as a hash table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Globalization.TextInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -377,13 +386,18 @@
         <Parameter Name="textInfo" Type="System.Globalization.TextInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a read-only version of the specified <see cref="T:System.Globalization.TextInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Globalization.TextInfo" /> object specified by the <paramref name="textInfo" /> parameter, if <paramref name="textInfo" /> is read-only.</para>
+          <para>-or-</para>
+          <para>A read-only memberwise clone of the <see cref="T:System.Globalization.TextInfo" /> object specified by <paramref name="textInfo" />, if <paramref name="textInfo" /> is not read-only.</para>
+        </returns>
         <param name="textInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.TextInfo" /> object.</param>
       </Docs>
@@ -429,7 +443,6 @@
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'char'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Casing semantics depend on the culture in use. For the invariant culture, the casing semantics are not culture-sensitive. For a specific culture, the casing semantics are sensitive to that culture.</para>
@@ -440,6 +453,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified character to lowercase.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified character converted to lowercase.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to convert to lowercase. </param>
       </Docs>
@@ -460,7 +477,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned string might differ in length from the input string. For more information on casing, refer to the Unicode Technical Report #21 "Case Mappings," published by the Unicode Consortium (http://www.unicode.org). The current implementation preserves the length of the string. However, this behavior is not guaranteed and could change in future implementations.</para>
@@ -472,6 +488,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string to lowercase.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified string converted to lowercase.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to convert to lowercase. </param>
       </Docs>
@@ -490,7 +510,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.ToString" />.</para>
@@ -499,6 +518,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the current <see cref="T:System.Globalization.TextInfo" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Globalization.TextInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToTitleCase">
@@ -517,7 +540,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generally, title casing converts the first character of a word to uppercase and the rest of the characters to lowercase. However, this method does not currently provide proper casing to convert a word that is entirely uppercase, such as an acronym. The following table shows the way the method renders several strings.</para>
@@ -588,6 +610,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string to title case (except for words that are entirely in uppercase, which are considered to be acronyms)..</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified string converted to title case.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to convert to title case. </param>
       </Docs>
@@ -608,7 +634,6 @@
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'char'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Casing semantics depend on the culture in use. For the invariant culture, the casing semantics are not culture-sensitive. For a specific culture, the casing semantics are sensitive to that culture.</para>
@@ -619,6 +644,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified character to uppercase.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified character converted to uppercase.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to convert to uppercase. </param>
       </Docs>
@@ -639,7 +668,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned string might differ in length from the input string. For more information on casing, refer to the Unicode Technical Report #21 "Case Mappings," published by the Unicode Consortium (http://www.unicode.org). The current implementation preserves the length of the string. However, this behavior is not guaranteed and could change in future implementations.</para>
@@ -651,6 +679,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified string to uppercase.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified string converted to uppercase.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to convert to uppercase. </param>
       </Docs>

@@ -2079,7 +2079,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="F:System.Windows.Forms.Keys.Up" />, <see cref="F:System.Windows.Forms.Keys.Down" />, <see cref="F:System.Windows.Forms.Keys.Right" />, and <see cref="F:System.Windows.Forms.Keys.Left" /> key values will return false; otherwise, processing is passed to the base class's <see cref="M:System.Windows.Forms.Form.ProcessDialogKey(System.Windows.Forms.Keys)" /> method.</para>
@@ -2088,6 +2087,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a key should be processed further.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true to indicate the key should be processed; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values. </param>
       </Docs>
@@ -2105,12 +2108,15 @@
         <Parameter Name="forward" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the TAB key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true to indicate the TAB key was successfully processed; otherwise, false.</para>
+        </returns>
         <param name="forward">
           <attribution license="cc4" from="Microsoft" modified="false" />true to cycle forward through the controls in the form; otherwise, false.</param>
       </Docs>

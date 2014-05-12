@@ -35,12 +35,15 @@
         <Parameter Name="origin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an export definition from the specified member, with the specified contract name, metadata, and origin.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An export definition created from the specified parameters.</para>
+        </returns>
         <param name="exportingMember">
           <attribution license="cc4" from="Microsoft" modified="false" />The member to export.</param>
         <param name="contractName">
@@ -71,12 +74,15 @@
         <Parameter Name="origin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an import definition for the specified parameter by using the specified contract name, type identity, import metadata, cardinality, and creation policy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An import definition created from the specified parameters.</para>
+        </returns>
         <param name="parameter">
           <attribution license="cc4" from="Microsoft" modified="false" />The parameter to import.</param>
         <param name="contractName">
@@ -114,12 +120,15 @@
         <Parameter Name="origin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an import definition for the specified member by using the specified contract name, type identity, import metadata, cardinality, recomposition policy, and creation policy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An import definition created from the specified parameters.</para>
+        </returns>
         <param name="importingMember">
           <attribution license="cc4" from="Microsoft" modified="false" />The member to import into.</param>
         <param name="contractName">
@@ -160,12 +169,15 @@
         <Parameter Name="origin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an import definition for the specified parameter by using the specified contract name, type identity, import and contract metadata, cardinality, and creation policy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An import definition created from the specified parameters.</para>
+        </returns>
         <param name="parameter">
           <attribution license="cc4" from="Microsoft" modified="false" />The parameter to import.</param>
         <param name="contractName">
@@ -209,12 +221,15 @@
         <Parameter Name="origin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an import definition for the specified member by using the specified contract name, type identity, import and contract metadata, cardinality, recomposition policy, and creation policy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An import definition created from the specified parameters.</para>
+        </returns>
         <param name="importingMember">
           <attribution license="cc4" from="Microsoft" modified="false" />The member to import into.</param>
         <param name="contractName">
@@ -261,12 +276,15 @@
         <Parameter Name="origin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an import definition for the specified member by using the specified contract name, type identity, import and contract metadata, cardinality, recomposition policy, and creation policy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An import definition created from the specified parameters.</para>
+        </returns>
         <param name="importingMember">
           <attribution license="cc4" from="Microsoft" modified="false" />The member to import into.</param>
         <param name="contractName">
@@ -310,12 +328,15 @@
         <Parameter Name="origin" Type="System.ComponentModel.Composition.Primitives.ICompositionElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a part definition with the specified part type, imports, exports, metadata, and origin.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A part definition created from the specified parameters.</para>
+        </returns>
         <param name="partType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the part.</param>
         <param name="isDisposalRequired">
@@ -344,12 +365,15 @@
         <Parameter Name="importDefinition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a representation of an import definition as an export factory product.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The representation of the import definition.</para>
+        </returns>
         <param name="importDefinition">
           <attribution license="cc4" from="Microsoft" modified="false" />The import definition to represent.</param>
       </Docs>
@@ -368,12 +392,15 @@
         <Parameter Name="exportDefinition" Type="System.ComponentModel.Composition.Primitives.ExportDefinition" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the exporting member from a specified export definition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The member specified in the export definition.</para>
+        </returns>
         <param name="exportDefinition">
           <attribution license="cc4" from="Microsoft" modified="false" />The export definition to examine.</param>
       </Docs>
@@ -392,12 +419,15 @@
         <Parameter Name="importDefinition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the importing member from a specified import definition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The member specified in the import definition.</para>
+        </returns>
         <param name="importDefinition">
           <attribution license="cc4" from="Microsoft" modified="false" />The import definition to examine.</param>
       </Docs>
@@ -416,12 +446,15 @@
         <Parameter Name="importDefinition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the importing parameter from a specified import definition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parameter specified in the import definition.</para>
+        </returns>
         <param name="importDefinition">
           <attribution license="cc4" from="Microsoft" modified="false" />The import definition to examine.</param>
       </Docs>
@@ -440,12 +473,15 @@
         <Parameter Name="partDefinition" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type of a part from a specified part definition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the defined part.</para>
+        </returns>
         <param name="partDefinition">
           <attribution license="cc4" from="Microsoft" modified="false" />The part definition to examine.</param>
       </Docs>
@@ -464,12 +500,15 @@
         <Parameter Name="partDefinition" Type="System.ComponentModel.Composition.Primitives.ComposablePartDefinition" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified part requires disposal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the part requires disposal; otherwise, false.</para>
+        </returns>
         <param name="partDefinition">
           <attribution license="cc4" from="Microsoft" modified="false" />The part to examine.</param>
       </Docs>
@@ -488,12 +527,15 @@
         <Parameter Name="importDefinition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified import definition represents an export factory (<see cref="T:System.ComponentModel.Composition.ExportFactory`1" /> or <see cref="T:System.ComponentModel.Composition.ExportFactory`2" /> object).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified import definition represents an export factory; otherwise, false.</para>
+        </returns>
         <param name="importDefinition">
           <attribution license="cc4" from="Microsoft" modified="false" />The import definition to check.</param>
       </Docs>
@@ -512,12 +554,15 @@
         <Parameter Name="importDefinition" Type="System.ComponentModel.Composition.Primitives.ImportDefinition" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an import definition represents a member or a parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the import definition represents a parameter; otherwise, false.</para>
+        </returns>
         <param name="importDefinition">
           <attribution license="cc4" from="Microsoft" modified="false" />The import definition to examine.</param>
       </Docs>

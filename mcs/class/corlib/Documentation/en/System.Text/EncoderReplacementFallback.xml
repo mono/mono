@@ -86,13 +86,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Text.EncoderFallbackBuffer" /> object that is initialized with the replacement string of this <see cref="T:System.Text.EncoderReplacementFallback" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Text.EncoderFallbackBuffer" /> object equal to this <see cref="T:System.Text.EncoderReplacementFallback" /> object. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultString">
@@ -131,7 +134,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -141,6 +143,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the value of a specified object is equal to the <see cref="T:System.Text.EncoderReplacementFallback" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter specifies an <see cref="T:System.Text.EncoderReplacementFallback" /> object and the replacement string of that object is equal to the replacement string of this <see cref="T:System.Text.EncoderReplacementFallback" /> object; otherwise, false. </para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Text.EncoderReplacementFallback" /> object.</param>
       </Docs>
@@ -158,7 +164,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -168,6 +173,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the hash code for the value of the <see cref="T:System.Text.EncoderReplacementFallback" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of the value of the object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MaxCharCount">

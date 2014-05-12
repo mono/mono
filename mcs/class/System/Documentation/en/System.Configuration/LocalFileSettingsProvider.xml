@@ -98,7 +98,6 @@
         <Parameter Name="property" Type="System.Configuration.SettingsProperty" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -108,6 +107,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the value of the named settings property for the previous version of the same application. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.SettingsPropertyValue" /> representing the application setting if found; otherwise, null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.SettingsContext" /> that describes where the application settings property is used.</param>
         <param name="property">
@@ -135,7 +138,6 @@
         <Parameter Name="properties" Type="System.Configuration.SettingsPropertyCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -149,6 +151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of setting property values for the specified application instance and settings property group.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Configuration.SettingsPropertyValueCollection" /> containing the values for the specified settings property group.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Configuration.SettingsContext" /> describing the current application usage.</param>
         <param name="properties">

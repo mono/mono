@@ -32,12 +32,15 @@
         <Parameter Name="composablePartCatalog" Type="System.ComponentModel.Composition.Primitives.ComposablePartCatalog" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new composition service by using the specified catalog as a source for exports.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new composition service.</para>
+        </returns>
         <param name="composablePartCatalog">
           <attribution license="cc4" from="Microsoft" modified="false" />The catalog that will provide exports.</param>
       </Docs>

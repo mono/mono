@@ -50,13 +50,16 @@
         <Parameter Name="section" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="System.Collections.Specialized.NameValueCollection" /> expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new expression.</para>
+        </returns>
         <param name="parent">
           <attribution license="cc4" from="Microsoft" modified="false" />This type supports the .NET Framework infrastructure and is not intended to be used directly from your code.</param>
         <param name="configContext">

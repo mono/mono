@@ -70,7 +70,6 @@
         <Parameter Name="deep" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>CloneNode serves as a copy constructor for nodes. For processing instruction nodes, the cloned node always includes the target and data. To see how this method behaves with other node types, see the <see cref="M:System.Xml.XmlNode.CloneNode(System.Boolean)" /> method in the XmlNode class.</para>
@@ -80,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplicate of this node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The duplicate node.</para>
+        </returns>
         <param name="deep">
           <attribution license="cc4" from="Microsoft" modified="false" />true to recursively clone the subtree under the specified node; false to clone only the node itself. </param>
       </Docs>

@@ -45,7 +45,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -58,6 +57,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessible object for the <see cref="T:System.Windows.Forms.DataGridViewTopLeftHeaderCell" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.DataGridViewTopLeftHeaderCell.DataGridViewTopLeftHeaderCellAccessibleObject" /> for the <see cref="T:System.Windows.Forms.DataGridViewTopLeftHeaderCell" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -75,7 +78,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -86,6 +88,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the bounding rectangle that encloses the cell's content area, which is calculated using the specified <see cref="T:System.Drawing.Graphics" /> object and cell style.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Rectangle" /> that bounds the cell's contents.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />The graphics context for the cell.</param>
         <param name="cellStyle">
@@ -109,7 +115,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -120,6 +125,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the bounding rectangle that encloses the cell's error icon, if one is displayed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Rectangle" /> that bounds the cell's error icon, if one is displayed; otherwise, <see cref="F:System.Drawing.Rectangle.Empty" />.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />The graphics context for the cell.</param>
         <param name="cellStyle">
@@ -144,7 +153,6 @@
         <Parameter Name="constraintSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -154,6 +162,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the preferred size, in pixels, of the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> that represents the preferred size, in pixels, of the cell.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> used to draw the cell.</param>
         <param name="cellStyle">
@@ -255,13 +267,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the string representation of the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current cell.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

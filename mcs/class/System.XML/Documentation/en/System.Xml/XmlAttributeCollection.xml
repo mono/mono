@@ -45,7 +45,6 @@
         <Parameter Name="node" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If an attribute with the same name is already present in the collection, the original attribute is removed from the collection and <paramref name="node" /> is added to the end of the collection.</para>
@@ -55,6 +54,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the specified attribute as the last node in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlAttribute to append to the collection.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> to insert. </param>
       </Docs>
@@ -107,7 +110,6 @@
         <Parameter Name="refNode" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If an attribute with the same name is already present in the collection, the original attribute is removed from the collection and <paramref name="newNode" /> is inserted into the collection. If <paramref name="refNode" /> is null, <paramref name="newNode" /> is inserted at the beginning of the collection.</para>
@@ -117,6 +119,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the specified attribute immediately after the specified reference attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlAttribute to insert into the collection.</para>
+        </returns>
         <param name="newNode">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> to insert. </param>
         <param name="refNode">
@@ -140,7 +146,6 @@
         <Parameter Name="refNode" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If an attribute with the same name is already present in the collection, the original attribute is removed from the collection and <paramref name="newNode" /> is inserted into the collection. If <paramref name="refNode" /> is null, <paramref name="newNode" /> is inserted at the end of the collection.</para>
@@ -150,6 +155,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the specified attribute immediately before the specified reference attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlAttribute to insert into the collection.</para>
+        </returns>
         <param name="newNode">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> to insert. </param>
         <param name="refNode">
@@ -240,7 +249,6 @@
         <Parameter Name="node" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If an attribute with the same name is already present in the collection, the original attribute is removed from the collection and <paramref name="node" /> is added to the beginning of the collection.</para>
@@ -250,6 +258,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the specified attribute as the first node in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlAttribute added to the collection.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> to insert. </param>
       </Docs>
@@ -270,7 +282,6 @@
         <Parameter Name="node" Type="System.Xml.XmlAttribute" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
@@ -279,6 +290,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the specified attribute from the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node removed or null if it is not found in the collection.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlAttribute" /> to remove. </param>
       </Docs>
@@ -323,7 +338,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
@@ -332,6 +346,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the attribute corresponding to the specified index from the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns null if there is no attribute at the specified index.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the node to remove. The first node has index 0. </param>
       </Docs>
@@ -352,12 +370,15 @@
         <Parameter Name="node" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Xml.XmlNode" /> using its <see cref="P:System.Xml.XmlNode.Name" /> property </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="node" /> replaces an existing node with the same name, the old node is returned; otherwise, the added node is returned.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />An attribute node to store in this collection. The node will later be accessible using the name of the node. If a node with that name is already present in the collection, it is replaced by the new one; otherwise, the node is appended to the end of the collection. </param>
       </Docs>

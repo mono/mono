@@ -110,9 +110,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Security.Permissions.ReflectionPermission" /> instance that contains the same values as the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A copy of a permission represents the same access to resources as the original permission.</para>
@@ -121,6 +118,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns an identical copy of the current permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the current permission.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -204,13 +205,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Security.Permissions.ReflectionPermission" /> instance that represents the intersection of the
-   current instance and <paramref name="target" />. If the intersection is empty, returns
-<see langword="null" />. If <paramref name="target" /> is
-<see langword="null" />, returns <see langword="null" /> 
-.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The <paramref name="target" /> parameter is not <see langword="null" /> and is not an instance of <see cref="T:System.Security.Permissions.ReflectionPermission" /> . </exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -220,6 +214,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a permission that is the intersection of the current permission and the specified permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission that represents the intersection of the current permission and the specified permission. This new permission is null if the intersection is empty.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission to intersect with the current permission. It must be of the same type as the current permission. </param>
       </Docs>
@@ -242,17 +240,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the current instance is a subset of <paramref name="target" /> ;
-   otherwise,<see langword=" false" />. If the current instance is unrestricted, and
-<paramref name="target" /> is not, returns <see langword="false" />. If <paramref name="target" /> is 
-   unrestricted, returns <see langword="true" />. If target is
-<see langword="null" /> and the access level of the current instance is <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.NoFlags" />, returns <see langword="true" />. If 
-   target is <see langword="null" /> and the access level of the current
-   instance is any value other than <see cref="F:System.Security.Permissions.ReflectionPermissionFlag.NoFlags" />, returns
-<see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The <paramref name="target" /> parameter is not <see langword="null" /> and is not an instance of <see cref="T:System.Security.Permissions.ReflectionPermission" /> . </exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -262,6 +249,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current permission is a subset of the specified permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current permission is a subset of the specified permission; otherwise, false.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission that is to be tested for the subset relationship. This permission must be of the same type as the current permission. </param>
       </Docs>
@@ -281,7 +272,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An unrestricted permission represents access to any and all resources protected by the permission.</para>
@@ -290,6 +280,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the current permission is unrestricted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current permission is unrestricted; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Security.Permissions.IBuiltInPermission.GetTokenIndex">
@@ -326,10 +320,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Security.SecurityElement" /> containing the XML encoding of the state of the current
-   instance.</para>
-        </returns>
         <remarks>
           <block subset="none" type="note">
             <para>For the XML encoding for this class, see the <see cref="T:System.Security.Permissions.ReflectionPermission" /> class page.</para>
@@ -340,6 +330,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an XML encoding of the permission and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the permission, including any state information.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -360,14 +354,6 @@
         <Parameter Name="other" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Security.Permissions.ReflectionPermission" /> 
-instance that represents the union of the current instance and <paramref name="other" />. If
-the current instance or <paramref name="other " />is unrestricted, returns a
-<see cref="T:System.Security.Permissions.ReflectionPermission" /> instance that is 
-unrestricted. If <paramref name="other" /> is <see langword="null" />, returns a copy of the
-current instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The <paramref name="other " />parameter is not <see langword="null" /> and is not an instance of <see cref="T:System.Security.Permissions.ReflectionPermission" /> .</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -377,6 +363,10 @@ current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a permission that is the union of the current permission and the specified permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission that represents the union of the current permission and the specified permission.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission to combine with the current permission. It must be of the same type as the current permission. </param>
       </Docs>

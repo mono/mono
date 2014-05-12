@@ -125,7 +125,6 @@
         <Parameter Name="componentClass" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ComponentModel.IComponent'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the type cannot be resolved into an object that implements <see cref="T:System.ComponentModel.IComponent" />, an exception is thrown.</para>
@@ -135,6 +134,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a component of the specified type and adds it to the design document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created component.</para>
+        </returns>
         <param name="componentClass">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the component to create. </param>
       </Docs>
@@ -156,7 +159,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ComponentModel.IComponent'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the type cannot be resolved into an object that implements <see cref="T:System.ComponentModel.IComponent" />, an exception is thrown.</para>
@@ -166,6 +168,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a component of the specified type and name, and adds it to the design document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created component.</para>
+        </returns>
         <param name="componentClass">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the component to create. </param>
         <param name="name">
@@ -186,7 +192,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'DesignerTransaction'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> that can be used to encapsulate a series of operations. Designer transactions can improve performance, reduce flicker caused by multiple updates during a process of operations, and enable most operations to be undone.</para>
@@ -196,6 +201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> that can encapsulate event sequences to improve performance and enable undo and redo support functionality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.ComponentModel.Design.DesignerTransaction" />. When you complete the steps in your transaction, you should call <see cref="M:System.ComponentModel.Design.DesignerTransaction.Commit" /> on this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateTransaction">
@@ -214,7 +223,6 @@
         <Parameter Name="description" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DesignerTransaction'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method creates a <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> that can be used to encapsulate a series of operations. Designer transactions can improve performance, reduce flicker caused by multiple updates during a process of operations, and enable most operations to be undone.</para>
@@ -224,6 +232,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.ComponentModel.Design.DesignerTransaction" /> that can encapsulate event sequences to improve performance and enable undo and redo support functionality, using the specified transaction description.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.Design.DesignerTransaction" />. When you have completed the steps in your transaction, you should call <see cref="M:System.ComponentModel.Design.DesignerTransaction.Commit" /> on this object.</para>
+        </returns>
         <param name="description">
           <attribution license="cc4" from="Microsoft" modified="false" />A title or description for the newly created transaction. </param>
       </Docs>
@@ -293,12 +305,15 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IDesigner'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the designer instance that contains the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.Design.IDesigner" />, or null if there is no designer for the specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to retrieve the designer for. </param>
       </Docs>
@@ -319,12 +334,15 @@
         <Parameter Name="typeName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an instance of the specified, fully qualified type name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type object for the specified type name, or null if the type cannot be found.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to load. </param>
       </Docs>

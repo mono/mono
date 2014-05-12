@@ -149,12 +149,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Identifies whether the attribute should serialize the connection string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute should serialize the connection string; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ShouldSerializeKeyRestrictions">
@@ -173,12 +176,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Identifies whether the attribute should serialize the set of key restrictions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attribute should serialize the set of key restrictions; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

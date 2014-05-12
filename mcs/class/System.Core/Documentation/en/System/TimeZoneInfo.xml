@@ -192,7 +192,6 @@
         <Parameter Name="destinationTimeZone" Type="System.TimeZoneInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When performing the conversion, the <see cref="M:System.TimeZoneInfo.ConvertTime(System.DateTimeOffset,System.TimeZoneInfo)" /> method applies any adjustment rules in effect in the <paramref name="destinationTimeZone" /> time zone. </para>
@@ -306,6 +305,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a time to the time in a particular time zone.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date and time in the destination time zone.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time to convert.   </param>
         <param name="destinationTimeZone">
@@ -326,7 +329,6 @@
         <Parameter Name="destinationTimeZone" Type="System.TimeZoneInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When performing the conversion, the <see cref="M:System.TimeZoneInfo.ConvertTime(System.DateTimeOffset,System.TimeZoneInfo)" /> method applies any adjustment rules in effect in the <paramref name="destinationTimeZone" /> time zone.</para>
@@ -338,6 +340,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a time to the time in a particular time zone.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date and time in the destination time zone.</para>
+        </returns>
         <param name="dateTimeOffset">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time to convert.   </param>
         <param name="destinationTimeZone">
@@ -359,7 +365,6 @@
         <Parameter Name="destinationTimeZone" Type="System.TimeZoneInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When performing the conversion, the <see cref="M:System.TimeZoneInfo.ConvertTime(System.DateTimeOffset,System.TimeZoneInfo)" /> method applies any adjustment rules in effect in the <paramref name="destinationTimeZone" /> time zone.</para>
@@ -491,6 +496,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a time from one time zone to another.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date and time in the destination time zone that corresponds to the <paramref name="dateTime" /> parameter in the source time zone.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time to convert.</param>
         <param name="sourceTimeZone">
@@ -513,7 +522,6 @@
         <Parameter Name="destinationTimeZoneId" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When performing the conversion, the <see cref="Overload:System.TimeZoneInfo.ConvertTimeBySystemTimeZoneId" /> method applies any adjustment rules in effect in the <paramref name="destinationTimeZoneId" /> time zone.</para>
@@ -618,6 +626,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a time to the time in another time zone based on the time zone's identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date and time in the destination time zone.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time to convert.</param>
         <param name="destinationTimeZoneId">
@@ -638,7 +650,6 @@
         <Parameter Name="destinationTimeZoneId" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When performing the conversion, the <see cref="Overload:System.TimeZoneInfo.ConvertTimeBySystemTimeZoneId" /> method applies any adjustment rules in effect in the <paramref name="destinationTimeZoneId" /> time zone.</para>
@@ -652,6 +663,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a time to the time in another time zone based on the time zone's identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date and time in the destination time zone.</para>
+        </returns>
         <param name="dateTimeOffset">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time to convert.</param>
         <param name="destinationTimeZoneId">
@@ -673,7 +688,6 @@
         <Parameter Name="destinationTimeZoneId" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When performing the conversion, the <see cref="Overload:System.TimeZoneInfo.ConvertTimeBySystemTimeZoneId" /> method applies any adjustment rules in effect in the <paramref name="destinationTimeZoneId" /> time zone.</para>
@@ -763,6 +777,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a time from one time zone to another based on time zone identifiers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date and time in the destination time zone that corresponds to the <paramref name="dateTime" /> parameter in the source time zone.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time to convert.</param>
         <param name="sourceTimeZoneId">
@@ -785,7 +803,6 @@
         <Parameter Name="destinationTimeZone" Type="System.TimeZoneInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When performing the conversion, the <see cref="M:System.TimeZoneInfo.ConvertTimeFromUtc(System.DateTime,System.TimeZoneInfo)" /> method applies any adjustment rules in effect in the <paramref name="destinationTimeZone" /> time zone.</para>
@@ -826,6 +843,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a Coordinated Universal Time (UTC) to the time in a specified time zone.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date and time in the destination time zone. Its <see cref="P:System.DateTime.Kind" /> property is <see cref="F:System.DateTimeKind.Utc" /> if <paramref name="destinationTimeZone" /> is <see cref="P:System.TimeZoneInfo.Utc" />; otherwise, its <see cref="P:System.DateTime.Kind" /> property is <see cref="F:System.DateTimeKind.Unspecified" />.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The Coordinated Universal Time (UTC).</param>
         <param name="destinationTimeZone">
@@ -845,7 +866,6 @@
         <Parameter Name="dateTime" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The exact conversion performed depends on the value of the <see cref="P:System.DateTime.Kind" /> property of the <paramref name="dateTime" /> parameter, as the following table shows.</para>
@@ -898,6 +918,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified date and time to Coordinated Universal Time (UTC).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Coordinated Universal Time (UTC) that corresponds to the <paramref name="dateTime" /> parameter. The <see cref="T:System.DateTime" /> value's <see cref="P:System.DateTime.Kind" /> property is always set to <see cref="F:System.DateTimeKind.Utc" />.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time to convert.</param>
       </Docs>
@@ -916,7 +940,6 @@
         <Parameter Name="sourceTimeZone" Type="System.TimeZoneInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="P:System.DateTime.Kind" /> property of the <paramref name="dateTime" /> parameter equals <see cref="F:System.DateTimeKind.Utc" /> and the <paramref name="sourceTimeZone" /> parameter equals <see cref="P:System.TimeZoneInfo.Utc" />, this method returns <paramref name="dateTime" /> without performing any conversion. </para>
@@ -927,6 +950,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the time in a specified time zone to Coordinated Universal Time (UTC).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Coordinated Universal Time (UTC) that corresponds to the <paramref name="dateTime" /> parameter. The <see cref="T:System.DateTime" /> object's <see cref="P:System.DateTime.Kind" /> property is always set to <see cref="F:System.DateTimeKind.Utc" />.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time to convert.</param>
         <param name="sourceTimeZone">
@@ -949,7 +976,6 @@
         <Parameter Name="standardDisplayName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload of the <see cref="M:System.TimeZoneInfo.CreateCustomTimeZone(System.String,System.TimeSpan,System.String,System.String)" /> method is suitable for creating a time zone that has no adjustments (that is, a time zone that does not support daylight saving time). To define a time zone that includes adjustments for daylight saving time, use either the <see cref="M:System.TimeZoneInfo.CreateCustomTimeZone(System.String,System.TimeSpan,System.String,System.String,System.String,System.TimeZoneInfo.AdjustmentRule[])" /> or the <see cref="M:System.TimeZoneInfo.CreateCustomTimeZone(System.String,System.TimeSpan,System.String,System.String,System.String,System.TimeZoneInfo.AdjustmentRule[],System.Boolean)" /> method.</para>
@@ -1023,6 +1049,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a custom time zone with a specified identifier, an offset from Coordinated Universal Time (UTC), a display name, and a standard time display name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new time zone.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The time zone's identifier.</param>
         <param name="baseUtcOffset">
@@ -1156,7 +1186,6 @@
         <Parameter Name="other" Type="System.TimeZoneInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Equality is based on a comparison of values. Two <see cref="T:System.TimeZoneInfo" /> objects are considered to be equal under the following conditions:</para>
@@ -1180,6 +1209,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current <see cref="T:System.TimeZoneInfo" /> object and another <see cref="T:System.TimeZoneInfo" /> object are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.TimeZoneInfo" /> objects are equal; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />A second object to compare with the current object.  </param>
       </Docs>
@@ -1197,7 +1230,6 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="id" /> parameter must correspond exactly to the time zone's registry key in length, but not in case, for a successful match to occur; that is, the comparison of <paramref name="id" /> with time zone identifiers is case-insensitive. If you want to retrieve time zone objects based on partial matches, you can write custom procedures that work with the read-only collection of <see cref="T:System.TimeZoneInfo" /> objects returned by the <see cref="M:System.TimeZoneInfo.GetSystemTimeZones" /> method. </para>
@@ -1208,6 +1240,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.TimeZoneInfo" /> object from the registry based on its identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object whose identifier is the value of the <paramref name="id" /> parameter.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The time zone identifier, which corresponds to the <see cref="P:System.TimeZoneInfo.Id" /> property.      </param>
       </Docs>
@@ -1225,7 +1261,6 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>There is an alternative to providing all the code required to create a time zone that is not found in the registry. You can define a custom time zone and either use the <see cref="M:System.TimeZoneInfo.ToSerializedString" /> method in a standalone executable or use an application's setup program to save the time zone as a string. The application can then retrieve this string from its storage location and instantiate it using the <see cref="M:System.TimeZoneInfo.FromSerializedString(System.String)" /> method.</para>
@@ -1234,6 +1269,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes a string to re-create an original serialized <see cref="T:System.TimeZoneInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The original serialized object.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The string representation of the serialized <see cref="T:System.TimeZoneInfo" /> object.   </param>
       </Docs>
@@ -1249,7 +1288,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.TimeZoneInfo.GetAdjustmentRules" /> method retrieves an array of <see cref="T:System.TimeZoneInfo.AdjustmentRule" /> objects. Each object in the array defines the effective start and end date of that time zone adjustment, as well as its delta (the exact amount by which the adjustment causes the time to change). In addition, two properties return <see cref="T:System.TimeZoneInfo.TransitionTime" /> objects that define when each annual transition to and from standard time occurs. </para>
@@ -1261,6 +1299,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of <see cref="T:System.TimeZoneInfo.AdjustmentRule" /> objects that apply to the current <see cref="T:System.TimeZoneInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of objects for this time zone.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetAmbiguousTimeOffsets">
@@ -1276,7 +1318,6 @@
         <Parameter Name="dateTime" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The precise behavior of this method depends on the relationship between the <see cref="P:System.DateTime.Kind" /> property and the <see cref="T:System.TimeZoneInfo" /> object, as the following table shows.</para>
@@ -1368,6 +1409,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns information about the possible dates and times that an ambiguous date and time can be mapped to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of objects that represents possible Coordinated Universal Time (UTC) offsets that a particular date and time can be mapped to.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time.</param>
       </Docs>
@@ -1385,7 +1430,6 @@
         <Parameter Name="dateTimeOffset" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The precise behavior of this method depends on the relationship between the <see cref="P:System.DateTimeOffset.Offset" /> property of the <paramref name="dateTimeOffset" /> parameter and the <see cref="T:System.TimeZoneInfo" /> object. If the value of the <see cref="P:System.DateTimeOffset.Offset" /> property corresponds to the current time zone's possible offsets from Coordinated Universal Time (UTC) for that date and time, the method returns the possible offsets. Otherwise, it converts <paramref name="dateTime" /> to the time in the current time zone, and then returns the possible offsets of that date and time. </para>
@@ -1395,6 +1439,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns information about the possible dates and times that an ambiguous date and time can be mapped to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of objects that represents possible Coordinated Universal Time (UTC) offsets that a particular date and time can be mapped to.</para>
+        </returns>
         <param name="dateTimeOffset">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time.</param>
       </Docs>
@@ -1410,7 +1458,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For additional detail about the <see cref="M:System.TimeZoneInfo.GetHashCode" /> method, see <see cref="M:System.Object.GetHashCode" />.</para>
@@ -1419,6 +1466,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serves as a hash function for hashing algorithms and data structures such as hash tables.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer that serves as the hash code for this <see cref="T:System.TimeZoneInfo" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -1452,7 +1503,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.TimeZoneInfo.GetSystemTimeZones" /> method retrieves all available time zone information from the subkeys of the registry's HKEY_LOCAL_MACHINE\Software\Microsoft\Windows NT\CurrentVersion\Time Zones key. If it is unable to successfully retrieve and parse values for particular string properties of individual <see cref="T:System.TimeZoneInfo" /> objects, this method sets their value to an empty string ("").</para>
@@ -1468,6 +1518,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a sorted collection of all the time zones about which information is available on the local system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A read-only collection of <see cref="T:System.TimeZoneInfo" /> objects.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetUtcOffset">
@@ -1483,7 +1537,6 @@
         <Parameter Name="dateTime" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned time span includes any differences due to the application of adjustment rules to the current time zone. It differs from the <see cref="P:System.TimeZoneInfo.BaseUtcOffset" /> property, which returns the difference between Coordinated Universal Time (UTC) and the time zone's standard time and, therefore, does not take adjustment rules into account.</para>
@@ -1494,6 +1547,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the offset or difference between the time in this time zone and Coordinated Universal Time (UTC) for a particular date and time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that indicates the time difference between the two time zones.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time to determine the offset for.   </param>
       </Docs>
@@ -1511,7 +1568,6 @@
         <Parameter Name="dateTimeOffset" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned time span includes any differences due to the application of adjustment rules to the current time zone. It differs from the <see cref="P:System.TimeZoneInfo.BaseUtcOffset" /> property, which returns the difference between Coordinated Universal Time (UTC) and the time zone's standard time and, therefore, does not take adjustment rules into account.</para>
@@ -1520,6 +1576,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the offset or difference between the time in this time zone and Coordinated Universal Time (UTC) for a particular date and time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that indicates the time difference between Coordinated Universal Time (UTC) and the current time zone.</para>
+        </returns>
         <param name="dateTimeOffset">
           <attribution license="cc4" from="Microsoft" modified="false" />The date and time to determine the offset for.</param>
       </Docs>
@@ -1537,7 +1597,6 @@
         <Parameter Name="other" Type="System.TimeZoneInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Like the <see cref="M:System.TimeZoneInfo.Equals(System.TimeZoneInfo)" /> method, the <see cref="M:System.TimeZoneInfo.HasSameRules(System.TimeZoneInfo)" /> method indicates whether two time zones have the same base offset (as defined by the <see cref="P:System.TimeZoneInfo.BaseUtcOffset" /> property) and the same adjustment rules. Unlike the <see cref="M:System.TimeZoneInfo.Equals(System.TimeZoneInfo)" /> method, <see cref="M:System.TimeZoneInfo.HasSameRules(System.TimeZoneInfo)" /> does not compare time zone identifiers (as defined by the <see cref="P:System.TimeZoneInfo.Id" /> property).</para>
@@ -1546,6 +1605,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the current object and another <see cref="T:System.TimeZoneInfo" /> object have the same adjustment rules.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two time zones have identical adjustment rules and an identical base offset; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />A second object to compare with the current <see cref="T:System.TimeZoneInfo" /> object.   </param>
       </Docs>
@@ -1588,7 +1651,6 @@
         <Parameter Name="dateTime" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An ambiguous time falls within a range of times for the current time zone. This means it can be either a standard time or a time that results from the application of an adjustment rule. Typically, ambiguous times result when the clock is set to return to standard time from daylight saving time. See the Example section for an illustration. </para>
@@ -1697,6 +1759,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a particular date and time in a particular time zone is ambiguous and can be mapped to two or more Coordinated Universal Time (UTC) times.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="dateTime" /> parameter is ambiguous; otherwise, false.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time value.   </param>
       </Docs>
@@ -1714,7 +1780,6 @@
         <Parameter Name="dateTimeOffset" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An ambiguous time falls within a range of times for the current time zone. This means that it can be either a standard time or a time that results from the application of an adjustment rule. Typically, ambiguous times result when the clock is set to return to standard time from daylight saving time. Coordinated Universal Time (UTC) has no ambiguous times; neither do time zones that do not support daylight saving time. </para>
@@ -1724,6 +1789,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a particular date and time in a particular time zone is ambiguous and can be mapped to two or more Coordinated Universal Time (UTC) times.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="dateTimeOffset" /> parameter is ambiguous in the current time zone; otherwise, false.</para>
+        </returns>
         <param name="dateTimeOffset">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time.</param>
       </Docs>
@@ -1741,7 +1810,6 @@
         <Parameter Name="dateTime" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value of <see cref="M:System.TimeZoneInfo.IsDaylightSavingTime(System.DateTime)" /> is affected by the relationship between the time zone represented by the <see cref="T:System.TimeZoneInfo" /> object and the <see cref="P:System.DateTime.Kind" /> property of the <paramref name="dateTime" /> parameter, as the following table shows.</para>
@@ -1856,6 +1924,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified date and time falls in the range of daylight saving time for the time zone of the current <see cref="T:System.TimeZoneInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="dateTime" /> parameter is a daylight saving time; otherwise, false.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time value.   </param>
       </Docs>
@@ -1873,7 +1945,6 @@
         <Parameter Name="dateTimeOffset" Type="System.DateTimeOffset" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value of <see cref="M:System.TimeZoneInfo.IsDaylightSavingTime(System.DateTime)" /> is affected by the relationship between the time zone represented by the <see cref="T:System.TimeZoneInfo" /> object and the <see cref="P:System.DateTimeOffset.Offset" /> property of the <paramref name="dateTimeOffset" /> parameter. If <paramref name="dateTimeOffset" /> does not correspond to the current time zone's offset from Coordinated Universal Time (UTC), the method converts that time to the time in the current time zone. It then determines whether that date and time is a daylight saving time.</para>
@@ -1883,6 +1954,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified date and time falls in the range of daylight saving time for the time zone of the current <see cref="T:System.TimeZoneInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="dateTimeOffset" /> parameter is a daylight saving time; otherwise, false.</para>
+        </returns>
         <param name="dateTimeOffset">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time value.</param>
       </Docs>
@@ -1900,7 +1975,6 @@
         <Parameter Name="dateTime" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An invalid time falls within a range of times for the current time zone that cannot be mapped to Coordinated Universal Time (UTC) due to the application of an adjustment rule. Typically, invalid times occur when the time moves ahead for daylight saving time. See the Example section for an illustration.</para>
@@ -1980,6 +2054,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a particular date and time is invalid.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="dateTime" /> is invalid; otherwise, false.</para>
+        </returns>
         <param name="dateTime">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time value.   </param>
       </Docs>
@@ -2113,7 +2191,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Applications that rely on time zones that are not typically defined in the registry of Windows systems can use the <see cref="Overload:System.TimeZoneInfo.CreateCustomTimeZone" /> method to instantiate the necessary time zones as <see cref="T:System.TimeZoneInfo" /> objects. The application can then call the <see cref="M:System.TimeZoneInfo.ToSerializedString" /> method to convert the time zone object to a string. </para>
@@ -2134,6 +2211,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the current <see cref="T:System.TimeZoneInfo" /> object to a serialized string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.TimeZoneInfo" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -2147,7 +2228,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When assigning a collection that contains <see cref="T:System.TimeZoneInfo" /> objects to a list control such as the <see cref="T:System.Windows.Forms.ListBox" /> control, the control automatically calls the <see cref="M:System.TimeZoneInfo.ToString" /> method to extract a string that describes each object to be represented in the list. As a result, you do not need to store a meaningful description of the object as a string, and the user does not need to use that string to extract the object from the collection. See <format type="text/html"><a href="bb7a42ab-6bd9-4c5c-b734-5546d51f8669">How to: Enumerate Time Zones Present on a Computer</a></format> for more detail.</para>
@@ -2156,6 +2236,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the current <see cref="T:System.TimeZoneInfo" /> object's display name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.TimeZoneInfo.DisplayName" /> property of the current <see cref="T:System.TimeZoneInfo" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Utc">

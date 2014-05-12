@@ -233,7 +233,6 @@ this-&gt;BindingContext-&gt;get_Item(dataSet1-&gt;Customers)-&gt;Position = 1;
         <Parameter Name="dataSource" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="T:System.Windows.Forms.Binding" /> class for a list of possible data sources and information about creating bindings between controls and data sources.</para>
@@ -243,6 +242,10 @@ this-&gt;BindingContext-&gt;get_Item(dataSet1-&gt;Customers)-&gt;Position = 1;
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the <see cref="T:System.Windows.Forms.BindingContext" /> contains the <see cref="T:System.Windows.Forms.BindingManagerBase" /> associated with the specified data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Windows.Forms.BindingContext" /> contains the specified <see cref="T:System.Windows.Forms.BindingManagerBase" />; otherwise, false.</para>
+        </returns>
         <param name="dataSource">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the data source. </param>
       </Docs>
@@ -262,7 +265,6 @@ this-&gt;BindingContext-&gt;get_Item(dataSet1-&gt;Customers)-&gt;Position = 1;
         <Parameter Name="dataMember" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>See the <see cref="T:System.Windows.Forms.Binding" /> class for a list of possible data sources and for information about creating bindings between controls and data sources.</para>
@@ -272,6 +274,10 @@ this-&gt;BindingContext-&gt;get_Item(dataSet1-&gt;Customers)-&gt;Position = 1;
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the <see cref="T:System.Windows.Forms.BindingContext" /> contains the <see cref="T:System.Windows.Forms.BindingManagerBase" /> associated with the specified data source and data member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Windows.Forms.BindingContext" /> contains the specified <see cref="T:System.Windows.Forms.BindingManagerBase" />; otherwise, false.</para>
+        </returns>
         <param name="dataSource">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that represents the data source. </param>
         <param name="dataMember">
@@ -517,7 +523,6 @@ this-&gt;BindingContext-&gt;get_Item(dataSet1-&gt;Customers)-&gt;Position = 1;
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Collections.IEnumerator" /> returned by the <see cref="M:System.Windows.Forms.BindingContext.System#Collections#IEnumerable#GetEnumerator" /> method allows you to iterate over the collection managed by the <see cref="T:System.Windows.Forms.BindingContext" />.</para>
@@ -526,6 +531,10 @@ this-&gt;BindingContext-&gt;get_Item(dataSet1-&gt;Customers)-&gt;Position = 1;
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an enumerator for the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="UpdateBinding">

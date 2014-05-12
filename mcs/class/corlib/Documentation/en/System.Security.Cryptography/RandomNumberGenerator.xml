@@ -72,12 +72,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'RandomNumberGenerator'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates an instance of the default implementation of a cryptographic random number generator that can be used to generate random data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of a cryptographic random number generator.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -96,12 +99,15 @@
         <Parameter Name="rngName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'RandomNumberGenerator'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates an instance of the specified implementation of a cryptographic random number generator.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of a cryptographic random number generator.</para>
+        </returns>
         <param name="rngName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the random number generator implementation to use. </param>
       </Docs>

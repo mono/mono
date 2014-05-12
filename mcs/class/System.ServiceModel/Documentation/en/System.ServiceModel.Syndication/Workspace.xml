@@ -155,12 +155,17 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.ServiceModel.Syndication.ResourceCollectionInfo" />.
+</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ElementExtensions">
@@ -218,12 +223,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an attribute extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.Boolean" />.
+</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the element.</param>
         <param name="ns">
@@ -249,12 +259,17 @@
         <Parameter Name="version" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to parse an element extension.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+Returns <see cref="T:System.Boolean" />.
+</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> to read from.</param>
         <param name="version">

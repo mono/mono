@@ -151,7 +151,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.Clone" /> and <see cref="M:System.ServiceModel.Security.Tokens.SecurityTokenParameters.CloneCore" /> methods follow the Core design pattern. </para>
@@ -163,6 +162,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clones another instance of this instance of the class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.ServiceModel.Security.Tokens.SecurityTokenParameters" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateKeyIdentifierClause">
@@ -180,12 +183,15 @@
         <Parameter Name="referenceStyle" Type="System.ServiceModel.Security.Tokens.SecurityTokenReferenceStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a key identifier clause for a token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security key identifier clause.</para>
+        </returns>
         <param name="token">
           <attribution license="cc4" from="Microsoft" modified="false" />The token.</param>
         <param name="referenceStyle">
@@ -321,12 +327,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays a text representation of this instance of the class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of this instance of this class.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="X509ReferenceStyle">

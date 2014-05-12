@@ -158,7 +158,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -168,6 +167,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a duplicate of the current <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A duplicate of the current instance.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -185,7 +188,6 @@
       </Parameters>
       <Docs>
         <param name="ctx">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -196,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates and returns the value of the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the current value of the parameter. If the context or the request is null, the <see cref="M:System.Web.UI.WebControls.QueryStringParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method returns null. </para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />A Web server control that is associated with the ASP.NET Web page where the <see cref="T:System.Web.UI.WebControls.QueryStringParameter" /> object is used.</param>
       </Docs>

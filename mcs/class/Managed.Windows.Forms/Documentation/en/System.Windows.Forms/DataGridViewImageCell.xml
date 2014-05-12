@@ -75,7 +75,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -85,6 +84,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an exact copy of this cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.DataGridViewImageCell" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -98,7 +101,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -111,6 +113,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessible object for the <see cref="T:System.Windows.Forms.DataGridViewImageCell" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.DataGridViewImageCell.DataGridViewImageCellAccessibleObject" /> for the <see cref="T:System.Windows.Forms.DataGridViewImageCell" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

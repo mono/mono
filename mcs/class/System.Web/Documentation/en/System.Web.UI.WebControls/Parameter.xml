@@ -238,7 +238,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -249,6 +248,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a duplicate of the current <see cref="T:System.Web.UI.WebControls.Parameter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Parameter" /> that is an exact duplicate of the current one.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -349,7 +352,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -359,6 +361,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates and returns the value of the <see cref="T:System.Web.UI.WebControls.Parameter" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the updated and current value of the parameter.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" /> of the request.</param>
         <param name="control">
@@ -476,7 +482,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -488,6 +493,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves the changes to the <see cref="T:System.Web.UI.WebControls.Parameter" /> object's view state since the time the page was posted back to the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the changes to the <see cref="T:System.Web.UI.WebControls.Parameter" /> view state. If there is no view state associated with the object, this method returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -552,7 +561,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.Parameter.Clone" /> method calls the <see cref="M:System.Web.UI.WebControls.Parameter.#ctor(System.Web.UI.WebControls.Parameter)" /> constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.Parameter" /> class with the values of the current instance.</para>
@@ -562,6 +570,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a duplicate of the current <see cref="T:System.Web.UI.WebControls.Parameter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.Parameter" /> that is a copy of the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.IsTrackingViewState">
@@ -619,7 +631,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is used primarily by control developers.</para>
@@ -630,6 +641,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves the changes to the <see cref="T:System.Web.UI.WebControls.Parameter" /> object's view state since the time the page was posted back to the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that contains the changes to the <see cref="T:System.Web.UI.WebControls.Parameter" /> object's view state. If there is no view state associated with the object, this method returns null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -658,7 +673,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -668,6 +682,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of this instance to its equivalent string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the value of this instance.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

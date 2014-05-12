@@ -120,42 +120,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> with one of the following values based on the result of the search
-   operation.</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description> Description</description>
-            </listheader>
-            <item>
-              <term> The index of <paramref name="value" /> in the
-      array.</term>
-              <description>
-                <paramref name="value" /> was found.</description>
-            </item>
-            <item>
-              <term> The bitwise complement of the index of the first element that is larger than
-   <paramref name="value" />.</term>
-              <description>
-                <paramref name="value" /> was not found and the value of at least one element of
-<paramref name="array" /> was greater than <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> The bitwise complement of (<paramref name="array" />.GetLowerBound(0) +
-<paramref name="array" />.Length).</term>
-              <description>
-                <paramref name="value" /> was not found, and <paramref name="value" /> was greater than the
-value of all array elements.</description>
-            </item>
-          </list>
-          <para>
-            <block subset="none" type="note"> If <paramref name="value" />
-is not found, the caller can take the bitwise complement of the return value to
-determine the index where value would be found in <paramref name="array" /> if it is sorted
-already.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>Both <paramref name="value" /> and at least one element of <paramref name="array" /> do not implement the <see cref="T:System.IComparable" /> interface. </para>
           <para>-or-</para>
@@ -193,6 +157,10 @@ already.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches an entire one-dimensional sorted array for a specific element, using the <see cref="T:System.IComparable" /> interface implemented by each element of the array and by the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <paramref name="value" /> in the specified <paramref name="array" />, if <paramref name="value" /> is found. If <paramref name="value" /> is not found and <paramref name="value" /> is less than one or more elements in <paramref name="array" />, a negative number which is the bitwise complement of the index of the first element that is larger than <paramref name="value" />. If <paramref name="value" /> is not found and <paramref name="value" /> is greater than any of the elements in <paramref name="array" />, a negative number which is the bitwise complement of (the index of the last element plus 1).</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The sorted one-dimensional <see cref="T:System.Array" /> to search.</param>
         <param name="value">
@@ -224,42 +192,6 @@ already.</block>
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> with one of the following values based on the result of the search
-   operation.</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> The index of <paramref name="value" /> in the
-      array.</term>
-              <description>
-                <paramref name="value" /> was found.</description>
-            </item>
-            <item>
-              <term> The bitwise complement of the index of the first element that is larger than
-   <paramref name="value" />.</term>
-              <description>
-                <paramref name="value" /> was not found, and at least one array element was
-   greater than <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> The bitwise complement of (<paramref name="array" />.GetLowerBound(0) +
-<paramref name="array" />.Length).</term>
-              <description>
-                <paramref name="value" /> was not found, and <paramref name="value" /> was greater than all
-array elements.</description>
-            </item>
-          </list>
-          <para>
-            <block subset="none" type="note"> If <paramref name="value" />
-is not found, the caller can take the bitwise complement of the return value to
-determine the index where value would be found in <paramref name="array" /> if it is
-already sorted.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="comparer" /> is <see langword="null" />, and both <paramref name="value" /> and at least one element of <paramref name="array" /> do not implement the <see cref="T:System.IComparable" /> interface.</para>
@@ -299,6 +231,10 @@ already sorted.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches an entire one-dimensional sorted array for a value using the specified <see cref="T:System.Collections.IComparer" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <paramref name="value" /> in the specified <paramref name="array" />, if <paramref name="value" /> is found. If <paramref name="value" /> is not found and <paramref name="value" /> is less than one or more elements in <paramref name="array" />, a negative number which is the bitwise complement of the index of the first element that is larger than <paramref name="value" />. If <paramref name="value" /> is not found and <paramref name="value" /> is greater than any of the elements in <paramref name="array" />, a negative number which is the bitwise complement of (the index of the last element plus 1).</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The sorted one-dimensional <see cref="T:System.Array" /> to search.</param>
         <param name="value">
@@ -333,44 +269,6 @@ already sorted.</block>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> with one of the following values based on the result of the search
-   operation.</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> The index of <paramref name="value" /> in the
-      array.</term>
-              <description>
-                <paramref name="value" /> was found.</description>
-            </item>
-            <item>
-              <term> The bitwise complement of the index of the first element that is larger than
-   <paramref name="value" />.</term>
-              <description>
-                <paramref name="value" /> was not found, and at least one array element in the
-   range of <paramref name="index" /> to <paramref name="index" /> + <paramref name="length" /> - 1 was greater
-   than <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> The bitwise complement of (<paramref name="index" /> + <paramref name="length" />).</term>
-              <description>
-                <paramref name="value" /> was not found, and <paramref name="value" /> was greater than all
-array elements in the range of <paramref name="index" /> to <paramref name="index" /> +
-<paramref name="length" />- 1.</description>
-            </item>
-          </list>
-          <para>
-            <block subset="none" type="note"> If <paramref name="value" />
-is not found, the caller can take the bitwise complement of the return value to
-determine the index of the array where <paramref name="value" /> would be found in the
-range of <paramref name="index" /> to <paramref name="index" /> + <paramref name=" length" /> - 1 if <paramref name="array" />
-is already sorted.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" /> .</exception>
         <exception cref="T:System.RankException">
@@ -411,6 +309,10 @@ is already sorted.</block>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches a range of elements in a one-dimensional sorted array for a value, using the <see cref="T:System.IComparable" /> interface implemented by each element of the array and by the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <paramref name="value" /> in the specified <paramref name="array" />, if <paramref name="value" /> is found. If <paramref name="value" /> is not found and <paramref name="value" /> is less than one or more elements in <paramref name="array" />, a negative number which is the bitwise complement of the index of the first element that is larger than <paramref name="value" />. If <paramref name="value" /> is not found and <paramref name="value" /> is greater than any of the elements in <paramref name="array" />, a negative number which is the bitwise complement of (the index of the last element plus 1).</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The sorted one-dimensional <see cref="T:System.Array" /> to search.</param>
         <param name="index">
@@ -448,44 +350,6 @@ is already sorted.</block>
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> with one of the following values based on the result of the search
-   operation.</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term> The index of <paramref name="value" /> in the
-      array.</term>
-              <description>
-                <paramref name="value" /> was found.</description>
-            </item>
-            <item>
-              <term> The bitwise complement of the index of the first element that is larger than
-   <paramref name="value" />.</term>
-              <description>
-                <paramref name="value" /> was not found, and at least one array element in the
-   range of <paramref name="index" /> to <paramref name="index" /> + <paramref name="length" /> - 1 was greater
-   than <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term> The bitwise complement of (<paramref name="index" /> + <paramref name="length" />).</term>
-              <description>
-                <paramref name="value" /> was not found, and <paramref name="value" /> was greater than all
-array elements in the range of <paramref name="index" /> to <paramref name="index" /> +
-<paramref name="length" />- 1.</description>
-            </item>
-          </list>
-          <para>
-            <block subset="none" type="note"> If <paramref name="value" /> is
-not found, the caller can take the bitwise complement of the return value to
-determine the index of <paramref name="array" /> where <paramref name="value" /> would be found in the
-range of <paramref name="index" /> to <paramref name="index" /> + <paramref name="length" /> - 1 if <paramref name="array" /> is
-already sorted.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" />.</exception>
         <exception cref="T:System.RankException">
@@ -574,6 +438,10 @@ class BinarySearchExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches a range of elements in a one-dimensional sorted array for a value, using the specified <see cref="T:System.Collections.IComparer" /> interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <paramref name="value" /> in the specified <paramref name="array" />, if <paramref name="value" /> is found. If <paramref name="value" /> is not found and <paramref name="value" /> is less than one or more elements in <paramref name="array" />, a negative number which is the bitwise complement of the index of the first element that is larger than <paramref name="value" />. If <paramref name="value" /> is not found and <paramref name="value" /> is greater than any of the elements in <paramref name="array" />, a negative number which is the bitwise complement of (the index of the last element plus 1).</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The sorted one-dimensional <see cref="T:System.Array" /> to search.</param>
         <param name="index">
@@ -682,30 +550,6 @@ class BinarySearchExample {
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>One of the following values based on the result of the search operation:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term>A non-negative index of <paramref name="value" /> in the array.</term>
-              <description>
-                <paramref name="value" /> was found.</description>
-            </item>
-            <item>
-              <term>A negative value, which is the bitwise complement of the index of the first element that is larger than   <paramref name="value" />.</term>
-              <description>
-                <paramref name="value" /> was not found and the value of at least one element of array was greater than <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term>A negative value, which is the bitwise complement of one more than the index of the final element.</term>
-              <description>
-                <paramref name="value" /> was not found, and  <paramref name="value" /> was greater than the value of all array elements.</description>
-            </item>
-          </list>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" /> .</exception>
@@ -734,6 +578,10 @@ class BinarySearchExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches an entire one-dimensional sorted array for a value using the specified <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <paramref name="value" /> in the specified <paramref name="array" />, if <paramref name="value" /> is found. If <paramref name="value" /> is not found and <paramref name="value" /> is less than one or more elements in <paramref name="array" />, a negative number which is the bitwise complement of the index of the first element that is larger than <paramref name="value" />. If <paramref name="value" /> is not found and <paramref name="value" /> is greater than any of the elements in <paramref name="array" />, a negative number which is the bitwise complement of (the index of the last element plus 1).</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The sorted one-dimensional, zero-based <see cref="T:System.Array" /> to search.  </param>
         <param name="value">
@@ -856,30 +704,6 @@ class BinarySearchExample {
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>One of the following values based on the result of the search operation:</para>
-          <list type="table">
-            <listheader>
-              <term>Return Value</term>
-              <description>Description</description>
-            </listheader>
-            <item>
-              <term>A non-negative index of <paramref name="value" /> in the array.</term>
-              <description>
-                <paramref name="value" /> was found.</description>
-            </item>
-            <item>
-              <term>A negative value, which is the bitwise complement of the index of the first element that is larger than   <paramref name="value" />.</term>
-              <description>
-                <paramref name="value" /> was not found and the value of at least one element of array was greater than <paramref name="value" />.</description>
-            </item>
-            <item>
-              <term>A negative value, which is the bitwise complement of one more than the index of the final element.</term>
-              <description>
-                <paramref name="value" /> was not found, and  <paramref name="value" /> was greater than the value of all array elements.</description>
-            </item>
-          </list>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentException">
           <para>
@@ -916,6 +740,10 @@ class BinarySearchExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches a range of elements in a one-dimensional sorted array for a value, using the specified <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <paramref name="value" /> in the specified <paramref name="array" />, if <paramref name="value" /> is found. If <paramref name="value" /> is not found and <paramref name="value" /> is less than one or more elements in <paramref name="array" />, a negative number which is the bitwise complement of the index of the first element that is larger than <paramref name="value" />. If <paramref name="value" /> is not found and <paramref name="value" /> is greater than any of the elements in <paramref name="array" />, a negative number which is the bitwise complement of (the index of the last element plus 1).</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The sorted one-dimensional, zero-based <see cref="T:System.Array" /> to search. </param>
         <param name="index">
@@ -1049,10 +877,6 @@ class BinarySearchExample {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that is a copy of
-   the current instance.</para>
-        </returns>
         <example>
           <para>This example demonstrates the <see cref="M:System.Array.Clone" /> method.</para>
           <code lang="C#">using System;
@@ -1102,6 +926,10 @@ public class ArrayCloneExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of the <see cref="T:System.Array" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the <see cref="T:System.Array" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1177,9 +1005,6 @@ public class ArrayCloneExample {
         <Parameter Name="converter" Type="System.Converter&lt;TInput,TOutput&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new array of the target type containing the converted elements from <paramref name="array" />.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" /> or <paramref name="converter" /> is <see langword="null" />.</exception>
@@ -1193,6 +1018,10 @@ public class ArrayCloneExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts an array of one type to an array of another type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the target type containing the converted elements from the source array.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to convert to a target type.</param>
         <param name="converter">
@@ -1800,10 +1629,6 @@ public class ArrayCopyToExample
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A zero-based, one-dimensional <see cref="T:System.Array" /> object containing <paramref name="length" /> elements of type
-<paramref name="elementType" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="elementType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -1847,6 +1672,10 @@ public class ArrayCreateInstanceExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a one-dimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> and length, with zero-based indexing.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new one-dimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> with the specified length, using zero-based indexing.</para>
+        </returns>
         <param name="elementType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the <see cref="T:System.Array" /> to create.</param>
         <param name="length">
@@ -1878,12 +1707,6 @@ public class ArrayCreateInstanceExample
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new zero-based, multidimensional <see cref="T:System.Array" /> instance of the
-   specified <see cref="T:System.Type" /> with the specified length for
-   each dimension. The <see cref="P:System.Array.Rank" /> of the new instance is equal to
-<paramref name="lengths" />.Length.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="elementType" /> or <paramref name="lengths" /> is <see langword="null" />.</para>
@@ -1959,6 +1782,10 @@ public class CreateMultiDimArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a multidimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> and dimension lengths, with zero-based indexing. The dimension lengths are specified in an array of 32-bit integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new multidimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> with the specified length for each dimension, using zero-based indexing.</para>
+        </returns>
         <param name="elementType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the <see cref="T:System.Array" /> to create.</param>
         <param name="lengths">
@@ -1990,7 +1817,6 @@ public class CreateMultiDimArrayExample
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unlike most classes, <see cref="T:System.Array" /> provides the <see cref="Overload:System.Array.CreateInstance" /> method, instead of public constructors, to allow for late bound access.</para>
@@ -2002,6 +1828,10 @@ public class CreateMultiDimArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a multidimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> and dimension lengths, with zero-based indexing. The dimension lengths are specified in an array of 64-bit integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new multidimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> with the specified length for each dimension, using zero-based indexing.</para>
+        </returns>
         <param name="elementType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the <see cref="T:System.Array" /> to create.</param>
         <param name="lengths">
@@ -2027,11 +1857,6 @@ public class CreateMultiDimArrayExample
         <Parameter Name="length2" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new zero-indexed, two-dimensional <see cref="T:System.Array" /> instance of <paramref name="elementType" /> objects with the size
-<paramref name="length1" /> for the first dimension and <paramref name="length2" /> 
-for the second.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="elementType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -2093,6 +1918,10 @@ public class Create2DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a two-dimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> and dimension lengths, with zero-based indexing.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new two-dimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> with the specified length for each dimension, using zero-based indexing.</para>
+        </returns>
         <param name="elementType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the <see cref="T:System.Array" /> to create.</param>
         <param name="length1">
@@ -2122,10 +1951,6 @@ public class Create2DArrayExample
         <Parameter Name="lowerBounds" Type="System.Int32[]" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new multidimensional <see cref="T:System.Array" /> whose element type is the specified <see cref="T:System.Type" /> and with
-   the specified length and lower bound for each dimension.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="elementType" />, <paramref name="lengths" />, or <paramref name="lowerBounds" /> is <see langword="null" />. </para>
@@ -2210,6 +2035,10 @@ public class MultiDimNonZeroBoundExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a multidimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> and dimension lengths, with the specified lower bounds.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new multidimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> with the specified length and lower bound for each dimension.</para>
+        </returns>
         <param name="elementType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the <see cref="T:System.Array" /> to create.</param>
         <param name="lengths">
@@ -2240,11 +2069,6 @@ public class MultiDimNonZeroBoundExample
         <Parameter Name="length3" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new zero-based, three-dimensional <see cref="T:System.Array" /> instance of <paramref name="elementType" /> objects with the size
-<paramref name="length1" /> for the first dimension, <paramref name="length2" /> for the second, and 
-<paramref name="length3" /> for the third.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="elementType" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -2320,6 +2144,10 @@ public class Create3DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a three-dimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> and dimension lengths, with zero-based indexing.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new three-dimensional <see cref="T:System.Array" /> of the specified <see cref="T:System.Type" /> with the specified length for each dimension, using zero-based indexing.</para>
+        </returns>
         <param name="elementType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the <see cref="T:System.Array" /> to create.</param>
         <param name="length1">
@@ -2351,10 +2179,6 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" />, if the array contains one or more elements that match the conditions defined by the specified predicate; otherwise, <see langword="false" />.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2367,6 +2191,10 @@ public class Create3DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified array contains elements that match the conditions defined by the specified predicate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="array" /> contains one or more elements that match the conditions defined by the specified predicate; otherwise, false.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
         <param name="match">
@@ -2394,9 +2222,6 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <paramref name="T" />.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2409,6 +2234,10 @@ public class Create3DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the first occurrence within the entire <see cref="T:System.Array" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <paramref name="T" />.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based array to search.</param>
         <param name="match">
@@ -2436,9 +2265,6 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>An array containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty array.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2451,6 +2277,10 @@ public class Create3DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves all the elements that match the conditions defined by the specified predicate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Array" /> containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty <see cref="T:System.Array" />.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
         <param name="match">
@@ -2478,9 +2308,6 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2494,6 +2321,10 @@ public class Create3DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the first occurrence within the entire <see cref="T:System.Array" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, –1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
         <param name="match">
@@ -2522,9 +2353,6 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2540,6 +2368,10 @@ public class Create3DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the first occurrence within the range of elements in the <see cref="T:System.Array" /> that extends from the specified index to the last element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, –1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
         <param name="startIndex">
@@ -2571,9 +2403,6 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2597,6 +2426,10 @@ public class Create3DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the first occurrence within the range of elements in the <see cref="T:System.Array" /> that starts at the specified index and contains the specified number of elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, –1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
         <param name="startIndex">
@@ -2628,9 +2461,6 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The last element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <paramref name="T" />.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2643,6 +2473,10 @@ public class Create3DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the last occurrence within the entire <see cref="T:System.Array" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The last element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <paramref name="T" />.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
         <param name="match">
@@ -2670,9 +2504,6 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2686,6 +2517,10 @@ public class Create3DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the last occurrence within the entire <see cref="T:System.Array" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, –1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
         <param name="match">
@@ -2714,9 +2549,6 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2732,6 +2564,10 @@ public class Create3DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the last occurrence within the range of elements in the <see cref="T:System.Array" /> that extends from the first element to the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, –1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
         <param name="startIndex">
@@ -2763,9 +2599,6 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2789,6 +2622,10 @@ public class Create3DArrayExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the last occurrence within the range of elements in the <see cref="T:System.Array" /> that contains the specified number of elements and ends at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the last occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, –1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
         <param name="startIndex">
@@ -2855,9 +2692,6 @@ public class Create3DArrayExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Collections.IEnumerator" /> for the current instance.</para>
-        </returns>
         <example>
           <para>This example demonstrates the <see cref="M:System.Array.GetEnumerator" /> method.</para>
           <code lang="C#">using System;
@@ -2894,6 +2728,10 @@ public class ArrayGetEnumerator {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Array" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:System.Array" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -2913,9 +2751,6 @@ public class ArrayGetEnumerator {
         <Parameter Name="dimension" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The number of elements in the specified dimension of the array.</para>
-        </returns>
         <exception cref="T:System.IndexOutOfRangeException">
           <para>
             <paramref name="dimension" /> is less than zero.</para>
@@ -2932,6 +2767,10 @@ public class ArrayGetEnumerator {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a 32-bit integer that represents the number of elements in the specified dimension of the <see cref="T:System.Array" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit integer that represents the number of elements in the specified dimension.</para>
+        </returns>
         <param name="dimension">
           <attribution license="cc4" from="Microsoft" modified="false" />A zero-based dimension of the <see cref="T:System.Array" /> whose length needs to be determined.</param>
       </Docs>
@@ -2957,7 +2796,6 @@ public class ArrayGetEnumerator {
         <Parameter Name="dimension" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An example of <see cref="M:System.Array.GetLongLength(System.Int32)" /> is GetLongLength(0), which returns the number of elements in the first dimension of the <see cref="T:System.Array" />.</para>
@@ -2967,6 +2805,10 @@ public class ArrayGetEnumerator {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a 64-bit integer that represents the number of elements in the specified dimension of the <see cref="T:System.Array" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 64-bit integer that represents the number of elements in the specified dimension.</para>
+        </returns>
         <param name="dimension">
           <attribution license="cc4" from="Microsoft" modified="false" />A zero-based dimension of the <see cref="T:System.Array" /> whose length needs to be determined.</param>
       </Docs>
@@ -2993,10 +2835,6 @@ public class ArrayGetEnumerator {
         <Parameter Name="dimension" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that contains the lower bound of the specified dimension in the
-   current instance.</para>
-        </returns>
         <exception cref="T:System.IndexOutOfRangeException">
           <para>
             <paramref name="dimension" /> &lt; 0.</para>
@@ -3015,6 +2853,10 @@ public class ArrayGetEnumerator {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the index of the first element of the specified dimension in the array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the first element of the specified dimension in the array.</para>
+        </returns>
         <param name="dimension">
           <attribution license="cc4" from="Microsoft" modified="false" />A zero-based dimension of the array whose starting index needs to be determined.</param>
       </Docs>
@@ -3043,10 +2885,6 @@ public class ArrayGetEnumerator {
         <Parameter Name="dimension" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> that contains the upper bound of the specified dimension in the
-   current instance.</para>
-        </returns>
         <exception cref="T:System.IndexOutOfRangeException">
           <para>
             <paramref name="dimension" /> &lt; 0.</para>
@@ -3063,6 +2901,10 @@ public class ArrayGetEnumerator {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the index of the last element of the specified dimension in the array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the last element of the specified dimension in the array, or -1 if the specified dimension is empty. </para>
+        </returns>
         <param name="dimension">
           <attribution license="cc4" from="Microsoft" modified="false" />A zero-based dimension of the array whose upper bound needs to be determined.</param>
       </Docs>
@@ -3086,10 +2928,6 @@ public class ArrayGetEnumerator {
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that contains the value at the specified position in the current
-   instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The current instance has more than one dimension.</exception>
         <exception cref="T:System.IndexOutOfRangeException">
           <para>
@@ -3122,6 +2960,10 @@ public class ArrayGetValueExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value at the specified position in the one-dimensional <see cref="T:System.Array" />. The index is specified as a 32-bit integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value at the specified position in the one-dimensional <see cref="T:System.Array" />.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />A 32-bit integer that represents the position of the <see cref="T:System.Array" /> element to get.</param>
       </Docs>
@@ -3150,10 +2992,6 @@ public class ArrayGetValueExample {
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that contains the value at the specified position in the
-   current instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="indices" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">The number of dimensions in the current instance is not equal to the number of elements in <paramref name="indices" />.</exception>
@@ -3170,6 +3008,10 @@ public class ArrayGetValueExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value at the specified position in the multidimensional <see cref="T:System.Array" />. The indexes are specified as an array of 32-bit integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value at the specified position in the multidimensional <see cref="T:System.Array" />.</para>
+        </returns>
         <param name="indices">
           <attribution license="cc4" from="Microsoft" modified="false" />A one-dimensional array of 32-bit integers that represent the indexes specifying the position of the <see cref="T:System.Array" /> element to get.</param>
       </Docs>
@@ -3197,7 +3039,6 @@ public class ArrayGetValueExample {
         <Parameter Name="index" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Array.GetLowerBound(System.Int32)" /> and <see cref="M:System.Array.GetUpperBound(System.Int32)" /> methods can determine whether the value of <paramref name="index" /> is out of bounds.</para>
@@ -3207,6 +3048,10 @@ public class ArrayGetValueExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value at the specified position in the one-dimensional <see cref="T:System.Array" />. The index is specified as a 64-bit integer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value at the specified position in the one-dimensional <see cref="T:System.Array" />.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />A 64-bit integer that represents the position of the <see cref="T:System.Array" /> element to get.</param>
       </Docs>
@@ -3238,7 +3083,6 @@ public class ArrayGetValueExample {
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The number of elements in <paramref name="indices" /> must equal the number of dimensions in the <see cref="T:System.Array" />. All elements in the <paramref name="indices" /> array must collectively specify the position of the desired element in the multidimensional <see cref="T:System.Array" />.</para>
@@ -3249,6 +3093,10 @@ public class ArrayGetValueExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value at the specified position in the multidimensional <see cref="T:System.Array" />. The indexes are specified as an array of 64-bit integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value at the specified position in the multidimensional <see cref="T:System.Array" />.</para>
+        </returns>
         <param name="indices">
           <attribution license="cc4" from="Microsoft" modified="false" />A one-dimensional array of 64-bit integers that represent the indexes specifying the position of the <see cref="T:System.Array" /> element to get.</param>
       </Docs>
@@ -3271,10 +3119,6 @@ public class ArrayGetValueExample {
         <Parameter Name="index2" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that contains the value at the specified position in the current 
-   instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The current instance does not have exactly two dimensions.</exception>
         <exception cref="T:System.IndexOutOfRangeException">At least one of <paramref name="index1" /> or <paramref name="index2" /> is outside the range of valid indexes for the corresponding dimension of the current instance.</exception>
         <remarks>
@@ -3286,6 +3130,10 @@ public class ArrayGetValueExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value at the specified position in the two-dimensional <see cref="T:System.Array" />. The indexes are specified as 32-bit integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value at the specified position in the two-dimensional <see cref="T:System.Array" />.</para>
+        </returns>
         <param name="index1">
           <attribution license="cc4" from="Microsoft" modified="false" />A 32-bit integer that represents the first-dimension index of the <see cref="T:System.Array" /> element to get.</param>
         <param name="index2">
@@ -3316,7 +3164,6 @@ public class ArrayGetValueExample {
         <Parameter Name="index2" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Array.GetLowerBound(System.Int32)" /> and <see cref="M:System.Array.GetUpperBound(System.Int32)" /> methods can determine whether any of the indexes is out of bounds.</para>
@@ -3326,6 +3173,10 @@ public class ArrayGetValueExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value at the specified position in the two-dimensional <see cref="T:System.Array" />. The indexes are specified as 64-bit integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value at the specified position in the two-dimensional <see cref="T:System.Array" />.</para>
+        </returns>
         <param name="index1">
           <attribution license="cc4" from="Microsoft" modified="false" />A 64-bit integer that represents the first-dimension index of the <see cref="T:System.Array" /> element to get.</param>
         <param name="index2">
@@ -3351,10 +3202,6 @@ public class ArrayGetValueExample {
         <Parameter Name="index3" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" /> that contains the value at the specified position in the 
-   current instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">The current instance does not have exactly three dimensions.</exception>
         <exception cref="T:System.IndexOutOfRangeException">
           <para>At least one of<paramref name="index1" /> or <paramref name="index2" /> or <paramref name="index3" /> is outside the range of valid indexes for the corresponding dimension of the current instance.</para>
@@ -3368,6 +3215,10 @@ public class ArrayGetValueExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value at the specified position in the three-dimensional <see cref="T:System.Array" />. The indexes are specified as 32-bit integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value at the specified position in the three-dimensional <see cref="T:System.Array" />.</para>
+        </returns>
         <param name="index1">
           <attribution license="cc4" from="Microsoft" modified="false" />A 32-bit integer that represents the first-dimension index of the <see cref="T:System.Array" /> element to get.</param>
         <param name="index2">
@@ -3401,7 +3252,6 @@ public class ArrayGetValueExample {
         <Parameter Name="index3" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Array.GetLowerBound(System.Int32)" /> and <see cref="M:System.Array.GetUpperBound(System.Int32)" /> methods can determine whether any of the indexes is out of bounds.</para>
@@ -3411,6 +3261,10 @@ public class ArrayGetValueExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value at the specified position in the three-dimensional <see cref="T:System.Array" />. The indexes are specified as 64-bit integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value at the specified position in the three-dimensional <see cref="T:System.Array" />.</para>
+        </returns>
         <param name="index1">
           <attribution license="cc4" from="Microsoft" modified="false" />A 64-bit integer that represents the first-dimension index of the <see cref="T:System.Array" /> element to get.</param>
         <param name="index2">
@@ -3442,11 +3296,6 @@ public class ArrayGetValueExample {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the index of the first occurrence of <paramref name="value" /> in
-<paramref name="array" />, if found; otherwise, <paramref name="array" />.GetLowerBound(0) - 1. <block subset="none" type="note"> For a vector, if <paramref name="value" /> is not 
-   found, the return value will be -1. This provides the caller with a standard code for a failed search.</block></para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" />.</exception>
         <exception cref="T:System.RankException">
@@ -3485,6 +3334,10 @@ public class ArrayIndexOfExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified object and returns the index of the first occurrence within the entire one-dimensional <see cref="T:System.Array" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the first occurrence of <paramref name="value" /> within the entire <paramref name="array" />, if found; otherwise, the lower bound of the array minus 1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> to search.</param>
         <param name="value">
@@ -3516,14 +3369,6 @@ public class ArrayIndexOfExample {
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the index of the first occurrence of <paramref name="value" /> in
-<paramref name="array" />, within the range <paramref name="startIndex" /> through the last element of 
-<paramref name="array" />, if found; otherwise, 
-<paramref name="array" />.GetLowerBound(0) - 1. 
-<block subset="none" type="note"> For a vector, if <paramref name="value" /> is not 
-   found, the return value will be -1. This provides the caller with a standard code for the failed search.</block></para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="array" /> is <see langword="null" />. </para>
@@ -3547,6 +3392,10 @@ public class ArrayIndexOfExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified object and returns the index of the first occurrence within the range of elements in the one-dimensional <see cref="T:System.Array" /> that extends from the specified index to the last element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the first occurrence of <paramref name="value" /> within the range of elements in <paramref name="array" /> that extends from <paramref name="startIndex" /> to the last element, if found; otherwise, the lower bound of the array minus 1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> to search.</param>
         <param name="value">
@@ -3581,14 +3430,6 @@ public class ArrayIndexOfExample {
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the index of the first occurrence of <paramref name="value" /> in
-<paramref name="array" />, within the range <paramref name="startIndex" /> through <paramref name="startIndex" /> 
-+ <paramref name="count" />- 1, if found; otherwise,
-<paramref name="array" />.GetLowerBound(0) - 1.
-<block subset="none" type="note"> For a vector, if <paramref name="value" /> is not 
-found, the return value will be -1. This provides the caller with a standard code for the failed search.</block></para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="array" /> is <see langword="null" />.</para>
@@ -3618,6 +3459,10 @@ found, the return value will be -1. This provides the caller with a standard cod
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified object and returns the index of the first occurrence within the range of elements in the one-dimensional <see cref="T:System.Array" /> that starts at the specified index and contains the specified number of elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the first occurrence of <paramref name="value" /> within the range of elements in <paramref name="array" /> that starts at <paramref name="startIndex" /> and contains the number of elements specified in <paramref name="count" />, if found; otherwise, the lower bound of the array minus 1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> to search.</param>
         <param name="value">
@@ -3918,13 +3763,6 @@ found, the return value will be -1. This provides the caller with a standard cod
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the index of the last occurrence in <paramref name="array" /> of
-<paramref name="value" />, if found; otherwise, 
-<paramref name="array" />.GetLowerBound(0) - 1. 
-<block subset="none" type="note"> For a vector, if <paramref name="value" /> is not 
-   found, the return value will be -1. This provides the caller with a standard code for the failed search.</block></para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" /> . </exception>
         <exception cref="T:System.RankException">
@@ -3966,6 +3804,10 @@ public class ArrayLastIndexOfExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified object and returns the index of the last occurrence within the entire one-dimensional <see cref="T:System.Array" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the last occurrence of <paramref name="value" /> within the entire <paramref name="array" />, if found; otherwise, the lower bound of the array minus 1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> to search.</param>
         <param name="value">
@@ -3997,13 +3839,6 @@ public class ArrayLastIndexOfExample {
         <Parameter Name="startIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the index of the last occurrence of <paramref name="value" /> in the range
-<paramref name="startIndex" /> through the lower bound of <paramref name="array" />, if found; otherwise, 
-<paramref name="array" />.GetLowerBound(0) - 1. <block subset="none" type="note"> For a vector, if <paramref name="value" /> is not found, the return value will
-   be -1. This provides the caller with a standard code for the failed
-   search.</block></para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="array" /> is <see langword="null" />.</para>
@@ -4026,6 +3861,10 @@ public class ArrayLastIndexOfExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified object and returns the index of the last occurrence within the range of elements in the one-dimensional <see cref="T:System.Array" /> that extends from the first element to the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the last occurrence of <paramref name="value" /> within the range of elements in <paramref name="array" /> that extends from the first element to <paramref name="startIndex" />, if found; otherwise, the lower bound of the array minus 1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> to search.</param>
         <param name="value">
@@ -4060,14 +3899,6 @@ public class ArrayLastIndexOfExample {
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the index of the last occurrence of <paramref name="value" /> in 
-<paramref name="array" />, within the range <paramref name="startIndex" /> through 
-<paramref name="startIndex" /> - <paramref name="count" /> + 1, if found; otherwise, 
-<paramref name="array" />.GetLowerBound(0) - 1. 
-<block subset="none" type="note"> For a vector, if <paramref name="value" /> is not 
-   found, the return value will be -1. This provides the caller with a standard code for the failed search.</block></para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="array" /> is <see langword="null" />.</para>
@@ -4096,6 +3927,10 @@ public class ArrayLastIndexOfExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified object and returns the index of the last occurrence within the range of elements in the one-dimensional <see cref="T:System.Array" /> that contains the specified number of elements and ends at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the last occurrence of <paramref name="value" /> within the range of elements in <paramref name="array" /> that contains the number of elements specified in <paramref name="count" /> and ends at <paramref name="startIndex" />, if found; otherwise, the lower bound of the array minus 1.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional <see cref="T:System.Array" /> to search.</param>
         <param name="value">
@@ -6252,7 +6087,6 @@ public class ArraySortExample {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Array" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -6261,6 +6095,10 @@ public class ArraySortExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an item to <see cref="T:System.Collections.IList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position into which the new element was inserted, or -1 to indicate that the item was not inserted into the collection.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to be added to the <see cref="T:System.Collections.IList" />.</param>
       </Docs>
@@ -6305,7 +6143,6 @@ public class ArraySortExample {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Array" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -6314,6 +6151,10 @@ public class ArraySortExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an element is in the <see cref="T:System.Collections.IList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="value" /> is found in the <see cref="T:System.Collections.IList" />; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to locate in the current list. The element to locate can be null for reference types.</param>
       </Docs>
@@ -6339,7 +6180,6 @@ public class ArraySortExample {
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Array" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -6348,6 +6188,10 @@ public class ArraySortExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the index of a specific item in the <see cref="T:System.Collections.IList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of value if found in the list; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to locate in the current list.</param>
       </Docs>
@@ -6477,7 +6321,6 @@ public class ArraySortExample {
         <Parameter Name="comparer" Type="System.Collections.IComparer" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Array" /> instance is cast to an <see cref="T:System.Collections.IStructuralComparable" /> interface.</para>
@@ -6486,6 +6329,46 @@ public class ArraySortExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current collection object precedes, occurs in the same position as, or follows another object in the sort order.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that indicates the relationship of the current collection object to other, as shown in the following table.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value</para>
+                </term>
+                <description>
+                  <para>Description</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>-1</para>
+              </term>
+              <description>
+                <para>The current instance precedes <paramref name="other" />.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>0</para>
+              </term>
+              <description>
+                <para>The current instance and <paramref name="other" /> are equal.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>1</para>
+              </term>
+              <description>
+                <para>The current instance follows <paramref name="other" />.</para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current instance.</param>
         <param name="comparer">
@@ -6507,7 +6390,6 @@ public class ArraySortExample {
         <Parameter Name="comparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Array" /> instance is cast to an <see cref="T:System.Collections.IStructuralEquatable" /> interface.</para>
@@ -6516,6 +6398,10 @@ public class ArraySortExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an object is equal to the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two objects are equal; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current instance.</param>
         <param name="comparer">
@@ -6536,7 +6422,6 @@ public class ArraySortExample {
         <Parameter Name="comparer" Type="System.Collections.IEqualityComparer" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Array" /> instance is cast to an <see cref="T:System.Collections.IStructuralEquatable" /> interface.</para>
@@ -6545,6 +6430,10 @@ public class ArraySortExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code for the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for the current instance.</para>
+        </returns>
         <param name="comparer">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that computes the hash code of the current object.</param>
       </Docs>
@@ -6568,10 +6457,6 @@ public class ArraySortExample {
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" />, if every element in <paramref name="array" /> matches the specified predicate; otherwise, <see langword="false" />.</para>
-        </returns>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -6584,6 +6469,10 @@ public class ArraySortExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether every element in the array matches the conditions defined by the specified predicate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if every element in <paramref name="array" /> matches the conditions defined by the specified predicate; otherwise, false. If there are no elements in the array, the return value is true.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to check against the conditions.</param>
         <param name="match">

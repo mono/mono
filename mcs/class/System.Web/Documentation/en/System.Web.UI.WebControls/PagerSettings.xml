@@ -879,7 +879,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.PagerSettings.System#Web#UI#IStateManager#SaveViewState" /> method is a helper method that is used by the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> class to save the state of the object.</para>
@@ -891,6 +890,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves the current view state of the <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the saved state of the <see cref="T:System.Web.UI.WebControls.PagerSettings" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -925,7 +928,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -935,6 +937,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the string representation of a <see cref="T:System.Web.UI.WebControls.PagerSettings" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty string ("").</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

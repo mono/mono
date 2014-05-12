@@ -41,7 +41,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Terminating the outbound session does not affect the incoming session and so makes no statement about the ability to receive messages on the session associated with the input channel. This operation must complete within a default interval of time. </para>
@@ -50,6 +49,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to terminate the outbound session.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous outbound session termination. </para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
         <param name="state">
@@ -72,7 +75,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Terminating the outbound session does not affect the incoming session and so makes no statement about the ability to receive messages on the session associated with the input channel.</para>
@@ -81,6 +83,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous operation to terminate the outbound session with a specified timeout within which the operation must complete.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> that references the asynchronous outbound session termination. </para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.TimeSpan" /> that specifies the interval of time within which the operation must complete.</param>
         <param name="callback">

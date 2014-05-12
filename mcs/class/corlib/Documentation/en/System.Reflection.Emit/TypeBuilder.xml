@@ -208,7 +208,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Type'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If this type is a nested type, the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method must be called on the enclosing type before it is called on the nested type.</para>
@@ -220,6 +219,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Type" /> object for the class. After defining fields and methods on the class, CreateType is called in order to load its Type object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the new <see cref="T:System.Type" /> object for this class.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DeclaringMethod">
@@ -292,7 +295,6 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ConstructorBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you do not define a constructor for your dynamic type, a default constructor is provided automatically, and it calls the default constructor of the base class.</para>
@@ -310,6 +312,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new constructor to the type, with the given attributes and signature.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined constructor.</para>
+        </returns>
         <param name="attributes">
           <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the constructor. </param>
         <param name="callingConvention">
@@ -342,7 +348,6 @@
         <Parameter Name="optionalCustomModifiers" Type="System.Type[][]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -355,6 +360,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new constructor to the type, with the given attributes, signature, and custom modifiers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined constructor.</para>
+        </returns>
         <param name="attributes">
           <attribution license="cc4" from="Microsoft" modified="false" />The attributes of the constructor. </param>
         <param name="callingConvention">
@@ -388,7 +397,6 @@
         <Parameter Name="attributes" Type="System.Reflection.MethodAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ConstructorBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Because the default constructor is automatically defined, it is necessary to call this method only in the following situations: </para>
@@ -405,6 +413,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines the default constructor. The constructor defined here will simply call the default constructor of the parent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the constructor.</para>
+        </returns>
         <param name="attributes">
           <attribution license="cc4" from="Microsoft" modified="false" />A MethodAttributes object representing the attributes to be applied to the constructor. </param>
       </Docs>
@@ -427,12 +439,15 @@
         <Parameter Name="eventtype" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventBuilder'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new event to the type, with the given name, attributes and event type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined event.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the event. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -459,12 +474,15 @@
         <Parameter Name="attributes" Type="System.Reflection.FieldAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FieldBuilder'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new field to the type, with the given name, attributes, and field type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined field.</para>
+        </returns>
         <param name="fieldName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the field. <paramref name="fieldName" /> cannot contain embedded nulls. </param>
         <param name="type">
@@ -492,7 +510,6 @@
         <Parameter Name="attributes" Type="System.Reflection.FieldAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -502,6 +519,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new field to the type, with the given name, attributes, field type, and custom modifiers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined field.</para>
+        </returns>
         <param name="fieldName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the field. <paramref name="fieldName" /> cannot contain embedded nulls. </param>
         <param name="type">
@@ -535,7 +556,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -545,6 +565,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines the generic type parameters for the current type, specifying their number and their names, and returns an array of <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> objects that can be used to set their constraints.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Reflection.Emit.GenericTypeParameterBuilder" /> objects that can be used to define the constraints of the generic type parameters for the current type.</para>
+        </returns>
         <param name="names">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of names for the generic type parameters.</param>
       </Docs>
@@ -567,7 +591,6 @@
         <Parameter Name="attributes" Type="System.Reflection.FieldAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FieldBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The field that you create with this method will be static, even if you do not include FieldAttributes.Static in the <paramref name="attributes" /> parameter.</para>
@@ -576,6 +599,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines initialized data field in the .sdata section of the portable executable (PE) file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A field to reference the data.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name used to refer to the data. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="data">
@@ -600,7 +627,6 @@
         <Parameter Name="attributes" Type="System.Reflection.MethodAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -611,6 +637,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new method to the type, with the specified name and method attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.MethodBuilder" /> representing the newly defined method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -634,7 +664,6 @@
         <Parameter Name="callingConvention" Type="System.Reflection.CallingConventions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -644,6 +673,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new method to the type, with the specified name, method attributes, and calling convention.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.MethodBuilder" /> representing the newly defined method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -671,12 +704,15 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new method to the type, with the specified name, method attributes, and method signature.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -707,12 +743,15 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new method to the type, with the specified name, method attributes, calling convention, and method signature.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.MethodBuilder" /> representing the newly defined method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -748,7 +787,6 @@
         <Parameter Name="parameterTypeOptionalCustomModifiers" Type="System.Type[][]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -761,6 +799,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new method to the type, with the specified name, method attributes, calling convention, method signature, and custom modifiers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.MethodBuilder" /> object representing the newly added method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -836,7 +878,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to create nested types even after the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method has been called on the enclosing type. </para>
@@ -848,6 +889,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a nested type, given its name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined nested type.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The short name of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
       </Docs>
@@ -869,7 +914,6 @@
         <Parameter Name="attr" Type="System.Reflection.TypeAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to create nested types even after the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method has been called on the enclosing type. </para>
@@ -881,6 +925,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a nested type, given its name and attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined nested type.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The short name of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attr">
@@ -905,7 +953,6 @@
         <Parameter Name="parent" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to create nested types even after the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method has been called on the enclosing type. </para>
@@ -917,6 +964,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a nested type, given its name, attributes, and the type that it extends.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined nested type.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The short name of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attr">
@@ -944,7 +995,6 @@
         <Parameter Name="typeSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to create nested types even after the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method has been called on the enclosing type. </para>
@@ -956,6 +1006,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a nested type, given its name, attributes, the total size of the type, and the type that it extends.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined nested type.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The short name of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attr">
@@ -985,7 +1039,6 @@
         <Parameter Name="packSize" Type="System.Reflection.Emit.PackingSize" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to create nested types even after the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method has been called on the enclosing type. </para>
@@ -997,6 +1050,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a nested type, given its name, attributes, the type that it extends, and the packing size.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined nested type.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The short name of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attr">
@@ -1031,7 +1088,6 @@
         <Parameter Name="interfaces" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to create nested types even after the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method has been called on the enclosing type. </para>
@@ -1043,6 +1099,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a nested type, given its name, attributes, the type that it extends, and the interfaces that it implements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined nested type.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The short name of the type. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attr">
@@ -1076,7 +1136,6 @@
         <Parameter Name="nativeCharSet" Type="System.Runtime.InteropServices.CharSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Some DLL import attributes (see the description of <see cref="T:System.Runtime.InteropServices.DllImportAttribute" />) cannot be specified as arguments to this method. For example, the DLL import attribute <see cref="F:System.Reflection.MethodImplAttributes.PreserveSig" /> must be added after the PInvoke method is created, if the method returns a value. The example shows how to do this.</para>
@@ -1085,6 +1144,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a PInvoke method given its name, the name of the DLL in which the method is defined, the attributes of the method, the calling convention of the method, the return type of the method, the types of the parameters of the method, and the PInvoke flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined PInvoke method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the PInvoke method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="dllName">
@@ -1127,7 +1190,6 @@
         <Parameter Name="nativeCharSet" Type="System.Runtime.InteropServices.CharSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MethodBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Some DLL import attributes (see the description of <see cref="T:System.Runtime.InteropServices.DllImportAttribute" />) cannot be specified as arguments to this method. For example, the DLL import attribute <see cref="F:System.Reflection.MethodImplAttributes.PreserveSig" /> must be added after the PInvoke method is created, if the method returns a value. The example shows how to do this.</para>
@@ -1136,6 +1198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a PInvoke method given its name, the name of the DLL in which the method is defined, the name of the entry point, the attributes of the method, the calling convention of the method, the return type of the method, the types of the parameters of the method, and the PInvoke flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined PInvoke method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the PInvoke method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="dllName">
@@ -1183,7 +1249,6 @@
         <Parameter Name="nativeCharSet" Type="System.Runtime.InteropServices.CharSet" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1196,6 +1261,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a PInvoke method given its name, the name of the DLL in which the method is defined, the name of the entry point, the attributes of the method, the calling convention of the method, the return type of the method, the types of the parameters of the method, the PInvoke flags, and custom modifiers for the parameters and return type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.MethodBuilder" /> representing the defined PInvoke method.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the PInvoke method. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="dllName">
@@ -1243,12 +1312,15 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyBuilder'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new property to the type, with the given name and property signature.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined property.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the property. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -1277,12 +1349,15 @@
         <Parameter Name="parameterTypes" Type="System.Type[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new property to the type, with the given name, attributes, calling convention, and property signature.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined property.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the property. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -1317,7 +1392,6 @@
         <Parameter Name="parameterTypeOptionalCustomModifiers" Type="System.Type[][]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1330,6 +1404,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new property to the type, with the given name, property signature, and custom modifiers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined property.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the property. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -1371,7 +1449,6 @@
         <Parameter Name="parameterTypeOptionalCustomModifiers" Type="System.Type[][]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is provided for designers of managed compilers.</para>
@@ -1384,6 +1461,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a new property to the type, with the given name, calling convention, property signature, and custom modifiers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The defined property.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the property. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="attributes">
@@ -1423,7 +1504,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ConstructorBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The initializer created is always public.</para>
@@ -1432,6 +1512,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines the initializer for this type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a type initializer.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefineUninitializedData">
@@ -1452,7 +1536,6 @@
         <Parameter Name="attributes" Type="System.Reflection.FieldAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FieldBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The field that you create with this method will be static, even if you do not include FieldAttributes.Static in the <paramref name="attributes" /> parameter.</para>
@@ -1461,6 +1544,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines an uninitialized data field in the .sdata section of the portable executable (PE) file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A field to reference the data.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name used to refer to the data. <paramref name="name" /> cannot contain embedded nulls. </param>
         <param name="size">
@@ -1580,7 +1667,6 @@
         <Parameter Name="constructor" Type="System.Reflection.ConstructorInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1591,6 +1677,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the constructor of the specified constructed generic type that corresponds to the specified constructor of the generic type definition. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.ConstructorInfo" /> object that represents the constructor of <paramref name="type" /> corresponding to <paramref name="constructor" />, which specifies a constructor belonging to the generic type definition of <paramref name="type" />.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The constructed generic type whose constructor is returned.</param>
         <param name="constructor">
@@ -1648,7 +1738,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -1657,6 +1746,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of <see cref="T:System.Reflection.ConstructorInfo" /> objects representing the public and non-public constructors defined for this class, as specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of <see cref="T:System.Reflection.ConstructorInfo" /> objects representing the specified constructors defined for this class. If no constructors are defined, an empty array is returned.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />This must be a bit flag from <see cref="T:System.Reflection.BindingFlags" /> as in InvokeMethod, NonPublic, and so on. </param>
       </Docs>
@@ -1677,12 +1770,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the custom attributes defined for this type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of objects representing all the custom attributes of this type.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether to search this member's inheritance chain to find the attributes. </param>
       </Docs>
@@ -1704,12 +1800,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the custom attributes of the current type that are assignable to a specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of custom attributes defined on the current type.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for. Only attributes that are assignable to this type are returned.</param>
         <param name="inherit">
@@ -1730,7 +1829,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -1739,6 +1837,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calling this method always throws <see cref="T:System.NotSupportedException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported. No value is returned.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEvent">
@@ -1758,7 +1860,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -1767,6 +1868,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the event with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Reflection.EventInfo" /> object representing the event declared or inherited by this type with the specified name, or null if there are no matches.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the event to search for. </param>
         <param name="bindingAttr">
@@ -1787,7 +1892,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -1796,6 +1900,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the public events declared or inherited by this type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of <see cref="T:System.Reflection.EventInfo" /> objects representing the public events declared or inherited by this type. An empty array is returned if there are no public events.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEvents">
@@ -1814,7 +1922,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -1823,6 +1930,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the public and non-public events that are declared by this type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of <see cref="T:System.Reflection.EventInfo" /> objects representing the events declared or inherited by this type that match the specified binding flags. An empty array is returned if there are no matching events.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of <see cref="T:System.Reflection.BindingFlags" /> values that limits the search.</param>
       </Docs>
@@ -1844,7 +1955,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -1853,6 +1963,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the field specified by the given name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.Reflection.FieldInfo" /> object representing the field declared or inherited by this type with the specified name and public or non-public modifier. If there are no matches then null is returned.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the field to get. </param>
         <param name="bindingAttr">
@@ -1875,7 +1989,6 @@
         <Parameter Name="field" Type="System.Reflection.FieldInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1886,6 +1999,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the field of the specified constructed generic type that corresponds to the specified field of the generic type definition. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.FieldInfo" /> object that represents the field of <paramref name="type" /> corresponding to <paramref name="field" />, which specifies a field belonging to the generic type definition of <paramref name="type" />.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The constructed generic type whose field is returned.</param>
         <param name="field">
@@ -1908,7 +2025,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Reflection.Emit.TypeBuilder.GetFields(System.Reflection.BindingFlags)" /> method does not return fields in a particular order, such as alphabetical or declaration order. Your code must not depend on the order in which fields are returned, because that order can vary.</para>
@@ -1918,6 +2034,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the public and non-public fields that are declared by this type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of <see cref="T:System.Reflection.FieldInfo" /> objects representing the public and non-public fields declared or inherited by this type. An empty array is returned if there are no fields, as specified.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />This must be a bit flag from <see cref="T:System.Reflection.BindingFlags" /> : InvokeMethod, NonPublic, and so on. </param>
       </Docs>
@@ -1935,7 +2055,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1947,6 +2066,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of <see cref="T:System.Type" /> objects representing the type arguments of a generic type or the type parameters of a generic type definition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects. The elements of the array represent the type arguments of a generic type or the type parameters of a generic type definition.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetGenericTypeDefinition">
@@ -1962,7 +2085,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1973,6 +2095,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object that represents a generic type definition from which the current type can be obtained.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing a generic type definition from which the current type can be obtained.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetInterface">
@@ -1992,7 +2118,6 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -2001,6 +2126,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the interface implemented (directly or indirectly) by this class with the fully qualified name matching the given interface name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Type" /> object representing the implemented interface. Returns null if no interface matching name is found.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the interface. </param>
         <param name="ignoreCase">
@@ -2028,7 +2157,6 @@
         <Parameter Name="interfaceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -2037,6 +2165,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an interface mapping for the requested interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the requested interface mapping.</para>
+        </returns>
         <param name="interfaceType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the interface for which the mapping is to be retrieved. </param>
       </Docs>
@@ -2055,12 +2187,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of all the interfaces implemented on this type and its base types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of <see cref="T:System.Type" /> objects representing the implemented interfaces. If none are defined, an empty array is returned.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMember">
@@ -2081,7 +2216,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -2090,6 +2224,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the public and non-public members declared or inherited by this type, as specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of <see cref="T:System.Reflection.MemberInfo" /> objects representing the public and non-public members defined on this type if <paramref name="nonPublic" /> is used; otherwise, only the public members are returned.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member. </param>
         <param name="type">
@@ -2114,7 +2252,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -2123,6 +2260,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the members for the public and non-public members declared or inherited by this type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of <see cref="T:System.Reflection.MemberInfo" /> objects representing the public and non-public members declared or inherited by this type. An empty array is returned if there are no matching members.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />This must be a bit flag from <see cref="T:System.Reflection.BindingFlags" />, such as InvokeMethod, NonPublic, and so on. </param>
       </Docs>
@@ -2143,7 +2284,6 @@
         <Parameter Name="method" Type="System.Reflection.MethodInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2154,6 +2294,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the method of the specified constructed generic type that corresponds to the specified method of the generic type definition. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object that represents the method of <paramref name="type" /> corresponding to <paramref name="method" />, which specifies a method belonging to the generic type definition of <paramref name="type" />.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The constructed generic type whose method is returned.</param>
         <param name="method">
@@ -2208,7 +2352,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -2217,6 +2360,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the public and non-public methods declared or inherited by this type, as specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of <see cref="T:System.Reflection.MethodInfo" /> objects representing the public and non-public methods defined on this type if <paramref name="nonPublic" /> is used; otherwise, only the public methods are returned.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />This must be a bit flag from <see cref="T:System.Reflection.BindingFlags" /> as in InvokeMethod, NonPublic, and so on. </param>
       </Docs>
@@ -2238,7 +2385,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -2248,6 +2394,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the public and non-public nested types that are declared by this type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing the nested type that matches the specified requirements, if found; otherwise, null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> containing the name of the nested type to get. </param>
         <param name="bindingAttr">
@@ -2270,7 +2420,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -2280,6 +2429,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the public and non-public nested types that are declared or inherited by this type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> objects representing all the types nested within the current <see cref="T:System.Type" /> that match the specified binding constraints.</para>
+          <para>An empty array of type <see cref="T:System.Type" />, if no types are nested within the current <see cref="T:System.Type" />, or if none of the nested types match the binding constraints.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />This must be a bit flag from <see cref="T:System.Reflection.BindingFlags" />, as in InvokeMethod, NonPublic, and so on. </param>
       </Docs>
@@ -2300,7 +2454,6 @@
         <Parameter Name="bindingAttr" Type="System.Reflection.BindingFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -2309,6 +2462,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the public and non-public properties declared or inherited by this type, as specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an array of PropertyInfo objects representing the public and non-public properties defined on this type if <paramref name="nonPublic" /> is used; otherwise, only the public properties are returned.</para>
+        </returns>
         <param name="bindingAttr">
           <attribution license="cc4" from="Microsoft" modified="false" />This invocation attribute. This must be a bit flag from <see cref="T:System.Reflection.BindingFlags" /> : InvokeMethod, NonPublic, and so on. </param>
       </Docs>
@@ -2411,7 +2568,6 @@
         <Parameter Name="namedParameters" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A method will be invoked if the number of parameters in the method declaration equals the number of arguments in the specified argument list, and the type of each argument can be converted by the binder to the type of the parameter.</para>
@@ -2425,6 +2581,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes the specified member. The method that is to be invoked must be accessible and provide the most specific match with the specified argument list, under the constraints of the specified binder and invocation attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the return value of the invoked member.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the member to invoke. This can be a constructor, method, property, or field. A suitable invocation attribute must be specified. Note that it is possible to invoke the default member of a class by passing an empty string as the name of the member. </param>
         <param name="invokeAttr">
@@ -2476,12 +2636,15 @@
         <Parameter Name="typeInfo" Type="System.Reflection.TypeInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether a specified <see cref="T:System.Reflection.TypeInfo" /> object can be assigned to this object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="typeInfo" /> can be assigned to this object; otherwise, false.</para>
+        </returns>
         <param name="typeInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to test.</param>
       </Docs>
@@ -2502,12 +2665,15 @@
         <Parameter Name="c" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether a specified <see cref="T:System.Type" /> can be assigned to this object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="c" /> parameter and the current type represent the same type, or if the current type is in the inheritance hierarchy of <paramref name="c" />, or if the current type is an interface that <paramref name="c" /> supports. false if none of these conditions are valid, or if <paramref name="c" /> is null.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to test. </param>
       </Docs>
@@ -2582,7 +2748,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -2592,6 +2757,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the current dynamic type has been created.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method has been called; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsDefined">
@@ -2611,7 +2780,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not supported for incomplete generic type parameters. Retrieve the type using <see cref="M:System.Type.GetType" /> or <see cref="M:System.Reflection.Assembly.GetType(System.String)" /> and use reflection on the retrieved type.</para>
@@ -2620,6 +2788,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a custom attribute is applied to the current type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more instances of <paramref name="attributeType" />, or an attribute derived from <paramref name="attributeType" />, is defined on this type; otherwise, false.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for. Only attributes that are assignable to this type are returned. </param>
         <param name="inherit">
@@ -2762,12 +2934,15 @@
         <Parameter Name="c" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether this type is derived from a specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Read-only. Returns true if this type is the same as the type <paramref name="c" />, or is a subtype of type <paramref name="c" />; otherwise, false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that is to be checked. </param>
       </Docs>
@@ -2804,7 +2979,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Reflection.Emit.TypeBuilder.MakeArrayType" /> method provides a way to generate an array type with any possible element type, including generic types.</para>
@@ -2813,6 +2987,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object that represents a one-dimensional array of the current type, with a lower bound of zero.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing a one-dimensional array type whose element type is the current type, with a lower bound of zero.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MakeArrayType">
@@ -2830,7 +3008,6 @@
         <Parameter Name="rank" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Reflection.Emit.TypeBuilder.MakeArrayType" /> method provides a way to generate an array type with any possible element type, including generic types.</para>
@@ -2839,6 +3016,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object that represents an array of the current type, with the specified number of dimensions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents a one-dimensional array of the current type.</para>
+        </returns>
         <param name="rank">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of dimensions for the array. </param>
       </Docs>
@@ -2856,7 +3037,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Reflection.Emit.TypeBuilder.MakeByRefType" /> method provides a way to generate ref types (ByRef in Visual Basic) for parameter lists.</para>
@@ -2868,6 +3048,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object that represents the current type when passed as a ref parameter (ByRef in Visual Basic).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the current type when passed as a ref parameter (ByRef in Visual Basic).</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MakeGenericType">
@@ -2891,7 +3075,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method when your emitted code requires a type constructed from the current generic type definition. It is not necessary to call the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method before calling the <see cref="M:System.Reflection.Emit.TypeBuilder.MakeGenericType(System.Type[])" /> method on a <see cref="T:System.Reflection.Emit.TypeBuilder" /> that represents a generic type definition. If the current <see cref="T:System.Reflection.Emit.TypeBuilder" /> does not represent the definition of a generic type, an <see cref="T:System.InvalidOperationException" /> is thrown.</para>
@@ -2911,6 +3094,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Substitutes the elements of an array of types for the type parameters of the current generic type definition, and returns the resulting constructed type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> representing the constructed type formed by substituting the elements of <paramref name="typeArguments" /> for the type parameters of the current generic type. </para>
+        </returns>
         <param name="typeArguments">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of types to be substituted for the type parameters of the current generic type definition.</param>
       </Docs>
@@ -2928,7 +3115,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Reflection.Emit.TypeBuilder.MakePointerType" /> method provides a way to generate pointer types for parameter lists.</para>
@@ -2940,6 +3126,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Type" /> object that represents the type of an unmanaged pointer to the current type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the type of an unmanaged pointer to the current type.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Module">
@@ -3300,12 +3490,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the type excluding the namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Read-only. The name of the type excluding the namespace.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TypeHandle">

@@ -80,12 +80,16 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a string to an <see cref="T:System.Net.Http.Headers.TransferCodingWithQualityHeaderValue" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Net.Http.Headers.TransferCodingWithQualityHeaderValue" />.</para>
+          <para>An <see cref="T:System.Net.Http.Headers.TransferCodingWithQualityHeaderValue" /> instance.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that represents transfer-coding value information.</param>
       </Docs>

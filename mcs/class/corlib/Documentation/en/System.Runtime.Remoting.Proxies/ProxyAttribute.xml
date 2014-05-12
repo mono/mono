@@ -75,12 +75,15 @@
         <Parameter Name="serverType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MarshalByRefObject'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates either an uninitialized <see cref="T:System.MarshalByRefObject" /> or a transparent proxy, depending on whether the specified type can exist in the current context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An uninitialized <see cref="T:System.MarshalByRefObject" /> or a transparent proxy.</para>
+        </returns>
         <param name="serverType">
           <attribution license="cc4" from="Microsoft" modified="false" />The object type to create an instance of. </param>
       </Docs>
@@ -104,7 +107,6 @@
         <Parameter Name="serverContext" Type="System.Runtime.Remoting.Contexts.Context" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'RealProxy'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -115,6 +117,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of a remoting proxy for a remote object described by the specified <see cref="T:System.Runtime.Remoting.ObjRef" />, and located on the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new instance of remoting proxy for the remote object that is described in the specified <see cref="T:System.Runtime.Remoting.ObjRef" />.</para>
+        </returns>
         <param name="objRef">
           <attribution license="cc4" from="Microsoft" modified="false" />The object reference to the remote object for which to create a proxy. </param>
         <param name="serverType">
@@ -177,12 +183,15 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified context.</para>
+        </returns>
         <param name="ctx">
           <attribution license="cc4" from="Microsoft" modified="false" />The context to be verified.</param>
         <param name="msg">

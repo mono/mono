@@ -170,12 +170,15 @@ public class DeclaringTypeExample {
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
       </Docs>
@@ -196,7 +199,6 @@ public class DeclaringTypeExample {
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method ignores the <paramref name="inherit" /> parameter for properties and events. To search the inheritance chain for attributes on properties and events, use the appropriate overloads of the <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.Assembly)" /> method. </para>
@@ -208,6 +210,10 @@ public class DeclaringTypeExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns an array of all custom attributes applied to this member. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains all the custom attributes applied to this member, or an array with zero elements if no attributes are defined.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />true to search this member's inheritance chain to find the attributes; otherwise, false. This parameter is ignored for properties and events; see Remarks.</param>
       </Docs>
@@ -229,7 +235,6 @@ public class DeclaringTypeExample {
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method ignores the <paramref name="inherit" /> parameter for properties and events. To search the inheritance chain for attributes on properties and events, use the appropriate overloads of the <see cref="M:System.Attribute.GetCustomAttributes(System.Reflection.Assembly)" /> method. </para>
@@ -241,6 +246,10 @@ public class DeclaringTypeExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns an array of custom attributes applied to this member and identified by <see cref="T:System.Type" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of custom attributes applied to this member, or an array with zero elements if no attributes assignable to <paramref name="attributeType" /> have been applied.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for. Only attributes that are assignable to this type are returned. </param>
         <param name="inherit">
@@ -259,7 +268,6 @@ public class DeclaringTypeExample {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to examine the custom attributes of code in the reflection-only context, in cases where the custom attributes themselves are defined in code that is loaded into the reflection-only context. Methods like <see cref="Overload:System.Attribute.GetCustomAttributes" /> and <see cref="Overload:System.Reflection.MemberInfo.GetCustomAttributes" /> cannot be used in such cases, because they create instances of the attributes. Code in the reflection-only context cannot be executed. For more information and for example code, see the <see cref="T:System.Reflection.CustomAttributeData" /> class.</para>
@@ -269,6 +277,10 @@ public class DeclaringTypeExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a list of <see cref="T:System.Reflection.CustomAttributeData" /> objects representing data about the attributes that have been applied to the target member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A generic list of <see cref="T:System.Reflection.CustomAttributeData" /> objects representing data about the attributes that have been applied to the target member.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -283,12 +295,15 @@ public class DeclaringTypeExample {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -327,7 +342,6 @@ public class DeclaringTypeExample {
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method ignores the <paramref name="inherit" /> parameter for properties and events. To search the inheritance chain for attributes on properties and events, use the appropriate overloads of the <see cref="M:System.Attribute.IsDefined(System.Reflection.MemberInfo,System.Type,System.Boolean)" /> method. </para>
@@ -339,6 +353,10 @@ public class DeclaringTypeExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, indicates whether one or more attributes of the specified type or of its derived types is applied to this member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more instances of <paramref name="attributeType" /> or any of its derived types is applied to this member; otherwise, false.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of custom attribute to search for. The search includes derived types. </param>
         <param name="inherit">
@@ -468,12 +486,15 @@ public class DeclaringTypeExample {
         <Parameter Name="right" Type="System.Reflection.MemberInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Reflection.MemberInfo" /> objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is equal to <paramref name="right" />; otherwise false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MemberInfo" /> to compare to <paramref name="right" />.</param>
         <param name="right">
@@ -495,12 +516,15 @@ public class DeclaringTypeExample {
         <Parameter Name="right" Type="System.Reflection.MemberInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.Reflection.MemberInfo" /> objects are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.MemberInfo" /> to compare to <paramref name="right" />.</param>
         <param name="right">
@@ -579,12 +603,15 @@ obtained.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Type" /> object representing the <see cref="T:System.Reflection.MemberInfo" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object representing the <see cref="T:System.Reflection.MemberInfo" /> class.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Runtime.InteropServices._MemberInfo.GetTypeInfo">

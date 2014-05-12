@@ -76,7 +76,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When the <see cref="M:System.Web.UI.WebControls.ValidatedControlConverter.FilterControl(System.Web.UI.Control)" /> method returns true, the <see cref="T:System.Web.UI.WebControls.ValidatedControlConverter" /> instance will add the ID of the control specified in the control parameter to the <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> returned by the <see cref="M:System.Web.UI.WebControls.ControlIDConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method.</para>
@@ -85,6 +84,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified control should be added to the list of controls that can be validated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control should be added to the list of controls that can be validated; otherwise, false.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The control to check. </param>
       </Docs>

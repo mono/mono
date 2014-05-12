@@ -152,7 +152,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The enumeration represents a moment-in-time snapshot of the contents of the bag. It does not reflect any updates to the collection after <see cref="M:System.Collections.Concurrent.ConcurrentBag`1.GetEnumerator" /> was called. The enumerator is safe to use concurrently with reads from and writes to the bag.</para>
@@ -161,6 +160,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the <see cref="T:System.Collections.Concurrent.ConcurrentBag`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for the contents of the <see cref="T:System.Collections.Concurrent.ConcurrentBag`1" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsEmpty">
@@ -278,7 +281,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The items enumerated represent a moment-in-time snapshot of the contents of the bag. It does not reflect any update to the collection after <see cref="M:System.Collections.Concurrent.ConcurrentBag`1.GetEnumerator" /> was called.</para>
@@ -287,6 +289,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the <see cref="T:System.Collections.Concurrent.ConcurrentBag`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for the contents of the <see cref="T:System.Collections.Concurrent.ConcurrentBag`1" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToArray">
@@ -301,12 +307,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies the <see cref="T:System.Collections.Concurrent.ConcurrentBag`1" /> elements to a new array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new array containing a snapshot of elements copied from the <see cref="T:System.Collections.Concurrent.ConcurrentBag`1" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryPeek">

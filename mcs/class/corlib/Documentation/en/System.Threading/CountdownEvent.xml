@@ -261,12 +261,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a signal with the <see cref="T:System.Threading.CountdownEvent" />, decrementing the value of <see cref="P:System.Threading.CountdownEvent.CurrentCount" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signal caused the count to reach zero and the event was set; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Signal">
@@ -283,12 +286,15 @@
         <Parameter Name="signalCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers multiple signals with the <see cref="T:System.Threading.CountdownEvent" />, decrementing the value of <see cref="P:System.Threading.CountdownEvent.CurrentCount" /> by the specified amount.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the signals caused the count to reach zero and the event was set; otherwise, false.</para>
+        </returns>
         <param name="signalCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of signals to register.</param>
       </Docs>
@@ -305,12 +311,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to increment <see cref="P:System.Threading.CountdownEvent.CurrentCount" /> by one.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the increment succeeded; otherwise, false. If <see cref="P:System.Threading.CountdownEvent.CurrentCount" /> is already at zero, this method will return false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryAddCount">
@@ -327,12 +336,15 @@
         <Parameter Name="signalCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to increment <see cref="P:System.Threading.CountdownEvent.CurrentCount" /> by a specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the increment succeeded; otherwise, false. If <see cref="P:System.Threading.CountdownEvent.CurrentCount" /> is already at zero this will return false.</para>
+        </returns>
         <param name="signalCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The value by which to increase <see cref="P:System.Threading.CountdownEvent.CurrentCount" />.</param>
       </Docs>
@@ -373,12 +385,15 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Blocks the current thread until the <see cref="T:System.Threading.CountdownEvent" /> is set, using a 32-bit signed integer to measure the timeout.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Threading.CountdownEvent" /> was set; otherwise, false.</para>
+        </returns>
         <param name="millisecondsTimeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" />(-1) to wait indefinitely.</param>
       </Docs>
@@ -423,12 +438,15 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Blocks the current thread until the <see cref="T:System.Threading.CountdownEvent" /> is set, using a <see cref="T:System.TimeSpan" /> to measure the timeout.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Threading.CountdownEvent" /> was set; otherwise, false.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> that represents the number of milliseconds to wait, or a <see cref="T:System.TimeSpan" /> that represents -1 milliseconds to wait indefinitely.</param>
       </Docs>
@@ -448,12 +466,15 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Blocks the current thread until the <see cref="T:System.Threading.CountdownEvent" /> is set, using a 32-bit signed integer to measure the timeout, while observing a <see cref="T:System.Threading.CancellationToken" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Threading.CountdownEvent" /> was set; otherwise, false.</para>
+        </returns>
         <param name="millisecondsTimeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or <see cref="F:System.Threading.Timeout.Infinite" />(-1) to wait indefinitely.</param>
         <param name="cancellationToken">
@@ -475,12 +496,15 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Blocks the current thread until the <see cref="T:System.Threading.CountdownEvent" /> is set, using a <see cref="T:System.TimeSpan" /> to measure the timeout, while observing a <see cref="T:System.Threading.CancellationToken" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Threading.CountdownEvent" /> was set; otherwise, false.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> that represents the number of milliseconds to wait, or a <see cref="T:System.TimeSpan" /> that represents -1 milliseconds to wait indefinitely.</param>
         <param name="cancellationToken">

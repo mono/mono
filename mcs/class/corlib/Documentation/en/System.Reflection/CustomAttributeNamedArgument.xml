@@ -100,12 +100,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
       </Docs>
@@ -123,12 +126,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsField">
@@ -209,12 +215,15 @@
         <Parameter Name="right" Type="System.Reflection.CustomAttributeNamedArgument" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structures are equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structures are equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The structure to the left of the equality operator.</param>
         <param name="right">
@@ -237,12 +246,15 @@
         <Parameter Name="right" Type="System.Reflection.CustomAttributeNamedArgument" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structures are different.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Reflection.CustomAttributeNamedArgument" /> structures are different; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The structure to the left of the inequality operator.</param>
         <param name="right">
@@ -262,13 +274,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that consists of the argument name, the equal sign, and a string representation of the argument value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that consists of the argument name, the equal sign, and a string representation of the argument value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TypedValue">

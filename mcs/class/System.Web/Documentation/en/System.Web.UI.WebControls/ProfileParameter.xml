@@ -128,7 +128,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.ProfileParameter.Clone" /> method calls the <see cref="M:System.Web.UI.WebControls.ProfileParameter.#ctor(System.Web.UI.WebControls.ProfileParameter)" /> copy constructor to initialize a new instance of the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> class with the values of the current instance.</para>
@@ -137,6 +136,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a duplicate of the current <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> object that is an exact duplicate of the current one.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Evaluate">
@@ -153,7 +156,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> attempts to bind to the value of the Profile property every time the <see cref="M:System.Web.UI.WebControls.ProfileParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method is called.</para>
@@ -163,6 +165,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates and returns the value of the <see cref="T:System.Web.UI.WebControls.ProfileParameter" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the updated and current value of the parameter. If the context or the ASP.NET Profile is null (Nothing in Visual Basic), the <see cref="M:System.Web.UI.WebControls.ProfileParameter.Evaluate(System.Web.HttpContext,System.Web.UI.Control)" /> method returns null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" /> of the request.</param>
         <param name="control">

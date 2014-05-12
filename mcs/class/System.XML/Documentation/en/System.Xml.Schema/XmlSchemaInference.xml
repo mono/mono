@@ -57,7 +57,6 @@
         <Parameter Name="instanceDocument" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -79,6 +78,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Infers an XML Schema Definition Language (XSD) schema from the XML document contained in the <see cref="T:System.Xml.XmlReader" /> object specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object containing the inferred schemas.</para>
+        </returns>
         <param name="instanceDocument">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> object containing the XML document to infer a schema from.</param>
       </Docs>
@@ -99,7 +102,6 @@
         <Parameter Name="schemas" Type="System.Xml.Schema.XmlSchemaSet" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -124,6 +126,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Infers an XML Schema Definition Language (XSD) schema from the XML document contained in the <see cref="T:System.Xml.XmlReader" /> object specified, and refines the inferred schema using an existing schema in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object specified with the same target namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> object containing the inferred schemas.</para>
+        </returns>
         <param name="instanceDocument">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlReader" /> object containing the XML document to infer a schema from.</param>
         <param name="schemas">

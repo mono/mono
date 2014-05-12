@@ -161,12 +161,15 @@
         <Parameter Name="right" Type="System.Reflection.CustomAttributeTypedArgument" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structures are equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structures are equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structure to the left of the equality operator.</param>
         <param name="right">
@@ -189,12 +192,15 @@
         <Parameter Name="right" Type="System.Reflection.CustomAttributeTypedArgument" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structures are different.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structures are different; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Reflection.CustomAttributeTypedArgument" /> structure to the left of the inequality operator.</param>
         <param name="right">
@@ -214,13 +220,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string consisting of the argument name, the equal sign, and a string representation of the argument value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string consisting of the argument name, the equal sign, and a string representation of the argument value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">

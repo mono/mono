@@ -461,7 +461,6 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <returns>Whether at least one value in the range satisfies the predicate.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="toExclusive" /> parameter is one more than the last integer to facilitate using the length of a range of integers starting at 0. For example, it would be set to 5 for integers 0 through 4.</para>
@@ -470,6 +469,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a specified test is true for any integer within a range of integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            true if <paramref name="predicate" /> returns true for any integer starting from <paramref name="fromInclusive" /> to <paramref name="toExclusive" /> - 1.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The first integer to pass to <paramref name="predicate" />.</param>
         <param name="toExclusive">
@@ -501,12 +505,16 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>Whether at least one element in the collection satisfies the predicate.</returns>
         <remarks>This method can be used within a contract condition to allow contracts to be applied to collections.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an element within a collection of elements exists within a function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                    true if and only if <paramref name="predicate" /> returns true for any element of type <paramref name="T" /> in <paramref name="collection" />.</para>
+        </returns>
         <param name="collection">
           <attribution license="cc4" from="Microsoft" modified="false" />The collection from which elements of type <paramref name="T" /> will be drawn to pass to <paramref name="predicate" />.</param>
         <param name="predicate">
@@ -536,7 +544,6 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <returns>Whether all values in the range satisfy the predicate.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="toExclusive" /> parameter is one more than the last integer to facilitate using the length of a range of integers starting at 0. For example, it would be set to 5 for integers 0 through 4.</para>
@@ -545,6 +552,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a particular condition is valid for all integers in a specified range.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                    true if <paramref name="predicate" /> returns true for all integers starting from <paramref name="fromInclusive" /> to <paramref name="toExclusive" /> - 1.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The first integer to pass to <paramref name="predicate" />.</param>
         <param name="toExclusive">
@@ -576,12 +588,16 @@
         <Parameter Name="predicate" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>Whether all elements in the collection satisfy the predicate.</returns>
         <remarks>This method can be used within a contract condition to allow contracts to be applied to collections.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether all the elements in a collection exist within a function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+                            true if and only if <paramref name="predicate" /> returns true for all elements of type <paramref name="T" /> in <paramref name="collection" />.</para>
+        </returns>
         <param name="collection">
           <attribution license="cc4" from="Microsoft" modified="false" />The collection from which elements of type <paramref name="T" /> will be drawn to pass to <paramref name="predicate" />.</param>
         <param name="predicate">
@@ -1139,7 +1155,6 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <returns>The return value.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used only in the conditional expression for the <see cref="Overload:System.Diagnostics.Contracts.Contract.Ensures" /> contract.</para>
@@ -1148,6 +1163,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Represents the return value of a method or property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Return value of the enclosing method or property.</para>
+        </returns>
         <typeparam name="T">
           <attribution license="cc4" from="Microsoft" modified="false" />Type of return value of the enclosing method or property.</typeparam>
       </Docs>

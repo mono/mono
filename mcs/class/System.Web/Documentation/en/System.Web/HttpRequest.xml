@@ -152,7 +152,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.HttpRequest.BinaryRead(System.Int32)" /> method is provided for compatibility with ASP.</para>
@@ -161,6 +160,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a binary read of a specified number of bytes from the current input stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array.</para>
+        </returns>
         <param name="count">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to read. </param>
       </Docs>
@@ -583,12 +586,15 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <Parameter Name="imageFieldName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Int32[]" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Maps an incoming image-field form parameter to appropriate x-coordinate and y-coordinate values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A two-dimensional array of integers.</para>
+        </returns>
         <param name="imageFieldName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the form image map. </param>
       </Docs>
@@ -607,7 +613,6 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.String" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -618,6 +623,10 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Maps the specified virtual path to a physical path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path on the server specified by <paramref name="virtualPath" />.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path (absolute or relative) for the current request. </param>
       </Docs>
@@ -638,7 +647,6 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
         <Parameter Name="allowCrossAppMapping" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -649,6 +657,10 @@ The runtime puts a cap on the size of the maximum upload to avoid possible denia
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Maps the specified virtual path to a physical path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path on the server.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path (absolute or relative) for the current request. </param>
         <param name="baseVirtualDir">

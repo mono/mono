@@ -60,7 +60,6 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Drawing.ImageFormatConverter" /> converts to and from known image formats, as specified in the <see cref="T:System.Drawing.Imaging.ImageFormat" /> class.</para>
@@ -69,6 +68,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether this converter can convert an object in the specified source type to the native type of the converter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if this object can perform the conversion.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A formatter context. This object can be used to get more information about the environment this converter is being called from. This may be null, so you should always check. Also, properties on the context object may also return null. </param>
         <param name="sourceType">
@@ -90,7 +93,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Drawing.ImageFormatConverter" /> converts to and from known image formats, as specified in the <see cref="T:System.Drawing.Imaging.ImageFormat" /> class.</para>
@@ -99,6 +101,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether this converter can convert an object to the specified destination type using the context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if this object can perform the conversion.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that specifies the context for this type conversion. </param>
         <param name="destinationType">
@@ -121,7 +127,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Drawing.ImageFormatConverter" /> converts to and from known image formats, as specified in the <see cref="T:System.Drawing.Imaging.ImageFormat" /> class.</para>
@@ -130,6 +135,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified object to an <see cref="T:System.Drawing.Imaging.ImageFormat" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted object.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A formatter context. This object can be used to get more information about the environment this converter is being called from. This may be null, so you should always check. Also, properties on the context object may also return null. </param>
         <param name="culture">
@@ -155,7 +164,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Drawing.ImageFormatConverter" /> converts to and from known image formats, as specified in the <see cref="T:System.Drawing.Imaging.ImageFormat" /> class.</para>
@@ -165,6 +173,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified object to the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted object.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A formatter context. This object can be used to get more information about the environment this converter is being called from. This may be null, so you should always check. Also, properties on the context object may also return null. </param>
         <param name="culture">
@@ -189,12 +201,15 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ComponentModel.TypeConverter+StandardValuesCollection'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection that contains a set of standard values for the data type this validator is designed for. Returns null if the data type does not support a standard set of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that contains a standard set of valid values, or null. The default implementation always returns null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A formatter context. This object can be used to get more information about the environment this converter is being called from. This may be null, so you should always check. Also, properties on the context object may also return null. </param>
       </Docs>
@@ -213,12 +228,15 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether this object supports a standard set of values that can be picked from a list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if the <see cref="Overload:System.Drawing.ImageFormatConverter.GetStandardValues" /> method should be called to find a common set of values the object supports.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A type descriptor through which additional context can be provided. </param>
       </Docs>

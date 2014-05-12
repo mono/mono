@@ -66,13 +66,16 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for the client's X.509 v.3 certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that indicates the status of the operation.</para>
+        </returns>
         <param name="requestCallback">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the operation is complete.</param>
         <param name="state">
@@ -217,13 +220,16 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous request for the client's X.509 v.3 certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IAsyncResult" /> object that is returned when the operation started.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />The pending request for the certificate.</param>
       </Docs>
@@ -241,7 +247,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -251,6 +256,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the client's X.509 v.3 certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="N:System.Security.Cryptography.X509Certificates" /> object that contains the client's X.509 v.3 certificate.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetClientCertificateAsync">
@@ -265,7 +274,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete when the certificate has been retrieved.</para>
@@ -275,6 +283,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the client's X.509 v.3 certificate as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns a <see cref="N:System.Security.Cryptography.X509Certificates" /> object that contains the client's X.509 v.3 certificate.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasEntityBody">

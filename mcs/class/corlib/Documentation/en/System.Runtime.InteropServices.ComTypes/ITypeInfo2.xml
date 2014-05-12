@@ -104,6 +104,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets all custom data items for the library.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value obtained from the returned HRESULT is one of the following: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK </para>
+              </term>
+              <description>
+                <para>Success </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_OUTOFMEMORY </para>
+              </term>
+              <description>
+                <para>Out of memory. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_INVALIDARG </para>
+              </term>
+              <description>
+                <para>One or more of the arguments is invalid. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="pCustData">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to CUSTDATA, which holds all custom data items. </param>
       </Docs>
@@ -133,6 +173,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets all custom data from the specified function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value obtained from the returned HRESULT is one of the following: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK </para>
+              </term>
+              <description>
+                <para>Success </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_OUTOFMEMORY </para>
+              </term>
+              <description>
+                <para>Out of memory. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_INVALIDARG </para>
+              </term>
+              <description>
+                <para>One or more of the arguments is invalid. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the function to get the custom data for. </param>
         <param name="pCustData">
@@ -164,6 +244,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets all custom data for the specified implementation type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value obtained from the returned HRESULT is one of the following: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK </para>
+              </term>
+              <description>
+                <para>Success </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_OUTOFMEMORY </para>
+              </term>
+              <description>
+                <para>Out of memory. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_INVALIDARG </para>
+              </term>
+              <description>
+                <para>One or more of the arguments is invalid. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the implementation type for the custom data. </param>
         <param name="pCustData">
@@ -196,6 +316,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets all of the custom data for the specified function parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value obtained from the returned HRESULT is one of the following: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK </para>
+              </term>
+              <description>
+                <para>Success </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_OUTOFMEMORY </para>
+              </term>
+              <description>
+                <para>Out of memory. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_INVALIDARG </para>
+              </term>
+              <description>
+                <para>One or more of the arguments is invalid. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="indexFunc">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the function to get the custom data for. </param>
         <param name="indexParam">
@@ -229,6 +389,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the variable for the custom data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value obtained from the returned HRESULT is one of the following: </para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Meaning </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>S_OK </para>
+              </term>
+              <description>
+                <para>Success </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_OUTOFMEMORY </para>
+              </term>
+              <description>
+                <para>Out of memory. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>E_INVALIDARG </para>
+              </term>
+              <description>
+                <para>One or more of the arguments is invalid. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the variable to get the custom data for. </param>
         <param name="pCustData">

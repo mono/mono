@@ -86,13 +86,16 @@
         <Parameter Name="type" Type="System.Security.AccessControl.AccessControlType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.AccessRule" /> class with the specified values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.AccessControl.AccessRule" /> object that this method creates.</para>
+        </returns>
         <param name="identityReference">
           <attribution license="cc4" from="Microsoft" modified="false" />The identity to which the access rule applies.  It must be an object that can be cast as a <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
         <param name="accessMask">
@@ -253,13 +256,16 @@
         <Parameter Name="flags" Type="System.Security.AccessControl.AuditFlags" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Security.AccessControl.AuditRule" /> class with the specified values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Security.AccessControl.AuditRule" /> object that this method creates.</para>
+        </returns>
         <param name="identityReference">
           <attribution license="cc4" from="Microsoft" modified="false" />The identity to which the audit rule applies.  It must be an object that can be cast as a <see cref="T:System.Security.Principal.SecurityIdentifier" />.</param>
         <param name="accessMask">
@@ -331,13 +337,16 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the primary group associated with the specified owner.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The primary group associated with the specified owner.</para>
+        </returns>
         <param name="targetType">
           <attribution license="cc4" from="Microsoft" modified="false" />The owner for which to get the primary group. </param>
       </Docs>
@@ -357,13 +366,16 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the owner associated with the specified primary group.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The owner associated with the specified group.</para>
+        </returns>
         <param name="targetType">
           <attribution license="cc4" from="Microsoft" modified="false" />The primary group for which to get the owner.</param>
       </Docs>
@@ -381,7 +393,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -391,6 +402,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of byte values that represents the security descriptor information for this <see cref="T:System.Security.AccessControl.ObjectSecurity" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of byte values that represents the security descriptor for this <see cref="T:System.Security.AccessControl.ObjectSecurity" /> object. This method returns null if there is no security information in this <see cref="T:System.Security.AccessControl.ObjectSecurity" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSecurityDescriptorSddlForm">
@@ -408,13 +423,16 @@
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the Security Descriptor Definition Language (SDDL) representation of the specified sections of the security descriptor associated with this <see cref="T:System.Security.AccessControl.ObjectSecurity" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SDDL representation of the specified sections of the security descriptor associated with this <see cref="T:System.Security.AccessControl.ObjectSecurity" /> object.</para>
+        </returns>
         <param name="includeSections">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies which sections (access rules, audit rules, primary group, owner) of the security descriptor to get.</param>
       </Docs>
@@ -495,13 +513,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Boolean value that specifies whether the security descriptor associated with this  <see cref="T:System.Security.AccessControl.ObjectSecurity" /> object can be converted to the Security Descriptor Definition Language (SDDL) format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the security descriptor associated with this  <see cref="T:System.Security.AccessControl.ObjectSecurity" /> object can be converted to the Security Descriptor Definition Language (SDDL) format; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ModifyAccess">

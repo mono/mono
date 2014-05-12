@@ -48,7 +48,6 @@
         <Parameter Name="handler" Type="System.Runtime.Remoting.Messaging.HeaderHandler" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -61,6 +60,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins the deserialization process of a remote procedure call (RPC).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The root of the deserialized object graph.</para>
+        </returns>
         <param name="serializationStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> from which the data is deserialized. </param>
         <param name="handler">

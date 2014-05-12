@@ -72,12 +72,15 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Boolean value indicating whether the specified context meets the context attribute's requirements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the passed in context is okay; otherwise, false.</para>
+        </returns>
         <param name="ctx">
           <attribution license="cc4" from="Microsoft" modified="false" />The context to check against the current context attribute. </param>
         <param name="msg">

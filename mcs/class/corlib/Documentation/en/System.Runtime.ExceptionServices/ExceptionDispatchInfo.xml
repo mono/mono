@@ -37,7 +37,6 @@
         <Parameter Name="source" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <see cref="T:System.Runtime.ExceptionServices.ExceptionDispatchInfo" /> object that is returned by this method at another time and possibly on another thread to rethrow the specified exception, as if the exception had flowed from this point where it was captured to the point where it is rethrown. </para>
@@ -47,6 +46,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Runtime.ExceptionServices.ExceptionDispatchInfo" /> object that represents the specified exception at the current point in code. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the specified exception at the current point in code. </para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The exception whose state is captured, and which is represented by the returned object. </param>
       </Docs>

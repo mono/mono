@@ -339,11 +339,6 @@ class App {
         <Parameter Name="period" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " />
-if the current instance has not been disposed; otherwise, <see langword="false" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="dueTime" /> or <paramref name="period" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> .</exception>
         <remarks>
@@ -356,6 +351,10 @@ if the current instance has not been disposed; otherwise, <see langword="false" 
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Changes the start time and the interval between method invocations for a timer, using 32-bit signed integers to measure time intervals.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the timer was successfully updated; otherwise, false.</para>
+        </returns>
         <param name="dueTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The amount of time to delay before the invoking the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to prevent the timer from restarting. Specify zero (0) to restart the timer immediately. </param>
         <param name="period">
@@ -380,7 +379,6 @@ if the current instance has not been disposed; otherwise, <see langword="false" 
         <Parameter Name="period" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The callback method is invoked once after <paramref name="dueTime" /> elapses, and thereafter each time the time interval specified by <paramref name="period" /> elapses.</para>
@@ -391,6 +389,10 @@ if the current instance has not been disposed; otherwise, <see langword="false" 
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Changes the start time and the interval between method invocations for a timer, using 64-bit signed integers to measure time intervals.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the timer was successfully updated; otherwise, false.</para>
+        </returns>
         <param name="dueTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The amount of time to delay before the invoking the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to prevent the timer from restarting. Specify zero (0) to restart the timer immediately. </param>
         <param name="period">
@@ -415,12 +417,6 @@ if the current instance has not been disposed; otherwise, <see langword="false" 
         <Parameter Name="period" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " /> if the current instance has
-   not been disposed; otherwise, <see langword="false" />.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="dueTime" /> or <paramref name="period" /> is negative and is not equal to <see cref="F:System.Threading.Timeout.Infinite" /> .</exception>
         <remarks>
@@ -433,6 +429,10 @@ if the current instance has not been disposed; otherwise, <see langword="false" 
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Changes the start time and the interval between method invocations for a timer, using <see cref="T:System.TimeSpan" /> values to measure time intervals.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the timer was successfully updated; otherwise, false.</para>
+        </returns>
         <param name="dueTime">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TimeSpan" /> representing the amount of time to delay before invoking the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed. Specify negative one (-1) milliseconds to prevent the timer from restarting. Specify zero (0) to restart the timer immediately. </param>
         <param name="period">
@@ -462,7 +462,6 @@ if the current instance has not been disposed; otherwise, <see langword="false" 
         <Parameter Name="period" Type="System.UInt32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The callback method is invoked once after <paramref name="dueTime" /> elapses, and thereafter each time the time interval specified by <paramref name="period" /> elapses.</para>
@@ -473,6 +472,10 @@ if the current instance has not been disposed; otherwise, <see langword="false" 
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Changes the start time and the interval between method invocations for a timer, using 32-bit unsigned integers to measure time intervals.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the timer was successfully updated; otherwise, false.</para>
+        </returns>
         <param name="dueTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The amount of time to delay before the invoking the callback method specified when the <see cref="T:System.Threading.Timer" /> was constructed, in milliseconds. Specify <see cref="F:System.Threading.Timeout.Infinite" /> to prevent the timer from restarting. Specify zero (0) to restart the timer immediately. </param>
         <param name="period">
@@ -525,12 +528,6 @@ if the current instance has not been disposed; otherwise, <see langword="false" 
         <Parameter Name="notifyObject" Type="System.Threading.WaitHandle" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " />if the call succeeds;
-   otherwise, <see langword="false" />.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="notifyObject" /> is <see langword="null" />.</exception>
         <remarks>
@@ -545,6 +542,10 @@ if the current instance has not been disposed; otherwise, <see langword="false" 
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases all resources used by the current instance of <see cref="T:System.Threading.Timer" /> and signals when the timer has been disposed of.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the function succeeds; otherwise, false.</para>
+        </returns>
         <param name="notifyObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to be signaled when the Timer has been disposed of. </param>
       </Docs>

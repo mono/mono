@@ -404,7 +404,6 @@
         <Parameter Name="componentType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.DesignSurface.CreateComponent(System.Type)" /> method is called by the design surface’s <see cref="Overload:System.ComponentModel.Design.IDesignerHost.CreateComponent" /> method to create an instance of a component. The component should be created and added to the public container on the design surface.</para>
@@ -413,6 +412,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created component.</para>
+        </returns>
         <param name="componentType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of component to create.</param>
       </Docs>
@@ -431,7 +434,6 @@
         <Parameter Name="rootDesigner" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.DesignSurface.CreateDesigner(System.ComponentModel.IComponent,System.Boolean)" /> method is called by the design surface’s <see cref="T:System.ComponentModel.IContainer" /> when a component is added to the container. This method creates a designer, but does not initialize it. When it returns, the designer is initialized by the container.</para>
@@ -443,6 +445,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a designer when a component is added to the container.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the requested designer, or null if no matching designer could be found.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component for which the designer should be created.</param>
         <param name="rootDesigner">
@@ -462,7 +468,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="type" /> is an <see cref="T:System.ComponentModel.IComponent" />, <see cref="M:System.ComponentModel.Design.DesignSurface.CreateInstance(System.Type)" /> searches for a constructor of type <see cref="T:System.ComponentModel.IContainer" /> first, followed by an empty constructor.</para>
@@ -471,6 +476,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the given type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created object.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to create.</param>
       </Docs>
@@ -488,7 +497,6 @@
         <Parameter Name="owningComponent" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adding a component to a nested container creates its designer and makes it eligible for all services available from the design surface. Components added to nested containers do not participate in serialization. </para>
@@ -497,6 +505,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a container suitable for nesting controls or components.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The nested container.</para>
+        </returns>
         <param name="owningComponent">
           <attribution license="cc4" from="Microsoft" modified="false" />The component that manages the nested container.</param>
       </Docs>
@@ -515,7 +527,6 @@
         <Parameter Name="containerName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adding a component to a nested container creates its designer and makes it eligible for all services available from the design surface. Components added to nested containers do not participate in serialization. </para>
@@ -525,6 +536,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a container suitable for nesting controls or components.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The nested container.</para>
+        </returns>
         <param name="owningComponent">
           <attribution license="cc4" from="Microsoft" modified="false" />The component that manages the nested container.</param>
         <param name="containerName">
@@ -663,7 +678,6 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.DesignSurface.GetService(System.Type)" /> method retrieves a service in the design surface’s service container. In addition, this will forward to any service provider that was given to the design surface at construction time.</para>
@@ -672,6 +686,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a service from the service container.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements, or is a derived class of, <paramref name="serviceType" />, or null if the service does not exist in the service container.</para>
+        </returns>
         <param name="serviceType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of service to retrieve. </param>
       </Docs>

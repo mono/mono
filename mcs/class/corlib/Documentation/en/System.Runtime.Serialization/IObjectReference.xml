@@ -40,7 +40,6 @@
         <Parameter Name="context" Type="System.Runtime.Serialization.StreamingContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful in a remoting situation where you serialize a proxy-creator object, not an actual object. When the proxy-creator object is deserialized, deserialization calls its <see cref="M:System.Runtime.Serialization.IObjectReference.GetRealObject(System.Runtime.Serialization.StreamingContext)" /> method. At this point, the proxy-creator object creates a new instance of the proxy object that refers back to the original actual object, perhaps on a remote computer. Finally, the proxy-creator object is discarded and reclaimed later by garbage collection.</para>
@@ -51,6 +50,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the real object that should be deserialized, rather than the object that the serialized stream specifies.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the actual object that is put into the graph.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Runtime.Serialization.StreamingContext" /> from which the current object is deserialized. </param>
       </Docs>

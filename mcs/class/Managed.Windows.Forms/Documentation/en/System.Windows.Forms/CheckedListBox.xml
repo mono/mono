@@ -363,7 +363,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you do not explicitly call the <see cref="M:System.Windows.Forms.CheckedListBox.CreateAccessibilityInstance" /> method, it will be called when the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property is referenced.</para>
@@ -375,6 +374,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessibility object for the <see cref="T:System.Windows.Forms.CheckedListBox" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.AccessibleObject" /> for the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -603,7 +606,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -613,6 +615,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified item is checked.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the item is checked; otherwise, false.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the item. </param>
       </Docs>
@@ -631,7 +637,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.CheckedListBox.GetItemCheckState(System.Int32)" /> method provides the ability to get the <see cref="T:System.Windows.Forms.CheckState" /> value of an item, given the index. If you never set the check state of an item to Indeterminate, then use the <see cref="M:System.Windows.Forms.CheckedListBox.GetItemChecked(System.Int32)" /> method.</para>
@@ -640,6 +645,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating the check state of the current item.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.CheckState" /> values.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the item to get the checked value of. </param>
       </Docs>

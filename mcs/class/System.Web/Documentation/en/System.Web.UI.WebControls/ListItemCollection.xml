@@ -207,7 +207,6 @@
         <Parameter Name="item" Type="System.Web.UI.WebControls.ListItem" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.ListItemCollection.Contains(System.Web.UI.WebControls.ListItem)" /> method to determine whether the <see cref="T:System.Web.UI.WebControls.ListItem" /> specified by the <paramref name="item" /> parameter is in the collection.</para>
@@ -216,6 +215,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the collection contains the specified item.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the specified item; otherwise, false.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.ListItem" /> to search for in the collection. </param>
       </Docs>
@@ -288,7 +291,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ListItem'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.ListItemCollection.FindByText(System.String)" /> method to search the collection for a <see cref="T:System.Web.UI.WebControls.ListItem" /> with a <see cref="P:System.Web.UI.WebControls.ListItem.Text" /> property that equals text specified by the <paramref name="text" /> parameter. This method performs a case-sensitive and culture-insensitive comparison. This method does not do partial searches or wildcard searches. If an item is not found in the collection using this criteria, null is returned.</para>
@@ -297,6 +299,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the collection for a <see cref="T:System.Web.UI.WebControls.ListItem" /> with a <see cref="P:System.Web.UI.WebControls.ListItem.Text" /> property that equals the specified text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ListItem" /> that contains the text specified by the <paramref name="text" /> parameter.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text to search for. </param>
       </Docs>
@@ -315,7 +321,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ListItem'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.ListItemCollection.FindByValue(System.String)" /> method to search the collection for a <see cref="T:System.Web.UI.WebControls.ListItem" /> with a <see cref="P:System.Web.UI.WebControls.ListItem.Value" /> property that contains value specified by the <paramref name="value" /> parameter. This method performs a case-sensitive and culture-insensitive comparison. This method does not do partial searches or wildcard searches. If an item is not found in the collection using this criteria, null is returned.</para>
@@ -324,6 +329,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the collection for a <see cref="T:System.Web.UI.WebControls.ListItem" /> with a <see cref="P:System.Web.UI.WebControls.ListItem.Value" /> property that contains the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.ListItem" /> that contains the value specified by the <paramref name="value" /> parameter.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to search for. </param>
       </Docs>
@@ -340,7 +349,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Collections.IEnumerator" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create a <see cref="T:System.Collections.IEnumerator" /> that can be iterated through to get each <see cref="T:System.Web.UI.WebControls.ListItem" /> object in the <see cref="T:System.Web.UI.WebControls.ListItemCollection" />.</para>
@@ -355,6 +363,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Collections.IEnumerator" /> implemented object that contains all <see cref="T:System.Web.UI.WebControls.ListItem" /> objects in the <see cref="T:System.Web.UI.WebControls.ListItemCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.IEnumerator" /> implemented object that contains all <see cref="T:System.Web.UI.WebControls.ListItem" /> objects in the <see cref="T:System.Web.UI.WebControls.ListItemCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -371,7 +383,6 @@
         <Parameter Name="item" Type="System.Web.UI.WebControls.ListItem" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.ListItemCollection.IndexOf(System.Web.UI.WebControls.ListItem)" /> method to determine the index value of the <see cref="T:System.Web.UI.WebControls.ListItem" /> specified by the <paramref name="item" /> parameter in the collection. If an item with this criteria is not found in the collection, -1 is returned.</para>
@@ -380,6 +391,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the index value that represents the position of the specified <see cref="T:System.Web.UI.WebControls.ListItem" /> in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index position of the specified <see cref="T:System.Web.UI.WebControls.ListItem" /> in the collection.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.WebControls.ListItem" /> to search for in the collection. </param>
       </Docs>
@@ -627,7 +642,6 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ListItemCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -636,6 +650,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Collections.IList.Add(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the item has been added. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -653,7 +671,6 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ListItemCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -662,6 +679,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Collections.IList.Contains(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Object" /> is found in the <see cref="T:System.Collections.IList" />; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -679,7 +700,6 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ListItemCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -688,6 +708,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Collections.IList.IndexOf(System.Object)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of <paramref name="value" /> if found in the list; otherwise, -1. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">
@@ -844,7 +868,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ListItemCollection" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
@@ -853,6 +876,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns object containing state changes. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the state of the <see cref="T:System.Web.UI.WebControls.ListItemCollection" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">

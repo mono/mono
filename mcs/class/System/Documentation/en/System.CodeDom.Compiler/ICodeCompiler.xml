@@ -45,12 +45,15 @@
         <Parameter Name="compilationUnit" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles an assembly from the <see cref="N:System.CodeDom" /> tree contained in the specified <see cref="T:System.CodeDom.CodeCompileUnit" />, using the specified compiler settings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
         <param name="compilationUnit">
@@ -75,12 +78,15 @@
       </Parameters>
       <Docs>
         <param name="batch">To be added.</param>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles an assembly based on the <see cref="N:System.CodeDom" /> trees contained in the specified array of <see cref="T:System.CodeDom.CodeCompileUnit" /> objects, using the specified compiler settings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
       </Docs>
@@ -102,12 +108,15 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles an assembly from the source code contained within the specified file, using the specified compiler settings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
         <param name="fileName">
@@ -132,12 +141,15 @@
       </Parameters>
       <Docs>
         <param name="batch">To be added.</param>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles an assembly from the source code contained within the specified files, using the specified compiler settings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
       </Docs>
@@ -159,12 +171,15 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles an assembly from the specified string containing source code, using the specified compiler settings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
         <param name="source">
@@ -189,12 +204,15 @@
       </Parameters>
       <Docs>
         <param name="batch">To be added.</param>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles an assembly from the specified array of strings containing source code, using the specified compiler settings.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.Compiler.CompilerResults" /> object that indicates the results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the settings for compilation. </param>
       </Docs>

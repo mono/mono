@@ -180,13 +180,52 @@
         <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the current <see cref="T:System.Security.Principal.SecurityIdentifier" /> object with the specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="sid" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return Value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>Less than zero </para>
+              </term>
+              <description>
+                <para>This instance is less than <paramref name="sid" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="sid" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Greater than zero </para>
+              </term>
+              <description>
+                <para>This instance is greater than <paramref name="sid" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="sid">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current object.</param>
       </Docs>
@@ -206,13 +245,16 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this <see cref="T:System.Security.Principal.SecurityIdentifier" /> object is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="o" /> is an object with the same underlying type and value as this <see cref="T:System.Security.Principal.SecurityIdentifier" /> object; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this <see cref="T:System.Security.Principal.SecurityIdentifier" /> object, or null.</param>
       </Docs>
@@ -232,13 +274,16 @@
         <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified <see cref="T:System.Security.Principal.SecurityIdentifier" /> object is equal to the current <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of <paramref name="sid" /> is equal to the value of the current <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </returns>
         <param name="sid">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current object.</param>
       </Docs>
@@ -284,13 +329,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serves as a hash function for the current <see cref="T:System.Security.Principal.SecurityIdentifier" /> object. The <see cref="M:System.Security.Principal.SecurityIdentifier.GetHashCode" /> method is suitable for hashing algorithms and data structures like a hash table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash value for the current <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsAccountSid">
@@ -306,13 +354,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the security identifier (SID) represented by this <see cref="T:System.Security.Principal.SecurityIdentifier" /> object is a valid Windows account SID.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the SID represented by this <see cref="T:System.Security.Principal.SecurityIdentifier" /> object is a valid Windows account SID; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsEqualDomainSid">
@@ -330,13 +381,16 @@
         <Parameter Name="sid" Type="System.Security.Principal.SecurityIdentifier" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the security identifier (SID) represented by this <see cref="T:System.Security.Principal.SecurityIdentifier" /> object is from the same domain as the specified SID.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the SID represented by this <see cref="T:System.Security.Principal.SecurityIdentifier" /> object is in the same domain as the <paramref name="sid" /> SID; otherwise, false.</para>
+        </returns>
         <param name="sid">
           <attribution license="cc4" from="Microsoft" modified="false" />The SID to compare with this <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</param>
       </Docs>
@@ -356,13 +410,16 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified type is a valid translation type for the <see cref="T:System.Security.Principal.SecurityIdentifier" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="targetType" /> is a valid translation type for the <see cref="T:System.Security.Principal.SecurityIdentifier" /> class; otherwise, false.</para>
+        </returns>
         <param name="targetType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type being queried for validity to serve as a conversion from <see cref="T:System.Security.Principal.SecurityIdentifier" />. The following target types are valid:</param>
       </Docs>
@@ -382,13 +439,16 @@
         <Parameter Name="type" Type="System.Security.Principal.WellKnownSidType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the <see cref="T:System.Security.Principal.SecurityIdentifier" /> object matches the specified well known security identifier (SID) type. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="type" /> is the SID type for the <see cref="T:System.Security.Principal.SecurityIdentifier" /> object; otherwise, false.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />A value to compare with the <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</param>
       </Docs>
@@ -451,13 +511,16 @@
         <Parameter Name="right" Type="System.Security.Principal.SecurityIdentifier" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two <see cref="T:System.Security.Principal.SecurityIdentifier" /> objects to determine whether they are equal. They are considered equal if they have the same canonical representation as the one returned by the <see cref="P:System.Security.Principal.SecurityIdentifier.Value" /> property or if they are both null. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The left operand to use for the equality comparison. This parameter can be null.</param>
         <param name="right">
@@ -480,13 +543,16 @@
         <Parameter Name="right" Type="System.Security.Principal.SecurityIdentifier" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares two <see cref="T:System.Security.Principal.SecurityIdentifier" /> objects to determine whether they are not equal. They are considered not equal if they have different canonical name representations than the one returned by the <see cref="P:System.Security.Principal.SecurityIdentifier.Value" /> property or if one of the objects is null and the other is not.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The left operand to use for the inequality comparison. This parameter can be null.</param>
         <param name="right">
@@ -506,13 +572,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the security identifier (SID), in Security Descriptor Definition Language (SDDL) format, for the account represented by the <see cref="T:System.Security.Principal.SecurityIdentifier" /> object. An example of the SDDL format is S-1-5-9. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The SID, in SDDL format, for the account represented by the <see cref="T:System.Security.Principal.SecurityIdentifier" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Translate">
@@ -530,13 +599,16 @@
         <Parameter Name="targetType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Translates the account name represented by the <see cref="T:System.Security.Principal.SecurityIdentifier" /> object into another <see cref="T:System.Security.Principal.IdentityReference" />-derived type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted identity.</para>
+        </returns>
         <param name="targetType">
           <attribution license="cc4" from="Microsoft" modified="false" />The target type for the conversion from <see cref="T:System.Security.Principal.SecurityIdentifier" />. The target type must be a type that is considered valid by the <see cref="M:System.Security.Principal.SecurityIdentifier.IsValidTargetType(System.Type)" /> method.</param>
       </Docs>

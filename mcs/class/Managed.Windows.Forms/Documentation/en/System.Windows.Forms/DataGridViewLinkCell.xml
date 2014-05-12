@@ -69,7 +69,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Override the <see cref="M:System.Windows.Forms.DataGridViewLinkCell.Clone" /> method whenever you derive from <see cref="T:System.Windows.Forms.DataGridViewLinkCell" /> and add new properties to the derived class.</para>
@@ -78,6 +77,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an exact copy of this cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.DataGridViewLinkCell" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateAccessibilityInstance">
@@ -91,7 +94,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you do not explicitly call the <see cref="M:System.Windows.Forms.DataGridViewLinkCell.CreateAccessibilityInstance" /> method, it will be called when the <see cref="T:System.Windows.Forms.DataGridViewLinkCell.DataGridViewLinkCellAccessibleObject" /> property is referenced.</para>
@@ -103,6 +105,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessible object for the <see cref="T:System.Windows.Forms.DataGridViewLinkCell" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.DataGridViewLinkCell.DataGridViewLinkCellAccessibleObject" /> for the <see cref="T:System.Windows.Forms.DataGridViewLinkCell" />. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EditType">
@@ -248,7 +254,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -259,6 +264,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the row containing the cell will be unshared when a key is released and the cell has focus.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the SPACE key was released, the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.TrackVisitedState" /> property is true, the <see cref="P:System.Windows.Forms.DataGridViewLinkCell.LinkVisited" /> property is false, and the CTRL, ALT, and SHIFT keys are not pressed; otherwise, false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.KeyEventArgs" /> that contains data about the key press.</param>
         <param name="rowIndex">
@@ -348,7 +357,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -359,6 +367,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the row containing the cell will be unshared when the mouse button is pressed while the pointer is over the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the mouse pointer is over the link; otherwise, false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains data about the mouse click.</param>
       </Docs>
@@ -376,7 +388,6 @@
         <Parameter Name="rowIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -387,6 +398,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the row containing the cell will be unshared when the mouse pointer leaves the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the link displayed by the cell is not in the normal state; otherwise, false.</para>
+        </returns>
         <param name="rowIndex">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the row containing the cell.</param>
       </Docs>
@@ -404,7 +419,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.DataGridViewLinkCell.MouseMoveUnsharesRow(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method is called just before the <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnMouseMove(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> method. It must return true if the call to <see cref="M:System.Windows.Forms.DataGridViewLinkCell.OnMouseMove(System.Windows.Forms.DataGridViewCellMouseEventArgs)" /> has the effect of unsharing the row containing the cell. It should return false otherwise.</para>
@@ -414,6 +428,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the row containing the cell will be unshared when the mouse pointer moves over the cell.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the mouse pointer is over the link and the link is has not yet changed color to reflect the hover state; otherwise, false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains data about the mouse click.</param>
       </Docs>
@@ -431,7 +449,6 @@
         <Parameter Name="e" Type="System.Windows.Forms.DataGridViewCellMouseEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -442,6 +459,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the row containing the cell will be unshared when the mouse button is released while the pointer is over the cell. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the mouse pointer is over the link; otherwise, false.</para>
+        </returns>
         <param name="e">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.DataGridViewCellMouseEventArgs" /> that contains data about the mouse click.</param>
       </Docs>

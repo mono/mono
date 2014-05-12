@@ -87,7 +87,6 @@
         <Parameter Name="attribs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Type" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.RootBuilder.GetChildControlType(System.String,System.Collections.IDictionary)" /> method overrides the implementation of this method in <see cref="T:System.Web.UI.ControlBuilder" />.</para>
@@ -96,6 +95,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the control type of any parsed child controls.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the child control.</para>
+        </returns>
         <param name="tagName">
           <attribution license="cc4" from="Microsoft" modified="false" />The tag name of the child control.</param>
         <param name="attribs">

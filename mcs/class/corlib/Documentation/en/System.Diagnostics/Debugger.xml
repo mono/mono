@@ -134,12 +134,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks to see if logging is enabled by an attached debugger.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a debugger is attached and logging is enabled; otherwise, false. The attached debugger is the registered managed debugger in the DbgManagedDebugger registry key. For more information on this key, see <format type="text/html"><a href="F91FC5F7-DE5A-4F23-B6AC-F450E63C662E">[&lt;topic://cpconenablingjit-attachdebugging&gt;]</a></format>.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Launch">
@@ -156,7 +159,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a debugger is already attached, nothing happens.</para>
@@ -165,6 +167,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Launches and attaches a debugger to the process.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the startup is successful or if the debugger is already attached; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Log">

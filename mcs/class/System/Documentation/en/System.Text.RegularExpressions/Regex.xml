@@ -689,7 +689,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -707,6 +706,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Escapes a minimal set of characters (\, *, +, ?, |, {, [, (,), ^, $,., #, and white space) by replacing them with their escape codes. This instructs the regular expression engine to interpret these characters literally rather than as metacharacters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string of characters with metacharacters converted to their escaped form.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The input string that contains the text to convert. </param>
       </Docs>
@@ -765,7 +768,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The collection of group names contains the set of strings used to name capturing groups in the expression. Even if capturing groups are not explicitly named, they are automatically assigned numerical names (1, 2, 3, and so on). Therefore, this collection can be used to determine the number of groups.</para>
@@ -774,6 +776,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of capturing group names for the regular expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array of group names.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetGroupNumbers">
@@ -790,7 +796,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Both unnamed and named capturing groups can be accessed by number. Unnamed groups are numbered from left to right starting with 1. (The capturing group in index 0 (zero) represents the match as a whole.)  Named groups are then numbered from left to right starting with a number that is one greater than the number of unnamed capturing groups.</para>
@@ -800,6 +805,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array of capturing group numbers that correspond to group names in an array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer array of group numbers.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GroupNameFromNumber">
@@ -818,7 +827,6 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A regular expression pattern may contain either named or numbered capturing groups, which delineate subexpressions within a pattern match. Numbered groups are delimited by the syntax (subexpression) and are assigned numbers based on their order in the regular expression. Named groups are delimited by the syntax (?&lt;name&gt;subexpression) or (?'name'subexpression), where name is the name by which the subexpression will be identified. (For more information, see <format type="text/html"><a href="0fc18634-f590-4062-8d5c-f0b71abe405b">Grouping Constructs</a></format>.) The <see cref="M:System.Text.RegularExpressions.Regex.GroupNameFromNumber(System.Int32)" /> method identifies both named groups and numbered groups by their ordinal positions in the regular expression. Ordinal position zero always represents the entire regular expression. All numbered groups are then counted before named groups, regardless of their actual position in the regular expression pattern. </para>
@@ -829,6 +837,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the group name that corresponds to the specified group number.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the group name associated with the specified group number. If there is no group name that corresponds to <paramref name="i" />, the method returns <see cref="F:System.String.Empty" />.</para>
+        </returns>
         <param name="i">
           <attribution license="cc4" from="Microsoft" modified="false" />The group number to convert to the corresponding group name. </param>
       </Docs>
@@ -849,7 +861,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A regular expression pattern may contain either named or numbered capturing groups, which delineate subexpressions within a pattern match. Numbered groups are delimited by the syntax (subexpression) and are assigned numbers based on their order in the regular expression. Named groups are delimited by the syntax (?&lt;name&gt;subexpression) or (?'name'subexpression), where name is the name by which the subexpression will be identified. (For more information, see <format type="text/html"><a href="0fc18634-f590-4062-8d5c-f0b71abe405b">Grouping Constructs</a></format>.) The <see cref="M:System.Text.RegularExpressions.Regex.GroupNumberFromName(System.String)" /> method identifies both named groups and numbered groups by their ordinal positions in the regular expression. Ordinal position zero always represents the entire regular expression. All numbered groups are then counted before named groups, regardless of their actual position in the regular expression pattern. </para>
@@ -859,6 +870,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the group number that corresponds to the specified group name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The group number that corresponds to the specified group name, or -1 if <paramref name="name" /> is not a valid group name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The group name to convert to the corresponding group number. </param>
       </Docs>
@@ -968,7 +983,6 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.Text.RegularExpressions.Regex.IsMatch" /> method is typically used to validate a string or to ensure that a string conforms to a particular pattern without retrieving that string for subsequent manipulation. If you want to determine whether one or more strings match a regular expression pattern and then retrieve them for subsequent manipulation, call the <see cref="Overload:System.Text.RegularExpressions.Regex.Match" /> or <see cref="Overload:System.Text.RegularExpressions.Regex.Matches" /> method.</para>
@@ -978,6 +992,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the regular expression specified in the <see cref="T:System.Text.RegularExpressions.Regex" /> constructor finds a match in a specified input string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the regular expression finds a match; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
       </Docs>
@@ -999,7 +1017,6 @@
         <Parameter Name="startat" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.Text.RegularExpressions.Regex.IsMatch" /> method is typically used to validate a string or to ensure that a string conforms to a particular pattern without retrieving that string for subsequent manipulation. If you want to determine whether one or more strings match a regular expression pattern and then retrieve them for subsequent manipulation, call the <see cref="Overload:System.Text.RegularExpressions.Regex.Match" /> or <see cref="Overload:System.Text.RegularExpressions.Regex.Matches" /> method.</para>
@@ -1009,6 +1026,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the regular expression specified in the <see cref="T:System.Text.RegularExpressions.Regex" /> constructor finds a match in the specified input string, beginning at the specified starting position in the string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the regular expression finds a match; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="startat">
@@ -1032,7 +1053,6 @@
         <Parameter Name="pattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>Returns true if the input string matches the regular expression defined in pattern.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.Text.RegularExpressions.Regex.IsMatch" /> method is typically used to validate a string or to ensure that a string conforms to a particular pattern without retrieving that string for subsequent manipulation. If you want to determine whether one or more strings match a regular expression pattern and then retrieve them for subsequent manipulation, call the <see cref="Overload:System.Text.RegularExpressions.Regex.Match" /> or <see cref="Overload:System.Text.RegularExpressions.Regex.Matches" /> method.</para>
@@ -1044,6 +1064,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified regular expression finds a match in the specified input string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the regular expression finds a match; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="pattern">
@@ -1068,7 +1092,6 @@
         <Parameter Name="options" Type="System.Text.RegularExpressions.RegexOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.Text.RegularExpressions.Regex.IsMatch" /> method is typically used to validate a string or to ensure that a string conforms to a particular pattern without retrieving that string for subsequent manipulation. If you want to determine whether one or more strings match a regular expression pattern and then retrieve them for subsequent manipulation, call the <see cref="Overload:System.Text.RegularExpressions.Regex.Match" /> or <see cref="Overload:System.Text.RegularExpressions.Regex.Matches" /> method.</para>
@@ -1080,6 +1103,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified regular expression finds a match in the specified input string, using the specified matching options.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the regular expression finds a match; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="pattern">
@@ -1110,7 +1137,6 @@
         <Parameter Name="matchTimeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.Text.RegularExpressions.Regex.IsMatch" /> method is typically used to validate a string or to ensure that a string conforms to a particular pattern without retrieving that string for subsequent manipulation. If you want to determine whether one or more strings match a regular expression pattern and then retrieve them for subsequent manipulation, call the <see cref="Overload:System.Text.RegularExpressions.Regex.Match" /> or <see cref="Overload:System.Text.RegularExpressions.Regex.Matches" /> method.</para>
@@ -1122,6 +1148,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified regular expression finds a match in the specified input string, using the specified matching options and time-out interval.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the regular expression finds a match; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match.</param>
         <param name="pattern">
@@ -1148,7 +1178,6 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Match'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String)" /> method returns the first substring that matches a regular expression pattern in an input string. For information about the language elements used to build a regular expression pattern, see <format type="text/html"><a href="930653a6-95d2-4697-9d5a-52d11bb6fd4c">Regular Expression Language - Quick Reference</a></format>.</para>
@@ -1160,6 +1189,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the specified input string for the first occurrence of the regular expression specified in the <see cref="T:System.Text.RegularExpressions.Regex" /> constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains information about the match.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
       </Docs>
@@ -1181,7 +1214,6 @@
         <Parameter Name="startat" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Match'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String,System.Int32)" /> method returns the first substring that matches a regular expression pattern, starting at or after the <paramref name="startat" /> character position, in an input string. For information about the language elements used to build a regular expression pattern, see <format type="text/html"><a href="930653a6-95d2-4697-9d5a-52d11bb6fd4c">Regular Expression Language - Quick Reference</a></format>.</para>
@@ -1196,6 +1228,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the input string for the first occurrence of a regular expression, beginning at the specified starting position in the string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains information about the match.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="startat">
@@ -1219,7 +1255,6 @@
         <Parameter Name="pattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Match'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String,System.String)" /> method returns the first substring that matches a regular expression pattern in an input string. For information about the language elements used to build a regular expression pattern, see <format type="text/html"><a href="930653a6-95d2-4697-9d5a-52d11bb6fd4c">Regular Expression Language - Quick Reference</a></format>.</para>
@@ -1233,6 +1268,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the specified input string for the first occurrence of the specified regular expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains information about the match.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="pattern">
@@ -1257,7 +1296,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Match'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String,System.Int32,System.Int32)" /> method returns the first substring that matches a regular expression pattern in a portion of an input string. For information about the language elements used to build a regular expression pattern, see <format type="text/html"><a href="930653a6-95d2-4697-9d5a-52d11bb6fd4c">Regular Expression Language - Quick Reference</a></format>.</para>
@@ -1270,6 +1308,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the input string for the first occurrence of a regular expression, beginning at the specified starting position and searching only the specified number of characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains information about the match.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="beginning">
@@ -1296,7 +1338,6 @@
         <Parameter Name="options" Type="System.Text.RegularExpressions.RegexOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Match'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String,System.String,System.Text.RegularExpressions.RegexOptions)" /> method returns the first substring that matches a regular expression pattern in an input string. For information about the language elements used to build a regular expression pattern, see <format type="text/html"><a href="930653a6-95d2-4697-9d5a-52d11bb6fd4c">Regular Expression Language - Quick Reference</a></format>.</para>
@@ -1310,6 +1351,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the input string for the first occurrence of the specified regular expression, using the specified matching options.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains information about the match.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="pattern">
@@ -1340,7 +1385,6 @@
         <Parameter Name="matchTimeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String,System.String,System.Text.RegularExpressions.RegexOptions,System.TimeSpan)" /> method returns the first substring that matches a regular expression pattern in an input string. For information about the language elements used to build a regular expression pattern, see <format type="text/html"><a href="930653a6-95d2-4697-9d5a-52d11bb6fd4c">Regular Expression Language - Quick Reference</a></format>.</para>
@@ -1354,6 +1398,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the input string for the first occurrence of the specified regular expression, using the specified matching options and time-out interval.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains information about the match.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match.</param>
         <param name="pattern">
@@ -1380,7 +1428,6 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MatchCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Matches(System.String)" /> method is similar to the <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String)" /> method, except that it returns information about all the matches found in the input string, instead of a single match. It is equivalent to the following code: </para>
@@ -1394,6 +1441,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the specified input string for all occurrences of a regular expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the <see cref="T:System.Text.RegularExpressions.Match" /> objects found by the search. If no matches are found, the method returns an empty collection object.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match.</param>
       </Docs>
@@ -1415,7 +1466,6 @@
         <Parameter Name="startat" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MatchCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The  <see cref="M:System.Text.RegularExpressions.Regex.Matches(System.String,System.Int32)" /> method is similar to the  <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String,System.Int32)" /> method, except that it returns information about all the matches found in the input string, instead of a single match. It is equivalent to the following code:</para>
@@ -1428,6 +1478,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the specified input string for all occurrences of a regular expression, beginning at the specified starting position in the string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the <see cref="T:System.Text.RegularExpressions.Match" /> objects found by the search. If no matches are found, the method returns an empty collection object.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="startat">
@@ -1451,7 +1505,6 @@
         <Parameter Name="pattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MatchCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Matches(System.String,System.String)" /> method is similar to the <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String,System.String)" /> method, except that it returns information about all the matches found in the input string, instead of a single match. It is equivalent to the following code: </para>
@@ -1465,6 +1518,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the specified input string for all occurrences of a specified regular expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the <see cref="T:System.Text.RegularExpressions.Match" /> objects found by the search. If no matches are found, the method returns an empty collection object.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="pattern">
@@ -1489,7 +1546,6 @@
         <Parameter Name="options" Type="System.Text.RegularExpressions.RegexOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MatchCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Matches(System.String,System.String,System.Text.RegularExpressions.RegexOptions)" /> method is similar to the <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String,System.String,System.Text.RegularExpressions.RegexOptions)" /> method, except that it returns information about all the matches found in the input string, instead of a single match. It is equivalent to the following code:</para>
@@ -1503,6 +1559,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the specified input string for all occurrences of a specified regular expression, using the specified matching options.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the <see cref="T:System.Text.RegularExpressions.Match" /> objects found by the search. If no matches are found, the method returns an empty collection object.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="pattern">
@@ -1533,7 +1593,6 @@
         <Parameter Name="matchTimeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Matches(System.String,System.String,System.Text.RegularExpressions.RegexOptions,System.TimeSpan)" /> method is similar to the <see cref="M:System.Text.RegularExpressions.Regex.Match(System.String,System.String,System.Text.RegularExpressions.RegexOptions,System.TimeSpan)" />  method, except that it returns information about all the matches found in the input string, instead of a single match. It is equivalent to the following code:</para>
@@ -1547,6 +1606,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the specified input string for all occurrences of a specified regular expression, using the specified matching options and time-out interval.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of the <see cref="T:System.Text.RegularExpressions.Match" /> objects found by the search. If no matches are found, the method returns an empty collection object.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match.</param>
         <param name="pattern">
@@ -1646,7 +1709,6 @@
         <Parameter Name="replacement" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The search for matches starts at the beginning of the <paramref name="input" /> string. The regular expression is the pattern defined by the constructor for the current <see cref="T:System.Text.RegularExpressions.Regex" /> object.</para>
@@ -1661,6 +1723,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input string, replaces all strings that match a regular expression pattern with a specified replacement string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that the replacement string takes the place of each matched string. If the regular expression pattern is not matched in the current instance, the method returns the current instance unchanged. </para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="replacement">
@@ -1684,7 +1750,6 @@
         <Parameter Name="evaluator" Type="System.Text.RegularExpressions.MatchEvaluator" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Replace(System.String,System.Text.RegularExpressions.MatchEvaluator)" /> method is useful for replacing a regular expression match if any of the following conditions is true:</para>
@@ -1711,6 +1776,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input string, replaces all strings that match a specified regular expression with a string returned by a <see cref="T:System.Text.RegularExpressions.MatchEvaluator" /> delegate. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that a replacement string takes the place of each matched string. If the regular expression pattern is not matched in the current instance, the method returns the current instance unchanged. </para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="evaluator">
@@ -1735,7 +1804,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The search for matches starts at the beginning of the <paramref name="input" /> string. The regular expression is the pattern that is defined by the constructor for the current <see cref="T:System.Text.RegularExpressions.Regex" /> object. If <paramref name="count" /> is negative, replacements continue to the end of the string. If <paramref name="count" /> exceeds the number of matches, all matches are replaced.</para>
@@ -1750,6 +1818,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input string, replaces a specified maximum number of strings that match a regular expression pattern with a specified replacement string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that the replacement string takes the place of each matched string. If the regular expression pattern is not matched in the current instance, the method returns the current instance unchanged.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="replacement">
@@ -1776,7 +1848,6 @@
         <Parameter Name="replacement" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The static Replace methods are equivalent to constructing a <see cref="T:System.Text.RegularExpressions.Regex" /> object with the specified regular expression pattern and calling the instance method Replace. </para>
@@ -1792,6 +1863,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input string, replaces all strings that match a specified regular expression with a specified replacement string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that the replacement string takes the place of each matched string. If <paramref name="pattern" /> is not matched in the current instance, the method returns the current instance unchanged.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="pattern">
@@ -1818,7 +1893,6 @@
         <Parameter Name="evaluator" Type="System.Text.RegularExpressions.MatchEvaluator" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Replace(System.String,System.String,System.Text.RegularExpressions.MatchEvaluator)" /> method is useful for replacing a regular expression match if any of the following conditions is true:</para>
@@ -1845,6 +1919,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input string, replaces all strings that match a specified regular expression with a string returned by a <see cref="T:System.Text.RegularExpressions.MatchEvaluator" /> delegate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that a replacement string takes the place of each matched string. If <paramref name="pattern" /> is not matched in the current instance, the method returns the current instance unchanged. </para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="pattern">
@@ -1871,7 +1949,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Replace(System.String,System.Text.RegularExpressions.MatchEvaluator,System.Int32)" /> method is useful for replacing a regular expression match if any of the following conditions is true:</para>
@@ -1898,6 +1975,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input string, replaces a specified maximum number of strings that match a regular expression pattern with a string returned by a <see cref="T:System.Text.RegularExpressions.MatchEvaluator" /> delegate. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that a replacement string takes the place of each matched string. If the regular expression pattern is not matched in the current instance, the method returns the current instance unchanged. </para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="evaluator">
@@ -1925,7 +2006,6 @@
         <Parameter Name="startat" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The search for matches starts in the <paramref name="input" /> string at the position specified by the <paramref name="startat" /> parameter. The regular expression is the pattern defined by the constructor for the current <see cref="T:System.Text.RegularExpressions.Regex" /> object. If <paramref name="count" /> is negative, replacements continue to the end of the string. If <paramref name="count" /> exceeds the number of matches, all matches are replaced.</para>
@@ -1940,6 +2020,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input substring, replaces a specified maximum number of strings that match a regular expression pattern with a specified replacement string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that the replacement string takes the place of each matched string. If the regular expression pattern is not matched in the current instance, the method returns the current instance unchanged. </para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="replacement">
@@ -1969,7 +2053,6 @@
         <Parameter Name="options" Type="System.Text.RegularExpressions.RegexOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The static Replace methods are equivalent to constructing a <see cref="T:System.Text.RegularExpressions.Regex" /> object with the specified regular expression pattern and calling the instance method Replace. </para>
@@ -1985,6 +2068,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input string, replaces all strings that match a specified regular expression with a specified replacement string. Specified options modify the matching operation. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that the replacement string takes the place of each matched string. If <paramref name="pattern" /> is not matched in the current instance, the method returns the current instance unchanged.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="pattern">
@@ -2014,7 +2101,6 @@
         <Parameter Name="options" Type="System.Text.RegularExpressions.RegexOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Replace(System.String,System.String,System.Text.RegularExpressions.MatchEvaluator,System.Text.RegularExpressions.RegexOptions)" /> method is useful for replacing a regular expression match in if any of the following conditions is true:</para>
@@ -2042,6 +2128,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input string, replaces all strings that match a specified regular expression with a string returned by a <see cref="T:System.Text.RegularExpressions.MatchEvaluator" /> delegate. Specified options modify the matching operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that a replacement string takes the place of each matched string. If <paramref name="pattern" /> is not matched in the current instance, the method returns the current instance unchanged.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="pattern">
@@ -2071,7 +2161,6 @@
         <Parameter Name="startat" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Replace(System.String,System.Text.RegularExpressions.MatchEvaluator,System.Int32,System.Int32)" /> method is useful for replacing a regular expression match if any of the following conditions is true:</para>
@@ -2098,6 +2187,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input substring, replaces a specified maximum number of strings that match a regular expression pattern with a string returned by a <see cref="T:System.Text.RegularExpressions.MatchEvaluator" /> delegate. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that a replacement string takes the place of each matched string. If the regular expression pattern is not matched in the current instance, the method returns the current instance unchanged. </para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match. </param>
         <param name="evaluator">
@@ -2131,7 +2224,6 @@
         <Parameter Name="matchTimeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The static Replace methods are equivalent to constructing a <see cref="T:System.Text.RegularExpressions.Regex" /> object with the specified regular expression pattern and calling the instance method Replace. </para>
@@ -2147,6 +2239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input string, replaces all strings that match a specified regular expression with a specified replacement string. Additional parameters specify options that modify the matching operation and a time-out interval if no match is found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that the replacement string takes the place of each matched string. If <paramref name="pattern" /> is not matched in the current instance, the method returns the current instance unchanged. </para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match.</param>
         <param name="pattern">
@@ -2182,7 +2278,6 @@
         <Parameter Name="matchTimeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Replace(System.String,System.String,System.Text.RegularExpressions.MatchEvaluator,System.Text.RegularExpressions.RegexOptions)" /> method is useful for replacing a regular expression match if any of the following conditions is true:</para>
@@ -2210,6 +2305,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In a specified input string, replaces all substrings that match a specified regular expression with a string returned by a <see cref="T:System.Text.RegularExpressions.MatchEvaluator" /> delegate. Additional parameters specify options that modify the matching operation and a time-out interval if no match is found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new string that is identical to the input string, except that the replacement string takes the place of each matched string. If <paramref name="pattern" /> is not matched in the current instance, the method returns the current instance unchanged. </para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to search for a match.</param>
         <param name="pattern">
@@ -2283,7 +2382,6 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" /> methods are similar to the <see cref="M:System.String.Split(System.Char[])" /> method, except that <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" /> splits the string at a delimiter determined by a regular expression instead of a set of characters. The string is split as many times as possible. If no delimiter is found, the return value contains one element whose value is the original input string.  </para>
@@ -2304,6 +2402,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Splits an input string into an array of substrings at the positions defined by a regular expression pattern specified in the <see cref="T:System.Text.RegularExpressions.Regex" /> constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to split. </param>
       </Docs>
@@ -2325,7 +2427,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" /> methods are similar to the <see cref="M:System.String.Split(System.Char[])" /> method, except that <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" /> splits the string at a delimiter determined by a regular expression instead of a set of characters. The <paramref name="count" /> parameter specifies the maximum number of substrings into which the <paramref name="input" /> string can be split; the last string contains the unsplit remainder of the string. A <paramref name="count" /> value of zero provides the default behavior of splitting as many times as possible. </para>
@@ -2343,6 +2444,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Splits an input string a specified maximum number of times into an array of substrings, at the positions defined by a regular expression specified in the <see cref="T:System.Text.RegularExpressions.Regex" /> constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to be split. </param>
         <param name="count">
@@ -2366,7 +2471,6 @@
         <Parameter Name="pattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" /> methods are similar to the <see cref="M:System.String.Split(System.Char[])" /> method, except that <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" /> splits the string at a delimiter determined by a regular expression instead of a set of characters. The <paramref name="input" /> string is split as many times as possible. If <paramref name="pattern" /> is not found in the <paramref name="input" /> string, the return value contains one element whose value is the original <paramref name="input" /> string. </para>
@@ -2391,6 +2495,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Splits an input string into an array of substrings at the positions defined by a regular expression pattern.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to split. </param>
         <param name="pattern">
@@ -2415,7 +2523,6 @@
         <Parameter Name="startat" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" /> methods are similar to the <see cref="M:System.String.Split(System.Char[])" /> method, except that <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" />  splits the string at a delimiter determined by a regular expression instead of a set of characters. The <paramref name="count" /> parameter specifies the maximum number of substrings into which the <paramref name="input" /> string is split; the last string contains the unsplit remainder of the string. A <paramref name="count" /> value of zero provides the default behavior of splitting as many times as possible. The <paramref name="startat" /> parameter defines the point at which the search for the first delimiter begins (this can be used for skipping leading white space).</para>
@@ -2434,6 +2541,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Splits an input string a specified maximum number of times into an array of substrings, at the positions defined by a regular expression specified in the <see cref="T:System.Text.RegularExpressions.Regex" /> constructor. The search for the regular expression pattern starts at a specified character position in the input string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to be split. </param>
         <param name="count">
@@ -2460,7 +2571,6 @@
         <Parameter Name="options" Type="System.Text.RegularExpressions.RegexOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" /> methods are similar to the <see cref="M:System.String.Split(System.Char[])" /> method, except that <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" /> splits the string at a delimiter determined by a regular expression instead of a set of characters. The string is split as many times as possible. If no delimiter is found, the return value contains one element whose value is the original <paramref name="input" /> string. </para>
@@ -2482,6 +2592,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Splits an input string into an array of substrings at the positions defined by a specified regular expression pattern. Specified options modify the matching operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to split. </param>
         <param name="pattern">
@@ -2512,7 +2626,6 @@
         <Parameter Name="matchTimeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" /> methods are similar to the <see cref="M:System.String.Split(System.Char[])" /> method, except that <see cref="M:System.Text.RegularExpressions.Regex.Split(System.String)" /> splits the string at a delimiter determined by a regular expression instead of a set of characters. The string is split as many times as possible. If no delimiter is found, the return value contains one element whose value is the original <paramref name="input" /> string. </para>
@@ -2534,6 +2647,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Splits an input string into an array of substrings at the positions defined by a specified regular expression pattern. Additional parameters specify options that modify the matching operation and a time-out interval if no match is found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to split.</param>
         <param name="pattern">
@@ -2585,7 +2702,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="pattern" /> parameter consists of regular expression language elements that symbolically describe the string to match. For more information about regular expressions, see <format type="text/html"><a href="521b3f6d-f869-42e1-93e5-158c54a6895d">.NET Framework Regular Expressions</a></format> and <format type="text/html"><a href="930653a6-95d2-4697-9d5a-52d11bb6fd4c">Regular Expression Language Elements</a></format>.</para>
@@ -2594,6 +2710,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the regular expression pattern that was passed into the Regex constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="pattern" /> parameter that was passed into the Regex constructor.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Unescape">
@@ -2612,7 +2732,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Text.RegularExpressions.Regex.Unescape(System.String)" /> method performs one of the following two transformations: </para>
@@ -2636,6 +2755,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts any escaped characters in the input string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string of characters with any escaped characters converted to their unescaped form.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The input string containing the text to convert. </param>
       </Docs>
@@ -2654,12 +2777,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used by a <see cref="T:System.Text.RegularExpressions.Regex" /> object generated by the <see cref="Overload:System.Text.RegularExpressions.Regex.CompileToAssembly" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Text.RegularExpressions.Regex.Options" /> property contains the <see cref="F:System.Text.RegularExpressions.RegexOptions.Compiled" /> option; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="UseOptionR">
@@ -2676,12 +2802,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used by a <see cref="T:System.Text.RegularExpressions.Regex" /> object generated by the <see cref="Overload:System.Text.RegularExpressions.Regex.CompileToAssembly" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.Text.RegularExpressions.Regex.Options" /> property contains the <see cref="F:System.Text.RegularExpressions.RegexOptions.RightToLeft" /> option; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

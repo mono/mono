@@ -32,7 +32,6 @@
         <Parameter Name="initialConnection" Type="System.ComponentModel.Design.Data.DesignerDataConnection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ComponentModel.Design.Data.IDataEnvironment.BuildConnection(System.Windows.Forms.IWin32Window,System.ComponentModel.Design.Data.DesignerDataConnection)" /> method to activate the design environment's user interface for creating or editing data connections. If the <paramref name="initialConnection" /> parameter is null, it indicates the user wants to create a new connection. If the <paramref name="initialConnection" /> parameter is a <see cref="T:System.ComponentModel.Design.Data.DesignerDataConnection" /> object, it indicates the user wants to edit an existing connection.</para>
@@ -44,6 +43,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new data connection or edits an existing connection using the design tool's new connection user interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new or edited <see cref="T:System.ComponentModel.Design.Data.DesignerDataConnection" /> object, or null if the user canceled.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />The parent window for the connection dialog.</param>
         <param name="initialConnection">
@@ -66,7 +69,6 @@
         <Parameter Name="initialQueryText" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.Data.IDataEnvironment.BuildQuery(System.Windows.Forms.IWin32Window,System.ComponentModel.Design.Data.DesignerDataConnection,System.ComponentModel.Design.Data.QueryBuilderMode,System.String)" /> method launches the design environment's UI for editing or creating SQL query strings. If the <paramref name="initialQueryText" /> parameter is <see cref="F:System.String.Empty" />, it indicates the user wants to create a new query. If the <paramref name="initialQueryText" /> parameter contains a string, it indicates the user wants to edit the existing query. </para>
@@ -76,6 +78,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Launches a dialog to build a SQL query string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the SQL query, or null if the user canceled.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />The parent window for the dialog.</param>
         <param name="connection">
@@ -101,7 +107,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.Data.IDataEnvironment.ConfigureConnection(System.Windows.Forms.IWin32Window,System.ComponentModel.Design.Data.DesignerDataConnection,System.String)" /> method writes a connection to the application's configuration file. The connection string and provider name are written to the <format type="text/html"><a href="b6ffbb2e-a4d1-410e-8f7e-9755e92c65de">connectionStrings</a></format> configuration element named according to the <paramref name="name" /> parameter. The <see cref="P:System.ComponentModel.Design.Data.DesignerDataConnection.Name" /> property of the <paramref name="connection" /> parameter is ignored. </para>
@@ -153,6 +158,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a connection string to the application's configuration file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.Design.Data.DesignerDataConnection" /> object containing the saved connection data with the <see cref="P:System.ComponentModel.Design.Data.DesignerDataConnection.Name" /> property set to <paramref name="name" />, and the <see cref="P:System.ComponentModel.Design.Data.DesignerDataConnection.IsConfigured" /> property set to true.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />The parent window for the dialog, if any.</param>
         <param name="connection">
@@ -196,12 +205,15 @@
         <Parameter Name="connection" Type="System.ComponentModel.Design.Data.DesignerDataConnection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a code expression that contains the source code required to retrieve a connection string from the application's configuration file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeExpression" /> object containing the source code required to retrieve a connection string from the application's configuration file.</para>
+        </returns>
         <param name="connection">
           <attribution license="cc4" from="Microsoft" modified="false" />The connection to retrieve from the application's configuration file.</param>
       </Docs>
@@ -219,7 +231,6 @@
         <Parameter Name="connection" Type="System.ComponentModel.Design.Data.DesignerDataConnection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.Data.IDataEnvironment.GetConnectionSchema(System.ComponentModel.Design.Data.DesignerDataConnection)" /> method returns the database schema for the specified data connection. If the schema is unavailable, or if the provider for the connection is unavailable, the <see cref="M:System.ComponentModel.Design.Data.IDataEnvironment.GetConnectionSchema(System.ComponentModel.Design.Data.DesignerDataConnection)" /> should return null.</para>
@@ -228,6 +239,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the schema for the specified data connection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.ComponentModel.Design.Data.IDesignerDataSchema" /> object containing the schema information for the specified data connection, or null if no schema information is available.</para>
+        </returns>
         <param name="connection">
           <attribution license="cc4" from="Microsoft" modified="false" />The data connection for which to return schema information.</param>
       </Docs>
@@ -245,7 +260,6 @@
         <Parameter Name="connection" Type="System.ComponentModel.Design.Data.DesignerDataConnection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.Data.IDataEnvironment.GetDesignTimeConnection(System.ComponentModel.Design.Data.DesignerDataConnection)" /> method returns a valid, open connection to the data store that can be used by the control designer. </para>
@@ -255,6 +269,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a database connection that can be used at design time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.Common.DbConnection" /> object that can be used at design time.</para>
+        </returns>
         <param name="connection">
           <attribution license="cc4" from="Microsoft" modified="false" />The desired data connection.</param>
       </Docs>

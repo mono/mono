@@ -99,7 +99,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The order of the binding elements is important. It reflects the order in which the protocol and transport channels are constructed and stacked. </para>
@@ -108,6 +107,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an ordered collection of binding elements contained in the current binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.BindingElementCollection" /> that contains the <see cref="T:System.ServiceModel.Channels.BindingElement" /> objects for the binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateMessageSecurity">
@@ -122,12 +125,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When implemented in a derived class, returns the <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> from the current binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.SecurityBindingElement" /> from the current binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EnvelopeVersion">
@@ -161,12 +167,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When implemented in a derived class, returns the transport binding element from the current binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.TransportBindingElement" /> from the current binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HostNameComparisonMode">

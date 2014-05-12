@@ -250,7 +250,6 @@
         <Parameter Name="extendee" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, you will use <see cref="M:System.Windows.Forms.ErrorProvider.CanExtend(System.Object)" /> to determine whether you can attach an <see cref="T:System.Windows.Forms.ErrorProvider" /> to the specified control.</para>
@@ -259,6 +258,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether a control can be extended.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control can be extended; otherwise, false.</para>
+          <para>This property will be true if the object is a <see cref="T:System.Windows.Forms.Control" /> and is not a <see cref="T:System.Windows.Forms.Form" /> or <see cref="T:System.Windows.Forms.ToolBar" />.</para>
+        </returns>
         <param name="extendee">
           <attribution license="cc4" from="Microsoft" modified="false" />The control to be extended. </param>
       </Docs>
@@ -406,12 +410,15 @@
         <Parameter Name="control" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the current error description string for the specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The error description string for the specified control.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The item to get the error description string for. </param>
       </Docs>
@@ -438,12 +445,15 @@
         <Parameter Name="control" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating where the error icon should be placed in relation to the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.ErrorIconAlignment" /> values. The default icon alignment is <see cref="F:System.Windows.Forms.ErrorIconAlignment.MiddleRight" />.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The control to get the icon location for. </param>
       </Docs>
@@ -470,7 +480,6 @@
         <Parameter Name="control" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Many icons typically have extra space around their central images, so the padding value is only necessary if additional space is necessary. Padding values can be positive or negative. Negative values cause the icon to overlap the edge of the control. The default icon padding is 0.</para>
@@ -479,6 +488,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the amount of extra space to leave next to the error icon.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of pixels to leave between the icon and the control. </para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The control to get the padding for. </param>
       </Docs>

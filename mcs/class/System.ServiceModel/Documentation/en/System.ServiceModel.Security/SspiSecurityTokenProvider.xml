@@ -93,7 +93,6 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The security token is of type <see cref="T:System.ServiceModel.Security.Tokens.SspiSecurityToken" />.</para>
@@ -102,6 +101,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the security token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security token.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Timespan" /> that represents the time-out interval.</param>
       </Docs>

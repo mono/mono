@@ -161,7 +161,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.ContainerControlDesigner.GetDesignTimeCssAttributes" /> method returns a collection of style attributes for the design-time representation of the control.</para>
@@ -172,6 +171,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of style attributes for the control at design time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of style attributes applied to the control on the design surface. The style attribute names are keys used to access the style attribute values in the <see cref="T:System.Collections.IDictionary" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetDesignTimeHtml">
@@ -187,7 +190,6 @@
         <Parameter Name="regions" Type="System.Web.UI.Design.DesignerRegionCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.Design.ContainerControlDesigner.GetDesignTimeHtml(System.Web.UI.Design.DesignerRegionCollection)" /> method to get the HTML for the control. Child controls that are contained in the editable design region are rendered using their associated control designers.</para>
@@ -197,6 +199,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the HTML markup that is used to represent the control at design time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTML markup string that represents the control.</para>
+        </returns>
         <param name="regions">
           <attribution license="cc4" from="Microsoft" modified="false" />A collection of designer regions.</param>
       </Docs>
@@ -214,7 +220,6 @@
         <Parameter Name="region" Type="System.Web.UI.Design.EditableDesignerRegion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.Design.ContainerControlDesigner" /> class implements a single designer region instead of a collection of designer regions. Therefore, the <paramref name="region" /> parameter is ignored, and the <see cref="M:System.Web.UI.Design.ContainerControlDesigner.GetEditableDesignerRegionContent(System.Web.UI.Design.EditableDesignerRegion)" /> method returns the content for the single designer region that is contained in the control designer.</para>
@@ -223,6 +228,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the content for the editable region of the control at design time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The persisted content of the region contained within the <see cref="T:System.Web.UI.Design.ContainerControlDesigner" />.</para>
+        </returns>
         <param name="region">
           <attribution license="cc4" from="Microsoft" modified="false" />An editable design region contained within the control.</param>
       </Docs>
@@ -238,7 +247,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.ContainerControlDesigner.GetPersistenceContent" /> method returns null to indicate that the <see cref="T:System.Web.UI.Design.ContainerControlDesigner" /> class does not have persisted inner content.</para>
@@ -247,6 +255,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the persistable content of the control at design time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SetEditableDesignerRegionContent">

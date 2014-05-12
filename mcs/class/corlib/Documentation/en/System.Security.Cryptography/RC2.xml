@@ -110,7 +110,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'RC2'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create an instance of the RC2 class that you can use to encrypt and decrypt data.</para>
@@ -119,6 +118,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of a cryptographic object to perform the <see cref="T:System.Security.Cryptography.RC2" /> algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a cryptographic object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -137,7 +140,6 @@
         <Parameter Name="AlgName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'RC2'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create an instance of the RC2 class that you can use to encrypt and decrypt data.</para>
@@ -146,6 +148,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of a cryptographic object to perform the specified implementation of the <see cref="T:System.Security.Cryptography.RC2" /> algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a cryptographic object.</para>
+        </returns>
         <param name="AlgName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of <see cref="T:System.Security.Cryptography.RC2" /> to use. </param>
       </Docs>

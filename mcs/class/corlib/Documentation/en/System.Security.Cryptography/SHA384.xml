@@ -68,12 +68,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'SHA384'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the default implementation of <see cref="T:System.Security.Cryptography.SHA384" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Security.Cryptography.SHA384" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -92,12 +95,15 @@
         <Parameter Name="hashName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SHA384'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of a specified implementation of <see cref="T:System.Security.Cryptography.SHA384" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Security.Cryptography.SHA384" /> using the specified implementation.</para>
+        </returns>
         <param name="hashName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of <see cref="T:System.Security.Cryptography.SHA384" /> to be used. </param>
       </Docs>

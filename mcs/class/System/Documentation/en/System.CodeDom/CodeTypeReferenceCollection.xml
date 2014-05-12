@@ -116,12 +116,15 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeReference" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified <see cref="T:System.CodeDom.CodeTypeReference" /> to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the new element was inserted.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeReference" /> to add. </param>
       </Docs>
@@ -242,12 +245,15 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeReference" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the collection contains the specified <see cref="T:System.CodeDom.CodeTypeReference" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.CodeDom.CodeTypeReference" /> is contained in the collection; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeReference" /> to search for in the collection. </param>
       </Docs>
@@ -296,12 +302,15 @@
         <Parameter Name="value" Type="System.CodeDom.CodeTypeReference" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the index in the collection of the specified <see cref="T:System.CodeDom.CodeTypeReference" />, if it exists in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified <see cref="T:System.CodeDom.CodeTypeReference" /> in the collection if found; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.CodeDom.CodeTypeReference" /> to locate in the collection. </param>
       </Docs>

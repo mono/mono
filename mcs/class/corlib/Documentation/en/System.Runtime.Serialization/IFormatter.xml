@@ -93,7 +93,6 @@
         <Parameter Name="serializationStream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Runtime.Serialization.IFormatter.Deserialize(System.IO.Stream)" /> method reads graph information from the stream and reconstructs a clone of the original graph. The topology of the graph is preserved.</para>
@@ -103,6 +102,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the data on the provided stream and reconstitutes the graph of objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The top object of the deserialized graph.</para>
+        </returns>
         <param name="serializationStream">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream that contains the data to deserialize. </param>
       </Docs>

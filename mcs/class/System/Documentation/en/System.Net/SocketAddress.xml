@@ -269,10 +269,6 @@ instance; otherwise <see langword="false" />.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> representation of the current
-   instance.</para>
-        </returns>
         <example>
           <para>The following example writes a socket address to the
       console.</para>
@@ -303,6 +299,10 @@ public class SocketAddressToString{
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns information about the socket address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains information about the <see cref="T:System.Net.SocketAddress" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

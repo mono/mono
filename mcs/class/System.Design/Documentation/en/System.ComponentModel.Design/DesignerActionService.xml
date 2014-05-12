@@ -178,7 +178,6 @@
         <Parameter Name="comp" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.Contains(System.ComponentModel.IComponent)" /> method only recognizes push-model smart tags, which are associated to a component with the <see cref="Overload:System.ComponentModel.Design.DesignerActionService.Add" /> method.</para>
@@ -188,6 +187,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current smart tag service manages the action lists for the specified component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the component is managed by the current service; otherwise, false.</para>
+        </returns>
         <param name="comp">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to search for.</param>
       </Docs>
@@ -336,7 +339,6 @@
         <Parameter Name="component" Type="System.ComponentModel.IComponent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.DesignerActionService.GetComponentActions(System.ComponentModel.IComponent)" /> method is equivalent to a call to the <see cref="M:System.ComponentModel.Design.DesignerActionService.GetComponentActions(System.ComponentModel.IComponent,System.ComponentModel.Design.ComponentActionsType)" /> method using a <paramref name="type" /> parameter of <see cref="F:System.ComponentModel.Design.ComponentActionsType.All" />. Therefore, the collection returned will contain both the push and pull lists of smart tags.</para>
@@ -346,6 +348,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of smart tag item lists associated with a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of smart tags for the specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component that the smart tags are associated with.</param>
       </Docs>
@@ -364,7 +370,6 @@
         <Parameter Name="type" Type="System.ComponentModel.Design.ComponentActionsType" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the overloaded <see cref="Overload:System.ComponentModel.Design.DesignerActionService.GetComponentActions" /> method filters on the <paramref name="type" /> parameter, which can have one of the following values. </para>
@@ -413,6 +418,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of smart tag item lists of the specified type associated with a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of smart tags of the specified type for the specified component.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component that the smart tags are associated with.</param>
         <param name="type">

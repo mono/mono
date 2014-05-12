@@ -37,7 +37,6 @@
         <Parameter Name="node" Type="System.Xml.Linq.XNode" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You cannot edit the XML tree by using the <see cref="T:System.Xml.XPath.XPathNavigator" /> that is returned by this method. The <see cref="P:System.Xml.XPath.XPathNavigator.CanEdit" /> property returns false.</para>
@@ -51,6 +50,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XPath.XPathNavigator" /> for an <see cref="T:System.Xml.Linq.XNode" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> that can process XPath queries.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XNode" /> that can process XPath queries.</param>
       </Docs>
@@ -70,7 +73,6 @@
         <Parameter Name="nameTable" Type="System.Xml.XmlNameTable" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You cannot edit the XML tree using the <see cref="T:System.Xml.XPath.XPathNavigator" /> that is returned by this method. The <see cref="P:System.Xml.XPath.XPathNavigator.CanEdit" /> property returns false.</para>
@@ -83,6 +85,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XPath.XPathNavigator" /> for an <see cref="T:System.Xml.Linq.XNode" />. The <see cref="T:System.Xml.XmlNameTable" /> enables more efficient XPath expression processing.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> that can process XPath queries.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Linq.XNode" /> that can process an XPath query.</param>
         <param name="nameTable">
@@ -104,7 +110,6 @@
         <Parameter Name="expression" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the collection is an enumeration of elements or attributes, you can use the Cast operator to get a collection of <see cref="T:System.Xml.Linq.XElement" /> or <see cref="T:System.Xml.Linq.XAttribute" />.</para>
@@ -115,6 +120,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can contain a bool, a double, a string, or an <see cref="T:System.Collections.Generic.IEnumerable`1" />. </para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
         <param name="expression">
@@ -137,7 +146,6 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method to evaluate XPath expressions that contain namespace prefixes.</para>
@@ -148,6 +156,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Evaluates an XPath expression, resolving namespace prefixes using the specified <see cref="T:System.Xml.IXmlNamespaceResolver" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the result of evaluating the expression. The object can be a bool, a double, a string, or an <see cref="T:System.Collections.Generic.IEnumerable`1" />.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
         <param name="expression">
@@ -171,12 +183,15 @@
         <Parameter Name="expression" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects an <see cref="T:System.Xml.Linq.XElement" /> using a XPath expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XElement" />, or null.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
         <param name="expression">
@@ -199,7 +214,6 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method to evaluate XPath expressions that contain namespace prefixes.</para>
@@ -208,6 +222,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects an <see cref="T:System.Xml.Linq.XElement" /> using a XPath expression, resolving namespace prefixes using the specified <see cref="T:System.Xml.IXmlNamespaceResolver" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XElement" />, or null.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
         <param name="expression">
@@ -231,7 +249,6 @@
         <Parameter Name="expression" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although the ordering of returned collections is not specified in the XML XPath Language 1.0 Recommendation, this extension method returns nodes in document order.</para>
@@ -241,6 +258,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects a collection of elements using an XPath expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> that contains the selected elements.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
         <param name="expression">
@@ -263,7 +284,6 @@
         <Parameter Name="resolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method to evaluate XPath expressions that contain namespace prefixes.</para>
@@ -274,6 +294,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects a collection of elements using an XPath expression, resolving namespace prefixes using the specified <see cref="T:System.Xml.IXmlNamespaceResolver" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Xml.Linq.XElement" /> that contains the selected elements.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> on which to evaluate the XPath expression.</param>
         <param name="expression">

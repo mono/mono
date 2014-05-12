@@ -71,7 +71,6 @@
         <Parameter Name="signature" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For information on signature blobs, see the Common Language Infrastructure (CLI) documentation, especially "Partition II: Metadata Definition and Semantics". The documentation is available online; see <see cref="http://go.microsoft.com/fwlink/?LinkID=99212">ECMA C# and Common Language Infrastructure Standards</see> on MSDN and <see cref="http://go.microsoft.com/fwlink/?LinkID=65552">Standard ECMA-335 - Common Language Infrastructure (CLI)</see> on the Ecma International Web site.</para>
@@ -80,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a token, valid in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" />, representing the signature for the associated dynamic method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token that can be embedded in the metadata and the MSIL stream for the associated dynamic method.</para>
+        </returns>
         <param name="signature">
           <attribution license="cc4" from="Microsoft" modified="false" />An array that contains the signature.</param>
       </Docs>
@@ -99,7 +102,6 @@
         <Parameter Name="method" Type="System.Reflection.Emit.DynamicMethod" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The token returned by this method overload allows you to call a dynamic method from the dynamic method associated with the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object. To call the associated dynamic method recursively, pass the value of the <see cref="P:System.Reflection.Emit.DynamicILInfo.DynamicMethod" /> property.</para>
@@ -108,6 +110,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a token, valid in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" />, representing a dynamic method to be called from the associated method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token that can be embedded in the MSIL stream for the associated dynamic method, as the target of an MSIL instruction.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />The dynamic method to call.</param>
       </Docs>
@@ -127,7 +133,6 @@
         <Parameter Name="field" Type="System.RuntimeFieldHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must obtain a token for any field that will be accessed by the dynamic method associated with the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object. Use the <see cref="M:System.Type.GetField(System.String)" /> method to get a <see cref="T:System.Reflection.FieldInfo" /> for the field you want to access, then use the <see cref="P:System.Reflection.FieldInfo.FieldHandle" /> property to get the <see cref="T:System.RuntimeFieldHandle" />.</para>
@@ -136,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a token, valid in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" />, representing a field to be accessed from the associated dynamic method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token that can be used as the operand of an MSIL instruction that accesses fields, in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object.</para>
+        </returns>
         <param name="field">
           <attribution license="cc4" from="Microsoft" modified="false" />The field to be accessed. </param>
       </Docs>
@@ -155,7 +164,6 @@
         <Parameter Name="method" Type="System.RuntimeMethodHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must obtain a token for any method that will be accessed by the dynamic method associated with the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object. Use the <see cref="Overload:System.Type.GetMethod" /> method to get a <see cref="T:System.Reflection.MethodInfo" /> for the method you want to access, and then use the <see cref="P:System.Reflection.MethodBase.MethodHandle" /> property to get the <see cref="T:System.RuntimeMethodHandle" />.</para>
@@ -167,6 +175,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a token, valid in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" />, representing a method to be accessed from the associated dynamic method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token that can be used as the operand of an MSIL instruction that accesses methods, such as <see cref="F:System.Reflection.Emit.OpCodes.Call" /> or <see cref="F:System.Reflection.Emit.OpCodes.Ldtoken" />, in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />The method to be accessed.</param>
       </Docs>
@@ -186,7 +198,6 @@
         <Parameter Name="type" Type="System.RuntimeTypeHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The token returned by this method overload allows you to define a local variable type, and emit MSIL to create an instance of a type in the dynamic method associated with the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object.</para>
@@ -196,6 +207,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a token, valid in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" />, representing a type to be used in the associated dynamic method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token that can be used as the operand of an MSIL instruction that requires a type, in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to be used.</param>
       </Docs>
@@ -215,12 +230,15 @@
         <Parameter Name="literal" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a token, valid in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" />, representing a string literal to be used in the associated dynamic method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token that can be used as the operand of an MSIL instruction that requires a string, in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object.</para>
+        </returns>
         <param name="literal">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to be used.</param>
       </Docs>
@@ -240,7 +258,6 @@
         <Parameter Name="contextType" Type="System.RuntimeTypeHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must obtain a token for any field that will be accessed by the dynamic method associated with the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object. Use the <see cref="M:System.Type.GetField(System.String)" /> method to get a <see cref="T:System.Reflection.FieldInfo" /> for the field you want to access, and then use the <see cref="P:System.Reflection.FieldInfo.FieldHandle" /> property to get the <see cref="T:System.RuntimeFieldHandle" />.</para>
@@ -249,6 +266,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a token, valid in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" />, representing a field to be accessed from the associated dynamic method; the field is on the specified generic type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token that can be used as the operand of an MSIL instruction that accesses fields in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object.</para>
+        </returns>
         <param name="field">
           <attribution license="cc4" from="Microsoft" modified="false" />The field to be accessed.</param>
         <param name="contextType">
@@ -271,7 +292,6 @@
         <Parameter Name="contextType" Type="System.RuntimeTypeHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must obtain a token for any method that will be called by the dynamic method associated with the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object. Use the <see cref="M:System.Type.GetMethod(System.String)" /> method to get a <see cref="T:System.Reflection.MethodInfo" /> for the method you want to call, and then use the <see cref="P:System.Reflection.MethodBase.MethodHandle" /> property to get the <see cref="T:System.RuntimeMethodHandle" />.</para>
@@ -280,6 +300,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a token, valid in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" />, representing a method on a generic type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A token that can be used as the operand of an MSIL instruction that accesses methods, such as <see cref="F:System.Reflection.Emit.OpCodes.Call" /> or <see cref="F:System.Reflection.Emit.OpCodes.Ldtoken" />, in the scope of the current <see cref="T:System.Reflection.Emit.DynamicILInfo" /> object.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />The method.</param>
         <param name="contextType">

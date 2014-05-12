@@ -279,7 +279,6 @@ public class DecoderExample
         <Parameter Name="flush" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -291,6 +290,10 @@ public class DecoderExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, calculates the number of characters produced by decoding a sequence of bytes starting at the specified byte pointer. A parameter indicates whether to clear the internal state of the decoder after the calculation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes and any bytes in the internal buffer.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first byte to decode. </param>
         <param name="count">
@@ -318,18 +321,6 @@ public class DecoderExample
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> containing 
-   the number of characters the next call to <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" /> will produce if presented with the
-   specified range of <paramref name="bytes" />
-   .</para>
-          <para>
-            <block subset="none" type="note">This value takes into account the state in which the current instance was
-   left following the last call to <see cref="M:System.Text.Decoder.GetChars(System.Byte[],System.Int32,System.Int32,System.Char[],System.Int32)" qualify="true" />. This
-   contrasts with <see cref="M:System.Text.Encoding.GetChars(System.Byte[])" qualify="true" />, which does not maintain state information
-   across subsequent calls.</block>
-          </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="bytes" /> is <see langword="null" /> . </exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -352,6 +343,10 @@ public class DecoderExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, calculates the number of characters produced by decoding a sequence of bytes from the specified byte array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes and any bytes in the internal buffer.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
         <param name="index">
@@ -384,7 +379,6 @@ public class DecoderExample
         <Parameter Name="flush" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -396,6 +390,10 @@ public class DecoderExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, calculates the number of characters produced by decoding a sequence of bytes from the specified byte array. A parameter indicates whether to clear the internal state of the decoder after the calculation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of characters produced by decoding the specified sequence of bytes and any bytes in the internal buffer.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
         <param name="index">
@@ -433,7 +431,6 @@ public class DecoderExample
         <Parameter Name="flush" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -446,6 +443,10 @@ public class DecoderExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, decodes a sequence of bytes starting at the specified byte pointer and any bytes in the internal buffer into a set of characters that are stored starting at the specified character pointer. A parameter indicates whether to clear the internal state of the decoder after the conversion.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written at the location indicated by the <paramref name="chars" /> parameter.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the first byte to decode. </param>
         <param name="byteCount">
@@ -479,12 +480,6 @@ public class DecoderExample
         <Parameter Name="charIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> containing
-   the number of characters decoded into <paramref name="chars" /> for a
-   particular encoding.
-   </para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="chars" /> does not contain sufficient space to store the decoded characters.</para>
@@ -523,6 +518,10 @@ public class DecoderExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, decodes a sequence of bytes from the specified byte array and any bytes in the internal buffer into the specified character array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written into <paramref name="chars" />.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
         <param name="byteIndex">
@@ -556,7 +555,6 @@ public class DecoderExample
         <Parameter Name="flush" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -569,6 +567,10 @@ public class DecoderExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, decodes a sequence of bytes from the specified byte array and any bytes in the internal buffer into the specified character array. A parameter indicates whether to clear the internal state of the decoder after the conversion.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The actual number of characters written into the <paramref name="chars" /> parameter.</para>
+        </returns>
         <param name="bytes">
           <attribution license="cc4" from="Microsoft" modified="false" />The byte array containing the sequence of bytes to decode. </param>
         <param name="byteIndex">

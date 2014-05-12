@@ -80,7 +80,6 @@
         <Parameter Name="subkey" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The newly created key.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In order to perform this action, the user must have permission at this level and below in the registry hierarchy.</para>
@@ -92,6 +91,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new subkey or opens an existing subkey for write access.  </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created subkey, or null if the operation failed. If a zero-length string is specified for <paramref name="subkey" />, the current <see cref="T:Microsoft.Win32.RegistryKey" /> object is returned.</para>
+        </returns>
         <param name="subkey">
           <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open. This string is not case-sensitive.</param>
       </Docs>
@@ -117,7 +120,6 @@
         <Parameter Name="permissionCheck" Type="Microsoft.Win32.RegistryKeyPermissionCheck" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -131,6 +133,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new subkey or opens an existing subkey for write access, using the specified permission check option. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created subkey, or null if the operation failed. If a zero-length string is specified for <paramref name="subkey" />, the current <see cref="T:Microsoft.Win32.RegistryKey" /> object is returned.</para>
+        </returns>
         <param name="subkey">
           <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open. This string is not case-sensitive.</param>
         <param name="permissionCheck">
@@ -158,7 +164,6 @@
         <Parameter Name="options" Type="Microsoft.Win32.RegistryOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To obtain the current <see cref="T:Microsoft.Win32.RegistryKey" /> object, specify an empty string ("") for <paramref name="subkey" />.</para>
@@ -167,6 +172,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a subkey or opens a subkey for write access, using the specified permission check and registry options. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created subkey, or null if the operation failed.</para>
+        </returns>
         <param name="subkey">
           <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open. </param>
         <param name="permissionCheck">
@@ -197,7 +206,6 @@
         <Parameter Name="registrySecurity" Type="System.Security.AccessControl.RegistrySecurity" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -214,6 +222,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new subkey or opens an existing subkey for write access, using the specified permission check option and registry security. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created subkey, or null if the operation failed. If a zero-length string is specified for <paramref name="subkey" />, the current <see cref="T:Microsoft.Win32.RegistryKey" /> object is returned.</para>
+        </returns>
         <param name="subkey">
           <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open. This string is not case-sensitive.</param>
         <param name="permissionCheck">
@@ -244,7 +256,6 @@
         <Parameter Name="registrySecurity" Type="System.Security.AccessControl.RegistrySecurity" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To obtain the current <see cref="T:Microsoft.Win32.RegistryKey" /> object, specify an empty string ("") for <paramref name="subkey" />.</para>
@@ -253,6 +264,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a subkey or opens a subkey for write access, using the specified permission check option, registry option, and registry security.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created subkey, or null if the operation failed.  </para>
+        </returns>
         <param name="subkey">
           <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open.</param>
         <param name="permissionCheck">
@@ -531,12 +546,15 @@
         <Parameter Name="handle" Type="Microsoft.Win32.SafeHandles.SafeRegistryHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a registry key from a specified handle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A registry key.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />The handle to the registry key.</param>
       </Docs>
@@ -561,7 +579,6 @@
         <Parameter Name="view" Type="Microsoft.Win32.RegistryView" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="view" /> parameter for this method is used in subsequent operations, such as opening subkeys. </para>
@@ -571,6 +588,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a registry key from a specified handle and registry view setting. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A registry key.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />The handle to the registry key.</param>
         <param name="view">
@@ -590,7 +611,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -601,6 +621,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the access control security for the current registry key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that describes the access control permissions on the registry key represented by the current <see cref="T:Microsoft.Win32.RegistryKey" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetAccessControl">
@@ -618,7 +642,6 @@
         <Parameter Name="includeSections" Type="System.Security.AccessControl.AccessControlSections" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -629,6 +652,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified sections of the access control security for the current registry key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that describes the access control permissions on the registry key represented by the current <see cref="T:Microsoft.Win32.RegistryKey" />.</para>
+        </returns>
         <param name="includeSections">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of enumeration values that specifies the type of security information to get. </param>
       </Docs>
@@ -647,7 +674,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method does not recursively find names. It returns the names on the base level from which it was called.</para>
@@ -656,6 +682,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of strings that contains all the subkey names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings that contains the names of the subkeys for the current key.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetValue">
@@ -674,7 +704,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The value stored, or null if the given key does not exist on the Registrykey.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -694,6 +723,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value associated with the specified name. Returns null if the name/value pair does not exist in the registry.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value associated with <paramref name="name" />, or null if <paramref name="name" /> is not found.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to retrieve. This string is not case-sensitive.</param>
       </Docs>
@@ -715,7 +748,6 @@
         <Parameter Name="defaultValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>The value associated with the key on the RegistryKey or the default value if not found.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this overload of <see cref="Overload:Microsoft.Win32.RegistryKey.GetValue" /> to handle the case where a name does not exist yet — for example, the first time your application is run. Whenever you call this overload, use the <paramref name="defaultValue" /> parameter to specify the value to return if <paramref name="name" /> does not exist.</para>
@@ -736,6 +768,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value associated with the specified name. If the name is not found, returns the default value that you provide.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value associated with <paramref name="name" />, with any embedded environment variables left unexpanded, or <paramref name="defaultValue" /> if <paramref name="name" /> is not found.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to retrieve. This string is not case-sensitive.</param>
         <param name="defaultValue">
@@ -764,7 +800,6 @@
         <Parameter Name="options" Type="Microsoft.Win32.RegistryValueOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -780,6 +815,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value associated with the specified name and retrieval options. If the name is not found, returns the default value that you provide.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value associated with <paramref name="name" />, processed according to the specified <paramref name="options" />, or <paramref name="defaultValue" /> if <paramref name="name" /> is not found.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to retrieve. This string is not case-sensitive.</param>
         <param name="defaultValue">
@@ -808,7 +847,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -821,6 +859,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the registry data type of the value associated with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The registry data type of the value associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the value whose registry data type is to be retrieved. This string is not case-sensitive.</param>
       </Docs>
@@ -839,7 +881,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If no value names for the key are found, an empty array is returned.</para>
@@ -849,6 +890,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an array of strings that contains all the value names associated with this key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of strings that contains the value names for the current key.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Handle">
@@ -919,12 +964,15 @@
         <Parameter Name="view" Type="Microsoft.Win32.RegistryView" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a new <see cref="T:Microsoft.Win32.RegistryKey" /> that represents the requested key on the local machine with the specified view.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested registry key.</para>
+        </returns>
         <param name="hKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The HKEY to open.</param>
         <param name="view">
@@ -948,7 +996,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The local machine registry is opened if <paramref name="machineName" /> is <see cref="F:System.String.Empty" />. The requested key must be a root key on the remote machine, and is identified by the appropriate <see cref="T:Microsoft.Win32.RegistryHive" /> value.</para>
@@ -958,6 +1005,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a new <see cref="T:Microsoft.Win32.RegistryKey" /> that represents the requested key on a remote machine.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested registry key.</para>
+        </returns>
         <param name="hKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The HKEY to open, from the <see cref="T:Microsoft.Win32.RegistryHive" /> enumeration. </param>
         <param name="machineName">
@@ -985,7 +1036,6 @@
         <Parameter Name="view" Type="Microsoft.Win32.RegistryView" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The local machine registry is opened if <paramref name="machineName" /> is <see cref="F:System.String.Empty" />. The requested key must be a root key on the remote machine, and is identified by the appropriate <see cref="T:Microsoft.Win32.RegistryHive" /> value.</para>
@@ -996,6 +1046,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a new registry key that represents the requested key on a remote machine with the specified view.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested registry key.</para>
+        </returns>
         <param name="hKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The HKEY to open from the <see cref="T:Microsoft.Win32.RegistryHive" /> enumeration.. </param>
         <param name="machineName">
@@ -1020,7 +1074,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must open a key before it can be manipulated with other methods and properties. To modify a key, you must open it with an overload of the <see cref="Overload:Microsoft.Win32.RegistryKey.OpenSubKey" /> method that allows you to specify write access, such as the <see cref="M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,Microsoft.Win32.RegistryKeyPermissionCheck)" /> overload or the <see cref="M:Microsoft.Win32.RegistryKey.OpenSubKey(System.String,System.Boolean)" /> overload.</para>
@@ -1031,6 +1084,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a subkey as read-only.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subkey requested, or null if the operation failed.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to open as read-only. </param>
       </Docs>
@@ -1056,7 +1113,6 @@
         <Parameter Name="permissionCheck" Type="Microsoft.Win32.RegistryKeyPermissionCheck" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1068,6 +1124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the specified subkey for read or read/write access.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subkey requested, or null if the operation failed.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open.</param>
         <param name="permissionCheck">
@@ -1091,7 +1151,6 @@
         <Parameter Name="writable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the requested key does not exist, this method returns null instead of throwing an exception.</para>
@@ -1102,6 +1161,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a specified subkey, and specifies whether write access is to be applied to the key. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subkey requested, or null if the operation failed.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />Name or path of the subkey to open. </param>
         <param name="writable">
@@ -1130,7 +1193,6 @@
         <Parameter Name="rights" Type="System.Security.AccessControl.RegistryRights" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1143,6 +1205,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the specified subkey for read or read/write access, requesting the specified access rights.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The subkey requested, or null if the operation failed.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name or path of the subkey to create or open.</param>
         <param name="permissionCheck">
@@ -1344,7 +1410,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The return value includes the registry path of the specified key and the hexadecimal value for the key. The registry path includes the absolute root of the specified key, always starts at one of the base keys for the registry, for example, HKEY_LOCAL_MACHINE.</para>
@@ -1353,6 +1418,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a string representation of this key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representing the key. If the specified key is invalid (cannot be found) then null is returned.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ValueCount">

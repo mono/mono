@@ -499,7 +499,6 @@
         <Parameter Name="viewPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -509,6 +508,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the data source view object for the <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> control. The <paramref name="viewPath" /> parameter can be an XPath expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns an <see cref="T:System.Web.UI.WebControls.XmlHierarchicalDataSourceView" /> object that represents a single view of the data starting with the data node identified by <paramref name="viewPath" />.</para>
+        </returns>
         <param name="viewPath">
           <attribution license="cc4" from="Microsoft" modified="false" />An XPath expression that identifies a node from which the current hierarchical view is built. </param>
       </Docs>
@@ -524,7 +527,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -535,6 +537,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the XML data into memory, either directly from the underlying data storage or from the cache, and returns it in the form of an <see cref="T:System.Xml.XmlDataDocument" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlDataDocument" /> object that represents the XML specified in the <see cref="P:System.Web.UI.WebControls.XmlDataSource.Data" /> property or in the file identified by the <see cref="P:System.Web.UI.WebControls.XmlDataSource.DataFile" /> property, with any transformations and <see cref="P:System.Web.UI.WebControls.XmlDataSource.XPath" /> queries applied.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -630,7 +636,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> instance is cast to the <see cref="T:System.ComponentModel.IListSource" /> interface.</para>
@@ -639,6 +644,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.ComponentModel.IListSource.GetList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object implementing <see cref="T:System.Collections.IList" /> that can be bound to a data source.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IDataSource.GetView">
@@ -654,12 +663,15 @@
         <Parameter Name="viewName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the named data source view associated with the data source control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the named <see cref="T:System.Web.UI.WebControls.XmlDataSourceView" /> object associated with the <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> control.</para>
+        </returns>
         <param name="viewName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the view to retrieve. If <see cref="F:System.String.Empty" /> is specified, the default view for the <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> control is retrieved. </param>
       </Docs>
@@ -675,7 +687,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.XmlDataSource" /> instance is cast to the <see cref="T:System.Web.UI.IDataSource" /> interface.</para>
@@ -684,6 +695,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Web.UI.IDataSource.GetViewNames" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object implementing <see cref="T:System.Collections.ICollection" /> containing names representing the list of view objects associated with the <see cref="T:System.Web.UI.IDataSource" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Transform">

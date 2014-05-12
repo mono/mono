@@ -1098,7 +1098,6 @@
         <Parameter Name="changeType" Type="System.IO.WatcherChangeTypes" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'WaitForChangedResult'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method waits indefinitely until the first change occurs and then returns. This is the same as using <see cref="M:System.IO.FileSystemWatcher.WaitForChanged(System.IO.WatcherChangeTypes)" /> with the <paramref name="timeout" /> parameter set to -1.</para>
@@ -1111,6 +1110,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A synchronous method that returns a structure that contains specific information on the change that occurred, given the type of change you want to monitor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.WaitForChangedResult" /> that contains specific information on the change that occurred.</para>
+        </returns>
         <param name="changeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.WatcherChangeTypes" /> to watch for. </param>
       </Docs>
@@ -1132,7 +1135,6 @@
         <Parameter Name="timeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'WaitForChangedResult'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method waits until a change occurs or it has timed out. A value of -1 for the <paramref name="timeout" /> parameter means wait indefinitely.</para>
@@ -1145,6 +1147,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A synchronous method that returns a structure that contains specific information on the change that occurred, given the type of change you want to monitor and the time (in milliseconds) to wait before timing out.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.WaitForChangedResult" /> that contains specific information on the change that occurred.</para>
+        </returns>
         <param name="changeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.WatcherChangeTypes" /> to watch for. </param>
         <param name="timeout">

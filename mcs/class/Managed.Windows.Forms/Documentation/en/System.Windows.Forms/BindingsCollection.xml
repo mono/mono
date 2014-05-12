@@ -347,12 +347,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the collection should be serialized.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection count is greater than zero; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

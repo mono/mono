@@ -74,12 +74,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new copy of the <see cref="T:System.Security.Policy.ApplicationDirectory" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new, identical copy of the <see cref="T:System.Security.Policy.ApplicationDirectory" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Directory">
@@ -119,7 +122,6 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The directory values of the two instances must match exactly. Equivalent noncanonical paths are not resolved. For example, C:\app and C:\temp\...\app are not equal directory values.</para>
@@ -128,6 +130,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether instances of the same type of an evidence object are equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two instances are equivalent; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />An object of same type as the current evidence object. </param>
       </Docs>
@@ -146,12 +152,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the hash code of the current application directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code of the current application directory.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Security.Policy.IBuiltInEvidence.GetRequiredSize">
@@ -240,7 +249,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful during debugging to get an easy-to-read representation of the object.</para>
@@ -249,6 +257,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a string representation of the state of the <see cref="T:System.Security.Policy.ApplicationDirectory" /> evidence object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of the state of the <see cref="T:System.Security.Policy.ApplicationDirectory" /> evidence object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

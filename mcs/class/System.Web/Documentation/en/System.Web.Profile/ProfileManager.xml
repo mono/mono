@@ -108,7 +108,6 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -119,6 +118,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deletes user profile data for which the last activity date and time occurred before the specified date and time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
         <param name="authenticationOption">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> enumeration values, specifying whether anonymous, authenticated, or both types of profiles are deleted.</param>
         <param name="userInactiveSinceDate">
@@ -138,7 +141,6 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -149,6 +151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deletes the profile for the specified user name from the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the user profile was found and deleted; otherwise, false.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The user name for the profile to be deleted.</param>
       </Docs>
@@ -166,7 +172,6 @@
         <Parameter Name="usernames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -178,6 +183,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deletes profile properties and information for the supplied list of user names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
         <param name="usernames">
           <attribution license="cc4" from="Microsoft" modified="false" />A string array of user names for profiles to be deleted. </param>
       </Docs>
@@ -195,7 +204,6 @@
         <Parameter Name="profiles" Type="System.Web.Profile.ProfileInfoCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -207,6 +215,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deletes profile properties and information from the data source for the supplied list of profiles.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles deleted from the data source.</para>
+        </returns>
         <param name="profiles">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Profile.ProfileInfoCollection" />  that contains profile information for profiles to be deleted.</param>
       </Docs>
@@ -248,7 +260,6 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -263,6 +274,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves profile information for all profiles in which the last activity date occurred on or before the specified date and time and the user name for the profile matches the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileInfoCollection" /> containing user profile information for inactive profiles in which the user name matches the supplied <paramref name="usernameToMatch" /> parameter.</para>
+        </returns>
         <param name="authenticationOption">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" />  enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
         <param name="usernameToMatch">
@@ -315,7 +330,6 @@
         <Parameter Name="usernameToMatch" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -328,6 +342,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves all profile information for profiles in which the user name matches the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileInfoCollection" /> containing user profile information for profiles where the user name matches the supplied <paramref name="usernameToMatch" /> parameter.</para>
+        </returns>
         <param name="authenticationOption">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" />  enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
         <param name="usernameToMatch">
@@ -376,7 +394,6 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -388,6 +405,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves all user profile data for profiles in which the last activity date occurred on or before the specified date and time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileInfoCollection" /> containing user profile information about the inactive profiles.</para>
+        </returns>
         <param name="authenticationOption">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
         <param name="userInactiveSinceDate">
@@ -435,7 +456,6 @@
         <Parameter Name="authenticationOption" Type="System.Web.Profile.ProfileAuthenticationOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -447,6 +467,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves user profile data for profiles in the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileInfoCollection" /> containing user profile information for all of the profiles in the data source.</para>
+        </returns>
         <param name="authenticationOption">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
       </Docs>
@@ -491,7 +515,6 @@
         <Parameter Name="userInactiveSinceDate" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -501,6 +524,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the number of profiles in which the last activity date occurred on or before the specified date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles in the data source for which the last activity date occurred before the specified date and time.</para>
+        </returns>
         <param name="authenticationOption">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
         <param name="userInactiveSinceDate">
@@ -520,7 +547,6 @@
         <Parameter Name="authenticationOption" Type="System.Web.Profile.ProfileAuthenticationOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -530,6 +556,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the number of profiles in the data source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of profiles in the data source.</para>
+        </returns>
         <param name="authenticationOption">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Web.Profile.ProfileAuthenticationOption" /> enumeration values, specifying whether anonymous, authenticated, or both types of profiles are returned.</param>
       </Docs>

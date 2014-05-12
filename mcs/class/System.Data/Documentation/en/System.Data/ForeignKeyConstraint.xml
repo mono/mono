@@ -335,12 +335,15 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the current <see cref="T:System.Data.ForeignKeyConstraint" /> is identical to the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the objects are identical; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to which this <see cref="T:System.Data.ForeignKeyConstraint" /> is compared. Two <see cref="T:System.Data.ForeignKeyConstraint" /> are equal if they constrain the same columns. </param>
       </Docs>
@@ -357,12 +360,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the hash code of this instance of the <see cref="T:System.Data.ForeignKeyConstraint" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

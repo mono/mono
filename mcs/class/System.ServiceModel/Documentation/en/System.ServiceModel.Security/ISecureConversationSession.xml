@@ -33,7 +33,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful for sessions like WS-RM sessions that build on top of the security session and refer to the security session token's identifier as part of their session establishment protocol.</para>
@@ -42,6 +41,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tries to read the session token identifier pointed to by the XML reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the XML pointed to by the XML reader corresponds to a SecurityKeyIdentifierClause that matches the security session's token; otherwise, false.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlReader" /> with which to try to read the token.</param>
       </Docs>

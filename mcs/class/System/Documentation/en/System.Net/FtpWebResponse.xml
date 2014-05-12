@@ -135,7 +135,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -146,6 +145,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the stream that contains response data sent from an FTP server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A readable <see cref="T:System.IO.Stream" /> instance that contains data returned with the response; otherwise, <see cref="F:System.IO.Stream.Null" /> if no response data was returned by the server.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Headers">

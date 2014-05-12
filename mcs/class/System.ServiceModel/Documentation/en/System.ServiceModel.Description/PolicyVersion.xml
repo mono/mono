@@ -115,12 +115,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the <see cref="T:System.ServiceModel.Description.PolicyVersion" /> instance into a string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace for the version of WS-Policy being used.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

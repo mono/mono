@@ -164,7 +164,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.IsReloadNeeded" /> method checks for the presence of the <see cref="T:System.ComponentModel.Design.Serialization.ICodeDomDesignerReload" /> interface on the <see cref="P:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.CodeDomProvider" />. The provider will reparse the CodeDOM tree and pass the resulting parse tree to the <see cref="M:System.ComponentModel.Design.Serialization.ICodeDomDesignerReload.ShouldReloadDesigner(System.CodeDom.CodeCompileUnit)" /> method. If this method returns false, the designer will not be reloaded.</para>
@@ -173,6 +172,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether a reload is required.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="P:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.CodeDomProvider" /> decides a reload is required; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnBeginLoad">
@@ -284,7 +287,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader.Parse" /> method is called when the <see cref="T:System.ComponentModel.Design.Serialization.CodeDomDesignerLoader" /> needs to parse the source code. The source code location and format must be specified by deriving classes.</para>
@@ -293,6 +295,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Parses the text or other persistent storage and returns a <see cref="T:System.CodeDom.CodeCompileUnit" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeCompileUnit" /> resulting from a parse operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="PerformFlush">
@@ -365,12 +371,15 @@
         <Parameter Name="serializationData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the specified serialization data object and returns a collection of objects represented by that data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of objects represented by <paramref name="serializationData" />.</para>
+        </returns>
         <param name="serializationData">
           <attribution license="cc4" from="Microsoft" modified="false" />An object consisting of serialized data.</param>
       </Docs>
@@ -388,12 +397,15 @@
         <Parameter Name="objects" Type="System.Collections.ICollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serializes the specified collection of objects and stores them in a serialization data object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the serialized state of the specified collection of objects.</para>
+        </returns>
         <param name="objects">
           <attribution license="cc4" from="Microsoft" modified="false" />A collection of objects to serialize.</param>
       </Docs>
@@ -412,12 +424,15 @@
         <Parameter Name="dataType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new name that is unique to all components in the specified container.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unique name for the data type.</para>
+        </returns>
         <param name="container">
           <attribution license="cc4" from="Microsoft" modified="false" />The container where the new object is added.</param>
         <param name="dataType">
@@ -437,12 +452,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified name is valid.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the name is valid; otherwise, false.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name to validate.</param>
       </Docs>

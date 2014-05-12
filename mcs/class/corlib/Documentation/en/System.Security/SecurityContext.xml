@@ -44,7 +44,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -54,6 +53,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Captures the security context for the current thread.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security context for the current thread.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateCopy">
@@ -69,7 +72,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -79,6 +81,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the current security context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The security context for the current thread.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dispose">
@@ -120,7 +126,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -130,6 +135,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the flow of the security context has been suppressed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the flow has been suppressed; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsWindowsIdentityFlowSuppressed">
@@ -145,7 +154,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -155,6 +163,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the flow of the Windows identity portion of the current security context has been suppressed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the flow has been suppressed; otherwise, false. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RestoreFlow">
@@ -228,7 +240,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -241,6 +252,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Suppresses the flow of the security context across asynchronous threads.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Threading.AsyncFlowControl" /> structure for restoring the flow.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SuppressFlowWindowsIdentity">
@@ -256,7 +271,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -270,6 +284,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Suppresses the flow of the Windows identity portion of the current security context across asynchronous threads.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure for restoring the flow.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

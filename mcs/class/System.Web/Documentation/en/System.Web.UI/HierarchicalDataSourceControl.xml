@@ -67,7 +67,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -77,6 +76,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Web.UI.ControlCollection" /> object to hold the child controls (both literal and server) of the server control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.UI.EmptyControlCollection" /> that prevents any child controls from being added.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -125,13 +128,16 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the current naming container for a server control with the specified <paramref name="id" /> parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified control, or null if the specified control does not exist.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The identifier for the control to be found.</param>
       </Docs>
@@ -181,7 +187,6 @@
         <Parameter Name="viewPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -191,6 +196,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the view helper object for the <see cref="T:System.Web.UI.IHierarchicalDataSource" /> interface for the specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> that represents a single view of the data at the hierarchical level identified by the <paramref name="viewPath" /> parameter.</para>
+        </returns>
         <param name="viewPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The hierarchical path of the view to retrieve. </param>
       </Docs>
@@ -206,13 +215,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the server control contains any child controls.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control contains other controls; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -322,7 +334,6 @@
         <Parameter Name="viewPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.IHierarchicalDataSource.GetHierarchicalView(System.String)" /> method is called by clients when a <see cref="T:System.Web.UI.HierarchicalDataSourceControl" /> is manipulated as an <see cref="T:System.Web.UI.IHierarchicalDataSource" /> interface. It delegates to the <see cref="M:System.Web.UI.HierarchicalDataSourceControl.GetHierarchicalView(System.String)" /> method, which derived classes override to return strongly typed <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> objects.</para>
@@ -331,6 +342,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the view helper object for the <see cref="T:System.Web.UI.IHierarchicalDataSource" /> interface for the specified path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a <see cref="T:System.Web.UI.HierarchicalDataSourceView" /> that represents a single view of the data at the hierarchical level identified by the <paramref name="viewPath" /> parameter.</para>
+        </returns>
         <param name="viewPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The hierarchical path of the view to retrieve. </param>
       </Docs>

@@ -79,7 +79,6 @@
         <Parameter Name="newChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -90,6 +89,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified node to the end of the list of child nodes, of this node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlNode" /> added.</para>
+        </returns>
         <param name="newChild">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNode" /> to add.</param>
       </Docs>
@@ -136,7 +139,6 @@
         <Parameter Name="deep" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method serves as a copy constructor for nodes. The cloned node has no parent (<see cref="P:System.Xml.XmlAttribute.ParentNode" /> returns null).</para>
@@ -146,6 +148,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplicate of this node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The duplicate node.</para>
+        </returns>
         <param name="deep">
           <attribution license="cc4" from="Microsoft" modified="false" />true to recursively clone the subtree under the specified node; false to clone only the node itself </param>
       </Docs>
@@ -215,7 +221,6 @@
         <Parameter Name="refChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -227,6 +232,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the specified node immediately after the specified reference node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlNode" /> inserted.</para>
+        </returns>
         <param name="newChild">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNode" /> to insert.</param>
         <param name="refChild">
@@ -249,7 +258,6 @@
         <Parameter Name="refChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -260,6 +268,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the specified node immediately before the specified reference node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlNode" /> inserted.</para>
+        </returns>
         <param name="newChild">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNode" /> to insert.</param>
         <param name="refChild">
@@ -461,7 +473,6 @@
         <Parameter Name="newChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -473,6 +484,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified node to the beginning of the list of child nodes for this node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlNode" /> added.</para>
+        </returns>
         <param name="newChild">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNode" /> to add. If it is an <see cref="T:System.Xml.XmlDocumentFragment" />, the entire contents of the document fragment are moved into the child list of this node.</param>
       </Docs>
@@ -492,13 +507,16 @@
         <Parameter Name="oldChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the specified child node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlNode" /> removed.</para>
+        </returns>
         <param name="oldChild">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNode" /> to remove.</param>
       </Docs>
@@ -519,7 +537,6 @@
         <Parameter Name="oldChild" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -530,6 +547,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces the child node specified with the new child node specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlNode" /> replaced.</para>
+        </returns>
         <param name="newChild">
           <attribution license="cc4" from="Microsoft" modified="false" />The new child <see cref="T:System.Xml.XmlNode" />.</param>
         <param name="oldChild">

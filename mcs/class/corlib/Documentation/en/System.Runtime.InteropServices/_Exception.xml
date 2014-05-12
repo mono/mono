@@ -50,7 +50,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -61,6 +60,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to compare with the current <see cref="T:System.Object" />.</param>
       </Docs>
@@ -78,7 +81,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -89,6 +91,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Exception.GetBaseException" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first exception thrown in a chain of exceptions. If the <see cref="P:System.Exception.InnerException" /> property of the current exception is a null reference (Nothing in Visual Basic), this property returns the current exception.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -104,7 +110,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -115,6 +120,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Object.GetHashCode" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for the current instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -162,7 +171,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -173,6 +181,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Exception.GetType" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object that represents the exact runtime type of the current instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HelpLink">
@@ -338,7 +350,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -349,6 +360,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Exception.ToString" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Exception" /> object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

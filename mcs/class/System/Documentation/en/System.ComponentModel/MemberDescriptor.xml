@@ -220,7 +220,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'AttributeCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called from the <see cref="P:System.ComponentModel.MemberDescriptor.Attributes" /> property when there is no <see cref="T:System.ComponentModel.AttributeCollection" /> for this member. If there are no attributes in the <see cref="P:System.ComponentModel.MemberDescriptor.AttributeArray" />, this will return an empty <see cref="T:System.ComponentModel.AttributeCollection" />.</para>
@@ -229,6 +228,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a collection of attributes using the array of attributes passed to the constructor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.AttributeCollection" /> that contains the <see cref="P:System.ComponentModel.MemberDescriptor.AttributeArray" /> attributes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Description">
@@ -316,12 +319,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to the given object to see if they are equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if equivalent; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current instance. </param>
       </Docs>
@@ -374,12 +380,15 @@
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.MethodInfo'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds the given method through reflection, searching only for public methods.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> that represents the method, or null if the method is not found.</para>
+        </returns>
         <param name="componentClass">
           <attribution license="cc4" from="Microsoft" modified="false" />The component that contains the method. </param>
         <param name="name">
@@ -410,12 +419,15 @@
         <Parameter Name="publicOnly" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Reflection.MethodInfo'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Finds the given method through reflection, with an option to search only public methods.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> that represents the method, or null if the method is not found.</para>
+        </returns>
         <param name="componentClass">
           <attribution license="cc4" from="Microsoft" modified="false" />The component that contains the method. </param>
         <param name="name">
@@ -442,12 +454,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.ComponentModel.MemberDescriptor" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetInvocationTarget">
@@ -466,7 +481,6 @@
         <Parameter Name="instance" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Normally, the return value will be the same as the <paramref name="instance" /> parameter. If another object has been associated with this instance, or if the instance is a custom type descriptor, the <see cref="M:System.ComponentModel.MemberDescriptor.GetInvocationTarget(System.Type,System.Object)" /> method may return a different value.</para>
@@ -475,6 +489,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the object that should be used during invocation of members.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object to be used during member invocations.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the invocation target.</param>
         <param name="instance">
@@ -503,12 +521,15 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the component on which to invoke a method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the component to invoke. This method returns a visual designer when the property is attached to a visual designer.</para>
+        </returns>
         <param name="componentClass">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> representing the type of component this <see cref="T:System.ComponentModel.MemberDescriptor" /> is bound to. For example, if this <see cref="T:System.ComponentModel.MemberDescriptor" /> describes a property, this parameter should be the class that the property is declared on. </param>
         <param name="component">
@@ -531,12 +552,15 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ISite'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a component site for the given component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The site of the component, or null if a site does not exist.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component for which you want to find a site. </param>
       </Docs>

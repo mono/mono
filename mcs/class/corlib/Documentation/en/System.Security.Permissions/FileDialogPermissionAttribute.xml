@@ -71,7 +71,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method should only be called by the security system, never by application code.</para>
@@ -81,6 +80,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a new <see cref="T:System.Security.Permissions.FileDialogPermission" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Permissions.FileDialogPermission" /> that corresponds to this attribute.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Open">

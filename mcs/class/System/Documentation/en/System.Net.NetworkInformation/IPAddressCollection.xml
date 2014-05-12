@@ -105,13 +105,16 @@
         <Parameter Name="address" Type="System.Net.IPAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks whether the collection contains the specified <see cref="T:System.Net.IPAddress" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Net.IPAddress" /> object exists in the collection; otherwise, false.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.IPAddress" /> object to be searched in the collection.</param>
       </Docs>
@@ -181,7 +184,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -193,6 +195,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that can be used to iterate through this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the <see cref="T:System.Collections.IEnumerator" /> interface and provides access to the <see cref="T:System.Net.NetworkInformation.IPAddressCollection" /> types in this collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsReadOnly">
@@ -253,13 +259,16 @@
         <Parameter Name="address" Type="System.Net.IPAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Throws a <see cref="T:System.NotSupportedException" /> because this operation is not supported for this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to be removed.</param>
       </Docs>
@@ -277,7 +286,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The object that is returned by this method is initially positioned before the first element in this collection. You must call the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method before you can access the first element. To access the element at the current position, call the <see cref="P:System.Collections.IEnumerator.Current" /> property.</para>
@@ -288,6 +296,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that can be used to iterate through this collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that implements the <see cref="T:System.Collections.IEnumerator" /> interface and provides access to the <see cref="T:System.Net.NetworkInformation.IPAddressCollection" /> types in this collection.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

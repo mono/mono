@@ -75,12 +75,15 @@
         <Parameter Name="partName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MessagePart'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the <see cref="T:System.Web.Services.Description.MessagePartCollection" /> returned by the <see cref="P:System.Web.Services.Description.Message.Parts" /> property, and returns the named <see cref="T:System.Web.Services.Description.MessagePart" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Description.MessagePart" />.</para>
+        </returns>
         <param name="partName">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that names the <see cref="T:System.Web.Services.Description.MessagePart" /> to be returned.</param>
       </Docs>
@@ -99,12 +102,15 @@
         <Parameter Name="partNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MessagePart []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the <see cref="T:System.Web.Services.Description.MessagePartCollection" /> returned by the <see cref="P:System.Web.Services.Description.Message.Parts" /> property and returns an array of type <see cref="T:System.Web.Services.Description.MessagePart" /> that contains the named instances.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Web.Services.Description.MessagePart" />.</para>
+        </returns>
         <param name="partNames">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of names of the <see cref="T:System.Web.Services.Description.MessagePart" /> instances to be returned. </param>
       </Docs>

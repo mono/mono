@@ -361,7 +361,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.Equals(System.Object)" />.</para>
@@ -370,6 +369,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object is the same instance as the current <see cref="T:System.Globalization.RegionInfo" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is a <see cref="T:System.Globalization.RegionInfo" /> object and its <see cref="P:System.Globalization.RegionInfo.Name" /> property is the same as the <see cref="P:System.Globalization.RegionInfo.Name" /> property of the current <see cref="T:System.Globalization.RegionInfo" /> object; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current <see cref="T:System.Globalization.RegionInfo" />. </param>
       </Docs>
@@ -418,7 +421,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.GetHashCode" />.</para>
@@ -428,6 +430,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serves as a hash function for the current <see cref="T:System.Globalization.RegionInfo" />, suitable for hashing algorithms and data structures, such as a hash table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Globalization.RegionInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsMetric">
@@ -1831,7 +1837,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1844,6 +1849,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string containing the culture name or ISO 3166 two-letter country/region codes specified for the current <see cref="T:System.Globalization.RegionInfo" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string containing the culture name or ISO 3166 two-letter country/region codes defined for the current <see cref="T:System.Globalization.RegionInfo" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TwoLetterISORegionName">

@@ -59,12 +59,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value for a specified key from the <see cref="P:System.Configuration.ConfigurationSettings.AppSettings" /> property and returns an object of the specified type containing the value from the configuration.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified key.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key for which to get the value.</param>
         <param name="type">

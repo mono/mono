@@ -83,7 +83,6 @@
         <Parameter Name="sectionName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The configuration settings for the specified section.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is deprecated and is maintained for backward compatibility. Please use the GetSection method instead.</para>
@@ -92,6 +91,13 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Configuration.ConfigurationSection" /> object for the passed configuration section name and path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Configuration.ConfigurationSection" /> object for the passed configuration section name and path.</para>
+          <block subset="none" type="note">
+            <para>The <see cref="T:System.Configuration.ConfigurationSettings" /> class provides backward compatibility only. You should use the <see cref="T:System.Configuration.ConfigurationManager" /> class or <see cref="T:System.Web.Configuration.WebConfigurationManager" /> class instead.</para>
+          </block>
+        </returns>
         <param name="sectionName">
           <attribution license="cc4" from="Microsoft" modified="false" />A configuration name and path, such as "system.net/settings".</param>
       </Docs>

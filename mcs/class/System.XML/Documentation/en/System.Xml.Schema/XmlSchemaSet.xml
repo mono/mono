@@ -138,7 +138,6 @@
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -149,6 +148,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the given <see cref="T:System.Xml.Schema.XmlSchema" /> to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchema" /> object if the schema is valid. If the schema is not valid and a <see cref="T:System.Xml.Schema.ValidationEventHandler" /> is specified, then null is returned and the appropriate validation event is raised. Otherwise, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown.</para>
+        </returns>
         <param name="schema">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchema" /> object to add to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</param>
       </Docs>
@@ -226,7 +229,6 @@ foreach(XmlSchema schema in schemaSet.Schemas())
         <Parameter Name="schemaUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -305,6 +307,10 @@ foreach(XmlSchema schema in schemaSet.Schemas())
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the XML Schema definition language (XSD) schema at the URL specified to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchema" /> object if the schema is valid. If the schema is not valid and a <see cref="T:System.Xml.Schema.ValidationEventHandler" /> is specified, then null is returned and the appropriate validation event is raised. Otherwise, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown.</para>
+        </returns>
         <param name="targetNamespace">
           <attribution license="cc4" from="Microsoft" modified="false" />The schema targetNamespace property, or null to use the targetNamespace specified in the schema.</param>
         <param name="schemaUri">
@@ -327,7 +333,6 @@ foreach(XmlSchema schema in schemaSet.Schemas())
         <Parameter Name="schemaDocument" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -367,6 +372,10 @@ foreach(XmlSchema schema in schemaSet.Schemas())
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the XML Schema definition language (XSD) schema contained in the <see cref="T:System.Xml.XmlReader" /> to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchema" /> object if the schema is valid. If the schema is not valid and a <see cref="T:System.Xml.Schema.ValidationEventHandler" /> is specified, then null is returned and the appropriate validation event is raised. Otherwise, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown.</para>
+        </returns>
         <param name="targetNamespace">
           <attribution license="cc4" from="Microsoft" modified="false" />The schema targetNamespace property, or null to use the targetNamespace specified in the schema.</param>
         <param name="schemaDocument">
@@ -440,7 +449,6 @@ foreach(XmlSchema schema in schemaSet.Schemas())
         <Parameter Name="targetNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -450,6 +458,10 @@ foreach(XmlSchema schema in schemaSet.Schemas())
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether an XML Schema definition language (XSD) schema with the specified target namespace URI is in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a schema with the specified target namespace URI is in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />; otherwise, false.</para>
+        </returns>
         <param name="targetNamespace">
           <attribution license="cc4" from="Microsoft" modified="false" />The schema targetNamespace property.</param>
       </Docs>
@@ -469,13 +481,16 @@ foreach(XmlSchema schema in schemaSet.Schemas())
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified XML Schema definition language (XSD) <see cref="T:System.Xml.Schema.XmlSchema" /> object is in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.Schema.XmlSchema" /> object is in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />; otherwise, false.</para>
+        </returns>
         <param name="schema">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchema" /> object.</param>
       </Docs>
@@ -658,7 +673,6 @@ foreach(XmlSchema schema in schemaSet.Schemas())
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -668,6 +682,10 @@ foreach(XmlSchema schema in schemaSet.Schemas())
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the specified XML Schema definition language (XSD) schema from the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.Schema.XmlSchema" /> object removed from the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> or null if the schema was not found in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
+        </returns>
         <param name="schema">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchema" /> object to remove from the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</param>
       </Docs>
@@ -687,7 +705,6 @@ foreach(XmlSchema schema in schemaSet.Schemas())
         <Parameter Name="schemaToRemove" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -714,6 +731,10 @@ ss.Compile();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the specified XML Schema definition language (XSD) schema and all the schemas it imports from the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Xml.Schema.XmlSchema" /> object and all its imports were successfully removed; otherwise, false.</para>
+        </returns>
         <param name="schemaToRemove">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchema" /> object to remove from the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</param>
       </Docs>
@@ -733,7 +754,6 @@ ss.Compile();</code>
         <Parameter Name="schema" Type="System.Xml.Schema.XmlSchema" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -747,6 +767,10 @@ ss.Compile();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reprocesses an XML Schema definition language (XSD) schema that already exists in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Schema.XmlSchema" /> object if the schema is a valid schema. If the schema is not valid and a <see cref="T:System.Xml.Schema.ValidationEventHandler" /> is specified, null is returned and the appropriate validation event is raised. Otherwise, an <see cref="T:System.Xml.Schema.XmlSchemaException" /> is thrown.</para>
+        </returns>
         <param name="schema">
           <attribution license="cc4" from="Microsoft" modified="false" />The schema to reprocess.</param>
       </Docs>
@@ -764,7 +788,6 @@ ss.Compile();</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -777,6 +800,10 @@ ss.Compile();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of all the XML Schema definition language (XSD) schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> object containing all the schemas that have been added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />. If no schemas have been added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />, an empty <see cref="T:System.Collections.ICollection" /> object is returned.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Schemas">
@@ -794,7 +821,6 @@ ss.Compile();</code>
         <Parameter Name="targetNamespace" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -808,6 +834,10 @@ ss.Compile();</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of all the XML Schema definition language (XSD) schemas in the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> that belong to the given namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> object containing all the schemas that have been added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" /> that belong to the given namespace. If no schemas have been added to the <see cref="T:System.Xml.Schema.XmlSchemaSet" />, an empty <see cref="T:System.Collections.ICollection" /> object is returned.</para>
+        </returns>
         <param name="targetNamespace">
           <attribution license="cc4" from="Microsoft" modified="false" />The schema targetNamespace property.</param>
       </Docs>

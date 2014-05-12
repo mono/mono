@@ -33,7 +33,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>The <see cref="System.Xml.XPath.XPathNavigator" /> instance created by the implementation of this interface.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="M:System.Xml.XPath.IXPathNavigable.CreateNavigator" /> method is called from an <see cref="T:System.Xml.XmlNode" /> object, the <see cref="T:System.Xml.XPath.XPathNavigator" /> object is initially positioned on the node from which the method was called. If the <see cref="M:System.Xml.XPath.IXPathNavigable.CreateNavigator" /> method is called from an <see cref="T:System.Xml.XPath.XPathDocument" /> object or an <see cref="T:System.Xml.XmlDocument" /> object, the <see cref="T:System.Xml.XPath.XPathNavigator" /> object is positioned on the root of the document.</para>
@@ -42,6 +41,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

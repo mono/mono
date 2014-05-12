@@ -820,12 +820,15 @@
         <Parameter Name="state" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Windows.Forms.OwnerDrawPropertyBag" /> for the specified <see cref="T:System.Windows.Forms.TreeNode" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.OwnerDrawPropertyBag" /> for the specified <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.TreeNode" /> for which to return an <see cref="T:System.Windows.Forms.OwnerDrawPropertyBag" />.</param>
         <param name="state">
@@ -846,7 +849,6 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can pass the <see cref="P:System.Windows.Forms.MouseEventArgs.X" /> and <see cref="P:System.Windows.Forms.MouseEventArgs.Y" /> coordinates of the <see cref="E:System.Windows.Forms.Control.MouseDown" /> event as the <see cref="P:System.Drawing.Point.X" /> and <see cref="P:System.Drawing.Point.Y" /> values of a new <see cref="T:System.Drawing.Point" />.</para>
@@ -855,6 +857,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the tree node that is at the specified point.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.TreeNode" /> at the specified point, in tree view (client) coordinates, or null if there is no node at that location.</para>
+        </returns>
         <param name="pt">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> to evaluate and retrieve the node from. </param>
       </Docs>
@@ -874,7 +880,6 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can pass the <see cref="P:System.Windows.Forms.MouseEventArgs.X" /> and <see cref="P:System.Windows.Forms.MouseEventArgs.Y" /> coordinates of the <see cref="E:System.Windows.Forms.Control.MouseDown" /> event as the <paramref name="x" /> and <paramref name="y" /> parameters.</para>
@@ -883,6 +888,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the tree node at the point with the specified coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.TreeNode" /> at the specified location, in tree view (client) coordinates, or null if there is no node at that location.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Drawing.Point.X" /> position to evaluate and retrieve the node from. </param>
         <param name="y">
@@ -903,7 +912,6 @@
         <Parameter Name="includeSubTrees" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="includeSubTrees" /> is true, the result is the number of all the tree nodes in the entire tree structure.</para>
@@ -912,6 +920,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the number of tree nodes, optionally including those in all subtrees, assigned to the tree view control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of tree nodes, optionally including those in all subtrees, assigned to the tree view control.</para>
+        </returns>
         <param name="includeSubTrees">
           <attribution license="cc4" from="Microsoft" modified="false" />true to count the <see cref="T:System.Windows.Forms.TreeNode" /> items that the subtrees contain; otherwise, false. </param>
       </Docs>
@@ -963,7 +975,6 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to determine whether a point is located in a <see cref="T:System.Windows.Forms.TreeNode" /> and where within the node the point is located, such as on the label or image area.</para>
@@ -972,6 +983,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides node information, given a point.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node information.</para>
+        </returns>
         <param name="pt">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Point" /> at which to retrieve node information.</param>
       </Docs>
@@ -990,7 +1005,6 @@
         <Parameter Name="y" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to determine whether a set of x- and y-coordinates is located in a <see cref="T:System.Windows.Forms.TreeNode" /> and where within the node the point is located, such as on the label or image area.</para>
@@ -999,6 +1013,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides node information, given x- and y-coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The node information.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />The x-coordinate at which to retrieve node information </param>
         <param name="y">
@@ -1194,7 +1212,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the user is editing a tree node, the <see cref="T:System.Windows.Forms.TreeView" /> control treats keys such as ENTER, ESC, HOME, and END as input keys.</para>
@@ -1203,6 +1220,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified key is a regular input key or a special key that requires preprocessing.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified key is a regular input key; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the Keys values.</param>
       </Docs>

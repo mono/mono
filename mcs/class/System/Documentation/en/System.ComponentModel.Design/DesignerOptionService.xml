@@ -174,12 +174,15 @@
         <Parameter Name="valueName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of an option defined in this package.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the option named <paramref name="valueName" />.</para>
+        </returns>
         <param name="pageName">
           <attribution license="cc4" from="Microsoft" modified="false" />The page to which the option is bound.</param>
         <param name="valueName">

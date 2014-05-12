@@ -56,13 +56,16 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the current instance is equal to the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is a <see cref="T:System.RuntimeFieldHandle" /> and equal to the value of the current instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare to the current instance.</param>
       </Docs>
@@ -87,13 +90,16 @@
         <Parameter Name="handle" Type="System.RuntimeFieldHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the current instance is equal to the specified <see cref="T:System.RuntimeFieldHandle" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of <paramref name="handle" /> is equal to the value of the current instance; otherwise, false.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.RuntimeFieldHandle" /> to compare to the current instance.</param>
       </Docs>
@@ -165,13 +171,16 @@
         <Parameter Name="right" Type="System.RuntimeFieldHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.RuntimeFieldHandle" /> structures are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.RuntimeFieldHandle" /> to compare to <paramref name="right" />.</param>
         <param name="right">
@@ -194,13 +203,16 @@
         <Parameter Name="right" Type="System.RuntimeFieldHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two <see cref="T:System.RuntimeFieldHandle" /> structures are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> is not equal to <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.RuntimeFieldHandle" /> to compare to <paramref name="right" />.</param>
         <param name="right">

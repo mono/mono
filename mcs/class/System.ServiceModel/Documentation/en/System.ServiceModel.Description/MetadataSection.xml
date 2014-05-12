@@ -116,7 +116,6 @@
       </Parameters>
       <Docs>
         <param name="schema">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this static factory method to quickly create a <see cref="T:System.ServiceModel.Description.MetadataSection" /> for a XML Schema document. The <see cref="P:System.ServiceModel.Description.MetadataSection.Dialect" /> property is assigned the value of <see cref="P:System.ServiceModel.Description.MetadataSection.XmlSchemaDialect" /> and the <see cref="P:System.ServiceModel.Description.MetadataSection.Identifier" /> property is assigned the value of the target namespace of the XML Schema document.</para>
@@ -125,6 +124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.ServiceModel.Description.MetadataSection" /> from the specified <see cref="T:System.Xml.Schema.XmlSchema" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.MetadataSection" /> containing the specified XML schema.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateFromServiceDescription">
@@ -142,7 +145,6 @@
       </Parameters>
       <Docs>
         <param name="serviceDescription">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this static factory method to quickly create a <see cref="T:System.ServiceModel.Description.MetadataSection" /> for a WSDL document. The <see cref="P:System.ServiceModel.Description.MetadataSection.Dialect" /> property is assigned the value of <see cref="P:System.ServiceModel.Description.MetadataSection.ServiceDescriptionDialect" /> and the <see cref="P:System.ServiceModel.Description.MetadataSection.Identifier" /> property is assigned the value of the target namespace of the WSDL document.</para>
@@ -151,6 +153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Description.MetadataSection" /> that contains the specified <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.MetadataSection" /> that contains the specified <see cref="T:System.Web.Services.Description.ServiceDescription" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dialect">

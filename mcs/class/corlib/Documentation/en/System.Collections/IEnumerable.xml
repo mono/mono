@@ -53,10 +53,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Collections.IEnumerator" />
-that can be used for simple iteration over a collection.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The foreach statement of the C# language (For Each in Visual Basic) hides the complexity of the enumerators.  Therefore, using foreach is recommended, instead of directly manipulating the enumerator.</para>
@@ -72,6 +68,10 @@ that can be used for simple iteration over a collection.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through a collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> object that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

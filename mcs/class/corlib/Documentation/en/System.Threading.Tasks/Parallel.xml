@@ -37,7 +37,6 @@
         <Parameter Name="body" Type="System.Action&lt;System.Int32,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int32" />), and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
@@ -51,6 +50,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for (For in Visual Basic) loop in which iterations may run in parallel and the state of the loop can be monitored and manipulated. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A  structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -75,7 +78,6 @@
         <Parameter Name="body" Type="System.Action&lt;System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the iteration count (<see cref="T:System.Int32" />) as a parameter.</para>
@@ -85,6 +87,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for (For in Visual Basic) loop in which iterations may run in parallel.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -109,7 +115,6 @@
         <Parameter Name="body" Type="System.Action&lt;System.Int64,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int64" />), and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
@@ -123,6 +128,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for (For in Visual Basic) loop with 64-bit indexes in which iterations may run in parallel and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Threading.Tasks.ParallelLoopResult" /> structure that contains information on what portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -147,7 +156,6 @@
         <Parameter Name="body" Type="System.Action&lt;System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the iteration count (<see cref="T:System.Int64" />) as a parameter.</para>
@@ -157,6 +165,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for (For in Visual Basic) loop with 64-bit indexes in which iterations may run in parallel.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -182,7 +194,6 @@
         <Parameter Name="body" Type="System.Action&lt;System.Int32,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int32" />), and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
@@ -192,6 +203,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for (For in Visual Basic) loop in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -219,7 +234,6 @@
         <Parameter Name="body" Type="System.Action&lt;System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the iteration count (<see cref="T:System.Int32" />) as a parameter.</para>
@@ -229,6 +243,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for (For in Visual Basic) loop in which iterations may run in parallel and loop options can be configured.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A  structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -256,7 +274,6 @@
         <Parameter Name="body" Type="System.Action&lt;System.Int64,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int64" />), and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
@@ -266,6 +283,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for (For in Visual Basic)  loop with 64-bit indexes in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -293,7 +314,6 @@
         <Parameter Name="body" Type="System.Action&lt;System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Supports 64-bit indexes. The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the iteration count (<see cref="T:System.Int64" />) as a parameter.</para>
@@ -303,6 +323,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for  (For in Visual Basic) loop with 64-bit indexes in which iterations may run in parallel and loop options can be configured.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -334,7 +358,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int32" />), a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same thread.</para>
@@ -347,6 +370,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for (For in Visual Basic) loop with thread-local data in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A  structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -382,7 +409,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int64" />), a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same task.</para>
@@ -395,6 +421,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for (For in Visual Basic)  loop with 64-bit indexes and thread-local data in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -431,7 +461,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int32" />), a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same task.</para>
@@ -443,6 +472,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for (For in Visual Basic)  loop with thread-local data in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -481,7 +514,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each value in the iteration range (<paramref name="fromInclusive" />, <paramref name="toExclusive" />). It is provided with the following parameters: the iteration count (<see cref="T:System.Int64" />), a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same thread.</para>
@@ -493,6 +525,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a for (For in Visual Basic) loop with 64-bit indexes and thread-local data in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="fromInclusive">
           <attribution license="cc4" from="Microsoft" modified="false" />The start index, inclusive.</param>
         <param name="toExclusive">
@@ -527,7 +563,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
@@ -536,6 +571,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.OrderablePartitioner`1" /> in which iterations may run in parallel and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The orderable partitioner that contains the original data source.</param>
         <param name="body">
@@ -562,7 +601,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
@@ -571,6 +609,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
         <param name="body">
@@ -597,7 +639,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
@@ -606,6 +647,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
         <param name="body">
@@ -632,7 +677,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and the current element's index (<see cref="T:System.Int64" />).</para>
@@ -641,6 +685,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation with 64-bit indexes on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
         <param name="body">
@@ -667,7 +715,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
@@ -676,6 +723,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
         <param name="body">
@@ -702,7 +753,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the current element as a parameter.</para>
@@ -711,6 +761,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
         <param name="body">
@@ -738,7 +792,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" />method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
@@ -747,6 +800,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.OrderablePartitioner`1" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The orderable partitioner that contains the original data source.</param>
         <param name="parallelOptions">
@@ -776,7 +833,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
@@ -785,6 +841,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A  structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
         <param name="parallelOptions">
@@ -814,7 +874,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
@@ -823,6 +882,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel and loop options can be configured.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
         <param name="parallelOptions">
@@ -852,7 +915,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and the current element's index (<see cref="T:System.Int64" />).</para>
@@ -861,6 +923,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation with 64-bit indexes on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
         <param name="parallelOptions">
@@ -890,7 +956,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource,System.Threading.Tasks.ParallelLoopState&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, and a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely.</para>
@@ -899,6 +964,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
         <param name="parallelOptions">
@@ -928,7 +997,6 @@
         <Parameter Name="body" Type="System.Action&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the current element as a parameter.</para>
@@ -937,6 +1005,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel and loop options can be configured.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
         <param name="parallelOptions">
@@ -968,7 +1040,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
@@ -979,6 +1050,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data on a <see cref="T:System.Collections.Concurrent.OrderablePartitioner`1" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The orderable partitioner that contains the original data source.</param>
         <param name="localInit">
@@ -1014,7 +1089,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``2(System.Collections.Concurrent.Partitioner{``0},System.Func{``1},System.Func{``0,System.Threading.Tasks.ParallelLoopState,``1,``1},System.Action{``1})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
@@ -1025,6 +1099,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
         <param name="localInit">
@@ -1060,7 +1138,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, the current element's index (<see cref="T:System.Int64" />), and some local state that may be shared amongst iterations that execute on the same thread.</para>
@@ -1071,6 +1148,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
         <param name="localInit">
@@ -1106,7 +1187,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same thread.</para>
@@ -1117,6 +1197,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
         <param name="localInit">
@@ -1153,7 +1237,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``2(System.Collections.Concurrent.OrderablePartitioner{``0},System.Threading.Tasks.ParallelOptions,System.Func{``1},System.Func{``0,System.Threading.Tasks.ParallelLoopState,System.Int64,``1,``1},System.Action{``1})" /> method expects custom partitioners to support dynamic partitioning. For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
@@ -1164,6 +1247,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation with 64-bit indexes and  with thread-local data on a <see cref="T:System.Collections.Concurrent.OrderablePartitioner`1" /> in which iterations may run in parallel , loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The orderable partitioner that contains the original data source.</param>
         <param name="parallelOptions">
@@ -1202,7 +1289,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is provided for scenarios where you want to override the default partitioning scheme. For example, small loop bodies might benefit from partitioning the range. The <see cref="M:System.Threading.Tasks.Parallel.ForEach``2(System.Collections.Concurrent.Partitioner{``0},System.Threading.Tasks.ParallelOptions,System.Func{``1},System.Func{``0,System.Threading.Tasks.ParallelLoopState,``1,``1},System.Action{``1})" /> method expects custom partitioners to support dynamic partitioning. This overload is provided for scenarios with small loop bodies that might benefit from static range partitioning. Partitioners must support dynamic partitions.  For more information, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format> and <format type="text/html"><a href="c875ad12-a161-43e6-ad1c-3d6927c536a7">How to: Implement Dynamic Partitions</a></format>.</para>
@@ -1213,6 +1299,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation  with thread-local data on a <see cref="T:System.Collections.Concurrent.Partitioner" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The partitioner that contains the original data source.</param>
         <param name="parallelOptions">
@@ -1251,7 +1341,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, the current element's index (<see cref="T:System.Int64" />), and some local state that may be shared amongst iterations that execute on the same thread.</para>
@@ -1262,6 +1351,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data and 64-bit indexes on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
         <param name="parallelOptions">
@@ -1300,7 +1393,6 @@
         <Parameter Name="localFinally" Type="System.Action&lt;TLocal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> The <paramref name="body" /> delegate is invoked once for each element in the <paramref name="source" /> enumerable. It is provided with the following parameters: the current element, a <see cref="T:System.Threading.Tasks.ParallelLoopState" /> instance that may be used to break out of the loop prematurely, and some local state that may be shared amongst iterations that execute on the same thread.</para>
@@ -1311,6 +1403,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes a foreach (For Each in Visual Basic) operation with thread-local data on an <see cref="T:System.Collections.IEnumerable" /> in which iterations may run in parallel, loop options can be configured, and the state of the loop can be monitored and manipulated..</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains information about which portion of the loop completed.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An enumerable data source.</param>
         <param name="parallelOptions">

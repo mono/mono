@@ -284,7 +284,6 @@
         <Parameter Name="elementTag" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -298,6 +297,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new HtmlElement of the specified HTML tag type. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new element of the specified tag type. </para>
+        </returns>
         <param name="elementTag">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the HTML element to create. </param>
       </Docs>
@@ -425,12 +428,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests the object for equality against the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the objects are equal; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to test.</param>
       </Docs>
@@ -591,7 +597,6 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If there are multiple elements in the document with the same ID value, <see cref="M:System.Windows.Forms.HtmlDocument.GetElementById(System.String)" /> will return the first one it finds.</para>
@@ -600,6 +605,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a single <see cref="T:System.Windows.Forms.HtmlElement" /> using the element's ID attribute as a search key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the first object with the same ID attribute as the specified value, or null if the <paramref name="id" /> cannot be found. </para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The ID attribute of the element to retrieve.</param>
       </Docs>
@@ -617,7 +626,6 @@
         <Parameter Name="point" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -627,6 +635,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the HTML element located at the specified client coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.HtmlElement" /> at the specified screen location in the document.</para>
+        </returns>
         <param name="point">
           <attribution license="cc4" from="Microsoft" modified="false" />The x,y position of the element on the screen, relative to the top-left corner of the document. </param>
       </Docs>
@@ -644,12 +656,15 @@
         <Parameter Name="tagName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieve a collection of elements with the specified HTML tag.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of elements who tag name is equal to the <paramref name="tagName" /> argument.</para>
+        </returns>
         <param name="tagName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the HTML tag for the <see cref="T:System.Windows.Forms.HtmlElement" /> objects you want to retrieve.</param>
       </Docs>
@@ -665,12 +680,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the hash code for this object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Int32" /> representing an in-memory hash of this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Images">
@@ -709,7 +727,6 @@
         <Parameter Name="scriptName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The underlying type of the object returned by <see cref="M:System.Windows.Forms.HtmlDocument.InvokeScript(System.String)" /> will vary. If the called Active Scripting function returns scalar data, such as a string or an integer, it will be returned as a string. If it returns a script-based object, such as an object created using JScript or VBScript's new operator, it will be of type Object. (You can make calls on such objects by calling <see cref="M:System.Object.GetType" /> and using <see cref="Overload:System.Type.InvokeMember" />.) If it returns an HTML DOM element, such as a DIV or a TABLE, it will be of type Object; if you have added a project reference to MSHTML.DLL, however, it will be cast to its specific unmanaged DOM type.</para>
@@ -720,6 +737,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes an Active Scripting function defined in an HTML page.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object returned by the Active Scripting call. </para>
+        </returns>
         <param name="scriptName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the script method to invoke.</param>
       </Docs>
@@ -738,7 +759,6 @@
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The underlying type of the object returned by <see cref="M:System.Windows.Forms.HtmlDocument.InvokeScript(System.String,System.Object[])" /> will vary. If the called Active Scripting function returns scalar data, such as a string or an integer, it will be returned as a string. If it returns a script-based object, such as an object created using JScript or VBScript's new operator, it will be of type Object. (You can make calls on such objects by calling <see cref="M:System.Object.GetType" /> and using <see cref="Overload:System.Type.InvokeMember" />.) If it returns an HTML DOM element, such as a DIV or a TABLE, it will be of type Object; if you have added a project reference to MSHTML.DLL, however, it will be cast to its specific unmanaged DOM type.</para>
@@ -749,6 +769,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes an Active Scripting function defined in an HTML page.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object returned by the Active Scripting call. </para>
+        </returns>
         <param name="scriptName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the script method to invoke.</param>
         <param name="args">
@@ -933,12 +957,15 @@
         <Parameter Name="right" Type="System.Windows.Forms.HtmlDocument" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified <see cref="T:System.Windows.Forms.HtmlDocument" /> instances represent the same value. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified instances are equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first instance to compare.</param>
         <param name="right">
@@ -959,12 +986,15 @@
         <Parameter Name="right" Type="System.Windows.Forms.HtmlDocument" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the specified <see cref="T:System.Windows.Forms.HtmlDocument" /> instances do not represent the same value. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified instances are not equal; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first instance to compare.</param>
         <param name="right">
@@ -984,7 +1014,6 @@
         <Parameter Name="replaceInHistory" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -996,6 +1025,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a new <see cref="T:System.Windows.Forms.HtmlDocument" /> to use with the <see cref="M:System.Windows.Forms.HtmlDocument.Write(System.String)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new document for writing.</para>
+        </returns>
         <param name="replaceInHistory">
           <attribution license="cc4" from="Microsoft" modified="false" />Whether the new window's navigation should replace the previous element in the navigation history of the DOM. </param>
       </Docs>

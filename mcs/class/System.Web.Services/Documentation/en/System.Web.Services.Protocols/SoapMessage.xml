@@ -201,7 +201,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.Services.Protocols.SoapMessage.GetInParameterValue(System.Int32)" /> property is only accessible when in parameters are available. ASP.NET throws <see cref="T:System.InvalidOperationException" /> when accessing the <see cref="M:System.Web.Services.Protocols.SoapMessage.GetInParameterValue(System.Int32)" /> property if in parameters are not available.</para>
@@ -211,6 +210,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parameter passed into the XML Web service method at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the parameter at the specified index.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the parameter in the array of parameters. </param>
       </Docs>
@@ -229,7 +232,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If out parameters are not available, ASP.NET throws an <see cref="T:System.InvalidOperationException" /> when accessing the <see cref="M:System.Web.Services.Protocols.SoapMessage.GetOutParameterValue(System.Int32)" /> property.</para>
@@ -239,6 +241,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the out parameter passed into the XML Web service method at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the parameter at the specified index.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the parameter in the array of parameters. </param>
       </Docs>
@@ -255,7 +261,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If a return value is not available, ASP.NET throws <see cref="T:System.InvalidOperationException" /> when accessing the <see cref="M:System.Web.Services.Protocols.SoapMessage.GetReturnValue" /> property.</para>
@@ -265,6 +270,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the return value of an XML Web service method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the return value of the XML Web service method.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

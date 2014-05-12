@@ -261,7 +261,6 @@
         <Parameter Name="value" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -271,6 +270,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified <see cref="T:System.Guid" /> object and returns an indication of their relative values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A negative integer </para>
+              </term>
+              <description>
+                <para>This instance is less than <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A positive integer </para>
+              </term>
+              <description>
+                <para>This instance is greater than <paramref name="value" />. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to this instance.</param>
       </Docs>
@@ -291,7 +330,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Any instance of <see cref="T:System.Guid" />, regardless of its value, is considered greater than null.</para>
@@ -301,6 +339,46 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares this instance to a specified object and returns an indication of their relative values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed number indicating the relative values of this instance and <paramref name="value" />.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Return value </para>
+                </term>
+                <description>
+                  <para>Description </para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>A negative integer </para>
+              </term>
+              <description>
+                <para>This instance is less than <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>Zero </para>
+              </term>
+              <description>
+                <para>This instance is equal to <paramref name="value" />. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>A positive integer </para>
+              </term>
+              <description>
+                <para>This instance is greater than <paramref name="value" />, or <paramref name="value" /> is null. </para>
+              </description>
+            </item>
+          </list>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare, or null. </param>
       </Docs>
@@ -346,7 +424,6 @@
         <Parameter Name="g" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -356,6 +433,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether this instance and a specified <see cref="T:System.Guid" /> object represent the same value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="g" /> is equal to this instance; otherwise, false.</para>
+        </returns>
         <param name="g">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare to this instance.</param>
       </Docs>
@@ -376,12 +457,15 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="o" /> is a <see cref="T:System.Guid" /> that has the same value as this instance; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance. </param>
       </Docs>
@@ -400,12 +484,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="NewGuid">
@@ -422,7 +509,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>A new, random Guid.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a convenient static method that you can call to get a new <see cref="T:System.Guid" />.</para>
@@ -432,6 +518,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Guid" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new GUID object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="op_Equality">
@@ -451,12 +541,15 @@
         <Parameter Name="b" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <returns>True if the two Guids have the same value.</returns>
         <remarks>None.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the values of two specified <see cref="T:System.Guid" /> objects are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="a" /> and <paramref name="b" /> are equal; otherwise, false.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="b">
@@ -480,12 +573,15 @@
         <Parameter Name="b" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <returns>True if the two Guids have different values.</returns>
         <remarks>None.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the values of two specified <see cref="T:System.Guid" /> objects are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="a" /> and <paramref name="b" /> are not equal; otherwise, false.</para>
+        </returns>
         <param name="a">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="b">
@@ -506,7 +602,6 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Guid.TryParse(System.String,System.Guid@)" /> method to catch any unsuccessful parse operations. </para>
@@ -515,6 +610,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a GUID to the equivalent <see cref="T:System.Guid" /> structure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains the value that was parsed.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The GUID to convert.</param>
       </Docs>
@@ -534,7 +633,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table shows the accepted format specifiers for the <paramref name="format" /> parameter. "0" represents a digit; hyphens ("-"), braces ("{", "}"), and parentheses ("(", ")") appear as shown.</para>
@@ -600,6 +698,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the string representation of a GUID to the equivalent <see cref="T:System.Guid" /> structure, provided that the string is in the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A structure that contains the value that was parsed.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The GUID to convert.</param>
         <param name="format">
@@ -620,7 +722,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>The byte values of the Guid.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the byte array returned by this method to round-trip a <see cref="T:System.Guid" /> value by calling the <see cref="M:System.Guid.#ctor(System.Byte[])" /> constructor. </para>
@@ -630,6 +731,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a 16-element byte array that contains the value of this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 16-element byte array.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -646,7 +751,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method provides a default GUID format that is sufficient for typical use; however, other versions of this method that take a <paramref name="format" /> parameter provide a few common format variations.</para>
@@ -655,6 +759,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the value of this instance in registry format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this <see cref="T:System.Guid" />, formatted by using the "D" format specifier as follows: </para>
+          <para>xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx </para>
+          <para>where the value of the GUID is represented as a series of lowercase hexadecimal digits in groups of 8, 4, 4, 4, and 12 digits and separated by hyphens. An example of a return value is "382c74c3-721d-4f34-80e5-57657b6cbc27". To convert the hexadecimal digits from a through f to uppercase, call the <see cref="M:System.String.ToUpper" />  method on the returned string.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -673,7 +783,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The Guid as a string.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following table shows the accepted format specifiers for the <paramref name="format" /> parameter. "0" represents a digit; hyphens ("-"), braces ("{", "}"), and parentheses ("(", ")") appear as shown.</para>
@@ -740,6 +849,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the value of this <see cref="T:System.Guid" /> instance, according to the provided format specifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this <see cref="T:System.Guid" />, represented as a series of lowercase hexadecimal digits in the specified format. </para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A single format specifier that indicates how to format the value of this <see cref="T:System.Guid" />. The <paramref name="format" /> parameter can be "N", "D", "B", "P", or "X". If <paramref name="format" /> is null or an empty string (""), "D" is used. </param>
       </Docs>
@@ -761,7 +874,6 @@
         <Parameter Name="provider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>A representation of the Guid as a string.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="provider" /> parameter is reserved for future use and does not contribute to the execution of this method. You can pass null in the method call.</para>
@@ -830,6 +942,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the value of this instance of the <see cref="T:System.Guid" /> class, according to the provided format specifier and culture-specific format information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of this <see cref="T:System.Guid" />, represented as a series of lowercase hexadecimal digits in the specified format.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A single format specifier that indicates how to format the value of this <see cref="T:System.Guid" />. The <paramref name="format" /> parameter can be "N", "D", "B", "P", or "X". If <paramref name="format" /> is null or an empty string (""), "D" is used. </param>
         <param name="provider">

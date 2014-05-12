@@ -372,7 +372,6 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.CheckBox.LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)" /> method is used primarily by control developers.</para>
@@ -382,6 +381,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes the postback data for the <see cref="T:System.Web.UI.WebControls.CheckBox" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the posted content is different from the last posting; otherwise, false.</para>
+        </returns>
         <param name="postDataKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The index within the posted collection that references the content to load. </param>
         <param name="postCollection">
@@ -523,7 +526,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.CheckBox.SaveViewState" /> method is used primarily by control developers.</para>
@@ -534,6 +536,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves the changes to the <see cref="T:System.Web.UI.WebControls.CheckBox" /> view state since the time the page was posted back to the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that contains the changes to the <see cref="T:System.Web.UI.WebControls.CheckBox" /> view state; otherwise, if no view state is associated with the object, null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackDataHandler.LoadPostData">
@@ -551,7 +557,6 @@
         <Parameter Name="postCollection" Type="System.Collections.Specialized.NameValueCollection" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -561,6 +566,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes posted data for the <see cref="T:System.Web.UI.WebControls.CheckBox" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the state of the <see cref="T:System.Web.UI.WebControls.CheckBox" /> has changed; otherwise false.</para>
+        </returns>
         <param name="postDataKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The key value used to index an entry in the collection. </param>
         <param name="postCollection">

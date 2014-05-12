@@ -86,7 +86,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="name" /> parameter is null, the <see cref="T:System.ComponentModel.IComponent" /> is added to the nested container without an identifying name.</para>
@@ -95,6 +94,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a site for the component within the container.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ComponentModel.ISite" />.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to create a site for.</param>
         <param name="name">
@@ -144,7 +147,6 @@
         <Parameter Name="service" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides the <see cref="M:System.ComponentModel.Container.GetService(System.Type)" /> method. This implementation only resolves requests for the <see cref="T:System.ComponentModel.INestedContainer" /> and <see cref="T:System.ComponentModel.IContainer" /> services.</para>
@@ -153,6 +155,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the service object of the specified type, if it is available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that implements the requested service, or null if the service cannot be resolved.</para>
+        </returns>
         <param name="service">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the service to retrieve.</param>
       </Docs>

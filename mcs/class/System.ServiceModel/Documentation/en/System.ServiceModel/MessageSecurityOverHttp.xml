@@ -104,12 +104,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Only used in extensibility scenarios to indicate whether an instance of a class derived from <see cref="T:System.ServiceModel.MessageSecurityOverHttp" /> is configured to perform secure conversation as described in WS-SecurityConversation. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns true, unless overridden in a derived class.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="NegotiateServiceCredential">

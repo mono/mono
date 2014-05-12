@@ -190,7 +190,6 @@
         <Parameter Name="argNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method belongs to a remote object.</para>
@@ -199,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a method argument, as an object, at a specified index. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method argument as an object.</para>
+        </returns>
         <param name="argNum">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the requested argument.</param>
       </Docs>
@@ -219,7 +222,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method belongs to a remote object.</para>
@@ -228,6 +230,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name of a method argument at a specified index. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the method argument.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the requested argument.</param>
       </Docs>
@@ -279,7 +285,6 @@
         <Parameter Name="argNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method belongs to a remote object.</para>
@@ -288,6 +293,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified argument marked as a ref parameter or an out parameter. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified argument marked as a ref parameter or an out parameter.</para>
+        </returns>
         <param name="argNum">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the requested argument.</param>
       </Docs>
@@ -308,7 +317,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method belongs to a remote object.</para>
@@ -317,6 +325,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the specified argument marked as a ref parameter or an out parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The argument name, or null if the current method is not implemented.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the requested argument.</param>
       </Docs>
@@ -361,7 +373,6 @@
         <Parameter Name="h" Type="System.Runtime.Remoting.Messaging.Header[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method belongs to a remote object. The value of the first header in the input array is the method name.</para>
@@ -370,6 +381,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes an internal serialization handler from an array of remoting headers that are applied to a method. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An internal serialization handler.</para>
+        </returns>
         <param name="h">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of remoting headers that contain key/value pairs. This array is used to initialize <see cref="T:System.Runtime.Remoting.Messaging.MethodResponse" /> fields for headers that belong to the namespace "http://schemas.microsoft.com/clr/soap/messageProperties".</param>
       </Docs>

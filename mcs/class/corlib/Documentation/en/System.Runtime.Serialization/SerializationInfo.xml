@@ -678,7 +678,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a Boolean, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -687,6 +686,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a Boolean value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Boolean value associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve. </param>
       </Docs>
@@ -707,7 +710,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'byte'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is an 8-bit unsigned integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -716,6 +718,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an 8-bit unsigned integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 8-bit unsigned integer associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve. </param>
       </Docs>
@@ -736,7 +742,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'char'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a Unicode character, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -745,6 +750,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a Unicode character value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Unicode character associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
@@ -765,7 +774,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a <see cref="T:System.DateTime" />, or can be converted to a <see cref="T:System.DateTime" />, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -774,6 +782,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.DateTime" /> value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> value associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.  </param>
       </Docs>
@@ -794,7 +806,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'decimal'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a decimal, or can be converted to a decimal, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -803,6 +814,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a decimal value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decimal value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.  </param>
       </Docs>
@@ -823,7 +838,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'double'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a double, or can be converted to a double, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -832,6 +846,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a double-precision floating-point value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The double-precision floating-point value associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
@@ -850,7 +868,6 @@ End Sub</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'SerializationInfoEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This function will most often be used by formatters that need to enumerate through the values before writing them out to the stream.</para>
@@ -859,6 +876,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Runtime.Serialization.SerializationInfoEnumerator" /> used to iterate through the name-value pairs in the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Serialization.SerializationInfoEnumerator" /> for parsing the name-value pairs contained in the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetInt16">
@@ -877,7 +898,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'short'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a 16-bit signed integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -886,6 +906,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a 16-bit signed integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 16-bit signed integer associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
@@ -906,7 +930,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a 32-bit signed integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -915,6 +938,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a 32-bit signed integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 32-bit signed integer associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to retrieve. </param>
       </Docs>
@@ -935,7 +962,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a 64-bit signed integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -944,6 +970,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a 64-bit signed integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 64-bit signed integer associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
@@ -969,7 +999,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'sbyte'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is an Int8, or can be converted to an Int8, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -978,6 +1007,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an 8-bit signed integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 8-bit signed integer associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
@@ -998,7 +1031,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a single-precision floating-point number, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -1007,6 +1039,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a single-precision floating-point value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single-precision floating-point value associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the value to retrieve. </param>
       </Docs>
@@ -1027,7 +1063,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a <see cref="T:System.String" />, or can be converted to a <see cref="T:System.String" />, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -1036,6 +1071,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a <see cref="T:System.String" /> value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.String" /> associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
@@ -1061,7 +1100,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ushort'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a 16-bit unsigned integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -1070,6 +1108,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a 16-bit unsigned integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 16-bit unsigned integer associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
@@ -1095,7 +1137,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'uint'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a 32-bit signed integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -1104,6 +1145,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a 32-bit unsigned integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 32-bit unsigned integer associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
@@ -1129,7 +1174,6 @@ End Sub</code>
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ulong'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value is a 64-bit unsigned integer, or can be converted to one, that value is returned; otherwise, a <see cref="T:System.InvalidCastException" /> is thrown. All conversions are done by the <see cref="T:System.Runtime.Serialization.IFormatterConverter" /> associated with this <see cref="T:System.Runtime.Serialization.SerializationInfo" />.</para>
@@ -1138,6 +1182,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a 64-bit unsigned integer value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 64-bit unsigned integer associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
       </Docs>
@@ -1159,7 +1207,6 @@ End Sub</code>
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the data stored in the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> is of the type requested (or one of its derived classes), that value is returned directly. Otherwise, <see cref="M:System.Runtime.Serialization.IFormatterConverter.Convert(System.Object,System.Type)" /> is called to convert it to the appropriate type.</para>
@@ -1169,6 +1216,10 @@ End Sub</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a value from the <see cref="T:System.Runtime.Serialization.SerializationInfo" /> store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object of the specified <see cref="T:System.Type" /> associated with <paramref name="name" />.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name associated with the value to retrieve.</param>
         <param name="type">

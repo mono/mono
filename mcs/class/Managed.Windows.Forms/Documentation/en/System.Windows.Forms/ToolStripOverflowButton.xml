@@ -36,7 +36,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you do not explicitly call the <see cref="M:System.Windows.Forms.ToolStripOverflowButton.CreateAccessibilityInstance" /> method, it will be called when the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property is referenced.</para>
@@ -48,6 +47,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessibility object for the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.AccessibleObject" /> for the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateDefaultDropDown">
@@ -61,12 +64,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an empty <see cref="T:System.Windows.Forms.ToolStripDropDown" /> that can be dropped down and to which events can be attached.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.ToolStripDropDown" /> control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultMargin">
@@ -100,12 +106,15 @@
         <Parameter Name="constrainingSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the size of a rectangular area into which a control can fit.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An ordered pair of type <see cref="T:System.Drawing.Size" /> representing the width and height of a rectangle.</para>
+        </returns>
         <param name="constrainingSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The custom-sized area for a control. </param>
       </Docs>

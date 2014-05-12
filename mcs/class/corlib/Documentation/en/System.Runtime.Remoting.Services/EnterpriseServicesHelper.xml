@@ -73,12 +73,15 @@
         <Parameter Name="retObj" Type="System.MarshalByRefObject" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.Activation.IConstructionReturnMessage'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Constructs a <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" /> from the specified <see cref="T:System.Runtime.Remoting.Activation.IConstructionCallMessage" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Runtime.Remoting.Activation.IConstructionReturnMessage" /> returned from the construction call that is specified in the <paramref name="ctorMsg" /> parameter.</para>
+        </returns>
         <param name="ctorMsg">
           <attribution license="cc4" from="Microsoft" modified="false" />A construction call to the object from which the new <see cref="T:System.Runtime.Remoting.Messaging.ReturnMessage" /> instance is returning. </param>
         <param name="retObj">
@@ -134,7 +137,6 @@
         <Parameter Name="punk" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Runtime.Remoting.Services.EnterpriseServicesHelper.WrapIUnknownWithComObject(System.IntPtr)" /> method is similar to the <see cref="M:System.Runtime.InteropServices.Marshal.GetObjectForIUnknown(System.IntPtr)" /> method, but does not attempt to maintain the identity of the unmanaged object. For example, two calls with the same IUnknown to the current method return two different RCWs, but two calls to the <see cref="M:System.Runtime.InteropServices.Marshal.GetObjectForIUnknown(System.IntPtr)" /> method with the same IUnknown return the same RCW.</para>
@@ -143,6 +145,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Wraps the specified IUnknown COM interface with a <format type="text/html"><a href="7E542583-1E31-4E10-B523-8CF2F29CB4A4">[&lt;topic://cpconruntimecallablewrapper&gt;]</a></format> (RCW).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The RCW where the specified IUnknown is wrapped.</para>
+        </returns>
         <param name="punk">
           <attribution license="cc4" from="Microsoft" modified="false" />A pointer to the IUnknown COM interface to wrap. </param>
       </Docs>

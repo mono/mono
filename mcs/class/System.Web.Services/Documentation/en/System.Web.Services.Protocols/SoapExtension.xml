@@ -52,7 +52,6 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.IO.Stream" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -63,6 +62,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, allows a SOAP extension access to the memory buffer containing the SOAP request or response.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> representing a new memory buffer that this SOAP extension can modify.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />A memory buffer containing the SOAP request or response. </param>
       </Docs>
@@ -81,7 +84,6 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The overload of <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> that gets called by ASP.NET depends on how the SOAP extension was specified. There are two methods for specifying a SOAP extension: </para>
@@ -100,6 +102,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, allows a SOAP extension to initialize data specific to a class implementing an XML Web service at a one time performance cost.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that the SOAP extension initializes for caching.</para>
+        </returns>
         <param name="serviceType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the class implementing the XML Web service to which the SOAP extension is applied. </param>
       </Docs>
@@ -119,7 +125,6 @@
         <Parameter Name="attribute" Type="System.Web.Services.Protocols.SoapExtensionAttribute" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the SOAP extension is configured using a configuration file see the <see cref="M:System.Web.Services.Protocols.SoapExtension.GetInitializer(System.Web.Services.Protocols.LogicalMethodInfo,System.Web.Services.Protocols.SoapExtensionAttribute)" /> overload that accepts a <see cref="T:System.Type" />.</para>
@@ -142,6 +147,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, allows a SOAP extension to initialize data specific to an XML Web service method using an attribute applied to the XML Web service method at a one time performance cost.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that the SOAP extension initializes for caching.</para>
+        </returns>
         <param name="methodInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Protocols.LogicalMethodInfo" /> representing the specific function prototype for the XML Web service method to which the SOAP extension is applied. </param>
         <param name="attribute">

@@ -201,12 +201,15 @@
         <Parameter Name="item" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the current value of the <see cref="T:System.Windows.Forms.ListControl" /> item, if it is a property of an object, given the item.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The filtered object.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The object the <see cref="T:System.Windows.Forms.ListControl" /> item is bound to.</param>
       </Docs>
@@ -226,12 +229,15 @@
         <Parameter Name="field" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the current value of the <see cref="T:System.Windows.Forms.ListControl" /> item, if it is a property of an object given the item and the property name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The filtered object.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The object the <see cref="T:System.Windows.Forms.ListControl" /> item is bound to.</param>
         <param name="field">
@@ -442,12 +448,15 @@
         <Parameter Name="item" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the text representation of the specified item.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <see cref="P:System.Windows.Forms.ListControl.DisplayMember" /> property is not specified, the value returned by <see cref="M:System.Windows.Forms.ListControl.GetItemText(System.Object)" /> is the value of the item's ToString method. Otherwise, the method returns the string value of the member specified in the <see cref="P:System.Windows.Forms.ListControl.DisplayMember" /> property for the object specified in the <paramref name="item" /> parameter.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The object from which to get the contents to display. </param>
       </Docs>
@@ -466,12 +475,15 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Handles special input keys, such as PAGE UP, PAGE DOWN, HOME, END, and so on.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="keyData" /> parameter specifies the <see cref="F:System.Windows.Forms.Keys.End" />, <see cref="F:System.Windows.Forms.Keys.Home" />, <see cref="F:System.Windows.Forms.Keys.PageUp" />, or <see cref="F:System.Windows.Forms.Keys.PageDown" /> key; false if the <paramref name="keyData" /> parameter specifies <see cref="F:System.Windows.Forms.Keys.Alt" />.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the values of <see cref="T:System.Windows.Forms.Keys" />.</param>
       </Docs>

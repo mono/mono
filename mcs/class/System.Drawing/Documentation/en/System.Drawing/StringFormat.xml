@@ -181,12 +181,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an exact copy of this <see cref="T:System.Drawing.StringFormat" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.StringFormat" /> object this method creates.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -247,6 +250,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases all resources used by this <see cref="T:System.Drawing.StringFormat" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -590,6 +597,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies the language and method to be used when local digits are substituted for western digits.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="language">
           <attribution license="cc4" from="Microsoft" modified="false" />A National Language Support (NLS) language identifier that identifies the language that will be used when local digits are substituted for western digits. You can pass the <see cref="P:System.Globalization.CultureInfo.LCID" /> property of a <see cref="T:System.Globalization.CultureInfo" /> object as the NLS language identifier. For example, suppose you create a <see cref="T:System.Globalization.CultureInfo" /> object by passing the string "ar-EG" to a <see cref="T:System.Globalization.CultureInfo" /> constructor. If you pass the <see cref="P:System.Globalization.CultureInfo.LCID" /> property of that <see cref="T:System.Globalization.CultureInfo" /> object along with <see cref="F:System.Drawing.StringDigitSubstitute.Traditional" /> to the <see cref="M:System.Drawing.StringFormat.SetDigitSubstitution(System.Int32,System.Drawing.StringDigitSubstitute)" /> method, then Arabic-Indic digits will be substituted for western digits at display time. </param>
         <param name="substitute">
@@ -618,6 +629,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies an array of <see cref="T:System.Drawing.CharacterRange" /> structures that represent the ranges of characters measured by a call to the <see cref="M:System.Drawing.Graphics.MeasureCharacterRanges(System.String,System.Drawing.Font,System.Drawing.RectangleF,System.Drawing.StringFormat)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
         <param name="ranges">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Drawing.CharacterRange" /> structures that specifies the ranges of characters measured by a call to the <see cref="M:System.Drawing.Graphics.MeasureCharacterRanges(System.String,System.Drawing.Font,System.Drawing.RectangleF,System.Drawing.StringFormat)" /> method. </param>
       </Docs>
@@ -663,7 +678,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Only the value of the <see cref="P:System.Drawing.StringFormat.FormatFlags" /> property is converted.</para>
@@ -672,6 +686,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts this <see cref="T:System.Drawing.StringFormat" /> object to a human-readable string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of this <see cref="T:System.Drawing.StringFormat" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

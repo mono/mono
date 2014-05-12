@@ -198,7 +198,6 @@
         <Parameter Name="ps" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Security.Permissions.IsolatedStoragePermission'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You call this method on derived classes to determine what permission type governs their use, and to return the permission of the type that has been granted. Use this information to determine the allowable quota and any other derived class-specific isolated storage settings.</para>
@@ -207,6 +206,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When implemented by a derived class, returns a permission that represents access to isolated storage from within a permission set.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Permissions.IsolatedStoragePermission" /> object.</para>
+        </returns>
         <param name="ps">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.PermissionSet" /> object that contains the set of permissions granted to code attempting to use isolated storage. </param>
       </Docs>
@@ -230,7 +233,6 @@
         <Parameter Name="newQuotaSize" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFile.IncreaseQuotaTo(System.Int64)" /> method overrides this method.</para>
@@ -239,6 +241,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, prompts a user to approve a larger quota size, in bytes, for isolated storage.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false in all cases.</para>
+        </returns>
         <param name="newQuotaSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The requested new quota size, in bytes, for the user to approve.</param>
       </Docs>

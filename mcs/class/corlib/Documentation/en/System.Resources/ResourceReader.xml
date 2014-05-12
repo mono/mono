@@ -293,7 +293,6 @@ Label15="Alternate Email Address:"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Collections.IDictionaryEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, you enumerate resources by calling the <see cref="M:System.Resources.ResourceReader.GetEnumerator" /> method and then repeatedly calling the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method on the returned <see cref="T:System.Collections.IDictionaryEnumerator" /> object until the method returns false. The resource name is available from the <see cref="P:System.Collections.IDictionaryEnumerator.Key" /> property; its value from the <see cref="P:System.Collections.IDictionaryEnumerator.Value" /> property. The example illustrates how to enumerate resources in this way.</para>
@@ -327,6 +326,10 @@ Label15="Alternate Email Address:"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator for this <see cref="T:System.Resources.ResourceReader" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for this <see cref="T:System.Resources.ResourceReader" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetResourceData">
@@ -367,7 +370,6 @@ Label15="Alternate Email Address:"</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -377,6 +379,10 @@ Label15="Alternate Email Address:"</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator for this <see cref="T:System.Resources.ResourceReader" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for this <see cref="T:System.Resources.ResourceReader" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">

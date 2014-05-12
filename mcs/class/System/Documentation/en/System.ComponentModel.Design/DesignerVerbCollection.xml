@@ -93,12 +93,15 @@
         <Parameter Name="value" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified <see cref="T:System.ComponentModel.Design.DesignerVerb" /> to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index in the collection at which the verb was added.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerVerb" /> to add to the collection. </param>
       </Docs>
@@ -169,12 +172,15 @@
         <Parameter Name="value" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified <see cref="T:System.ComponentModel.Design.DesignerVerb" /> exists in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object exists in the collection; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerVerb" /> to search for in the collection. </param>
       </Docs>
@@ -223,12 +229,15 @@
         <Parameter Name="value" Type="System.ComponentModel.Design.DesignerVerb" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the index of the specified <see cref="T:System.ComponentModel.Design.DesignerVerb" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the specified object if it is found in the list; otherwise, -1.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.DesignerVerb" /> whose index to get in the collection. </param>
       </Docs>

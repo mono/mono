@@ -35,7 +35,6 @@
         <Parameter Name="dataSet" Type="System.Data.DataSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -53,6 +52,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or updates rows in the <see cref="T:System.Data.DataSet" /> to match those in the data source using the <see cref="T:System.Data.DataSet" /> name, and creates a <see cref="T:System.Data.DataTable" /> named "Table".</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet" />. This does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataSet" /> to fill with records and, if necessary, schema. </param>
       </Docs>
@@ -72,7 +75,6 @@
         <Parameter Name="schemaType" Type="System.Data.SchemaType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataTable []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.IDataAdapter.FillSchema(System.Data.DataSet,System.Data.SchemaType)" /> method retrieves the schema from the data source using the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" />. The connection object associated with the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" /> must be valid, but it does not need to be open. If the connection is closed before <see cref="M:System.Data.IDataAdapter.FillSchema(System.Data.DataSet,System.Data.SchemaType)" /> is called, it is opened to retrieve data, then closed. If the connection is open before <see cref="M:System.Data.IDataAdapter.FillSchema(System.Data.DataSet,System.Data.SchemaType)" /> is called, it remains open.</para>
@@ -122,6 +124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Data.DataTable" /> named "Table" to the specified <see cref="T:System.Data.DataSet" /> and configures the schema to match that in the data source based on the specified <see cref="T:System.Data.SchemaType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataTable" /> objects that contain schema information returned from the data source.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataSet" /> to be filled with the schema from the data source. </param>
         <param name="schemaType">
@@ -140,7 +146,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IDataParameter []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <code>private static void GetParameters(String connectiongString) {
@@ -164,6 +169,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parameters set by the user when executing an SQL SELECT statement.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.IDataParameter" /> objects that contains the parameters set by the user.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -247,7 +256,6 @@
         <Parameter Name="dataSet" Type="System.Data.DataSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When an application calls the <see cref="M:System.Data.IDataAdapter.Update(System.Data.DataSet)" /> method, the <see cref="T:System.Data.IDataAdapter" /> examines the <see cref="P:System.Data.DataRow.RowState" /> property, and executes the required INSERT, UPDATE, or DELETE statements iteratively for each row, based on the order of the indexes configured in the <see cref="T:System.Data.DataSet" />. For example, <see cref="M:System.Data.IDataAdapter.Update(System.Data.DataSet)" /> might execute a DELETE statement, followed by an INSERT statement, and then another DELETE statement, because of the ordering of the rows in the <see cref="T:System.Data.DataTable" />.</para>
@@ -328,6 +336,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calls the respective INSERT, UPDATE, or DELETE statements for each inserted, updated, or deleted row in the specified <see cref="T:System.Data.DataSet" /> from a <see cref="T:System.Data.DataTable" /> named "Table".</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully updated from the <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataSet" /> used to update the data source. </param>
       </Docs>

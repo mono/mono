@@ -32,13 +32,16 @@
         <Parameter Name="taskName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified <format type="text/html"><a href="d82e2485-e5f0-4936-a357-745bacccc299">Task</a></format> element to the <format type="text/html"><a href="350f6fc2-86b3-45f2-a31e-ece0e6bd4dca">Target</a></format> element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:Microsoft.Build.BuildEngine.BuildTask" /> object represents a child <unmanagedCodeEntityReference>Task</unmanagedCodeEntityReference> element of the <unmanagedCodeEntityReference>Target</unmanagedCodeEntityReference> element.</para>
+        </returns>
         <param name="taskName">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:Microsoft.Build.BuildEngine.BuildTask" /> object that represents the Task element to add to the Target element.</param>
       </Docs>
@@ -92,7 +95,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -103,6 +105,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an enumerator that iterates through the <see cref="T:Microsoft.Build.BuildEngine.BuildTask" /> objects in the <see cref="T:Microsoft.Build.BuildEngine.Target" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the <see cref="T:Microsoft.Build.BuildEngine.BuildTask" /> objects in the <see cref="T:Microsoft.Build.BuildEngine.Target" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

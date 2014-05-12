@@ -78,12 +78,15 @@
         <Parameter Name="url" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Web.Services.Discovery.DiscoveryExceptionDictionary" /> contains an <see cref="T:System.Exception" /> with the specified URL.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.Services.Discovery.DiscoveryExceptionDictionary" /> contains an <see cref="T:System.Exception" /> with the specified URL; otherwise, false.</para>
+        </returns>
         <param name="url">
           <attribution license="cc4" from="Microsoft" modified="false" />The URL of the <see cref="T:System.Exception" /> to locate within the <see cref="T:System.Web.Services.Discovery.DiscoveryExceptionDictionary" />. </param>
       </Docs>

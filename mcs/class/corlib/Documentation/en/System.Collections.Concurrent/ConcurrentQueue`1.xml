@@ -143,7 +143,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The enumeration represents a moment-in-time snapshot of the contents of the queue. It does not reflect any updates to the collection after <see cref="M:System.Collections.Concurrent.ConcurrentQueue`1.GetEnumerator" /> was called. The enumerator is safe to use concurrently with reads from and writes to the queue.</para>
@@ -153,6 +152,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the <see cref="T:System.Collections.Concurrent.ConcurrentQueue`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for the contents of the <see cref="T:System.Collections.Concurrent.ConcurrentQueue`1" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsEmpty">
@@ -293,12 +296,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through a collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToArray">
@@ -313,12 +319,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies the elements stored in the <see cref="T:System.Collections.Concurrent.ConcurrentQueue`1" /> to a new array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new array containing a snapshot of elements copied from the <see cref="T:System.Collections.Concurrent.ConcurrentQueue`1" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryDequeue">

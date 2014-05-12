@@ -58,12 +58,15 @@
         <Parameter Name="filePath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.IHttpHandler" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Web.IHttpHandler" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.IHttpHandler" /> instance.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpContext" /> that provides references to intrinsic server objects (For example, <see cref="P:System.Web.HttpContext.Request" />, <see cref="P:System.Web.HttpContext.Response" />, <see cref="P:System.Web.HttpContext.Session" />, and <see cref="P:System.Web.HttpContext.Server" />) used to service HTTP requests.</param>
         <param name="verb">

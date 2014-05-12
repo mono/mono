@@ -48,7 +48,6 @@
         <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> is not tied to a particular version of the WS-Addressing specification or bound to a particular wire format.</para>
@@ -57,6 +56,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.ServiceModel.EndpointAddress10" /> class with a specified endpoint address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress10" /> class that contains the specified endpoint address.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> used to initialize the instance of this class.</param>
       </Docs>
@@ -75,7 +78,6 @@
         <Parameter Name="xmlSchemaSet" Type="System.Xml.Schema.XmlSchemaSet" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is required by the serialization contract. It must be public to be seen by the <see cref="T:System.Xml.Serialization.XmlSerializer" />. It is not intended to be called by developers.</para>
@@ -84,6 +86,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an XML-qualified name that describes the XML representation of the version 1.0 endpoint address from a specified cached schema.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.XmlQualifiedName" /> that describes the XML representation of the endpoint address.</para>
+        </returns>
         <param name="xmlSchemaSet">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Schema.XmlSchema" /> that contains a cache of the XML schema definition language (XSD) schemas for the endpoint address.</param>
       </Docs>
@@ -100,12 +106,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns null.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>null</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Xml.Serialization.IXmlSerializable.ReadXml">
@@ -166,12 +175,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the endpoint address contained in this serializable type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.EndpointAddress" /> used to initialize the instance of this class. </para>
+        </returns>
       </Docs>
     </Member>
   </Members>

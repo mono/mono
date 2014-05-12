@@ -157,12 +157,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the current object off of the stack, returning its value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object removed from the stack; null if no objects are on the stack.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Push">

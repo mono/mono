@@ -287,7 +287,6 @@
         <Parameter Name="generation" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -297,6 +296,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of times garbage collection has occurred for the specified generation of objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of times garbage collection has occurred for the specified generation since the process was started.</para>
+        </returns>
         <param name="generation">
           <attribution license="cc4" from="Microsoft" modified="false" />The generation of objects for which the garbage collection count is to be determined. </param>
       </Docs>
@@ -317,7 +320,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to determine the age of an object, and then use that information with the <see cref="M:System.GC.Collect(System.Int32)" /> method to force the garbage collector to collect objects in the same generation. For example, use this method when you have a set of objects that are created as a group and that become inaccessible at the same time.</para>
@@ -326,6 +328,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the current generation number of the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current generation number of <paramref name="obj" />.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that generation information is retrieved for. </param>
       </Docs>
@@ -346,12 +352,15 @@
         <Parameter Name="wo" Type="System.WeakReference" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the current generation number of the target of a specified weak reference.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current generation number of the target of <paramref name="wo" />.</para>
+        </returns>
         <param name="wo">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.WeakReference" /> that refers to the target object whose generation number is to be determined. </param>
       </Docs>
@@ -372,7 +381,6 @@
         <Parameter Name="forceFullCollection" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="forceFullCollection" /> parameter is true, this method waits a short interval before returning while the system collects garbage and finalizes objects. The duration of the interval is an internally specified limit determined by the number of garbage collection cycles completed and the change in the amount of memory recovered between cycles. The garbage collector does not guarantee that all inaccessible memory is collected.</para>
@@ -381,6 +389,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the number of bytes currently thought to be allocated. A parameter indicates whether this method can wait a short interval before returning, to allow the system to collect garbage and finalize objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number that is the best available approximation of the number of bytes currently allocated in managed memory.</para>
+        </returns>
         <param name="forceFullCollection">
           <attribution license="cc4" from="Microsoft" modified="false" />true to indicate that this method can wait for garbage collection to occur before returning; otherwise, false.</param>
       </Docs>
@@ -609,7 +621,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="T:System.GCNotificationStatus" /> enumeration returned by this method to determine the status of the current garbage collection notification that was registered by using the <see cref="M:System.GC.RegisterForFullGCNotification(System.Int32,System.Int32)" /> method. You can also use the <see cref="M:System.GC.WaitForFullGCComplete" /> method to determine whether the full garbage collection has completed.</para>
@@ -621,6 +632,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the status of a registered notification for determining whether a full, blocking garbage collection by the common language runtime is imminent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The status of the registered garbage collection notification.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WaitForFullGCApproach">
@@ -637,7 +652,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="T:System.GCNotificationStatus" /> enumeration returned by this method to determine the status of the current garbage collection notification that was registered by using the <see cref="M:System.GC.RegisterForFullGCNotification(System.Int32,System.Int32)" /> method. You can also use the <see cref="M:System.GC.WaitForFullGCComplete" /> method to determine whether the full garbage collection has completed.</para>
@@ -650,6 +664,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns, in a specified time-out period, the status of a registered notification for determining whether a full, blocking garbage collection by the common language runtime is imminent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The status of the registered garbage collection notification.</para>
+        </returns>
         <param name="millisecondsTimeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The length of time to wait before a notification status can be obtained. Specify -1 to wait indefinitely.</param>
       </Docs>
@@ -666,7 +684,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="T:System.GCNotificationStatus" /> enumeration returned by this method to determine the status of the current garbage collection notification that was registered by using the <see cref="M:System.GC.RegisterForFullGCNotification(System.Int32,System.Int32)" /> method. You can also use the <see cref="M:System.GC.WaitForFullGCApproach" /> method to determine whether a full garbage collection is imminent.</para>
@@ -678,6 +695,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the status of a registered notification for determining whether a full, blocking garbage collection by the common language runtime has completed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The status of the registered garbage collection notification.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WaitForFullGCComplete">
@@ -694,7 +715,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="T:System.GCNotificationStatus" /> enumeration returned by this method to determine the status of the current garbage collection notification that was registered by using the <see cref="M:System.GC.RegisterForFullGCNotification(System.Int32,System.Int32)" /> method. You can also use the <see cref="M:System.GC.WaitForFullGCApproach" /> method to determine whether a full garbage collection is imminent.</para>
@@ -707,6 +727,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns, in a specified time-out period, the status of a registered notification for determining whether a full, blocking garbage collection by common language the runtime has completed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The status of the registered garbage collection notification.</para>
+        </returns>
         <param name="millisecondsTimeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The length of time to wait before a notification status can be obtained. Specify -1 to wait indefinitely.</param>
       </Docs>

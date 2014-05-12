@@ -159,12 +159,15 @@
         <Parameter Name="enable" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enables or disables component notification with the <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the component notification was enabled prior to this call; otherwise, false.</para>
+        </returns>
         <param name="enable">
           <attribution license="cc4" from="Microsoft" modified="false" />true to enable component notification by the <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" />; false to disable component notification by the <see cref="T:System.ComponentModel.Design.Serialization.DesignerLoader" />.</param>
       </Docs>
@@ -203,7 +206,6 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -213,6 +215,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the requested service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested service, or null if the requested service cannot be found.</para>
+        </returns>
         <param name="serviceType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the service.</param>
       </Docs>
@@ -249,7 +255,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.IsReloadNeeded" /> method is used by some designer loaders to optimize reloading. This method can be overridden if your designer loader supports intelligent reloading. Some designer loaders can detect changes made to their underlying document and determine if a reload of the designer is actually necessary. If not, they should return false from this method. The default implementation always returns true, indicating that any call to <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.Reload(System.ComponentModel.Design.Serialization.BasicDesignerLoader.ReloadOptions)" /> will succeed.</para>
@@ -258,6 +263,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the designer should be reloaded.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the designer should be reloaded; otherwise, false. The default implementation always returns true.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LoaderHost">
@@ -637,7 +646,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Any object can call the <see cref="M:System.ComponentModel.Design.Serialization.BasicDesignerLoader.System#ComponentModel#Design#Serialization#IDesignerLoaderService#Reload" /> method to request that the loader reload the design document. If the loader supports reloading and complies with the reload, the designer loader can return true. Otherwise, it returns false, indicating that the reload will not occur. Callers cannot rely on the reload happening immediately; the designer loader can schedule this for some other time, or it can try to reload the designer at once.</para>
@@ -647,6 +655,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reloads the design document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the reload request is accepted; false if the loader does not allow the reload.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

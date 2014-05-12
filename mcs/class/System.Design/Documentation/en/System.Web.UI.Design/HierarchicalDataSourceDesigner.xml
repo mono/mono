@@ -169,12 +169,15 @@
         <Parameter Name="viewPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the named data source view associated with the data source control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Design.DesignerHierarchicalDataSourceView" /> object.</para>
+        </returns>
         <param name="viewPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The unique path to the block of data to use in creating the view.</param>
       </Docs>

@@ -127,12 +127,15 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is not supported, and always throws <see cref="T:System.NotSupportedException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This comparison is not supported. No value is returned.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to be compared to this instance. </param>
       </Docs>
@@ -151,12 +154,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code of this object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetNextArg">
@@ -178,7 +184,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>Returns the next argument as a <see cref="T:System.TypedReference" />.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The iterator is automatically advanced to the next argument.</para>
@@ -187,6 +192,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the next argument in a variable-length argument list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next argument as a <see cref="T:System.TypedReference" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetNextArg">
@@ -210,7 +219,6 @@
         <Parameter Name="rth" Type="System.RuntimeTypeHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypedReference'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The iterator is automatically advanced to the next argument.</para>
@@ -219,6 +227,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the next argument in a variable-length argument list that has a specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next argument as a <see cref="T:System.TypedReference" /> object.</para>
+        </returns>
         <param name="rth">
           <attribution license="cc4" from="Microsoft" modified="false" />A runtime type handle that identifies the type of the argument to retrieve. </param>
       </Docs>
@@ -237,7 +249,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'RuntimeTypeHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method does not advance the iterator to the next argument.</para>
@@ -248,6 +259,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the type of the next argument.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type of the next argument.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRemainingCount">
@@ -264,12 +279,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>The count of arguments remaining to be processed.</returns>
         <remarks />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of arguments remaining in the argument list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of remaining arguments.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

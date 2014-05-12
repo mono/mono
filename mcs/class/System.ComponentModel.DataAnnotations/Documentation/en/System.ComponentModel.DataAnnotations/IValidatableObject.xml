@@ -29,12 +29,15 @@
         <Parameter Name="validationContext" Type="System.ComponentModel.DataAnnotations.ValidationContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object is valid.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that holds failed-validation information.</para>
+        </returns>
         <param name="validationContext">
           <attribution license="cc4" from="Microsoft" modified="false" />The validation context.</param>
       </Docs>

@@ -295,7 +295,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The tree structure from the tree node being cloned and below is copied. Any child tree nodes assigned to the <see cref="T:System.Windows.Forms.TreeNode" /> being cloned are included in the new tree node and subtree.</para>
@@ -305,6 +304,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies the tree node and the entire subtree rooted at this tree node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that represents the cloned <see cref="T:System.Windows.Forms.TreeNode" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -596,7 +599,6 @@
         <Parameter Name="handle" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When a node is added to the <see cref="P:System.Windows.Forms.TreeView.Nodes" /> collection, the <see cref="T:System.Windows.Forms.TreeView" /> control sends an NM_CUSTOMDRAW notification before the node handle is available. If you override the <see cref="M:System.Windows.Forms.Control.WndProc(System.Windows.Forms.Message@)" /> method of the <see cref="T:System.Windows.Forms.TreeView" /> to provide custom drawing in response to this notification, you should always check the return value of this method for null before you attempt to access the node. </para>
@@ -605,6 +607,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the tree node with the specified handle and assigned to the specified tree view control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.TreeNode" /> that represents the tree node assigned to the specified <see cref="T:System.Windows.Forms.TreeView" /> control with the specified handle.</para>
+        </returns>
         <param name="tree">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.TreeView" /> that contains the tree node. </param>
         <param name="handle">
@@ -652,12 +658,15 @@
         <Parameter Name="includeSubTrees" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of child tree nodes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of child tree nodes assigned to the <see cref="P:System.Windows.Forms.TreeNode.Nodes" /> collection.</para>
+        </returns>
         <param name="includeSubTrees">
           <attribution license="cc4" from="Microsoft" modified="false" />true if the resulting count includes all tree nodes indirectly rooted at this tree node; otherwise, false. </param>
       </Docs>

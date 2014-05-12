@@ -211,12 +211,15 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether a specified key identifier clause type can be created.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified key identifier clause type can be created; otherwise, false.</para>
+        </returns>
         <typeparam name="T">
           <attribution license="cc4" from="Microsoft" modified="false" />The specified key identifier clause type.</typeparam>
       </Docs>
@@ -260,12 +263,15 @@
         <Parameter Name="securityStateEncoder" Type="System.ServiceModel.Security.SecurityStateEncoder" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a security context token cookie.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A security context token cookie.</para>
+        </returns>
         <param name="contextId">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the context id.</param>
         <param name="id">
@@ -305,12 +311,15 @@
         <Parameter Name="securityStateEncoder" Type="System.ServiceModel.Security.SecurityStateEncoder" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a security context token cookie.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A security context token cookie.</para>
+        </returns>
         <param name="contextId">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.UniqueId" /> that represents the context id.</param>
         <param name="id">
@@ -352,12 +361,15 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a key identifier clause of a specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IdentityModel.Tokens.SecurityKeyIdentifierClause" /> cast to type <paramref name="T" />.</para>
+        </returns>
         <typeparam name="T">
           <attribution license="cc4" from="Microsoft" modified="false" />The specified type.</typeparam>
       </Docs>
@@ -456,12 +468,15 @@
       </Parameters>
       <Docs>
         <param name="clause">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the current token's key identifier clause matches a specified key identifier clause.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current token's key identifier clause matches a specified key identifier clause; otherwise, false. The default is false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SecurityKeys">
@@ -495,12 +510,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a text representation of the current instance of this object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of the current instance of this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ValidFrom">

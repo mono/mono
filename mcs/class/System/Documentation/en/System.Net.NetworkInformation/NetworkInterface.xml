@@ -81,7 +81,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -91,6 +90,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns objects that describe the network interfaces on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.NetworkInterface" /> array that contains objects that describe the available network interfaces, or an empty array if no interfaces are detected.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetIPProperties">
@@ -106,7 +109,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -116,6 +118,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that describes the configuration of this network interface.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.NetworkInformation.IPInterfaceProperties" /> object that describes this network interface.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetIPv4Statistics">
@@ -131,13 +137,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the IPv4 statistics for this <see cref="T:System.Net.NetworkInformation.NetworkInterface" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.NetworkInformation.IPv4InterfaceStatistics" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetIsNetworkAvailable">
@@ -158,7 +167,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -168,6 +176,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether any network connection is available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a network connection is available; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPhysicalAddress">
@@ -183,7 +195,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -193,6 +204,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the Media Access Control (MAC) or physical address for this adapter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.NetworkInformation.PhysicalAddress" /> object that contains the physical address.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Id">
@@ -413,13 +428,16 @@
         <Parameter Name="networkInterfaceComponent" Type="System.Net.NetworkInformation.NetworkInterfaceComponent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Boolean" /> value that indicates whether the interface supports the specified protocol.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified protocol is supported; otherwise, false.</para>
+        </returns>
         <param name="networkInterfaceComponent">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.NetworkInformation.NetworkInterfaceComponent" /> value.</param>
       </Docs>

@@ -329,7 +329,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If any inner exceptions are themselves instances of <see cref="T:System.AggregateException" />, this method will recursively flatten all of them. The inner exceptions returned in the new <see cref="T:System.AggregateException" /> will be the union of all of the the inner exceptions from exception tree rooted at the provided <see cref="T:System.AggregateException" /> instance.</para>
@@ -338,6 +337,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Flattens an <see cref="T:System.AggregateException" /> instances into a single, new instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new, flattened <see cref="T:System.AggregateException" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetBaseException">
@@ -352,12 +355,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.AggregateException" /> that is the root cause of this exception.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the <see cref="T:System.AggregateException" /> that is the root cause of this exception.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -446,12 +452,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a string representation of the current <see cref="T:System.AggregateException" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the current exception.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

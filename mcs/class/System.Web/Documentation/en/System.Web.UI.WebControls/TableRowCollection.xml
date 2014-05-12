@@ -46,7 +46,6 @@
         <Parameter Name="row" Type="System.Web.UI.WebControls.TableRow" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to add a <see cref="T:System.Web.UI.WebControls.TableRow" /> object to the end of a <see cref="T:System.Web.UI.WebControls.TableRowCollection" />.</para>
@@ -55,6 +54,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the specified <see cref="T:System.Web.UI.WebControls.TableRow" /> object to the end of the <see cref="T:System.Web.UI.WebControls.TableRowCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the <see cref="T:System.Web.UI.WebControls.TableRow" />.</para>
+        </returns>
         <param name="row">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.TableRow" /> object to add to the <see cref="T:System.Web.UI.WebControls.TableRowCollection" />. </param>
       </Docs>
@@ -202,7 +205,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Collections.IEnumerator" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to create a <see cref="T:System.Collections.IEnumerator" /> implemented object that can be iterated through easily to get each item in the <see cref="T:System.Web.UI.WebControls.TableRowCollection" />.</para>
@@ -217,6 +219,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Collections.IEnumerator" /> implemented object that contains all <see cref="T:System.Web.UI.WebControls.TableRow" /> objects within the <see cref="T:System.Web.UI.WebControls.TableRowCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.IEnumerator" /> implemented object that contains all <see cref="T:System.Web.UI.WebControls.TableRow" /> objects within the <see cref="T:System.Web.UI.WebControls.TableRowCollection" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -233,7 +239,6 @@
         <Parameter Name="row" Type="System.Web.UI.WebControls.TableRow" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to determine the index of the specified <see cref="T:System.Web.UI.WebControls.TableRow" /> in the <see cref="T:System.Web.UI.WebControls.TableRowCollection" />. If the specified <see cref="T:System.Web.UI.WebControls.TableRow" /> is not found, an index of -1 is returned.</para>
@@ -242,6 +247,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that represents the index of the specified <see cref="T:System.Web.UI.WebControls.TableRow" /> from the <see cref="T:System.Web.UI.WebControls.TableRowCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ordinal index position of the specified <see cref="T:System.Web.UI.WebControls.TableRow" /> within the collection. The default is -1, which indicates that the specified <see cref="T:System.Web.UI.WebControls.TableRow" /> has not been found.</para>
+        </returns>
         <param name="row">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.TableRow" /> object to search for in the <see cref="T:System.Web.UI.WebControls.TableRowCollection" />. </param>
       </Docs>
@@ -405,7 +414,6 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, you should use the <see cref="M:System.Web.UI.WebControls.TableRowCollection.Add(System.Web.UI.WebControls.TableRow)" /> method to add an element to a <see cref="T:System.Web.UI.WebControls.TableRowCollection" /> object. </para>
@@ -415,6 +423,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an object to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the object was added to the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -432,7 +444,6 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.TableRowCollection.System#Collections#IList#Contains(System.Object)" /> method is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.TableRowCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -441,6 +452,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object is contained within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the object is in the collection; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -458,7 +473,6 @@
       </Parameters>
       <Docs>
         <param name="value">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Typically, you should use the <see cref="M:System.Web.UI.WebControls.TableRowCollection.GetRowIndex(System.Web.UI.WebControls.TableRow)" /> method to get the index of an element in a <see cref="T:System.Web.UI.WebControls.TableRowCollection" /> object. </para>
@@ -468,6 +482,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified object and returns the zero-based index of the first occurrence within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of the object within the collection; otherwise, -1 if the object is not in the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">

@@ -117,7 +117,6 @@
         <Parameter Name="message" Type="System.ServiceModel.Description.MessageDescription" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is the inverse of the <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetMessageDescription(System.Web.Services.Description.MessageBinding)" /> method.</para>
@@ -126,6 +125,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the WSDL binding for the message specified by the description.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.MessageBinding" /> for the message specified by the description.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.MessageDescription" /> associated with the description.</param>
       </Docs>
@@ -145,7 +148,6 @@
       </Parameters>
       <Docs>
         <param name="message">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is the inverse of the <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetMessageBinding(System.ServiceModel.Description.MessageDescription)" /> method.</para>
@@ -154,6 +156,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the message description for the message specified by the WSDL binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.MessageDescription" /> for the message specified by the binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOperationBinding">
@@ -170,7 +176,6 @@
         <Parameter Name="operation" Type="System.ServiceModel.Description.OperationDescription" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is the inverse of the <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetOperationDescription(System.Web.Services.Description.OperationBinding)" /> method.</para>
@@ -179,6 +184,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the WSDL binding for the operation specified by the description.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Services.Description.OperationBinding" /> for the operation specified by the description.</para>
+        </returns>
         <param name="operation">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Description.OperationDescription" /> of the operation associated with the binding.</param>
       </Docs>
@@ -198,7 +207,6 @@
       </Parameters>
       <Docs>
         <param name="operation">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is the inverse of the <see cref="M:System.ServiceModel.Description.WsdlEndpointConversionContext.GetOperationBinding(System.ServiceModel.Description.OperationDescription)" /> method.</para>
@@ -207,6 +215,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the operation description of the operation associated with the WSDL binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.OperationDescription" /> of the operation associated with the binding.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WsdlBinding">

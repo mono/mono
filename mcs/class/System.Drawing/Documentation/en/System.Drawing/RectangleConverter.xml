@@ -49,12 +49,15 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if this converter can convert an object in the given source type to the native type of the converter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if this object can perform the conversion; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A formatter context. This object can be used to get additional information about the environment this converter is being called from. This may be null, so you should always check. Also, properties on the context object may also return null. </param>
         <param name="sourceType">
@@ -76,7 +79,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="context" /> parameter can be used to get additional information about the environment this converter is being called from. </para>
@@ -85,6 +87,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether this converter can convert an object to the given destination type using the context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if this converter can perform the conversion; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> object that provides a format context. This can be null, so you should always check. Also, properties on the context object can also return null.</param>
         <param name="destinationType">
@@ -107,12 +113,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given object to a <see cref="T:System.Drawing.Rectangle" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted object. </para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that can be used to get additional information about the environment this converter is being called from. This may be null, so you should always check. Also, properties on the context object may also return null. </param>
         <param name="culture">
@@ -138,7 +147,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The most common types to convert are to and from a string object. The default implementation calls the object's <see cref="M:System.Object.ToString" /> method if the object is valid and if the destination type is string. If this method cannot convert to the destination type, it throws a <see cref="T:System.NotSupportedException" /> exception.</para>
@@ -147,6 +155,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified object to the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted object.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that can be used to get additional information about the environment this converter is being called from. This may be null, so you should always check. Also, properties on the context object may also return null. </param>
         <param name="culture">
@@ -172,12 +184,15 @@
         <Parameter Name="propertyValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of this type given a set of property values for the object. This is useful for objects that are immutable but still want to provide changeable properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created object, or null if the object could not be created. The default implementation returns null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> through which additional context can be provided. </param>
         <param name="propertyValues">
@@ -198,12 +213,15 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if changing a value on this object should require a call to <see cref="M:System.Drawing.RectangleConverter.CreateInstance(System.ComponentModel.ITypeDescriptorContext,System.Collections.IDictionary)" /> to create a new value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if <see cref="M:System.Drawing.RectangleConverter.CreateInstance(System.ComponentModel.ITypeDescriptorContext,System.Collections.IDictionary)" /> should be called when a change is made to one or more properties of this object; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A type descriptor through which additional context can be provided. </param>
       </Docs>
@@ -224,7 +242,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ComponentModel.PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A simple implementation of this method can just call the <see cref="Overload:System.ComponentModel.TypeDescriptor.GetProperties" /> method for the correct data type.</para>
@@ -233,6 +250,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the set of properties for this type. By default, a type does not return any properties. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The set of properties that should be exposed for this data type. If no properties should be exposed, this may return null. The default implementation always returns null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> through which additional context can be provided. </param>
         <param name="value">
@@ -255,12 +276,15 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if this object supports properties. By default, this is false.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method returns true if <see cref="M:System.Drawing.RectangleConverter.GetProperties(System.ComponentModel.ITypeDescriptorContext,System.Object,System.Attribute[])" /> should be called to find the properties of this object; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> through which additional context can be provided. </param>
       </Docs>

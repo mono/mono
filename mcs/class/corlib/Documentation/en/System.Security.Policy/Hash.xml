@@ -79,7 +79,6 @@
         <Parameter Name="md5" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -89,6 +88,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Security.Policy.Hash" /> object that contains an <see cref="T:System.Security.Cryptography.MD5" /> hash value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the hash value provided by the <paramref name="md5" /> parameter.</para>
+        </returns>
         <param name="md5">
           <attribution license="cc4" from="Microsoft" modified="false" />A byte array that contains an <see cref="T:System.Security.Cryptography.MD5" /> hash value.</param>
       </Docs>
@@ -108,7 +111,6 @@
         <Parameter Name="sha1" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -118,6 +120,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Security.Policy.Hash" /> object that contains a <see cref="T:System.Security.Cryptography.SHA1" /> hash value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains the hash value provided by the <paramref name="sha1" /> parameter.</para>
+        </returns>
         <param name="sha1">
           <attribution license="cc4" from="Microsoft" modified="false" />A byte array that contains a <see cref="T:System.Security.Cryptography.SHA1" /> hash value.</param>
       </Docs>
@@ -138,7 +144,6 @@
         <Parameter Name="hashAlg" Type="System.Security.Cryptography.HashAlgorithm" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'byte []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The assembly specified in the class constructor provides the bytes for computing the hash value. The <paramref name="hashAlg" /> parameter is an object derived from a specific <see cref="T:System.Security.Cryptography.HashAlgorithm" />. The returned hash value is of the type identified by <paramref name="hashAlg" />.</para>
@@ -147,6 +152,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the hash value for the assembly using the specified hash algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that represents the hash value for the assembly.</para>
+        </returns>
         <param name="hashAlg">
           <attribution license="cc4" from="Microsoft" modified="false" />The hash algorithm to use to compute the hash value for the assembly. </param>
       </Docs>
@@ -316,7 +325,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful during debugging to get an easy-to-read representation of the object.</para>
@@ -325,6 +333,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string representation of the current <see cref="T:System.Security.Policy.Hash" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A representation of the current <see cref="T:System.Security.Policy.Hash" />.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

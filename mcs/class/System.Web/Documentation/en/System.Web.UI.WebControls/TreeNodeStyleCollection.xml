@@ -33,7 +33,6 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.TreeNodeStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -46,6 +45,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object to the end of the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position into which the new <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> was inserted.</para>
+        </returns>
         <param name="style">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> to append. </param>
       </Docs>
@@ -63,7 +66,6 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.TreeNodeStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -73,6 +75,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object is in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object is contained in the collection; otherwise, false.</para>
+        </returns>
         <param name="style">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> to find. </param>
       </Docs>
@@ -155,7 +161,6 @@
         <Parameter Name="style" Type="System.Web.UI.WebControls.TreeNodeStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -168,6 +173,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the index of the specified <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> object in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="style" /> within the <see cref="T:System.Web.UI.WebControls.TreeNodeStyleCollection" />, if found; otherwise, -1.</para>
+        </returns>
         <param name="style">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.TreeNodeStyle" /> to locate.</param>
       </Docs>

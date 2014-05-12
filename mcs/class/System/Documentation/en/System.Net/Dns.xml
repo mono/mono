@@ -46,7 +46,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Dns.BeginGetHostAddresses(System.String,System.AsyncCallback,System.Object)" /> method asynchronously queries a DNS server for the IP addresses that are associated with a host name. If <paramref name="hostNameOrAddress" /> is an IP address, this address is returned without querying the DNS server.</para>
@@ -62,6 +61,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously returns the Internet Protocol (IP) addresses for the specified host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> instance that references the asynchronous request.</para>
+        </returns>
         <param name="hostNameOrAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The host name or IP address to resolve.</param>
         <param name="requestCallback">
@@ -94,9 +97,6 @@
         <Parameter Name="stateObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="hostName" /> is <see langword="null" /> .</exception>
         <exception cref="T:System.Net.Sockets.SocketException">An error was encountered executing the DNS query .</exception>
@@ -115,6 +115,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for <see cref="T:System.Net.IPHostEntry" /> information about the specified DNS host name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> instance that references the asynchronous request.</para>
+        </returns>
         <param name="hostName">
           <attribution license="cc4" from="Microsoft" modified="false" />The DNS name of the host. </param>
         <param name="requestCallback">
@@ -141,7 +145,6 @@
         <Parameter Name="stateObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Dns.BeginGetHostEntry(System.Net.IPAddress,System.AsyncCallback,System.Object)" /> method asynchronously queries a DNS server for the IP addresses and aliases associated with an IP address.</para>
@@ -154,6 +157,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously resolves an IP address to an <see cref="T:System.Net.IPHostEntry" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> instance that references the asynchronous request.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The IP address to resolve.</param>
         <param name="requestCallback">
@@ -179,7 +186,6 @@
         <Parameter Name="stateObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Dns.BeginGetHostEntry(System.String,System.AsyncCallback,System.Object)" /> method queries a DNS server for the IP address that is associated with a host name or IP address.</para>
@@ -192,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously resolves a host name or IP address to an <see cref="T:System.Net.IPHostEntry" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> instance that references the asynchronous request.</para>
+        </returns>
         <param name="hostNameOrAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The host name or IP address to resolve.</param>
         <param name="requestCallback">
@@ -224,9 +234,6 @@
         <Parameter Name="stateObject" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IAsyncResult" /> instance that contains information about the asynchronous operation.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="hostName" /> is <see langword="null" /> .</exception>
         <exception cref="T:System.Net.Sockets.SocketException">An error was encountered executing the DNS query .</exception>
@@ -245,6 +252,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request to resolve a DNS host name or IP address to an <see cref="T:System.Net.IPAddress" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> instance that references the asynchronous request.</para>
+        </returns>
         <param name="hostName">
           <attribution license="cc4" from="Microsoft" modified="false" />The DNS name of the host. </param>
         <param name="requestCallback">
@@ -269,7 +280,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Dns.BeginGetHostAddresses(System.String,System.AsyncCallback,System.Object)" /> method queries a DNS server for the IP addresses associated with a host name. If <paramref name="hostNameOrAddress" /> is an IP address, this address is returned without querying the DNS server.</para>
@@ -282,6 +292,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous request for DNS information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Net.IPAddress" /> that holds the IP addresses for the host specified by the <paramref name="hostNameOrAddress" /> parameter of <see cref="M:System.Net.Dns.BeginGetHostAddresses(System.String,System.AsyncCallback,System.Object)" />.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> instance returned by a call to the <see cref="M:System.Net.Dns.BeginGetHostAddresses(System.String,System.AsyncCallback,System.Object)" /> method.</param>
       </Docs>
@@ -308,9 +322,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.IPHostEntry" /> object containing DNS address information about a host. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="asyncResult " />is <see langword="null" />.</exception>
         <remarks>
@@ -326,6 +337,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous request for DNS information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IPHostEntry" /> object that contains DNS information about a host.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> instance that is returned by a call to the <see cref="M:System.Net.Dns.BeginGetHostByName(System.String,System.AsyncCallback,System.Object)" /> method.</param>
       </Docs>
@@ -346,7 +361,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method blocks until the operation is complete. </para>
@@ -360,6 +374,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous request for DNS information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IPHostEntry" /> instance that contains address information about the host.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> instance returned by a call to an <see cref="Overload:System.Net.Dns.BeginGetHostEntry" /> method.</param>
       </Docs>
@@ -386,9 +404,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.IPHostEntry" /> object containing address information about a host. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="asyncResult " />is <see langword="null" />.</exception>
         <remarks>
@@ -404,6 +419,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous request for DNS information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IPHostEntry" /> object that contains DNS information about a host.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> instance that is returned by a call to the <see cref="M:System.Net.Dns.BeginResolve(System.String,System.AsyncCallback,System.Object)" /> method.</param>
       </Docs>
@@ -424,7 +443,6 @@
         <Parameter Name="hostNameOrAddress" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Dns.GetHostAddresses(System.String)" /> method queries a DNS server for the IP addresses associated with a host name. If <paramref name="hostNameOrAddress" /> is an IP address, this address is returned without querying the DNS server.</para>
@@ -438,6 +456,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the Internet Protocol (IP) addresses for the specified host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Net.IPAddress" /> that holds the IP addresses for the host that is specified by the <paramref name="hostNameOrAddress" /> parameter.</para>
+        </returns>
         <param name="hostNameOrAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The host name or IP address to resolve.</param>
       </Docs>
@@ -456,7 +478,6 @@
         <Parameter Name="hostNameOrAddress" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />  object will complete after the <paramref name="hostNameOrAddress" /> has been resolved.</para>
@@ -466,6 +487,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the Internet Protocol (IP) addresses for the specified host as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns an array of type <see cref="T:System.Net.IPAddress" /> that holds the IP addresses for the host that is specified by the <paramref name="hostNameOrAddress" /> parameter.</para>
+        </returns>
         <param name="hostNameOrAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The host name or IP address to resolve.</param>
       </Docs>
@@ -492,9 +518,6 @@
         <Parameter Name="address" Type="System.Net.IPAddress" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.IPHostEntry" /> instance containing the host information.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="address " />is <see langword="null" /> .</exception>
         <exception cref="T:System.Net.Sockets.SocketException">An error was encountered executing the DNS query .</exception>
@@ -510,6 +533,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Net.IPHostEntry" /> instance from the specified <see cref="T:System.Net.IPAddress" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IPHostEntry" />.</para>
+          <para>An <see cref="T:System.Net.IPHostEntry" /> instance.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Net.IPAddress" />. </param>
       </Docs>
@@ -537,9 +565,6 @@
         <Parameter Name="address" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.IPHostEntry" /> instance containing the host information.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="address " />is <see langword="null" /> .</exception>
         <exception cref="T:System.FormatException">
@@ -557,6 +582,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Net.IPHostEntry" /> instance from an IP address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IPHostEntry" /> instance.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />An IP address. </param>
       </Docs>
@@ -584,11 +613,6 @@
         <Parameter Name="hostName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.IPHostEntry" /> object containing host information for the address
-   specified in <paramref name="hostName" />
-   .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="hostName " />is <see langword="null" /> .</exception>
         <exception cref="T:System.Net.Sockets.SocketException">An error was encountered executing the DNS query .</exception>
@@ -607,6 +631,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the DNS information for the specified DNS host name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IPHostEntry" /> object that contains host information for the address specified in <paramref name="hostName" />.</para>
+        </returns>
         <param name="hostName">
           <attribution license="cc4" from="Microsoft" modified="false" />The DNS name of the host. </param>
       </Docs>
@@ -627,7 +655,6 @@
         <Parameter Name="address" Type="System.Net.IPAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Dns.GetHostEntry(System.Net.IPAddress)" /> method queries a DNS server for the IP addresses and aliases associated with an IP address.</para>
@@ -641,6 +668,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves an IP address to an <see cref="T:System.Net.IPHostEntry" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IPHostEntry" /> instance that contains address information about the host specified in <paramref name="address" />.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />An IP address.</param>
       </Docs>
@@ -660,7 +691,6 @@
         <Parameter Name="hostNameOrAddress" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Dns.GetHostEntry(System.String)" /> method queries a DNS server for the IP address that is associated with a host name or IP address.</para>
@@ -692,6 +722,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves a host name or IP address to an <see cref="T:System.Net.IPHostEntry" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IPHostEntry" /> instance that contains address information about the host specified in <paramref name="hostNameOrAddress" />.</para>
+        </returns>
         <param name="hostNameOrAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The host name or IP address to resolve.</param>
       </Docs>
@@ -710,7 +744,6 @@
         <Parameter Name="address" Type="System.Net.IPAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />  object will complete after the <paramref name="address" /> has been resolved.</para>
@@ -725,6 +758,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves an IP address to an <see cref="T:System.Net.IPHostEntry" /> instance as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns an <see cref="T:System.Net.IPHostEntry" /> instance that contains address information about the host specified in <paramref name="address" />.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />An IP address.</param>
       </Docs>
@@ -743,7 +781,6 @@
         <Parameter Name="hostNameOrAddress" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />  object will complete after the <paramref name="hostNameOrAddress" /> has been resolved.</para>
@@ -776,6 +813,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves a host name or IP address to an <see cref="T:System.Net.IPHostEntry" /> instance as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation. The <see cref="P:System.Threading.Tasks.Task`1.Result" /> property on the task object returns an <see cref="T:System.Net.IPHostEntry" /> instance that contains address information about the host specified in <paramref name="hostNameOrAddress" />.</para>
+        </returns>
         <param name="hostNameOrAddress">
           <attribution license="cc4" from="Microsoft" modified="false" />The host name or IP address to resolve.</param>
       </Docs>
@@ -795,10 +837,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> containing the DNS host name
-   of the local machine.</para>
-        </returns>
         <remarks>To be added.</remarks>
         <exception cref="T:System.Net.Sockets.SocketException">An error was encountered resolving the local host name.</exception>
         <exception cref="T:System.Security.SecurityException">The caller does not have permission to access DNS information.</exception>
@@ -807,6 +845,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the host name of the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the DNS host name of the local computer.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -832,12 +874,6 @@
         <Parameter Name="hostName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.IPHostEntry" /> instance
-   containing address information about the host specified in
-<paramref name="hostName" />
-.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="hostName " />is <see langword="null" /> .</exception>
         <exception cref="T:System.Net.Sockets.SocketException">An error was encountered executing the DNS query .</exception>
@@ -884,6 +920,10 @@ public class DnsTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Resolves a DNS host name or IP address to an <see cref="T:System.Net.IPHostEntry" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IPHostEntry" /> instance that contains address information about the host specified in <paramref name="hostName" />.</para>
+        </returns>
         <param name="hostName">
           <attribution license="cc4" from="Microsoft" modified="false" />A DNS-style host name or IP address. </param>
       </Docs>

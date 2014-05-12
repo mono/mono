@@ -104,7 +104,6 @@
         <Parameter Name="headers" Type="System.Runtime.Remoting.Channels.ITransportHeaders" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IO.Stream'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns the stream returned by the <see cref="M:System.Runtime.Remoting.Channels.IServerChannelSink.GetResponseStream(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders)" /> called with the <paramref name="msg" /> and <paramref name="headers" /> parameters (<see cref="M:System.Runtime.Remoting.Channels.IServerChannelSink.GetResponseStream(System.Runtime.Remoting.Channels.IServerResponseChannelSinkStack,System.Object,System.Runtime.Remoting.Messaging.IMessage,System.Runtime.Remoting.Channels.ITransportHeaders)" /> (<paramref name="msg" />, <paramref name="headers" />)) on the top sink in the current sink stack. The top sink in the sink stack remains unchanged.</para>
@@ -113,6 +112,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.IO.Stream" /> onto which the specified message is to be serialized.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.IO.Stream" /> onto which the specified message is to be serialized.</para>
+        </returns>
         <param name="msg">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to be serialized onto the requested stream. </param>
         <param name="headers">
@@ -135,12 +138,15 @@
         <Parameter Name="sink" Type="System.Runtime.Remoting.Channels.IServerChannelSink" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Pops the information associated with all the sinks from the sink stack up to and including the specified sink.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Information generated on the request side and associated with the specified sink.</para>
+        </returns>
         <param name="sink">
           <attribution license="cc4" from="Microsoft" modified="false" />The sink to remove and return from the sink stack. </param>
       </Docs>

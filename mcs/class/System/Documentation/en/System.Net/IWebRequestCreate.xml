@@ -42,10 +42,6 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Net.WebRequest" />
-instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.IWebRequestCreate.Create(System.Uri)" /> method must return an initialized instance of the <see cref="T:System.Net.WebRequest" /> descendant that is capable of performing a standard request/response transaction for the protocol without needing any protocol-specific fields modified.</para>
@@ -54,6 +50,10 @@ instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Net.WebRequest" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebRequest" /> instance.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The uniform resource identifier (URI) of the Web resource. </param>
       </Docs>

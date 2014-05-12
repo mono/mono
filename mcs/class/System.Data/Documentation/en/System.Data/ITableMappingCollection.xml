@@ -38,12 +38,15 @@
         <Parameter Name="dataSetTableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ITableMapping'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a table mapping to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to the newly-mapped <see cref="T:System.Data.ITableMapping" /> object.</para>
+        </returns>
         <param name="sourceTableName">
           <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the source table. </param>
         <param name="dataSetTableName">
@@ -64,12 +67,15 @@
         <Parameter Name="sourceTableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the collection contains a table mapping with the specified source table name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a table mapping with the specified source table name exists, otherwise false.</para>
+        </returns>
         <param name="sourceTableName">
           <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the source table. </param>
       </Docs>
@@ -88,12 +94,15 @@
         <Parameter Name="dataSetTableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ITableMapping'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the TableMapping object with the specified <see cref="T:System.Data.DataSet" /> table name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The TableMapping object with the specified DataSet table name.</para>
+        </returns>
         <param name="dataSetTableName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the DataSet table within the collection. </param>
       </Docs>
@@ -112,12 +121,15 @@
         <Parameter Name="sourceTableName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the location of the <see cref="T:System.Data.ITableMapping" /> object within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based location of the <see cref="T:System.Data.ITableMapping" /> object within the collection.</para>
+        </returns>
         <param name="sourceTableName">
           <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the source table. </param>
       </Docs>

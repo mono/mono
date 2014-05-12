@@ -114,6 +114,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Releases all resources used by this <see cref="T:System.Drawing.FontFamily" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not return a value.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -130,12 +134,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified object is a <see cref="T:System.Drawing.FontFamily" /> and is identical to this <see cref="T:System.Drawing.FontFamily" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is a <see cref="T:System.Drawing.FontFamily" /> and is identical to this <see cref="T:System.Drawing.FontFamily" />; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to test. </param>
       </Docs>
@@ -246,12 +253,15 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the cell ascent, in design units, of the <see cref="T:System.Drawing.FontFamily" /> of the specified style.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cell ascent for this <see cref="T:System.Drawing.FontFamily" /> that uses the specified <see cref="T:System.Drawing.FontStyle" />.</para>
+        </returns>
         <param name="style">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontStyle" /> that contains style information for the font. </param>
       </Docs>
@@ -270,12 +280,15 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the cell descent, in design units, of the <see cref="T:System.Drawing.FontFamily" /> of the specified style. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cell descent metric for this <see cref="T:System.Drawing.FontFamily" /> that uses the specified <see cref="T:System.Drawing.FontStyle" />.</para>
+        </returns>
         <param name="style">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.FontStyle" /> that contains style information for the font. </param>
       </Docs>
@@ -294,7 +307,6 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -304,6 +316,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the height, in font design units, of the em square for the specified style.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The height of the em square.</para>
+        </returns>
         <param name="style">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> for which to get the em height. </param>
       </Docs>
@@ -322,12 +338,15 @@
         <Parameter Name="graphics" Type="System.Drawing.Graphics" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'FontFamily []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an array that contains all the <see cref="T:System.Drawing.FontFamily" /> objects available for the specified graphics context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Drawing.FontFamily" /> objects available for the specified <see cref="T:System.Drawing.Graphics" /> object.</para>
+        </returns>
         <param name="graphics">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> object from which to return <see cref="T:System.Drawing.FontFamily" /> objects. </param>
       </Docs>
@@ -344,12 +363,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a hash code for this <see cref="T:System.Drawing.FontFamily" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for this <see cref="T:System.Drawing.FontFamily" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -366,12 +388,15 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the line spacing, in design units, of the <see cref="T:System.Drawing.FontFamily" /> of the specified style. The line spacing is the vertical distance between the base lines of two consecutive lines of text. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The distance between two consecutive lines of text.</para>
+        </returns>
         <param name="style">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> to apply. </param>
       </Docs>
@@ -390,7 +415,6 @@
         <Parameter Name="language" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To indicate language neutral, you should specify 0 for the <paramref name="language" /> parameter. For a listing of the available languages and sublanguages, see the Winnt.h header file. If you have vsprvs installed, this header file can typically be found relative to the vsprvs installation directory at \\VC\PlatformSDK\Include.</para>
@@ -399,6 +423,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name, in the specified language, of this <see cref="T:System.Drawing.FontFamily" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the name, in the specified language, of this <see cref="T:System.Drawing.FontFamily" />. </para>
+        </returns>
         <param name="language">
           <attribution license="cc4" from="Microsoft" modified="false" />The language in which the name is returned. </param>
       </Docs>
@@ -417,12 +445,15 @@
         <Parameter Name="style" Type="System.Drawing.FontStyle" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the specified <see cref="T:System.Drawing.FontStyle" /> enumeration is available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Drawing.FontStyle" /> is available; otherwise, false.</para>
+        </returns>
         <param name="style">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.FontStyle" /> to test. </param>
       </Docs>
@@ -458,12 +489,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts this <see cref="T:System.Drawing.FontFamily" /> to a human-readable string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string that represents this <see cref="T:System.Drawing.FontFamily" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

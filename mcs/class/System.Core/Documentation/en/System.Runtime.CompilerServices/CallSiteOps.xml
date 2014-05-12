@@ -100,12 +100,15 @@
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates the call site target with a new rule based on the arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new call site target.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />The call site binder.</param>
         <param name="site">
@@ -176,12 +179,15 @@
         <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of a dynamic call site used for cache lookup.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new call site.</para>
+        </returns>
         <param name="site">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
         <typeparam name="T">
@@ -217,12 +223,15 @@
         <Parameter Name="cache" Type="System.Runtime.CompilerServices.RuleCache&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the dynamic rule cache for rules applicable to the dynamic operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of applicable rules.</para>
+        </returns>
         <param name="cache">
           <attribution license="cc4" from="Microsoft" modified="false" />The cache.</param>
         <typeparam name="T">
@@ -251,12 +260,15 @@
         <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks whether the executed rule matched</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if rule matched, false otherwise.</para>
+        </returns>
         <param name="site">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
       </Docs>
@@ -290,12 +302,15 @@
         <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves binding rule cache.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cache.</para>
+        </returns>
         <param name="site">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
         <typeparam name="T">
@@ -331,12 +346,15 @@
         <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the dynamic binding rules from the call site.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of dynamic binding rules.</para>
+        </returns>
         <param name="site">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
         <typeparam name="T">
@@ -411,12 +429,15 @@
         <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks if a dynamic site requires an update.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if rule does not need updating, false otherwise.</para>
+        </returns>
         <param name="site">
           <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
       </Docs>

@@ -46,12 +46,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a program database (PDB) symbol generator.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A PDB symbol generator.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MarkSequencePoint">

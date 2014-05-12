@@ -76,7 +76,6 @@
         <Parameter Name="lparam" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A hook procedure is a mechanism by which a function can intercept events before they reach an application. When you override the <see cref="M:System.Windows.Forms.CommonDialog.HookProc(System.IntPtr,System.Int32,System.IntPtr,System.IntPtr)" /> method for a <see cref="T:System.Windows.Forms.CommonDialog" /> class, the operating system invokes your override of the function to post operating system messages to the window.</para>
@@ -90,6 +89,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines the common dialog box hook procedure that is overridden to add specific functionality to a common dialog box.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A zero value if the default dialog box procedure processes the message; a nonzero value if the default dialog box procedure ignores the message.</para>
+        </returns>
         <param name="hWnd">
           <attribution license="cc4" from="Microsoft" modified="false" />The handle to the dialog box window. </param>
         <param name="msg">
@@ -143,7 +146,6 @@
         <Parameter Name="lparam" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Control is transferred here when messages are sent to the owner window of the common dialog box. Inheriting classes can override this method to add specific functionality to a common dialog box.</para>
@@ -152,6 +154,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines the owner window procedure that is overridden to add specific functionality to a common dialog box.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The result of the message processing, which is dependent on the message sent.</para>
+        </returns>
         <param name="hWnd">
           <attribution license="cc4" from="Microsoft" modified="false" />The window handle of the message to send. </param>
         <param name="msg">
@@ -195,7 +201,6 @@
         <Parameter Name="hwndOwner" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is invoked when the user of a common dialog box calls <see cref="M:System.Windows.Forms.CommonDialog.ShowDialog" />, and it must be overridden by inherited classes of <see cref="T:System.Windows.Forms.CommonDialog" /> to implement a specific common dialog box.</para>
@@ -204,6 +209,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, specifies a common dialog box.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the dialog box was successfully run; otherwise, false.</para>
+        </returns>
         <param name="hwndOwner">
           <attribution license="cc4" from="Microsoft" modified="false" />A value that represents the window handle of the owner window for the common dialog box. </param>
       </Docs>
@@ -220,7 +229,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method implements <see cref="M:System.Windows.Forms.CommonDialog.RunDialog(System.IntPtr)" />.</para>
@@ -229,6 +237,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Runs a common dialog box with a default owner.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Windows.Forms.DialogResult.OK" /> if the user clicks OK in the dialog box; otherwise, <see cref="F:System.Windows.Forms.DialogResult.Cancel" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -245,7 +258,6 @@
         <Parameter Name="owner" Type="System.Windows.Forms.IWin32Window" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the <see cref="M:System.Windows.Forms.CommonDialog.ShowDialog" /> method allows you to specify a specific form or control that will own the dialog box that is shown. If you use the version of this method that has no parameters, the dialog box being shown would be owned automatically by the currently active window of your application.</para>
@@ -254,6 +266,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Runs a common dialog box with the specified owner.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="F:System.Windows.Forms.DialogResult.OK" /> if the user clicks <ui>OK</ui> in the dialog box; otherwise, <see cref="F:System.Windows.Forms.DialogResult.Cancel" />.</para>
+        </returns>
         <param name="owner">
           <attribution license="cc4" from="Microsoft" modified="false" />Any object that implements <see cref="T:System.Windows.Forms.IWin32Window" /> that represents the top-level window that will own the modal dialog box. </param>
       </Docs>

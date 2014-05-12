@@ -188,7 +188,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> for the <see cref="T:System.Windows.Forms.CurrencyManager" /> is used to specify a column in the list.</para>
@@ -197,6 +196,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the property descriptor collection for the underlying list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> for the list.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -217,7 +220,6 @@
         <Parameter Name="listAccessors" Type="System.Collections.ArrayList" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For the <see cref="M:System.Windows.Forms.CurrencyManager.GetListName(System.Collections.ArrayList)" /> method to be successful, the underlying list must be of type <see cref="T:System.ComponentModel.ITypedList" />.</para>
@@ -226,6 +228,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name of the list supplying the data for the binding using the specified set of bound properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, a <see cref="T:System.String" /> containing name of the list supplying the data for the binding; otherwise, an <see cref="F:System.String.Empty" /> string.</para>
+        </returns>
         <param name="listAccessors">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.ArrayList" /> of properties to be found in the data source.</param>
       </Docs>

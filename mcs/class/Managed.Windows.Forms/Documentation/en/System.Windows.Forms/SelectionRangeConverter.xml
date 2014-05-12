@@ -57,7 +57,6 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Windows.Forms.SelectionRangeConverter" /> class is specialized to convert between the types <see cref="T:System.String" /> and <see cref="T:System.Windows.Forms.SelectionRange" />. As a result, the <see cref="M:System.Windows.Forms.SelectionRangeConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)" /> method returns true if the <paramref name="sourceType" /> parameter is of type <see cref="T:System.String" />. Otherwise, it defers the call to the base implementation of this method, <see cref="M:System.ComponentModel.TypeConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)" />.</para>
@@ -66,6 +65,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if this converter can convert an object of the specified source type to the native type of the converter by querying the supplied type descriptor context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the converter can perform the specified conversion; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="sourceType">
@@ -87,7 +90,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.SelectionRangeConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Type)" /> method returns true if the <paramref name="destinationType" /> parameter is of type <see cref="T:System.String" /> or <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" />. Otherwise, it defers the call to the base implementation of this method, <see cref="M:System.ComponentModel.TypeConverter.CanConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Type)" />.</para>
@@ -96,6 +98,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether this converter can convert an object to the specified destination type by using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this converter can perform the specified conversion; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="destinationType">
@@ -118,7 +124,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.SelectionRangeConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)" /> method is specialized to convert <see cref="T:System.String" /> values that represent a range of dates to their <see cref="T:System.Windows.Forms.SelectionRange" /> representations. Types other than <see cref="T:System.String" /> are passed to the base class implementation of this method.</para>
@@ -127,6 +132,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified value to the converter's native type by using the specified locale.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted <paramref name="value" />. </para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="culture">
@@ -152,7 +161,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.SelectionRangeConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)" /> method is specialized to convert <see cref="T:System.Windows.Forms.SelectionRange" /> values to their <see cref="T:System.String" /> or <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" /> representations. Other types are passed to the base class implementation of this method.</para>
@@ -161,6 +169,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified <see cref="T:System.Windows.Forms.SelectionRangeConverter" /> object to another type by using the specified culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted <paramref name="value" />.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="culture">
@@ -186,7 +198,6 @@
         <Parameter Name="propertyValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="Overload:System.Windows.Forms.SelectionRangeConverter.CreateInstance" /> method to make changes to an existing immutable object by creating a modified version of it. This method expects the <paramref name="propertyValues" /> parameter to have elements with key values of Start and End, each with the corresponding <see cref="T:System.DateTime" /> value. </para>
@@ -195,6 +206,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Windows.Forms.SelectionRange" /> object by using the specified type descriptor and set of property values for that object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, the newly created <see cref="T:System.Windows.Forms.SelectionRange" />; otherwise, this method throws an exception.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="propertyValues">
@@ -215,7 +230,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation always returns true.</para>
@@ -224,6 +238,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if changing a value on an instance should require a call to <see cref="Overload:System.Windows.Forms.SelectionRangeConverter.CreateInstance" /> to create a new value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="Overload:System.Windows.Forms.SelectionRangeConverter.CreateInstance" /> must be called to make a change to one or more properties; otherwise false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
       </Docs>
@@ -244,7 +262,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation of this method does not use the <paramref name="context" /> or <paramref name="value" /> parameters, but simply refers the call to the TypeDescriptor.<see cref="M:System.ComponentModel.TypeDescriptor.GetProperties(System.Type,System.Attribute[])" /> method.</para>
@@ -253,6 +270,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the set of filtered properties for the <see cref="T:System.Windows.Forms.SelectionRange" /> type </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, the set of properties that should be exposed for the <see cref="T:System.Windows.Forms.SelectionRange" /> type; otherwise, null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="value">
@@ -275,7 +296,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation always returns true.</para>
@@ -284,6 +304,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current object supports properties that use the specified type descriptor context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="Overload:System.Windows.Forms.SelectionRangeConverter.GetProperties" /> can be called to find the properties of a <see cref="T:System.Windows.Forms.SelectionRange" /> object; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
       </Docs>

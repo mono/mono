@@ -52,7 +52,6 @@
         <Parameter Name="months" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -66,6 +65,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the date that is the specified number of months away from the specified date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.DateTime" /> that results from adding the specified number of months to the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add <paramref name="months" />. </param>
         <param name="months">
@@ -88,7 +91,6 @@
         <Parameter Name="years" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -102,6 +104,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the date that is the specified number of years away from the specified date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.DateTime" /> that results from adding the specified number of years to the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add <paramref name="years" />. </param>
         <param name="years">
@@ -144,13 +150,16 @@
         <Parameter Name="sexagenaryYear" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the celestial stem of the specified year in the sexagenary (60-year) cycle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number from 1 through 10.</para>
+        </returns>
         <param name="sexagenaryYear">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 through 60 that represents a year in the sexagenary cycle. </param>
       </Docs>
@@ -170,13 +179,16 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the day of the month in the specified date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 through 31 that represents the day of the month specified in the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -196,13 +208,16 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the day of the week in the specified date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.DayOfWeek" /> values that represents the day of the week specified in the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -222,7 +237,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -232,6 +246,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the day of the year in the specified date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 through 354 in a common year, or 1 through 384 in a leap year, that represents the day of the year specified in the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -253,7 +271,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -263,6 +280,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of days in the specified month of the specified year and era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified month of the specified year and era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -287,7 +308,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -297,6 +317,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of days in the specified year and era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified year and era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="era">
@@ -319,7 +343,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -329,6 +352,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the leap month for the specified year and era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A positive integer from 1 through 13 that indicates the leap month in the specified year and era.</para>
+          <para> -or-</para>
+          <para>Zero if this calendar does not support a leap month, or if the <paramref name="year" /> and <paramref name="era" /> parameters do not specify a leap year.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year.</param>
         <param name="era">
@@ -350,13 +379,16 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the month in the specified date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 to 13 that represents the month specified in the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -377,13 +409,16 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of months in the specified year and era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of months in the specified year in the specified era. The return value is 12 months in a common year or 13 months in a leap year.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="era">
@@ -405,13 +440,16 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the year in the sexagenary (60-year) cycle that corresponds to the specified date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number from 1 through 60 in the sexagenary cycle that corresponds to the <paramref name="date" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.DateTime" /> to read.</param>
       </Docs>
@@ -431,13 +469,16 @@
         <Parameter Name="sexagenaryYear" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the terrestrial branch of the specified year in the sexagenary (60-year) cycle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 through 12.</para>
+        </returns>
         <param name="sexagenaryYear">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer from 1 through 60 that represents a year in the sexagenary cycle.</param>
       </Docs>
@@ -457,13 +498,16 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the year in the specified date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the year in the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -486,13 +530,16 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified date in the specified era is a leap day.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified day is a leap day; otherwise, false.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -520,13 +567,16 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified month in the specified year and era is a leap month.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="month" /> parameter is a leap month; otherwise, false.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -551,13 +601,16 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified year in the specified era is a leap year.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified year is a leap year; otherwise, false.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="era">
@@ -586,7 +639,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -596,6 +648,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.DateTime" /> that is set to the specified date, time, and era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DateTime" /> that is set to the specified date, time, and era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -629,7 +685,6 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -641,6 +696,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified year to a four-digit year.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that contains the four-digit representation of the <paramref name="year" /> parameter.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A two-digit or four-digit integer that represents the year to convert. </param>
       </Docs>

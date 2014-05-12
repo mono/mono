@@ -162,7 +162,6 @@
         <Parameter Name="nextSink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessageSink'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current method is an implementation of <see cref="M:System.Runtime.Remoting.Contexts.IContributeClientContextSink.GetClientContextSink(System.Runtime.Remoting.Messaging.IMessageSink)" />.</para>
@@ -171,6 +170,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a CallOut sink and chains it in front of the provided chain of sinks at the context boundary on the client end of a remoting call.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The composite sink chain with the new CallOut sink.</para>
+        </returns>
         <param name="nextSink">
           <attribution license="cc4" from="Microsoft" modified="false" />The chain of sinks composed so far. </param>
       </Docs>
@@ -221,7 +224,6 @@
         <Parameter Name="nextSink" Type="System.Runtime.Remoting.Messaging.IMessageSink" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Runtime.Remoting.Messaging.IMessageSink'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The current method is an implementation of <see cref="M:System.Runtime.Remoting.Contexts.IContributeServerContextSink.GetServerContextSink(System.Runtime.Remoting.Messaging.IMessageSink)" />.</para>
@@ -230,6 +232,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a synchronized dispatch sink and chains it in front of the provided chain of sinks at the context boundary on the server end of a remoting call.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The composite sink chain with the new synchronized dispatch sink.</para>
+        </returns>
         <param name="nextSink">
           <attribution license="cc4" from="Microsoft" modified="false" />The chain of sinks composed so far. </param>
       </Docs>
@@ -256,12 +262,15 @@
         <Parameter Name="msg" Type="System.Runtime.Remoting.Activation.IConstructionCallMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Boolean value indicating whether the context parameter meets the context attribute's requirements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the passed in context is OK; otherwise, false.</para>
+        </returns>
         <param name="ctx">
           <attribution license="cc4" from="Microsoft" modified="false" />The context to check. </param>
         <param name="msg">

@@ -235,10 +235,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Security.Permissions.FileIOPermission" /> object with the security
-   information of the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method should be called only by the security system, never by application code.</para>
@@ -248,6 +244,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a new <see cref="T:System.Security.Permissions.FileIOPermission" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Permissions.FileIOPermission" /> that corresponds to this attribute.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

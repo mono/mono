@@ -154,13 +154,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Impersonates the user represented by the application identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that represents the Windows user prior to impersonation; this object can be used to revert to the original user's context.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -176,13 +179,16 @@
         <Parameter Name="token" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Impersonates the user represented by the specified user token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that represents the Windows user prior to impersonation; this object can be used to revert to the original user's context.</para>
+        </returns>
         <param name="token">
           <attribution license="cc4" from="Microsoft" modified="false" />The handle of a Windows account token.</param>
       </Docs>
@@ -201,7 +207,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -211,6 +216,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Impersonates the user specified by the configuration settings for the specified virtual path, or the specified user token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that represents the Windows user prior to impersonation; this object can be used to revert to the original user's context.</para>
+        </returns>
         <param name="userToken">
           <attribution license="cc4" from="Microsoft" modified="false" />The handle of a Windows account token.</param>
         <param name="virtualPath">
@@ -271,7 +280,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -281,6 +289,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gives the <see cref="T:System.Web.Hosting.HostingEnvironment" /> object an infinite lifetime by preventing a lease from being created.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -339,13 +351,16 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Maps a virtual path to a physical path on the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path on the server specified by <paramref name="virtualPath" />.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The virtual path (absolute or relative).</param>
       </Docs>
@@ -432,7 +447,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -442,6 +456,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the current thread to the culture specified in the application configuration file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that represents the culture prior to changing; this object can be used to revert to the previous culture.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -457,7 +475,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -467,6 +484,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the current thread to the culture of the specified virtual path.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IDisposable" /> object that represents the culture prior to changing; this object can be used to revert to the previous culture.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The path that contains the culture information.</param>
       </Docs>

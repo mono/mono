@@ -353,10 +353,6 @@ value does not include header information.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" />
-containing the hash code for the current instance.</para>
-        </returns>
         <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -366,6 +362,10 @@ containing the hash code for the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash value for a <see cref="T:System.Net.HttpWebResponse" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer hash value.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
       <AssemblyInfo>
@@ -419,10 +419,6 @@ containing the hash code for the current instance.</para>
         <Parameter Name="headerName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" /> containing the value of the specified header.
-   </para>
-        </returns>
         <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -432,6 +428,10 @@ containing the hash code for the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the contents of a header that was returned with the response.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The contents of the specified header.</para>
+        </returns>
         <param name="headerName">
           <attribution license="cc4" from="Microsoft" modified="false" />The header value to return. </param>
       </Docs>
@@ -452,9 +452,6 @@ containing the hash code for the current instance.</para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.IO.Stream" /> containing the body of the response.</para>
-        </returns>
         <exception cref="T:System.ObjectDisposedException">The current instance has been disposed.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -470,6 +467,10 @@ containing the hash code for the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the stream that is used to read the body of the response from the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> containing the body of the response.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

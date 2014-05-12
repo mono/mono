@@ -192,12 +192,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new transport binding element from this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created <see cref="T:System.ServiceModel.Channels.TransportBindingElement" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DecompressionEnabled">

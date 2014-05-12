@@ -105,13 +105,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new configuration element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.Configuration.BypassElement" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetElementKey">
@@ -134,13 +137,16 @@
         <Parameter Name="element" Type="System.Configuration.ConfigurationElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the key for the specified configuration element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key value of <paramref name="element" />.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.Configuration.BypassElement" />.</param>
       </Docs>
@@ -160,13 +166,16 @@
         <Parameter Name="element" Type="System.Net.Configuration.BypassElement" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the index of the specified configuration element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of <paramref name="element" />.</para>
+        </returns>
         <param name="element">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.Configuration.BypassElement" />.</param>
       </Docs>

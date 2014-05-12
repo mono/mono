@@ -96,7 +96,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use CreateMask() to create the first mask in a series and CreateMask(int) for all subsequent masks.</para>
@@ -109,6 +108,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the first mask in a series of masks that can be used to retrieve individual bits in a <see cref="T:System.Collections.Specialized.BitVector32" /> that is set up as bit flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A mask that isolates the first bit flag in the <see cref="T:System.Collections.Specialized.BitVector32" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateMask">
@@ -127,7 +130,6 @@
         <Parameter Name="previous" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use CreateMask() to create the first mask in a series and CreateMask(int) for all subsequent masks.</para>
@@ -140,6 +142,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an additional mask following the specified mask in a series of masks that can be used to retrieve individual bits in a <see cref="T:System.Collections.Specialized.BitVector32" /> that is set up as bit flags.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A mask that isolates the bit flag following the one that <paramref name="previous" /> points to in <see cref="T:System.Collections.Specialized.BitVector32" />.</para>
+        </returns>
         <param name="previous">
           <attribution license="cc4" from="Microsoft" modified="false" />The mask that indicates the previous bit flag. </param>
       </Docs>
@@ -160,7 +166,6 @@
         <Parameter Name="maxValue" Type="System.Int16" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'BitVector32+Section'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <see cref="T:System.Collections.Specialized.BitVector32.Section" /> is a window into the <see cref="T:System.Collections.Specialized.BitVector32" /> and is composed of the smallest number of consecutive bits that can contain the maximum value specified in <see cref="M:System.Collections.Specialized.BitVector32.CreateSection(System.Int16)" />. For example, a section with a maximum value of 1 is composed of only one bit, whereas a section with a maximum value of 5 is composed of three bits. You can create a <see cref="T:System.Collections.Specialized.BitVector32.Section" /> with a maximum value of 1 to serve as a Boolean, thereby allowing you to store integers and Booleans in the same <see cref="T:System.Collections.Specialized.BitVector32" />.</para>
@@ -171,6 +176,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the first <see cref="T:System.Collections.Specialized.BitVector32.Section" /> in a series of sections that contain small integers.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.BitVector32.Section" /> that can hold a number from zero to <paramref name="maxValue" />.</para>
+        </returns>
         <param name="maxValue">
           <attribution license="cc4" from="Microsoft" modified="false" />A 16-bit signed integer that specifies the maximum value for the new <see cref="T:System.Collections.Specialized.BitVector32.Section" />. </param>
       </Docs>
@@ -240,7 +249,6 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The object <paramref name="o" /> is considered equal to the <see cref="T:System.Collections.Specialized.BitVector32" /> if the type of <paramref name="o" /> is compatible with the <see cref="T:System.Collections.Specialized.BitVector32" /> type and if the value of <paramref name="o" /> is equal to the value of <see cref="P:System.Collections.Specialized.BitVector32.Data" />.</para>
@@ -250,6 +258,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object is equal to the <see cref="T:System.Collections.Specialized.BitVector32" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object is equal to the <see cref="T:System.Collections.Specialized.BitVector32" />; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current <see cref="T:System.Collections.Specialized.BitVector32" />. </param>
       </Docs>
@@ -268,7 +280,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The hash code of a <see cref="T:System.Collections.Specialized.BitVector32" /> is based on the value of <see cref="P:System.Collections.Specialized.BitVector32.Data" />. Two instances of <see cref="T:System.Collections.Specialized.BitVector32" /> with the same value for <see cref="P:System.Collections.Specialized.BitVector32.Data" /> will also generate the same hash code.</para>
@@ -278,6 +289,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serves as a hash function for the <see cref="T:System.Collections.Specialized.BitVector32" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the <see cref="T:System.Collections.Specialized.BitVector32" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -338,7 +353,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method overrides <see cref="M:System.Object.ToString" />.</para>
@@ -348,6 +362,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the current <see cref="T:System.Collections.Specialized.BitVector32" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Collections.Specialized.BitVector32" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -366,7 +384,6 @@
         <Parameter Name="value" Type="System.Collections.Specialized.BitVector32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is an O(1) operation.</para>
@@ -375,6 +392,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the specified <see cref="T:System.Collections.Specialized.BitVector32" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the specified <see cref="T:System.Collections.Specialized.BitVector32" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Specialized.BitVector32" /> to represent. </param>
       </Docs>

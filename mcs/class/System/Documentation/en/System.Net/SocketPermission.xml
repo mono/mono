@@ -225,9 +225,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Net.SocketPermission" /> containing the same values as the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The object returned by this method represents the same level of access as the current instance. This method overrides <see cref="M:System.Security.CodeAccessPermission.Copy" /> and is implemented to support the <see cref="T:System.Security.IPermission" /> interface.</para>
@@ -236,6 +233,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of a <see cref="T:System.Net.SocketPermission" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Net.SocketPermission" /> class that is a copy of the current instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -295,14 +296,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new <see cref="T:System.Net.SocketPermission" /> instance that represents the intersection of the
-   current instance and <paramref name="target" />. If target is
-<see langword="null" />, returns <see langword="null" />. If the intersection is
-   empty, returns <see langword="null" />. If the
-   current instance is unrestricted, returns a copy of <paramref name="target" />. If
-<paramref name="target" /> is unrestricted, returns a copy of the current instance.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="target" /> is not of type <see cref="T:System.Net.SocketPermission" /> .</exception>
         <remarks>
@@ -313,6 +306,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the logical intersection between two <see cref="T:System.Net.SocketPermission" /> instances.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.SocketPermission" /> instance that represents the intersection of two <see cref="T:System.Net.SocketPermission" /> instances. If the intersection is empty, the method returns null. If the <paramref name="target" /> parameter is a null reference, the method returns null.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.SocketPermission" /> instance to intersect with the current instance. </param>
       </Docs>
@@ -335,15 +332,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the current instance is a subset of <paramref name="target" /> ;
-   otherwise,<see langword=" false" />. If the current instance is unrestricted, and
-<paramref name="target" /> is not, returns <see langword="false" />. If <paramref name="target" /> is 
-   unrestricted, returns <see langword="true" />. If <paramref name="target" /> is
-<see langword="null" /> 
-and the current instance does not secure any resources and is not unrestricted, returns <see langword="true" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <para>
             <paramref name="target " />is not <see langword="null" /> and is not of type <see cref="T:System.Net.SocketPermission" />.</para>
@@ -357,6 +345,10 @@ and the current instance does not secure any resources and is not unrestricted, 
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the current permission is a subset of the specified permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="target" /> is null, this method returns true if the current instance defines no permissions; otherwise, false. If <paramref name="target" /> is not null, this method returns true if the current instance defines a subset of <paramref name="target" /> permissions; otherwise, false.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Net.SocketPermission" /> that is to be tested for the subset relationship. </param>
       </Docs>
@@ -376,12 +368,15 @@ and the current instance does not secure any resources and is not unrestricted, 
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Checks the overall permission state of the object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Net.SocketPermission" /> instance is created with the Unrestricted value from <see cref="T:System.Security.Permissions.PermissionState" />; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToXml">
@@ -399,9 +394,6 @@ and the current instance does not secure any resources and is not unrestricted, 
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Security.SecurityElement" /> containing the XML encoding of the state of the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.SocketPermission.ToXml" /> method creates a <see cref="T:System.Security.SecurityElement" /> instance to encode a representation of the <see cref="T:System.Net.SocketPermission" /> instance, including state information, in XML.</para>
@@ -411,6 +403,10 @@ and the current instance does not secure any resources and is not unrestricted, 
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an XML encoding of a <see cref="T:System.Net.SocketPermission" /> instance and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.SecurityElement" /> instance that contains an XML-encoded representation of the <see cref="T:System.Net.SocketPermission" /> instance, including state information.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -431,11 +427,6 @@ and the current instance does not secure any resources and is not unrestricted, 
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Net.SocketPermission" /> instance that represents the union of the current
- instance and <paramref name="target" />. If the current instance or <paramref name="target " />is
- unrestricted, returns a <see cref="T:System.Net.SocketPermission" /> instance that is unrestricted.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="target " /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentException">
@@ -448,6 +439,10 @@ and the current instance does not secure any resources and is not unrestricted, 
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the logical union between two <see cref="T:System.Net.SocketPermission" /> instances.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Net.SocketPermission" /> instance that represents the union of two <see cref="T:System.Net.SocketPermission" /> instances. If <paramref name="target" /> parameter is null, it returns a copy of the current instance.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Net.SocketPermission" /> instance to combine with the current instance. </param>
       </Docs>

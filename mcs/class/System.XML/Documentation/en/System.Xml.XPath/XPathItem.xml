@@ -126,7 +126,6 @@
         <Parameter Name="returnType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -136,6 +135,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the item's value as the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the item as the type requested.</para>
+        </returns>
         <param name="returnType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to return the item value as.</param>
       </Docs>
@@ -156,7 +159,6 @@
         <Parameter Name="nsResolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -168,6 +170,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the item's value as the type specified using the <see cref="T:System.Xml.IXmlNamespaceResolver" /> object specified to resolve namespace prefixes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the item as the type requested.</para>
+        </returns>
         <param name="returnType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to return the item's value as.</param>
         <param name="nsResolver">

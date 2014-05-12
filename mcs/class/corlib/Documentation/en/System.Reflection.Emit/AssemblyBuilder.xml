@@ -161,7 +161,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ModuleBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>It is an error to define multiple dynamic modules with the same name in an assembly.</para>
@@ -177,6 +176,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a named transient dynamic module in this assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.ModuleBuilder" /> representing the defined dynamic module.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic module. Must be less than 260 characters in length. </param>
       </Docs>
@@ -198,7 +201,6 @@
         <Parameter Name="emitSymbolInfo" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ModuleBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>It is an error to define multiple dynamic modules with the same name in an assembly.</para>
@@ -214,6 +216,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a named transient dynamic module in this assembly and specifies whether symbol information should be emitted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.ModuleBuilder" /> representing the defined dynamic module.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic module. Must be less than 260 characters in length. </param>
         <param name="emitSymbolInfo">
@@ -237,7 +243,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ModuleBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To define a persistable dynamic module, this assembly needs to be created with the <see cref="F:System.Reflection.Emit.AssemblyBuilderAccess.Save" /> or the <see cref="F:System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave" /> attribute.</para>
@@ -254,6 +259,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a persistable dynamic module with the given name that will be saved to the specified file. No symbol information is emitted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.ModuleBuilder" /> object representing the defined dynamic module.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic module. Must be less than 260 characters in length. </param>
         <param name="fileName">
@@ -278,7 +287,6 @@
         <Parameter Name="emitSymbolInfo" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ModuleBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To define a persistable dynamic module, this assembly needs to be created with the <see cref="F:System.Reflection.Emit.AssemblyBuilderAccess.Save" /> or the <see cref="F:System.Reflection.Emit.AssemblyBuilderAccess.RunAndSave" /> attribute.</para>
@@ -295,6 +303,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a persistable dynamic module, specifying the module name, the name of the file to which the module will be saved, and whether symbol information should be emitted using the default symbol writer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.ModuleBuilder" /> object representing the defined dynamic module.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the dynamic module. Must be less than 260 characters in length. </param>
         <param name="fileName">
@@ -321,7 +333,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Resources.IResourceWriter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Fine grain resources can be added with the returned <see cref="T:System.Resources.ResourceWriter" /> by calling <see cref="M:System.Resources.ResourceWriter.AddResource(System.String,System.String)" />.</para>
@@ -336,6 +347,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a standalone managed resource for this assembly with the default public resource attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Resources.ResourceWriter" /> object for the specified resource.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The logical name of the resource. </param>
         <param name="description">
@@ -363,7 +378,6 @@
         <Parameter Name="attribute" Type="System.Reflection.ResourceAttributes" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Resources.IResourceWriter'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Fine-grain resources can be added with the returned <see cref="T:System.Resources.ResourceWriter" /> by calling <see cref="M:System.Resources.ResourceWriter.AddResource(System.String,System.String)" />.</para>
@@ -378,6 +392,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Defines a standalone managed resource for this assembly. Attributes can be specified for the managed resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Resources.ResourceWriter" /> object for the specified resource.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The logical name of the resource. </param>
         <param name="description">
@@ -556,12 +574,15 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> equals the type and value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />An object to compare with this instance, or null.</param>
       </Docs>
@@ -602,12 +623,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the custom attributes that have been applied to the current <see cref="T:System.Reflection.Emit.AssemblyBuilder" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the custom attributes; the array is empty if there are no attributes.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />This argument is ignored for objects of this type.</param>
       </Docs>
@@ -627,12 +651,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the custom attributes that have been applied to the current <see cref="T:System.Reflection.Emit.AssemblyBuilder" />, and that derive from a specified attribute type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the custom attributes that are derived at any level from <paramref name="attributeType" />; the array is empty if there are no such attributes.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The base type from which attributes derive.</param>
         <param name="inherit">
@@ -655,12 +682,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ModuleBuilder'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the dynamic module with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A ModuleBuilder object representing the requested dynamic module.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the requested dynamic module. </param>
       </Docs>
@@ -679,12 +709,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the exported types defined in this assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Type" /> containing the exported types defined in this assembly.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetFile">
@@ -703,7 +736,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -713,6 +745,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.IO.FileStream" /> for the specified file in the file table of the manifest of this assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.FileStream" /> for the specified file, or null, if the file is not found.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the specified file. </param>
       </Docs>
@@ -733,12 +769,15 @@
         <Parameter Name="getResourceModules" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the files in the file table of an assembly manifest, specifying whether to include resource modules.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.IO.FileStream" /> objects.</para>
+        </returns>
         <param name="getResourceModules">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include resource modules; otherwise, false. </param>
       </Docs>
@@ -755,12 +794,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetLoadedModules">
@@ -777,12 +819,15 @@
         <Parameter Name="getResourceModules" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all the loaded modules that are part of this assembly, and optionally includes resource modules. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded modules that are part of this assembly.</para>
+        </returns>
         <param name="getResourceModules">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include resource modules; otherwise, false.</param>
       </Docs>
@@ -803,12 +848,16 @@
         <Parameter Name="resourceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns information about how the given resource has been persisted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.Reflection.ManifestResourceInfo" /> populated with information about the resource's topology, or null if the resource is not found.</para>
+        </returns>
         <param name="resourceName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource. </param>
       </Docs>
@@ -827,12 +876,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the specified manifest resource from this assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type String containing the names of all the resources.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetManifestResourceStream">
@@ -851,12 +903,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the specified manifest resource from this assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> representing this manifest resource.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the manifest resource being requested. </param>
       </Docs>
@@ -878,7 +933,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned <see cref="T:System.IO.Stream" /> has its file pointer set to the beginning of the resource.</para>
@@ -887,6 +941,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads the specified manifest resource, scoped by the namespace of the specified type, from this assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> representing this manifest resource.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type whose namespace is used to scope the manifest resource name. </param>
         <param name="name">
@@ -907,12 +965,15 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the specified module in this assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The module being requested, or null if the module is not found.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the requested module.</param>
       </Docs>
@@ -931,12 +992,15 @@
         <Parameter Name="getResourceModules" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets all the modules that are part of this assembly, and optionally includes resource modules.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The modules that are part of this assembly.</para>
+        </returns>
         <param name="getResourceModules">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include resource modules; otherwise, false.</param>
       </Docs>
@@ -955,12 +1019,15 @@
         <Parameter Name="copiedName" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Reflection.AssemblyName" /> that was specified when the current dynamic assembly was created, and sets the code base as specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the dynamic assembly.</para>
+        </returns>
         <param name="copiedName">
           <attribution license="cc4" from="Microsoft" modified="false" />true to set the code base to the location of the assembly after it is shadow-copied; false to set the code base to the original location.</param>
       </Docs>
@@ -977,7 +1044,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method does not return a complete list of referenced assemblies. For example, if you apply a custom attribute to the <see cref="T:System.Reflection.Emit.AssemblyBuilder" />, the assembly in which the attribute was defined is included in the list returned by this method. However, if you use a <see cref="T:System.Type" /> object to specify the type of a method parameter, that type is not included.</para>
@@ -987,6 +1053,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an incomplete list of <see cref="T:System.Reflection.AssemblyName" /> objects for the assemblies that are referenced by this <see cref="T:System.Reflection.Emit.AssemblyBuilder" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of assembly names for the referenced assemblies. This array is not a complete list.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSatelliteAssembly">
@@ -1003,7 +1073,6 @@
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Satellite assemblies contain localized resources, as distinct from main application assemblies, which contain non-localizable executable code and resources for a single culture that serve as the default or neutral culture.</para>
@@ -1013,6 +1082,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the satellite assembly for the specified culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified satellite assembly.</para>
+        </returns>
         <param name="culture">
           <attribution license="cc4" from="Microsoft" modified="false" />The specified culture. </param>
       </Docs>
@@ -1032,7 +1105,6 @@
         <Parameter Name="version" Type="System.Version" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Satellite assemblies contain localized resources, as distinct from main application assemblies, which contain non-localizable executable code and resources for a single culture that serve as the default or neutral culture.</para>
@@ -1042,6 +1114,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the specified version of the satellite assembly for the specified culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified satellite assembly.</para>
+        </returns>
         <param name="culture">
           <attribution license="cc4" from="Microsoft" modified="false" />The specified culture. </param>
         <param name="version">
@@ -1064,7 +1140,6 @@
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A type cannot be found until it has been created by calling the <see cref="M:System.Reflection.Emit.TypeBuilder.CreateType" /> method.</para>
@@ -1073,6 +1148,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the specified type from the types that have been defined and created in the current <see cref="T:System.Reflection.Emit.AssemblyBuilder" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified type, or null if the type is not found or has not been created yet. </para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to search for.</param>
         <param name="throwOnError">
@@ -1140,12 +1219,15 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether one or more instances of the specified attribute type is applied to this member.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more instances of <paramref name="attributeType" /> is applied to this dynamic assembly; otherwise, false.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to test for.</param>
         <param name="inherit">

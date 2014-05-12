@@ -104,7 +104,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportAllBindings" /> method to import all binding information from the metadata documents and return them as <see cref="T:System.ServiceModel.Channels.Binding" /> objects. Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned objects.</para>
@@ -114,6 +113,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a set of <see cref="T:System.ServiceModel.Channels.Binding" /> objects imported from the metadata documents.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A set of <see cref="T:System.ServiceModel.Channels.Binding" /> objects imported from the metadata documents.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ImportAllContracts">
@@ -128,7 +131,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportAllContracts" /> method to import all WSDL port type information from the metadata documents and return them as <see cref="T:System.ServiceModel.Description.ContractDescription" /> objects. It is recommended to check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned objects.</para>
@@ -138,6 +140,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a set of <see cref="T:System.ServiceModel.Description.ContractDescription" /> objects that represent port type information in the metadata documents.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A set of <see cref="T:System.ServiceModel.Description.ContractDescription" /> objects that represent port type information in the metadata documents.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ImportAllEndpoints">
@@ -152,7 +158,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportAllEndpoints" /> method to import all endpoint information from the metadata documents and return them as a collection of <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> objects. Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned objects.</para>
@@ -162,6 +167,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents the endpoints in WSDL documents.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents the endpoints in WSDL documents.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ImportBinding">
@@ -179,7 +188,6 @@
       </Parameters>
       <Docs>
         <param name="binding">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportBinding(System.Web.Services.Description.Binding)" /> method to use a <see cref="T:System.Web.Services.Description.Binding" /> object to locate binding information in the metadata and return that binding information as a <see cref="T:System.ServiceModel.Channels.Binding" /> object. Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
@@ -188,6 +196,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Channels.Binding" /> object that represents binding information from a set of metadata documents.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.Binding" /> object that represents binding information from a set of metadata documents.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ImportContract">
@@ -205,7 +217,6 @@
       </Parameters>
       <Docs>
         <param name="wsdlPortType">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportContract(System.Web.Services.Description.PortType)" /> method to use a <see cref="T:System.Web.Services.Description.PortType" /> object to locate port type information in the metadata and return that information as a <see cref="T:System.ServiceModel.Description.ContractDescription" /> object. Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
@@ -214,6 +225,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Description.ContractDescription" /> object that represents metadata located by the specified port type information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ContractDescription" /> object that represents metadata located by the specified port type information.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ImportEndpoint">
@@ -231,7 +246,6 @@
       </Parameters>
       <Docs>
         <param name="wsdlPort">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.ServiceModel.Description.WsdlImporter.ImportEndpoint(System.Web.Services.Description.Port)" /> method to use a <see cref="T:System.Web.Services.Description.Port" /> object to locate port type information in the metadata and return that information as a <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> object. Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
@@ -240,6 +254,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> from a set of metadata documents that uses information from the specified <see cref="T:System.Web.Services.Description.Port" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> object that represents specific WSDL port information in the metadata document.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ImportEndpoints">
@@ -257,7 +275,6 @@
       </Parameters>
       <Docs>
         <param name="binding">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
@@ -266,6 +283,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types using the specified <see cref="T:System.Web.Services.Description.Binding" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types using the specified <see cref="T:System.Web.Services.Description.Binding" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ImportEndpoints">
@@ -283,7 +304,6 @@
       </Parameters>
       <Docs>
         <param name="portType">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
@@ -292,6 +312,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types associated with the specified <see cref="T:System.Web.Services.Description.PortType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types associated with the specified <see cref="T:System.Web.Services.Description.PortType" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ImportEndpoints">
@@ -309,7 +333,6 @@
       </Parameters>
       <Docs>
         <param name="service">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Check the <see cref="P:System.ServiceModel.Description.MetadataImporter.Errors" /> property to determine whether there are any import errors before using the returned object.</para>
@@ -318,6 +341,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types within the specified <see cref="T:System.Web.Services.Description.Service" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Description.ServiceEndpointCollection" /> that represents all WSDL port types within the specified <see cref="T:System.Web.Services.Description.Service" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WsdlDocuments">

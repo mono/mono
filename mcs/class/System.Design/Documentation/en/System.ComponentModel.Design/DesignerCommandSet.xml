@@ -116,7 +116,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although the base implementation always returns null, the overridden version supplied by the programmer should return a collection of command objects of the type described by <paramref name="name" />. The base implementation of the <see cref="P:System.ComponentModel.Design.DesignerCommandSet.Verbs" /> and <see cref="P:System.ComponentModel.Design.DesignerCommandSet.ActionLists" /> properties specify the following values and meanings for this parameter.</para>
@@ -153,6 +152,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of command objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that contains the specified type—either <see cref="T:System.ComponentModel.Design.DesignerActionList" /> or <see cref="T:System.ComponentModel.Design.DesignerVerb" />—of command objects. The base implementation always returns null.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of collection to return, indicating either a <see cref="T:System.ComponentModel.Design.DesignerActionListCollection" /> or a <see cref="T:System.ComponentModel.Design.DesignerVerbCollection" />.</param>
       </Docs>

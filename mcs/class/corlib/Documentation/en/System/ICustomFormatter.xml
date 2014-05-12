@@ -59,7 +59,6 @@
         <Parameter Name="formatProvider" Type="System.IFormatProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -75,6 +74,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the value of a specified object to an equivalent string representation using specified format and culture-specific formatting information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string representation of the value of <paramref name="arg" />, formatted as specified by <paramref name="format" /> and <paramref name="formatProvider" />.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />A format string containing formatting specifications. </param>
         <param name="arg">

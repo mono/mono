@@ -51,7 +51,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="context" /> parameter can be used to extract additional information about the environment this converter is being invoked from. This can be null, so always check. Also, properties on the context object can return null.</para>
@@ -60,6 +59,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether this converter can convert an object to the given destination type using the context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this converter can perform the conversion; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="destinationType">
@@ -83,7 +86,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The most common types to convert are to and from a string object. The default implementation will make a call to <see cref="M:System.Object.ToString" /> on the object if the object is valid and if the destination type is string. If this cannot convert to the destination type, this will throw a <see cref="T:System.NotSupportedException" />.</para>
@@ -92,6 +94,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given object to another type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted object.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A formatter context. This object can be used to extract additional information about the environment this converter is being invoked from. This may be null, so you should always check. Also, properties on the context object may also return null. </param>
         <param name="culture">

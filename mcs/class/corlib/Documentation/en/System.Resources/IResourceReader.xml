@@ -72,7 +72,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Collections.IDictionaryEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Because <see cref="T:System.Resources.IResourceReader" /> inherits the <see cref="T:System.Collections.IEnumerable" /> interface, it must also provide an implementation of the <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> method, which returns an <see cref="T:System.Collections.IEnumerator" /> object that can be used to enumerate a collection. Typically, <see cref="M:System.Collections.IEnumerable.GetEnumerator" /> is implemented as an explicit interface implementation.</para>
@@ -81,6 +80,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a dictionary enumerator of the resources for this reader.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A dictionary enumerator for the resources for this reader.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

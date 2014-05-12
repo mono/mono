@@ -928,7 +928,6 @@
         <Parameter Name="logName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to determine if a log exists on the local computer. If you want to determine whether a source exists on the local computer, use <see cref="M:System.Diagnostics.EventLog.SourceExists(System.String)" />.</para>
@@ -941,6 +940,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the log exists on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the log exists on the local computer; otherwise, false.</para>
+        </returns>
         <param name="logName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the log to search for. Possible values include: Application, Security, System, other application-specific logs (such as those associated with Active Directory), or any custom log on the computer. </param>
       </Docs>
@@ -967,7 +970,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to determine if a log exists on a remote computer. If you want to determine whether a source exists on a remote computer, use <see cref="M:System.Diagnostics.EventLog.SourceExists(System.String)" />.</para>
@@ -980,6 +982,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the log exists on the specified computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the log exists on the specified computer; otherwise, false.</para>
+        </returns>
         <param name="logName">
           <attribution license="cc4" from="Microsoft" modified="false" />The log for which to search. Possible values include: Application, Security, System, other application-specific logs (such as those associated with Active Directory), or any custom log on the computer. </param>
         <param name="machineName">
@@ -1000,7 +1006,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'EventLog []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The array of <see cref="T:System.Diagnostics.EventLog" /> objects is a snapshot of all event logs on the local computer when the call to <see cref="M:System.Diagnostics.EventLog.GetEventLogs" /> is made. This is not a dynamic collection, so it does not reflect the deletion or creation of logs in real time. You should verify that a log in the array exists before you read or write to it. The array usually includes at least three logs: Application, System, and Security. If you created custom logs on the local computer, they will appear in the array as well.</para>
@@ -1010,6 +1015,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for all event logs on the local computer and creates an array of <see cref="T:System.Diagnostics.EventLog" /> objects that contain the list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Diagnostics.EventLog" /> that represents the logs on the local computer.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetEventLogs">
@@ -1033,7 +1042,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'EventLog []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The array of <see cref="T:System.Diagnostics.EventLog" /> objects is a snapshot of all event logs on the computer specified by the <paramref name="machineName" /> parameter when the call to <see cref="M:System.Diagnostics.EventLog.GetEventLogs" /> is made. This is not a dynamic collection, so it does not reflect the deletion or creation of logs in real time. You should verify that a log in the array exists before you read or write to it. The array usually includes at least three logs: Application, System, and Security. If you created custom logs on the specified computer, they will appear in the array as well.</para>
@@ -1045,6 +1053,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for all event logs on the given computer and creates an array of <see cref="T:System.Diagnostics.EventLog" /> objects that contain the list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of type <see cref="T:System.Diagnostics.EventLog" /> that represents the logs on the given computer.</para>
+        </returns>
         <param name="machineName">
           <attribution license="cc4" from="Microsoft" modified="false" />The computer on which to search for event logs. </param>
       </Docs>
@@ -1161,7 +1173,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The event source indicates what logs the event. It is often the name of the application, or the name of a subcomponent of the application, if the application is large. Applications and services should write to the Application log or a custom log. Device drivers should write to the System log.</para>
@@ -1171,6 +1182,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name of the log to which the specified source is registered.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the log associated with the specified source in the registry.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the event source. </param>
         <param name="machineName">
@@ -1503,7 +1518,6 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to determine whether an event source exists on the local computer. If you want to determine whether a log exists on the local computer, use <see cref="M:System.Diagnostics.EventLog.Exists(System.String)" />.</para>
@@ -1522,6 +1536,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an event source is registered on the local computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the event source is registered on the local computer; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the event source. </param>
       </Docs>
@@ -1548,7 +1566,6 @@
         <Parameter Name="machineName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to determine whether an event source exists on the computer specified by the <paramref name="machineName" /> parameter. If you want to determine whether a log exists on the specified computer, use <see cref="M:System.Diagnostics.EventLog.Exists(System.String)" />.</para>
@@ -1570,6 +1587,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether an event source is registered on a specified computer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the event source is registered on the given computer; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the event source. </param>
         <param name="machineName">

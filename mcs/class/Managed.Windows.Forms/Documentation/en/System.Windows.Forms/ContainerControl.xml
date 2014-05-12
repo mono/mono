@@ -642,7 +642,6 @@
         <Parameter Name="forward" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A control with its <see cref="P:System.Windows.Forms.Control.TabStop" /> property set to false cannot be selected, so the next available control will be selected.</para>
@@ -651,6 +650,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Selects the next available control and makes it the active control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a control is selected; otherwise, false.</para>
+        </returns>
         <param name="forward">
           <attribution license="cc4" from="Microsoft" modified="false" />true to cycle forward through the controls in the <see cref="T:System.Windows.Forms.ContainerControl" />; otherwise, false. </param>
       </Docs>
@@ -694,7 +697,6 @@
         <Parameter Name="control" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="control" /> parameter must be a child of the container control.</para>
@@ -703,6 +705,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Activates the specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control is successfully activated; otherwise, false.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> to activate.</param>
       </Docs>
@@ -737,7 +743,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.Windows.Forms.ContainerControl.Validate" /> method validates the last child control that is not validated and its ancestors up through, but not including, the current container control. This overloaded version always performs validation, regardless of the value of the <see cref="P:System.Windows.Forms.ContainerControl.AutoValidate" /> property of the control's parent. Therefore use it to unconditionally force validation.</para>
@@ -746,6 +751,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies the value of the control losing focus by causing the <see cref="E:System.Windows.Forms.Control.Validating" /> and <see cref="E:System.Windows.Forms.Control.Validated" /> events to occur, in that order. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if validation is successful; otherwise, false. If called from the <see cref="E:System.Windows.Forms.Control.Validating" /> or <see cref="E:System.Windows.Forms.Control.Validated" /> event handlers, this method will always return false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -765,7 +774,6 @@
         <Parameter Name="checkAutoValidate" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.Windows.Forms.ContainerControl.Validate" /> method validates the last child control that is not validated and its ancestors up through, but not including, the current container control. This overloaded version performs validation based on the following conditions:</para>
@@ -782,6 +790,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies the value of the control that is losing focus; conditionally dependent on whether automatic validation is turned on. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if validation is successful; otherwise, false. If called from the <see cref="E:System.Windows.Forms.Control.Validating" /> or <see cref="E:System.Windows.Forms.Control.Validated" /> event handlers, this method will always return false.</para>
+        </returns>
         <param name="checkAutoValidate">
           <attribution license="cc4" from="Microsoft" modified="false" />If true, the value of the <see cref="P:System.Windows.Forms.ContainerControl.AutoValidate" /> property is used to determine if validation should be performed; if false, validation is unconditionally performed.</param>
       </Docs>
@@ -805,7 +817,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -817,6 +828,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Causes all of the child controls within a control that support validation to validate their data. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all of the children validated successfully; otherwise, false. If called from the <see cref="E:System.Windows.Forms.Control.Validating" /> or <see cref="E:System.Windows.Forms.Control.Validated" /> event handlers, this method will always return false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ValidateChildren">
@@ -840,7 +855,6 @@
         <Parameter Name="validationConstraints" Type="System.Windows.Forms.ValidationConstraints" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -854,6 +868,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Causes all of the child controls within a control that support validation to validate their data. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all of the children validated successfully; otherwise, false. If called from the <see cref="E:System.Windows.Forms.Control.Validating" /> or <see cref="E:System.Windows.Forms.Control.Validated" /> event handlers, this method will always return false.</para>
+        </returns>
         <param name="validationConstraints">
           <attribution license="cc4" from="Microsoft" modified="false" />Places restrictions on which controls have their <see cref="E:System.Windows.Forms.Control.Validating" /> event raised.</param>
       </Docs>

@@ -149,7 +149,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -167,6 +166,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the Web page is in postback and returns a name/value collection of the postback variables.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.NameValueCollection" /> of the postback variables, if any; otherwise null. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -186,7 +189,6 @@
       </Parameters>
       <Docs>
         <param name="formID">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Adapters.PageAdapter.GetPostBackFormReference(System.String)" /> method provides a DHTML reference to the postback form. The code fragment has the following format: </para>
@@ -196,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a DHTML code fragment that the client browser can use to reference the form on the page that was posted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> with a reference to the form on the page that was posted.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetRadioButtonsByGroup">
@@ -208,7 +214,6 @@
         <Parameter Name="groupName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -218,6 +223,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a collection of radio button controls specified by <paramref name="groupName" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.ICollection" /> of <see cref="T:System.Web.UI.WebControls.RadioButton" /> controls that make up <paramref name="groupName" />.</para>
+        </returns>
         <param name="groupName">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that is the name of the <see cref="T:System.Web.UI.WebControls.RadioButton" /> group to retrieve. </param>
       </Docs>
@@ -233,7 +242,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -295,6 +303,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that is used by the Web page to maintain the control and view states.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object derived from <see cref="T:System.Web.UI.PageStatePersister" /> that supports creating and extracting the combined control and view states for the <see cref="T:System.Web.UI.Page" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -558,7 +570,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -569,6 +580,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Transforms text for the target browser.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the transformed text.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that is the text to transform.</param>
       </Docs>

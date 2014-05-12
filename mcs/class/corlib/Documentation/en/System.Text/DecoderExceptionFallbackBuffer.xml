@@ -58,7 +58,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -68,6 +67,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Throws <see cref="T:System.Text.DecoderFallbackException" /> when the input byte sequence cannot be decoded. The nominal return value is not used. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>None. No value is returned because the <see cref="M:System.Text.DecoderExceptionFallbackBuffer.Fallback(System.Byte[],System.Int32)" /> method always throws an exception. </para>
+          <para>The nominal return value is true. A return value is defined, although it is unchanging, because this method implements an abstract method.</para>
+        </returns>
         <param name="bytesUnknown">
           <attribution license="cc4" from="Microsoft" modified="false" />An input array of bytes.</param>
         <param name="index">
@@ -87,7 +91,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -97,6 +100,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the next character in the exception data buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value is always the Unicode character NULL (U+0000). </para>
+          <para>A return value is defined, although it is unchanging, because this method implements an abstract method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="MovePrevious">
@@ -112,7 +120,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -122,6 +129,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Causes the next call to <see cref="M:System.Text.DecoderExceptionFallbackBuffer.GetNextChar" /> to access the exception data buffer character position that is prior to the current position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value is always false. </para>
+          <para>A return value is defined, although it is unchanging, because this method implements an abstract method.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Remaining">

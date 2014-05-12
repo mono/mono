@@ -42,7 +42,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version="2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -62,6 +61,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the collection of custom metadata.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of custom metadata.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -114,13 +117,16 @@
         <Parameter Name="metadataName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version="2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the specified metadata entry.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <paramref name="attributeName" /> metadata.</para>
+        </returns>
         <param name="metadataName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the metadata entry.</param>
       </Docs>

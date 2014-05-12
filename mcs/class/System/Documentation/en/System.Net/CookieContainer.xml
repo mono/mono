@@ -375,7 +375,6 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -386,6 +385,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the HTTP cookie header that contains the HTTP cookies that represent the <see cref="T:System.Net.Cookie" /> instances that are associated with a specific URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An HTTP cookie header, with strings representing <see cref="T:System.Net.Cookie" /> instances delimited by semicolons.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the <see cref="T:System.Net.Cookie" /> instances desired. </param>
       </Docs>
@@ -406,7 +409,6 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CookieCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A new instance of a <see cref="T:System.Net.CookieCollection" /> is created. Then the <see cref="T:System.Net.Cookie" /> instances in the internal collection that are associated with the specified URI are read out and added to the new <see cref="T:System.Net.CookieCollection" />.</para>
@@ -415,6 +417,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Net.CookieCollection" /> that contains the <see cref="T:System.Net.Cookie" /> instances that are associated with a specific URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.CookieCollection" /> that contains the <see cref="T:System.Net.Cookie" /> instances that are associated with a specific URI.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI of the <see cref="T:System.Net.Cookie" /> instances desired. </param>
       </Docs>

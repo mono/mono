@@ -46,12 +46,15 @@
         <Parameter Name="interval" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new window timer associated with the system events window.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ID of the new timer.</para>
+        </returns>
         <param name="interval">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies the interval between timer notifications, in milliseconds.</param>
       </Docs>

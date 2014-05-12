@@ -215,7 +215,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'OleDbTransaction'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must explicitly commit or roll back the transaction using the <see cref="M:System.Data.OleDb.OleDbTransaction.Commit" /> or <see cref="M:System.Data.OleDb.OleDbTransaction.Rollback" /> method. To make sure that the .NET Framework Data Provider for OLE DB transaction management model performs correctly, avoid using other transaction management models, such as those provided by the data source.</para>
@@ -224,6 +223,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts a database transaction with the current <see cref="T:System.Data.IsolationLevel" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the new transaction.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -240,7 +243,6 @@
         <Parameter Name="isolationLevel" Type="System.Data.IsolationLevel" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'OleDbTransaction'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must explicitly commit or roll back the transaction using the <see cref="M:System.Data.OleDb.OleDbTransaction.Commit" /> or <see cref="M:System.Data.OleDb.OleDbTransaction.Rollback" /> method. To make sure that the .NET Framework Data Provider for OLE DB transaction management model performs correctly, avoid using other transaction management models, such as those provided by the data source.</para>
@@ -252,6 +254,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts a database transaction with the specified isolation level.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing the new transaction.</para>
+        </returns>
         <param name="isolationLevel">
           <attribution license="cc4" from="Microsoft" modified="false" />The isolation level under which the transaction should run.</param>
       </Docs>
@@ -417,12 +423,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'OleDbCommand'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns an <see cref="T:System.Data.OleDb.OleDbCommand" /> object associated with the <see cref="T:System.Data.OleDb.OleDbConnection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Data.OleDb.OleDbCommand" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -583,7 +592,6 @@
         <Parameter Name="restrictions" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Data.DataTable'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The schema table is returned as a <see cref="T:System.Data.DataTable" /> that has the same format as the OLE DB schema rowset specified by the <paramref name="schema" /> parameter. Use the <paramref name="restrictions" /> parameter to filter the rows to be returned in the <see cref="T:System.Data.DataTable" /> (for example, by specifying restrictions for table name, type, owner, or schema). When you pass values in the array, include empty strings or nulls for array elements that do not contain values. If you pass an empty array to <paramref name="restrictions" />, all rows (one for each table) are returned in default order. Values in the array correspond to the order of the columns in the source table and <see cref="T:System.Data.DataTable" />. Each element in the restrictions array is compared with the content of the corresponding column in the schema rowset. For example, the first element in the restrictions array is compared to first column in the rowset. If a restriction element is not null, only rows from the schema rowset that exactly match the value of the restriction are added to the resulting <see cref="T:System.Data.DataTable" />.</para>
@@ -594,6 +602,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns schema information from a data source as indicated by a GUID, and after it applies the specified restrictions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that contains the requested schema information.</para>
+        </returns>
         <param name="schema">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Data.OleDb.OleDbSchemaGuid" /> values that specifies the schema table to return. </param>
         <param name="restrictions">
@@ -615,12 +627,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns schema information for the data source of this <see cref="T:System.Data.OleDb.OleDbConnection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that contains schema information.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSchema">
@@ -636,7 +651,6 @@
         <Parameter Name="collectionName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When <paramref name="collectionName" /> is specified as null, the <see cref="T:System.Data.DataTable" /> will contain information about all the metadata that is available, and its restrictions.</para>
@@ -645,6 +659,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns schema information for the data source of this <see cref="T:System.Data.OleDb.OleDbConnection" /> using the specified string for the schema name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that contains schema information.</para>
+        </returns>
         <param name="collectionName">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies the name of the schema to return. </param>
       </Docs>
@@ -663,7 +681,6 @@
         <Parameter Name="restrictionValues" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When <paramref name="collectionName" /> is specified as null, the <see cref="T:System.Data.DataTable" /> will contain information about all the metadata that is available, and its restrictions.</para>
@@ -674,6 +691,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns schema information for the data source of this <see cref="T:System.Data.OleDb.OleDbConnection" /> using the specified string for the schema name and the specified string array for the restriction values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that contains schema information.</para>
+        </returns>
         <param name="collectionName">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies the name of the schema to return.</param>
         <param name="restrictionValues">
@@ -967,7 +988,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.OleDb.OleDbConnection" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
@@ -976,6 +996,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.ICloneable.Clone" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Object" /> that is a copy of this instance.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

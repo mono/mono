@@ -77,12 +77,15 @@
         <Parameter Name="osHandle" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Binds an operating system handle to the <see cref="T:System.Threading.ThreadPool" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the handle is bound; otherwise, false.</para>
+        </returns>
         <param name="osHandle">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IntPtr" /> that holds the handle. The handle must have been opened for overlapped I/O on the unmanaged side. </param>
       </Docs>
@@ -102,7 +105,6 @@
         <Parameter Name="osHandle" Type="System.Runtime.InteropServices.SafeHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -112,6 +114,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Binds an operating system handle to the <see cref="T:System.Threading.ThreadPool" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the handle is bound; otherwise, false.</para>
+        </returns>
         <param name="osHandle">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Runtime.InteropServices.SafeHandle" />  that holds the operating system handle. The handle must have been opened for overlapped I/O on the unmanaged side.</param>
       </Docs>
@@ -201,7 +207,6 @@
         <Parameter Name="callBack" Type="System.Threading.WaitCallback" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can place data required by the queued method in the instance fields of the class in which the method is defined, or you can use the <see cref="M:System.Threading.ThreadPool.QueueUserWorkItem(System.Threading.WaitCallback,System.Object)" /> overload that accepts an object containing the necessary data.</para>
@@ -217,6 +222,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Queues a method for execution. The method executes when a thread pool thread becomes available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the method is successfully queued; <see cref="T:System.NotSupportedException" /> is thrown if the work item could not be queued.</para>
+        </returns>
         <param name="callBack">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.WaitCallback" /> that represents the method to be executed. </param>
       </Docs>
@@ -238,7 +247,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the callback method requires complex data, you can define a class to contain the data.</para>
@@ -254,6 +262,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Queues a method for execution, and specifies an object containing data to be used by the method. The method executes when a thread pool thread becomes available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the method is successfully queued; <see cref="T:System.NotSupportedException" /> is thrown if the work item could not be queued.</para>
+        </returns>
         <param name="callBack">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.WaitCallback" /> representing the method to execute. </param>
         <param name="state">
@@ -280,7 +292,6 @@
         <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'RegisteredWaitHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When you are finished using the <see cref="T:System.Threading.RegisteredWaitHandle" /> that is returned by this method, call its <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method to release references to the wait handle. We recommend that you always call the <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method, even if you specify true for <paramref name="executeOnlyOnce" />. Garbage collection works more efficiently if you call the <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method instead of depending on the registered wait handle's finalizer.</para>
@@ -309,6 +320,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a delegate to wait for a <see cref="T:System.Threading.WaitHandle" />, specifying a 32-bit signed integer for the time-out in milliseconds.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.RegisteredWaitHandle" /> that encapsulates the native handle.</para>
+        </returns>
         <param name="waitObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to register. Use a <see cref="T:System.Threading.WaitHandle" /> other than <see cref="T:System.Threading.Mutex" />.</param>
         <param name="callBack">
@@ -341,7 +356,6 @@
         <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'RegisteredWaitHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When you are finished using the <see cref="T:System.Threading.RegisteredWaitHandle" /> that is returned by this method, call its <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method to release references to the wait handle. We recommend that you always call the <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method, even if you specify true for <paramref name="executeOnlyOnce" />. Garbage collection works more efficiently if you call the <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method instead of depending on the registered wait handle's finalizer.</para>
@@ -370,6 +384,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a delegate to wait for a <see cref="T:System.Threading.WaitHandle" />, specifying a 64-bit signed integer for the time-out in milliseconds.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.RegisteredWaitHandle" /> that encapsulates the native handle.</para>
+        </returns>
         <param name="waitObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to register. Use a <see cref="T:System.Threading.WaitHandle" /> other than <see cref="T:System.Threading.Mutex" />.</param>
         <param name="callBack">
@@ -402,7 +420,6 @@
         <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'RegisteredWaitHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When you are finished using the <see cref="T:System.Threading.RegisteredWaitHandle" /> that is returned by this method, call its <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method to release references to the wait handle. We recommend that you always call the <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method, even if you specify true for <paramref name="executeOnlyOnce" />. Garbage collection works more efficiently if you call the <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method instead of depending on the registered wait handle's finalizer.</para>
@@ -431,6 +448,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a delegate to wait for a <see cref="T:System.Threading.WaitHandle" />, specifying a <see cref="T:System.TimeSpan" /> value for the time-out.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.RegisteredWaitHandle" /> that encapsulates the native handle.</para>
+        </returns>
         <param name="waitObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to register. Use a <see cref="T:System.Threading.WaitHandle" /> other than <see cref="T:System.Threading.Mutex" />.</param>
         <param name="callBack">
@@ -468,7 +489,6 @@
         <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'RegisteredWaitHandle'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When you are finished using the <see cref="T:System.Threading.RegisteredWaitHandle" /> that is returned by this method, call its <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method to release references to the wait handle. We recommend that you always call the <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method, even if you specify true for <paramref name="executeOnlyOnce" />. Garbage collection works more efficiently if you call the <see cref="M:System.Threading.RegisteredWaitHandle.Unregister(System.Threading.WaitHandle)" /> method instead of depending on the registered wait handle's finalizer.</para>
@@ -497,6 +517,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a delegate to wait for a <see cref="T:System.Threading.WaitHandle" />, specifying a 32-bit unsigned integer for the time-out in milliseconds.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.RegisteredWaitHandle" /> that can be used to cancel the registered wait operation.</para>
+        </returns>
         <param name="waitObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to register. Use a <see cref="T:System.Threading.WaitHandle" /> other than <see cref="T:System.Threading.Mutex" />.</param>
         <param name="callBack">
@@ -525,7 +549,6 @@
         <Parameter Name="completionPortThreads" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -538,6 +561,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the number of requests to the thread pool that can be active concurrently. All requests above that number remain queued until thread pool threads become available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the change is successful; otherwise, false.</para>
+        </returns>
         <param name="workerThreads">
           <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of worker threads in the thread pool. </param>
         <param name="completionPortThreads">
@@ -561,7 +588,6 @@
         <Parameter Name="completionPortThreads" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The thread pool provides new worker threads or I/O completion threads on demand until it reaches the minimum for each category. When the minimum is reached, the thread pool can create additional threads in that category or wait until some tasks complete. Beginning with the net_v40_short, the thread pool creates and destroys threads in order to optimize throughput, which is defined as the number of tasks that complete per unit of time. Too few threads might not make optimal use of available resources, whereas too many threads could increase resource contention. </para>
@@ -575,6 +601,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the minimum number of threads the thread pool creates on demand, as new requests are made, before switching to an algorithm for managing thread creation and destruction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the change is successful; otherwise, false.</para>
+        </returns>
         <param name="workerThreads">
           <attribution license="cc4" from="Microsoft" modified="false" />The minimum number of worker threads that the thread pool creates on demand. </param>
         <param name="completionPortThreads">
@@ -601,7 +631,6 @@
         <Parameter Name="overlapped" Type="System.Threading.NativeOverlapped*" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -614,6 +643,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Queues an overlapped I/O operation for execution.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation was successfully queued to an I/O completion port; otherwise, false.</para>
+        </returns>
         <param name="overlapped">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.NativeOverlapped" /> structure to queue.</param>
       </Docs>
@@ -635,7 +668,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unlike the <see cref="M:System.Threading.ThreadPool.QueueUserWorkItem(System.Threading.WaitCallback,System.Object)" /> method, <see cref="M:System.Threading.ThreadPool.UnsafeQueueUserWorkItem(System.Threading.WaitCallback,System.Object)" /> does not propagate the calling stack to the worker thread. This allows code to lose the calling stack and thereby to elevate its security privileges.</para>
@@ -647,6 +679,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Queues the specified delegate to the thread pool, but does not propagate the calling stack to the worker thread.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the method succeeds; <see cref="T:System.OutOfMemoryException" /> is thrown if the work item could not be queued.</para>
+        </returns>
         <param name="callBack">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Threading.WaitCallback" /> that represents the delegate to invoke when a thread in the thread pool picks up the work item. </param>
         <param name="state">
@@ -673,7 +709,6 @@
         <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unlike the <see cref="M:System.Threading.ThreadPool.RegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.UInt32,System.Boolean)" /> method, <see cref="M:System.Threading.ThreadPool.UnsafeRegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.Int32,System.Boolean)" /> does not propagate the calling stack to the worker thread. This allows code to lose the calling stack and thereby to elevate its security privileges.</para>
@@ -687,6 +722,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a delegate to wait for a <see cref="T:System.Threading.WaitHandle" />, using a 32-bit signed integer for the time-out in milliseconds. This method does not propagate the calling stack to the worker thread.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.RegisteredWaitHandle" /> object that can be used to cancel the registered wait operation.</para>
+        </returns>
         <param name="waitObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to register. Use a <see cref="T:System.Threading.WaitHandle" /> other than <see cref="T:System.Threading.Mutex" />.</param>
         <param name="callBack">
@@ -719,7 +758,6 @@
         <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unlike the <see cref="M:System.Threading.ThreadPool.RegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.UInt32,System.Boolean)" /> method, <see cref="M:System.Threading.ThreadPool.UnsafeRegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.Int64,System.Boolean)" /> does not propagate the calling stack to the worker thread. This allows code to lose the calling stack and thereby to elevate its security privileges.</para>
@@ -733,6 +771,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a delegate to wait for a <see cref="T:System.Threading.WaitHandle" />, specifying a 64-bit signed integer for the time-out in milliseconds. This method does not propagate the calling stack to the worker thread.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.RegisteredWaitHandle" /> object that can be used to cancel the registered wait operation.</para>
+        </returns>
         <param name="waitObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to register. Use a <see cref="T:System.Threading.WaitHandle" /> other than <see cref="T:System.Threading.Mutex" />.</param>
         <param name="callBack">
@@ -765,7 +807,6 @@
         <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unlike the <see cref="M:System.Threading.ThreadPool.RegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.UInt32,System.Boolean)" /> method, <see cref="M:System.Threading.ThreadPool.UnsafeRegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.TimeSpan,System.Boolean)" /> does not propagate the calling stack to the worker thread. This allows code to lose the calling stack and thereby to elevate its security privileges.</para>
@@ -779,6 +820,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a delegate to wait for a <see cref="T:System.Threading.WaitHandle" />, specifying a <see cref="T:System.TimeSpan" /> value for the time-out. This method does not propagate the calling stack to the worker thread.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.RegisteredWaitHandle" /> object that can be used to cancel the registered wait operation.</para>
+        </returns>
         <param name="waitObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to register. Use a <see cref="T:System.Threading.WaitHandle" /> other than <see cref="T:System.Threading.Mutex" />.</param>
         <param name="callBack">
@@ -816,7 +861,6 @@
         <Parameter Name="executeOnlyOnce" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Unlike the <see cref="M:System.Threading.ThreadPool.RegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.UInt32,System.Boolean)" /> method, <see cref="M:System.Threading.ThreadPool.UnsafeRegisterWaitForSingleObject(System.Threading.WaitHandle,System.Threading.WaitOrTimerCallback,System.Object,System.UInt32,System.Boolean)" /> does not propagate the calling stack to the worker thread. This allows code to lose the calling stack and thereby to elevate its security privileges.</para>
@@ -830,6 +874,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a delegate to wait for a <see cref="T:System.Threading.WaitHandle" />, specifying a 32-bit unsigned integer for the time-out in milliseconds. This method does not propagate the calling stack to the worker thread.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Threading.RegisteredWaitHandle" /> object that can be used to cancel the registered wait operation.</para>
+        </returns>
         <param name="waitObject">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Threading.WaitHandle" /> to register. Use a <see cref="T:System.Threading.WaitHandle" /> other than <see cref="T:System.Threading.Mutex" />.</param>
         <param name="callBack">

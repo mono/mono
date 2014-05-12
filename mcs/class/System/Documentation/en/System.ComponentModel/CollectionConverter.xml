@@ -68,7 +68,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="context" /> parameter can be used to extract additional information about the environment this converter is being invoked from. This can be null, so always check. Also, properties on the context object can return null.</para>
@@ -80,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given value object to the specified destination type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="culture">
@@ -108,7 +111,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="context" /> parameter can be used to extract additional information about the environment this converter is being invoked from. This can be null, so always check. Also, properties on the context object can return null.</para>
@@ -133,6 +135,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of properties for the type of array specified by the value parameter using the specified context and attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties that are exposed for this data type, or null if there are no properties. This method always returns null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="value">
@@ -157,7 +163,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="context" /> parameter can be used to extract additional information about the environment this converter is being invoked from. This can be null, so always check. Also, properties on the context object can return null.</para>
@@ -167,6 +172,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether this object supports properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false because <see cref="M:System.ComponentModel.CollectionConverter.GetProperties(System.ComponentModel.ITypeDescriptorContext,System.Object,System.Attribute[])" /> should not be called to find the properties of this object. This method never returns true.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
       </Docs>

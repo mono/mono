@@ -43,7 +43,6 @@
         <Parameter Name="innerException" Type="System.Exception" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The binary rewriter calls this method to notify listeners about a contract failure. The <see cref="M:System.Runtime.CompilerServices.ContractHelper.RaiseContractFailedEvent(System.Diagnostics.Contracts.ContractFailureKind,System.String,System.String,System.Exception)" /> method does not perform the failure behavior (an assert or throw) itself. If the failure is handled by the listeners, the method returns null. If the failure is not handled by the listeners, a localized failure message is returned.</para>
@@ -52,6 +51,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used by the binary rewriter to activate the default failure behavior.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A null reference (Nothing in Visual Basic) if the event was handled and should not trigger a failure; otherwise, returns the localized failure message.</para>
+        </returns>
         <param name="failureKind">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the enumeration values that specifies the type of failure.</param>
         <param name="userMessage">

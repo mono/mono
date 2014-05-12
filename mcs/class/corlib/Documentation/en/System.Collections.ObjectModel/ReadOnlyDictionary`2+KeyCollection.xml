@@ -92,12 +92,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the <see cref="T:System.Collections.ObjectModel.ReadOnlyDictionary`2" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.Generic.ICollection&lt;TKey&gt;.Add">
@@ -276,7 +279,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Collections.ObjectModel.ReadOnlyDictionary`2" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
@@ -285,6 +287,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through a collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

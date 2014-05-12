@@ -275,12 +275,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously clears all buffers for the current writer and causes any buffered data to be written to the underlying device. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous flush operation. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FormatProvider">
@@ -391,9 +394,6 @@
         <Parameter Name="writer" Type="System.IO.TextWriter" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A thread-safe <see cref="T:System.IO.TextWriter" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="writer" /> is <see langword="null" />.</exception>
         <remarks>
@@ -405,6 +405,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a thread-safe wrapper around the specified TextWriter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A thread-safe wrapper.</para>
+        </returns>
         <param name="writer">
           <attribution license="cc4" from="Microsoft" modified="false" />The TextWriter to synchronize. </param>
       </Docs>
@@ -1324,7 +1328,6 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.IO.TextWriter" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextWriter.WriteAsync(System.Char)" /> method, see the <see cref="M:System.IO.StreamWriter.WriteAsync(System.Char)" /> method.</para>
@@ -1333,6 +1336,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a character to the text string or stream asynchronously.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to write to the text stream.</param>
       </Docs>
@@ -1351,12 +1358,15 @@
         <Parameter Name="buffer" Type="System.Char[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a character array to the text string or stream asynchronously.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array to write to the text stream. If <paramref name="buffer" /> is null, nothing is written.</param>
       </Docs>
@@ -1375,7 +1385,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.IO.TextWriter" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextWriter.WriteAsync(System.String)" />  method, see the <see cref="M:System.IO.StreamWriter.WriteAsync(System.String)" /> method.</para>
@@ -1384,6 +1393,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a string to the text string or stream asynchronously.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation. </para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to write. If <paramref name="value" /> is null, nothing is written to the text stream.</param>
       </Docs>
@@ -1404,7 +1417,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.IO.TextWriter" /> class is an abstract class. Therefore, you do not instantiate it in your code. For an example of using the <see cref="M:System.IO.TextWriter.WriteAsync(System.Char[],System.Int32,System.Int32)" />  method, see the <see cref="M:System.IO.StreamWriter.WriteAsync(System.Char[],System.Int32,System.Int32)" />  method.</para>
@@ -1413,6 +1425,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a subarray of characters to the text string or stream asynchronously. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array to write data from. </param>
         <param name="index">
@@ -2355,7 +2371,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="F:System.IO.TextWriter.CoreNewLine" /> field. </para>
@@ -2364,6 +2379,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a line terminator asynchronously to the text string or stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="WriteLineAsync">
@@ -2380,7 +2399,6 @@
         <Parameter Name="value" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="F:System.IO.TextWriter.CoreNewLine" /> field. </para>
@@ -2390,6 +2408,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a character followed by a line terminator asynchronously to the text string or stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to write to the text stream.</param>
       </Docs>
@@ -2408,7 +2430,6 @@
         <Parameter Name="buffer" Type="System.Char[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="F:System.IO.TextWriter.CoreNewLine" /> field. </para>
@@ -2417,6 +2438,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes an array of characters followed by a line terminator asynchronously to the text string or stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array to write to the text stream. If the character array is null, only the line terminator is written. </param>
       </Docs>
@@ -2435,7 +2460,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="F:System.IO.TextWriter.CoreNewLine" /> field.</para>
@@ -2445,6 +2469,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a string followed by a line terminator asynchronously to the text string or stream. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to write. If the value is null, only a line terminator is written. </param>
       </Docs>
@@ -2465,7 +2493,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The line terminator is defined by the <see cref="F:System.IO.TextWriter.CoreNewLine" /> field.</para>
@@ -2475,6 +2502,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a subarray of characters followed by a line terminator asynchronously to the text string or stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array to write data from. </param>
         <param name="index">

@@ -40,7 +40,6 @@
         <Parameter Name="to" Type="System.Runtime.Versioning.ResourceScope" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -50,6 +49,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a version-safe name based on the specified resource name and the intended resource consumption source.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A version-safe name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource.</param>
         <param name="from">
@@ -76,7 +79,6 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -86,6 +88,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a version-safe name based on the specified resource name, the intended resource consumption scope, and the type using the resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A version-safe name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the resource.</param>
         <param name="from">

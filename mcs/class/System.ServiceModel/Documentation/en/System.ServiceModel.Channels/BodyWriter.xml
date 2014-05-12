@@ -58,7 +58,6 @@
         <Parameter Name="maxBufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <see cref="P:System.ServiceModel.Channels.BodyWriter.IsBuffered" /> is true then the <see cref="T:System.ServiceModel.Channels.BodyWriter" /> object is returned. If <see cref="P:System.ServiceModel.Channels.BodyWriter.IsBuffered" /> is false then the contents of the <see cref="T:System.ServiceModel.Channels.BodyWriter" /> up to <paramref name="maxBufferSize" /> is returned. This also calls <see cref="M:System.ServiceModel.Channels.BodyWriter.OnCreateBufferedCopy(System.Int32)" /> as an extensibility point.</para>
@@ -67,6 +66,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a buffered copy of the body.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ServiceModel.Channels.BodyWriter" /> that contains a copy of this object.</para>
+        </returns>
         <param name="maxBufferSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of the buffer for the body.</param>
       </Docs>
@@ -107,7 +110,6 @@
         <Parameter Name="maxBufferSize" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A class derived from <see cref="T:System.ServiceModel.Channels.BodyWriter" /> can override this method to create a buffered copy of the <see cref="T:System.ServiceModel.Channels.BodyWriter" />. But the default implementation of <see cref="M:System.ServiceModel.Channels.BodyWriter.WriteBodyContents(System.Xml.XmlDictionaryWriter)" /> calls <see cref="M:System.ServiceModel.Channels.BodyWriter.OnWriteBodyContents(System.Xml.XmlDictionaryWriter)" />, so overriding just <see cref="M:System.ServiceModel.Channels.BodyWriter.OnWriteBodyContents(System.Xml.XmlDictionaryWriter)" /> should be easier and work for most scenarios.</para>
@@ -117,6 +119,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides an extensibility point when the body contents are written.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Channels.BodyWriter" /> with the specified maximum buffer size.</para>
+        </returns>
         <param name="maxBufferSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The maximum size of the buffer for the body.</param>
       </Docs>

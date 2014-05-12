@@ -66,12 +66,15 @@
         <Parameter Name="resourceAssembly" Type="System.Reflection.Assembly" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns a saved license key for the specified type, from the specified resource assembly.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="P:System.ComponentModel.License.LicenseKey" /> for the specified type. This method returns null unless you override it.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type of component. </param>
         <param name="resourceAssembly">
@@ -94,12 +97,15 @@
         <Parameter Name="type" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the requested service, if it is available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the service, or null if the service cannot be found.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of service to retrieve. </param>
       </Docs>

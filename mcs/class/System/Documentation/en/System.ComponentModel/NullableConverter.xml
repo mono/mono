@@ -55,12 +55,15 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether this converter can convert an object of the given type to the type of this converter, using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this converter can perform the conversion; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" />  that provides a format context.</param>
         <param name="sourceType">
@@ -83,12 +86,15 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether this converter can convert the object to the specified type, using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this converter can perform the conversion; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context.</param>
         <param name="destinationType">
@@ -112,12 +118,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given object to the type of this converter, using the specified context and culture information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context.</param>
         <param name="culture">
@@ -144,12 +153,15 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given value object to the specified type, using the specified context and culture information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context.</param>
         <param name="culture">
@@ -177,8 +189,11 @@
       </Parameters>
       <Docs>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the given <see cref="T:System.Collections.IDictionary" />, or null if the object cannot be created. This method always returns null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="propertyValues">
@@ -201,8 +216,11 @@
       </Parameters>
       <Docs>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if changing a property on this object requires a call to <see cref="M:System.ComponentModel.TypeConverter.CreateInstance(System.Collections.IDictionary)" /> to create a new value; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context.</param>
       </Docs>
@@ -225,8 +243,11 @@
       </Parameters>
       <Docs>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties that are exposed for this data type, or null if there are no properties.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="value">
@@ -251,8 +272,11 @@
       </Parameters>
       <Docs>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="M:System.ComponentModel.TypeConverter.GetProperties(System.Object)" /> should be called to find the properties of this object; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context.</param>
       </Docs>
@@ -273,8 +297,11 @@
       </Parameters>
       <Docs>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> that holds a standard set of valid values, or null if the data type does not support a standard set of values.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context that can be used to extract additional information about the environment from which this converter is invoked. This parameter or properties of this parameter can be null.</param>
       </Docs>
@@ -295,8 +322,11 @@
       </Parameters>
       <Docs>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> returned from <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> is an exhaustive list of possible values; false if other values are possible.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context.</param>
       </Docs>
@@ -317,8 +347,11 @@
       </Parameters>
       <Docs>
         <summary>To be added.</summary>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> should be called to find a common set of values the object supports; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context.</param>
       </Docs>

@@ -354,7 +354,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -367,6 +366,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Formats event information for display purposes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event information.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -385,7 +388,6 @@
       <Docs>
         <param name="include_app_info">To be added.</param>
         <param name="include_custom_event_details">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -398,6 +400,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Formats event information for display purposes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The event information.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

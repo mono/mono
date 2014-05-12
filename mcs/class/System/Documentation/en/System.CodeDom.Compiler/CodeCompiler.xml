@@ -69,12 +69,15 @@
         <Parameter Name="options" Type="System.CodeDom.Compiler.CompilerParameters" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the command arguments to be passed to the compiler from the specified <see cref="T:System.CodeDom.Compiler.CompilerParameters" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The command arguments.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> that indicates the compiler options. </param>
       </Docs>
@@ -144,12 +147,15 @@
         <Parameter Name="e" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles the specified compile unit using the specified options, and returns the results from the compilation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="e">
@@ -173,12 +179,15 @@
         <Parameter Name="ea" Type="System.CodeDom.CodeCompileUnit[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles the specified compile units using the specified options, and returns the results from the compilation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="ea">
@@ -202,12 +211,15 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles the specified file using the specified options, and returns the results from the compilation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="fileName">
@@ -231,12 +243,15 @@
         <Parameter Name="fileNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles the specified files using the specified options, and returns the results from the compilation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="fileNames">
@@ -260,12 +275,15 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles the specified source code string using the specified options, and returns the results from the compilation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="source">
@@ -289,12 +307,15 @@
         <Parameter Name="sources" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'CompilerResults'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles the specified source code strings using the specified options, and returns the results from the compilation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="sources">
@@ -323,12 +344,15 @@
         <Parameter Name="cmdArgs" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the command arguments to use when invoking the compiler to generate a response file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The command arguments to use to generate a response file, or null if there are no response file arguments.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="cmdArgs">
@@ -352,12 +376,15 @@
         <Parameter Name="separator" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Joins the specified string arrays.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The concatenated string.</para>
+        </returns>
         <param name="sa">
           <attribution license="cc4" from="Microsoft" modified="false" />The array of strings to join. </param>
         <param name="separator">
@@ -409,7 +436,6 @@
         <Parameter Name="e" Type="System.CodeDom.CodeCompileUnit" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
@@ -418,6 +444,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromDom(System.CodeDom.Compiler.CompilerParameters,System.CodeDom.CodeCompileUnit)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="e">
@@ -441,7 +471,6 @@
         <Parameter Name="ea" Type="System.CodeDom.CodeCompileUnit[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
@@ -450,6 +479,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromDomBatch(System.CodeDom.Compiler.CompilerParameters,System.CodeDom.CodeCompileUnit[])" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="ea">
@@ -473,7 +506,6 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
@@ -482,6 +514,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromFile(System.CodeDom.Compiler.CompilerParameters,System.String)" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="fileName">
@@ -505,7 +541,6 @@
         <Parameter Name="fileNames" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
@@ -514,6 +549,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromFileBatch(System.CodeDom.Compiler.CompilerParameters,System.String[])" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="fileNames">
@@ -537,7 +576,6 @@
         <Parameter Name="source" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
@@ -546,6 +584,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromSource(System.CodeDom.Compiler.CompilerParameters,System.String)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="source">
@@ -569,7 +611,6 @@
         <Parameter Name="sources" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.CodeDom.Compiler.CodeCompiler" /> instance is cast to an <see cref="T:System.CodeDom.Compiler.ICodeCompiler" /> interface.</para>
@@ -578,6 +619,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.CodeDom.Compiler.ICodeCompiler.CompileAssemblyFromSourceBatch(System.CodeDom.Compiler.CompilerParameters,System.String[])" />. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The results of compilation.</para>
+        </returns>
         <param name="options">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.Compiler.CompilerParameters" /> object that indicates the compiler options. </param>
         <param name="sources">

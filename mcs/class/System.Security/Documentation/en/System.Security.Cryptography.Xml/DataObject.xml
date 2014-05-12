@@ -147,7 +147,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Xml.XmlElement" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to output XML for a <see cref="T:System.Security.Cryptography.Xml.DataObject" />.</para>
@@ -156,6 +155,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the XML representation of the <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XML representation of the <see cref="T:System.Security.Cryptography.Xml.DataObject" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Id">

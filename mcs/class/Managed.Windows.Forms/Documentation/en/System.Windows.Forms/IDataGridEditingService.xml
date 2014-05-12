@@ -26,12 +26,15 @@
         <Parameter Name="rowNumber" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an edit operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation can be performed; otherwise false.</para>
+        </returns>
         <param name="gridColumn">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> to edit. </param>
         <param name="rowNumber">
@@ -54,7 +57,6 @@
         <Parameter Name="shouldAbort" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the value cannot be committed, the <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> remains editable. </para>
@@ -63,6 +65,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends the edit operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if value is commited; otherwise false.</para>
+        </returns>
         <param name="gridColumn">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.DataGridColumnStyle" /> to edit. </param>
         <param name="rowNumber">

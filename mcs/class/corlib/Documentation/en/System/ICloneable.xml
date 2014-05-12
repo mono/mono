@@ -43,11 +43,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Object" /> of the same type as the current instance, containing
-   copies of the non-static members of the current instance.
-   </para>
-        </returns>
         <example>
           <para>The following example shows an implementation of <see cref="M:System.ICloneable.Clone" /> that
    uses the <see cref="M:System.Object.MemberwiseClone" />
@@ -92,6 +87,10 @@ public class TestMyClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new object that is a copy of the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object that is a copy of this instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

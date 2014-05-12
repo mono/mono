@@ -49,12 +49,15 @@
         <Parameter Name="serviceDescription" Type="System.Web.Services.Description.ServiceDescription" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified <see cref="T:System.Web.Services.Description.ServiceDescription" /> to the end of the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index where the <see cref="T:System.Web.Services.Description.ServiceDescription" /> parameter has been added.</para>
+        </returns>
         <param name="serviceDescription">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.ServiceDescription" /> to add to the collection.</param>
       </Docs>
@@ -73,12 +76,15 @@
         <Parameter Name="serviceDescription" Type="System.Web.Services.Description.ServiceDescription" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified <see cref="T:System.Web.Services.Description.ServiceDescription" /> is a member of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="serviceDescription" /> parameter is a member of the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" />; otherwise, false.</para>
+        </returns>
         <param name="serviceDescription">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.ServiceDescription" /> for which to check collection membership.</param>
       </Docs>
@@ -123,12 +129,15 @@
         <Parameter Name="name" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.Services.Description.Binding" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> and returns the <see cref="T:System.Web.Services.Description.Binding" /> with the specified name that is a member of one of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances contained in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The binding with the specified name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> whose <see cref="P:System.Xml.XmlQualifiedName.Name" /> property is used to retrieve a <see cref="T:System.Web.Services.Description.Binding" /> instance.</param>
       </Docs>
@@ -167,12 +176,15 @@
         <Parameter Name="name" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.Services.Description.Message" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> and returns the <see cref="T:System.Web.Services.Description.Message" /> with the specified name that is a member of one of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances contained in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The message with the specified name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" />, passed by reference, whose <see cref="P:System.Xml.XmlQualifiedName.Name" /> property is shared by the <see cref="T:System.Web.Services.Description.Message" /> returned.</param>
       </Docs>
@@ -191,12 +203,15 @@
         <Parameter Name="name" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.Services.Description.PortType" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> and returns the <see cref="T:System.Web.Services.Description.PortType" /> with the specified name that is a member of one of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances contained in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The PortType with the specified name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" />, passed by reference, whose <see cref="P:System.Xml.XmlQualifiedName.Name" /> property is shared by the <see cref="T:System.Web.Services.Description.PortType" /> returned.</param>
       </Docs>
@@ -215,12 +230,15 @@
         <Parameter Name="name" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.Services.Description.Service" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> and returns the <see cref="T:System.Web.Services.Description.Service" /> with the specified name that is a member of one of the <see cref="T:System.Web.Services.Description.ServiceDescription" /> instances contained in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The service with the specified name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlQualifiedName" />, passed by reference, whose <see cref="P:System.Xml.XmlQualifiedName.Name" /> property is shared by the <see cref="T:System.Web.Services.Description.Service" /> returned.</param>
       </Docs>
@@ -239,12 +257,15 @@
         <Parameter Name="serviceDescription" Type="System.Web.Services.Description.ServiceDescription" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches for the specified <see cref="T:System.Web.Services.Description.ServiceDescription" /> and returns the zero-based index of the first occurrence within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the specified service description, or -1 if the element was not found in the collection.</para>
+        </returns>
         <param name="serviceDescription">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.Services.Description.ServiceDescription" /> for which to search in the collection.</param>
       </Docs>

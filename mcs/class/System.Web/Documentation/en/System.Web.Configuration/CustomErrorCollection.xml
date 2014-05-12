@@ -200,13 +200,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Web.Configuration.CustomError" /> object with the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Configuration.CustomError" /> with the specified index.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The collection index of the <see cref="T:System.Web.Configuration.CustomError" /> object. </param>
       </Docs>
@@ -224,13 +227,16 @@
         <Parameter Name="statusCode" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Web.Configuration.CustomError" /> object with the specified status code.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Configuration.CustomError" /> object with the specified status code.</para>
+        </returns>
         <param name="statusCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The HTTP status code associated with the custom error. </param>
       </Docs>
@@ -268,13 +274,16 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Web.Configuration.CustomErrorCollection" /> key at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Web.Configuration.CustomErrorCollection" /> key at the specified index.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The collection key's index. </param>
       </Docs>

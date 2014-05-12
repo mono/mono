@@ -35,12 +35,15 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Automatically generates <see cref="T:System.Web.DynamicData.DynamicField" /> objects based on metadata information for the table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.Web.DynamicData.DynamicField" /> objects.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The data-bound control that will contain the <see cref="T:System.Web.DynamicData.DynamicField" /> objects.</param>
       </Docs>

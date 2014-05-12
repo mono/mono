@@ -60,7 +60,6 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnitConverter.CanConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Type)" /> method to determine whether the data type specified by the <paramref name="sourceType" /> parameter can be converted to a <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
@@ -72,6 +71,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a data type can be converted to a <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the data type specified by the <paramref name="sourceType" /> parameter can be converted to a <see cref="T:System.Web.UI.WebControls.FontUnit" />; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> implemented object that provides information about the context of a type converter. </param>
         <param name="sourceType">
@@ -97,12 +100,18 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the converter can convert a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object to the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the converter supports converting a <see cref="T:System.Web.UI.WebControls.FontUnit" /> object to the destination type; otherwise, false.</para>
+          <block subset="none" type="note">
+            <para>This method will return true only if the <paramref name="destinationType" /> is <see cref="T:System.String" />. The only type this converter can convert <see cref="T:System.Web.UI.WebControls.FontUnit" /> into is <see cref="T:System.String" />.</para>
+          </block>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that indicates the context of the object to convert.</param>
         <param name="destinationType">
@@ -121,7 +130,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnitConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)" /> method to convert the object specified by the <paramref name="value" /> parameter to a <see cref="T:System.Web.UI.WebControls.FontUnit" /> in the culture specified by the <paramref name="culture" /> parameter.</para>
@@ -136,6 +144,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts an object to a <see cref="T:System.Web.UI.WebControls.FontUnit" /> in a specific culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> implemented object that provides information about the context of a type converter. </param>
         <param name="culture">
@@ -161,7 +173,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnitConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)" /> method to convert the <see cref="T:System.Web.UI.WebControls.FontUnit" /> specified by the <paramref name="value" /> parameter to an object with the data type specified by the <paramref name="destinationType" /> parameter.</para>
@@ -177,6 +188,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a <see cref="T:System.Web.UI.WebControls.FontUnit" /> to an object with a different data type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> implemented object that provides information about the context of a type converter. </param>
         <param name="culture">
@@ -201,7 +216,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.ComponentModel.TypeConverter+StandardValuesCollection" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnitConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method to retrieve a <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> containing the standard values for a <see cref="T:System.Web.UI.WebControls.FontUnit" />. This collection contains all the fields in the <see cref="T:System.Web.UI.WebControls.FontUnit" /> class.</para>
@@ -210,6 +224,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> containing the standard values for a <see cref="T:System.Web.UI.WebControls.FontUnit" />, using the specified format context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> containing the standard values for a <see cref="T:System.Web.UI.WebControls.FontUnit" />.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides information about the context of a type converter. </param>
       </Docs>
@@ -228,7 +246,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnitConverter.GetStandardValuesExclusive(System.ComponentModel.ITypeDescriptorContext)" /> method to determine whether the <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> returned by the <see cref="M:System.Web.UI.WebControls.FontUnitConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method is an exclusive list of values. This method is overridden to always return false to indicate that the list of values is not an exclusive list.</para>
@@ -237,6 +254,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether the <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> returned by the <see cref="M:System.Web.UI.WebControls.FontUnitConverter.GetStandardValues(System.ComponentModel.ITypeDescriptorContext)" /> method is an exclusive list of values, using the specified format context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false for all cases.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides information about the context of a type converter. </param>
       </Docs>
@@ -255,7 +276,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Boolean" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.WebControls.FontUnitConverter.GetStandardValuesSupported(System.ComponentModel.ITypeDescriptorContext)" /> method to determine whether the instance of the <see cref="T:System.Web.UI.WebControls.FontUnitConverter" /> class that this method is called from supports a standard set of values that can be picked from a list, using the specified format context. This method is overridden to always return true to indicate that this class supports a standard set of values that can be picked from a list.</para>
@@ -264,6 +284,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether the instance of the <see cref="T:System.Web.UI.WebControls.FontUnitConverter" /> class that this method is called from supports a standard set of values that can be picked from a list, using the specified format context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true for all cases.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides information about the context of a type converter. </param>
       </Docs>

@@ -300,7 +300,6 @@
         <Parameter Name="input" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.Add(System.Char)" /> method adds the <paramref name="input" /> character value to the first available position in the formatted string after the position that was last assigned, which is represented by the <see cref="P:System.ComponentModel.MaskedTextProvider.LastAssignedPosition" /> property. This method will fail for any of the following reasons:</para>
@@ -317,6 +316,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified input character to the end of the formatted string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the input character was added successfully; otherwise false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Char" /> value to be appended to the formatted string. </param>
       </Docs>
@@ -336,7 +339,6 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.Add(System.String)" /> method adds the characters from the <paramref name="input" /> string to the formatted string, starting with the first available position after <see cref="P:System.ComponentModel.MaskedTextProvider.LastAssignedPosition" />. This method will fail for any of the following reasons:</para>
@@ -354,6 +356,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the characters in the specified input string to the end of the formatted string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all the characters from the input string were added successfully; otherwise false to indicate that no characters were added.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing character values to be appended to the formatted string. </param>
       </Docs>
@@ -558,7 +564,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.Clone" /> method returns a new copy of the current <see cref="T:System.ComponentModel.MaskedTextProvider" />.</para>
@@ -567,6 +572,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the current <see cref="T:System.ComponentModel.MaskedTextProvider" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.MaskedTextProvider" /> object this method creates, cast as an object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Culture">
@@ -678,7 +687,6 @@
         <Parameter Name="direction" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The formatted string is composed of editable characters and literals copied from the mask. The editable character positions will either be occupied by the prompt character copied from the mask if they are unassigned, or with a valid input character if they have been assigned an input.</para>
@@ -689,6 +697,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the position of the first assigned editable position after the specified position using the specified search direction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, an <see cref="T:System.Int32" /> representing the zero-based position of the first assigned editable position encountered; otherwise <see cref="P:System.ComponentModel.MaskedTextProvider.InvalidIndex" />.</para>
+        </returns>
         <param name="position">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in the formatted string to start the search.</param>
         <param name="direction">
@@ -712,7 +724,6 @@
         <Parameter Name="direction" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The formatted string is composed of editable characters and literals copied from the mask. The editable character positions will either be occupied by the prompt character copied from the mask if they are unassigned, or with a valid input character if they have been assigned an input.</para>
@@ -723,6 +734,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the position of the first assigned editable position between the specified positions using the specified search direction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, an <see cref="T:System.Int32" /> representing the zero-based position of the first assigned editable position encountered; otherwise <see cref="P:System.ComponentModel.MaskedTextProvider.InvalidIndex" />.</para>
+        </returns>
         <param name="startPosition">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in the formatted string where the search starts.</param>
         <param name="endPosition">
@@ -747,7 +762,6 @@
         <Parameter Name="direction" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.FindEditPositionFrom(System.Int32,System.Boolean)" /> method is used to search for the next assigned or unassigned editable position in the formatted string after the specified position.</para>
@@ -757,6 +771,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the position of the first editable position after the specified position using the specified search direction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, an <see cref="T:System.Int32" /> representing the zero-based position of the first editable position encountered; otherwise <see cref="P:System.ComponentModel.MaskedTextProvider.InvalidIndex" />.</para>
+        </returns>
         <param name="position">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in the formatted string to start the search.</param>
         <param name="direction">
@@ -780,7 +798,6 @@
         <Parameter Name="direction" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.FindEditPositionInRange(System.Int32,System.Int32,System.Boolean)" /> method is used to search for the first editable character between two specified positions, inclusive, using the specified search direction. The result can subsequently be passed as a parameter to the <see cref="P:System.ComponentModel.MaskedTextProvider.Item(System.Int32)" /> indexer to obtain the assigned value at this position.</para>
@@ -790,6 +807,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the position of the first editable position between the specified positions using the specified search direction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, an <see cref="T:System.Int32" /> representing the zero-based position of the first editable position encountered; otherwise <see cref="P:System.ComponentModel.MaskedTextProvider.InvalidIndex" />.</para>
+        </returns>
         <param name="startPosition">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in the formatted string where the search starts.</param>
         <param name="endPosition">
@@ -814,7 +835,6 @@
         <Parameter Name="direction" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.FindNonEditPositionFrom(System.Int32,System.Boolean)" /> method is used to search for the next literal character in the formatted string after the specified position. The result can subsequently be passed as a parameter to the <see cref="P:System.ComponentModel.MaskedTextProvider.Item(System.Int32)" /> indexer to obtain the literal value at this position.</para>
@@ -824,6 +844,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the position of the first non-editable position after the specified position using the specified search direction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, an <see cref="T:System.Int32" /> representing the zero-based position of the first literal position encountered; otherwise <see cref="P:System.ComponentModel.MaskedTextProvider.InvalidIndex" />.</para>
+        </returns>
         <param name="position">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in the formatted string to start the search.</param>
         <param name="direction">
@@ -847,7 +871,6 @@
         <Parameter Name="direction" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.FindNonEditPositionInRange(System.Int32,System.Int32,System.Boolean)" /> method is used to search for the first literal character between two specified positions, inclusive, using the specified search direction. The result can subsequently be passed as a parameter to the <see cref="P:System.ComponentModel.MaskedTextProvider.Item(System.Int32)" /> indexer to obtain the literal value at this position.</para>
@@ -857,6 +880,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the position of the first non-editable position between the specified positions using the specified search direction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, an <see cref="T:System.Int32" /> representing the zero-based position of the first literal position encountered; otherwise <see cref="P:System.ComponentModel.MaskedTextProvider.InvalidIndex" />.</para>
+        </returns>
         <param name="startPosition">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in the formatted string where the search starts.</param>
         <param name="endPosition">
@@ -881,7 +908,6 @@
         <Parameter Name="direction" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The formatted string is composed of editable characters and literals copied from the mask. The editable character positions will either be occupied by the prompt character copied from the mask if they are unassigned, or with a valid input character if they have been assigned an input.</para>
@@ -892,6 +918,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the position of the first unassigned editable position after the specified position using the specified search direction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, an <see cref="T:System.Int32" /> representing the zero-based position of the first unassigned editable position encountered; otherwise <see cref="P:System.ComponentModel.MaskedTextProvider.InvalidIndex" />.</para>
+        </returns>
         <param name="position">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in the formatted string to start the search.</param>
         <param name="direction">
@@ -915,7 +945,6 @@
         <Parameter Name="direction" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The formatted string is composed of editable characters and literals copied from the mask. The editable character positions will either be occupied by the prompt character copied from the mask if they are unassigned, or with a valid input character if they have been assigned an input.</para>
@@ -926,6 +955,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the position of the first unassigned editable position between the specified positions using the specified search direction.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, an <see cref="T:System.Int32" /> representing the zero-based position of the first unassigned editable position encountered; otherwise <see cref="P:System.ComponentModel.MaskedTextProvider.InvalidIndex" />.</para>
+        </returns>
         <param name="startPosition">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in the formatted string where the search starts.</param>
         <param name="endPosition">
@@ -949,7 +982,6 @@
         <Parameter Name="hint" Type="System.ComponentModel.MaskedTextResultHint" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following methods of the <see cref="T:System.ComponentModel.MaskedTextProvider" /> class contain a parameter of type <see cref="T:System.ComponentModel.MaskedTextResultHint" /> that is used to output information about the operation of the method: <see cref="Overload:System.ComponentModel.MaskedTextProvider.Add" />, <see cref="Overload:System.ComponentModel.MaskedTextProvider.Clear" />, <see cref="Overload:System.ComponentModel.MaskedTextProvider.InsertAt" />, <see cref="Overload:System.ComponentModel.MaskedTextProvider.Remove" />, <see cref="Overload:System.ComponentModel.MaskedTextProvider.RemoveAt" />, <see cref="Overload:System.ComponentModel.MaskedTextProvider.Replace" />, <see cref="Overload:System.ComponentModel.MaskedTextProvider.Set" />, <see cref="M:System.ComponentModel.MaskedTextProvider.VerifyChar(System.Char,System.Int32,System.ComponentModel.MaskedTextResultHint@)" />, and <see cref="Overload:System.ComponentModel.MaskedTextProvider.VerifyString" />. The <see cref="M:System.ComponentModel.MaskedTextProvider.GetOperationResultFromHint(System.ComponentModel.MaskedTextResultHint)" /> method interprets this value and returns a Boolean value that indicates whether the <see cref="T:System.ComponentModel.MaskedTextResultHint" /> has signaled that the operation was a success or failure.</para>
@@ -958,6 +990,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.ComponentModel.MaskedTextResultHint" /> denotes success or failure.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.ComponentModel.MaskedTextResultHint" /> value represents a success; otherwise, false if it represents failure.</para>
+        </returns>
         <param name="hint">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.MaskedTextResultHint" /> value typically obtained as an output parameter from a previous operation. </param>
       </Docs>
@@ -1024,7 +1060,6 @@
         <Parameter Name="position" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.InsertAt(System.Char,System.Int32)" /> method inserts a character into the first edit position at or beyond that specified by the <paramref name="pos" /> parameter. This method will shift all existing characters after the insertion point over by one position to make room for the inserted <paramref name="input" /> character. If one of the following errors occurs, the insertion is not performed, and the method returns false.</para>
@@ -1051,6 +1086,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the specified character at the specified position within the formatted string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the insertion was successful; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Char" /> to be inserted. </param>
         <param name="position">
@@ -1073,7 +1112,6 @@
         <Parameter Name="position" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.InsertAt(System.String,System.Int32)" /> method inserts each character from the <paramref name="input" /> string into the edit positions located at position <paramref name="pos" /> and beyond. This method will shift all existing characters after the insertion point over by one position for each inserted character. If one of the following errors occurs, no insertion is performed, and the method returns false.</para>
@@ -1100,6 +1138,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts the specified string at a specified position within the formatted string. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the insertion was successful; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to be inserted. </param>
         <param name="position">
@@ -1199,7 +1241,6 @@
         <Parameter Name="position" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.IsAvailablePosition(System.Int32)" /> method returns true only if all of the following conditions are true:</para>
@@ -1219,6 +1260,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified position is available for assignment.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified position in the formatted string is editable and has not been assigned to yet; otherwise false.</para>
+        </returns>
         <param name="position">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in the mask to test.</param>
       </Docs>
@@ -1238,7 +1283,6 @@
         <Parameter Name="position" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.IsEditPosition(System.Int32)" /> method returns true only if both of the following conditions are true:</para>
@@ -1255,6 +1299,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified position is editable. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified position in the formatted string is editable; otherwise false.</para>
+        </returns>
         <param name="position">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in the mask to test.</param>
       </Docs>
@@ -1307,7 +1355,6 @@
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Valid input characters include all printable characters, which include letters, digits, punctuation, symbols and the space character.</para>
@@ -1316,6 +1363,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified character is a valid input character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified character contains a valid input value; otherwise false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Char" /> value to test.</param>
       </Docs>
@@ -1335,7 +1386,6 @@
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Valid mask characters include all printable characters, which include letters, digits, punctuation, symbols and the space character.</para>
@@ -1344,6 +1394,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified character is a valid mask character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified character contains a valid mask value; otherwise false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Char" /> value to test.</param>
       </Docs>
@@ -1363,7 +1417,6 @@
         <Parameter Name="c" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Valid password characters include all printable characters and the null character, which is used to disable password functionality. Printable characters include letters, digits, punctuation, symbols and the space character.</para>
@@ -1372,6 +1425,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified character is a valid password character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified character contains a valid password value; otherwise false.</para>
+        </returns>
         <param name="c">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Char" /> value to test.</param>
       </Docs>
@@ -1574,7 +1631,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.ComponentModel.MaskedTextProvider.Remove" /> method has no effect if there are no characters assigned to the mask yet.</para>
@@ -1584,6 +1640,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the last assigned character from the formatted string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was successfully removed; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Remove">
@@ -1624,7 +1684,6 @@
         <Parameter Name="position" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.ComponentModel.MaskedTextProvider.RemoveAt" /> method has no effect if there are no assigned characters at the removal position specified. Literal characters are not affected by this method.</para>
@@ -1636,6 +1695,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the assigned character at the specified position from the formatted string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was successfully removed; otherwise, false.</para>
+        </returns>
         <param name="position">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position of the assigned character to remove.</param>
       </Docs>
@@ -1656,7 +1719,6 @@
         <Parameter Name="endPosition" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.ComponentModel.MaskedTextProvider.RemoveAt" /> method has no effect if there are no assigned characters at the removal positions specified. </para>
@@ -1666,6 +1728,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the assigned characters between the specified positions from the formatted string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was successfully removed; otherwise, false.</para>
+        </returns>
         <param name="startPosition">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the first assigned character to remove.</param>
         <param name="endPosition">
@@ -1715,7 +1781,6 @@
         <Parameter Name="position" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.Replace(System.Char,System.Int32)" /> method searches for the first editable position in the formatted string at or beyond the specified position, <paramref name="pos" />. If one is found, the value of the editable position is changed to the specified character, <paramref name="input" />. Any of the following conditions will result in an error that causes no replacement to be performed and a value of false to be returned:</para>
@@ -1735,6 +1800,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces a single character at or beyond the specified position with the specified character value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was successfully replaced; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Char" /> value that replaces the existing value.</param>
         <param name="position">
@@ -1757,7 +1826,6 @@
         <Parameter Name="position" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.Replace(System.String,System.Int32)" /> method searches for the first editable position at or beyond the specified position, <paramref name="pos" />. Operating under the assumption that there are enough editable positions after this point, the existing character values are replaced one-by-one with the contents of the replacement string parameter, <paramref name="input" />. </para>
@@ -1778,6 +1846,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Replaces a range of editable characters starting at the specified position with the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all the characters were successfully replaced; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value used to replace the existing editable characters.</param>
         <param name="position">
@@ -2026,7 +2098,6 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.ComponentModel.MaskedTextProvider.Set" /> method clears the existing contents of the formatted string and then applies the mask against the <paramref name="input" /> string to update the contents of the formatted string. </para>
@@ -2044,6 +2115,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the formatted string to the specified input string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if all the characters were successfully set; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value used to set the formatted string.</param>
       </Docs>
@@ -2117,7 +2192,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ComponentModel.MaskedTextProvider.ToDisplayString" /> method will always include prompt and literal characters in the return value, regardless of the value of the <see cref="P:System.ComponentModel.MaskedTextProvider.IncludePrompt" /> or <see cref="P:System.ComponentModel.MaskedTextProvider.IncludeLiterals" /> properties. This method will always display password characters if the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property is set to a character value other than null. </para>
@@ -2128,6 +2202,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the formatted string in a displayable form.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The formatted <see cref="T:System.String" /> that includes prompts and mask literals.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -2143,7 +2221,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the overloaded <see cref="Overload:System.ComponentModel.MaskedTextProvider.ToString" /> method includes prompts and literals according to the current values of the <see cref="P:System.ComponentModel.MaskedTextProvider.IncludePrompt" /> and <see cref="P:System.ComponentModel.MaskedTextProvider.IncludeLiterals" /> properties, respectively. It will always return the original input characters, ignoring the value of the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property.</para>
@@ -2155,6 +2232,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the formatted string that includes all the assigned character values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The formatted <see cref="T:System.String" /> that includes all the assigned character values.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ToString">
@@ -2172,7 +2253,6 @@
         <Parameter Name="ignorePasswordChar" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the overloaded <see cref="Overload:System.ComponentModel.MaskedTextProvider.ToString" /> method includes prompts and literals according to the current values of the <see cref="P:System.ComponentModel.MaskedTextProvider.IncludePrompt" /> and <see cref="P:System.ComponentModel.MaskedTextProvider.IncludeLiterals" /> properties, respectively. If the <paramref name="ignorePasswordChar" /> parameter is true, it will return the original input characters, ignoring the value of the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property. If this parameter is false, it will use the password character to obscure editable user input if the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property is set to a value other than null.</para>
@@ -2184,6 +2264,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the formatted string, optionally including password characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The formatted <see cref="T:System.String" /> that includes literals, prompts, and optionally password characters.</para>
+        </returns>
         <param name="ignorePasswordChar">
           <attribution license="cc4" from="Microsoft" modified="false" />true to return the actual editable characters; otherwise, false to indicate that the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property is to be honored.</param>
       </Docs>
@@ -2204,7 +2288,6 @@
         <Parameter Name="includeLiterals" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the overloaded <see cref="Overload:System.ComponentModel.MaskedTextProvider.ToString" /> method includes prompts and literals according to the values of the <paramref name="IncludePrompt" /> and <paramref name="IncludeLiterals" /> parameters, respectively. Notice that these parameters override the values of the <see cref="P:System.ComponentModel.MaskedTextProvider.IncludePrompt" /> <see cref="P:System.ComponentModel.MaskedTextProvider.IncludeLiterals" /> properties. This method will always return the original input characters, ignoring the value of the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property.</para>
@@ -2216,6 +2299,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the formatted string, optionally including prompt and literal characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The formatted <see cref="T:System.String" /> that includes all the assigned character values and optionally includes literals and prompts.</para>
+        </returns>
         <param name="includePrompt">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include prompt characters in the return string; otherwise, false.</param>
         <param name="includeLiterals">
@@ -2238,7 +2325,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the overloaded <see cref="Overload:System.ComponentModel.MaskedTextProvider.ToString" /> method returns a substring of the formatted string, starting at the position <paramref name="startPos" /> and including the subsequent number of characters specified by the <paramref name="length" /> parameter. The returned string includes prompts and literals according to the current values of the <see cref="P:System.ComponentModel.MaskedTextProvider.IncludePrompt" /> and <see cref="P:System.ComponentModel.MaskedTextProvider.IncludeLiterals" /> properties, respectively. The return string will contain the original input characters; the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property is always ignored.</para>
@@ -2266,6 +2352,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a substring of the formatted string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, a substring of the formatted <see cref="T:System.String" />, which includes all the assigned character values; otherwise the <see cref="F:System.String.Empty" /> string.</para>
+        </returns>
         <param name="startPosition">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based position in the formatted string where the output begins. </param>
         <param name="length">
@@ -2289,7 +2379,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the overloaded <see cref="Overload:System.ComponentModel.MaskedTextProvider.ToString" /> method returns a substring of the formatted string, starting at the position <paramref name="startPos" /> and including the subsequent number of characters specified by the <paramref name="length" /> parameter. The returned string includes prompts and literals according to the current values of the <see cref="P:System.ComponentModel.MaskedTextProvider.IncludePrompt" /> and <see cref="P:System.ComponentModel.MaskedTextProvider.IncludeLiterals" /> properties, respectively. If the <paramref name="ignorePasswordChar" /> parameter is true, it will return the original input characters, ignoring the value of the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property. If this parameter is false, it will use the password character to obscure editable user input if the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property is set to a value other than null.</para>
@@ -2317,6 +2406,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a substring of the formatted string, optionally including password characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, a substring of the formatted <see cref="T:System.String" />, which includes literals, prompts, and optionally password characters; otherwise the <see cref="F:System.String.Empty" /> string.</para>
+        </returns>
         <param name="ignorePasswordChar">
           <attribution license="cc4" from="Microsoft" modified="false" />true to return the actual editable characters; otherwise, false to indicate that the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property is to be honored.</param>
         <param name="startPosition">
@@ -2343,7 +2436,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the overloaded <see cref="Overload:System.ComponentModel.MaskedTextProvider.ToString" /> method returns a substring of the formatted string, starting at the position <paramref name="startPos" /> and including the subsequent number of characters specified by the <paramref name="length" /> parameter. The return string includes prompts and literals according to the values of the <paramref name="IncludePrompt" /> and <paramref name="IncludeLiterals" /> parameters, respectively. Notice that these parameters override the values of the <see cref="P:System.ComponentModel.MaskedTextProvider.IncludePrompt" /> <see cref="P:System.ComponentModel.MaskedTextProvider.IncludeLiterals" /> properties. This method will always return the original input characters, ignoring the value of the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property.</para>
@@ -2371,6 +2463,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a substring of the formatted string, optionally including prompt and literal characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, a substring of the formatted <see cref="T:System.String" />, which includes all the assigned character values and optionally includes literals and prompts; otherwise the <see cref="F:System.String.Empty" /> string.</para>
+        </returns>
         <param name="includePrompt">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include prompt characters in the return string; otherwise, false.</param>
         <param name="includeLiterals">
@@ -2400,7 +2496,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This version of the overloaded <see cref="Overload:System.ComponentModel.MaskedTextProvider.ToString" /> method returns a substring of the formatted string, starting at the position <paramref name="startPos" /> and including the subsequent number of characters specified by the <paramref name="length" /> parameter. The return string includes prompts and literals according to the values of the <paramref name="IncludePrompt" /> and <paramref name="IncludeLiterals" /> parameters, respectively. Notice that these parameters override the values of the <see cref="P:System.ComponentModel.MaskedTextProvider.IncludePrompt" /> and  <see cref="P:System.ComponentModel.MaskedTextProvider.IncludeLiterals" /> properties. If the <paramref name="ignorePasswordChar" /> parameter is true, it will return the original input characters, ignoring the value of the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property. If this parameter is false, it will use the password character to obscure editable user input if the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property is set to a value other than null.</para>
@@ -2428,6 +2523,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a substring of the formatted string, optionally including prompt, literal, and password characters.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If successful, a substring of the formatted <see cref="T:System.String" />, which includes all the assigned character values and optionally includes literals, prompts, and password characters; otherwise the <see cref="F:System.String.Empty" /> string.</para>
+        </returns>
         <param name="ignorePasswordChar">
           <attribution license="cc4" from="Microsoft" modified="false" />true to return the actual editable characters; otherwise, false to indicate that the <see cref="P:System.ComponentModel.MaskedTextProvider.PasswordChar" /> property is to be honored.</param>
         <param name="includePrompt">
@@ -2481,7 +2580,6 @@
         <Parameter Name="position" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A character is said to be <newTerm>escaped</newTerm> if it is valid input, but is not assigned to that position in the formatted string. Escaped characters fall into the following three categories:</para>
@@ -2502,6 +2600,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether the specified character would be escaped at the specified position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified character would be escaped at the specified position; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Char" /> value to test.</param>
         <param name="position">
@@ -2523,7 +2625,6 @@
         <Parameter Name="input" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.ComponentModel.MaskedTextProvider.VerifyString" /> applies the <paramref name="input" /> string against the mask, without actually changing the formatted string, to test whether <paramref name="input" /> would be valid in a corresponding <see cref="Overload:System.ComponentModel.MaskedTextProvider.Set" /> operation. This method also returns true if input is null or has zero length.</para>
@@ -2532,6 +2633,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether the specified string could be set successfully.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified string represents valid input; otherwise, false.</para>
+        </returns>
         <param name="input">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> value to test.</param>
       </Docs>

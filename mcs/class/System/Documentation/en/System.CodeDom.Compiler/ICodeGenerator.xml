@@ -43,7 +43,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -53,6 +52,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an escaped identifier for the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The escaped identifier for the value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to create an escaped identifier for. </param>
       </Docs>
@@ -73,7 +76,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -83,6 +85,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a valid identifier for the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid identifier for the specified value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to generate a valid identifier for. </param>
       </Docs>
@@ -243,12 +249,15 @@
         <Parameter Name="type" Type="System.CodeDom.CodeTypeReference" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type indicated by the specified <see cref="T:System.CodeDom.CodeTypeReference" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A text representation of the specified type for the language this code generator is designed to generate code in. For example, in Visual Basic, passing in type System.Int32 will return "Integer".</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.CodeDom.CodeTypeReference" /> that indicates the type to return. </param>
       </Docs>
@@ -269,7 +278,6 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method tests whether an identifier is valid. When implementing <see cref="M:System.CodeDom.Compiler.ICodeGenerator.IsValidIdentifier(System.String)" /> in a derived class, design the method to test the value passed to it, and return true only if the value fits the rules of the language and does not conflict with a keyword.</para>
@@ -278,6 +286,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value that indicates whether the specified value is a valid identifier for the current language.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="value" /> parameter is a valid identifier; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to test for being a valid identifier. </param>
       </Docs>
@@ -298,7 +310,6 @@
         <Parameter Name="supports" Type="System.CodeDom.Compiler.GeneratorSupport" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be called with a number of <see cref="T:System.CodeDom.Compiler.GeneratorSupport" /> flags at once to test for a set of capabilities by joining a set of appropriate capability flags together with a binary "Or" operator (|).</para>
@@ -307,6 +318,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the generator provides support for the language features represented by the specified <see cref="T:System.CodeDom.Compiler.GeneratorSupport" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified capabilities are supported; otherwise, false.</para>
+        </returns>
         <param name="supports">
           <attribution license="cc4" from="Microsoft" modified="false" />The capabilities to test the generator for. </param>
       </Docs>

@@ -71,7 +71,6 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, this method always returns false. It never returns true.</para>
@@ -80,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether this converter can convert an object of the given type to the type of this converter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this converter can perform the conversion; otherwise, false.</para>
+        </returns>
         <param name="sourceType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type you want to convert from. </param>
       </Docs>
@@ -101,7 +104,6 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, this method returns false, unless <paramref name="sourceType" /> is an <see cref="T:System.ComponentModel.Design.Serialization.InstanceDescriptor" />.</para>
@@ -110,6 +112,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether this converter can convert an object of the given type to the type of this converter, using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this converter can perform the conversion; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="sourceType">
@@ -132,7 +138,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="destinationType" /> is a string, the default implementation of <see cref="Overload:System.ComponentModel.TypeConverter.CanConvertTo" /> always returns true.</para>
@@ -141,6 +146,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether this converter can convert the object to the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this converter can perform the conversion; otherwise, false.</para>
+        </returns>
         <param name="destinationType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the type you want to convert to. </param>
       </Docs>
@@ -162,7 +171,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <paramref name="context" /> parameter to extract additional information about the environment from which this converter is invoked. This parameter can be null, so always check it. Also, properties on the context object can return null.</para>
@@ -172,6 +180,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether this converter can convert the object to the specified type, using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this converter can perform the conversion; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="destinationType">
@@ -195,12 +207,15 @@
       </Parameters>
       <Docs>
         <param name="o">To be added: an object of type 'object'</param>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given value to the type of this converter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ConvertFrom">
@@ -221,7 +236,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Custom type authors that intend to support a type conversion behavior for XAML typically implement a <see cref="T:System.ComponentModel.TypeConverter" /> class that supports <see cref="M:System.ComponentModel.TypeConverter.ConvertFrom(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object)" /> behavior from a string. This behavior enables type conversion from the string provided as a XAML attribute value and provides a XAML processor with the support needed to create an object from the string, so that the object can be produced in a parsed object graph. Custom types or members of custom types are indicated by applying <see cref="T:System.ComponentModel.TypeConverterAttribute" /> to the definitions, with the attribute referencing the custom <see cref="T:System.ComponentModel.TypeConverter" /> implementation. </para>
@@ -231,6 +245,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given object to the type of this converter, using the specified context and culture information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="culture">
@@ -255,7 +273,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation always returns null.</para>
@@ -264,6 +281,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given string to the type of this converter, using the invariant culture.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted text.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to convert. </param>
       </Docs>
@@ -285,7 +306,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An exception is raised if the string cannot be converted into the appropriate object. The default implementation always returns null.</para>
@@ -295,6 +315,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given string to the type of this converter, using the invariant culture and the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted text.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="text">
@@ -317,7 +341,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation always returns null.</para>
@@ -326,6 +349,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified text to an object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted text.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text representation of the object to convert. </param>
       </Docs>
@@ -347,7 +374,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An exception is raised if the string cannot be converted into the appropriate object. The default implementation always returns null.</para>
@@ -357,6 +383,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given text to an object, using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted text.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="text">
@@ -381,7 +411,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An exception is raised if the string cannot be converted into the appropriate object. The default implementation always returns null.</para>
@@ -391,6 +420,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given text to an object, using the specified context and culture information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted text.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="culture">
@@ -416,7 +449,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The most common type to convert to and from is a string object. This implementation calls <see cref="M:System.Object.ToString" /> on the object, if the object is valid and if the destination type is a string.</para>
@@ -425,6 +457,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given value object to the specified type, using the arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to convert. </param>
         <param name="destinationType">
@@ -450,7 +486,6 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The most common types to convert are to and from a string object. This implementation calls <see cref="M:System.Object.ToString" /> on the object if the object is valid and if the destination type is a string.</para>
@@ -462,6 +497,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given value object to the specified type, using the specified context and culture information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="culture">
@@ -488,7 +527,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="context" /> parameter can be used to extract additional information about the environment from which this converter is being invoked. This can be null, so always check. Also, properties on the context object can return null.</para>
@@ -498,6 +536,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified value to a culture-invariant string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the converted value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to convert. </param>
       </Docs>
@@ -519,7 +561,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <paramref name="context" /> parameter to extract additional information about the environment from which this converter is invoked. This parameter can be null, so always check it. Also, properties on the context object can return null.</para>
@@ -529,6 +570,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified value to a culture-invariant string representation, using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that represents the converted value.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="value">
@@ -551,7 +596,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Depending on the implementation of the value formatter, it might be possible to pass the returned string back into the value formatter to re-create an instance of the object.</para>
@@ -560,6 +604,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified value to a string representation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to convert. </param>
       </Docs>
@@ -581,7 +629,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <paramref name="context" /> parameter to extract additional information about the environment from which this converter is invoked. This parameter can be null, so always check it. Also, properties on the context object can return null.</para>
@@ -591,6 +638,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given value to a string representation, using the given context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="value">
@@ -615,7 +666,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <paramref name="context" /> parameter to extract additional information about the environment from which this converter is invoked. This parameter can be null, so always check it. Also, properties on the context object can return null.</para>
@@ -625,6 +675,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the given value to a string representation, using the specified context and culture information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the converted value.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="culture">
@@ -649,7 +703,6 @@
         <Parameter Name="propertyValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method for objects that are immutable, but for which you want to provide changeable properties.</para>
@@ -659,6 +712,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Re-creates an <see cref="T:System.Object" /> given a set of property values for the object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the given <see cref="T:System.Collections.IDictionary" />, or null if the object cannot be created. This method always returns null.</para>
+        </returns>
         <param name="propertyValues">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.IDictionary" /> that represents a dictionary of new property values. </param>
       </Docs>
@@ -680,7 +737,6 @@
         <Parameter Name="propertyValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method for objects that are immutable, but for which you want to provide changeable properties.</para>
@@ -689,6 +745,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the type that this <see cref="T:System.ComponentModel.TypeConverter" /> is associated with, using the specified context, given a set of property values for the object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the given <see cref="T:System.Collections.IDictionary" />, or null if the object cannot be created. This method always returns null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="propertyValues">
@@ -711,12 +771,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Exception'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an exception to throw when a conversion cannot be performed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Exception" /> that represents the exception to throw when a conversion cannot be performed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to convert, or null if the object is not available. </param>
       </Docs>
@@ -738,12 +801,15 @@
         <Parameter Name="destinationType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Exception'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an exception to throw when a conversion cannot be performed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Exception" /> that represents the exception to throw when a conversion cannot be performed.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to convert, or null if the object is not available. </param>
         <param name="destinationType">
@@ -764,12 +830,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether changing a value on this object requires a call to the <see cref="M:System.ComponentModel.TypeConverter.CreateInstance(System.Collections.IDictionary)" /> method to create a new value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if changing a property on this object requires a call to <see cref="M:System.ComponentModel.TypeConverter.CreateInstance(System.Collections.IDictionary)" /> to create a new value; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetCreateInstanceSupported">
@@ -788,7 +857,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, this method always returns false.</para>
@@ -797,6 +865,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether changing a value on this object requires a call to <see cref="M:System.ComponentModel.TypeConverter.CreateInstance(System.Collections.IDictionary)" /> to create a new value, using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if changing a property on this object requires a call to <see cref="M:System.ComponentModel.TypeConverter.CreateInstance(System.Collections.IDictionary)" /> to create a new value; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
       </Docs>
@@ -817,7 +889,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, this method always returns null.</para>
@@ -827,6 +898,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of properties for the type of array specified by the value parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties that are exposed for this data type, or null if there are no properties.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that specifies the type of array for which to get properties. </param>
       </Docs>
@@ -848,7 +923,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <paramref name="context" /> parameter to extract additional information about the environment from which this converter is invoked. This parameter can be null, so always check it. Also, properties on the context object can return null.</para>
@@ -859,6 +933,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of properties for the type of array specified by the value parameter, using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties that are exposed for this data type, or null if there are no properties.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="value">
@@ -883,7 +961,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, this method always returns null.</para>
@@ -892,6 +969,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of properties for the type of array specified by the value parameter, using the specified context and attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> with the properties that are exposed for this data type, or null if there are no properties.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="value">
@@ -914,7 +995,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, this method always returns false.</para>
@@ -923,6 +1003,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether this object supports properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="M:System.ComponentModel.TypeConverter.GetProperties(System.Object)" /> should be called to find the properties of this object; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPropertiesSupported">
@@ -941,7 +1025,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, this method always returns false.</para>
@@ -950,6 +1033,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether this object supports properties, using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="M:System.ComponentModel.TypeConverter.GetProperties(System.Object)" /> should be called to find the properties of this object; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
       </Docs>
@@ -968,7 +1055,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Collections.ICollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, this method always returns null.</para>
@@ -977,6 +1063,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of standard values from the default context for the data type this type converter is designed for.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> containing a standard set of valid values, or null if the data type does not support a standard set of values.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetStandardValues">
@@ -995,7 +1085,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TypeConverter+StandardValuesCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in <see cref="T:System.ComponentModel.TypeConverter" />, this method always returns null.</para>
@@ -1004,6 +1093,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of standard values for the data type this type converter is designed for when provided with a format context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> that holds a standard set of valid values, or null if the data type does not support a standard set of values.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context that can be used to extract additional information about the environment from which this converter is invoked. This parameter or properties of this parameter can be null. </param>
       </Docs>
@@ -1022,7 +1115,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, this method always returns false.</para>
@@ -1032,6 +1124,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether the collection of standard values returned from <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> is an exclusive list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> returned from <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> is an exhaustive list of possible values; false if other values are possible.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetStandardValuesExclusive">
@@ -1050,7 +1146,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, this method always returns false.</para>
@@ -1060,6 +1155,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether the collection of standard values returned from <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> is an exclusive list of possible values, using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> returned from <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> is an exhaustive list of possible values; false if other values are possible.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
       </Docs>
@@ -1078,12 +1177,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether this object supports a standard set of values that can be picked from a list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> should be called to find a common set of values the object supports; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetStandardValuesSupported">
@@ -1102,7 +1204,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>As implemented in this class, this method always returns false.</para>
@@ -1112,6 +1213,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether this object supports a standard set of values that can be picked from a list, using the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> should be called to find a common set of values the object supports; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
       </Docs>
@@ -1132,7 +1237,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starting in net_v40_long, the <see cref="M:System.ComponentModel.TypeConverter.IsValid(System.ComponentModel.ITypeDescriptorContext,System.Object)" /> method catches exceptions from the <see cref="Overload:System.ComponentModel.TypeConverter.CanConvertFrom" /> and <see cref="Overload:System.ComponentModel.TypeConverter.ConvertFrom" /> methods. If the input value type causes <see cref="Overload:System.ComponentModel.TypeConverter.CanConvertFrom" /> to return false, or if the input value causes <see cref="Overload:System.ComponentModel.TypeConverter.ConvertFrom" /> to raise an exception, the <see cref="M:System.ComponentModel.TypeConverter.IsValid(System.ComponentModel.ITypeDescriptorContext,System.Object)" /> method returns false. </para>
@@ -1148,6 +1252,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether the given value object is valid for this type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified value is valid for this object; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to test for validity. </param>
       </Docs>
@@ -1169,7 +1277,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <paramref name="context" /> parameter to extract additional information about the environment from which this converter is invoked. This parameter can be null, so always check it. Also, properties on the context object can return null. </para>
@@ -1186,6 +1293,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns whether the given value object is valid for this type and for the specified context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified value is valid for this object; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that provides a format context. </param>
         <param name="value">
@@ -1209,7 +1320,6 @@
         <Parameter Name="names" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PropertyDescriptorCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>All properties in the collection that are not already in the array of names are added alphabetically to the end. If the <paramref name="names" /> parameter is an empty array or null, all the properties in the collection are sorted alphabetically.</para>
@@ -1218,6 +1328,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sorts a collection of properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that contains the sorted properties.</para>
+        </returns>
         <param name="props">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyDescriptorCollection" /> that has the properties to sort. </param>
         <param name="names">

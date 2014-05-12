@@ -106,7 +106,6 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code.</para>
@@ -116,6 +115,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to compare with the current <see cref="T:System.Object" />.</param>
       </Docs>
@@ -189,7 +192,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code.</para>
@@ -199,6 +201,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.MemberInfo.GetCustomAttributes(System.Boolean)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains all the custom attributes, or an array with zero elements if no attributes are defined.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />Specifies whether to search this member's inheritance chain to find the attributes.</param>
       </Docs>
@@ -221,7 +227,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code.</para>
@@ -231,6 +236,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.MemberInfo.GetCustomAttributes(System.Type,System.Boolean)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of custom attributes applied to this member, or an array with zero (0) elements if no attributes have been applied.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for. Only attributes that are assignable to this type are returned. </param>
         <param name="inherit">
@@ -252,7 +261,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code.</para>
@@ -262,6 +270,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Object.GetHashCode" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for the current instance.</para>
+        </returns>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
     </Member>
@@ -309,7 +321,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code.</para>
@@ -319,6 +330,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Object.GetType" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
     </Member>
@@ -395,7 +410,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code.</para>
@@ -405,6 +419,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.FieldInfo.GetValue(System.Object)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object containing the value of the field reflected by this instance.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object whose field value will be returned.</param>
       </Docs>
@@ -426,7 +444,6 @@
         <Parameter Name="obj" Type="System.TypedReference" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code.</para>
@@ -436,6 +453,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.FieldInfo.GetValueDirect(System.TypedReference)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> containing a field value.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.TypedReference" /> structure that encapsulates a managed pointer to a location and a runtime representation of the type that might be stored at that location.</param>
       </Docs>
@@ -520,7 +541,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code.</para>
@@ -530,6 +550,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.MemberInfo.IsDefined(System.Type,System.Boolean)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more instance of <paramref name="attributeType" /> is applied to this member; otherwise, false.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> object to which the custom attributes are applied. </param>
         <param name="inherit">
@@ -1023,7 +1047,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code, and should not be called from managed code.</para>
@@ -1032,6 +1055,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Object.ToString" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Object" />.</para>
+        </returns>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
     </Member>

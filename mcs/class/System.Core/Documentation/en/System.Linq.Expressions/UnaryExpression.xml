@@ -306,7 +306,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the CanReduce method returns true, this should return a valid expression.</para>
@@ -316,6 +315,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reduces the expression node to a simpler expression. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The reduced expression.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Type">
@@ -351,12 +354,15 @@
         <Parameter Name="operand" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This expression if no children are changed or an expression with the updated children.</para>
+        </returns>
         <param name="operand">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.UnaryExpression.Operand" /> property of the result.</param>
       </Docs>

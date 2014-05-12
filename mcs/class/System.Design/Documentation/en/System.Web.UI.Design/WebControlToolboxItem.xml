@@ -110,7 +110,6 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -120,6 +119,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates objects from each type contained in this <see cref="T:System.Drawing.Design.ToolboxItem" />, and adds them to the specified designer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of created <see cref="T:System.ComponentModel.IComponent" /> objects.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the current design document. </param>
       </Docs>
@@ -165,7 +168,6 @@
         <Parameter Name="attributeType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation will throw an <see cref="T:System.ArgumentException" /> if the <paramref name="attributeType" /> parameter is anything other than a <see cref="T:System.Web.UI.PersistChildrenAttribute" />.</para>
@@ -174,6 +176,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of the specified type of attribute of the toolbox item.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified type of attribute.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the current design document. </param>
         <param name="attributeType">
@@ -194,12 +200,15 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the HTML for the Web control that the tool creates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The HTML for the Web control that the tool creates.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the current design document. </param>
       </Docs>
@@ -218,12 +227,15 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the type of this toolbox item.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of this toolbox item.</para>
+        </returns>
         <param name="host">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.IDesignerHost" /> for the current design document. </param>
       </Docs>

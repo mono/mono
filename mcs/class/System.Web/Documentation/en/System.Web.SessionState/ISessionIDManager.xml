@@ -30,7 +30,6 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -40,6 +39,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a unique session identifier.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A unique session identifier.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" /> object that references server objects used to process HTTP requests (for example, the <see cref="P:System.Web.HttpContext.Request" /> and <see cref="P:System.Web.HttpContext.Response" /> properties). </param>
       </Docs>
@@ -57,7 +60,6 @@
         <Parameter Name="context" Type="System.Web.HttpContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -68,6 +70,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the session identifier from the context of the current HTTP request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The current session identifier sent with the HTTP request.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The current <see cref="T:System.Web.HttpContext" /> object that references server objects used to process HTTP requests (for example, the <see cref="P:System.Web.HttpContext.Request" /> and <see cref="P:System.Web.HttpContext.Response" /> properties).</param>
       </Docs>
@@ -182,7 +188,6 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -193,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Confirms that the supplied session identifier is valid.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the session identifier is valid; otherwise, false.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The session identifier to validate. </param>
       </Docs>

@@ -94,12 +94,15 @@
         <Parameter Name="relation" Type="System.Data.DataRelation" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataView'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Data.DataView" /> for the child <see cref="T:System.Data.DataTable" /> with the specified child <see cref="T:System.Data.DataRelation" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>a <see cref="T:System.Data.DataView" /> for the child <see cref="T:System.Data.DataTable" />.</para>
+        </returns>
         <param name="relation">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRelation" /> object. </param>
       </Docs>
@@ -118,12 +121,15 @@
         <Parameter Name="relationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataView'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Data.DataView" /> for the child <see cref="T:System.Data.DataTable" /> with the specified child <see cref="T:System.Data.DataRelation" /> name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>a <see cref="T:System.Data.DataView" /> for the child <see cref="T:System.Data.DataTable" />.</para>
+        </returns>
         <param name="relationName">
           <attribution license="cc4" from="Microsoft" modified="false" />A string containing the <see cref="T:System.Data.DataRelation" /> name. </param>
       </Docs>
@@ -205,12 +211,15 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the current <see cref="T:System.Data.DataRowView" /> is identical to the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="object" /> is a <see cref="T:System.Data.DataRowView" /> and it returns the same row as the current <see cref="T:System.Data.DataRowView" />; otherwise false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> to be compared. </param>
       </Docs>
@@ -227,12 +236,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code of the <see cref="T:System.Data.DataRow" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code 1, which represents Boolean true if the value of this instance is nonzero; otherwise the integer zero, which represents Boolean false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -393,7 +405,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -402,6 +413,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of custom attributes for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An AttributeCollection containing the attributes for this object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetClassName">
@@ -416,7 +431,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -425,6 +439,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the class name of this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The class name of this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetComponentName">
@@ -439,7 +457,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -448,6 +465,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetConverter">
@@ -462,7 +483,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -471,6 +491,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a type converter for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The type converter for this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultEvent">
@@ -485,7 +509,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -494,6 +517,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default event for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default event for this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetDefaultProperty">
@@ -508,7 +535,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -517,6 +543,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the default property for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default property for this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEditor">
@@ -533,7 +563,6 @@
         <Parameter Name="editorBaseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -542,6 +571,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an editor of the specified type for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> of the specified type that is the editor for this object, or null if the editor cannot be found.</para>
+        </returns>
         <param name="editorBaseType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that represents the editor for this object. </param>
       </Docs>
@@ -558,7 +591,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -567,6 +599,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the events for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The events for this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetEvents">
@@ -583,7 +619,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -592,6 +627,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the events for this instance of a component with specified attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The events for this instance of a component.</para>
+        </returns>
         <param name="attributes">
           <attribution license="cc4" from="Microsoft" modified="false" />The attributes</param>
       </Docs>
@@ -608,7 +647,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -617,6 +655,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the properties for this instance of a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The properties for this instance of a component.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.ComponentModel.ICustomTypeDescriptor.GetProperties">
@@ -633,7 +675,6 @@
         <Parameter Name="attributes" Type="System.Attribute[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -642,6 +683,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the properties for this instance of a component with specified attributes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The properties for this instance of a component.</para>
+        </returns>
         <param name="attributes">
           <attribution license="cc4" from="Microsoft" modified="false" />The attributes.</param>
       </Docs>
@@ -660,7 +705,6 @@
         <Parameter Name="pd" Type="System.ComponentModel.PropertyDescriptor" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.DataRowView" /> instance is cast to an <see cref="T:System.ComponentModel.ICustomTypeDescriptor" /> interface.</para>
@@ -669,6 +713,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that contains the property described by the specified property descriptor.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the owner of the specified property.</para>
+        </returns>
         <param name="pd">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.PropertyDescriptor" /> that represents the property whose owner is to be found. </param>
       </Docs>

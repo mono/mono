@@ -286,7 +286,6 @@ End Try</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <see cref="M:System.Runtime.InteropServices.SEHException.CanResume" /> returns true, then a filtered exception handler can correct the problem that caused the exception, and the code will continue from the point at which the exception was thrown.</para>
@@ -295,6 +294,10 @@ End Try</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the exception can be recovered from, and whether the code can continue from the point at which the exception was thrown.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always false, because resumable exceptions are not implemented.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

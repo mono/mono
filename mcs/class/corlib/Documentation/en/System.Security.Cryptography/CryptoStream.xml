@@ -257,7 +257,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must preface your call to <see cref="M:System.Security.Cryptography.CryptoStream.FlushAsync(System.Threading.CancellationToken)" /> with the await (C#) or Await (Visual Basic) operator to suspend execution of the method until the task is complete. For more information, see <format type="text/html"><a href="db854f91-ccef-4035-ae4d-0911fde808c7">Asynchronous Programming with Async and Await (C# and Visual Basic)</a></format>.</para>
@@ -267,6 +266,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Clears all buffers for the current stream asynchronously, causes any buffered data to be written to the underlying device, and monitors cancellation requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous flush operation.</para>
+        </returns>
         <param name="cancellationToken">
           <attribution license="cc4" from="Microsoft" modified="false" />The token to monitor for cancellation requests. The default value is <see cref="P:System.Threading.CancellationToken.None" />.</param>
       </Docs>
@@ -383,12 +386,15 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a sequence of bytes from the current stream and advances the position within the stream by the number of bytes read.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The total number of bytes read into the buffer. This can be less than the number of bytes requested if that many bytes are not currently available, or zero if the end of the stream has been reached.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes. A maximum of <paramref name="count" /> bytes are read from the current stream and stored in <paramref name="buffer" />. </param>
         <param name="offset">
@@ -414,7 +420,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must preface your call to <see cref="M:System.Security.Cryptography.CryptoStream.ReadAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)" /> with the await (C#) or Await (Visual Basic) operator to suspend execution of the method until the task is complete. For more information, see <format type="text/html"><a href="db854f91-ccef-4035-ae4d-0911fde808c7">Asynchronous Programming with Async and Await (C# and Visual Basic)</a></format>.</para>
@@ -424,6 +429,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a sequence of bytes from the current stream asynchronously, advances the position within the stream by the number of bytes read, and monitors cancellation requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the task object's <paramref name="TResult" /> parameter contains the total number of bytes read into the buffer. The result can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the stream has been reached. </para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write the data into.</param>
         <param name="offset">
@@ -451,7 +460,6 @@
         <Parameter Name="origin" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method exists only to support inheritance from <see cref="T:System.IO.Stream" />, and cannot be used.</para>
@@ -460,6 +468,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the position within the current stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is not supported.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />A byte offset relative to the <paramref name="origin" /> parameter. </param>
         <param name="origin">
@@ -542,7 +554,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You must preface your call to <see cref="M:System.Security.Cryptography.CryptoStream.WriteAsync(System.Byte[],System.Int32,System.Int32,System.Threading.CancellationToken)" /> with the await (C#) or Await (Visual Basic) operator to suspend execution of the method until the task is complete. For more information, see <format type="text/html"><a href="db854f91-ccef-4035-ae4d-0911fde808c7">Asynchronous Programming with Async and Await (C# and Visual Basic)</a></format>.</para>
@@ -552,6 +563,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes a sequence of bytes to the current stream asynchronously, advances the current position within the stream by the number of bytes written, and monitors cancellation requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write data from.</param>
         <param name="offset">

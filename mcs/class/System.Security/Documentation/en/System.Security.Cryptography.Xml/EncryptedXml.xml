@@ -188,7 +188,6 @@
       </Parameters>
       <Docs>
         <param name="symAlg">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -199,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decrypts an &lt;EncryptedData&gt; element using the specified symmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the raw decrypted plain text.</para>
+        </returns>
         <param name="encryptedData">
           <attribution license="cc4" from="Microsoft" modified="false" />The data to decrypt.</param>
       </Docs>
@@ -247,7 +250,6 @@
         <Parameter Name="encryptedKey" Type="System.Security.Cryptography.Xml.EncryptedKey" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -258,6 +260,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the key represented by the <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the key.</para>
+        </returns>
         <param name="encryptedKey">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.Xml.EncryptedKey" /> object that contains the key to retrieve.</param>
       </Docs>
@@ -279,7 +285,6 @@
       </Parameters>
       <Docs>
         <param name="symAlg">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -289,6 +294,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decrypts an &lt;EncryptedKey&gt; element using a symmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the plain text key.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes that represents an encrypted &lt;EncryptedKey&gt; element.</param>
       </Docs>
@@ -311,7 +320,6 @@
       </Parameters>
       <Docs>
         <param name="fOAEP">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -321,6 +329,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Decrypts an &lt;EncryptedKey&gt; element using an asymmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the plain text key.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of bytes that represents an encrypted &lt;EncryptedKey&gt; element.</param>
         <param name="rsa">
@@ -391,7 +403,6 @@
         <Parameter Name="certificate" Type="System.Security.Cryptography.X509Certificates.X509Certificate2" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -403,6 +414,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encrypts the outer XML of an element using the specified X.509 certificate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> element that represents the encrypted XML data.</para>
+        </returns>
         <param name="inputElement">
           <attribution license="cc4" from="Microsoft" modified="false" />The XML element to encrypt.</param>
         <param name="certificate">
@@ -425,7 +440,6 @@
         <Parameter Name="keyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -436,6 +450,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encrypts the outer XML of an element using the specified key in the key mapping table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object that represents the encrypted XML data.</para>
+        </returns>
         <param name="inputElement">
           <attribution license="cc4" from="Microsoft" modified="false" />The XML element to encrypt.</param>
         <param name="keyName">
@@ -460,7 +478,6 @@
       <Docs>
         <param name="plainText">To be added.</param>
         <param name="symAlg">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -470,6 +487,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encrypts data in the specified byte array using the specified symmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array of encrypted data.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="EncryptData">
@@ -490,7 +511,6 @@
       </Parameters>
       <Docs>
         <param name="symAlg">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -500,6 +520,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encrypts the specified element or its contents using the specified symmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the encrypted data.</para>
+        </returns>
         <param name="inputElement">
           <attribution license="cc4" from="Microsoft" modified="false" />The element or its contents to encrypt.</param>
         <param name="content">
@@ -523,7 +547,6 @@
       </Parameters>
       <Docs>
         <param name="symAlg">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -534,6 +557,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encrypts a key using a symmetric algorithm that a recipient uses to decrypt an &lt;EncryptedData&gt; element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that represents the encrypted value of the <paramref name="keyData" /> parameter.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to encrypt.</param>
       </Docs>
@@ -556,7 +583,6 @@
       </Parameters>
       <Docs>
         <param name="fOAEP">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -567,6 +593,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encrypts the key that a recipient uses to decrypt an &lt;EncryptedData&gt; element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that represents the encrypted value of the <paramref name="keyData" /> parameter.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to encrypt.</param>
         <param name="rsa">
@@ -590,7 +620,6 @@
       </Parameters>
       <Docs>
         <param name="symAlgUri">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -601,6 +630,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the decryption initialization vector (IV) from an <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array that contains the decryption initialization vector (IV).</para>
+        </returns>
         <param name="encryptedData">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object that contains the initialization vector (IV) to retrieve.</param>
       </Docs>
@@ -622,7 +655,6 @@
       </Parameters>
       <Docs>
         <param name="symAlgUri">To be added.</param>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -632,6 +664,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the decryption key from the specified <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.Cryptography.SymmetricAlgorithm" /> object associated with the decryption key.</para>
+        </returns>
         <param name="encryptedData">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.Cryptography.Xml.EncryptedData" /> object that contains the decryption key to retrieve.</param>
       </Docs>
@@ -652,7 +688,6 @@
         <Parameter Name="idValue" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -662,6 +697,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines how to resolve internal Uniform Resource Identifier (URI) references.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlElement" /> object that contains an ID indicating how internal Uniform Resource Identifiers (URIs) are to be resolved.</para>
+        </returns>
         <param name="document">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDocument" /> object that contains an element with an ID value.</param>
         <param name="idValue">

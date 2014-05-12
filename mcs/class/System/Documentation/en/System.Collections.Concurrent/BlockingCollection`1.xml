@@ -377,12 +377,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a consuming <see cref="T:System.Collections.Generic.IEnumerator`1" /> for items in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> that removes and returns items from the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetConsumingEnumerable">
@@ -399,7 +402,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method enables client code to remove items from the collection by using a foreach loop (For Each in Visual Basic), or <see cref="M:System.Threading.Tasks.Parallel.ForEach``1(System.Collections.Concurrent.Partitioner{``0},System.Action{``0})" /> or a PLINQ query. The enumerator will continue to provide items (if any exist) until <see cref="P:System.Collections.Concurrent.BlockingCollection`1.IsCompleted" /> returns true, and if <see cref="P:System.Collections.Concurrent.BlockingCollection`1.IsCompleted" /> is false the loop blocks until an item becomes available or until the <see cref="T:System.Threading.CancellationToken" /> is cancelled. </para>
@@ -408,6 +410,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a consuming <see cref="T:System.Collections.Generic.IEnumerable`1" /> for items in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.Generic.IEnumerable`1" /> that removes and returns items from the collection.</para>
+        </returns>
         <param name="cancellationToken">
           <attribution license="cc4" from="Microsoft" modified="false" />A cancellation token to observe.</param>
       </Docs>
@@ -543,12 +549,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides an <see cref="T:System.Collections.IEnumerator" /> for items in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> for the items in the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Take">
@@ -563,7 +572,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A call to <see cref="M:System.Collections.Concurrent.BlockingCollection`1.Take" /> may block until an item is available to be removed.</para>
@@ -573,6 +581,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes  an item from the <see cref="T:System.Collections.Concurrent.BlockingCollection`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item removed from the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Take">
@@ -589,7 +601,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A call to <see cref="M:System.Collections.Concurrent.BlockingCollection`1.Take(System.Threading.CancellationToken)" /> may block until an item is available to be removed or the token is canceled.</para>
@@ -599,6 +610,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes an item from the <see cref="T:System.Collections.Concurrent.BlockingCollection`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The item removed from the collection.</para>
+        </returns>
         <param name="cancellationToken">
           <attribution license="cc4" from="Microsoft" modified="false" />Object that can be used to cancel the take operation.</param>
       </Docs>
@@ -661,7 +676,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The copied elements are not removed from the collection. </para>
@@ -671,6 +685,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies the items from the <see cref="T:System.Collections.Concurrent.BlockingCollection`1" /> instance into a new array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array containing copies of the elements of the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TryAdd">

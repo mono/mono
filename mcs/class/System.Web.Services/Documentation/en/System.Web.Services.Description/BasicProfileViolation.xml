@@ -121,13 +121,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.String" /> that comprises information from <see cref="P:System.Web.Services.Description.BasicProfileViolation.NormativeStatement" />, <see cref="P:System.Web.Services.Description.BasicProfileViolation.Details" />, and <see cref="P:System.Web.Services.Description.BasicProfileViolation.Elements" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that comprises information from <see cref="P:System.Web.Services.Description.BasicProfileViolation.NormativeStatement" />, <see cref="P:System.Web.Services.Description.BasicProfileViolation.Details" />, and <see cref="P:System.Web.Services.Description.BasicProfileViolation.Elements" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>

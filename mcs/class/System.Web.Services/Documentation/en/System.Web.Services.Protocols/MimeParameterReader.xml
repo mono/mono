@@ -54,12 +54,15 @@
         <Parameter Name="request" Type="System.Web.HttpRequest" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Object[]" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, deserializes an HTTP request into an array of Web method parameter values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Object" /> objects that contains the deserialized HTTP request.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpRequest" /> object containing the input message for an operation.</param>
       </Docs>

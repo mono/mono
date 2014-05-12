@@ -199,7 +199,6 @@
         <Parameter Name="elementName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlMembersMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.XmlSchemaImporter.ImportAnyType(System.Xml.XmlQualifiedName,System.String)" /> method is used by the Wsdl.exe tool while generating client proxy classes or abstract server classes from a Web Services Description Language (WSDL) document. Instead of calling this method directly, use Wsdl.exe or Xsd.exe.</para>
@@ -209,6 +208,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for a single, (SOAP) literal element part defined in a WSDL document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> representing the .NET Framework type mapping for a single element part of a WSDL message definition.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> that specifies the name of an element's type for which a .NET Framework type is generated.</param>
         <param name="elementName">
@@ -232,7 +235,6 @@
         <Parameter Name="baseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlTypeMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload of the <see cref="M:System.Xml.Serialization.XmlSchemaImporter.ImportDerivedTypeMapping(System.Xml.XmlQualifiedName,System.Type)" /> method is used by the Xsd.exe tool to generate classes from an XML Schema Definition (XSD) document. Instead of calling this method directly, use Xsd.exe.</para>
@@ -241,6 +243,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for an element defined in an XML schema document. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> representing the.NET Framework type mapping information for an XML schema element.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> that specifies the name of an element defined in an XML schema document.</param>
         <param name="baseType">
@@ -265,7 +271,6 @@
         <Parameter Name="baseTypeCanBeIndirect" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlTypeMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload of the <see cref="M:System.Xml.Serialization.XmlSchemaImporter.ImportDerivedTypeMapping(System.Xml.XmlQualifiedName,System.Type,System.Boolean)" /> method is used by the Xsd.exe tool to generate classes from an XML Schema Definition (XSD) document. It also is used by the Wsdl.exe tool while generating client proxy classes or abstract server classes from a Web Services Description Language (WSDL) document. Instead of calling this method directly, use Wsdl.exe or Xsd.exe.</para>
@@ -274,6 +279,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for an element defined in an XML schema document or as a part in a WSDL document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework type mapping information for an XML schema element.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> that specifies the name of an element defined in an XML schema document.</param>
         <param name="baseType">
@@ -298,7 +307,6 @@
         <Parameter Name="name" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlMembersMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.XmlSchemaImporter.ImportMembersMapping(System.Xml.XmlQualifiedName)" /> method of the <see cref="T:System.Xml.Serialization.XmlSchemaImporter" /> class is used by the Wsdl.exe tool while generating client proxy classes or abstract server classes from a Web Services Description Language (WSDL) document. Instead of calling this method directly, use Wsdl.exe or Xsd.exe.</para>
@@ -308,6 +316,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for a single element part of a literal-use SOAP message defined in a WSDL document. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework type mapping for a WSDL message definition containing a single element part.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> that specifies the name of the message part.</param>
       </Docs>
@@ -328,7 +340,6 @@
         <Parameter Name="names" Type="System.Xml.XmlQualifiedName[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlMembersMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.XmlSchemaImporter.ImportMembersMapping(System.Xml.XmlQualifiedName[])" /> method is used by the Wsdl.exe tool while generating client proxy classes or abstract server classes from a Web Services Description Language (WSDL) document. Instead of calling this method directly, use Wsdl.exe or Xsd.exe.</para>
@@ -339,6 +350,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for the element parts of a literal-use SOAP message defined in a WSDL document. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> that represents the .NET Framework type mappings for the element parts of a WSDL message definition.</para>
+        </returns>
         <param name="names">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Xml.XmlQualifiedName" /> that specifies the names of the message parts.</param>
       </Docs>
@@ -360,13 +375,16 @@
         <Parameter Name="members" Type="System.Xml.Serialization.SoapSchemaMember[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for the element parts of a literal-use SOAP message defined in a WSDL document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.Serialization.XmlMembersMapping" /> that contains type mapping information.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the element for which to generate a mapping.</param>
         <param name="ns">
@@ -393,7 +411,6 @@
         <Parameter Name="baseTypeCanBeIndirect" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlMembersMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.XmlSchemaImporter.ImportMembersMapping(System.Xml.XmlQualifiedName[],System.Type,System.Boolean)" /> method is used by the Wsdl.exe tool while generating client proxy classes or abstract server classes from a Web Services Description Language (WSDL) document. Instead of calling this method directly, use Wsdl.exe or Xsd.exe.</para>
@@ -404,6 +421,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for the element parts of a literal-use SOAP message defined in a WSDL document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework type mappings for the element parts of a WSDL message definition.</para>
+        </returns>
         <param name="names">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Xml.XmlQualifiedName" /> that specifies the names of the message parts.</param>
         <param name="baseType">
@@ -427,13 +448,16 @@
         <Parameter Name="typeName" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for an element defined in an XML schema document. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> object that describes a type mapping.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlQualifiedName" /> that specifies an XML element.</param>
       </Docs>
@@ -454,13 +478,16 @@
         <Parameter Name="baseType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for an element defined in an XML schema document. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> object that describes a type mapping.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlQualifiedName" /> that specifies an XML element.</param>
         <param name="baseType">
@@ -484,13 +511,16 @@
         <Parameter Name="baseTypeCanBeIndirect" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for an element defined in an XML schema document. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Xml.Serialization.XmlTypeMapping" /> object that describes a type mapping.</para>
+        </returns>
         <param name="typeName">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.XmlQualifiedName" /> that specifies an XML element.</param>
         <param name="baseType">
@@ -515,7 +545,6 @@
         <Parameter Name="name" Type="System.Xml.XmlQualifiedName" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlTypeMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Xml.Serialization.XmlSchemaImporter.ImportTypeMapping(System.Xml.XmlQualifiedName)" /> method is used by the Xsd.exe tool while generating classes XML Schema Definition (XSD) document. Instead of calling this method directly, use Xsd.exe.</para>
@@ -525,6 +554,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates internal type mapping information for an element defined in an XML schema document. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The .NET Framework type mapping information for an XML schema element.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlQualifiedName" /> that specifies the name of an element defined in an XML schema document.</param>
       </Docs>

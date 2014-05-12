@@ -44,7 +44,6 @@
         <Parameter Name="func" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TSource,TSource&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -56,6 +55,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Applies an accumulator function over a sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The final accumulator value.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to aggregate over.</param>
         <param name="func">
@@ -85,7 +88,6 @@
         <Parameter Name="func" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TAccumulate,TSource,TAccumulate&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -97,6 +99,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Applies an accumulator function over a sequence. The specified seed value is used as the initial accumulator value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The final accumulator value.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to aggregate over.</param>
         <param name="seed">
@@ -132,7 +138,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TAccumulate,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -144,6 +149,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Applies an accumulator function over a sequence. The specified seed value is used as the initial accumulator value, and the specified function is used to select the result value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transformed final accumulator value.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to aggregate over.</param>
         <param name="seed">
@@ -179,7 +188,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -190,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether all the elements of a sequence satisfy a condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if every element of the source sequence passes the test in the specified predicate, or if the sequence is empty; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose elements to test for a condition.</param>
         <param name="predicate">
@@ -216,7 +228,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Any``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Any``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -226,6 +237,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a sequence contains any elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the source sequence contains any elements; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to check for being empty.</param>
         <typeparam name="TSource">
@@ -251,7 +266,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -262,6 +276,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether any element of a sequence satisfies a condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if any elements in the source sequence pass the test in the specified predicate; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose elements to test for a condition.</param>
         <param name="predicate">
@@ -285,7 +303,6 @@
         <Parameter Name="source" Type="System.Collections.IEnumerable" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the type of <paramref name="source" /> implements <see cref="T:System.Linq.IQueryable`1" />, <see cref="M:System.Linq.Queryable.AsQueryable(System.Collections.IEnumerable)" /> returns it directly. Otherwise, it returns an <see cref="T:System.Linq.IQueryable`1" /> that executes queries by calling the equivalent query operator methods in <see cref="T:System.Linq.Enumerable" /> instead of those in <see cref="T:System.Linq.Queryable" />.</para>
@@ -295,6 +312,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts an <see cref="T:System.Collections.IEnumerable" /> to an <see cref="T:System.Linq.IQueryable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable" /> that represents the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to convert.</param>
       </Docs>
@@ -317,7 +338,6 @@
         <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TElement&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the type of <paramref name="source" /> implements <see cref="T:System.Linq.IQueryable`1" />, <see cref="M:System.Linq.Queryable.AsQueryable``1(System.Collections.Generic.IEnumerable{``0})" /> returns it directly. Otherwise, it returns an <see cref="T:System.Linq.IQueryable`1" /> that executes queries by calling the equivalent query operator methods in <see cref="T:System.Linq.Enumerable" /> instead of those in <see cref="T:System.Linq.Queryable" />.</para>
@@ -326,6 +346,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a generic <see cref="T:System.Collections.Generic.IEnumerable`1" /> to a generic <see cref="T:System.Linq.IQueryable`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that represents the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to convert.</param>
         <typeparam name="TElement">
@@ -347,7 +371,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Decimal&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Decimal})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Decimal})" /> itself. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -357,6 +380,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of <see cref="T:System.Decimal" /> values to calculate the average of.</param>
       </Docs>
@@ -376,7 +403,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Double&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Double})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Double})" /> itself. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -386,6 +412,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of <see cref="T:System.Double" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of <see cref="T:System.Double" /> values to calculate the average of.</param>
       </Docs>
@@ -405,7 +435,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Int32&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Int32})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Int32})" /> itself. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -415,6 +444,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of <see cref="T:System.Int32" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of <see cref="T:System.Int32" /> values to calculate the average of.</param>
       </Docs>
@@ -434,7 +467,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Int64&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Int64})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Int64})" /> itself. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -444,6 +476,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of <see cref="T:System.Int64" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of <see cref="T:System.Int64" /> values to calculate the average of.</param>
       </Docs>
@@ -463,7 +499,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Nullable&lt;System.Decimal&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Nullable{System.Decimal}})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Nullable{System.Decimal}})" /> itself. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -473,6 +508,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of nullable <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values, or null if the source sequence is empty or contains only null values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of nullable <see cref="T:System.Decimal" /> values to calculate the average of.</param>
       </Docs>
@@ -492,7 +531,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Nullable&lt;System.Double&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Nullable{System.Double}})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Nullable{System.Double}})" /> itself. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -502,6 +540,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of nullable <see cref="T:System.Double" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values, or null if the source sequence is empty or contains only null values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of nullable <see cref="T:System.Double" /> values to calculate the average of.</param>
       </Docs>
@@ -521,7 +563,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Nullable&lt;System.Int32&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Nullable{System.Int32}})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Nullable{System.Int32}})" /> itself. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -531,6 +572,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of nullable <see cref="T:System.Int32" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values, or null if the source sequence is empty or contains only null values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of nullable <see cref="T:System.Int32" /> values to calculate the average of.</param>
       </Docs>
@@ -550,7 +595,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Nullable&lt;System.Int64&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Nullable{System.Int64}})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Nullable{System.Int64}})" /> itself. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -560,6 +604,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of nullable <see cref="T:System.Int64" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values, or null if the source sequence is empty or contains only null values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of nullable <see cref="T:System.Int64" /> values to calculate the average of.</param>
       </Docs>
@@ -579,7 +627,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Nullable&lt;System.Single&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Nullable{System.Single}})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Nullable{System.Single}})" /> itself. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -589,6 +636,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of nullable <see cref="T:System.Single" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values, or null if the source sequence is empty or contains only null values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of nullable <see cref="T:System.Single" /> values to calculate the average of.</param>
       </Docs>
@@ -608,7 +659,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Single&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Single})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Average(System.Linq.IQueryable{System.Single})" /> itself. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -618,6 +668,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of <see cref="T:System.Single" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of <see cref="T:System.Single" /> values to calculate the average of.</param>
       </Docs>
@@ -641,7 +695,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Decimal&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -652,6 +705,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of <see cref="T:System.Decimal" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
         <param name="selector">
@@ -679,7 +736,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Double&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -690,6 +746,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of <see cref="T:System.Double" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the average of.</param>
         <param name="selector">
@@ -717,7 +777,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -728,6 +787,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of <see cref="T:System.Int32" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the average of.</param>
         <param name="selector">
@@ -755,7 +818,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int64&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -766,6 +828,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of <see cref="T:System.Int64" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the average of.</param>
         <param name="selector">
@@ -793,7 +859,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Decimal&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -804,6 +869,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of nullable <see cref="T:System.Decimal" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values, or null if the <paramref name="source" /> sequence is empty or contains only null values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the average of.</param>
         <param name="selector">
@@ -831,7 +900,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Double&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -842,6 +910,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of nullable <see cref="T:System.Double" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values, or null if the <paramref name="source" /> sequence is empty or contains only null values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the average of.</param>
         <param name="selector">
@@ -869,7 +941,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Int32&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -880,6 +951,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of nullable <see cref="T:System.Int32" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values, or null if the <paramref name="source" /> sequence is empty or contains only null values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the average of.</param>
         <param name="selector">
@@ -907,7 +982,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Int64&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -918,6 +992,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of nullable <see cref="T:System.Int64" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values, or null if the <paramref name="source" /> sequence is empty or contains only null values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the average of.</param>
         <param name="selector">
@@ -945,7 +1023,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Single&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -956,6 +1033,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of nullable <see cref="T:System.Single" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values, or null if the <paramref name="source" /> sequence is empty or contains only null values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the average of.</param>
         <param name="selector">
@@ -983,7 +1064,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Single&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -994,6 +1074,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the average of a sequence of <see cref="T:System.Single" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the average of.</param>
         <param name="selector">
@@ -1020,7 +1104,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Cast``1(System.Linq.IQueryable)" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Cast``1(System.Linq.IQueryable)" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1030,6 +1113,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the elements of an <see cref="T:System.Linq.IQueryable" /> to the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains each element of the source sequence converted to the specified type.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Linq.IQueryable" /> that contains the elements to be converted.</param>
         <typeparam name="TResult">
@@ -1055,7 +1142,6 @@
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Concat``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Concat``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source1" /> parameter.</para>
@@ -1065,6 +1151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Concatenates two sequences.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains the concatenated elements of the two input sequences.</para>
+        </returns>
         <param name="source1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to concatenate.</param>
         <param name="source2">
@@ -1092,7 +1182,6 @@
         <Parameter Name="item" Type="TSource" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Contains``1(System.Linq.IQueryable{``0},``0)" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Contains``1(System.Linq.IQueryable{``0},``0)" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1102,6 +1191,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a sequence contains a specified element by using the default equality comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the input sequence contains an element that has the specified value; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> in which to locate <paramref name="item" />.</param>
         <param name="item">
@@ -1130,7 +1223,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Contains``1(System.Linq.IQueryable{``0},``0,System.Collections.Generic.IEqualityComparer{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Contains``1(System.Linq.IQueryable{``0},``0,System.Collections.Generic.IEqualityComparer{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1140,6 +1232,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a sequence contains a specified element by using a specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the input sequence contains an element that has the specified value; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> in which to locate <paramref name="item" />.</param>
         <param name="item">
@@ -1168,7 +1264,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Count``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Count``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1178,6 +1273,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of elements in a sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of elements in the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Linq.IQueryable`1" /> that contains the elements to be counted.</param>
         <typeparam name="TSource">
@@ -1203,7 +1302,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -1214,6 +1312,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of elements in the specified sequence that satisfies a condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of elements in the sequence that satisfies the condition in the predicate function.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> that contains the elements to be counted.</param>
         <param name="predicate">
@@ -1240,7 +1342,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.DefaultIfEmpty``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.DefaultIfEmpty``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1250,6 +1351,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the elements of the specified sequence or the type parameter's default value in a singleton collection if the sequence is empty.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains default(<paramref name="TSource" />) if <paramref name="source" /> is empty; otherwise, <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Linq.IQueryable`1" /> to return a default value for if empty.</param>
         <typeparam name="TSource">
@@ -1275,7 +1380,6 @@
         <Parameter Name="defaultValue" Type="TSource" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.DefaultIfEmpty``1(System.Linq.IQueryable{``0},``0)" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.DefaultIfEmpty``1(System.Linq.IQueryable{``0},``0)" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1285,6 +1389,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the elements of the specified sequence or the specified value in a singleton collection if the sequence is empty.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains <paramref name="defaultValue" /> if <paramref name="source" /> is empty; otherwise, <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Linq.IQueryable`1" /> to return the specified value for if empty.</param>
         <param name="defaultValue">
@@ -1311,7 +1419,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Distinct``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Distinct``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1321,6 +1428,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns distinct elements from a sequence by using the default equality comparer to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains distinct elements from <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Linq.IQueryable`1" /> to remove duplicates from.</param>
         <typeparam name="TSource">
@@ -1346,7 +1457,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Distinct``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEqualityComparer{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Distinct``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEqualityComparer{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1356,6 +1466,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns distinct elements from a sequence by using a specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains distinct elements from <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Linq.IQueryable`1" /> to remove duplicates from.</param>
         <param name="comparer">
@@ -1383,7 +1497,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.ElementAt``1(System.Linq.IQueryable{``0},System.Int32)" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.ElementAt``1(System.Linq.IQueryable{``0},System.Int32)" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1393,6 +1506,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the element at a specified index in a sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element at the specified position in <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return an element from.</param>
         <param name="index">
@@ -1420,7 +1537,6 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.ElementAtOrDefault``1(System.Linq.IQueryable{``0},System.Int32)" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.ElementAtOrDefault``1(System.Linq.IQueryable{``0},System.Int32)" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1430,6 +1546,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the element at a specified index in a sequence or a default value if the index is out of range.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <unmanagedCodeEntityReference>default</unmanagedCodeEntityReference>(<paramref name="TSource" />) if <paramref name="index" /> is outside the bounds of <paramref name="source" />; otherwise, the element at the specified position in <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return an element from.</param>
         <param name="index">
@@ -1457,7 +1578,6 @@
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Except``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Except``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the<paramref name="source1" /> parameter.</para>
@@ -1467,6 +1587,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set difference of two sequences by using the default equality comparer to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains the set difference of the two sequences.</para>
+        </returns>
         <param name="source1">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements that are not also in <paramref name="source2" /> will be returned.</param>
         <param name="source2">
@@ -1495,7 +1619,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Except``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Except``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the<paramref name="source1" /> parameter.</para>
@@ -1505,6 +1628,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set difference of two sequences by using the specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains the set difference of the two sequences.</para>
+        </returns>
         <param name="source1">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements that are not also in <paramref name="source2" /> will be returned.</param>
         <param name="source2">
@@ -1533,7 +1660,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.First``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.First``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1543,6 +1669,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the first element of a sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first element in <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Linq.IQueryable`1" /> to return the first element of.</param>
         <typeparam name="TSource">
@@ -1568,7 +1698,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -1579,6 +1708,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the first element of a sequence that satisfies a specified condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first element in <paramref name="source" /> that passes the test in <paramref name="predicate" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return an element from.</param>
         <param name="predicate">
@@ -1605,7 +1738,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.FirstOrDefault``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.FirstOrDefault``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -1616,6 +1748,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the first element of a sequence, or a default value if the sequence contains no elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <unmanagedCodeEntityReference>default</unmanagedCodeEntityReference>(<paramref name="TSource" />) if <paramref name="source" /> is empty; otherwise, the first element in <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Linq.IQueryable`1" /> to return the first element of.</param>
         <typeparam name="TSource">
@@ -1641,7 +1778,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -1652,6 +1788,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the first element of a sequence that satisfies a specified condition or a default value if no such element is found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <unmanagedCodeEntityReference>default</unmanagedCodeEntityReference>(<paramref name="TSource" />) if <paramref name="source" /> is empty or if no element passes the test specified by <paramref name="predicate" />; otherwise, the first element in <paramref name="source" /> that passes the test specified by <paramref name="predicate" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return an element from.</param>
         <param name="predicate">
@@ -1680,7 +1821,6 @@
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -1691,6 +1831,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups the elements of a sequence according to a specified key selector function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <unmanagedCodeEntityReference>IQueryable&lt;IGrouping&lt;TKey, TSource&gt;&gt;</unmanagedCodeEntityReference> in C# or <unmanagedCodeEntityReference>IQueryable(Of IGrouping(Of TKey, TSource))</unmanagedCodeEntityReference> in vbprvb where each <see cref="T:System.Linq.IGrouping`2" /> object contains a sequence of objects and a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements to group.</param>
         <param name="keySelector">
@@ -1722,7 +1866,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -1733,6 +1876,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups the elements of a sequence according to a specified key selector function and compares the keys by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <unmanagedCodeEntityReference>IQueryable&lt;IGrouping&lt;TKey, TSource&gt;&gt;</unmanagedCodeEntityReference> in C# or <unmanagedCodeEntityReference>IQueryable(Of IGrouping(Of TKey, TSource))</unmanagedCodeEntityReference> in vbprvb where each <see cref="T:System.Linq.IGrouping`2" /> contains a sequence of objects and a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements to group.</param>
         <param name="keySelector">
@@ -1767,7 +1914,6 @@
         <Parameter Name="elementSelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TElement&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -1778,6 +1924,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups the elements of a sequence according to a specified key selector function and projects the elements for each group by using a specified function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <unmanagedCodeEntityReference>IQueryable&lt;IGrouping&lt;TKey, TElement&gt;&gt;</unmanagedCodeEntityReference> in C# or <unmanagedCodeEntityReference>IQueryable(Of IGrouping(Of TKey, TElement))</unmanagedCodeEntityReference> in vbprvb where each <see cref="T:System.Linq.IGrouping`2" /> contains a sequence of objects of type <paramref name="TElement" /> and a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements to group.</param>
         <param name="keySelector">
@@ -1815,7 +1965,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -1826,6 +1975,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups the elements of a sequence and projects the elements for each group by using a specified function. Key values are compared by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <unmanagedCodeEntityReference>IQueryable&lt;IGrouping&lt;TKey, TElement&gt;&gt;</unmanagedCodeEntityReference> in C# or <unmanagedCodeEntityReference>IQueryable(Of IGrouping(Of TKey, TElement))</unmanagedCodeEntityReference> in vbprvb where each <see cref="T:System.Linq.IGrouping`2" /> contains a sequence of objects of type <paramref name="TElement" /> and a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements to group.</param>
         <param name="keySelector">
@@ -1864,7 +2017,6 @@
         <Parameter Name="resultSelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TKey,System.Collections.Generic.IEnumerable&lt;TSource&gt;,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -1875,6 +2027,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups the elements of a sequence according to a specified key selector function and creates a result value from each group and its key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <unmanagedCodeEntityReference>T:System.Linq.IQueryable`1</unmanagedCodeEntityReference> that has a type argument of <paramref name="TResult" /> and where each element represents a projection over a group and its key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements to group.</param>
         <param name="keySelector">
@@ -1912,7 +2068,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -1923,6 +2078,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups the elements of a sequence according to a specified key selector function and creates a result value from each group and its key. Keys are compared by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <unmanagedCodeEntityReference>T:System.Linq.IQueryable`1</unmanagedCodeEntityReference> that has a type argument of <paramref name="TResult" /> and where each element represents a projection over a group and its key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements to group.</param>
         <param name="keySelector">
@@ -1963,7 +2122,6 @@
         <Parameter Name="resultSelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TKey,System.Collections.Generic.IEnumerable&lt;TElement&gt;,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -1974,6 +2132,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups the elements of a sequence according to a specified key selector function and creates a result value from each group and its key. The elements of each group are projected by using a specified function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <unmanagedCodeEntityReference>T:System.Linq.IQueryable`1</unmanagedCodeEntityReference> that has a type argument of <paramref name="TResult" /> and where each element represents a projection over a group and its key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements to group.</param>
         <param name="keySelector">
@@ -2017,7 +2179,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2028,6 +2189,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups the elements of a sequence according to a specified key selector function and creates a result value from each group and its key. Keys are compared by using a specified comparer and the elements of each group are projected by using a specified function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <unmanagedCodeEntityReference>T:System.Linq.IQueryable`1</unmanagedCodeEntityReference> that has a type argument of <paramref name="TResult" /> and where each element represents a projection over a group and its key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements to group.</param>
         <param name="keySelector">
@@ -2073,7 +2238,6 @@
         <Parameter Name="resultSelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TOuter,System.Collections.Generic.IEnumerable&lt;TInner&gt;,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2084,6 +2248,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Correlates the elements of two sequences based on key equality and groups the results. The default equality comparer is used to compare keys.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains elements of type <paramref name="TResult" /> obtained by performing a grouped join on two sequences.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to join.</param>
         <param name="inner">
@@ -2130,7 +2298,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2141,6 +2308,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Correlates the elements of two sequences based on key equality and groups the results. A specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> is used to compare keys.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains elements of type <paramref name="TResult" /> obtained by performing a grouped join on two sequences.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to join.</param>
         <param name="inner">
@@ -2182,7 +2353,6 @@
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Intersect``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Intersect``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source1" /> parameter.</para>
@@ -2192,6 +2362,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set intersection of two sequences by using the default equality comparer to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the set intersection of the two sequences.</para>
+        </returns>
         <param name="source1">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose distinct elements that also appear in <paramref name="source2" /> are returned.</param>
         <param name="source2">
@@ -2220,7 +2394,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Intersect``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Intersect``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source1" /> parameter.</para>
@@ -2230,6 +2403,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set intersection of two sequences by using the specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains the set intersection of the two sequences.</para>
+        </returns>
         <param name="source1">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose distinct elements that also appear in <paramref name="source2" /> are returned.</param>
         <param name="source2">
@@ -2265,7 +2442,6 @@
         <Parameter Name="resultSelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TOuter,TInner,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2276,6 +2452,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Correlates the elements of two sequences based on matching keys. The default equality comparer is used to compare keys.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that has elements of type <paramref name="TResult" /> obtained by performing an inner join on two sequences.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to join.</param>
         <param name="inner">
@@ -2322,7 +2502,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2333,6 +2512,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Correlates the elements of two sequences based on matching keys. A specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> is used to compare keys.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that has elements of type <paramref name="TResult" /> obtained by performing an inner join on two sequences.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to join.</param>
         <param name="inner">
@@ -2373,7 +2556,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Last``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Last``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -2383,6 +2565,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the last element in a sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value at the last position in <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return the last element of.</param>
         <typeparam name="TSource">
@@ -2408,7 +2594,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2419,6 +2604,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the last element of a sequence that satisfies a specified condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The last element in <paramref name="source" /> that passes the test specified by <paramref name="predicate" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return an element from.</param>
         <param name="predicate">
@@ -2445,7 +2634,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.LastOrDefault``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.LastOrDefault``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -2456,6 +2644,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the last element in a sequence, or a default value if the sequence contains no elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <unmanagedCodeEntityReference>default</unmanagedCodeEntityReference>(<paramref name="TSource" />) if <paramref name="source" /> is empty; otherwise, the last element in <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return the last element of.</param>
         <typeparam name="TSource">
@@ -2481,7 +2674,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2492,6 +2684,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the last element of a sequence that satisfies a condition or a default value if no such element is found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <unmanagedCodeEntityReference>default</unmanagedCodeEntityReference>(<paramref name="TSource" />) if <paramref name="source" /> is empty or if no elements pass the test in the predicate function; otherwise, the last element of <paramref name="source" /> that passes the test in the predicate function.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return an element from.</param>
         <param name="predicate">
@@ -2518,7 +2715,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.LongCount``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.LongCount``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -2528,6 +2724,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Int64" /> that represents the total number of elements in a sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of elements in <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> that contains the elements to be counted.</param>
         <typeparam name="TSource">
@@ -2553,7 +2753,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2564,6 +2763,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Int64" /> that represents the number of elements in a sequence that satisfy a condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of elements in <paramref name="source" /> that satisfy the condition in the predicate function.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> that contains the elements to be counted.</param>
         <param name="predicate">
@@ -2590,7 +2793,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Max``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Max``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -2600,6 +2802,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a generic <see cref="T:System.Linq.IQueryable`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum of.</param>
         <typeparam name="TSource">
@@ -2626,7 +2832,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2637,6 +2842,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes a projection function on each element of a generic <see cref="T:System.Linq.IQueryable`1" /> and returns the maximum resulting value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum of.</param>
         <param name="selector">
@@ -2665,7 +2874,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Min``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Min``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -2675,6 +2883,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value of a generic <see cref="T:System.Linq.IQueryable`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum of.</param>
         <typeparam name="TSource">
@@ -2701,7 +2913,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2712,6 +2923,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes a projection function on each element of a generic <see cref="T:System.Linq.IQueryable`1" /> and returns the minimum resulting value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum of.</param>
         <param name="selector">
@@ -2740,7 +2955,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The OfType method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling OfType itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -2750,6 +2964,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Filters the elements of an <see cref="T:System.Linq.IQueryable" /> based on a specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection that contains the elements from <paramref name="source" /> that have type <paramref name="TResult" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable" /> whose elements to filter.</param>
         <typeparam name="TResult">
@@ -2776,7 +2994,6 @@
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2787,6 +3004,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sorts the elements of a sequence in ascending order according to a key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IOrderedQueryable`1" /> whose elements are sorted according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to order.</param>
         <param name="keySelector">
@@ -2818,7 +3039,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2829,6 +3049,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sorts the elements of a sequence in ascending order by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IOrderedQueryable`1" /> whose elements are sorted according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to order.</param>
         <param name="keySelector">
@@ -2861,7 +3085,6 @@
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2872,6 +3095,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sorts the elements of a sequence in descending order according to a key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IOrderedQueryable`1" /> whose elements are sorted in descending order according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to order.</param>
         <param name="keySelector">
@@ -2903,7 +3130,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2914,6 +3140,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sorts the elements of a sequence in descending order by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IOrderedQueryable`1" /> whose elements are sorted in descending order according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to order.</param>
         <param name="keySelector">
@@ -2944,7 +3174,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Reverse``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Reverse``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -2954,6 +3183,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inverts the order of the elements in a sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> whose elements correspond to those of the input sequence in reverse order.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to reverse.</param>
         <typeparam name="TSource">
@@ -2980,7 +3213,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -2991,6 +3223,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects each element of a sequence into a new form by incorporating the element's index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> whose elements are the result of invoking a projection function on each element of <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to project.</param>
         <param name="selector">
@@ -3021,7 +3257,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3032,6 +3267,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects each element of a sequence into a new form.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> whose elements are the result of invoking a projection function on each element of <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to project.</param>
         <param name="selector">
@@ -3062,7 +3301,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Collections.Generic.IEnumerable&lt;TResult&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3073,6 +3311,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1" /> and combines the resulting sequences into one sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> whose elements are the result of invoking a one-to-many projection function on each element of the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to project.</param>
         <param name="selector">
@@ -3103,7 +3345,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32,System.Collections.Generic.IEnumerable&lt;TResult&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3114,6 +3355,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1" /> and combines the resulting sequences into one sequence. The index of each source element is used in the projected form of that element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> whose elements are the result of invoking a one-to-many projection function on each element of the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to project.</param>
         <param name="selector">
@@ -3146,7 +3391,6 @@
         <Parameter Name="resultSelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TCollection,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3157,6 +3401,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1" /> and invokes a result selector function on each element therein. The resulting values from each intermediate sequence are combined into a single, one-dimensional sequence and returned.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> whose elements are the result of invoking the one-to-many projection function <paramref name="collectionSelector" /> on each element of <paramref name="source" /> and then mapping each of those sequence elements and their corresponding <paramref name="source" /> element to a result element.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to project.</param>
         <param name="collectionSelector">
@@ -3193,7 +3441,6 @@
         <Parameter Name="resultSelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TCollection,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3204,6 +3451,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1" /> that incorporates the index of the source element that produced it. A result selector function is invoked on each element of each intermediate sequence, and the resulting values are combined into a single, one-dimensional sequence and returned.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> whose elements are the result of invoking the one-to-many projection function <paramref name="collectionSelector" /> on each element of <paramref name="source" /> and then mapping each of those sequence elements and their corresponding <paramref name="source" /> element to a result element.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to project.</param>
         <param name="collectionSelector">
@@ -3237,7 +3488,6 @@
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.SequenceEqual``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.SequenceEqual``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source1" /> parameter.</para>
@@ -3247,6 +3497,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two sequences are equal by using the default equality comparer to compare elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two source sequences are of equal length and their corresponding elements compare equal; otherwise, false.</para>
+        </returns>
         <param name="source1">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements to compare to those of <paramref name="source2" />.</param>
         <param name="source2">
@@ -3275,7 +3529,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.SequenceEqual``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.SequenceEqual``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source1" /> parameter.</para>
@@ -3285,6 +3538,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two sequences are equal by using a specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> to compare elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two source sequences are of equal length and their corresponding elements compare equal; otherwise, false.</para>
+        </returns>
         <param name="source1">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> whose elements to compare to those of <paramref name="source2" />.</param>
         <param name="source2">
@@ -3313,7 +3570,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Single``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Single``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3323,6 +3579,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the only element of a sequence, and throws an exception if there is not exactly one element in the sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single element of the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return the single element of.</param>
         <typeparam name="TSource">
@@ -3348,7 +3608,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3359,6 +3618,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the only element of a sequence that satisfies a specified condition, and throws an exception if more than one such element exists.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single element of the input sequence that satisfies the condition in <paramref name="predicate" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return a single element from.</param>
         <param name="predicate">
@@ -3385,7 +3648,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.SingleOrDefault``1(System.Linq.IQueryable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.SingleOrDefault``1(System.Linq.IQueryable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3396,6 +3658,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the only element of a sequence, or a default value if the sequence is empty; this method throws an exception if there is more than one element in the sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single element of the input sequence, or <unmanagedCodeEntityReference>default</unmanagedCodeEntityReference>(<paramref name="TSource" />) if the sequence contains no elements.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return the single element of.</param>
         <typeparam name="TSource">
@@ -3421,7 +3687,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3432,6 +3697,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the only element of a sequence that satisfies a specified condition or a default value if no such element exists; this method throws an exception if more than one element satisfies the condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single element of the input sequence that satisfies the condition in <paramref name="predicate" />, or <unmanagedCodeEntityReference>default</unmanagedCodeEntityReference>(<paramref name="TSource" />) if no such element is found.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return a single element from.</param>
         <param name="predicate">
@@ -3459,7 +3728,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Skip``1(System.Linq.IQueryable{``0},System.Int32)" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Skip``1(System.Linq.IQueryable{``0},System.Int32)" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3469,6 +3737,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Bypasses a specified number of elements in a sequence and then returns the remaining elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains elements that occur after the specified index in the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return elements from.</param>
         <param name="count">
@@ -3496,7 +3768,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3507,6 +3778,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Bypasses elements in a sequence as long as a specified condition is true and then returns the remaining elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains elements from <paramref name="source" /> starting at the first element in the linear series that does not pass the test specified by <paramref name="predicate" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return elements from.</param>
         <param name="predicate">
@@ -3534,7 +3809,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3545,6 +3819,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Bypasses elements in a sequence as long as a specified condition is true and then returns the remaining elements. The element's index is used in the logic of the predicate function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains elements from <paramref name="source" /> starting at the first element in the linear series that does not pass the test specified by <paramref name="predicate" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to return elements from.</param>
         <param name="predicate">
@@ -3568,7 +3846,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Decimal&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Decimal})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Decimal})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3578,6 +3855,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of a sequence of <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of <see cref="T:System.Decimal" /> values to calculate the sum of.</param>
       </Docs>
@@ -3597,7 +3878,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Double&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Double})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Double})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3607,6 +3887,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of a sequence of <see cref="T:System.Double" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of <see cref="T:System.Double" /> values to calculate the sum of.</param>
       </Docs>
@@ -3626,7 +3910,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Int32&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Int32})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Int32})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3636,6 +3919,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of a sequence of <see cref="T:System.Int32" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of <see cref="T:System.Int32" /> values to calculate the sum of.</param>
       </Docs>
@@ -3655,7 +3942,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Int64&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Int64})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Int64})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3665,6 +3951,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of a sequence of <see cref="T:System.Int64" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of <see cref="T:System.Int64" /> values to calculate the sum of.</param>
       </Docs>
@@ -3684,7 +3974,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Nullable&lt;System.Decimal&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Nullable{System.Decimal}})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Nullable{System.Decimal}})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3694,6 +3983,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of a sequence of nullable <see cref="T:System.Decimal" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of nullable <see cref="T:System.Decimal" /> values to calculate the sum of.</param>
       </Docs>
@@ -3713,7 +4006,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Nullable&lt;System.Double&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Nullable{System.Double}})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Nullable{System.Double}})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3723,6 +4015,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of a sequence of nullable <see cref="T:System.Double" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of nullable <see cref="T:System.Double" /> values to calculate the sum of.</param>
       </Docs>
@@ -3742,7 +4038,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Nullable&lt;System.Int32&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Nullable{System.Int32}})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Nullable{System.Int32}})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3752,6 +4047,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of a sequence of nullable <see cref="T:System.Int32" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of nullable <see cref="T:System.Int32" /> values to calculate the sum of.</param>
       </Docs>
@@ -3771,7 +4070,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Nullable&lt;System.Int64&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Nullable{System.Int64}})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Nullable{System.Int64}})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3781,6 +4079,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of a sequence of nullable <see cref="T:System.Int64" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of nullable <see cref="T:System.Int64" /> values to calculate the sum of.</param>
       </Docs>
@@ -3800,7 +4102,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Nullable&lt;System.Single&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Nullable{System.Single}})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Nullable{System.Single}})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3810,6 +4111,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of a sequence of nullable <see cref="T:System.Single" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of nullable <see cref="T:System.Single" /> values to calculate the sum of.</param>
       </Docs>
@@ -3829,7 +4134,6 @@
         <Parameter Name="source" Type="System.Linq.IQueryable&lt;System.Single&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Single})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Sum(System.Linq.IQueryable{System.Single})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.Execute``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -3839,6 +4143,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of a sequence of <see cref="T:System.Single" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of <see cref="T:System.Single" /> values to calculate the sum of.</param>
       </Docs>
@@ -3862,7 +4170,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Decimal&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3873,6 +4180,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of the sequence of <see cref="T:System.Decimal" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values of type <paramref name="TSource" />.</param>
         <param name="selector">
@@ -3900,7 +4211,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Double&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3911,6 +4221,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of the sequence of <see cref="T:System.Double" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values of type <paramref name="TSource" />.</param>
         <param name="selector">
@@ -3938,7 +4252,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3949,6 +4262,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of the sequence of <see cref="T:System.Int32" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values of type <paramref name="TSource" />.</param>
         <param name="selector">
@@ -3976,7 +4293,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int64&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -3987,6 +4303,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of the sequence of <see cref="T:System.Int64" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values of type <paramref name="TSource" />.</param>
         <param name="selector">
@@ -4014,7 +4334,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Decimal&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4025,6 +4344,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of the sequence of nullable <see cref="T:System.Decimal" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values of type <paramref name="TSource" />.</param>
         <param name="selector">
@@ -4052,7 +4375,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Double&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4063,6 +4385,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of the sequence of nullable <see cref="T:System.Double" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values of type <paramref name="TSource" />.</param>
         <param name="selector">
@@ -4090,7 +4416,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Int32&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4101,6 +4426,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of the sequence of nullable <see cref="T:System.Int32" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values of type <paramref name="TSource" />.</param>
         <param name="selector">
@@ -4128,7 +4457,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Int64&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4139,6 +4467,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of the sequence of nullable <see cref="T:System.Int64" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values of type <paramref name="TSource" />.</param>
         <param name="selector">
@@ -4166,7 +4498,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Nullable&lt;System.Single&gt;&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4177,6 +4508,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of the sequence of nullable <see cref="T:System.Single" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values of type <paramref name="TSource" />.</param>
         <param name="selector">
@@ -4204,7 +4539,6 @@
         <Parameter Name="selector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Single&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4215,6 +4549,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the sum of the sequence of <see cref="T:System.Single" /> values that is obtained by invoking a projection function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values of type <paramref name="TSource" />.</param>
         <param name="selector">
@@ -4242,7 +4580,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Take``1(System.Linq.IQueryable{``0},System.Int32)" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Take``1(System.Linq.IQueryable{``0},System.Int32)" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source" /> parameter.</para>
@@ -4252,6 +4589,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a specified number of contiguous elements from the start of a sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains the specified number of elements from the start of <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return elements from.</param>
         <param name="count">
@@ -4279,7 +4620,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4290,6 +4630,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns elements from a sequence as long as a specified condition is true.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains elements from the input sequence occurring before the element at which the test specified by <paramref name="predicate" /> no longer passes.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return elements from.</param>
         <param name="predicate">
@@ -4317,7 +4661,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4328,6 +4671,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns elements from a sequence as long as a specified condition is true. The element's index is used in the logic of the predicate function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains elements from the input sequence occurring before the element at which the test specified by <paramref name="predicate" /> no longer passes.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return elements from.</param>
         <param name="predicate">
@@ -4356,7 +4703,6 @@
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4367,6 +4713,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a subsequent ordering of the elements in a sequence in ascending order according to a key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IOrderedQueryable`1" /> whose elements are sorted according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IOrderedQueryable`1" /> that contains elements to sort.</param>
         <param name="keySelector">
@@ -4398,7 +4748,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4409,6 +4758,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a subsequent ordering of the elements in a sequence in ascending order by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IOrderedQueryable`1" /> whose elements are sorted according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IOrderedQueryable`1" /> that contains elements to sort.</param>
         <param name="keySelector">
@@ -4441,7 +4794,6 @@
         <Parameter Name="keySelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,TKey&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4452,6 +4804,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a subsequent ordering of the elements in a sequence in descending order, according to a key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IOrderedQueryable`1" /> whose elements are sorted in descending order according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IOrderedQueryable`1" /> that contains elements to sort.</param>
         <param name="keySelector">
@@ -4483,7 +4839,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4494,6 +4849,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a subsequent ordering of the elements in a sequence in descending order by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection whose elements are sorted in descending order according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IOrderedQueryable`1" /> that contains elements to sort.</param>
         <param name="keySelector">
@@ -4525,7 +4884,6 @@
         <Parameter Name="source2" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Union``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Union``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source1" /> parameter.</para>
@@ -4535,6 +4893,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set union of two sequences by using the default equality comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains the elements from both input sequences, excluding duplicates.</para>
+        </returns>
         <param name="source1">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose distinct elements form the first set for the union operation.</param>
         <param name="source2">
@@ -4563,7 +4925,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Union``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Union``1(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``0},System.Collections.Generic.IEqualityComparer{``0})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source1" /> parameter.</para>
@@ -4573,6 +4934,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set union of two sequences by using a specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains the elements from both input sequences, excluding duplicates.</para>
+        </returns>
         <param name="source1">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose distinct elements form the first set for the union operation.</param>
         <param name="source2">
@@ -4602,7 +4967,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4613,6 +4977,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Filters a sequence of values based on a predicate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains elements from the input sequence that satisfy the condition specified by <paramref name="predicate" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to filter.</param>
         <param name="predicate">
@@ -4640,7 +5008,6 @@
         <Parameter Name="predicate" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TSource,System.Int32,System.Boolean&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method has at least one parameter of type <see cref="T:System.Linq.Expressions.Expression`1" /> whose type argument is one of the <see cref="T:System.Func`2" /> types. For these parameters, you can pass in a lambda expression and it will be compiled to an <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
@@ -4651,6 +5018,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Filters a sequence of values based on a predicate. Each element's index is used in the logic of the predicate function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains elements from the input sequence that satisfy the condition specified by <paramref name="predicate" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.IQueryable`1" /> to filter.</param>
         <param name="predicate">
@@ -4680,7 +5051,6 @@
         <Parameter Name="resultSelector" Type="System.Linq.Expressions.Expression&lt;System.Func&lt;TFirst,TSecond,TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.Queryable.Zip``3(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``1},System.Linq.Expressions.Expression{System.Func{``0,``1,``2}})" /> method generates a <see cref="T:System.Linq.Expressions.MethodCallExpression" /> that represents calling <see cref="M:System.Linq.Queryable.Zip``3(System.Linq.IQueryable{``0},System.Collections.Generic.IEnumerable{``1},System.Linq.Expressions.Expression{System.Func{``0,``1,``2}})" /> itself as a constructed generic method. It then passes the <see cref="T:System.Linq.Expressions.MethodCallExpression" /> to the <see cref="M:System.Linq.IQueryProvider.CreateQuery``1(System.Linq.Expressions.Expression)" /> method of the <see cref="T:System.Linq.IQueryProvider" /> represented by the <see cref="P:System.Linq.IQueryable.Provider" /> property of the <paramref name="source1" /> parameter.</para>
@@ -4690,6 +5060,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Merges two sequences by using the specified predicate function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Linq.IQueryable`1" /> that contains merged elements of two input sequences.</para>
+        </returns>
         <param name="source1">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to merge.</param>
         <param name="source2">

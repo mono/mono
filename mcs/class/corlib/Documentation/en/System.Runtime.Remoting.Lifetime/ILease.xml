@@ -169,7 +169,6 @@
         <Parameter Name="renewalTime" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TimeSpan'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The lease time is set to the maximum of the <see cref="P:System.Runtime.Remoting.Lifetime.ILease.CurrentLeaseTime" /> or the current time plus the renewal time.</para>
@@ -178,6 +177,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Renews a lease for the specified time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new expiration time of the lease.</para>
+        </returns>
         <param name="renewalTime">
           <attribution license="cc4" from="Microsoft" modified="false" />The length of time to renew the lease by. </param>
       </Docs>
@@ -252,6 +255,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes a sponsor from the sponsor list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>After this method is called, the lease state changes to expired and the object is collected by the garbage collector.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The lease sponsor to unregister. </param>
       </Docs>

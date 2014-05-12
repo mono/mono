@@ -298,7 +298,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.Xml.CreateControlCollection" /> method is used primarily by control developers extending the functionality of the <see cref="T:System.Web.UI.WebControls.Xml" /> control.</para>
@@ -307,6 +306,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Web.UI.EmptyControlCollection" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns an <see cref="T:System.Web.UI.EmptyControlCollection" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Document">
@@ -462,12 +465,15 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the page naming container for the specified server control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified control; otherwise, null if the specified control does not exist.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The identifier for the control to be found.</param>
       </Docs>
@@ -509,7 +515,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.Xml.GetDesignModeState" /> method is a helper method used to get the current design-time state of the <see cref="T:System.Web.UI.WebControls.Xml" /> control.</para>
@@ -518,6 +523,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets design-time data for a control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> containing the design-time data for the <see cref="T:System.Web.UI.WebControls.Xml" /> control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasControls">
@@ -536,12 +545,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the server control contains any child controls.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control contains other controls; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Render">

@@ -69,12 +69,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Advances the enumerator to the next element of the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorServiceAdornerCollection" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the enumerator was successfully advanced to the next element; false if the enumerator was past the end of the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Reset">
@@ -127,7 +130,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Windows.Forms.Design.Behavior.BehaviorServiceAdornerCollectionEnumerator" /> instance is cast to an <see cref="T:System.Collections.IEnumerator" /> interface.</para>
@@ -136,6 +138,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see the <see cref="M:System.Collections.IEnumerator.MoveNext" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the enumerator was successfully advanced to the next element; false if the enumerator was past the end of the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEnumerator.Reset">

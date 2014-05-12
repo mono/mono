@@ -635,7 +635,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="millisecondsTimeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
@@ -650,6 +649,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tries to enter the lock in read mode, with an optional integer time-out.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered read mode, otherwise, false.</para>
+        </returns>
         <param name="millisecondsTimeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or -1 (<see cref="F:System.Threading.Timeout.Infinite" />) to wait indefinitely.</param>
       </Docs>
@@ -668,7 +671,6 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="timeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
@@ -683,6 +685,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tries to enter the lock in read mode, with an optional time-out.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered read mode, otherwise, false.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The interval to wait, or -1 milliseconds to wait indefinitely. </param>
       </Docs>
@@ -701,7 +707,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="millisecondsTimeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
@@ -716,6 +721,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tries to enter the lock in upgradeable mode, with an optional time-out.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered upgradeable mode, otherwise, false.</para>
+        </returns>
         <param name="millisecondsTimeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or -1 (<see cref="F:System.Threading.Timeout.Infinite" />) to wait indefinitely.</param>
       </Docs>
@@ -734,7 +743,6 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="timeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
@@ -749,6 +757,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tries to enter the lock in upgradeable mode, with an optional time-out.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered upgradeable mode, otherwise, false.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The interval to wait, or -1 milliseconds to wait indefinitely.</param>
       </Docs>
@@ -767,7 +779,6 @@
         <Parameter Name="millisecondsTimeout" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="millisecondsTimeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
@@ -780,6 +791,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tries to enter the lock in write mode, with an optional time-out.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered write mode, otherwise, false.</para>
+        </returns>
         <param name="millisecondsTimeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of milliseconds to wait, or -1 (<see cref="F:System.Threading.Timeout.Infinite" />) to wait indefinitely.</param>
       </Docs>
@@ -798,7 +813,6 @@
         <Parameter Name="timeout" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If <paramref name="timeout" /> is 0 (zero), this method checks the lock state and returns false immediately if the desired state is unavailable.</para>
@@ -811,6 +825,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tries to enter the lock in write mode, with an optional time-out.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the calling thread entered write mode, otherwise, false.</para>
+        </returns>
         <param name="timeout">
           <attribution license="cc4" from="Microsoft" modified="false" />The interval to wait, or -1 milliseconds to wait indefinitely.</param>
       </Docs>

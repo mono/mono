@@ -379,14 +379,6 @@
         <Parameter Name="rparam" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
-<paramref name="rparam" /><paramref name=" " /> 
-represents the same URI as the current instance. If <paramref name="rparam" /> is
-<see langword="null" /> 
-, returns <see langword="false" /> .</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.UriBuilder.Equals(System.Object)" /> method compares a specified <see cref="T:System.Uri" /> instance with the <see cref="T:System.Uri" /> instance built by the <see cref="T:System.UriBuilder" /> instance. If the two are the same, the <see cref="M:System.UriBuilder.Equals(System.Object)" /> method returns true.</para>
@@ -395,6 +387,10 @@ represents the same URI as the current instance. If <paramref name="rparam" /> i
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares an existing <see cref="T:System.Uri" /> instance with the contents of the <see cref="T:System.UriBuilder" /> for equality.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="rparam" /> represents the same <see cref="T:System.Uri" /> as the <see cref="T:System.Uri" /> constructed by this <see cref="T:System.UriBuilder" /> instance; otherwise, false.</para>
+        </returns>
         <param name="rparam">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current instance. </param>
       </Docs>
@@ -447,9 +443,6 @@ represents the same URI as the current instance. If <paramref name="rparam" /> i
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for this instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The hash code is generated without including any fragment. The URIs http://www.contoso.com/index.htm#search and http://www.contoso.com/index.htm generate the same hash code.</para>
@@ -460,6 +453,10 @@ represents the same URI as the current instance. If <paramref name="rparam" /> i
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for the URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code generated for the URI.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -728,10 +725,6 @@ represents the same URI as the current instance. If <paramref name="rparam" /> i
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" /> containing the escaped URI contained in the current <see cref="T:System.UriBuilder" /> instance.
-   </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The display string contains the <see cref="P:System.UriBuilder.Port" /> property value if the <see cref="P:System.UriBuilder.Port" /> property was set or the port was specified when the <see cref="T:System.UriBuilder" /> was constructed using of the <see cref="M:System.UriBuilder.#ctor" /> methods that accept a port number parameter except for the case when the <see cref="P:System.UriBuilder.Port" />.property value was set to a value of -1 to indicate the default port.</para>
@@ -741,6 +734,11 @@ represents the same URI as the current instance. If <paramref name="rparam" /> i
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the display string for the specified <see cref="T:System.UriBuilder" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string that contains the unescaped display string of the <see cref="T:System.UriBuilder" />.</para>
+          <para />
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

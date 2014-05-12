@@ -186,9 +186,6 @@ public class WebRequestExample {
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.IAsyncResult" /> object that contains information about the asynchronous operation.</para>
-        </returns>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -201,6 +198,10 @@ public class WebRequestExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a descendant class, provides an asynchronous version of the <see cref="M:System.Net.WebRequest.GetRequestStream" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous request.</para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
         <param name="state">
@@ -226,9 +227,6 @@ public class WebRequestExample {
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.IAsyncResult" /> object that contains information about the asynchronous operation. </para>
-        </returns>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -244,6 +242,10 @@ public class WebRequestExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a descendant class, begins an asynchronous request for an Internet resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous request.</para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
         <param name="state">
@@ -399,10 +401,6 @@ public class WebRequestExample {
         <Parameter Name="requestUriString" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A new instance of a class that derived from <see cref="T:System.Net.WebRequest" /> and is registered to handle the
-   scheme of <paramref name="requestUriString" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="requestUriString " />is <see langword="null" />.</exception>
         <exception cref="T:System.NotSupportedException">The request scheme specified in <paramref name="requestUri " /> is not registered.</exception>
@@ -438,6 +436,10 @@ public class WebRequestExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new <see cref="T:System.Net.WebRequest" /> instance for the specified URI scheme.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebRequest" /> descendant for the specific URI scheme.</para>
+        </returns>
         <param name="requestUriString">
           <attribution license="cc4" from="Microsoft" modified="false" />The URI that identifies the Internet resource. </param>
       </Docs>
@@ -460,10 +462,6 @@ public class WebRequestExample {
         <Parameter Name="requestUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A new instance of a class derived from <see cref="T:System.Net.WebRequest" /> that is registered to handle the closest registered
-   match for <paramref name="requestUri" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="requestUri " />is <see langword="null" />.</exception>
         <exception cref="T:System.NotSupportedException">The request scheme specified in <paramref name="requestUri " /> is not registered.</exception>
@@ -499,6 +497,10 @@ public class WebRequestExample {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new <see cref="T:System.Net.WebRequest" /> instance for the specified URI scheme.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebRequest" /> descendant for the specified URI scheme.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> containing the URI of the requested resource. </param>
       </Docs>
@@ -521,9 +523,6 @@ public class WebRequestExample {
         <Parameter Name="requestUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A new instance of the type derived from <see cref="T:System.Net.WebRequest" /> that is registered for the scheme of the specified <see cref="T:System.Uri" /> .</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="requestUri" /> is <see langword="null" />.</exception>
         <exception cref="T:System.NotSupportedException">The request scheme specified in <paramref name="requestUri " /> is not registered.</exception>
@@ -577,6 +576,10 @@ public class CreateDefaultExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new <see cref="T:System.Net.WebRequest" /> instance for the specified URI scheme.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebRequest" /> descendant for the specified URI scheme.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Uri" /> containing the URI of the requested resource. </param>
       </Docs>
@@ -601,7 +604,6 @@ public class CreateDefaultExample
         <Parameter Name="requestUriString" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebRequest.CreateHttp(System.String)" /> method returns an instance of the <see cref="T:System.Net.HttpWebRequest" /> class for the <paramref name="requestUriString" />.</para>
@@ -613,6 +615,11 @@ public class CreateDefaultExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new <see cref="T:System.Net.HttpWebRequest" /> instance for the specified URI string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Net.HttpWebRequest" />.</para>
+          <para>An <see cref="T:System.Net.HttpWebRequest" />  instance for the specific URI string.</para>
+        </returns>
         <param name="requestUriString">
           <attribution license="cc4" from="Microsoft" modified="false" />A URI string that identifies the Internet resource. </param>
       </Docs>
@@ -636,7 +643,6 @@ public class CreateDefaultExample
         <Parameter Name="requestUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.WebRequest.CreateHttp(System.Uri)" /> method returns an instance of the <see cref="T:System.Net.HttpWebRequest" /> class for the <paramref name="requestUri" />.</para>
@@ -648,6 +654,11 @@ public class CreateDefaultExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new <see cref="T:System.Net.HttpWebRequest" /> instance for the specified URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Net.HttpWebRequest" />.</para>
+          <para>An <see cref="T:System.Net.HttpWebRequest" /> instance for the specific URI string.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />A URI that identifies the Internet resource.</param>
       </Docs>
@@ -761,10 +772,6 @@ public class CreateDefaultExample
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.IO.Stream" /> to write data
-   to.</para>
-        </returns>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="asyncResult" /> was not returned by a call to <see cref="M:System.Net.WebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" />.</exception>
@@ -790,6 +797,10 @@ public class CreateDefaultExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a descendant class, returns a <see cref="T:System.IO.Stream" /> for writing data to the Internet resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> to write data to.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> that references a pending request for a stream. </param>
       </Docs>
@@ -812,10 +823,6 @@ public class CreateDefaultExample
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Net.WebResponse" /> that contains a response to the request
-   referenced by <paramref name="asyncResult" />.</para>
-        </returns>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
         <exception cref="T:System.ArgumentException">
           <paramref name="asyncResult" /> was not returned by a call to <see cref="M:System.Net.WebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" />.</exception>
@@ -838,6 +845,10 @@ public class CreateDefaultExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a descendant class, returns a <see cref="T:System.Net.WebResponse" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> that contains a response to the Internet request.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> that references a pending request for a response. </param>
       </Docs>
@@ -888,10 +899,6 @@ public class CreateDefaultExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.IO.Stream" /> for writing data to
-   a resource.</para>
-        </returns>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -905,6 +912,10 @@ public class CreateDefaultExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a descendant class, returns a <see cref="T:System.IO.Stream" /> for writing data to the Internet resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> for writing data to the Internet resource.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -920,7 +931,6 @@ public class CreateDefaultExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />object will complete when the <see cref="T:System.IO.Stream" /> for writing data to the Internet resource is available.</para>
@@ -929,6 +939,11 @@ public class CreateDefaultExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a descendant class, returns a <see cref="T:System.IO.Stream" /> for writing data to the Internet resource as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetResponse">
@@ -946,9 +961,6 @@ public class CreateDefaultExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Net.WebResponse" /> containing the response to the request.</para>
-        </returns>
         <exception cref="T:System.NotSupportedException">This method is not overridden in the derived class.</exception>
         <exception cref="T:System.Net.WebException">
           <para> The request timed out.</para>
@@ -971,6 +983,10 @@ public class CreateDefaultExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a descendant class, returns a response to an Internet request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> containing the response to the Internet request.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -986,7 +1002,6 @@ public class CreateDefaultExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after a response to an Internet request is available.</para>
@@ -995,6 +1010,11 @@ public class CreateDefaultExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a descendant class, returns a response to an Internet request as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetSystemWebProxy">
@@ -1015,7 +1035,6 @@ public class CreateDefaultExample
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -1026,6 +1045,10 @@ public class CreateDefaultExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a proxy configured with the Internet Explorer settings of the currently impersonated user.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Net.IWebProxy" /> used by every call to instances of <see cref="T:System.Net.WebRequest" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -1208,13 +1231,6 @@ public class CreateDefaultExample
         <Parameter Name="creator" Type="System.Net.IWebRequestCreate" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true " /> if registration is successful;
-<see langword="false" />, if 
-<paramref name="prefix" /> 
-is already registered.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="prefix" /> is <see langword="null" /> or 
@@ -1282,6 +1298,10 @@ public class RegisterPrefixExample
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a <see cref="T:System.Net.WebRequest" /> descendant for the specified URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if registration is successful; otherwise, false.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The complete URI or URI prefix that the <see cref="T:System.Net.WebRequest" /> descendant services. </param>
         <param name="creator">

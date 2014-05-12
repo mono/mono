@@ -79,7 +79,6 @@
         <Parameter Name="location" Type="System.Web.UI.Design.ControlLocation" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although a control might already have an ID assigned to it, if there is already a control in the Web Forms page with the same ID, a new ID is assigned.</para>
@@ -88,6 +87,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, adds a Web server control to the Web Forms page.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ID of the control that was added.</para>
+        </returns>
         <param name="newControl">
           <attribution license="cc4" from="Microsoft" modified="false" />The control to add to the Web Forms page.</param>
         <param name="referenceControl">
@@ -130,7 +133,6 @@
         <Parameter Name="serviceProvider" Type="System.IServiceProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.WebFormsRootDesigner.CreateDesignerActionService(System.IServiceProvider)" /> method is called by a control designer and provides a way for action items for the control designer to be implemented in the Web Forms page through a design host, such as vsprvslong.</para>
@@ -139,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a design-time <see cref="T:System.ComponentModel.Design.DesignerActionService" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A design-time designer action service object.</para>
+        </returns>
         <param name="serviceProvider">
           <attribution license="cc4" from="Microsoft" modified="false" />A design host, such as vsprvslong, cast as an <see cref="T:System.IServiceProvider" />.</param>
       </Docs>
@@ -154,12 +160,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Web.UI.IUrlResolutionService" /> that resolves relative URLs.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that resolves relative URLs.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CurrentCulture">
@@ -251,7 +260,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.WebFormsRootDesigner.GenerateEmptyDesignTimeHtml(System.Web.UI.Control)" /> method enables a consistent display of empty controls at design time.</para>
@@ -260,6 +268,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates empty HTML markup for a control at design time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML markup for an empty control.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The control to generate HTML markup for.</param>
       </Docs>
@@ -279,12 +291,15 @@
         <Parameter Name="errorMessage" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates HTML markup that is used to display an error message at design time by using the specified control, exception, and message.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>HTML markup for a control and exception information.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The control that raised the exception.</param>
         <param name="e">
@@ -304,12 +319,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns a <see cref="T:System.Web.UI.Design.ClientScriptItemCollection" />  object that contains all client script items that are on the page.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that contains all client script items that are on the page.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetControlViewAndTag">
@@ -347,12 +365,15 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the requested service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested service; otherwise, null, if the service cannot be resolved.</para>
+        </returns>
         <param name="serviceType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of service to retrieve.</param>
       </Docs>
@@ -370,12 +391,15 @@
         <Parameter Name="viewTechnology" Type="System.ComponentModel.Design.ViewTechnology" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a view object that is determined by the provided <see cref="T:System.ComponentModel.Design.ViewTechnology" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object containing the current view of the component.</para>
+        </returns>
         <param name="viewTechnology">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ComponentModel.Design.ViewTechnology" /> obtained from the <see cref="P:System.Web.UI.Design.WebFormsRootDesigner.SupportedTechnologies" /> property.</param>
       </Docs>
@@ -684,12 +708,15 @@
         <Parameter Name="relativeUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a relative URL into a fully qualified URL.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A fully qualified URL resolved from <paramref name="relativeUrl" />.</para>
+        </returns>
         <param name="relativeUrl">
           <attribution license="cc4" from="Microsoft" modified="false" />A relative URL for a resource on the site.</param>
       </Docs>
@@ -942,7 +969,6 @@
         <Parameter Name="viewTechnology" Type="System.ComponentModel.Design.ViewTechnology" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.WebFormsRootDesigner" /> instance is cast to an <see cref="T:System.ComponentModel.Design.IRootDesigner" /> interface.</para>
@@ -951,6 +977,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a view object for the specified view technology. For a description of this member, see <see cref="M:System.ComponentModel.Design.IRootDesigner.GetView(System.ComponentModel.Design.ViewTechnology)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The view object for the specified view technology.</para>
+        </returns>
         <param name="viewTechnology">
           <attribution license="cc4" from="Microsoft" modified="false" /> The view technology.</param>
       </Docs>

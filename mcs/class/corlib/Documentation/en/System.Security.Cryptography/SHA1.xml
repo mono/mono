@@ -68,7 +68,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'SHA1'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation of <see cref="T:System.Security.Cryptography.SHA1" /> is <see cref="T:System.Security.Cryptography.SHA1CryptoServiceProvider" />.</para>
@@ -77,6 +76,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the default implementation of <see cref="T:System.Security.Cryptography.SHA1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Security.Cryptography.SHA1" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -95,12 +98,15 @@
         <Parameter Name="hashName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SHA1'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified implementation of <see cref="T:System.Security.Cryptography.SHA1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Security.Cryptography.SHA1" /> using the specified implementation.</para>
+        </returns>
         <param name="hashName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the specific implementation of <see cref="T:System.Security.Cryptography.SHA1" /> to be used. </param>
       </Docs>

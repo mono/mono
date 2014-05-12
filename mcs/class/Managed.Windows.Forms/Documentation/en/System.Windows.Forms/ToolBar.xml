@@ -1296,7 +1296,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.ToolBar.ToString" /> method returns a string that includes the type, the value of the <see cref="P:System.Windows.Forms.ToolBar.ToolBarButtonCollection.Count" /> property in the <see cref="T:System.Windows.Forms.ToolBar.ToolBarButtonCollection" />, and the string returned by the <see cref="M:System.Windows.Forms.ToolBar.ToString" /> method of the toolbar’s first button.</para>
@@ -1305,6 +1304,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the <see cref="T:System.Windows.Forms.ToolBar" /> control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A String that represents the current <see cref="T:System.Windows.Forms.ToolBar" />. </para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

@@ -204,7 +204,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.Panel.CreateControlStyle" /> method is used primarily by control developers.</para>
@@ -213,6 +212,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a style object that is used internally by the <see cref="T:System.Web.UI.WebControls.Panel" /> control to implement all style related properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.WebControls.PanelStyle" /> that contains the style properties of the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DefaultButton">

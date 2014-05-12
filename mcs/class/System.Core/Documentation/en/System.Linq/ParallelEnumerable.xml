@@ -36,12 +36,15 @@
         <Parameter Name="func" Type="System.Func&lt;TSource,TSource,TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Applies in parallel an accumulator function over a sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The final accumulator value.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to aggregate over.</param>
         <param name="func">
@@ -70,12 +73,15 @@
         <Parameter Name="func" Type="System.Func&lt;TAccumulate,TSource,TAccumulate&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Applies in parallel an accumulator function over a sequence. The specified seed value is used as the initial accumulator value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The final accumulator value.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to aggregate over.</param>
         <param name="seed">
@@ -110,12 +116,15 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TAccumulate,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Applies in parallel an accumulator function over a sequence. The specified seed value is used as the initial accumulator value, and the specified function is used to select the result value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transformed final accumulator value.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to aggregate over.</param>
         <param name="seed">
@@ -155,7 +164,6 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TAccumulate,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is specific to parallelized queries. A parallelized query may partition the data source sequence into several sub-sequences (partitions). The <paramref name="updateAccumulatorFunc" /> is invoked on each element within partitions. Each partition then yields a single accumulated result. The <paramref name="combineAccumulatorsFunc" /> is then invoked on the results of each partition to yield a single element. This element is then transformed by the <paramref name="resultSelector" /> function.</para>
@@ -164,6 +172,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Applies in parallel an accumulator function over a sequence. This overload is not available in the sequential implementation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transformed final accumulator value.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to aggregate over.</param>
         <param name="seedFactory">
@@ -205,7 +217,6 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TAccumulate,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload is specific to processing a parallelized query. A parallelized query may partition the data source sequence into several sub-sequences (partitions). The <paramref name="updateAccumulatorFunc" /> is invoked on each element within partitions. Each partition then yields a single accumulated result. The <paramref name="combineAccumulatorsFunc" /> is then invoked on the results of each partition to yield a single element. This element is then transformed by the <paramref name="resultSelector" /> function.</para>
@@ -214,6 +225,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Applies in parallel an accumulator function over a sequence. This overload is not available in the sequential implementation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The transformed final accumulator value.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to aggregate over.</param>
         <param name="seed">
@@ -250,12 +265,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines in parallel whether all elements of a sequence satisfy a condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if every element of the source sequence passes the test in the specified predicate, or if the sequence is empty; otherwise, false..</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose elements to apply the predicate to.</param>
         <param name="predicate">
@@ -281,7 +299,6 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload of the Any method causes a fully-buffered merge to be performed before the result is returned. The merge behavior can impact performance or cause an out of memory exception in large enumerables. To avoid the merge behavior, use the overload of Any that takes a Func parameter, or else use an alternative method such as FirstOrDefault.</para>
@@ -290,6 +307,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a parallel sequence contains any elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the source sequence contains any elements; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to check for emptiness.</param>
         <typeparam name="TSource">
@@ -314,12 +335,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines in parallel whether any element of a sequence satisfies a condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if any elements in the source sequence pass the test in the specified predicate; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to whose elements the predicate will be applied.</param>
         <param name="predicate">
@@ -345,12 +369,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a <see cref="T:System.Linq.ParallelQuery`1" /> into an <see cref="T:System.Collections.Generic.IEnumerable`1" /> to force sequential evaluation of the query.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The input sequence typed as <see cref="T:System.Collections.Generic.IEnumerable`1" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to cast as <see cref="T:System.Collections.Generic.IEnumerable`1" />.</param>
         <typeparam name="TSource">
@@ -371,7 +398,6 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A natural tension exists between performance and preserving order in parallel processing. By default, a parallelized query behaves as if the ordering of the results is arbitrary unless AsOrdered is applied or there is an explicit OrderBy operator in the query. For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
@@ -380,6 +406,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enables treatment of a data source as if it were ordered, overriding the default of unordered. AsOrdered may only be invoked on non-generic sequences returned by AsParallel, ParallelEnumerable.Range, and ParallelEnumerable.Repeat.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source sequence which will maintain the original ordering in the subsequent query operators.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The input sequence.</param>
       </Docs>
@@ -401,7 +431,6 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A natural tension exists between performance and preserving order in parallel processing. By default, a parallelized query behaves as if the ordering of the results is arbitrary unless AsOrdered is applied or there is an explicit OrderBy operator in the query. For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
@@ -410,6 +439,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enables treatment of a data source as if it were ordered, overriding the default of unordered. AsOrdered may only be invoked on generic sequences returned by AsParallel, ParallelEnumerable.Range, and ParallelEnumerable.Repeat.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source sequence which will maintain the original ordering in the subsequent query operators.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The input sequence.</param>
         <typeparam name="TSource">
@@ -430,7 +463,6 @@
         <Parameter Name="source" Type="System.Collections.IEnumerable" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Linq.ParallelEnumerable.Cast``1(System.Linq.ParallelQuery)" /> operator can be used to convert a ParallelQuery to a ParallelQuery(T).</para>
@@ -439,6 +471,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enables parallelization of a query.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source as a ParallelQuery to bind to ParallelEnumerable extension methods.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to convert to a <see cref="T:System.Linq.ParallelQuery" />.</param>
       </Docs>
@@ -460,7 +496,6 @@
         <Parameter Name="source" Type="System.Collections.Concurrent.Partitioner&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The source partitioner's GetOrderedPartitions method is used when ordering is enabled, whereas the partitioner's GetPartitions is used if ordering is not enabled (the default). The source partitioner's GetDynamicPartitions and GetDynamicOrderedPartitions are not used. For more information and examples, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
@@ -469,6 +504,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enables parallelization of a query, as sourced by a custom partitioner that is responsible for splitting the input sequence into partitions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="source" /> as a ParallelQuery to bind to ParallelEnumerable extension methods.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A partitioner over the input sequence.</param>
         <typeparam name="TSource">
@@ -492,12 +531,15 @@
         <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enables parallelization of a query.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source as a <see cref="T:System.Linq.ParallelQuery`1" /> to bind to ParallelEnumerable extension methods.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> to convert to a <see cref="T:System.Linq.ParallelQuery`1" />.</param>
         <typeparam name="TSource">
@@ -521,7 +563,6 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format> and <format type="text/html"><a href="c67eccc7-004d-4b2f-987e-919cbbd62ef7">How to: Control Ordering in a PLINQ Query</a></format>.</para>
@@ -530,6 +571,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a <see cref="T:System.Linq.ParallelQuery`1" /> into an <see cref="T:System.Collections.Generic.IEnumerable`1" /> to force sequential evaluation of the query.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source as an <see cref="T:System.Collections.Generic.IEnumerable`1" /> to bind to sequential extension methods.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Linq.ParallelQuery`1" /> to convert to an <see cref="T:System.Collections.Generic.IEnumerable`1" />.</param>
         <typeparam name="TSource">
@@ -553,7 +598,6 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>AsUnordered may provide performance benefits when ordering is not required in a portion of a query. By default, PLINQ treats an input sequence as unordered unless OrderBy or AsOrdered is specified. However, if ordering was turned on and is no longer needed, then AsUnordered can be used to turn it off in mid-query, and this may result in performance benefits. The AsUnordered operator itself does not shuffle the source sequence; it simply removes the ordering requirement for subsequent operators. If the source is ordered, subsequent operators might keep that ordering if it is more efficient to do so. AsUnordered can be called anywhere in the query; it does not need to be called immediately after AsParallel. For more information, see <format type="text/html"><a href="53706c7e-397d-467a-98cd-c0d1fd63ba5e">Understanding Speedup in PLINQ</a></format> and <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
@@ -562,6 +606,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Allows an intermediate query to be treated as if no ordering is implied among the elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The source sequence with arbitrary order.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The input sequence.</param>
         <typeparam name="TSource">
@@ -582,12 +630,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Decimal&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
       </Docs>
@@ -606,12 +657,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Double&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
       </Docs>
@@ -630,12 +684,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Int32&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
       </Docs>
@@ -654,12 +711,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Int64&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
       </Docs>
@@ -678,12 +738,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Decimal&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
       </Docs>
@@ -702,12 +765,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Double&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The source sequence.</param>
       </Docs>
@@ -726,12 +792,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Int32&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
       </Docs>
@@ -750,12 +819,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Int64&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
       </Docs>
@@ -774,12 +846,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Single&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
       </Docs>
@@ -798,12 +873,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Single&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
       </Docs>
@@ -826,12 +904,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Decimal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
         <param name="selector">
@@ -858,12 +939,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Double&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
         <param name="selector">
@@ -890,12 +974,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
         <param name="selector">
@@ -922,12 +1009,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
         <param name="selector">
@@ -954,12 +1044,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Decimal&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
         <param name="selector">
@@ -986,12 +1079,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Double&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
         <param name="selector">
@@ -1018,12 +1114,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Int32&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
         <param name="selector">
@@ -1050,12 +1149,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Int64&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
         <param name="selector">
@@ -1082,12 +1184,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Single&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
         <param name="selector">
@@ -1114,12 +1219,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Single&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the average of a sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The average of the sequence of values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values that are used to calculate an average.</param>
         <param name="selector">
@@ -1145,12 +1253,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the elements of a ParallelQuery to the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains each element of the source sequence converted to the specified type.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence that contains the elements to be converted.</param>
         <typeparam name="TResult">
@@ -1180,7 +1291,6 @@
         <Parameter Name="second" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of Concat with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the Concat operator would appear to be binding to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -1189,6 +1299,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This Concat overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="second">
@@ -1215,12 +1329,15 @@
         <Parameter Name="second" Type="System.Linq.ParallelQuery&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Concatenates two parallel sequences.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the concatenated elements of the two input sequences.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to concatenate.</param>
         <param name="second">
@@ -1247,12 +1364,15 @@
         <Parameter Name="value" Type="TSource" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines in parallel whether a sequence contains a specified element by using the default equality comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the source sequence contains an element that has the specified value; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence in which to locate a value.</param>
         <param name="value">
@@ -1280,12 +1400,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines in parallel whether a sequence contains a specified element by using a specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the source sequence contains an element that has the specified value; otherwise, false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence in which to locate a value.</param>
         <param name="value">
@@ -1313,12 +1436,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of elements in a parallel sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of elements in the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence that contains elements to be counted.</param>
         <typeparam name="TSource">
@@ -1343,12 +1469,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a number that represents how many elements in the specified parallel sequence satisfy a condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number that represents how many elements in the sequence satisfy the condition in the predicate function.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence that contains elements to be counted.</param>
         <param name="predicate">
@@ -1374,12 +1503,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the elements of the specified parallel sequence or the type parameter's default value in a singleton collection if the sequence is empty.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains default(TSource) if <paramref name="source" /> is empty; otherwise, <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return a default value for if it is empty.</param>
         <typeparam name="TSource">
@@ -1404,12 +1536,15 @@
         <Parameter Name="defaultValue" Type="TSource" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the elements of the specified parallel sequence or the specified value in a singleton collection if the sequence is empty.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains defaultValue if <paramref name="source" /> is empty; otherwise, <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return the specified value for if it is empty.</param>
         <param name="defaultValue">
@@ -1435,12 +1570,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns distinct elements from a parallel sequence by using the default equality comparer to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains distinct elements from the source sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to remove duplicate elements from.</param>
         <typeparam name="TSource">
@@ -1465,12 +1603,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns distinct elements from a parallel sequence by using a specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains distinct elements from the source sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to remove duplicate elements from.</param>
         <param name="comparer">
@@ -1497,12 +1638,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the element at a specified index in a parallel sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The element at the specified position in the source sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to return an element from.</param>
         <param name="index">
@@ -1529,12 +1673,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the element at a specified index in a parallel sequence or a default value if the index is out of range.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>default(TSource) if the index is outside the bounds of the source sequence; otherwise, the element at the specified position in the source sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to return an element from.</param>
         <param name="index">
@@ -1558,12 +1705,15 @@
       </TypeParameters>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an empty ParallelQuery{TResult} that has the specified type argument.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An empty sequence whose type argument is <paramref name="TResult" />.</para>
+        </returns>
         <typeparam name="TResult">
           <attribution license="cc4" from="Microsoft" modified="false" />The type to assign to the type parameter of the returned generic sequence.</typeparam>
       </Docs>
@@ -1591,7 +1741,6 @@
         <Parameter Name="second" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of Except with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the Except operator would appear to be binding to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -1600,6 +1749,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This Except overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="second">
@@ -1626,12 +1779,15 @@
         <Parameter Name="second" Type="System.Linq.ParallelQuery&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set difference of two parallel sequences by using the default equality comparer to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the set difference of the elements of two sequences.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose elements that are not also in <paramref name="second" /> will be returned.</param>
         <param name="second">
@@ -1664,7 +1820,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of Except with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the Except operator would appear to be binding to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -1673,6 +1828,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This Except overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="second">
@@ -1702,12 +1861,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set difference of two parallel sequences by using the specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the set difference of the elements of two sequences.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose elements that are not also in <paramref name="second" /> will be returned.</param>
         <param name="second">
@@ -1736,7 +1898,6 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the query is not ordered, then the first element is non-deterministic. For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
@@ -1745,6 +1906,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the first element of a parallel sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first element in the specified sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return the first element of.</param>
         <typeparam name="TSource">
@@ -1769,7 +1934,6 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the query is not ordered, then the first element is non-deterministic. For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
@@ -1778,6 +1942,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the first element in a parallel sequence that satisfies a specified condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The first element in the sequence that passes the test in the specified predicate function.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return an element from.</param>
         <param name="predicate">
@@ -1803,7 +1971,6 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the query is not ordered, then the first element is non-deterministic. For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
@@ -1812,6 +1979,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the first element of a parallel sequence, or a default value if the sequence contains no elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>default(TSource) if <paramref name="source" /> is empty; otherwise, the first element in <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return the first element of.</param>
         <typeparam name="TSource">
@@ -1836,7 +2007,6 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the query is not ordered, then the first element is non-deterministic. For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
@@ -1845,6 +2015,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the first element of the parallel sequence that satisfies a condition or a default value if no such element is found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>default(TSource) if <paramref name="source" /> is empty or if no element passes the test specified by predicate; otherwise, the first element in <paramref name="source" /> that passes the test specified by predicate.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return an element from.</param>
         <param name="predicate">
@@ -1906,12 +2080,15 @@
         <Parameter Name="keySelector" Type="System.Func&lt;TSource,TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups in parallel the elements of a sequence according to a specified key selector function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence of groups that are sorted descending according to <paramref name="TKey" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An OrderedParallelQuery{TSource}that contains elements to sort.</param>
         <param name="keySelector">
@@ -1942,12 +2119,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups in parallel the elements of a sequence according to a specified key selector function and compares the keys by using a specified <see cref="T:System.Collections.Generic.IComparer`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence of groups that are sorted descending according to <paramref name="TKey" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.OrderedParallelQuery`1" /> that contains elements to sort.</param>
         <param name="keySelector">
@@ -1981,12 +2161,15 @@
         <Parameter Name="elementSelector" Type="System.Func&lt;TSource,TElement&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups in parallel the elements of a sequence according to a specified key selector function and projects the elements for each group by using a specified function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence of groups that are sorted descending according to <paramref name="TKey" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Linq.OrderedParallelQuery`1" /> that contains elements to sort.</param>
         <param name="keySelector">
@@ -2023,12 +2206,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups in parallel the elements of a sequence according to a key selector function. The keys are compared by using a comparer and each group's elements are projected by using a specified function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence of groups that are sorted descending according to <paramref name="TKey" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An OrderedParallelQuery{TSource}that contains elements to sort.</param>
         <param name="keySelector">
@@ -2066,12 +2252,15 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TKey,System.Collections.Generic.IEnumerable&lt;TSource&gt;,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups in parallel the elements of a sequence according to a specified key selector function and creates a result value from each group and its key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence of elements of type <paramref name="TResult" /> where each element represents a projection over a group and its key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose elements to group.</param>
         <param name="keySelector">
@@ -2108,12 +2297,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups in parallel the elements of a sequence according to a specified key selector function and creates a result value from each group and its key. The keys are compared by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence of groups.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose elements to group.</param>
         <param name="keySelector">
@@ -2153,12 +2345,15 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TKey,System.Collections.Generic.IEnumerable&lt;TElement&gt;,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups in parallel the elements of a sequence according to a specified key selector function and creates a result value from each group and its key. The elements of each group are projected by using a specified function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence of elements of type <paramref name="TResult" /> where each element represents a projection over a group and its key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose elements to group.</param>
         <param name="keySelector">
@@ -2201,12 +2396,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Groups the elements of a sequence according to a specified key selector function and creates a result value from each group and its key. Key values are compared by using a specified comparer, and the elements of each group are projected by using a specified function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence of elements of type <paramref name="TResult" /> where each element represents a projection over a group and its key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose elements to group.</param>
         <param name="keySelector">
@@ -2256,7 +2454,6 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TOuter,System.Collections.Generic.IEnumerable&lt;TInner&gt;,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of GroupJoin with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the GroupJoin operator would appear to be binding to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -2265,6 +2462,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This GroupJoin overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="inner">
@@ -2309,12 +2510,15 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TOuter,System.Collections.Generic.IEnumerable&lt;TInner&gt;,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Correlates in parallel the elements of two sequences based on equality of keys and groups the results. The default equality comparer is used to compare keys.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that has elements of type <paramref name="TResult" /> that are obtained by performing a grouped join on two sequences.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to join.</param>
         <param name="inner">
@@ -2365,7 +2569,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of GroupJoin with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the GroupJoin operator would appear to be binding to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -2374,6 +2577,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This GroupJoin overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="inner">
@@ -2421,12 +2628,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Correlates in parallel the elements of two sequences based on key equality and groups the results. A specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> is used to compare keys.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that has elements of type <paramref name="TResult" /> that are obtained by performing a grouped join on two sequences.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to join.</param>
         <param name="inner">
@@ -2472,7 +2682,6 @@
         <Parameter Name="second" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of Intersect with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the Intersect operator would appear to be binding to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -2481,6 +2690,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This Intersect overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="second">
@@ -2507,12 +2720,15 @@
         <Parameter Name="second" Type="System.Linq.ParallelQuery&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set intersection of two parallel sequences by using the default equality comparer to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the elements that form the set intersection of two sequences.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose distinct elements that also appear in <paramref name="second" /> will be returned.</param>
         <param name="second">
@@ -2545,7 +2761,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of Intersect with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the Intersect operator would appear to be binding to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -2554,6 +2769,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This Intersect overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="second">
@@ -2583,12 +2802,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set intersection of two parallel sequences by using the specified IEqualityComparer{T} to compare values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the elements that form the set intersection of two sequences.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose distinct elements that also appear in <paramref name="second" /> will be returned.</param>
         <param name="second">
@@ -2628,7 +2850,6 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TOuter,TInner,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage Join with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the Join operator would appear to be binding to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -2637,6 +2858,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This Join overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when invoked.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="inner">
@@ -2681,12 +2906,15 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TOuter,TInner,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Correlates in parallel the elements of two sequences based on matching keys. The default equality comparer is used to compare keys.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that has elements of type <paramref name="TResult" /> that are obtained by performing an inner join on two sequences.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to join.</param>
         <param name="inner">
@@ -2737,7 +2965,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of Join with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the Join operator would appear to be binding to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -2746,6 +2973,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This Join overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when invoked.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="inner">
@@ -2793,12 +3024,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Correlates in parallel the elements of two sequences based on matching keys. A specified <see cref="T:System.Collections.Generic.IEqualityComparer`1" /> is used to compare keys.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that has elements of type <paramref name="TResult" /> that are obtained by performing an inner join on two sequences.</para>
+        </returns>
         <param name="outer">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to join.</param>
         <param name="inner">
@@ -2838,7 +3072,6 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the query is not ordered, then the last element is non-deterministic. For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
@@ -2847,6 +3080,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the last element of a parallel sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value at the last position in the source sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return the last element from.</param>
         <typeparam name="TSource">
@@ -2871,7 +3108,6 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the query is not ordered, then the last element is non-deterministic. For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
@@ -2880,6 +3116,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the last element of a parallel sequence that satisfies a specified condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The last element in the sequence that passes the test in the specified predicate function.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return an element from.</param>
         <param name="predicate">
@@ -2905,7 +3145,6 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the query is not ordered, then the last element is non-deterministic. For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
@@ -2914,6 +3153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the last element of a parallel sequence, or a default value if the sequence contains no elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>default() if the source sequence is empty; otherwise, the last element in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return an element from.</param>
         <typeparam name="TSource">
@@ -2938,7 +3181,6 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the query is not ordered, then the last element is non-deterministic. For more information, see <format type="text/html"><a href="10d202bc-19e1-4b5c-bbf1-9a977322a9ca">Order Preservation in PLINQ</a></format>.</para>
@@ -2947,6 +3189,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the last element of a parallel sequence that satisfies a condition, or a default value if no such element is found.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>default() if the sequence is empty or if no elements pass the test in the predicate function; otherwise, the last element that passes the test in the predicate function.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return an element from.</param>
         <param name="predicate">
@@ -2972,12 +3218,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an Int64 that represents the total number of elements in a parallel sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of elements in the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence that contains elements to be counted.</param>
         <typeparam name="TSource">
@@ -3002,12 +3251,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an Int64 that represents how many elements in a parallel sequence satisfy a condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A number that represents how many elements in the sequence satisfy the condition in the predicate function.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence that contains elements to be counted.</param>
         <param name="predicate">
@@ -3030,12 +3282,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Decimal&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
       </Docs>
@@ -3054,12 +3309,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Double&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
       </Docs>
@@ -3078,12 +3336,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Int32&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
       </Docs>
@@ -3102,12 +3363,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Int64&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
       </Docs>
@@ -3126,12 +3390,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Decimal&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
       </Docs>
@@ -3150,12 +3417,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Double&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
       </Docs>
@@ -3174,12 +3444,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Int32&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
       </Docs>
@@ -3198,12 +3471,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Int64&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
       </Docs>
@@ -3222,12 +3498,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Single&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
       </Docs>
@@ -3246,12 +3525,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Single&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
       </Docs>
@@ -3273,12 +3555,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the maximum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <typeparam name="TSource">
@@ -3303,12 +3588,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Decimal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the maximum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <param name="selector">
@@ -3335,12 +3623,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Double&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the maximum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <param name="selector">
@@ -3367,12 +3658,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the maximum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <param name="selector">
@@ -3399,12 +3693,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the maximum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <param name="selector">
@@ -3431,12 +3728,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Decimal&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the maximum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <param name="selector">
@@ -3463,12 +3763,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Double&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the maximum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <param name="selector">
@@ -3495,12 +3798,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Int32&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the maximum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <param name="selector">
@@ -3527,12 +3833,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Int64&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the maximum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <param name="selector">
@@ -3559,12 +3868,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Single&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the maximum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <param name="selector">
@@ -3591,12 +3903,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Single&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the maximum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <param name="selector">
@@ -3624,12 +3939,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the maximum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The maximum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the maximum value of.</param>
         <param name="selector">
@@ -3654,12 +3972,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Decimal&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
       </Docs>
@@ -3678,12 +3999,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Double&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
       </Docs>
@@ -3702,12 +4026,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Int32&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
       </Docs>
@@ -3726,12 +4053,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Int64&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
       </Docs>
@@ -3750,12 +4080,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Decimal&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
       </Docs>
@@ -3774,12 +4107,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Double&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
       </Docs>
@@ -3798,12 +4134,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Int32&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
       </Docs>
@@ -3822,12 +4161,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Int64&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
       </Docs>
@@ -3846,12 +4188,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Single&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
       </Docs>
@@ -3870,12 +4215,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Single&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
       </Docs>
@@ -3897,12 +4245,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minimum value in a parallel sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <typeparam name="TSource">
@@ -3927,12 +4278,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Decimal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the minimum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <param name="selector">
@@ -3959,12 +4313,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Double&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the minimum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <param name="selector">
@@ -3991,12 +4348,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the minimum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <param name="selector">
@@ -4023,12 +4383,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the minimum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <param name="selector">
@@ -4055,12 +4418,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Decimal&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the minimum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <param name="selector">
@@ -4087,12 +4453,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Double&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the minimum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <param name="selector">
@@ -4119,12 +4488,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Int32&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the minimum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <param name="selector">
@@ -4151,12 +4523,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Int64&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the minimum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <param name="selector">
@@ -4183,12 +4558,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Single&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the minimum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <param name="selector">
@@ -4215,12 +4593,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Single&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the minimum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <param name="selector">
@@ -4248,12 +4629,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Invokes in parallel a transform function on each element of a sequence and returns the minimum value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The minimum value in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to determine the minimum value of.</param>
         <param name="selector">
@@ -4281,12 +4665,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Filters the elements of a ParallelQuery based on a specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains elements from the input sequence of type .</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence whose elements to filter.</param>
         <typeparam name="TResult">
@@ -4312,7 +4699,6 @@
         <Parameter Name="keySelector" Type="System.Func&lt;TSource,TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In contrast to the sequential implementation, this is not a stable sort. To achieve a stable sort, change a query of the form: var ordered = source.Select((e,i) =&gt; new { E=e, I=i }).OrderBy((v) =&gt; v.e).ThenBy(v =&gt; v.i).Select((v) =&gt; v.e); </para>
@@ -4321,6 +4707,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sorts in parallel the elements of a sequence in ascending order according to a key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An OrderedParallelQuery{TSource} whose elements are sorted according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to order.</param>
         <param name="keySelector">
@@ -4351,7 +4741,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In contrast to the sequential implementation, this is not a stable sort. See the remarks for <see cref="M:System.Linq.ParallelEnumerable.OrderBy``2(System.Linq.ParallelQuery{``0},System.Func{``0,``1})" /> for an approach to implementing a stable sort.</para>
@@ -4360,6 +4749,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sorts in parallel the elements of a sequence in ascending order by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An OrderedParallelQuery{TSource} whose elements are sorted according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to order.</param>
         <param name="keySelector">
@@ -4391,7 +4784,6 @@
         <Parameter Name="keySelector" Type="System.Func&lt;TSource,TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In contrast to the sequential implementation, this is not a stable sort. See the remarks for <see cref="M:System.Linq.ParallelEnumerable.OrderBy``2(System.Linq.ParallelQuery{``0},System.Func{``0,``1})" /> for an approach to implementing a stable sort.</para>
@@ -4400,6 +4792,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sorts in parallel the elements of a sequence in descending order according to a key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An OrderedParallelQuery{TSource} whose elements are sorted descending according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to order.</param>
         <param name="keySelector">
@@ -4430,7 +4826,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In contrast to the sequential implementation, this is not a stable sort. See the remarks for <see cref="M:System.Linq.ParallelEnumerable.OrderBy``2(System.Linq.ParallelQuery{``0},System.Func{``0,``1})" /> for an approach to implementing a stable sort.</para>
@@ -4439,6 +4834,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sorts the elements of a sequence in descending order by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An OrderedParallelQuery{TSource} whose elements are sorted descending according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to order.</param>
         <param name="keySelector">
@@ -4466,12 +4865,15 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a parallel sequence of integral numbers within a specified range.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An IEnumerable&lt;Int32&gt; in C# or IEnumerable(Of Int32) in Visual Basic that contains a range of sequential integral numbers.</para>
+        </returns>
         <param name="start">
           <attribution license="cc4" from="Microsoft" modified="false" />The value of the first integer in the sequence.</param>
         <param name="count">
@@ -4521,12 +4923,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inverts the order of the elements in a parallel sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence whose elements correspond to those of the input sequence in reverse order.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to reverse.</param>
         <typeparam name="TSource">
@@ -4552,12 +4957,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Int32,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects in parallel each element of a sequence into a new form by incorporating the element's index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence whose elements are the result of invoking the transform function on each element of <paramref name="source" />, based on the index supplied to <paramref name="selector" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to invoke a transform function on.</param>
         <param name="selector">
@@ -4587,12 +4995,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects in parallel each element of a sequence into a new form.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence whose elements are the result of invoking the transform function on each element of <paramref name="source" />.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to invoke a transform function on.</param>
         <param name="selector">
@@ -4622,12 +5033,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Collections.Generic.IEnumerable&lt;TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects in parallel each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1" /> and flattens the resulting sequences into one sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence whose elements are the result of invoking the one-to-many transform function on each element of the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to project.</param>
         <param name="selector">
@@ -4657,12 +5071,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Int32,System.Collections.Generic.IEnumerable&lt;TResult&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects in parallel each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1" />, and flattens the resulting sequences into one sequence. The index of each source element is used in the projected form of that element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence whose elements are the result of invoking the one-to-many transform function on each element of the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to project.</param>
         <param name="selector">
@@ -4694,12 +5111,15 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TSource,TCollection,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1" />, flattens the resulting sequences into one sequence, and invokes a result selector function on each element therein.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence whose elements are the result of invoking the one-to-many transform function <paramref name="collectionSelector" /> on each element of <paramref name="source" /> based on the index supplied to <paramref name="collectionSelector" />, and then mapping each of those sequence elements and their corresponding source element to a result element. </para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to project.</param>
         <param name="collectionSelector">
@@ -4735,12 +5155,15 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TSource,TCollection,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Projects each element of a sequence to an <see cref="T:System.Collections.Generic.IEnumerable`1" />, flattens the resulting sequences into one sequence, and invokes a result selector function on each element therein. The index of each source element is used in the intermediate projected form of that element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence whose elements are the result of invoking the one-to-many transform function <paramref name="collectionSelector" /> on each element of <paramref name="source" /> based on the index supplied to <paramref name="collectionSelector" />, and then mapping each of those sequence elements and their corresponding source element to a result element.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to project.</param>
         <param name="collectionSelector">
@@ -4778,7 +5201,6 @@
         <Parameter Name="second" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of SequenceEqual with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the SequenceEqual operator would appear to be binding to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -4787,6 +5209,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This SequenceEqual overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="second">
@@ -4813,12 +5239,15 @@
         <Parameter Name="second" Type="System.Linq.ParallelQuery&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two parallel sequences are equal by comparing the elements by using the default equality comparer for their type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two source sequences are of equal length and their corresponding elements are equal according to the default equality comparer for their type; otherwise, false.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to compare to second.</param>
         <param name="second">
@@ -4851,7 +5280,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of SequenceEqual with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the SequenceEqual operator would appear to be binding to the parallel implementation, but would in reality bind to sequential implementation.</para>
@@ -4860,6 +5288,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This SequenceEqual overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="second">
@@ -4889,12 +5321,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether two parallel sequences are equal by comparing their elements by using a specified IEqualityComparer{T}.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the two source sequences are of equal length and their corresponding elements are equal according to the default equality comparer for their type; otherwise, false.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to compare to <paramref name="second" />.</param>
         <param name="second">
@@ -4922,12 +5357,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the only element of a parallel sequence, and throws an exception if there is not exactly one element in the sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single element of the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return the single element of.</param>
         <typeparam name="TSource">
@@ -4952,12 +5390,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the only element of a parallel sequence that satisfies a specified condition, and throws an exception if more than one such element exists.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single element of the input sequence that satisfies a condition.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return the single element of.</param>
         <param name="predicate">
@@ -4983,12 +5424,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the only element of a parallel sequence, or a default value if the sequence is empty; this method throws an exception if there is more than one element in the sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single element of the input sequence, or default() if the sequence contains no elements.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return the single element of.</param>
         <typeparam name="TSource">
@@ -5013,12 +5457,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the only element of a parallel sequence that satisfies a specified condition or a default value if no such element exists; this method throws an exception if more than one element satisfies the condition.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The single element of the input sequence that satisfies the condition, or default() if no such element is found.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return the single element of.</param>
         <param name="predicate">
@@ -5045,7 +5492,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If count &gt; source.Count(), no elements are returned.</para>
@@ -5054,6 +5500,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Bypasses a specified number of elements in a parallel sequence and then returns the remaining elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the elements that occur after the specified index in the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return elements from.</param>
         <param name="count">
@@ -5080,12 +5530,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Bypasses elements in a parallel sequence as long as a specified condition is true and then returns the remaining elements.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the elements from the input sequence starting at the first element in the linear series that does not pass the test specified by predicate.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return elements from.</param>
         <param name="predicate">
@@ -5112,12 +5565,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Int32,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Bypasses elements in a parallel sequence as long as a specified condition is true and then returns the remaining elements. The element's index is used in the logic of the predicate function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the elements from the input sequence starting at the first element in the linear series that does not pass the test specified by predicate.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return elements from.</param>
         <param name="predicate">
@@ -5140,12 +5596,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Decimal&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
       </Docs>
@@ -5164,12 +5623,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Double&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
       </Docs>
@@ -5188,12 +5650,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Int32&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
       </Docs>
@@ -5212,12 +5677,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Int64&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
       </Docs>
@@ -5236,12 +5704,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Decimal&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
       </Docs>
@@ -5260,12 +5731,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Double&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
       </Docs>
@@ -5284,12 +5758,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Int32&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
       </Docs>
@@ -5308,12 +5785,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Int64&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
       </Docs>
@@ -5332,12 +5812,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Nullable&lt;System.Single&gt;&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
       </Docs>
@@ -5356,12 +5839,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;System.Single&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of a sequence of values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
       </Docs>
@@ -5384,12 +5870,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Decimal&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
         <param name="selector">
@@ -5416,12 +5905,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Double&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
         <param name="selector">
@@ -5448,12 +5940,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Int32&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
         <param name="selector">
@@ -5480,12 +5975,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
         <param name="selector">
@@ -5512,12 +6010,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Decimal&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
         <param name="selector">
@@ -5544,12 +6045,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Double&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
         <param name="selector">
@@ -5576,12 +6080,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Int32&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
         <param name="selector">
@@ -5608,12 +6115,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Int64&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
         <param name="selector">
@@ -5640,12 +6150,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Nullable&lt;System.Single&gt;&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
         <param name="selector">
@@ -5672,12 +6185,15 @@
         <Parameter Name="selector" Type="System.Func&lt;TSource,System.Single&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes in parallel the sum of the sequence of values that are obtained by invoking a transform function on each element of the input sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The sum of the projected values in the sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence of values to calculate the sum of.</param>
         <param name="selector">
@@ -5704,12 +6220,15 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a specified number of contiguous elements from the start of a parallel sequence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the specified number of elements from the start of the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return elements from.</param>
         <param name="count">
@@ -5736,12 +6255,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns elements from a parallel sequence as long as a specified condition is true.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the elements from the input sequence that occur before the element at which the test no longer passes.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return elements from.</param>
         <param name="predicate">
@@ -5768,12 +6290,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Int32,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns elements from a parallel sequence as long as a specified condition is true. The element's index is used in the logic of the predicate function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains elements from the input sequence that occur before the element at which the test no longer passes.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to return elements from.</param>
         <param name="predicate">
@@ -5801,7 +6326,6 @@
         <Parameter Name="keySelector" Type="System.Func&lt;TSource,TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In contrast to the sequential implementation, this is not a stable sort. See the remarks for <see cref="M:System.Linq.ParallelEnumerable.OrderBy``2(System.Linq.ParallelQuery{``0},System.Func{``0,``1})" /> for an approach to implementing a stable sort.</para>
@@ -5810,6 +6334,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs in parallel a subsequent ordering of the elements in a sequence in ascending order according to a key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An OrderedParallelQuery{TSource} whose elements are sorted according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An OrderedParallelQuery{TSource} that contains elements to sort.</param>
         <param name="keySelector">
@@ -5840,7 +6368,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In contrast to the sequential implementation, this is not a stable sort. See the remarks for <see cref="M:System.Linq.ParallelEnumerable.OrderBy``2(System.Linq.ParallelQuery{``0},System.Func{``0,``1})" /> for an approach to implementing a stable sort.</para>
@@ -5849,6 +6376,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs in parallel a subsequent ordering of the elements in a sequence in ascending order by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An OrderedParallelQuery{TSource} whose elements are sorted according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An OrderedParallelQuery{TSource} that contains elements to sort.</param>
         <param name="keySelector">
@@ -5880,7 +6411,6 @@
         <Parameter Name="keySelector" Type="System.Func&lt;TSource,TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In contrast to the sequential implementation, this is not a stable sort. See the remarks for <see cref="M:System.Linq.ParallelEnumerable.OrderBy``2(System.Linq.ParallelQuery{``0},System.Func{``0,``1})" /> for an approach to implementing a stable sort.</para>
@@ -5889,6 +6419,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs in parallel a subsequent ordering of the elements in a sequence in descending order, according to a key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence whose elements are sorted descending according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An OrderedParallelQuery{TSource} that contains elements to sort.</param>
         <param name="keySelector">
@@ -5919,7 +6453,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In contrast to the sequential implementation, this is not a stable sort. See the remarks for <see cref="M:System.Linq.ParallelEnumerable.OrderBy``2(System.Linq.ParallelQuery{``0},System.Func{``0,``1})" /> for an approach to implementing a stable sort.</para>
@@ -5928,6 +6461,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs in parallel a subsequent ordering of the elements in a sequence in descending order by using a specified comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence whose elements are sorted descending according to a key.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />An OrderedParallelQuery{TSource} that contains elements to sort.</param>
         <param name="keySelector">
@@ -5957,12 +6494,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an array from a <see cref="T:System.Linq.ParallelQuery`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the elements from the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to create an array from.</param>
         <typeparam name="TSource">
@@ -5988,12 +6528,15 @@
         <Parameter Name="keySelector" Type="System.Func&lt;TSource,TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Collections.Generic.Dictionary`2" /> from a <see cref="T:System.Linq.ParallelQuery`1" /> according to a specified key selector function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Generic.Dictionary`2" /> that contains keys and values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to create a <see cref="T:System.Collections.Generic.Dictionary`2" /> from.</param>
         <param name="keySelector">
@@ -6024,12 +6567,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Collections.Generic.Dictionary`2" />  from a <see cref="T:System.Linq.ParallelQuery`1" /> according to a specified key selector function and key comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Generic.Dictionary`2" /> that contains keys and values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to create a <see cref="T:System.Collections.Generic.Dictionary`2" /> from.</param>
         <param name="keySelector">
@@ -6063,12 +6609,15 @@
         <Parameter Name="elementSelector" Type="System.Func&lt;TSource,TElement&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Collections.Generic.Dictionary`2" /> from a <see cref="T:System.Linq.ParallelQuery`1" /> according to specified key selector and element selector functions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Generic.Dictionary`2" /> that contains values of type <paramref name="TElement" /> selected from the input sequence</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to create a <see cref="T:System.Collections.Generic.Dictionary`2" /> from.</param>
         <param name="keySelector">
@@ -6105,12 +6654,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Collections.Generic.Dictionary`2" /> from a <see cref="T:System.Linq.ParallelQuery`1" /> according to a specified key selector function, a comparer, and an element selector function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Generic.Dictionary`2" /> that contains values of type <paramref name="TElement" /> selected from the input sequence</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to create a <see cref="T:System.Collections.Generic.Dictionary`2" /> from.</param>
         <param name="keySelector">
@@ -6144,12 +6696,15 @@
         <Parameter Name="source" Type="System.Linq.ParallelQuery&lt;TSource&gt;" RefType="this" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Collections.Generic.List`1" /> from an <see cref="T:System.Linq.ParallelQuery`1" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Generic.List`1" />  that contains elements from the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to create a <see cref="T:System.Collections.Generic.List`1" /> from.</param>
         <typeparam name="TSource">
@@ -6175,12 +6730,15 @@
         <Parameter Name="keySelector" Type="System.Func&lt;TSource,TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Linq.ILookup`2" /> from a <see cref="T:System.Linq.ParallelQuery`1" /> according to a specified key selector function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Linq.ILookup`2" /> that contains keys and values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to create a <see cref="T:System.Linq.ILookup`2" /> from.</param>
         <param name="keySelector">
@@ -6211,12 +6769,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Linq.ILookup`2" /> from a <see cref="T:System.Linq.ParallelQuery`1" /> according to a specified key selector function and key comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Linq.ILookup`2" /> that contains keys and values.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to create a <see cref="T:System.Linq.ILookup`2" /> from.</param>
         <param name="keySelector">
@@ -6250,12 +6811,15 @@
         <Parameter Name="elementSelector" Type="System.Func&lt;TSource,TElement&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Linq.ILookup`2" /> from a <see cref="T:System.Linq.ParallelQuery`1" /> according to specified key selector and element selector functions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Linq.ILookup`2" /> that contains values of type <paramref name="TElement" /> selected from the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to create a <see cref="T:System.Linq.ILookup`2" /> from.</param>
         <param name="keySelector">
@@ -6292,12 +6856,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Linq.ILookup`2" /> from a <see cref="T:System.Linq.ParallelQuery`1" /> according to a specified key selector function, a comparer and an element selector function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Lookup&lt;(Of &lt;(TKey, TElement&gt;)&gt;) that contains values of type TElement selected from the input sequence.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The sequence to create a <see cref="T:System.Linq.ILookup`2" /> from.</param>
         <param name="keySelector">
@@ -6337,7 +6904,6 @@
         <Parameter Name="second" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of Union with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the Union operator would appear to be binding to the parallel implementation, but would in reality bind to sequential implementation.</para>
@@ -6346,6 +6912,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This Union overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="second">
@@ -6372,12 +6942,15 @@
         <Parameter Name="second" Type="System.Linq.ParallelQuery&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set union of two parallel sequences by using the default equality comparer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the elements from both input sequences, excluding duplicates.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose distinct elements form the first set for the union.</param>
         <param name="second">
@@ -6410,7 +6983,6 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of Union with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the Union operator would appear to be binding to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -6419,6 +6991,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This Union overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when called.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="second">
@@ -6448,12 +7024,15 @@
         <Parameter Name="comparer" Type="System.Collections.Generic.IEqualityComparer&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Produces the set union of two parallel sequences by using a specified IEqualityComparer{T}.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains the elements from both input sequences, excluding duplicates.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence whose distinct elements form the first set for the union.</param>
         <param name="second">
@@ -6482,12 +7061,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Filters in parallel a sequence of values based on a predicate.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains elements from the input sequence that satisfy the condition.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to filter.</param>
         <param name="predicate">
@@ -6514,12 +7096,15 @@
         <Parameter Name="predicate" Type="System.Func&lt;TSource,System.Int32,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Filters in parallel a sequence of values based on a predicate. Each element's index is used in the logic of the predicate function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains elements from the input sequence that satisfy the condition.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A sequence to filter.</param>
         <param name="predicate">
@@ -6546,12 +7131,15 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the <see cref="T:System.Threading.CancellationToken" /> to associate with the query.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ParallelQuery representing the same query as source, but with the registered cancellation token.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A ParallelQuery on which to set the option.</param>
         <param name="cancellationToken">
@@ -6578,12 +7166,15 @@
         <Parameter Name="degreeOfParallelism" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the degree of parallelism to use in a query. Degree of parallelism is the maximum number of concurrently executing tasks that will be used to process the query.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ParallelQuery representing the same query as source, with the limit on the degrees of parallelism set.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A ParallelQuery on which to set the limit on the degrees of parallelism.</param>
         <param name="degreeOfParallelism">
@@ -6610,7 +7201,6 @@
         <Parameter Name="executionMode" Type="System.Linq.ParallelExecutionMode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The execution mode specifies whether PLINQ will attempt to fall back to sequential execution if it detects certain query shapes. For more information and examples, see <format type="text/html"><a href="e52ff26c-c5d3-4fab-9fec-c937fb387963">How to: Specify the Execution Mode in PLINQ</a></format>.</para>
@@ -6619,6 +7209,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the execution mode of the query.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ParallelQuery representing the same query as source, but with the registered execution mode.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A ParallelQuery on which to set the option.</param>
         <param name="executionMode">
@@ -6645,12 +7239,15 @@
         <Parameter Name="mergeOptions" Type="System.Linq.ParallelMergeOptions" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the merge options for this query, which specify how the query will buffer output.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>ParallelQuery representing the same query as source, but with the registered merge options.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />A ParallelQuery on which to set the option.</param>
         <param name="mergeOptions">
@@ -6685,7 +7282,6 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TFirst,TSecond,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This overload exists to disallow usage of Zip with a left data source of type <see cref="T:System.Linq.ParallelQuery`1" /> and a right data source of type <see cref="T:System.Collections.Generic.IEnumerable`1" />. Otherwise, the Zip operator would appear to be bind to the parallel implementation, but would in reality bind to the sequential implementation.</para>
@@ -6694,6 +7290,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This Zip overload should never be called. This method is marked as obsolete and always throws <see cref="T:System.NotSupportedException" /> when invoked.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload always throws a <see cref="T:System.NotSupportedException" />.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />This parameter is not used.</param>
         <param name="second">
@@ -6729,12 +7329,15 @@
         <Parameter Name="resultSelector" Type="System.Func&lt;TFirst,TSecond,TResult&gt;" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Merges in parallel two sequences by using the specified predicate function.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that has elements of type <paramref name="TResult" /> that are obtained by performing <paramref name="resultSelector" /> pairwise on two sequences. If the sequence lengths are unequal, this truncates to the length of the shorter sequence.</para>
+        </returns>
         <param name="first">
           <attribution license="cc4" from="Microsoft" modified="false" />The first sequence to zip.</param>
         <param name="second">

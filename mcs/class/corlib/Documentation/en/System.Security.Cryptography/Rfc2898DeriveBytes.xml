@@ -250,7 +250,6 @@
         <Parameter Name="cb" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -260,6 +259,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the pseudo-random key for this object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array filled with pseudo-random key bytes.</para>
+        </returns>
         <param name="cb">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of pseudo-random key bytes to generate. </param>
       </Docs>

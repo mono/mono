@@ -156,7 +156,6 @@
         <Parameter Name="provider" Type="System.CodeDom.Compiler.CodeDomProvider" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="key" /> parameter is a valid string of characters, that string is returned. If the <paramref name="key" /> parameter is an invalid string or a string that contains invalid characters, the <see cref="M:System.Resources.Tools.StronglyTypedResourceBuilder.VerifyResourceName(System.String,System.CodeDom.Compiler.CodeDomProvider)" /> method attempts to generate a valid string based on the <paramref name="key" /> and <paramref name="provider" /> parameters. If a valid string can be generated, that string is returned; otherwise, null is returned.</para>
@@ -170,6 +169,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Generates a valid resource string based on the specified input string and code provider.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A valid resource name derived from the <paramref name="key" /> parameter. Any invalid tokens are replaced with the underscore (_) character, or null if the derived string still contains invalid characters according to the language specified by the <paramref name="provider" /> parameter.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The string to verify and, if necessary, convert to a valid resource name.</param>
         <param name="provider">

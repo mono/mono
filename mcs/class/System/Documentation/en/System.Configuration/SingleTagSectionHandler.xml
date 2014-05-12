@@ -64,12 +64,15 @@
         <Parameter Name="section" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used internally to create a new instance of this object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created object handler.</para>
+        </returns>
         <param name="parent">
           <attribution license="cc4" from="Microsoft" modified="false" />The parent of this object.</param>
         <param name="context">

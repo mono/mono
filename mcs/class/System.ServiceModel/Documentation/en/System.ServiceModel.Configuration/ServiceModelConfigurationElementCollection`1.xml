@@ -121,12 +121,15 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a boolean value that indicates whether this collection contains a configuration element with the specified key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains a configuration element with the specified key; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The configuration element to search for in the collection.</param>
       </Docs>
@@ -164,12 +167,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Configuration.ConfigurationElement" /> instance of type <paramref name="ConfigurationElementType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Configuration.ConfigurationElement" /> instance of type <paramref name="ConfigurationElementType" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ElementName">

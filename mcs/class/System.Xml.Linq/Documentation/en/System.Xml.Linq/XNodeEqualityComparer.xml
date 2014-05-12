@@ -59,7 +59,6 @@
         <Parameter Name="y" Type="System.Xml.Linq.XNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following criteria determine whether two nodes are equal:</para>
@@ -94,6 +93,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the values of two nodes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Boolean" /> indicating if the nodes are equal.</para>
+        </returns>
         <param name="x">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.Linq.XNode" /> to compare.</param>
         <param name="y">
@@ -114,7 +117,6 @@
         <Parameter Name="obj" Type="System.Xml.Linq.XNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.Linq.XNode" /> implementation of <see cref="M:System.Object.GetHashCode" /> is based on the referential identity of the node. This method computes a deep hash code based on the value of the node and all descendants. The hash code reflects all attributes and all descendent nodes.</para>
@@ -123,6 +125,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code based on an <see cref="T:System.Xml.Linq.XNode" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Int32" /> that contains a value-based hash code for the node.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XNode" /> to hash.</param>
       </Docs>
@@ -144,7 +150,6 @@
       <Docs>
         <param name="n1">To be added.</param>
         <param name="n2">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following criteria determine whether two nodes are equal:</para>
@@ -179,6 +184,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares the values of two nodes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the nodes are equal; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IEqualityComparer.GetHashCode">
@@ -195,7 +204,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Xml.Linq.XNode" /> implementation of <see cref="T:System.Object.GetHashCode" /> is based on the referential identity of the node. This method computes a deep hash code based on the value of the node, its attributes, and its descendants.</para>
@@ -204,6 +212,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a hash code based on the value of a node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Int32" /> that contains a value-based hash code for the node.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The node to hash.</param>
       </Docs>

@@ -131,10 +131,6 @@
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the <see cref="T:System.Collections.IDictionary" /> contains an entry with the key; otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="key " />is <see langword="null" />.</exception>
         <remarks>
@@ -146,6 +142,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Collections.IDictionary" /> object contains an element with the specified key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.IDictionary" /> contains an element with the key; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Collections.IDictionary" /> object.</param>
       </Docs>
@@ -166,10 +166,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Collections.IDictionaryEnumerator" /> for the current
-   instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>[Visual Basic, C#]</para>
@@ -186,6 +182,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IDictionaryEnumerator" /> object for the <see cref="T:System.Collections.IDictionary" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionaryEnumerator" /> object for the <see cref="T:System.Collections.IDictionary" /> object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

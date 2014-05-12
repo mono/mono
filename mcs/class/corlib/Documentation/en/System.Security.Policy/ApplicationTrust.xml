@@ -286,7 +286,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -296,6 +295,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an XML encoding of the <see cref="T:System.Security.Policy.ApplicationTrust" /> object and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

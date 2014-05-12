@@ -77,12 +77,15 @@
       <Docs>
         <param name="name">To be added.</param>
         <param name="ns">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether the collection contains the specified policy assertion.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the specified policy assertion; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Find">
@@ -102,12 +105,15 @@
       <Docs>
         <param name="name">To be added.</param>
         <param name="ns">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified policy assertion.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified policy assertion, or null if the assertion cannot be found.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="FindAll">
@@ -127,12 +133,15 @@
       <Docs>
         <param name="name">To be added.</param>
         <param name="ns">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns all specified policy assertions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of all policy assertions that match the specification, or an empty collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="InsertItem">
@@ -178,12 +187,15 @@
       <Docs>
         <param name="name">To be added.</param>
         <param name="ns">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes the specified policy assertion from the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The policy assertion that was removed from the collection or null if the policy assertion was not in the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="RemoveAll">
@@ -203,12 +215,15 @@
       <Docs>
         <param name="name">To be added.</param>
         <param name="ns">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Removes all policy assertions that match the specified name and namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of all removed policy assertions or an empty collection if no assertions were found that match the specified name and namespace.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SetItem">

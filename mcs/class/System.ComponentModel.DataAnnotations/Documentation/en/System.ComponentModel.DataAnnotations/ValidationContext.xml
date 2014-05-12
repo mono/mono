@@ -137,7 +137,6 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="P:System.ComponentModel.DataAnnotations.ValidationContext.ServiceContainer" /> object is defined at the application level, the <see cref="M:System.ComponentModel.DataAnnotations.ValidationContext.GetService(System.Type)" /> method accesses it to retrieve the requested service. </para>
@@ -147,6 +146,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the service that provides custom validation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of the service, or null if the service is not available.</para>
+        </returns>
         <param name="serviceType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of the service to use for validation.</param>
       </Docs>

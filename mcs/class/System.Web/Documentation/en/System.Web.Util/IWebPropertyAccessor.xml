@@ -25,13 +25,16 @@
         <Parameter Name="target" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of a specified property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified property.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The property from which the value is retrieved.</param>
       </Docs>

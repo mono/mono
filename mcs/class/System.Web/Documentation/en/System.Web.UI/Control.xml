@@ -583,7 +583,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ControlCollection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Override this method in a custom server control if you have created a collection object that is derived from the <see cref="T:System.Web.UI.ControlCollection" /> class. You can then instantiate that collection class in the override of this method.</para>
@@ -592,6 +591,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Web.UI.ControlCollection" /> object to hold the child controls (both literal and server) of the server control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.ControlCollection" /> object to contain the current server control's child server controls.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -920,7 +923,6 @@
         <Parameter Name="id" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Control'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use <see cref="M:System.Web.UI.Control.FindControl(System.String)" /> to access a control from a function in a code-behind page, to access a control that is inside another container, or in other circumstances where the target control is not directly accessible to the caller. This method will find a control only if the control is directly contained by the specified container; that is, the method does not search throughout a hierarchy of controls within controls. For information about how to find a control when you do not know its immediate container, see <format type="text/html"><a href="59964ef8-72ef-4159-9f1a-5b230ff46fb3">How to: Access Server Controls by ID</a></format>.</para>
@@ -929,6 +931,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the current naming container for a server control with the specified <paramref name="id" /> parameter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified control, or null if the specified control does not exist.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The identifier for the control to be found. </param>
       </Docs>
@@ -948,12 +954,15 @@
         <Parameter Name="pathOffset" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Control'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Searches the current naming container for a server control with the specified <paramref name="id" /> and an integer, specified in the <paramref name="pathOffset" /> parameter, which aids in the search. You should not override this version of the <see cref="Overload:System.Web.UI.Control.FindControl" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified control, or null if the specified control does not exist.</para>
+        </returns>
         <param name="id">
           <attribution license="cc4" from="Microsoft" modified="false" />The identifier for the control to be found. </param>
         <param name="pathOffset">
@@ -997,7 +1006,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Control.GetDesignModeState" /> method returns design-time data for a control.</para>
@@ -1006,6 +1014,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets design-time data for a control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> containing the design-time data for the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasChildViewState">
@@ -1038,7 +1050,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Since this method simply determines if any child controls exist, it can enhance performance by allowing you to avoid an unnecessary <see cref="P:System.Web.UI.ControlCollection.Count" /> property call. Calls to this property require a <see cref="T:System.Web.UI.ControlCollection" /> object to be instantiated. If there are no children, this object creation wastes server resources.</para>
@@ -1047,6 +1058,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the server control contains any child controls.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control contains other controls; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1064,12 +1079,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether events are registered for the control or any child controls.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if events are registered; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ID">
@@ -1182,7 +1200,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When this method returns true, the server control's collection holds a single literal control.</para>
@@ -1191,6 +1208,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the server control holds only literal content.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the server control contains solely literal content; otherwise false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1357,7 +1378,6 @@
         <Parameter Name="virtualPath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can only be used by server controls that have permissions to read files and which are part of fully trusted .dll files, such as System.Web.dll. This helps prevent security breaches.</para>
@@ -1366,6 +1386,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the physical path that a virtual path, either absolute or relative, maps to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The physical path to the requested file.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />A relative or root relative URL. </param>
       </Docs>
@@ -1417,7 +1441,6 @@
         <Parameter Name="args" Type="System.EventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>ASP.NET server controls such as the <see cref="T:System.Web.UI.WebControls.Repeater" />, <see cref="T:System.Web.UI.WebControls.DataList" /> and <see cref="T:System.Web.UI.WebControls.GridView" /> Web controls can contain child controls that raise events. For example, each row in a <see cref="T:System.Web.UI.WebControls.GridView" /> control can contain one or more buttons created dynamically by templates. Rather than each button raising an event individually, events from the nested controls are "bubbled"—that is, they are sent to the naming container. The naming container in turn raises a generic event called <see cref="E:System.Web.UI.WebControls.GridView.RowCommand" /> with parameter values. These values allow you to determine which individual control that raised the original event. By responding to this single event, you can avoid having to write individual event-handling methods for child controls.</para>
@@ -1426,6 +1449,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the event for the server control is passed up the page's UI server control hierarchy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the event has been canceled; otherwise, false. The default is false.</para>
+        </returns>
         <param name="source">
           <attribution license="cc4" from="Microsoft" modified="false" />The source of the event. </param>
         <param name="args">
@@ -1580,7 +1607,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Control.OpenFile(System.String)" /> method returns a <see cref="T:System.IO.Stream" /> object that can be used to read the contents of the file specified in the <paramref name="path" /> parameter. The path parameter can be either a relative or root URL without a protocol (such as "~/mySite/myFile.txt), or a physical path, either local ("c:\mySite\myFile.txt") or UNC ("\\myServer\myFile.txt").</para>
@@ -1590,6 +1616,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.IO.Stream" /> used to read a file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> that references the desired file.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the desired file.</param>
       </Docs>
@@ -1856,7 +1886,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>ASP.NET Web pages are viewable across a wide range of devices that are capable of requesting pages from the Web. The <see cref="M:System.Web.UI.Control.ResolveAdapter" /> method returns the control adapter responsible for rendering the control on the specific browser or device that requested the ASP.NET page. </para>
@@ -1867,6 +1896,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the control adapter responsible for rendering the specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.UI.Adapters.ControlAdapter" /> that will render the control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ResolveClientUrl">
@@ -1882,7 +1915,6 @@
         <Parameter Name="relativeUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.Control.ResolveClientUrl(System.String)" /> method to return a URL string suitable for use by the client to access resources on the Web server, such as image files, links to additional pages, and so on.</para>
@@ -1894,6 +1926,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a URL that can be used by the browser.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A fully qualified URL to the specified resource suitable for use on the browser.</para>
+        </returns>
         <param name="relativeUrl">
           <attribution license="cc4" from="Microsoft" modified="false" />A URL relative to the current page.</param>
       </Docs>
@@ -1908,7 +1944,6 @@
         <Parameter Name="relativeUrl" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="relativeUrl" /> parameter contains an absolute URL, the URL is returned unchanged. If the <paramref name="relativeUrl" /> parameter contains a relative URL, that URL is changed to a relative URL that is correct for the current request path, so that the browser can resolve the URL.</para>
@@ -1938,6 +1973,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts a URL into one that is usable on the requesting client.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The converted URL.</para>
+        </returns>
         <param name="relativeUrl">
           <attribution license="cc4" from="Microsoft" modified="false" />The URL associated with the <see cref="P:System.Web.UI.Control.TemplateSourceDirectory" /> property. </param>
       </Docs>
@@ -1957,7 +1996,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Web.UI.Control.SaveControlState" /> method to save state information required for the operation of a specific control. This control-state data is stored separately from the control's view-state data.</para>
@@ -1967,6 +2005,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves any server control state changes that have occurred since the time the page was posted back to the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the server control's current state. If there is no state associated with the control, this method returns null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SaveViewState">
@@ -1977,7 +2019,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>View state is the accumulation of the values of a server control's properties. These values are automatically placed in the server control's <see cref="P:System.Web.UI.Control.ViewState" /> property, which is an instance of the <see cref="T:System.Web.UI.StateBag" /> class. This property's value is then persisted to a string object after the save state stage of the server control life cycle. For more information, see <format type="text/html"><a href="7949d756-1a79-464e-891f-904b1cfc7991">Introduction to the ASP.NET Page Life Cycle</a></format>.</para>
@@ -1987,6 +2028,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves any server control view-state changes that have occurred since the time the page was posted back to the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns the server control's current view state. If there is no view state associated with the control, this method returns null.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2149,7 +2194,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Control" /> instance is cast to an <see cref="T:System.Web.UI.IControlDesignerAccessor" /> interface.</para>
@@ -2158,6 +2202,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Web.UI.IControlDesignerAccessor.GetDesignModeState" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionary" /> of the control state.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IControlDesignerAccessor.SetDesignModeState">

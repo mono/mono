@@ -223,7 +223,6 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method may return multiple matches.</para>
@@ -232,6 +231,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to match a candidate <see cref="T:System.Uri" /> to the <see cref="T:System.UriTemplateTable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of <see cref="T:System.UriTemplateMatch" /> instances.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The candidate URI.</param>
       </Docs>
@@ -250,7 +253,6 @@
         <Parameter Name="uri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns, at most, one match. If more than one match is found, a <see cref="T:System.UriTemplateMatchException" /> is thrown.</para>
@@ -259,6 +261,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to match a candidate <see cref="T:System.Uri" /> to the <see cref="T:System.UriTemplateTable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A single <see cref="T:System.UriTemplateMatch" /> instance.</para>
+        </returns>
         <param name="uri">
           <attribution license="cc4" from="Microsoft" modified="false" />The candidate URI.</param>
       </Docs>

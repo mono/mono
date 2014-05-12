@@ -76,12 +76,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a copy of the existing <see cref="T:System.ServiceModel.Syndication.UrlSyndicationContent" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ServiceModel.Syndication.SyndicationContent" /> instance that contains the new copy of the <see cref="T:System.ServiceModel.Syndication.UrlSyndicationContent" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Type">

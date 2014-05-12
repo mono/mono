@@ -55,7 +55,6 @@
         <Parameter Name="username" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -66,6 +65,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used by ASP.NET to create an instance of a profile for the specified user name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Web.Profile.ProfileBase" /> that represents the profile for the specified user.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to create a profile for.</param>
       </Docs>
@@ -84,7 +87,6 @@
         <Parameter Name="isAuthenticated" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -95,6 +97,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Used by ASP.NET to create an instance of a profile for the specified user name. Takes a parameter indicating whether the user is authenticated or anonymous.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileBase" /> object that represents the profile for the specified user.</para>
+        </returns>
         <param name="username">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the user to create a profile for.</param>
         <param name="isAuthenticated">
@@ -114,7 +120,6 @@
         <Parameter Name="groupName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -124,6 +129,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a group of properties identified by a group name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Profile.ProfileGroupBase" /> object for a group of properties configured with the specified group name.</para>
+        </returns>
         <param name="groupName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the group of properties.</param>
       </Docs>
@@ -141,7 +150,6 @@
         <Parameter Name="propertyName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -152,6 +160,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the value of a profile property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the specified profile property, typed as object.</para>
+        </returns>
         <param name="propertyName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the profile property.</param>
       </Docs>

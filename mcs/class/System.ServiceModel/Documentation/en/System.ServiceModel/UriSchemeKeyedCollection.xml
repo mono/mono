@@ -64,12 +64,15 @@
         <Parameter Name="item" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the key for a specified URI from the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The key for the specified URI from the collection.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Uri" /> whose key is being retrieved.</param>
       </Docs>

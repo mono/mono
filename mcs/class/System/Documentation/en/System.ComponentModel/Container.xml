@@ -157,7 +157,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'ISite'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <paramref name="name" /> parameter is null, the <see cref="T:System.ComponentModel.IComponent" /> is added to the <see cref="T:System.ComponentModel.Container" /> without an identifying name.</para>
@@ -167,6 +166,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a site <see cref="T:System.ComponentModel.ISite" /> for the given <see cref="T:System.ComponentModel.IComponent" /> and assigns the given name to the site.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The newly created site.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.IComponent" /> to create a site for. </param>
         <param name="name">
@@ -270,7 +273,6 @@
         <Parameter Name="service" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation of this method returns the current instance of the class if <paramref name="service" /> is an <see cref="T:System.ComponentModel.IContainer" />; otherwise, it returns null. You can override this method to provide a custom implementation to return a service object. For more information, see the <see cref="M:System.IServiceProvider.GetService(System.Type)" /> method.</para>
@@ -279,6 +281,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the service object of the specified type, if it is available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> implementing the requested service, or null if the service cannot be resolved.</para>
+        </returns>
         <param name="service">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of the service to retrieve. </param>
       </Docs>

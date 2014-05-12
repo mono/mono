@@ -34,7 +34,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Component editors can display a component editor form that is similar to a property page from the Component Object Model (COM).</para>
@@ -44,6 +43,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether the component can display a <see cref="T:System.Windows.Forms.Design.ComponentEditorForm" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified component can display a component editor form; otherwise, false.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to check for support for displaying a <see cref="T:System.Windows.Forms.Design.ComponentEditorForm" />. </param>
       </Docs>
@@ -60,7 +63,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Some dialog boxes are parented to an owner application and are not visible in the task list. This method returns an <see cref="T:System.Windows.Forms.IWin32Window" /> that indicates the window that should be the owner for dialog boxes of this sort that are spawned from an integrated development environment.</para>
@@ -69,6 +71,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the window that should be used as the owner when showing dialog boxes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.IWin32Window" /> that indicates the window to own any child dialog boxes.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -108,7 +114,6 @@
         <Parameter Name="parent" Type="System.Windows.Forms.IWin32Window" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <see cref="T:System.Windows.Forms.Design.ComponentEditorForm" /> is similar to a property page from the Component Object Model (COM).</para>
@@ -118,6 +123,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to display a <see cref="T:System.Windows.Forms.Design.ComponentEditorForm" /> for a component.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the attempt is successful; otherwise, false.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component for which to display a <see cref="T:System.Windows.Forms.Design.ComponentEditorForm" />. </param>
         <param name="parent">
@@ -138,12 +147,15 @@
         <Parameter Name="form" Type="System.Windows.Forms.Form" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Attempts to display the specified form in a dialog box.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values indicating the result code returned by the dialog box.</para>
+        </returns>
         <param name="form">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Form" /> to display. </param>
       </Docs>
@@ -300,7 +312,6 @@
         <Parameter Name="buttons" Type="System.Windows.Forms.MessageBoxButtons" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method ensures that the display of the message box is properly integrated with the development environment.</para>
@@ -309,6 +320,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays the specified message in a message box with the specified caption and buttons to place on the dialog box.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.DialogResult" /> values indicating the result code returned by the dialog box.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The message to display. </param>
         <param name="caption">
@@ -331,12 +346,15 @@
         <Parameter Name="toolWindow" Type="System.Guid" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Displays the specified tool window.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the tool window was successfully shown; false if it could not be shown or found.</para>
+        </returns>
         <param name="toolWindow">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Guid" /> identifier for the tool window. This can be a custom <see cref="T:System.Guid" /> or one of the predefined values from <see cref="T:System.ComponentModel.Design.StandardToolWindows" />. </param>
       </Docs>

@@ -354,7 +354,6 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.ScrollBarState" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -365,6 +364,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the size of the sizing handle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> that specifies the size of the sizing handle.</para>
+        </returns>
         <param name="g">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> this operation will use.</param>
         <param name="state">
@@ -385,7 +388,6 @@
         <Parameter Name="state" Type="System.Windows.Forms.VisualStyles.ScrollBarState" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -396,6 +398,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the size of the scroll box grip.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> that specifies the size of the scroll box grip.</para>
+        </returns>
         <param name="g">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Drawing.Graphics" /> this operation will use.</param>
         <param name="state">

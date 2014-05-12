@@ -56,12 +56,15 @@
       <Docs>
         <param name="first">To be added.</param>
         <param name="second">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns a value that describes the document order of the two specified positions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Xml.XmlNodeOrder" /> values that describes the relation of <paramref name="firstPosition" /> to <paramref name="secondPosition" /> in the document.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CurrentPosition">
@@ -101,12 +104,15 @@
       </Parameters>
       <Docs>
         <param name="node_position">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the local name of the node at the position specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The local name of the node at the specified position. <see cref="F:System.String.Empty" /> is returned if the node does not have a local name, for example if the current position references a text node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetName">
@@ -124,7 +130,6 @@
       </Parameters>
       <Docs>
         <param name="node_position">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The name is the name of the XML element at <paramref name="nodePosition" /> and typically includes a namespace prefix.</para>
@@ -133,6 +138,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the name of the node at the specified position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the node at <paramref name="nodePosition" />. <see cref="F:System.String.Empty" /> is returned if the node does not have a name.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetNamespace">
@@ -150,12 +159,15 @@
       </Parameters>
       <Docs>
         <param name="node_position">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the namespace of the node at the specified position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The namespace of the node at <paramref name="nodePosition" />. <see cref="F:System.String.Empty" /> is returned if the node does not have a namespace.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetNodeType">
@@ -173,12 +185,15 @@
       </Parameters>
       <Docs>
         <param name="node_position">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the type of the node at the specified position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Xml.XPath.XPathNodeType" /> values that indicate the type of the XML node.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetValue">
@@ -196,7 +211,6 @@
       </Parameters>
       <Docs>
         <param name="node_position">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For elements, this method returns the concatenation of all text descendents of the node at the specified position, similar to the <see cref="P:System.Xml.XmlElement.InnerText" /> property.</para>
@@ -205,6 +219,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the text value of the node at the specified position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The text value of the node at <paramref name="nodePosition" />. <see cref="F:System.String.Empty" /> is returned if the node does not have a text value.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -297,7 +297,6 @@ The routine internally uses a technique similar to thread local storage to fetch
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.HttpContext.GetAppConfig(System.String)" /> method has been deprecated. Use the <see cref="M:System.Web.Configuration.WebConfigurationManager.GetWebApplicationSection(System.String)" /> method of the <see cref="T:System.Web.Configuration.WebConfigurationManager" /> class to get configuration information for the current application.</para>
@@ -306,6 +305,10 @@ The routine internally uses a technique similar to thread local storage to fetch
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns requested configuration information for the current application.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object containing configuration information. (Cast the returned configuration section to the appropriate configuration type before use.)</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The application configuration tag for which information is requested.</param>
       </Docs>
@@ -329,7 +332,6 @@ The routine internally uses a technique similar to thread local storage to fetch
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.HttpContext.GetConfig(System.String)" /> method has been deprecated. Use the <see cref="M:System.Web.HttpContext.GetSection(System.String)" /> method to get configuration information for the current HTTP request. </para>
@@ -338,6 +340,10 @@ The routine internally uses a technique similar to thread local storage to fetch
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns requested configuration information for the current HTTP request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified <see cref="T:System.Configuration.ConfigurationSection" />, null if the section does not exist, or an internal object if the section is not accessible at run time. (Cast the returned object to the appropriate configuration type before use.) </para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The configuration tag for which information is requested.</param>
       </Docs>
@@ -365,7 +371,6 @@ The routine internally uses a technique similar to thread local storage to fetch
         <Parameter Name="resourceKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.HttpContext.GetGlobalResourceObject(System.String,System.String)" /> method returns a global resource by using the culture that is specified in the <see cref="P:System.Globalization.CultureInfo.CurrentUICulture" /> property.</para>
@@ -377,6 +382,10 @@ The routine internally uses a technique similar to thread local storage to fetch
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an application-level resource object based on the specified <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> and <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the requested application-level resource object; otherwise, null if a resource object is not found or if a resource object is found but it does not have the requested property.</para>
+        </returns>
         <param name="classKey">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> property of the requested resource object.</param>
         <param name="resourceKey">
@@ -398,7 +407,6 @@ The routine internally uses a technique similar to thread local storage to fetch
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Globalization.CultureInfo" /> object represents the culture for which the resource was localized. If the resource is not localized for this culture, the lookup will follow a fallback process to locate an appropriate resource. For more information, see <format type="text/html"><a href="b224d7c0-35f8-4e82-a705-dd76795e8d16">Packaging and Deploying Resources</a></format>.</para>
@@ -410,6 +418,10 @@ The routine internally uses a technique similar to thread local storage to fetch
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an application-level resource object based on the specified <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> and <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> properties, and on the <see cref="T:System.Globalization.CultureInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the requested application-level resource object, which is localized for the specified culture; otherwise, null if a resource object is not found or if a resource object is found but it does not have the requested property.</para>
+        </returns>
         <param name="classKey">
           <attribution license="cc4" from="Microsoft" modified="false" />A string that represents the <see cref="P:System.Web.Compilation.ResourceExpressionFields.ClassKey" /> property of the requested resource object.</param>
         <param name="resourceKey">
@@ -432,7 +444,6 @@ The routine internally uses a technique similar to thread local storage to fetch
         <Parameter Name="resourceKey" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.HttpContext.GetLocalResourceObject(System.String,System.String)" /> method returns a local resource by using the culture that is specified in the <see cref="P:System.Globalization.CultureInfo.CurrentUICulture" /> property.</para>
@@ -441,6 +452,10 @@ The routine internally uses a technique similar to thread local storage to fetch
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a page-level resource object based on the specified <see cref="P:System.Web.Compilation.ExpressionBuilderContext.VirtualPath" /> and <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> properties.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the requested page-level resource object; otherwise, null if a matching resource object is found but not a <paramref name="resourceKey" /> parameter.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.Compilation.ExpressionBuilderContext.VirtualPath" /> property for the local resource object.</param>
         <param name="resourceKey">
@@ -462,7 +477,6 @@ The routine internally uses a technique similar to thread local storage to fetch
         <Parameter Name="culture" Type="System.Globalization.CultureInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the resource is not localized for this culture, the lookup will follow a fallback process to locate an appropriate resource. For more information, see <format type="text/html"><a href="b224d7c0-35f8-4e82-a705-dd76795e8d16">Packaging and Deploying Resources</a></format>.</para>
@@ -471,6 +485,10 @@ The routine internally uses a technique similar to thread local storage to fetch
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a page-level resource object based on the specified <see cref="P:System.Web.Compilation.ExpressionBuilderContext.VirtualPath" /> and <see cref="P:System.Web.Compilation.ResourceExpressionFields.ResourceKey" /> properties, and on the <see cref="T:System.Globalization.CultureInfo" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the requested local resource object, which is localized for the specified culture; otherwise null if a matching resource object is found but not a <paramref name="resourceKey" /> parameter.</para>
+        </returns>
         <param name="virtualPath">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Web.Compilation.ExpressionBuilderContext.VirtualPath" /> property for the local resource object.</param>
         <param name="resourceKey">
@@ -493,12 +511,15 @@ The routine internally uses a technique similar to thread local storage to fetch
       </Parameters>
       <Docs>
         <param name="name">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a specified configuration section for the current application's default configuration. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified <see cref="T:System.Configuration.ConfigurationSection" />, null if the section does not exist, or an internal object if the section is not accessible at run time.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Handler">
@@ -912,7 +933,6 @@ The routine internally uses a technique similar to thread local storage to fetch
         <Parameter Name="service" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful to gain access to the underlying <see cref="T:System.Web.HttpWorkerRequest" /> object.</para>
@@ -921,6 +941,10 @@ The routine internally uses a technique similar to thread local storage to fetch
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object for the current service type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.HttpContext" />; otherwise, null if no service is found.</para>
+        </returns>
         <param name="service">
           <attribution license="cc4" from="Microsoft" modified="false" />A type of <see cref="T:System.Web.HttpContext" /> service to set the service provider to.</param>
       </Docs>

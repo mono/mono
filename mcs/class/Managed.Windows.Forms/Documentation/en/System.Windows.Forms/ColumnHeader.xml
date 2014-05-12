@@ -128,7 +128,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use this method to copy existing <see cref="T:System.Windows.Forms.ColumnHeader" /> objects from an existing <see cref="T:System.Windows.Forms.ListView" /> control for use in other <see cref="T:System.Windows.Forms.ListView" /> controls.</para>
@@ -137,6 +136,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an identical copy of the current <see cref="T:System.Windows.Forms.ColumnHeader" /> that is not attached to any list view control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object representing a copy of this <see cref="T:System.Windows.Forms.ColumnHeader" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

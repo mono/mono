@@ -169,7 +169,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -181,6 +180,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the access control security for a named system semaphore.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Security.AccessControl.SemaphoreSecurity" /> object that represents the access control security for the named system semaphore.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OpenExisting">
@@ -198,7 +201,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -211,6 +213,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the specified named semaphore, if it already exists.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the named system semaphore.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the system semaphore to open.</param>
       </Docs>
@@ -231,7 +237,6 @@
         <Parameter Name="rights" Type="System.Security.AccessControl.SemaphoreRights" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -243,6 +248,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens the specified named semaphore, if it already exists, with the desired security access.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the named system semaphore.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the system semaphore to open. </param>
         <param name="rights">
@@ -270,7 +279,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -282,6 +290,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Exits the semaphore and returns the previous count.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The count on the semaphore before the <see cref="Overload:System.Threading.Semaphore.Release" /> method was called. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Release">
@@ -304,7 +316,6 @@
         <Parameter Name="releaseCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -316,6 +327,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Exits the semaphore a specified number of times and returns the previous count.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The count on the semaphore before the <see cref="Overload:System.Threading.Semaphore.Release" /> method was called. </para>
+        </returns>
         <param name="releaseCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of times to exit the semaphore.</param>
       </Docs>

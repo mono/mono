@@ -112,7 +112,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>A label pointing to the end of the try block.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creating an exception block records some information, but does not actually emit any Microsoft intermediate language (MSIL) onto the stream.</para>
@@ -121,6 +120,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an exception block for a non-filtered exception.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The label for the end of the block. This will leave you in the correct place to execute finally blocks or to finish the try.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="BeginFaultBlock">
@@ -209,7 +212,6 @@
         <Parameter Name="localType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'LocalBuilder'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The local variable is created in the current lexical scope; for example, if code is being emitted in a for loop (For loop in Visual Basic), the scope of the variable is the loop.</para>
@@ -219,6 +221,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Declares a local variable of the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The declared local variable.</para>
+        </returns>
         <param name="localType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that represents the type of the local variable. </param>
       </Docs>
@@ -239,7 +245,6 @@
         <Parameter Name="pinned" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -250,6 +255,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Declares a local variable of the specified type, optionally pinning the object referred to by the variable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.Emit.LocalBuilder" /> object that represents the local variable.</para>
+        </returns>
         <param name="localType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> object that represents the type of the local variable.</param>
         <param name="pinned">
@@ -270,7 +279,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>The newly defined label.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To set the position of the label within the stream, you must call <see cref="M:System.Reflection.Emit.ILGenerator.MarkLabel(System.Reflection.Emit.Label)" />.</para>
@@ -280,6 +288,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Declares a new label.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a new label that can be used as a token for branching.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Emit">

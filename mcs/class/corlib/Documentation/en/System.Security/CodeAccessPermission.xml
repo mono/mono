@@ -115,10 +115,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A new <see cref="T:System.Security.CodeAccessPermission" /> instance that is value
- equal to the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A copy of a permission object represents the same access to resources as the original permission object.</para>
@@ -127,6 +123,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When implemented by a derived class, creates and returns an identical copy of the current permission object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the current permission object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -214,7 +214,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -224,6 +223,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Security.CodeAccessPermission" /> object is equal to the current <see cref="T:System.Security.CodeAccessPermission" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Security.CodeAccessPermission" /> object is equal to the current <see cref="T:System.Security.CodeAccessPermission" />; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Security.CodeAccessPermission" /> object to compare with the current <see cref="T:System.Security.CodeAccessPermission" />. </param>
       </Docs>
@@ -282,7 +285,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -292,6 +294,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a hash code for the <see cref="T:System.Security.CodeAccessPermission" /> object that is suitable for use in hashing algorithms and data structures such as a hash table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current <see cref="T:System.Security.CodeAccessPermission" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Intersect">
@@ -311,12 +317,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A new <see cref="T:System.Security.CodeAccessPermission" /> instance
- that represents the intersection of the current instance and
-<paramref name="target" /> . If the intersection is empty or 
-<paramref name="target" /> is <see langword="null" />, returns <see langword="null" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="target" /> is not <see langword="null" /> and is not a <see cref="T:System.Security.CodeAccessPermission" /> object.</exception>
         <remarks>
@@ -327,6 +327,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When implemented by a derived class, creates and returns a permission that is the intersection of the current permission and the specified permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission that represents the intersection of the current permission and the specified permission. This new permission is null if the intersection is empty.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission to intersect with the current permission. It must be of the same type as the current permission. </param>
       </Docs>
@@ -349,15 +353,6 @@
         <Parameter Name="target" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if the current instance is a
-   subset of <paramref name="target" />; otherwise, <see langword="false" />. If the current
-   instance is unrestricted, and <paramref name="target" /> is not, returns
-<see langword="false" />. If <paramref name="target" /> is unrestricted, returns 
-<see langword="true" /> .</para>
-          <see langword="" />
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="target" /> is not <see langword="null" /> and is not of type <see cref="T:System.Security.CodeAccessPermission" /> .</exception>
         <remarks>
@@ -390,6 +385,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When implemented by a derived class, determines whether the current permission is a subset of the specified permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the current permission is a subset of the specified permission; otherwise, false.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission that is to be tested for the subset relationship. This permission must be of the same type as the current permission. </param>
       </Docs>
@@ -537,10 +536,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.String" /> containing the XML 
- representation of the state of the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful in debugging when you need to display the permission as a string.</para>
@@ -549,6 +544,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and returns a string representation of the current permission object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string representation of the current permission object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -567,10 +566,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Security.SecurityElement" /> containing an XML encoding of the state of the
- current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Custom code that extends security objects needs to implement the <see cref="M:System.Security.CodeAccessPermission.ToXml" /> and <see cref="M:System.Security.CodeAccessPermission.FromXml(System.Security.SecurityElement)" /> methods to make the objects security-encodable.</para>
@@ -579,6 +574,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates an XML encoding of the security object and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML encoding of the security object, including any state information.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -599,10 +598,6 @@
         <Parameter Name="other" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>If <paramref name="other" /> is <see langword="null" />, returns a copy of the current 
- instance using the <see cref="M:System.Security.IPermission.Copy" qualify="true" /> method.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="other" /> is not of type <see cref="T:System.Security.CodeAccessPermission" /> .</exception>
         <exception cref="T:System.NotSupportedException">
@@ -615,6 +610,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates a permission that is the union of the current permission and the specified permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new permission that represents the union of the current permission and the specified permission.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />A permission to combine with the current permission. It must be of the same type as the current permission. </param>
       </Docs>

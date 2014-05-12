@@ -32,7 +32,6 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation of this method is intended to be overridden by a derived class in order to return the name of the key associated with the <paramref name="value" /> parameter. The default implementation returns null (Nothing in Visual Basic). This protected method is accessible only through this class or a derived class.</para>
@@ -41,6 +40,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the name of the key associated with the value passed by reference.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A null reference.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An object for which to return the name of the key. </param>
       </Docs>

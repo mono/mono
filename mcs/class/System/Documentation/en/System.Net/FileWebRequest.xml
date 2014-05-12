@@ -114,7 +114,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IAsyncResult'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.FileWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> method starts an asynchronous request for a stream used to send data to a file system resource. The callback method that implements the <see cref="T:System.AsyncCallback" /> delegate uses the <see cref="M:System.Net.FileWebRequest.EndGetRequestStream(System.IAsyncResult)" /> method to return the request stream.</para>
@@ -123,6 +122,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for a <see cref="T:System.IO.Stream" /> object to use to write data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous request.</para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
         <param name="state">
@@ -146,7 +149,6 @@
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IAsyncResult'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The asynchronous callback method that implements the <see cref="T:System.AsyncCallback" /> delegate uses the <see cref="M:System.Net.FileWebRequest.EndGetResponse(System.IAsyncResult)" /> method to return the actual <see cref="T:System.Net.FileWebResponse" />.</para>
@@ -155,6 +157,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins an asynchronous request for a file system resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that references the asynchronous request.</para>
+        </returns>
         <param name="callback">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
         <param name="state">
@@ -278,7 +284,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IO.Stream'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.FileWebRequest.EndGetRequestStream(System.IAsyncResult)" /> method completes an asynchronous stream request that was started by the <see cref="M:System.Net.FileWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> method.</para>
@@ -290,6 +295,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous request for a <see cref="T:System.IO.Stream" /> instance that the application uses to write data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> object that the application uses to write data.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> that references the pending request for a stream. </param>
       </Docs>
@@ -310,7 +319,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'WebResponse'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.FileWebRequest.EndGetResponse(System.IAsyncResult)" /> method completes an asynchronous request for a file system resource that was started with the <see cref="M:System.Net.FileWebRequest.BeginGetResponse(System.AsyncCallback,System.Object)" /> method.</para>
@@ -319,6 +327,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Ends an asynchronous request for a file system resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> that contains the response from the file system resource.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.IAsyncResult" /> that references the pending request for a response. </param>
       </Docs>
@@ -367,7 +379,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IO.Stream'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.FileWebRequest.GetRequestStream" /> method provides synchronous access to the <see cref="T:System.IO.Stream" />. For asynchronous access, use the <see cref="M:System.Net.FileWebRequest.BeginGetRequestStream(System.AsyncCallback,System.Object)" /> and <see cref="M:System.Net.FileWebRequest.EndGetRequestStream(System.IAsyncResult)" /> methods.</para>
@@ -376,6 +387,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.IO.Stream" /> object for writing data to the file system resource.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> for writing data to the file system resource.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetResponse">
@@ -392,7 +407,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'WebResponse'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.FileWebRequest.GetResponse" /> method returns a <see cref="T:System.Net.WebResponse" /> object that contains the response from the file system resource.</para>
@@ -402,6 +416,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a response to a file system request.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Net.WebResponse" /> that contains the response from the file system resource.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Headers">

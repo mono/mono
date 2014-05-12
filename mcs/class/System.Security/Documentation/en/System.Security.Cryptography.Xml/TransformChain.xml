@@ -112,12 +112,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>a <see cref="T:System.Collections.IEnumerator" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator of the transforms in the <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator of the transforms in the <see cref="T:System.Security.Cryptography.Xml.TransformChain" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">

@@ -151,7 +151,6 @@
         <Parameter Name="deep" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method serves as a copy constructor for nodes. The cloned node has no parent (<see cref="P:System.Xml.XmlNode.ParentNode" /> returns null).</para>
@@ -161,6 +160,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a duplicate of this node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The cloned XmlDocument node.</para>
+        </returns>
         <param name="deep">
           <attribution license="cc4" from="Microsoft" modified="false" />true to recursively clone the subtree under the specified node; false to clone only the node itself. </param>
       </Docs>
@@ -181,7 +184,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The XmlAttribute can be added to an <see cref="T:System.Xml.XmlElement" /> using the <see cref="M:System.Xml.XmlElement.SetAttributeNode(System.Xml.XmlAttribute)" /> method.</para>
@@ -190,6 +192,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlAttribute" /> with the specified <see cref="P:System.Xml.XmlDocument.Name" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlAttribute.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the attribute. If the name contains a colon, the <see cref="P:System.Xml.XmlNode.Prefix" /> property reflects the part of the name preceding the first colon and the <see cref="P:System.Xml.XmlDocument.LocalName" /> property reflects the part of the name following the first colon. The <see cref="P:System.Xml.XmlNode.NamespaceURI" /> remains empty unless the prefix is a recognized built-in prefix such as xmlns. In this case NamespaceURI has a value of http://www.w3.org/2000/xmlns/. </param>
       </Docs>
@@ -211,7 +217,6 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlAttribute'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The XmlAttribute can be added to an <see cref="T:System.Xml.XmlElement" /> using the <see cref="M:System.Xml.XmlElement.SetAttributeNode(System.Xml.XmlAttribute)" /> method.</para>
@@ -220,6 +225,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlAttribute" /> with the specified qualified name and <see cref="P:System.Xml.XmlNode.NamespaceURI" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlAttribute.</para>
+        </returns>
         <param name="qualifiedName">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the attribute. If the name contains a colon then the <see cref="P:System.Xml.XmlNode.Prefix" /> property will reflect the part of the name preceding the colon and the <see cref="P:System.Xml.XmlDocument.LocalName" /> property will reflect the part of the name after the colon. </param>
         <param name="namespaceURI">
@@ -244,7 +253,6 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>A new <see cref="T:System.Xml.XmlAttribute" /> instance whose <see cref="P:System.Xml.XmlAttribute.OwnerDocument" /> is this document.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The XmlAttribute can be added to an <see cref="T:System.Xml.XmlElement" /> using the <see cref="M:System.Xml.XmlElement.SetAttributeNode(System.Xml.XmlAttribute)" /> method.</para>
@@ -254,6 +262,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlAttribute" /> with the specified <see cref="P:System.Xml.XmlNode.Prefix" />, <see cref="P:System.Xml.XmlDocument.LocalName" />, and <see cref="P:System.Xml.XmlNode.NamespaceURI" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlAttribute.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the attribute (if any). String.Empty and null are equivalent. </param>
         <param name="localName">
@@ -278,7 +290,6 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlCDataSection'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although this method creates the new object in the context of the document, it does not automatically add the new object to the document tree. To add the new object, you must explicitly call one of the node insert methods.</para>
@@ -288,6 +299,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlCDataSection" /> containing the specified data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlCDataSection.</para>
+        </returns>
         <param name="data">
           <attribution license="cc4" from="Microsoft" modified="false" />The content of the new XmlCDataSection. </param>
       </Docs>
@@ -308,7 +323,6 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlComment'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although this method creates the new object in the context of the document, it does not automatically add the new object to the document tree. To add the new object, you must explicitly call one of the node insert methods.</para>
@@ -318,6 +332,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlComment" /> containing the specified data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlComment.</para>
+        </returns>
         <param name="data">
           <attribution license="cc4" from="Microsoft" modified="false" />The content of the new XmlComment. </param>
       </Docs>
@@ -340,7 +358,6 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
@@ -349,6 +366,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a default attribute with the specified prefix, local name and namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Xml.XmlAttribute" />.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the attribute (if any). </param>
         <param name="localName">
@@ -371,7 +392,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'XmlDocumentFragment'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>DocumentFragment nodes cannot be inserted into a document. However, you can insert children of the DocumentFragment node into a document.</para>
@@ -380,6 +400,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlDocumentFragment" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlDocumentFragment.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateDocumentType">
@@ -401,7 +425,6 @@
         <Parameter Name="internalSubset" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlDocumentType'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned node will have parsed <see cref="P:System.Xml.XmlDocumentType.Entities" /> and <see cref="P:System.Xml.XmlDocumentType.Notations" /> collections.</para>
@@ -413,6 +436,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new <see cref="T:System.Xml.XmlDocumentType" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlDocumentType.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />Name of the document type. </param>
         <param name="publicId">
@@ -439,7 +466,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlElement'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Note that the instance returned implements the XmlElement interface, so default attributes would be created directly on the returned object.</para>
@@ -450,6 +476,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an element with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlElement.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the element. If the name contains a colon then the <see cref="P:System.Xml.XmlNode.Prefix" /> property reflects the part of the name preceding the colon and the <see cref="P:System.Xml.XmlDocument.LocalName" /> property reflects the part of the name after the colon. The qualified name cannot include a prefix of'xmlns'. </param>
       </Docs>
@@ -471,7 +501,6 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlElement'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following C# code </para>
@@ -487,6 +516,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlElement" /> with the qualified name and <see cref="P:System.Xml.XmlNode.NamespaceURI" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlElement.</para>
+        </returns>
         <param name="qualifiedName">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name of the element. If the name contains a colon then the <see cref="P:System.Xml.XmlNode.Prefix" /> property will reflect the part of the name preceding the colon and the <see cref="P:System.Xml.XmlDocument.LocalName" /> property will reflect the part of the name after the colon. The qualified name cannot include a prefix of'xmlns'. </param>
         <param name="namespaceURI">
@@ -511,7 +544,6 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>A new <see cref="T:System.Xml.XmlElement" /> instance whose <see cref="P:System.Xml.XmlElement.OwnerDocument" /> is this document.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following C# code </para>
@@ -527,6 +559,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an element with the specified <see cref="P:System.Xml.XmlNode.Prefix" />, <see cref="P:System.Xml.XmlDocument.LocalName" />, and <see cref="P:System.Xml.XmlNode.NamespaceURI" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new <see cref="T:System.Xml.XmlElement" />.</para>
+        </returns>
         <param name="prefix">
           <attribution license="cc4" from="Microsoft" modified="false" />The prefix of the new element (if any). String.Empty and null are equivalent. </param>
         <param name="localName">
@@ -551,7 +587,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlEntityReference'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the referenced entity is known, the child list of the XmlEntityReference node is made the same as that of the corresponding <see cref="T:System.Xml.XmlEntity" /> node.</para>
@@ -569,6 +604,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlEntityReference" /> with the specified name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlEntityReference.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the entity reference. </param>
       </Docs>
@@ -586,7 +625,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -596,6 +634,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateNavigator">
@@ -614,7 +656,6 @@
         <Parameter Name="node" Type="System.Xml.XmlNode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is a Microsoft extension to the Document Object Model (DOM).</para>
@@ -623,6 +664,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XPath.XPathNavigator" /> object for navigating this document positioned on the <see cref="T:System.Xml.XmlNode" /> specified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathNavigator" /> object.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.XmlNode" /> you want the navigator initially positioned on. </param>
       </Docs>
@@ -645,7 +690,6 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="T:System.Xml.XmlNode" /> instance as indicated by the parameters.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="nodeTypeString" /> parameter is case sensitive and must be one of the values in the following table.</para>
@@ -1093,6 +1137,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlNode" /> with the specified node type, <see cref="P:System.Xml.XmlDocument.Name" />, and <see cref="P:System.Xml.XmlNode.NamespaceURI" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlNode.</para>
+        </returns>
         <param name="nodeTypeString">
           <attribution license="cc4" from="Microsoft" modified="false" />String version of the <see cref="T:System.Xml.XmlNodeType" /> of the new node. This parameter must be one of the values listed in the table below. </param>
         <param name="name">
@@ -1119,7 +1167,6 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="T:System.Xml.XmlNode" /> instance as indicated by the parameters.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although this method creates the new object in the context of the document, it does not automatically add the new object to the document tree. To add the new object, you must explicitly call one of the node insert methods.</para>
@@ -1458,6 +1505,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlNode" /> with the specified <see cref="T:System.Xml.XmlNodeType" />, <see cref="P:System.Xml.XmlDocument.Name" />, and <see cref="P:System.Xml.XmlNode.NamespaceURI" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlNode.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The XmlNodeType of the new node. </param>
         <param name="name">
@@ -1485,7 +1536,6 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="T:System.Xml.XmlNode" /> instance as indicated by the parameters.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although this method creates the new object in the context of the document, it does not automatically add the new object to the document tree. To add the new object, you must explicitly call one of the node insert methods.</para>
@@ -1824,6 +1874,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Xml.XmlNode" /> with the specified <see cref="T:System.Xml.XmlNodeType" />, <see cref="P:System.Xml.XmlNode.Prefix" />, <see cref="P:System.Xml.XmlDocument.Name" />, and <see cref="P:System.Xml.XmlNode.NamespaceURI" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlNode.</para>
+        </returns>
         <param name="type">
           <attribution license="cc4" from="Microsoft" modified="false" />The XmlNodeType of the new node. </param>
         <param name="prefix">
@@ -1851,7 +1905,6 @@
         <Parameter Name="data" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlProcessingInstruction'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although this method creates the new object in the context of the document, it does not automatically add the new object to the document tree. To add the new object, you must explicitly call one of the node insert methods.</para>
@@ -1861,6 +1914,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlProcessingInstruction" /> with the specified name and data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlProcessingInstruction.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the processing instruction. </param>
         <param name="data">
@@ -1883,7 +1940,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlSignificantWhitespace'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is a Microsoft extension to the Document Object Model (DOM). It is used when you want to manually format your document.</para>
@@ -1893,6 +1949,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlSignificantWhitespace" /> node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new XmlSignificantWhitespace node.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The string must contain only the following characters &amp;#20; &amp;#10; &amp;#13; and &amp;#9; </param>
       </Docs>
@@ -1913,7 +1973,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlText'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Although this method creates the new object in the context of the document, it does not automatically add the new object to the document tree. To add the new object, you must explicitly call one of the node insert methods.</para>
@@ -1923,6 +1982,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlText" /> with the specified text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlText node.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The text for the Text node. </param>
       </Docs>
@@ -1943,7 +2006,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlWhitespace'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is a Microsoft extension to the Document Object Model (DOM). It is used when you want to manually format your document.</para>
@@ -1953,6 +2015,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlWhitespace" /> node.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new XmlWhitespace node.</para>
+        </returns>
         <param name="text">
           <attribution license="cc4" from="Microsoft" modified="false" />The string must contain only the following characters &amp;#20; &amp;#10; &amp;#13; and &amp;#9; </param>
       </Docs>
@@ -1975,7 +2041,6 @@
         <Parameter Name="standalone" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlDeclaration'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The attributes are exposed as special properties on the XmlDeclaration node, and not as <see cref="T:System.Xml.XmlAttribute" /> nodes.</para>
@@ -1987,6 +2052,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlDeclaration" /> node with the specified values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlDeclaration node.</para>
+        </returns>
         <param name="version">
           <attribution license="cc4" from="Microsoft" modified="false" />The version must be "1.0". </param>
         <param name="encoding">
@@ -2067,7 +2136,6 @@
         <Parameter Name="elementId" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="T:System.Xml.XmlElement" /> instance that matches the argument ID, or null if there is no such element.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the document has multiple elements with the matching ID, this method returns the first matching element in the document.</para>
@@ -2079,6 +2147,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Xml.XmlElement" /> with the specified ID.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlElement with the matching ID or null if no matching element is found.</para>
+        </returns>
         <param name="elementId">
           <attribution license="cc4" from="Microsoft" modified="false" />The attribute ID to match. </param>
       </Docs>
@@ -2099,8 +2171,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <see cref="T:System.Xml.XmlNodeList" /> that contains the resulting elements.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The nodes are placed in the order in which they would be encountered in the document.</para>
@@ -2112,6 +2182,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.XmlNodeList" /> containing a list of all descendant elements that match the specified <see cref="P:System.Xml.XmlDocument.Name" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlNodeList" /> containing a list of all matching nodes. If no nodes match <paramref name="name" />, the returned collection will be empty.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The qualified name to match. It is matched against the Name property of the matching node. The special value "*" matches all tags. </param>
       </Docs>
@@ -2133,8 +2207,6 @@
         <Parameter Name="namespaceURI" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <see cref="T:System.Xml.XmlNodeList" /> that contains the resulting elements.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The nodes are placed in the order in which they would be encountered in the document tree.</para>
@@ -2146,6 +2218,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Xml.XmlNodeList" /> containing a list of all descendant elements that match the specified <see cref="P:System.Xml.XmlDocument.LocalName" /> and <see cref="P:System.Xml.XmlNode.NamespaceURI" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XmlNodeList" /> containing a list of all matching nodes. If no nodes match the specified <paramref name="localName" /> and <paramref name="namespaceURI" />, the returned collection will be empty.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The LocalName to match. The special value "*" matches all tags. </param>
         <param name="namespaceURI">
@@ -2195,7 +2271,6 @@
         <Parameter Name="deep" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="T:System.Xml.XmlNode" /> that is imported.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned node has no parent. The source node is not altered or removed from the original document; ImportNode creates a copy of the source node.</para>
@@ -2368,6 +2443,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Imports a node from another document to the current document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The imported <see cref="T:System.Xml.XmlNode" />.</para>
+        </returns>
         <param name="node">
           <attribution license="cc4" from="Microsoft" modified="false" />The node being imported. </param>
         <param name="deep">
@@ -2989,7 +3068,6 @@
         <Parameter Name="reader" Type="System.Xml.XmlReader" />
       </Parameters>
       <Docs>
-        <returns>An <see cref="T:System.Xml.XmlNode" /> object that represents the node in the argument XmlReader, or null if the reader is not ready to be consumed.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads one XmlNode from the given reader and positions the reader on the next node. This method creates the type of XmlNode matching the <see cref="P:System.Xml.XmlNode.NodeType" /> on which the reader is currently positioned. (If the reader is in the initial state, ReadNode advances the reader to the first node and then operates on that node.) </para>
@@ -3007,6 +3085,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an <see cref="T:System.Xml.XmlNode" /> object based on the information in the <see cref="T:System.Xml.XmlReader" />. The reader must be positioned on a node or attribute.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new XmlNode or null if no more nodes exist.</para>
+        </returns>
         <param name="reader">
           <attribution license="cc4" from="Microsoft" modified="false" />The XML source </param>
       </Docs>

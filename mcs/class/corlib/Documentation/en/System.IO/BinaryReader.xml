@@ -266,7 +266,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If surrogate characters can be expected in the stream use the <see cref="M:System.IO.BinaryReader.ReadChars(System.Int32)" /> method, then set the stream back to the original position.</para>
@@ -276,6 +275,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the next available character and does not advance the byte or character position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next available character, or -1 if no more characters are available or the stream does not support seeking.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Read">
@@ -292,7 +295,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -303,6 +305,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads characters from the underlying stream and advances the current position of the stream in accordance with the Encoding used and the specific character being read from the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next character from the input stream, or -1 if no characters are currently available.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Read">
@@ -323,7 +329,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -334,6 +339,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the specified number of bytes from the stream, starting from a specified point in the byte array. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of bytes read into <paramref name="buffer" />. This might be less than the number of bytes requested if that many bytes are not available, or it might be zero if the end of the stream is reached.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to read data into. </param>
         <param name="index">
@@ -360,7 +369,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -371,6 +379,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the specified number of characters from the stream, starting from a specified point in the character array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The total number of characters read into the buffer. This might be less than the number of characters requested if that many characters are not currently available, or it might be zero if the end of the stream is reached.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to read data into. </param>
         <param name="index">
@@ -393,7 +405,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -405,6 +416,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads in a 32-bit integer in compressed format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit integer in compressed format.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadBoolean">
@@ -421,7 +436,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -432,6 +446,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a Boolean value from the current stream and advances the current position of the stream by one byte.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the byte is nonzero; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadByte">
@@ -448,7 +466,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'byte'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -471,6 +488,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the next byte from the current stream and advances the current position of the stream by one byte.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next byte read from the current stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadBytes">
@@ -489,7 +510,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>An array of bytes of the length of count.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -500,6 +520,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the specified number of bytes from the current stream into a byte array and advances the current position by that number of bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array containing data read from the underlying stream. This might be less than the number of bytes requested if the end of the stream is reached.</para>
+        </returns>
         <param name="count">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of bytes to read. This value must be 0 or a non-negative number or an exception will occur.</param>
       </Docs>
@@ -518,7 +542,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'char'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="M:System.IO.BinaryReader.ReadChar" /> method attempts to read a surrogate character in the stream an exception will be raised and the position in the stream will advance. The position is restored to the original location before <see cref="M:System.IO.BinaryReader.ReadChar" /> was called if the stream is seekable; however, if the stream is unseekable, the position will not be corrected. If surrogate characters can be expected in the stream, use the <see cref="M:System.IO.BinaryReader.ReadChars(System.Int32)" /> method instead.</para>
@@ -540,6 +563,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the next character from the current stream and advances the current position of the stream in accordance with the Encoding used and the specific character being read from the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A character read from the current stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadChars">
@@ -558,7 +585,6 @@
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'char []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -569,6 +595,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads the specified number of characters from the current stream, returns the data in a character array, and advances the current position in accordance with the Encoding used and the specific character being read from the stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A character array containing data read from the underlying stream. This might be less than the number of characters requested if the end of the stream is reached.</para>
+        </returns>
         <param name="count">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of characters to read. </param>
       </Docs>
@@ -587,7 +617,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'decimal'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -598,6 +627,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a decimal value from the current stream and advances the current position of the stream by sixteen bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A decimal value read from the current stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadDouble">
@@ -614,7 +647,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'double'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -626,6 +658,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an 8-byte floating point value from the current stream and advances the current position of the stream by eight bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-byte floating point value read from the current stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadInt16">
@@ -642,7 +678,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'short'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -654,6 +689,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a 2-byte signed integer from the current stream and advances the current position of the stream by two bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 2-byte signed integer read from the current stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadInt32">
@@ -670,7 +709,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -683,6 +721,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a 4-byte signed integer from the current stream and advances the current position of the stream by four bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 4-byte signed integer read from the current stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadInt64">
@@ -699,7 +741,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'long'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -711,6 +752,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an 8-byte signed integer from the current stream and advances the current position of the stream by eight bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-byte signed integer read from the current stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadSByte">
@@ -732,7 +777,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'sbyte'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -743,6 +787,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a signed byte from this stream and advances the current position of the stream by one byte.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A signed byte read from the current stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadSingle">
@@ -759,7 +807,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'float'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -771,6 +818,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a 4-byte floating point value from the current stream and advances the current position of the stream by four bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 4-byte floating point value read from the current stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadString">
@@ -787,7 +838,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -798,6 +848,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a string from the current stream. The string is prefixed with the length, encoded as an integer seven bits at a time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The string being read.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadUInt16">
@@ -819,7 +873,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ushort'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -831,6 +884,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a 2-byte unsigned integer from the current stream using little-endian encoding and advances the position of the stream by two bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 2-byte unsigned integer read from this stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadUInt32">
@@ -852,7 +909,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'uint'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -864,6 +920,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a 4-byte unsigned integer from the current stream and advances the position of the stream by four bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 4-byte unsigned integer read from this stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadUInt64">
@@ -885,7 +945,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'ulong'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -897,6 +956,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads an 8-byte unsigned integer from the current stream and advances the position of the stream by eight bytes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An 8-byte unsigned integer read from this stream.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.IDisposable.Dispose">

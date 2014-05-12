@@ -57,12 +57,15 @@
         <Parameter Name="iZone" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a new application domain for the specified Web application. This class was used by earlier versions of the .NET Framework than version 2.0, which uses the <see cref="T:System.Web.Hosting.AppManagerAppDomainFactory" /> class instead.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new application domain.</para>
+        </returns>
         <param name="module">
           <attribution license="cc4" from="Microsoft" modified="false" />The module containing the Web application.</param>
         <param name="typeName">

@@ -35,7 +35,6 @@
         <Parameter Name="control" Type="System.Web.UI.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> implementation to work correctly. This method uses the <see cref="P:System.Web.UI.Control.Site" /> of the specified control to retrieve the designer host.</para>
@@ -44,6 +43,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a string of data that represents the persisted form of the specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the persisted form of the control.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to persist. </param>
       </Docs>
@@ -92,7 +95,6 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> implementation to work correctly.</para>
@@ -101,6 +103,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a string of data that represents the persisted form of the specified control, using the specified designer host.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the persisted form of the control.</para>
+        </returns>
         <param name="control">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Control" /> to persist. </param>
         <param name="host">
@@ -154,7 +160,6 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> implementation to work correctly.</para>
@@ -163,6 +168,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a string of data that can persist the inner properties of the specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that contains the information to persist about the inner properties of the control.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to persist the inner properties of. </param>
         <param name="host">
@@ -219,7 +228,6 @@
         <Parameter Name="host" Type="System.ComponentModel.Design.IDesignerHost" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.ControlPersister.PersistTemplate(System.Web.UI.ITemplate,System.ComponentModel.Design.IDesignerHost)" /> method requires an <see cref="T:System.ComponentModel.Design.IDesignerHost" /> interface implementation in order to work correctly.</para>
@@ -228,6 +236,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a string of data that represents the persisted form of the specified template.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the persisted form of the template.</para>
+        </returns>
         <param name="template">
           <attribution license="cc4" from="Microsoft" modified="false" />The template to persist.</param>
         <param name="host">

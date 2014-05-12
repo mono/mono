@@ -41,12 +41,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the settings for a peer resolver service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.PeerResolvers.ServiceSettingsResponseInfo" /> that contains information about the peer resolver service.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Refresh">
@@ -68,7 +72,6 @@
         <Parameter Name="refreshInfo" Type="System.ServiceModel.PeerResolvers.RefreshInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A "refresh" of an entry is implemented by updating the supplied entry's expiry timestamp. All information used to uniquely identify the entry must be supplied in the <see cref="T:System.ServiceModel.PeerResolvers.RefreshInfo" /> object supplied to this method.</para>
@@ -77,6 +80,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Refreshes the expiry for an entry in the peer resolver service's registration lookup table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.PeerResolvers.RefreshResponseInfo" /> that contains the newly refreshed registration entry.</para>
+        </returns>
         <param name="refreshInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />
           <see cref="T:System.ServiceModel.PeerResolvers.RefreshInfo" /> object that contains the mesh ID and the registration ID of the entry to refresh in the peer resolver service's registration lookup table.</param>
@@ -101,7 +109,6 @@
         <Parameter Name="registerInfo" Type="System.ServiceModel.PeerResolvers.RegisterInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is used to add a peer node's registration information to the lookup table used by the peer resolver service.</para>
@@ -110,6 +117,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Registers a peer node with the custom peer resolver service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.PeerResolvers.RegisterResponseInfo" /> that contains a copy of the entry added to the peer resolver service's registration lookup table.</para>
+        </returns>
         <param name="registerInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />
           <see cref="T:System.ServiceModel.PeerResolvers.RegisterInfo" />  that contains information about the peer node to register with the peer resolver service.</param>
@@ -134,12 +146,16 @@
         <Parameter Name="resolveInfo" Type="System.ServiceModel.PeerResolvers.ResolveInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a list of known endpoints for a registration entry.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.PeerResolvers.ResolveResponseInfo" /> that contains the endpoints for the registration entry in the lookup table that matches the information supplied in the <paramref name="resolveInfo" /> parameter. </para>
+        </returns>
         <param name="resolveInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />
           <see cref="T:System.ServiceModel.PeerResolvers.ResolveInfo" /> that contains information on the peer node for which endpoints, if known, are to be looked up by the peer resolver service.</param>
@@ -196,12 +212,16 @@
         <Parameter Name="updateInfo" Type="System.ServiceModel.PeerResolvers.UpdateInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates the entry for a specific peer node in the peer resolver service's lookup table.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="T:System.ServiceModel.PeerResolvers.UpdateInfo" /> that contains a copy of the updated peer node entry.</para>
+        </returns>
         <param name="updateInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />
           <see cref="T:System.ServiceModel.PeerResolvers.UpdateInfo" /> that uniquely identifies a specific peer node entry and provides updated information for it.</param>

@@ -140,7 +140,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.Http.HttpResponseMessage.EnsureSuccessStatusCode" /> method throws an exception if the HTTP response was unsuccessful. If the <see cref="P:System.Net.Http.HttpResponseMessage.Content" /> is not null, this method will also call <see cref="M:System.Net.Http.HttpResponseMessage.Dispose" /> to free managed and unmanaged resources. </para>
@@ -149,6 +148,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Throws an exception if the <see cref="P:System.Net.Http.HttpResponseMessage.IsSuccessStatusCode" /> property for the HTTP response is false.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Net.Http.HttpResponseMessage" />.</para>
+          <para>The HTTP response message if the call is successful.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Headers">
@@ -261,12 +265,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.String" />.</para>
+          <para>A string representation of the current object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Version">

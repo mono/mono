@@ -205,7 +205,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation for the <see cref="M:System.Diagnostics.Switch.GetSupportedAttributes" /> method returns null. If a switch is added in a configuration file and custom attributes are specified that are not included in the string array returned by <see cref="M:System.Diagnostics.Switch.GetSupportedAttributes" />, a <see cref="T:System.Configuration.ConfigurationException" /> is thrown when the switch is loaded.</para>
@@ -214,6 +213,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the custom attributes supported by the switch.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string array that contains the names of the custom attributes supported by the switch, or null if there no custom attributes are supported.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OnSwitchSettingChanged">

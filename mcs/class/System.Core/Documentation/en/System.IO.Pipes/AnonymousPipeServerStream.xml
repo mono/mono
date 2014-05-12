@@ -266,7 +266,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.Pipes.AnonymousPipeServerStream.DisposeLocalCopyOfClientHandle" /> method should be called after a client handle has been passed to a client process. If this method is not called, the <see cref="T:System.IO.Pipes.AnonymousPipeServerStream" /> object will not receive notice when the client disposes of its <see cref="T:System.IO.Pipes.PipeStream" /> object.</para>
@@ -275,6 +274,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the connected <see cref="T:System.IO.Pipes.AnonymousPipeClientStream" /> object's handle as a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the connected <see cref="T:System.IO.Pipes.AnonymousPipeClientStream" /> object's handle.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ReadMode">

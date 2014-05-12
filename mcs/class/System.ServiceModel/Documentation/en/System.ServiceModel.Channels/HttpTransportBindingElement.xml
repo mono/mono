@@ -140,7 +140,6 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to get a channel factory for sending messages based on the configuration of the transport binding element.</para>
@@ -149,6 +148,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel factory that can be used to create a channel.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel factory of the specified type.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />
           <see cref="T:System.ServiceModel.Channels.BindingContext" /> members that describe bindings, behaviors, contracts and other information required to create the channel factory.</param>
@@ -178,7 +181,6 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to get a channel listener for receiving messages based on the configuration of the transport binding element.</para>
@@ -187,6 +189,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel listener of the specified type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A channel listener of the specified type.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />
           <see cref="T:System.ServiceModel.Channels.BindingContext" /> members that describe bindings, behaviors, contracts and other information required to create the channel factory.</param>
@@ -239,12 +245,15 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a channel factory of the specified type can be built.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a channel factory can be built; otherwise false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the channel.</param>
         <typeparam name="TChannel">
@@ -273,12 +282,15 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a channel listener of the specified type can be built.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a channel listener can be built; otherwise false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.BindingContext" /> for the channel.</param>
         <typeparam name="TChannel">
@@ -297,12 +309,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance that is a copy of the current binding element.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance that is a copy of the current binding element.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="DecompressionEnabled">
@@ -369,12 +384,15 @@
         <Parameter Name="context" Type="System.ServiceModel.Channels.BindingContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a property from the specified <see cref="T:System.ServiceModel.Channels.BindingContext" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The property from the specified <see cref="T:System.ServiceModel.Channels.BindingContext" />.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.ServiceModel.Channels.BindingContext" />.</param>
         <typeparam name="T">

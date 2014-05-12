@@ -467,12 +467,15 @@ be called successfully. </para>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads all the bytes from the current stream and writes them to another stream, using a specified buffer size and cancellation token.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous copy operation.</para>
+        </returns>
         <param name="destination">
           <attribution license="cc4" from="Microsoft" modified="false" />The stream to which the contents of the current stream will be copied.</param>
         <param name="bufferSize">
@@ -550,7 +553,6 @@ be called successfully. </para>
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Because any data written to a <see cref="T:System.IO.MemoryStream" /> object is written into RAM, this method is redundant.</para>
@@ -561,6 +563,10 @@ be called successfully. </para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously clears all buffers for this stream, and monitors cancellation requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous flush operation.</para>
+        </returns>
         <param name="cancellationToken">
           <attribution license="cc4" from="Microsoft" modified="false" />The token to monitor for cancellation requests.</param>
       </Docs>
@@ -580,12 +586,6 @@ be called successfully. </para>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.Byte" /> array from which the current stream was created, or the
-   underlying array if a <see cref="T:System.Byte" />
-   array was not provided to the <see cref="T:System.IO.MemoryStream" />
-   constructor during construction of the current instance.</para>
-        </returns>
         <exception cref="T:System.UnauthorizedAccessException">The current instance was not created with a publicly visible buffer.</exception>
         <example>
           <para>The following example demonstrates that two calls to the <see cref="M:System.IO.MemoryStream.GetBuffer" />
@@ -639,6 +639,10 @@ public class MemoryStreamTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the array of unsigned bytes from which this stream was created.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The byte array from which this stream was created, or the underlying array if a byte array was not provided to the <see cref="T:System.IO.MemoryStream" /> constructor during construction of the current instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -726,11 +730,6 @@ public class MemoryStreamTest {
         <Parameter Name="count" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para> A <see cref="T:System.Int32" /> that specifies the total number of bytes
-   written into the buffer, or zero if the end of the stream is
-   reached before any bytes are read.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="buffer" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -785,6 +784,10 @@ public class MemoryStreamTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a block of bytes from the current stream and writes the data to a buffer.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The total number of bytes written into the buffer. This can be less than the number of bytes requested if that number of bytes are not currently available, or zero if the end of the stream is reached before any bytes are read.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />When this method returns, contains the specified byte array with the values between <paramref name="offset" /> and (<paramref name="offset" /> + <paramref name="count" /> - 1) replaced by the characters read from the current stream. </param>
         <param name="offset">
@@ -811,7 +814,6 @@ public class MemoryStreamTest {
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the operation is canceled before it completes, the returned task contains the <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" /> value for the <see cref="P:System.Threading.Tasks.Task.Status" /> property.</para>
@@ -821,6 +823,10 @@ public class MemoryStreamTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously reads a sequence of bytes from the current stream, advances the position within the stream by the number of bytes read, and monitors cancellation requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous read operation. The value of the <paramref name="TResult" /> parameter contains the total number of bytes read into the buffer. The result value can be less than the number of bytes requested if the number of bytes currently available is less than the requested number, or it can be 0 (zero) if the end of the stream has been reached. </para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write the data into.</param>
         <param name="offset">
@@ -846,10 +852,6 @@ public class MemoryStreamTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> The byte cast to a <see cref="T:System.Int32" />, or -1 if the end of the stream has been reached.
-   </para>
-        </returns>
         <exception cref="T:System.ObjectDisposedException"> The current stream is closed.</exception>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -860,6 +862,10 @@ public class MemoryStreamTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Reads a byte from the current stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The byte cast to a <see cref="T:System.Int32" />, or -1 if the end of the stream has been reached.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -881,10 +887,6 @@ public class MemoryStreamTest {
         <Parameter Name="loc" Type="System.IO.SeekOrigin" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int64" /> containing the new position within the stream, calculated by
-   combining the seek reference point and the offset.</para>
-        </returns>
         <exception cref="T:System.IO.IOException">Seeking is attempted before the beginning of  the stream.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="offset" /> is greater than the maximum length of <see cref="T:System.IO.MemoryStream" />.</exception>
@@ -901,6 +903,10 @@ public class MemoryStreamTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets the position within the current stream to the specified value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new position within the stream, calculated by combining the initial reference point and the offset.</para>
+        </returns>
         <param name="offset">
           <attribution license="cc4" from="Microsoft" modified="false" />The new position within the stream. This is relative to the <paramref name="loc" /> parameter, and can be positive or negative. </param>
         <param name="loc">
@@ -964,10 +970,6 @@ public class MemoryStreamTest {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> A new <see cref="T:System.Byte" /> array.
-   </para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method omits unused bytes in <see cref="T:System.IO.MemoryStream" /> from the array. To get the entire buffer, use the <see cref="M:System.IO.MemoryStream.GetBuffer" /> method.</para>
@@ -980,6 +982,10 @@ public class MemoryStreamTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Writes the stream contents to a byte array, regardless of the <see cref="P:System.IO.MemoryStream.Position" /> property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new byte array.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1050,7 +1056,6 @@ public class MemoryStreamTest {
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the operation is canceled before it completes, the returned task contains the <see cref="F:System.Threading.Tasks.TaskStatus.Canceled" /> value for the <see cref="P:System.Threading.Tasks.Task.Status" /> property.</para>
@@ -1060,6 +1065,10 @@ public class MemoryStreamTest {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Asynchronously writes a sequence of bytes to the current stream, advances the current position within this stream by the number of bytes written, and monitors cancellation requests.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A task that represents the asynchronous write operation.</para>
+        </returns>
         <param name="buffer">
           <attribution license="cc4" from="Microsoft" modified="false" />The buffer to write data from.</param>
         <param name="offset">

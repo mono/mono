@@ -199,7 +199,6 @@
         <Parameter Name="contractType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The difference between the <see cref="Overload:System.ServiceModel.Description.ContractDescription.GetContract" /> overloads is that the ones with two arguments allow you to find attributes from the service (for example, <see cref="T:System.ServiceModel.OperationBehaviorAttribute" />).</para>
@@ -208,6 +207,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the contract description for a specified type of contract.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ContractDescription" /> for the specified type of contract.</para>
+        </returns>
         <param name="contractType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract.</param>
       </Docs>
@@ -227,7 +230,6 @@
         <Parameter Name="serviceImplementation" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The difference between the <see cref="Overload:System.ServiceModel.Description.ContractDescription.GetContract" /> overloads is that the ones with two arguments allow you to find attributes from the service (for example, <see cref="T:System.ServiceModel.OperationBehaviorAttribute" />).</para>
@@ -236,6 +238,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the contract description for a specified type of contract and service implementation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ContractDescription" /> for the specified type of contract and service implementation.</para>
+        </returns>
         <param name="contractType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract.</param>
         <param name="serviceImplementation">
@@ -257,7 +263,6 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The difference between the <see cref="Overload:System.ServiceModel.Description.ContractDescription.GetContract" /> overloads is that the ones with two arguments allow you to find attributes from the service (for example, <see cref="T:System.ServiceModel.OperationBehaviorAttribute" />).</para>
@@ -266,6 +271,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the contract description for a specified type of contract and a specified type of service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ContractDescription" /> for the specified type of contract and type of service.</para>
+        </returns>
         <param name="contractType">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Type" /> of contract.</param>
         <param name="serviceType">
@@ -284,12 +293,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a collection of contract descriptions that are inherited by the current contract description.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.ObjectModel.Collection`1" /> of type <see cref="T:System.ServiceModel.Description.ContractDescription" /> that is inherited by the current contract description.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HasProtectionLevel">

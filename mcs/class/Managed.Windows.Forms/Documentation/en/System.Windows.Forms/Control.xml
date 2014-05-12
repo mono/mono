@@ -804,7 +804,6 @@
         <Parameter Name="method" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The delegate is called asynchronously, and this method returns immediately. You can call this method from any thread, even the thread that owns the control's handle. If the control's handle does not exist yet, this method searches up the control's parent chain until it finds a control or form that does have a window handle. If no appropriate handle can be found, <see cref="M:System.Windows.Forms.Control.BeginInvoke(System.Delegate)" /> will throw an exception. Exceptions within the delegate method are considered untrapped and will be sent to the application's untrapped exception handler.</para>
@@ -820,6 +819,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the specified delegate asynchronously on the thread that the control's underlying handle was created on.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that represents the result of the <see cref="M:System.Windows.Forms.Control.BeginInvoke(System.Delegate)" /> operation.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />A delegate to a method that takes no parameters. </param>
       </Docs>
@@ -850,7 +853,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The delegate is called asynchronously, and this method returns immediately. You can call this method from any thread, even the thread that owns the control's handle. If the control's handle does not exist yet, this method searches up the control's parent chain until it finds a control or form that does have a window handle. If no appropriate handle can be found, <see cref="M:System.Windows.Forms.Control.BeginInvoke(System.Delegate)" /> will throw an exception. Exceptions within the delegate method are considered untrapped and will be sent to the application's untrapped exception handler.</para>
@@ -866,6 +868,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the specified delegate asynchronously with the specified arguments, on the thread that the control's underlying handle was created on.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that represents the result of the <see cref="M:System.Windows.Forms.Control.BeginInvoke(System.Delegate)" /> operation.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />A delegate to a method that takes parameters of the same number and type that are contained in the <paramref name="args" /> parameter. </param>
         <param name="args">
@@ -1475,12 +1481,15 @@
         <Parameter Name="ctl" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a value indicating whether the specified control is a child of the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified control is a child of the control; otherwise, false.</para>
+        </returns>
         <param name="ctl">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> to evaluate. </param>
       </Docs>
@@ -1724,7 +1733,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If you do not explicitly call the <see cref="M:System.Windows.Forms.Control.CreateAccessibilityInstance" /> method, it will be called when the <see cref="P:System.Windows.Forms.Control.AccessibilityObject" /> property is referenced.</para>
@@ -1736,6 +1744,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new accessibility object for the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Windows.Forms.AccessibleObject" /> for the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1779,12 +1791,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the control collection for the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Windows.Forms.Control.ControlCollection" /> assigned to the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1837,7 +1852,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Drawing.Graphics" /> object that you retrieve through the <see cref="M:System.Windows.Forms.Control.CreateGraphics" /> method should not normally be retained after the current Windows message has been processed, because anything painted with that object will be erased with the next WM_PAINT message. Therefore you cannot cache the <see cref="T:System.Drawing.Graphics" /> object for reuse, except to use non-visual methods like <see cref="M:System.Drawing.Graphics.MeasureString(System.String,System.Drawing.Font)" />. Instead, you must call <see cref="M:System.Windows.Forms.Control.CreateGraphics" /> every time that you want to use the <see cref="T:System.Drawing.Graphics" /> object, and then call <see cref="M:System.Drawing.Graphics.Dispose" /> when you are finished using it. For more information about Windows messages, see <see cref="M:System.Windows.Forms.Control.WndProc(System.Windows.Forms.Message@)" />.</para>
@@ -1850,6 +1864,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the <see cref="T:System.Drawing.Graphics" /> for the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Graphics" /> for the control.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -2449,7 +2467,6 @@
         <Parameter Name="allowedEffects" Type="System.Windows.Forms.DragDropEffects" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="allowedEffects" /> parameter determines which drag operations can occur. If the drag operation needs to interoperate with applications in another process, data should either be a base managed class (<see cref="T:System.String" />, <see cref="T:System.Drawing.Bitmap" />, or <see cref="T:System.Drawing.Imaging.Metafile" />), or an object that implements <see cref="T:System.Runtime.Serialization.ISerializable" /> or <see cref="T:System.Windows.Forms.IDataObject" />.</para>
@@ -2517,6 +2534,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Begins a drag-and-drop operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A value from the <see cref="T:System.Windows.Forms.DragDropEffects" /> enumeration that represents the final effect that was performed during the drag-and-drop operation.</para>
+        </returns>
         <param name="data">
           <attribution license="cc4" from="Microsoft" modified="false" />The data to drag. </param>
         <param name="allowedEffects">
@@ -2890,7 +2911,6 @@
         <Parameter Name="asyncResult" Type="System.IAsyncResult" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the asynchronous operation has not been completed, this function will block until the result is available.</para>
@@ -2902,6 +2922,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the return value of the asynchronous operation represented by the <see cref="T:System.IAsyncResult" /> passed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> generated by the asynchronous operation.</para>
+        </returns>
         <param name="asyncResult">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IAsyncResult" /> that represents a specific invoke asynchronous operation, returned when calling <see cref="M:System.Windows.Forms.Control.BeginInvoke(System.Delegate)" />. </param>
       </Docs>
@@ -3005,7 +3029,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The control's <see cref="P:System.Windows.Forms.Control.Parent" /> property value might not be the same as the <see cref="T:System.Windows.Forms.Form" /> returned by <see cref="M:System.Windows.Forms.Control.FindForm" /> method. For example, if a <see cref="T:System.Windows.Forms.RadioButton" /> control is contained within a <see cref="T:System.Windows.Forms.GroupBox" /> control, and the <see cref="T:System.Windows.Forms.GroupBox" /> is on a <see cref="T:System.Windows.Forms.Form" />, the <see cref="T:System.Windows.Forms.RadioButton" /> control's <see cref="P:System.Windows.Forms.Control.Parent" /> is the <see cref="T:System.Windows.Forms.GroupBox" /> and the <see cref="T:System.Windows.Forms.GroupBox" /> control's <see cref="P:System.Windows.Forms.Control.Parent" /> is the <see cref="T:System.Windows.Forms.Form" />.</para>
@@ -3014,6 +3037,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the form that the control is on.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.Form" /> that the control is on.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3028,7 +3055,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.Control.Focus" /> method returns true if the control successfully received input focus. The control can have the input focus while not displaying any visual cues of having the focus. This behavior is primarily observed by the nonselectable controls listed below, or any controls derived from them.</para>
@@ -3073,6 +3099,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Sets input focus to the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the input focus request was successful; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3259,7 +3289,6 @@
         <Parameter Name="handle" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method searches up the window handle parent chain until it finds a handle that is associated with a control. This method is more reliable than the <see cref="M:System.Windows.Forms.Control.FromHandle(System.IntPtr)" /> method, because it correctly returns controls that own more than one handle.</para>
@@ -3268,6 +3297,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the control that contains the specified handle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.Control" /> that represents the control associated with the specified handle; returns null if no control with the specified handle is found.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />The window handle (HWND) to search for. </param>
       </Docs>
@@ -3291,7 +3324,6 @@
         <Parameter Name="handle" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Windows.Forms.Control.FromChildHandle(System.IntPtr)" /> method if you need to return controls that own more than one handle.</para>
@@ -3300,6 +3332,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the control that is currently associated with the specified handle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Control" /> that represents the control associated with the specified handle; returns null if no control with the specified handle is found.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />The window handle (HWND) to search for. </param>
       </Docs>
@@ -3326,12 +3362,15 @@
         <Parameter Name="objectId" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the specified <see cref="T:System.Windows.Forms.AccessibleObject" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The specified <see cref="T:System.Windows.Forms.AccessibleObject" />.</para>
+        </returns>
         <param name="objectId">
           <attribution license="cc4" from="Microsoft" modified="false" />An Int32 that identifies the <see cref="T:System.Windows.Forms.AccessibleObject" /> to retrieve.</param>
       </Docs>
@@ -3347,12 +3386,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a value indicating how a control will behave when its <see cref="P:System.Windows.Forms.Control.AutoSize" /> property is enabled.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.AutoSizeMode" /> values. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetChildAtPoint">
@@ -3365,7 +3407,6 @@
         <Parameter Name="pt" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If there is no child control at the specified point, the <see cref="M:System.Windows.Forms.Control.GetChildAtPoint(System.Drawing.Point)" /> method returns null.</para>
@@ -3374,6 +3415,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the child control that is located at the specified coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Windows.Forms.Control" /> that represents the control that is located at the specified point.</para>
+        </returns>
         <param name="pt">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that contains the coordinates where you want to look for a control. Coordinates are expressed relative to the upper-left corner of the control's client area. </param>
       </Docs>
@@ -3396,12 +3441,15 @@
         <Parameter Name="skipValue" Type="System.Windows.Forms.GetChildAtPointSkip" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the child control that is located at the specified coordinates, specifying whether to ignore child controls of a certain type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The child <see cref="T:System.Windows.Forms.Control" /> at the specified coordinates.</para>
+        </returns>
         <param name="pt">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Point" /> that contains the coordinates where you want to look for a control. Coordinates are expressed relative to the upper-left corner of the control's client area.</param>
         <param name="skipValue">
@@ -3416,12 +3464,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the next <see cref="T:System.Windows.Forms.ContainerControl" /> up the control's chain of parent controls.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.IContainerControl" />, that represents the parent of the <see cref="T:System.Windows.Forms.Control" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -3439,7 +3490,6 @@
         <Parameter Name="forward" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.Control.GetNextControl(System.Windows.Forms.Control,System.Boolean)" /> method is dependent on tab order. To iterate through all controls of a form, including nested controls, use the <see cref="P:System.Windows.Forms.Control.Controls" /> property. To get or set the active control of a container control, use the <see cref="P:System.Windows.Forms.ContainerControl.ActiveControl" /> property.</para>
@@ -3448,6 +3498,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the next control forward or back in the tab order of child controls.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The next <see cref="T:System.Windows.Forms.Control" /> in the tab order.</para>
+        </returns>
         <param name="ctl">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> to start the search with. </param>
         <param name="forward">
@@ -3468,7 +3522,6 @@
         <Parameter Name="proposedSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -3478,6 +3531,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the size of a rectangular area into which a control can be fitted.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An ordered pair of type <see cref="T:System.Drawing.Size" /> representing the width and height of a rectangle.</para>
+        </returns>
         <param name="proposedSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The custom-sized area for a control. </param>
       </Docs>
@@ -3510,7 +3567,6 @@
         <Parameter Name="specified" Type="System.Windows.Forms.BoundsSpecified" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is a helper method that is called by <see cref="M:System.Windows.Forms.Control.ScaleControl(System.Drawing.SizeF,System.Windows.Forms.BoundsSpecified)" /> to retrieve the bounds within which the control is scaled. You can override this method to reuse the <see cref="M:System.Windows.Forms.Control.ScaleControl(System.Drawing.SizeF,System.Windows.Forms.BoundsSpecified)" /> scaling logic, but you must supply your own bounds. The default implementation returns scaled bounds that take into account the <paramref name="specified" /> bounds, whether the control is top level, whether the control is fixed width or auto size, and any adornments the control might have. </para>
@@ -3519,6 +3575,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the bounds within which the control is scaled.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> representing the bounds within which the control is scaled.</para>
+        </returns>
         <param name="bounds">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Rectangle" /> that specifies the area for which to retrieve the display bounds.</param>
         <param name="factor">
@@ -3541,7 +3601,6 @@
         <Parameter Name="flag" Type="System.Windows.Forms.ControlStyles" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Control style bit flags are used to categorize supported behavior. A control can enable a style by calling the <see cref="M:System.Windows.Forms.Control.SetStyle(System.Windows.Forms.ControlStyles,System.Boolean)" /> method and passing in the appropriate <see cref="T:System.Windows.Forms.ControlStyles" /> bit and the Boolean value to set the bit to. To determine the value assigned to a specified <see cref="T:System.Windows.Forms.ControlStyles" /> bit, use the <see cref="M:System.Windows.Forms.Control.GetStyle(System.Windows.Forms.ControlStyles)" /> method and pass in the <see cref="T:System.Windows.Forms.ControlStyles" /> member to evaluate.</para>
@@ -3550,6 +3609,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the value of the specified control style bit for the control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified control style bit is set to true; otherwise, false.</para>
+        </returns>
         <param name="flag">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.ControlStyles" /> bit to return the value from. </param>
       </Docs>
@@ -3562,12 +3625,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the control is a top-level control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control is a top-level control; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -4202,7 +4268,6 @@
         <Parameter Name="method" Type="System.Delegate" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Delegates are similar to function pointers in C or C++ languages. Delegates encapsulate a reference to a method inside a delegate object. The delegate object can then be passed to code that calls the referenced method, and the method to be invoked can be unknown at compile time. Unlike function pointers in C or C++, delegates are object-oriented, type-safe, and more secure.</para>
@@ -4219,6 +4284,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the specified delegate on the thread that owns the control's underlying window handle.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value from the delegate being invoked, or null if the delegate has no return value.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />A delegate that contains a method to be called in the control's thread context. </param>
       </Docs>
@@ -4244,7 +4313,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Delegates are similar to function pointers in C or C++ languages. Delegates encapsulate a reference to a method inside a delegate object. The delegate object can then be passed to code that calls the referenced method, and the method to be invoked can be unknown at compile time. Unlike function pointers in C or C++, delegates are object-oriented, type-safe, and more secure.</para>
@@ -4261,6 +4329,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the specified delegate, on the thread that owns the control's underlying window handle, with the specified list of arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the return value from the delegate being invoked, or null if the delegate has no return value.</para>
+        </returns>
         <param name="method">
           <attribution license="cc4" from="Microsoft" modified="false" />A delegate to a method that takes parameters of the same number and type that are contained in the <paramref name="args" /> parameter. </param>
         <param name="args">
@@ -4568,7 +4640,6 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call the <see cref="M:System.Windows.Forms.Control.IsInputChar(System.Char)" /> method to determine whether the character specified by the <paramref name="charCode" /> parameter is an input character that the control wants. This method is called during window message preprocessing to determine whether the specified input character should be preprocessed or sent directly to the control. If <see cref="M:System.Windows.Forms.Control.IsInputChar(System.Char)" /> returns true, the specified character is sent directly to the control. If <see cref="M:System.Windows.Forms.Control.IsInputChar(System.Char)" /> returns false, the specified character is preprocessed and only sent to the control if it is not consumed by the preprocessing phase. The preprocessing of a character includes checking whether the character is a mnemonic of another control.</para>
@@ -4577,6 +4648,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if a character is an input character that the control recognizes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character should be sent directly to the control and not preprocessed; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to test. </param>
       </Docs>
@@ -4595,7 +4670,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Call the <see cref="M:System.Windows.Forms.Control.IsInputKey(System.Windows.Forms.Keys)" /> method to determine whether the key specified by the <paramref name="keyData" /> parameter is an input key that the control wants. This method is called during window message preprocessing to determine whether the specified input key should be preprocessed or sent directly to the control. If <see cref="M:System.Windows.Forms.Control.IsInputKey(System.Windows.Forms.Keys)" /> returns true, the specified key is sent directly to the control. If <see cref="M:System.Windows.Forms.Control.IsInputKey(System.Windows.Forms.Keys)" /> returns false, the specified key is preprocessed and only sent to the control if it is not consumed by the preprocessing phase. Keys that are preprocessed include the TAB, RETURN, ESC, and the UP ARROW, DOWN ARROW, LEFT ARROW, and RIGHT ARROW keys.</para>
@@ -4604,6 +4678,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified key is a regular input key or a special key that requires preprocessing.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified key is a regular input key; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values. </param>
       </Docs>
@@ -4625,7 +4703,6 @@
         <Parameter Name="keyVal" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Windows.Forms.Control.IsKeyLocked(System.Windows.Forms.Keys)" /> property to determine whether the CAPS LOCK, NUM LOCK, or SCROLL LOCK keys are on, whether individually or in combination.</para>
@@ -4634,6 +4711,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the CAPS LOCK, NUM LOCK, or SCROLL LOCK key is in effect.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified key or keys are in effect; otherwise, false.</para>
+        </returns>
         <param name="keyVal">
           <attribution license="cc4" from="Microsoft" modified="false" />The CAPS LOCK, NUM LOCK, or SCROLL LOCK member of the <see cref="T:System.Windows.Forms.Keys" /> enumeration. </param>
       </Docs>
@@ -4681,7 +4762,6 @@
         <Parameter Name="text" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The mnemonic character is the character immediately following the first instance of "&amp;" in a <see cref="T:System.String" />.</para>
@@ -4690,6 +4770,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the specified character is the mnemonic character assigned to the control in the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <paramref name="charCode" /> character is the mnemonic character assigned to the control; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to test. </param>
         <param name="text">
@@ -8629,12 +8713,15 @@
         <Parameter Name="p" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the location of the specified screen point into client coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Point" /> that represents the converted <see cref="T:System.Drawing.Point" />, <paramref name="p" />, in client coordinates.</para>
+        </returns>
         <param name="p">
           <attribution license="cc4" from="Microsoft" modified="false" />The screen coordinate <see cref="T:System.Drawing.Point" /> to convert. </param>
       </Docs>
@@ -8653,12 +8740,15 @@
         <Parameter Name="p" Type="System.Drawing.Point" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the location of the specified client point into screen coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Point" /> that represents the converted <see cref="T:System.Drawing.Point" />, <paramref name="p" />, in screen coordinates.</para>
+        </returns>
         <param name="p">
           <attribution license="cc4" from="Microsoft" modified="false" />The client coordinate <see cref="T:System.Drawing.Point" /> to convert. </param>
       </Docs>
@@ -8787,7 +8877,6 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called during message preprocessing to handle dialog characters, such as control mnemonics. This method is called only if the <see cref="M:System.Windows.Forms.Control.IsInputChar(System.Char)" /> method indicates that the control is not processing the character. The <see cref="M:System.Windows.Forms.Control.ProcessDialogChar(System.Char)" /> method simply sends the character to the parent's <see cref="M:System.Windows.Forms.Control.ProcessDialogChar(System.Char)" /> method, or returns false if the control has no parent. The <see cref="T:System.Windows.Forms.Form" /> class overrides this method to perform actual processing of dialog characters. This method is only called when the control is hosted in a Windows Forms application or as an ActiveX control.</para>
@@ -8796,6 +8885,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a dialog character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was processed by the control; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to process. </param>
       </Docs>
@@ -8814,7 +8907,6 @@
         <Parameter Name="keyData" Type="System.Windows.Forms.Keys" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called during message preprocessing to handle dialog characters, such as TAB, RETURN, ESC, and arrow keys. This method is called only if the <see cref="M:System.Windows.Forms.Control.IsInputKey(System.Windows.Forms.Keys)" /> method indicates that the control is not processing the key. The <see cref="M:System.Windows.Forms.Control.ProcessDialogKey(System.Windows.Forms.Keys)" /> simply sends the character to the parent's <see cref="M:System.Windows.Forms.Control.ProcessDialogKey(System.Windows.Forms.Keys)" /> method, or returns false if the control has no parent. The <see cref="T:System.Windows.Forms.Form" /> class overrides this method to perform actual processing of dialog keys. This method is only called when the control is hosted in a Windows Forms application or as an ActiveX control.</para>
@@ -8823,6 +8915,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a dialog key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the key was processed by the control; otherwise, false.</para>
+        </returns>
         <param name="keyData">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.Keys" /> values that represents the key to process. </param>
       </Docs>
@@ -8901,7 +8997,6 @@
         <Parameter Name="charCode" Type="System.Char" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called to give a control the opportunity to process a mnemonic character. The method should determine whether the control is in a state to process mnemonics and if whether the given character represents a mnemonic. If so, the method should perform the action associated with the mnemonic and return true. If not, the method should return false. Implementations of this method often use the <see cref="M:System.Windows.Forms.Control.IsMnemonic(System.Char,System.String)" /> method to determine whether the given character matches a mnemonic in the control's text.</para>
@@ -8916,6 +9011,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Processes a mnemonic character.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the character was processed as a mnemonic by the control; otherwise, false.</para>
+        </returns>
         <param name="charCode">
           <attribution license="cc4" from="Microsoft" modified="false" />The character to process. </param>
       </Docs>
@@ -9268,12 +9367,15 @@
         <Parameter Name="r" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the size and location of the specified screen rectangle in client coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that represents the converted <see cref="T:System.Drawing.Rectangle" />, <paramref name="r" />, in client coordinates.</para>
+        </returns>
         <param name="r">
           <attribution license="cc4" from="Microsoft" modified="false" />The screen coordinate <see cref="T:System.Drawing.Rectangle" /> to convert. </param>
       </Docs>
@@ -9292,12 +9394,15 @@
         <Parameter Name="r" Type="System.Drawing.Rectangle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Computes the size and location of the specified client rectangle in screen coordinates.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Rectangle" /> that represents the converted <see cref="T:System.Drawing.Rectangle" />, <paramref name="p" />, in screen coordinates.</para>
+        </returns>
         <param name="r">
           <attribution license="cc4" from="Microsoft" modified="false" />The client coordinate <see cref="T:System.Drawing.Rectangle" /> to convert. </param>
       </Docs>
@@ -9900,7 +10005,6 @@
         <Parameter Name="align" Type="System.Drawing.ContentAlignment" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="P:System.Windows.Forms.Control.RightToLeft" /> property of <see cref="T:System.Windows.Forms.RightToLeft" /> is set to No, the return value is equal to the <paramref name="align" /> parameter passed in.</para>
@@ -9909,6 +10013,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified <see cref="T:System.Drawing.ContentAlignment" /> to the appropriate <see cref="T:System.Drawing.ContentAlignment" /> to support right-to-left text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Drawing.ContentAlignment" /> values.</para>
+        </returns>
         <param name="align">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Drawing.ContentAlignment" /> values. </param>
       </Docs>
@@ -9932,7 +10040,6 @@
         <Parameter Name="align" Type="System.Windows.Forms.HorizontalAlignment" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="P:System.Windows.Forms.Control.RightToLeft" /> property of <see cref="T:System.Windows.Forms.RightToLeft" /> is set to No, the return value is equal to the <paramref name="align" /> parameter passed in.</para>
@@ -9941,6 +10048,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified <see cref="T:System.Windows.Forms.HorizontalAlignment" /> to the appropriate <see cref="T:System.Windows.Forms.HorizontalAlignment" /> to support right-to-left text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.HorizontalAlignment" /> values.</para>
+        </returns>
         <param name="align">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.HorizontalAlignment" /> values. </param>
       </Docs>
@@ -9964,7 +10075,6 @@
         <Parameter Name="align" Type="System.Windows.Forms.LeftRightAlignment" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="P:System.Windows.Forms.Control.RightToLeft" /> property of <see cref="T:System.Windows.Forms.RightToLeft" /> is set to No, the return value is equal to the <paramref name="align" /> parameter passed in.</para>
@@ -9973,6 +10083,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified <see cref="T:System.Windows.Forms.LeftRightAlignment" /> to the appropriate <see cref="T:System.Windows.Forms.LeftRightAlignment" /> to support right-to-left text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.LeftRightAlignment" /> values.</para>
+        </returns>
         <param name="align">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.LeftRightAlignment" /> values. </param>
       </Docs>
@@ -9996,7 +10110,6 @@
         <Parameter Name="align" Type="System.Drawing.ContentAlignment" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="P:System.Windows.Forms.Control.RightToLeft" /> property of <see cref="T:System.Windows.Forms.RightToLeft" /> is set to No, the return value is equal to the <paramref name="align" /> parameter passed in.</para>
@@ -10005,6 +10118,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified <see cref="T:System.Drawing.ContentAlignment" /> to the appropriate <see cref="T:System.Drawing.ContentAlignment" /> to support right-to-left text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Drawing.ContentAlignment" /> values.</para>
+        </returns>
         <param name="align">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Drawing.ContentAlignment" /> values. </param>
       </Docs>
@@ -10028,7 +10145,6 @@
         <Parameter Name="align" Type="System.Windows.Forms.HorizontalAlignment" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="P:System.Windows.Forms.Control.RightToLeft" /> property of <see cref="T:System.Windows.Forms.RightToLeft" /> is set to No, the return value is equal to the <paramref name="align" /> parameter passed in.</para>
@@ -10037,6 +10153,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified <see cref="T:System.Windows.Forms.HorizontalAlignment" /> to the appropriate <see cref="T:System.Windows.Forms.HorizontalAlignment" /> to support right-to-left text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.HorizontalAlignment" /> values.</para>
+        </returns>
         <param name="align">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.HorizontalAlignment" /> values. </param>
       </Docs>
@@ -10060,7 +10180,6 @@
         <Parameter Name="align" Type="System.Windows.Forms.LeftRightAlignment" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="P:System.Windows.Forms.Control.RightToLeft" /> property of <see cref="T:System.Windows.Forms.RightToLeft" /> is set to No, the return value is equal to the <paramref name="align" /> parameter passed in.</para>
@@ -10069,6 +10188,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified <see cref="T:System.Windows.Forms.LeftRightAlignment" /> to the appropriate <see cref="T:System.Windows.Forms.LeftRightAlignment" /> to support right-to-left text.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>One of the <see cref="T:System.Windows.Forms.LeftRightAlignment" /> values.</para>
+        </returns>
         <param name="align">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.LeftRightAlignment" /> values. </param>
       </Docs>
@@ -10400,7 +10523,6 @@
         <Parameter Name="wrap" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.Control.SelectNextControl(System.Windows.Forms.Control,System.Boolean,System.Boolean,System.Boolean,System.Boolean)" /> method activates the next control in the tab order if the control's Selectable style bit is set to true in <see cref="T:System.Windows.Forms.ControlStyles" />, it is contained in another control, and all its parent controls are both visible and enabled.</para>
@@ -10468,6 +10590,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Activates the next control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if a control was activated; otherwise, false.</para>
+        </returns>
         <param name="ctl">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Windows.Forms.Control" /> at which to start the search. </param>
         <param name="forward">
@@ -10953,12 +11079,15 @@
         <Parameter Name="clientSize" Type="System.Drawing.Size" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the size of the entire control from the height and width of its client area.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Drawing.Size" /> value representing the height and width of the entire control.</para>
+        </returns>
         <param name="clientSize">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Size" /> value representing the height and width of the control's client area.</param>
       </Docs>

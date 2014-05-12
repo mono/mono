@@ -1467,7 +1467,6 @@
         <Parameter Name="custom" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can override <see cref="M:System.Web.HttpApplication.GetVaryByCustomString(System.Web.HttpContext,System.String)" /> to add a new method for calculating custom vary-by values that are based on the current request. The implementation has to call the base class for custom values that it does not recognize. For more information, see <format type="text/html"><a href="b6c73735-a3cd-4d19-ba4d-0431881b0db0">How to: Cache Versions of a Page Using Custom Strings</a></format>. </para>
@@ -1476,6 +1475,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides an application-wide implementation of the <see cref="P:System.Web.UI.PartialCachingAttribute.VaryByCustom" /> property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the value of the <paramref name="custom" /> parameter is "browser", the browser's <see cref="P:System.Web.Configuration.HttpCapabilitiesBase.Type" />; otherwise, null.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpContext" /> object that contains information about the current Web request. </param>
         <param name="custom">
@@ -2030,12 +2033,16 @@
         <Parameter Name="extraData" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initiates an asynchronous call to the HTTP event handler.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.IAsyncResult" /> that contains information about the status of the process.</para>
+          <para />
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Web.HttpContext" /> that provides references to intrinsic server objects that are used to service HTTP requests.</param>
         <param name="cb">

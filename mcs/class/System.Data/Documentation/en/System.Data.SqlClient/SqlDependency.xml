@@ -444,7 +444,6 @@
         <Parameter Name="connectionString" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method starts the listener for the <see cref="T:System.AppDomain" /> for receiving dependency notifications from the instance of ssNoVersion specified by the <paramref name="connectionString" /> parameter. This method may be called more than once with different connection strings for multiple servers.</para>
@@ -454,6 +453,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts the listener for receiving dependency change notifications from the instance of SQL Server specified by the connection string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the listener initialized successfully; false if a compatible listener already exists.</para>
+        </returns>
         <param name="connectionString">
           <attribution license="cc4" from="Microsoft" modified="false" />The connection string for the instance of ssNoVersion from which to obtain change notifications.</param>
       </Docs>
@@ -472,7 +475,6 @@
         <Parameter Name="queue" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method starts the listener for the <see cref="T:System.AppDomain" /> for receiving dependency notifications from the instance of SQL Server specified by the <paramref name="connectionString" /> parameter. This method may be called more than once with different connection strings for multiple servers.</para>
@@ -483,6 +485,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Starts the listener for receiving dependency change notifications from the instance of SQL Server specified by the connection string using the specified SQL Server Service Broker queue.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the listener initialized successfully; false if a compatible listener already exists.</para>
+        </returns>
         <param name="connectionString">
           <attribution license="cc4" from="Microsoft" modified="false" />The connection string for the instance of SQL Server from which to obtain change notifications.</param>
         <param name="queue">
@@ -502,7 +508,6 @@
         <Parameter Name="connectionString" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.Data.SqlClient.SqlDependency.Stop" /> method must be called for each <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> call. A given listener only shuts down fully when it receives the same number of <see cref="Overload:System.Data.SqlClient.SqlDependency.Stop" /> requests as <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> requests.</para>
@@ -511,6 +516,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Stops a listener for a connection specified in a previous <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> call.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the listener was completely stopped; false if the <see cref="T:System.AppDomain" /> was unbound from the listener, but there are is at least one other <see cref="T:System.AppDomain" /> using the same listener.</para>
+        </returns>
         <param name="connectionString">
           <attribution license="cc4" from="Microsoft" modified="false" />Connection string for the instance of SQL Server that was used in a previous <see cref="M:System.Data.SqlClient.SqlDependency.Start(System.String)" /> call.</param>
       </Docs>
@@ -529,7 +538,6 @@
         <Parameter Name="queue" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="Overload:System.Data.SqlClient.SqlDependency.Stop" /> method must be called for each <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> call. A given listener only shuts down fully when it receives the same number of <see cref="Overload:System.Data.SqlClient.SqlDependency.Stop" /> requests as <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> requests.</para>
@@ -538,6 +546,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Stops a listener for a connection specified in a previous <see cref="Overload:System.Data.SqlClient.SqlDependency.Start" /> call.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the listener was completely stopped; false if the <see cref="T:System.AppDomain" /> was unbound from the listener, but there is at least one other <see cref="T:System.AppDomain" /> using the same listener.</para>
+        </returns>
         <param name="connectionString">
           <attribution license="cc4" from="Microsoft" modified="false" />Connection string for the instance of SQL Server that was used in a previous <see cref="M:System.Data.SqlClient.SqlDependency.Start(System.String,System.String)" /> call.</param>
         <param name="queue">

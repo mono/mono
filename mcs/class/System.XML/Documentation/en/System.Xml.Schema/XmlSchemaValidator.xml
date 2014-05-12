@@ -151,7 +151,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -169,6 +168,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the expected attributes for the current element context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Xml.Schema.XmlSchemaAttribute" /> objects or an empty array if there are no expected attributes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetExpectedParticles">
@@ -184,7 +187,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -305,6 +307,10 @@ validator.ValidateEndElement(null);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the expected particles in the current element context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Xml.Schema.XmlSchemaParticle" /> objects or an empty array if there are no expected particles.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetUnspecifiedDefaultAttributes">
@@ -506,7 +512,6 @@ validator.ValidateEndElement(null);</code>
         <Parameter Name="schemaInfo" Type="System.Xml.Schema.XmlSchemaInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -527,6 +532,10 @@ validator.ValidateEndElement(null);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Validates the attribute name, namespace URI, and value in the current element context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The validated attribute's value.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute to validate.</param>
         <param name="namespaceUri">
@@ -555,7 +564,6 @@ validator.ValidateEndElement(null);</code>
         <Parameter Name="schemaInfo" Type="System.Xml.Schema.XmlSchemaInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -576,6 +584,10 @@ validator.ValidateEndElement(null);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Validates the attribute name, namespace URI, and value in the current element context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The validated attribute's value.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />The local name of the attribute to validate.</param>
         <param name="namespaceUri">
@@ -700,7 +712,6 @@ validator.ValidateEndElement(null);</code>
         <Parameter Name="schemaInfo" Type="System.Xml.Schema.XmlSchemaInfo" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -727,6 +738,10 @@ validator.ValidateEndElement(null);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies if the text content of the element is valid according to its data type for elements with simple content, and verifies if the content of the current element is complete for elements with complex content.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parsed, typed text value of the element if the element has simple content.</para>
+        </returns>
         <param name="schemaInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaInfo" /> object whose properties are set on successful validation of the element. This parameter can be null.</param>
       </Docs>
@@ -747,7 +762,6 @@ validator.ValidateEndElement(null);</code>
         <Parameter Name="typedValue" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -777,6 +791,10 @@ validator.ValidateEndElement(null);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Verifies if the text content of the element specified is valid according to its data type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The parsed, typed simple content of the element.</para>
+        </returns>
         <param name="schemaInfo">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaInfo" /> object whose properties are set on successful validation of the text content of the element. This parameter can be null.</param>
         <param name="typedValue">

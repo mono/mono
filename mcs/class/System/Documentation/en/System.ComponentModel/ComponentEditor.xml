@@ -61,7 +61,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method opens an advanced user interface that you can use to edit the component. The default implementation opens a dialog box with a collection of component editor control objects and a user interface.</para>
@@ -70,6 +69,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Edits the component and returns a value indicating whether the component was modified.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the component was modified; otherwise, false.</para>
+        </returns>
         <param name="component">
           <attribution license="cc4" from="Microsoft" modified="false" />The component to be edited. </param>
       </Docs>
@@ -91,7 +94,6 @@
         <Parameter Name="component" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can override this method to provide a custom editing user interface for a component. From within this method you can display a dialog box or other type of user interface.</para>
@@ -100,6 +102,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Edits the component and returns a value indicating whether the component was modified based upon a given context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the component was modified; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An optional context object that can be used to obtain further information about the edit. </param>
         <param name="component">

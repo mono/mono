@@ -203,7 +203,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is equivalent to using the <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFileStream.#ctor(System.String,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,System.IO.IsolatedStorage.IsolatedStorageFile)" /> constructor.</para>
@@ -212,6 +211,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a file in the isolated store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new isolated storage file.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative path of the file to create.</param>
       </Docs>
@@ -327,12 +330,15 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified path refers to an existing directory in the isolated store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="path" /> refers to an existing directory in the isolated store and is not null; otherwise, false.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to test.</param>
       </Docs>
@@ -383,12 +389,15 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified path refers to an existing file in the isolated store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="path" /> refers to an existing file in the isolated store and is not null; otherwise, false.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path and file name to test.</param>
       </Docs>
@@ -430,7 +439,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the file described by path does not exist, this method returns 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC), adjusted to local time.</para>
@@ -439,6 +447,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the creation date and time of a specified file or directory.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The creation date and time for the specified file or directory. This value is expressed in local time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the file or directory for which to obtain creation date and time information.</param>
       </Docs>
@@ -460,7 +472,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is equivalent to using the <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFile.GetDirectoryNames(System.String)" /> method with "*" specified for the search pattern.</para>
@@ -469,6 +480,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enumerates the directories at the root of an isolated store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of relative paths of directories at the root of the isolated store. A zero-length array specifies that there are no directories at the root.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetDirectoryNames">
@@ -487,7 +502,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Wildcard characters must only be in the final element of a <paramref name="searchPattern" />. For instance, "directory1/*etc*" is a valid search string, but "*etc*/directory" is not.</para>
@@ -499,6 +513,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enumerates the directories in an isolated storage scope that match a given search pattern.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of the relative paths of directories in the isolated storage scope that match <paramref name="searchPattern" />. A zero-length array specifies that there are no directories that match.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />A search pattern. Both single-character ("?") and multi-character ("*") wildcards are supported. </param>
       </Docs>
@@ -519,7 +537,6 @@
         <Parameter Name="scope" Type="System.IO.IsolatedStorage.IsolatedStorageScope" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <format type="text/html"><a href="0FCF279A-F241-48F0-8034-2E3D331F1FCB">[&lt;topic://cpconenumeratingstores&gt;]</a></format> example demonstrates the use of the <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFile.GetEnumerator(System.IO.IsolatedStorage.IsolatedStorageScope)" /> method.</para>
@@ -528,6 +545,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the enumerator for the <see cref="T:System.IO.IsolatedStorage.IsolatedStorageFile" /> stores within an isolated storage scope.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Enumerator for the <see cref="T:System.IO.IsolatedStorage.IsolatedStorageFile" /> stores within the specified isolated storage scope.</para>
+        </returns>
         <param name="scope">
           <attribution license="cc4" from="Microsoft" modified="false" />Represents the <see cref="T:System.IO.IsolatedStorage.IsolatedStorageScope" /> for which to return isolated stores. User and User|Roaming are the only IsolatedStorageScope combinations supported. </param>
       </Docs>
@@ -549,7 +570,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is equivalent to using the <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFile.GetFileNames(System.String)" /> method with "*" specified for the search pattern.</para>
@@ -558,6 +578,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enumerates the file names at the root of an isolated store.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of relative paths of files at the root of the isolated store.  A zero-length array specifies that there are no files at the root.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetFileNames">
@@ -576,7 +600,6 @@
         <Parameter Name="searchPattern" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="searchPattern" /> "Project\Data*.txt" will give all ".txt" files beginning with Data in the Project directory of the isolated storage scope. For complete description of search pattern strings, see <see cref="T:System.IO.Directory" />.</para>
@@ -587,6 +610,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the file names that match a search pattern.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of relative paths of files in the isolated storage scope that match <paramref name="searchPattern" />. A zero-length array specifies that there are no files that match.</para>
+        </returns>
         <param name="searchPattern">
           <attribution license="cc4" from="Microsoft" modified="false" />A search pattern. Both single-character ("?") and multi-character ("*") wildcards are supported. </param>
       </Docs>
@@ -610,7 +637,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the file described by <paramref name="path" /> does not exist, this method returns 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC), adjusted to local time.</para>
@@ -619,6 +645,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the date and time a specified file or directory was last accessed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date and time that the specified file or directory was last accessed. This value is expressed in local time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the file or directory for which to obtain last access date and time information.</param>
       </Docs>
@@ -642,7 +672,6 @@
         <Parameter Name="path" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the file described by <paramref name="path" /> does not exist, this method returns 12:00 midnight, January 1, 1601 A.D. (C.E.) Coordinated Universal Time (UTC), adjusted to local time.</para>
@@ -651,6 +680,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the date and time a specified file or directory was last written to.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date and time that the specified file or directory was last written to. This value is expressed in local time.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The path to the file or directory for which to obtain last write date and time information.</param>
       </Docs>
@@ -668,7 +701,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -681,6 +713,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains machine-scoped isolated storage corresponding to the calling code's application identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object corresponding to the isolated storage scope based on the calling code's application identity.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMachineStoreForAssembly">
@@ -696,7 +732,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -712,6 +747,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains machine-scoped isolated storage corresponding to the calling code's assembly identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object corresponding to the isolated storage scope based on the calling code's assembly identity.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMachineStoreForDomain">
@@ -727,7 +766,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -745,6 +783,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains machine-scoped isolated storage corresponding to the application domain identity and the assembly identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object corresponding to the <see cref="T:System.IO.IsolatedStorage.IsolatedStorageScope" />, based on a combination of the application domain identity and the assembly identity.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetPermission">
@@ -763,7 +805,6 @@
         <Parameter Name="ps" Type="System.Security.PermissionSet" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called during a store's initialization to determine the isolated storage file permissions that are granted to an assembly. The <see cref="T:System.IO.IsolatedStorage.IsolatedStorage" /> base class uses these permissions to determine the quota.</para>
@@ -772,6 +813,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Security.Permissions.IsolatedStoragePermission" /> from within a given permission set that represents access to isolated storage.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the <see cref="T:System.IO.IsolatedStorage.IsolatedStorageFile" /> object in the supplied permission set. The value is null if there is no permission of type <see cref="T:System.Security.Permissions.IsolatedStorageFilePermission" /> in the supplied set.</para>
+        </returns>
         <param name="ps">
           <attribution license="cc4" from="Microsoft" modified="false" />An object that contains the set of permissions granted to code that is attempting to use isolated storage. </param>
       </Docs>
@@ -792,7 +837,6 @@
         <Parameter Name="applicationIdentity" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -804,6 +848,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains isolated storage corresponding to the given application identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the parameters.</para>
+        </returns>
         <param name="scope">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values. </param>
         <param name="applicationIdentity">
@@ -826,7 +874,6 @@
         <Parameter Name="applicationEvidenceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -838,6 +885,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains isolated storage corresponding to the isolation scope and the application identity object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the parameters.</para>
+        </returns>
         <param name="scope">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values. </param>
         <param name="applicationEvidenceType">
@@ -862,7 +913,6 @@
         <Parameter Name="assemblyIdentity" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IsolatedStorageFile'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This form of GetStore is most useful for administrative code that needs to open a store as if it were another assembly. The store is opened for the evidence provided and not for the currently executing assembly.</para>
@@ -874,6 +924,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the isolated storage corresponding to the given application domain and assembly evidence objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the parameters.</para>
+        </returns>
         <param name="scope">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values. </param>
         <param name="domainIdentity">
@@ -900,7 +954,6 @@
         <Parameter Name="assemblyEvidenceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IsolatedStorageFile'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This is the overload of <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFile.GetStore(System.IO.IsolatedStorage.IsolatedStorageScope,System.Type,System.Type)" /> most likely to be called from application code.</para>
@@ -913,6 +966,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains isolated storage corresponding to the isolated storage scope given the application domain and assembly evidence types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the parameters.</para>
+        </returns>
         <param name="scope">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values. </param>
         <param name="domainEvidenceType">
@@ -941,7 +998,6 @@
         <Parameter Name="assemblyEvidenceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'IsolatedStorageFile'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -952,6 +1008,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains isolated storage corresponding to the given application domain and the assembly evidence objects and types.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the parameters.</para>
+        </returns>
         <param name="scope">
           <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the enumeration values. </param>
         <param name="domainEvidence">
@@ -977,7 +1037,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -991,6 +1050,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains user-scoped isolated storage corresponding to the calling code's application identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object corresponding to the isolated storage scope based on the calling code's assembly identity.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetUserStoreForAssembly">
@@ -1007,7 +1070,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IsolatedStorageFile'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The same assembly within different applications always uses the same isolated store when using this method.</para>
@@ -1022,6 +1084,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains user-scoped isolated storage corresponding to the calling code's assembly identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object corresponding to the isolated storage scope based on the calling code's assembly identity.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetUserStoreForDomain">
@@ -1038,7 +1104,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IsolatedStorageFile'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The same assembly code will use different isolated stores when used in the context of different applications.</para>
@@ -1055,6 +1120,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains user-scoped isolated storage corresponding to the application domain identity and assembly identity.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object corresponding to the <see cref="T:System.IO.IsolatedStorage.IsolatedStorageScope" />, based on a combination of the application domain identity and the assembly identity.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetUserStoreForSite">
@@ -1074,7 +1143,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is supported only in Silverlight-based applications. </para>
@@ -1083,6 +1151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains a user-scoped isolated store for use by applications in a virtual host domain.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The isolated storage file that corresponds to the isolated storage scope based on the calling code's application identity.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IncreaseQuotaTo">
@@ -1104,7 +1176,6 @@
         <Parameter Name="newQuotaSize" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFile.IncreaseQuotaTo(System.Int64)" /> method enables an application to explicitly request a larger quota size in bytes. The new quota size must not be smaller than the current quota size, because only quota increases are allowed.</para>
@@ -1117,6 +1188,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Enables an application to explicitly request a larger quota size, in bytes. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the new quota is accepted; otherwise, false.</para>
+        </returns>
         <param name="newQuotaSize">
           <attribution license="cc4" from="Microsoft" modified="false" />The requested size, in bytes.</param>
       </Docs>
@@ -1270,7 +1345,6 @@
         <Parameter Name="mode" Type="System.IO.FileMode" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is equivalent to using the <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFileStream.#ctor(System.String,System.IO.FileMode,System.IO.IsolatedStorage.IsolatedStorageFile)" /> constructor.</para>
@@ -1279,6 +1353,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a file in the specified mode.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file that is opened in the specified mode, with read/write access, and is unshared.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative path of the file within the isolated store.</param>
         <param name="mode">
@@ -1306,7 +1384,6 @@
         <Parameter Name="access" Type="System.IO.FileAccess" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is equivalent to using the <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFileStream.#ctor(System.String,System.IO.FileMode,System.IO.FileAccess,System.IO.IsolatedStorage.IsolatedStorageFile)" /> constructor.</para>
@@ -1315,6 +1392,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a file in the specified mode with the specified read/write access.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file that is opened in the specified mode and access, and is unshared.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative path of the file within the isolated store.</param>
         <param name="mode">
@@ -1345,7 +1426,6 @@
         <Parameter Name="share" Type="System.IO.FileShare" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is equivalent to using the <see cref="M:System.IO.IsolatedStorage.IsolatedStorageFileStream.#ctor(System.String,System.IO.FileMode,System.IO.FileAccess,System.IO.FileShare,System.IO.IsolatedStorage.IsolatedStorageFile)" /> constructor.</para>
@@ -1354,6 +1434,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Opens a file in the specified mode, with the specified read/write access and sharing permission.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A file that is opened in the specified mode and access, and with the specified sharing options.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The relative path of the file within the isolated store.</param>
         <param name="mode">

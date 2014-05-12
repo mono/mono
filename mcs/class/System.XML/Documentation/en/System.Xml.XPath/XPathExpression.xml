@@ -139,7 +139,6 @@ expression.AddSort("@ISBN", (IComparer)isbn);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>An XPathExpression that is the copy of this instance.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, the <see cref="M:System.Xml.XPath.XPathExpression.Clone" /> method returns a clone of this <see cref="T:System.Xml.XPath.XPathExpression" /> object with the same state as this <see cref="T:System.Xml.XPath.XPathExpression" /> object.</para>
@@ -148,6 +147,10 @@ expression.AddSort("@ISBN", (IComparer)isbn);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns a clone of this <see cref="T:System.Xml.XPath.XPathExpression" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Xml.XPath.XPathExpression" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Compile">
@@ -165,7 +168,6 @@ expression.AddSort("@ISBN", (IComparer)isbn);</code>
         <Parameter Name="xpath" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -200,6 +202,10 @@ expression.AddSort("@ISBN", (IComparer)isbn);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles the XPath expression specified and returns an <see cref="T:System.Xml.XPath.XPathExpression" /> object representing the XPath expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathExpression" /> object.</para>
+        </returns>
         <param name="xpath">
           <attribution license="cc4" from="Microsoft" modified="false" />An XPath expression.</param>
       </Docs>
@@ -220,7 +226,6 @@ expression.AddSort("@ISBN", (IComparer)isbn);</code>
         <Parameter Name="nsResolver" Type="System.Xml.IXmlNamespaceResolver" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -259,6 +264,10 @@ expression.AddSort("@ISBN", (IComparer)isbn);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compiles the specified XPath expression, with the <see cref="T:System.Xml.IXmlNamespaceResolver" /> object specified for namespace resolution, and returns an <see cref="T:System.Xml.XPath.XPathExpression" /> object that represents the XPath expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.XPath.XPathExpression" /> object.</para>
+        </returns>
         <param name="xpath">
           <attribution license="cc4" from="Microsoft" modified="false" />An XPath expression.</param>
         <param name="nsResolver">

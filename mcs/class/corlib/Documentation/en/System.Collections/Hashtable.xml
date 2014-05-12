@@ -778,10 +778,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Object" />
-that is a copy of the current instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A shallow copy of a collection copies only the elements of the collection, whether they are reference types or value types, but it does not copy the objects that the references refer to. The references in the new collection point to the same objects that the references in the original collection point to.</para>
@@ -793,6 +789,10 @@ that is a copy of the current instance.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of the <see cref="T:System.Collections.Hashtable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the <see cref="T:System.Collections.Hashtable" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -842,11 +842,6 @@ that is a copy of the current instance.</para>
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" />
-if the current instance contains <paramref name="key" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="key" /> is <see langword="null" />. </exception>
         <remarks>
@@ -860,6 +855,10 @@ if the current instance contains <paramref name="key" />; otherwise, <see langwo
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Collections.Hashtable" /> contains a specific key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.Hashtable" /> contains an element with the specified key; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Collections.Hashtable" />. </param>
       </Docs>
@@ -882,11 +881,6 @@ if the current instance contains <paramref name="key" />; otherwise, <see langwo
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if
- the current instance contains an entry with <paramref name="key" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="key" /> is <see langword="null" />. </exception>
         <remarks>
@@ -899,6 +893,10 @@ if the current instance contains <paramref name="key" />; otherwise, <see langwo
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Collections.Hashtable" /> contains a specific key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.Hashtable" /> contains an element with the specified key; otherwise, false.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The key to locate in the <see cref="T:System.Collections.Hashtable" />. </param>
       </Docs>
@@ -921,12 +919,6 @@ if the current instance contains <paramref name="key" />; otherwise, <see langwo
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" />
-if the current instance contains an
-entry with <paramref name="value" />; otherwise, <see langword="false" />.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The values of the elements of the <see cref="T:System.Collections.Hashtable" /> are compared to the specified value using the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
@@ -937,6 +929,10 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Collections.Hashtable" /> contains a specific value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Collections.Hashtable" /> contains an element with the specified <paramref name="value" />; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The value to locate in the <see cref="T:System.Collections.Hashtable" />. The value can be null. </param>
       </Docs>
@@ -1060,10 +1056,6 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Collections.IDictionaryEnumerator" /> for the current
-   instance.</para>
-        </returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>[Visual Basic, C#]</para>
@@ -1082,6 +1074,10 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IDictionaryEnumerator" /> that iterates through the <see cref="T:System.Collections.Hashtable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IDictionaryEnumerator" /> for the <see cref="T:System.Collections.Hashtable" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1102,9 +1098,6 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for <paramref name="key" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="key" /> is <see langword="null" />. </exception>
         <remarks>
@@ -1116,6 +1109,10 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for the specified key.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for <paramref name="key" />.</para>
+        </returns>
         <param name="key">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> for which a hash code is to be returned. </param>
       </Docs>
@@ -1358,12 +1355,6 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
         <Parameter Name="key" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="item" /> and <paramref name="key" /> represent the
-   same value; otherwise,
-<see langword="false" />. </para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <para>
             <paramref name="item" /> is <see langword="null" />. </para>
@@ -1380,6 +1371,10 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Compares a specific <see cref="T:System.Object" /> with a specific key in the <see cref="T:System.Collections.Hashtable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="item" /> and <paramref name="key" /> are equal; otherwise, false.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to compare with <paramref name="key" />. </param>
         <param name="key">
@@ -1505,9 +1500,6 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
         <Parameter Name="table" Type="System.Collections.Hashtable" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A synchronized (thread-safe) wrapper for <paramref name="table" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="table" /> is <see langword="null" />. </exception>
         <remarks>
@@ -1522,6 +1514,10 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a synchronized (thread-safe) wrapper for the <see cref="T:System.Collections.Hashtable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A synchronized (thread-safe) wrapper for the <see cref="T:System.Collections.Hashtable" />.</para>
+        </returns>
         <param name="table">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Hashtable" /> to synchronize. </param>
       </Docs>
@@ -1574,7 +1570,6 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>[Visual Basic, C#]</para>
@@ -1592,6 +1587,10 @@ entry with <paramref name="value" />; otherwise, <see langword="false" />.</para
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through a collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Values">

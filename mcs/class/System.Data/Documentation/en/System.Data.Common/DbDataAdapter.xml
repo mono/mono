@@ -156,7 +156,6 @@
         <Parameter Name="command" Type="System.Data.IDbCommand" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In <see cref="T:System.Data.Common.DbDataAdapter" />, this method throws <see cref="T:System.NotSupportedException" />. Classes that inherit from <see cref="T:System.Data.Common.DbDataAdapter" /> override this method to provide support for batches.</para>
@@ -165,6 +164,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Data.IDbCommand" /> to the current batch.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of commands in the batch before adding the <see cref="T:System.Data.IDbCommand" />.</para>
+        </returns>
         <param name="command">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.IDbCommand" /> to add to the batch.</param>
       </Docs>
@@ -203,12 +206,15 @@
         <Parameter Name="tableMapping" Type="System.Data.Common.DataTableMapping" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'RowUpdatedEventArgs'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Data.Common.RowUpdatedEventArgs" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Data.Common.RowUpdatedEventArgs" /> class.</para>
+        </returns>
         <param name="dataRow">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRow" /> used to update the data source. </param>
         <param name="command">
@@ -236,12 +242,15 @@
         <Parameter Name="tableMapping" Type="System.Data.Common.DataTableMapping" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'RowUpdatingEventArgs'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Initializes a new instance of the <see cref="T:System.Data.Common.RowUpdatingEventArgs" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the <see cref="T:System.Data.Common.RowUpdatingEventArgs" /> class.</para>
+        </returns>
         <param name="dataRow">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataRow" /> that updates the data source. </param>
         <param name="command">
@@ -343,7 +352,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In <see cref="T:System.Data.Common.DbDataAdapter" />, this method throws <see cref="T:System.NotSupportedException" />. Classes that inherit from <see cref="T:System.Data.Common.DbDataAdapter" /> override this method to provide support for batches.</para>
@@ -352,6 +360,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Executes the current batch.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The return value from the last command in the batch.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Fill">
@@ -364,7 +376,6 @@
         <Parameter Name="dataSet" Type="System.Data.DataSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> method retrieves the data from the data source using a SELECT statement. The <see cref="T:System.Data.IDbConnection" /> object associated with the select command must be valid, but it does not need to be open. If the <see cref="T:System.Data.IDbConnection" /> is closed before <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> is called, it is opened to retrieve data and then closed. If the connection is open before <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> is called, it remains open.</para>
@@ -392,6 +403,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in the <see cref="T:System.Data.DataSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet" />. This does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataSet" /> to fill with records and, if necessary, schema. </param>
       </Docs>
@@ -410,7 +425,6 @@
         <Parameter Name="dataTable" Type="System.Data.DataTable" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> method retrieves rows from the data source using the SELECT statement specified by an associated <see cref="P:System.Data.IDbDataAdapter.SelectCommand" /> property. The connection object associated with the SELECT statement must be valid, but it does not need to be open. If the connection is closed before <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> is called, it is opened to retrieve data, then closed. If the connection is open before <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> is called, it remains open.</para>
@@ -437,6 +451,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in a specified range in the <see cref="T:System.Data.DataSet" /> to match those in the data source using the <see cref="T:System.Data.DataTable" /> name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet" />. This does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="dataTable">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the <see cref="T:System.Data.DataTable" /> to use for table mapping. </param>
       </Docs>
@@ -456,7 +474,6 @@
         <Parameter Name="srcTable" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> method retrieves the data from the data source using a SELECT statement. The <see cref="T:System.Data.IDbConnection" /> object associated with the select command must be valid, but it does not need to be open. If the <see cref="T:System.Data.IDbConnection" /> is closed before <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> is called, it is opened to retrieve data, then closed. If the connection is open before <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> is called, it remains open.</para>
@@ -498,6 +515,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in the <see cref="T:System.Data.DataSet" /> to match those in the data source using the <see cref="T:System.Data.DataSet" /> and <see cref="T:System.Data.DataTable" /> names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet" />. This does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataSet" /> to fill with records and, if necessary, schema. </param>
         <param name="srcTable">
@@ -541,7 +562,6 @@
         <Parameter Name="behavior" Type="System.Data.CommandBehavior" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> method retrieves rows from the data source using the SELECT statement specified by an associated <see cref="P:System.Data.IDbDataAdapter.SelectCommand" /> property. The connection object associated with the SELECT statement must be valid, but it does not need to be open. If the connection is closed before <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> is called, it is opened to retrieve data and then closed. If the connection is open before <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> is called, it remains open.</para>
@@ -558,6 +578,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in a <see cref="T:System.Data.DataTable" /> to match those in the data source using the specified <see cref="T:System.Data.DataTable" />, <see cref="T:System.Data.IDbCommand" /> and <see cref="T:System.Data.CommandBehavior" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataTable" />. This does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="dataTable">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataTable" /> to fill with records and, if necessary, schema. </param>
         <param name="command">
@@ -591,7 +615,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.Common.DataAdapter.Fill(System.Data.DataSet)" /> method retrieves rows from the data source using the SELECT statement specified by an associated <see cref="P:System.Data.IDbDataAdapter.SelectCommand" /> property. The connection object associated with the SELECT statement must be valid, but it does not need to be open. If the connection is closed before <see cref="M:System.Data.Common.DataAdapter.Fill(System.Data.DataSet)" /> is called, it is opened to retrieve data, and then it is closed. If the connection is open before <see cref="M:System.Data.Common.DataAdapter.Fill(System.Data.DataSet)" /> is called, it remains open.</para>
@@ -608,6 +631,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in a <see cref="T:System.Data.DataTable" /> to match those in the data source starting at the specified record and retrieving up to the specified maximum number of records.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataTable" />. This value does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="startRecord">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based record number to start with. </param>
         <param name="maxRecords">
@@ -629,7 +656,6 @@
         <Parameter Name="srcTable" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <paramref name="maxRecords" /> value of 0 gets all records found after the start record. If <paramref name="maxRecords" /> is greater than the number of remaining rows, only the remaining rows are returned, and no error is issued.</para>
@@ -680,6 +706,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in a specified range in the <see cref="T:System.Data.DataSet" /> to match those in the data source using the <see cref="T:System.Data.DataSet" /> and <see cref="T:System.Data.DataTable" /> names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet" />. This does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataSet" /> to fill with records and, if necessary, schema. </param>
         <param name="startRecord">
@@ -738,7 +768,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="behavior" Type="System.Data.CommandBehavior" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A <paramref name="maxRecords" /> value of 0 gets all records found after the start record. If <paramref name="maxRecords" /> is greater than the number of remaining rows, only the remaining rows are returned and no error is issued.</para>
@@ -774,6 +803,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in a specified range in the <see cref="T:System.Data.DataSet" /> to match those in the data source using the <see cref="T:System.Data.DataSet" /> and <see cref="T:System.Data.DataTable" /> names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows added to or refreshed in the data tables.</para>
+        </returns>
         <param name="dataTables">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataTable" /> objects to fill from the data source.</param>
         <param name="startRecord">
@@ -801,7 +834,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="behavior" Type="System.Data.CommandBehavior" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> method retrieves rows from the data source using the SELECT statement specified by an associated <see cref="P:System.Data.IDbDataAdapter.SelectCommand" /> property. The connection object associated with the SELECT statement must be valid, but it does not need to be open. If the connection is closed before <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> is called, it is opened to retrieve data, then closed. If the connection is open before <see cref="M:System.Data.Common.DbDataAdapter.Fill(System.Data.DataSet)" /> is called, it remains open.</para>
@@ -827,6 +859,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds or refreshes rows in a specified range in the <see cref="T:System.Data.DataSet" /> to match those in the data source using the <see cref="T:System.Data.DataSet" /> and source table names, command string, and command behavior.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully added to or refreshed in the <see cref="T:System.Data.DataSet" />. This does not include rows affected by statements that do not return rows.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataSet" /> to fill with records and, if necessary, schema. </param>
         <param name="startRecord">
@@ -894,7 +930,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="schemaType" Type="System.Data.SchemaType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Data.DataTable []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method retrieves the schema information from the data source using the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" />.</para>
@@ -948,6 +983,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Data.DataTable" /> named "Table" to the specified <see cref="T:System.Data.DataSet" /> and configures the schema to match that in the data source based on the specified <see cref="T:System.Data.SchemaType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to a collection of <see cref="T:System.Data.DataTable" /> objects that were added to the <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataSet" /> to insert the schema in. </param>
         <param name="schemaType">
@@ -969,7 +1008,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="schemaType" Type="System.Data.SchemaType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Data.DataTable'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.Common.DbDataAdapter.FillSchema(System.Data.DataTable,System.Data.SchemaType)" /> method retrieves the schema from the data source using the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" />. The connection object associated with the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" /> must be valid, but it does not need to be open. If the connection is closed before <see cref="M:System.Data.Common.DbDataAdapter.FillSchema(System.Data.DataTable,System.Data.SchemaType)" /> is called, it is opened to retrieve data, then closed. If the connection is open before <see cref="M:System.Data.Common.DbDataAdapter.FillSchema(System.Data.DataTable,System.Data.SchemaType)" /> is called, it remains open.</para>
@@ -1026,6 +1064,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Configures the schema of the specified <see cref="T:System.Data.DataTable" /> based on the specified <see cref="T:System.Data.SchemaType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataTable" /> that contains schema information returned from the data source.</para>
+        </returns>
         <param name="dataTable">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataTable" /> to be filled with the schema from the data source. </param>
         <param name="schemaType">
@@ -1048,7 +1090,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="srcTable" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Data.DataTable []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method retrieves the schema information from the data source using the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" />.</para>
@@ -1112,6 +1153,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Data.DataTable" /> to the specified <see cref="T:System.Data.DataSet" /> and configures the schema to match that in the data source based upon the specified <see cref="T:System.Data.SchemaType" /> and <see cref="T:System.Data.DataTable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A reference to a collection of <see cref="T:System.Data.DataTable" /> objects that were added to the <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Data.DataSet" /> to insert the schema in. </param>
         <param name="schemaType">
@@ -1137,7 +1182,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="behavior" Type="System.Data.CommandBehavior" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Data.DataTable'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.Common.DbDataAdapter.FillSchema(System.Data.DataTable,System.Data.SchemaType)" /> method retrieves the schema from the data source using the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" />. The connection object associated with the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" /> must be valid, but it does not need to be open. If the connection is closed before <see cref="M:System.Data.Common.DbDataAdapter.FillSchema(System.Data.DataTable,System.Data.SchemaType)" /> is called, it is opened to retrieve data, then closed. If the connection is open before <see cref="M:System.Data.Common.DbDataAdapter.FillSchema(System.Data.DataTable,System.Data.SchemaType)" /> is called, it remains open.</para>
@@ -1191,6 +1235,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Configures the schema of the specified <see cref="T:System.Data.DataTable" /> based on the specified <see cref="T:System.Data.SchemaType" />, command string, and <see cref="T:System.Data.CommandBehavior" /> values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A of <see cref="T:System.Data.DataTable" /> object that contains schema information returned from the data source.</para>
+        </returns>
         <param name="dataTable">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataTable" /> to be filled with the schema from the data source. </param>
         <param name="schemaType">
@@ -1219,7 +1267,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="behavior" Type="System.Data.CommandBehavior" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Data.DataTable []'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Data.Common.DbDataAdapter.FillSchema(System.Data.DataTable,System.Data.SchemaType)" /> method retrieves the schema from the data source using the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" />. The connection object associated with the <see cref="P:System.Data.IDbDataAdapter.SelectCommand" /> must be valid, but it does not need to be open. If the connection is closed before <see cref="M:System.Data.Common.DbDataAdapter.FillSchema(System.Data.DataTable,System.Data.SchemaType)" /> is called, it is opened to retrieve data, then closed. If the connection is open before <see cref="M:System.Data.Common.DbDataAdapter.FillSchema(System.Data.DataTable,System.Data.SchemaType)" /> is called, it remains open.</para>
@@ -1283,6 +1330,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Data.DataTable" /> to the specified <see cref="T:System.Data.DataSet" /> and configures the schema to match that in the data source based on the specified <see cref="T:System.Data.SchemaType" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.DataTable" /> objects that contain schema information returned from the data source.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataSet" /> to be filled with the schema from the data source. </param>
         <param name="schemaType">
@@ -1313,7 +1364,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="parameterIndex" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>In <see cref="T:System.Data.Common.DbDataAdapter" />, this method throws <see cref="T:System.NotSupportedException" />. Classes that inherit from <see cref="T:System.Data.Common.DbDataAdapter" /> override this method to provide support for batches.</para>
@@ -1322,6 +1372,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Data.IDataParameter" /> from one of the commands in the current batch.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.IDataParameter" /> specified.</para>
+        </returns>
         <param name="commandIdentifier">
           <attribution license="cc4" from="Microsoft" modified="false" />The index of the command to retrieve the parameter from.</param>
         <param name="parameterIndex">
@@ -1359,12 +1413,15 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Data.IDataParameter []'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the parameters set by the user when executing an SQL SELECT statement.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of <see cref="T:System.Data.IDataParameter" /> objects that contains the parameters set by the user.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1627,7 +1684,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DbDataAdapter" /> instance is cast to an <see cref="T:System.ICloneable" /> interface.</para>
@@ -1637,6 +1693,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new object that is a copy of the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new object that is a copy of this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="TerminateBatching">
@@ -1670,7 +1730,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="dataRows" Type="System.Data.DataRow[]" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When an application calls the <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> method, the <see cref="T:System.Data.Common.DbDataAdapter" /> examines the <see cref="P:System.Data.DataRow.RowState" /> property, and executes the required INSERT, UPDATE, or DELETE statements iteratively for each row, based on the order of the indexes configured in the <see cref="T:System.Data.DataSet" />. For example, <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> might execute a DELETE statement, followed by an INSERT statement, and then another DELETE statement, due to the ordering of the rows in the <see cref="T:System.Data.DataTable" />.</para>
@@ -1751,6 +1810,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates the values in the database by executing the respective INSERT, UPDATE, or DELETE statements for each inserted, updated, or deleted row in the specified array in the <see cref="T:System.Data.DataSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully updated from the <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
         <param name="dataRows">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Data.DataRow" /> objects used to update the data source. </param>
       </Docs>
@@ -1769,7 +1832,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="dataSet" Type="System.Data.DataSet" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When an application calls the <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> method, the <see cref="T:System.Data.Common.DbDataAdapter" /> examines the <see cref="P:System.Data.DataRow.RowState" /> property, and executes the required INSERT, UPDATE, or DELETE statements iteratively for each row, based on the order of the indexes configured in the <see cref="T:System.Data.DataSet" />. For example, <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> might execute a DELETE statement, followed by an INSERT statement, and then another DELETE statement, due to the ordering of the rows in the <see cref="T:System.Data.DataTable" />.</para>
@@ -1850,6 +1912,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates the values in the database by executing the respective INSERT, UPDATE, or DELETE statements for each inserted, updated, or deleted row in the specified <see cref="T:System.Data.DataSet" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully updated from the <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataSet" /> used to update the data source. </param>
       </Docs>
@@ -1868,7 +1934,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="dataTable" Type="System.Data.DataTable" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When an application calls the <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> method, the <see cref="T:System.Data.Common.DbDataAdapter" /> examines the <see cref="P:System.Data.DataRow.RowState" /> property, and executes the required INSERT, UPDATE, or DELETE statements iteratively for each row, based on the order of the indexes configured in the <see cref="T:System.Data.DataSet" />. For example, <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> might execute a DELETE statement, followed by an INSERT statement, and then another DELETE statement, due to the ordering of the rows in the <see cref="T:System.Data.DataTable" />.</para>
@@ -1949,6 +2014,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates the values in the database by executing the respective INSERT, UPDATE, or DELETE statements for each inserted, updated, or deleted row in the specified <see cref="T:System.Data.DataTable" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully updated from the <see cref="T:System.Data.DataTable" />.</para>
+        </returns>
         <param name="dataTable">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataTable" /> used to update the data source. </param>
       </Docs>
@@ -1968,7 +2037,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="tableMapping" Type="System.Data.Common.DataTableMapping" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When an application calls the <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> method, the <see cref="T:System.Data.Common.DbDataAdapter" /> examines the <see cref="P:System.Data.DataRow.RowState" /> property, and executes the required INSERT, UPDATE, or DELETE statements iteratively for each row, based on the order of the indexes configured in the <see cref="T:System.Data.DataSet" />. For example, <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> might execute a DELETE statement, followed by an INSERT statement, and then another DELETE statement, due to the ordering of the rows in the <see cref="T:System.Data.DataTable" />.</para>
@@ -2049,6 +2117,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates the values in the database by executing the respective INSERT, UPDATE, or DELETE statements for each inserted, updated, or deleted row in the specified array of <see cref="T:System.Data.DataSet" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully updated from the <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
         <param name="dataRows">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of <see cref="T:System.Data.DataRow" /> objects used to update the data source. </param>
         <param name="tableMapping">
@@ -2070,7 +2142,6 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
         <Parameter Name="srcTable" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When an application calls the <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> method, the <see cref="T:System.Data.Common.DbDataAdapter" /> examines the <see cref="P:System.Data.DataRow.RowState" /> property, and executes the required INSERT, UPDATE, or DELETE statements iteratively for each row, based on the order of the indexes configured in the <see cref="T:System.Data.DataSet" />. For example, <see cref="M:System.Data.Common.DbDataAdapter.Update(System.Data.DataSet)" /> might execute a DELETE statement, followed by an INSERT statement, and then another DELETE statement, due to the ordering of the rows in the <see cref="T:System.Data.DataTable" />.</para>
@@ -2162,6 +2233,10 @@ adapter.Fill(dataset, "AAA"); // Fills table "aaa" because only one similarly na
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Updates the values in the database by executing the respective INSERT, UPDATE, or DELETE statements for each inserted, updated, or deleted row in the <see cref="T:System.Data.DataSet" />  with the specified <see cref="T:System.Data.DataTable" /> name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows successfully updated from the <see cref="T:System.Data.DataSet" />.</para>
+        </returns>
         <param name="dataSet">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.DataSet" /> to use to update the data source. </param>
         <param name="srcTable">

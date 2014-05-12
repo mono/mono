@@ -133,7 +133,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Net.EndpointPermission.ToString" /> method returns a string that represents the contents for the <see cref="T:System.Net.EndpointPermission" /> instance. The string is in the form <see cref="P:System.Net.EndpointPermission.Hostname" /> # <see cref="P:System.Net.EndpointPermission.Port" /> # <see cref="P:System.Net.EndpointPermission.Transport" />.</para>
@@ -142,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the current <see cref="T:System.Net.EndpointPermission" /> instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Net.EndpointPermission" /> instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Transport">

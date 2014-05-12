@@ -37,7 +37,6 @@
         <Parameter Name="property" Type="System.Configuration.SettingsProperty" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -47,6 +46,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the settings provider compatible with the specified settings property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If found, the <see cref="T:System.Configuration.SettingsProvider" /> that can persist the specified settings property; otherwise, null.</para>
+        </returns>
         <param name="property">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Configuration.SettingsProperty" /> that requires serialization.</param>
       </Docs>

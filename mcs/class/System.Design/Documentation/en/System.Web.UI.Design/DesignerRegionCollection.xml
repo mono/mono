@@ -107,7 +107,6 @@
         <Parameter Name="region" Type="System.Web.UI.Design.DesignerRegion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.DesignerRegionCollection.Add(System.Web.UI.Design.DesignerRegion)" /> method adds the specified <see cref="T:System.Web.UI.Design.DesignerRegion" /> object to the end of the collection. To add a <see cref="T:System.Web.UI.Design.DesignerRegion" /> object to the collection at a specific index location, use the <see cref="M:System.Web.UI.Design.DesignerRegionCollection.Insert(System.Int32,System.Web.UI.Design.DesignerRegion)" /> method.</para>
@@ -116,6 +115,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds the specified <see cref="T:System.Web.UI.Design.DesignerRegion" /> object to the end of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the region was added to the collection.</para>
+        </returns>
         <param name="region">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.DesignerRegion" /> to add to the collection.</param>
       </Docs>
@@ -154,7 +157,6 @@
         <Parameter Name="region" Type="System.Web.UI.Design.DesignerRegion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.DesignerRegionCollection.Contains(System.Web.UI.Design.DesignerRegion)" /> method determines equality by using the <see cref="M:System.Object.Equals(System.Object)" /> method on the <see cref="T:System.Web.UI.Design.DesignerRegion" /> objects.</para>
@@ -164,6 +166,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the specified region is contained within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the region is in the collection; otherwise, false.</para>
+        </returns>
         <param name="region">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.DesignerRegion" /> to locate within the collection.</param>
       </Docs>
@@ -228,7 +234,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="P:System.Web.UI.Design.DesignerRegionCollection.Count" /> property together with a loop construct, such as while, for, or foreach statements, to enumerate through the <see cref="T:System.Web.UI.Design.DesignerRegionCollection" /> object.</para>
@@ -237,6 +242,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator that iterates through the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -252,7 +261,6 @@
         <Parameter Name="region" Type="System.Web.UI.Design.DesignerRegion" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.Design.DesignerRegionCollection.IndexOf(System.Web.UI.Design.DesignerRegion)" /> method determines equality by using the <see cref="M:System.Object.Equals(System.Object)" /> method on the <see cref="T:System.Web.UI.Design.DesignerRegion" /> objects.</para>
@@ -262,6 +270,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the index of the specified <see cref="T:System.Web.UI.Design.DesignerRegion" /> object within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of <paramref name="region" /> within the collection; otherwise, -1, if <paramref name="region" /> is not in the collection.</para>
+        </returns>
         <param name="region">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.DesignerRegion" /> to locate within the collection.</param>
       </Docs>
@@ -578,7 +590,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.DesignerRegionCollection" /> instance is cast to an <see cref="T:System.Collections.IEnumerable" /> interface.</para>
@@ -587,6 +598,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Collections.IEnumerable.GetEnumerator" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Add">
@@ -602,7 +617,6 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.DesignerRegionCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -611,6 +625,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Collections.IList.Add(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the item was added to the collection.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The item to add to the collection.</param>
       </Docs>
@@ -649,7 +667,6 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.DesignerRegionCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -658,6 +675,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Collections.IList.Contains(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true, if the region is in the collection; otherwise, false.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.DesignerRegion" /> to locate within the collection.</param>
       </Docs>
@@ -675,7 +696,6 @@
         <Parameter Name="o" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.Design.DesignerRegionCollection" /> instance is cast to an <see cref="T:System.Collections.IList" /> interface.</para>
@@ -684,6 +704,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Collections.IList.IndexOf(System.Object)" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based index of the first occurrence of the object within the collection; otherwise, -1, if the object is not in the collection.</para>
+        </returns>
         <param name="o">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.Design.DesignerRegion" /> to locate within the collection.</param>
       </Docs>

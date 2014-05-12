@@ -56,7 +56,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.ControlBuilder.AllowWhitespaceLiterals" /> method is used to determine whether white space literals are permitted in the content between the opening and closing tags of a control. When this method returns false, the white space literals are trimmed from the content before the content is processed by the page parser. When this method returns true, the white space literals not removed. </para>
@@ -66,6 +65,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether white space literals are permitted in the content between a control's opening and closing tags. This method is called by the ASP.NET page framework.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns true.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -150,12 +153,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds a design-time instance of the control that is referred to by this <see cref="T:System.Web.UI.ControlBuilder" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resulting built control.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CloseControl">
@@ -216,12 +222,15 @@
         <Parameter Name="sourceFileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.UI.ControlBuilder" /></returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a <see cref="T:System.Web.UI.ControlBuilder" /> object from the specified tag name and object type, as well as other parameters defining the builder.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The builder that is responsible for creating the control.</para>
+        </returns>
         <param name="parser">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.TemplateParser" /> object responsible for parsing the control. </param>
         <param name="parentBuilder">
@@ -293,7 +302,6 @@
         <Parameter Name="attribs" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Type" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called by the ASP.NET page framework during parsing and is not intended to be called directly in you code.</para>
@@ -302,6 +310,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains the <see cref="T:System.Type" /> of the control type corresponding to a child tag. This method is called by the ASP.NET page framework.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Type" /> of the specified control's child.</para>
+        </returns>
         <param name="tagName">
           <attribution license="cc4" from="Microsoft" modified="false" />The tag name of the child. </param>
         <param name="attribs">
@@ -339,7 +351,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is called by the ASP.NET page framework during parsing and is not intended to be called directly in you code.</para>
@@ -348,6 +359,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if a control has both an opening and closing tag. This method is called by the ASP.NET page framework.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control has an opening and closing tag; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -362,7 +377,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A literal string refers to the text between the opening and closing tag of an HTML control. HTML encoding is when text is converted into a string representation that the browser will display rather than interpret as HTML. Characters such as the question mark (?), ampersand (&amp;), slash mark (/), and spaces might be truncated or corrupted by some browsers, so those characters must be encoded when they appear in a tags or in query strings.</para>
@@ -372,6 +386,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the literal string of an HTML control must be HTML decoded. This method is called by the ASP.NET page framework.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the HTML control literal string is to be decoded; otherwise, false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -485,7 +503,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The inner text is the text between the opening and closing tags of the control.</para>
@@ -495,6 +512,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines if the control builder needs to get its inner text. If so, the <see cref="M:System.Web.UI.ControlBuilder.SetTagInnerText(System.String)" /> method must be called. This method is called by the ASP.NET page framework.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the control builder needs to get its inner text. The default is false.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

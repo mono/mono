@@ -52,12 +52,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Data.Common.DataColumnMapping" /> object to the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index of the DataColumnMapping object that was added to the collection.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />A DataColumnMapping object to add to the collection. </param>
       </Docs>
@@ -77,12 +80,15 @@
         <Parameter Name="dataSetColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataColumnMapping'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Data.Common.DataColumnMapping" /> object to the collection when given a source column name and a <see cref="T:System.Data.DataSet" /> column name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The DataColumnMapping object that was added to the collection.</para>
+        </returns>
         <param name="sourceColumn">
           <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the source column to map to. </param>
         <param name="dataSetColumn">
@@ -167,12 +173,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether a <see cref="T:System.Data.Common.DataColumnMapping" /> object with the given <see cref="T:System.Object" /> exists in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the collection contains the specified <see cref="T:System.Data.Common.DataColumnMapping" /> object; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that is the <see cref="T:System.Data.Common.DataColumnMapping" />. </param>
       </Docs>
@@ -191,12 +200,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether a <see cref="T:System.Data.Common.DataColumnMapping" /> object with the given source column name exists in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if collection contains a <see cref="T:System.Data.Common.DataColumnMapping" /> object with the specified source column name; otherwise, false.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive source column name of the <see cref="T:System.Data.Common.DataColumnMapping" /> object. </param>
       </Docs>
@@ -292,12 +304,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataColumnMapping'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Data.Common.DataColumnMapping" /> object with the specified <see cref="T:System.Data.DataSet" /> column name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.Common.DataColumnMapping" /> object with the specified <see cref="T:System.Data.DataSet" /> column name.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The name, which is not case-sensitive, of the <see cref="T:System.Data.DataSet" /> column to find. </param>
       </Docs>
@@ -318,7 +333,6 @@
         <Parameter Name="mappingAction" Type="System.Data.MissingMappingAction" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DataColumnMapping'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the <see cref="T:System.Data.Common.DataColumnMapping" /> exists in the collection, it is returned.</para>
@@ -364,6 +378,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a <see cref="T:System.Data.Common.DataColumnMapping" /> for the specified <see cref="T:System.Data.Common.DataColumnMappingCollection" />, source column name, and <see cref="T:System.Data.MissingMappingAction" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.Common.DataColumnMapping" /> object.</para>
+        </returns>
         <param name="columnMappings">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.Common.DataColumnMappingCollection" />. </param>
         <param name="sourceColumn">
@@ -404,12 +422,15 @@
         <Parameter Name="schemaAction" Type="System.Data.MissingSchemaAction" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A static method that returns a <see cref="T:System.Data.DataColumn" /> object without instantiating a <see cref="T:System.Data.Common.DataColumnMappingCollection" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.DataColumn" /> object.</para>
+        </returns>
         <param name="columnMappings">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Data.Common.DataColumnMappingCollection" />.</param>
         <param name="sourceColumn">
@@ -432,12 +453,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an enumerator that can iterate through the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" /> that can be used to iterate through the collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -454,12 +478,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the location of the specified <see cref="T:System.Object" /> that is a <see cref="T:System.Data.Common.DataColumnMapping" /> within the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based location of the specified <see cref="T:System.Object" /> that is a <see cref="T:System.Data.Common.DataColumnMapping" /> within the collection.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Object" /> that is the <see cref="T:System.Data.Common.DataColumnMapping" /> to find. </param>
       </Docs>
@@ -478,12 +505,15 @@
         <Parameter Name="sourceColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the location of the <see cref="T:System.Data.Common.DataColumnMapping" /> with the specified source column name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based location of the <see cref="T:System.Data.Common.DataColumnMapping" /> with the specified case-sensitive source column name.</para>
+        </returns>
         <param name="sourceColumn">
           <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the source column. </param>
       </Docs>
@@ -502,12 +532,15 @@
         <Parameter Name="dataSetColumn" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the location of the specified <see cref="T:System.Data.Common.DataColumnMapping" /> with the given <see cref="T:System.Data.DataSet" /> column name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The zero-based location of the specified <see cref="T:System.Data.Common.DataColumnMapping" /> with the given DataSet column name, or -1 if the DataColumnMapping object does not exist in the collection.</para>
+        </returns>
         <param name="dataSetColumn">
           <attribution license="cc4" from="Microsoft" modified="false" />The name, which is not case-sensitive, of the data set column to find. </param>
       </Docs>
@@ -556,6 +589,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Inserts a <see cref="T:System.Data.Common.DataColumnMapping" /> object into the <see cref="T:System.Data.Common.DataColumnMappingCollection" /> at the specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Data.Common.DataColumnMapping" /> object.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index of the <see cref="T:System.Data.Common.DataColumnMapping" /> object to insert. </param>
         <param name="value">
@@ -840,7 +877,6 @@
         <Parameter Name="dataSetColumnName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DataColumnMappingCollection" /> instance is cast to an <see cref="T:System.Data.IColumnMappingCollection" /> interface.</para>
@@ -850,6 +886,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds a <see cref="T:System.Data.Common.DataColumnMapping" /> object to the <see cref="T:System.Data.Common.DataColumnMappingCollection" /> by using the source column and <see cref="T:System.Data.DataSet" /> column names.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ColumnMapping object that was added to the collection.</para>
+        </returns>
         <param name="sourceColumnName">
           <attribution license="cc4" from="Microsoft" modified="false" />The case-sensitive name of the source column.</param>
         <param name="dataSetColumnName">
@@ -870,7 +910,6 @@
         <Parameter Name="dataSetColumnName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Data.Common.DataColumnMappingCollection" /> instance is cast to an <see cref="T:System.Data.IColumnMappingCollection" /> interface.</para>
@@ -880,6 +919,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Data.Common.DataColumnMapping" /> object that has the specified <see cref="T:System.Data.DataSet" /> column name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Data.Common.DataColumnMapping" /> object that  has the specified <see cref="T:System.Data.DataSet" /> column name.</para>
+        </returns>
         <param name="dataSetColumnName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name, which is not case-sensitive, of the <see cref="T:System.Data.DataSet" /> column to find.</param>
       </Docs>

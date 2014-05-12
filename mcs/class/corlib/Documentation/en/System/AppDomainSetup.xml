@@ -457,7 +457,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method provides a way to override the configuration information of an application that creates a new application domain. The configuration file information in <paramref name="value" /> overrides the configuration file information for the application. For example, when the Example.exe application creates a new application domain, it can override the configuration information originally obtained from Example.exe.config file.</para>
@@ -471,6 +470,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the XML configuration information set by the <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method, which overrides the application's XML configuration information.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains the XML configuration information that was set by the <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method, or null if the <see cref="M:System.AppDomainSetup.SetConfigurationBytes(System.Byte[])" /> method has not been called.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LicenseFile">

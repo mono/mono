@@ -75,12 +75,15 @@
         <Parameter Name="target" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Specifies whether this object can provide its extender properties to the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if this object can provide its extender properties; otherwise, false.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that the externder properties are provided to. </param>
       </Docs>
@@ -99,12 +102,15 @@
         <Parameter Name="ctl" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the Help keyword for the specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Help keyword associated with this control, or null if the <see cref="T:System.Windows.Forms.HelpProvider" /> is currently configured to display the entire Help file or is configured to provide a Help string.</para>
+        </returns>
         <param name="ctl">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Control" /> from which to retrieve the Help topic. </param>
       </Docs>
@@ -131,12 +137,15 @@
         <Parameter Name="ctl" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the current <see cref="T:System.Windows.Forms.HelpNavigator" /> setting for the specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Windows.Forms.HelpNavigator" /> setting for the specified control. The default is <see cref="F:System.Windows.Forms.HelpNavigator.AssociateIndex" />.</para>
+        </returns>
         <param name="ctl">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Control" /> from which to retrieve the Help navigator. </param>
       </Docs>
@@ -163,7 +172,6 @@
         <Parameter Name="ctl" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To display this Help string at run time, the user presses the F1 key while the specified control has the input focus.</para>
@@ -172,6 +180,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the contents of the pop-up Help window for the specified control.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Help string associated with this control. The default is null.</para>
+        </returns>
         <param name="ctl">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Control" /> from which to retrieve the Help string. </param>
       </Docs>
@@ -198,7 +210,6 @@
         <Parameter Name="ctl" Type="System.Windows.Forms.Control" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When you use the <see cref="M:System.Windows.Forms.HelpProvider.SetHelpKeyword(System.Windows.Forms.Control,System.String)" /> or <see cref="M:System.Windows.Forms.HelpProvider.SetHelpString(System.Windows.Forms.Control,System.String)" /> method to associate a keyword or prompt with a specified control, calling this method automatically returns true. You can override this behavior by passing false to the <see cref="M:System.Windows.Forms.HelpProvider.SetShowHelp(System.Windows.Forms.Control,System.Boolean)" /> method.</para>
@@ -207,6 +218,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether the specified control's Help should be displayed.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if Help will be displayed for the control; otherwise, false.</para>
+        </returns>
         <param name="ctl">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Windows.Forms.Control" /> for which Help will be displayed. </param>
       </Docs>
@@ -432,7 +447,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Windows.Forms.HelpProvider.ToString" /> method returns a string that includes the type and the <see cref="P:System.Windows.Forms.HelpProvider.HelpNamespace" /> property of the <see cref="T:System.Windows.Forms.HelpProvider" />.</para>
@@ -441,6 +455,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the current <see cref="T:System.Windows.Forms.HelpProvider" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Windows.Forms.HelpProvider" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>

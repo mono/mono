@@ -72,7 +72,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the <see cref="M:System.Security.SecurityManager.CurrentThreadRequiresSecurityContextCapture" /> method before you cache sensitive data that is obtained after successful security demands. </para>
@@ -87,6 +86,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the current thread requires a security context capture if its security state has to be re-created at a later point in time.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>false if the stack contains no partially trusted application domains, no partially trusted assemblies, and no currently active <see cref="M:System.Security.CodeAccessPermission.PermitOnly" /> or <see cref="M:System.Security.CodeAccessPermission.Deny" /> modifiers; true if the common language runtime cannot guarantee that the stack contains none of these. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetStandardSandbox">
@@ -103,7 +106,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <block subset="none" type="note">
@@ -183,6 +185,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a permission set that is safe to grant to an application that has the provided evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A permission set that can be used as a grant set for the application that has the provided evidence.</para>
+        </returns>
         <param name="evidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The host evidence to match to a permission set.</param>
       </Docs>
@@ -231,7 +237,6 @@
         <Parameter Name="perm" Type="System.Security.IPermission" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Granting of permissions is determined by policy and is different from a demand subject to overrides, such as an assert. Also, <see cref="M:System.Security.SecurityManager.IsGranted(System.Security.IPermission)" /> only tests the grant of the calling code assembly, independent of other callers on the stack.</para>
@@ -240,6 +245,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether a permission is granted to the caller.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the permissions granted to the caller include the permission <paramref name="perm" />; otherwise, false.</para>
+        </returns>
         <param name="perm">
           <attribution license="cc4" from="Microsoft" modified="false" />The permission to test against the grant of the caller. </param>
       </Docs>
@@ -266,12 +275,15 @@
         <Parameter Name="type" Type="System.Security.PolicyLevelType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Policy.PolicyLevel'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a <see cref="T:System.Security.Policy.PolicyLevel" /> from the specified file.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded policy level.</para>
+        </returns>
         <param name="path">
           <attribution license="cc4" from="Microsoft" modified="false" />The physical file path to a file containing the security policy information. </param>
         <param name="type">
@@ -300,12 +312,15 @@
         <Parameter Name="type" Type="System.Security.PolicyLevelType" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Policy.PolicyLevel'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a <see cref="T:System.Security.Policy.PolicyLevel" /> from the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The loaded policy level.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The XML representation of a security policy level in the same form in which it appears in a configuration file. </param>
         <param name="type">
@@ -331,7 +346,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The returned enumerator provides successive <see cref="T:System.Security.Policy.PolicyLevel" /> objects that represent the policy at the respective (machine, user, enterprise, application domain) level of the hierarchy. These objects are the live policy objects; altering these objects can have unpredictable results.</para>
@@ -341,6 +355,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides an enumerator to access the security policy hierarchy by levels, such as computer policy and user policy.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator for <see cref="T:System.Security.Policy.PolicyLevel" /> objects that compose the security policy hierarchy.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ResolvePolicy">
@@ -364,7 +382,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'PermissionSet'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method invokes the security policy engine, providing it with evidence of the calling code's identity. The result is determined by the security policy.</para>
@@ -373,6 +390,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines what permissions to grant to code based on the specified evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The set of permissions that can be granted by the security system.</para>
+        </returns>
         <param name="evidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The evidence set used to evaluate policy. </param>
       </Docs>
@@ -397,7 +418,6 @@
         <Parameter Name="evidences" Type="System.Security.Policy.Evidence[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -407,6 +427,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines what permissions to grant to code based on the specified evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The set of permissions that is appropriate for all of the provided evidence.</para>
+        </returns>
         <param name="evidences">
           <attribution license="cc4" from="Microsoft" modified="false" />An array of evidence objects used to evaluate policy. </param>
       </Docs>
@@ -467,7 +491,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'Collections.IEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is useful in analyzing how a specified policy configuration works with specific kinds of evidence.</para>
@@ -477,6 +500,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a collection of code groups matching the specified evidence.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumeration of the set of code groups matching the evidence.</para>
+        </returns>
         <param name="evidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The evidence set against which the policy is evaluated. </param>
       </Docs>
@@ -501,7 +528,6 @@
         <Parameter Name="evidence" Type="System.Security.Policy.Evidence" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -511,6 +537,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines which permissions to grant to code based on the specified evidence, excluding the policy for the <see cref="T:System.AppDomain" /> level.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The set of permissions that can be granted by the security system.</para>
+        </returns>
         <param name="evidence">
           <attribution license="cc4" from="Microsoft" modified="false" />The evidence set used to evaluate policy.</param>
       </Docs>

@@ -71,12 +71,6 @@
         <Parameter Name="array" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <paramref name="array" />, if it did not exist in the table at the time of the call, or
-   the <see cref="T:System.String" />
-   instance previously stored in the table with a value equal to <paramref name="array" />.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" />.</exception>
         <remarks>
@@ -87,6 +81,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, atomizes the specified string and adds it to the XmlNameTable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new atomized string or the existing one if it already exists.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The name to add. </param>
       </Docs>
@@ -111,12 +109,6 @@
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.String" qualify="true" />
-equivalent of the specified subset of the <see cref="T:System.Char" qualify="true" /> array that is stored in the table, or
-<see cref="F:System.String.Empty" qualify="true" /> if
-<paramref name="length" /> is zero.</para>
-        </returns>
         <exception cref="T:System.IndexOutOfRangeException">
           <para>
             <paramref name="offset" /> &lt; 0.</para>
@@ -138,6 +130,10 @@ equivalent of the specified subset of the <see cref="T:System.Char" qualify="tru
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, atomizes the specified string and adds it to the XmlNameTable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The new atomized string or the existing one if it already exists. If length is zero, String.Empty is returned.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the name to add. </param>
         <param name="offset">
@@ -164,10 +160,6 @@ equivalent of the specified subset of the <see cref="T:System.Char" qualify="tru
         <Parameter Name="array" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.String" />
-instance previously stored in the table with a value equal to <paramref name="array" />, or <see langword="null" /> if it does not exist.</para>
-        </returns>
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" />.</exception>
         <remarks>
@@ -178,6 +170,10 @@ instance previously stored in the table with a value equal to <paramref name="ar
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the atomized string containing the same value as the specified string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The atomized string or null if the string has not already been atomized.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The name to look up. </param>
       </Docs>
@@ -202,11 +198,6 @@ instance previously stored in the table with a value equal to <paramref name="ar
         <Parameter Name="length" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>The <see cref="T:System.String" qualify="true" />
-equivalent of the specified subset of the <see cref="T:System.Char" qualify="true" /> array that is stored in the table, or
-<see langword="null" /> if the equivalent <see cref="T:System.String" /> is not in the table.</para>
-        </returns>
         <exception cref="T:System.IndexOutOfRangeException">
           <paramref name="offset" /> &lt; 0. <para>- or -</para><para><paramref name="offset" /> &gt;= <paramref name="array" />.Length.</para><para>- or -</para><para><paramref name="length" /> &gt; <paramref name="array" />.Length - <paramref name="offset" />.</para><para>The above conditions do not cause an exception to be thrown if <paramref name="length" /> = 0.</para></exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
@@ -219,6 +210,10 @@ equivalent of the specified subset of the <see cref="T:System.Char" qualify="tru
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, gets the atomized string containing the same characters as the specified range of characters in the given array.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The atomized string or null if the string has not already been atomized. If <paramref name="length" /> is zero, String.Empty is returned.</para>
+        </returns>
         <param name="array">
           <attribution license="cc4" from="Microsoft" modified="false" />The character array containing the name to look up. </param>
         <param name="offset">

@@ -51,7 +51,6 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The concrete <see cref="T:System.Web.Services.Discovery.SchemaReference" /> class inherits from the abstract <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /> class. </para>
@@ -61,6 +60,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Web.Services.Discovery.SchemaReference" /> object for a given discovery document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.SchemaReference" /> object that specifies the file name for an XML Schema document.</para>
+        </returns>
         <param name="filename">
           <attribution license="cc4" from="Microsoft" modified="false" />The file system path of the XML Schema document.</param>
       </Docs>

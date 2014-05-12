@@ -36,7 +36,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'XmlNode'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The following C# code uses GetNode to access a node the <see cref="T:System.Xml.XPath.XPathNavigator" /> is currently positioned on.</para>
@@ -51,6 +50,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Xml.XmlNode" /> for the current position.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The XmlNode for the current position.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

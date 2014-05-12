@@ -66,7 +66,6 @@
         <Parameter Name="months" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -80,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates a date that is a specified number of months away from a specified initial date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date yielded by adding the number of months specified by the <paramref name="months" /> parameter to the date specified by the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The date to which to add months. The <see cref="T:System.Globalization.UmAlQuraCalendar" /> class supports only dates from 04/30/1900 00.00.00 (Gregorian date) through 11/16/2077 23:59:59 (Gregorian date).</param>
         <param name="months">
@@ -102,7 +105,6 @@
         <Parameter Name="years" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -116,6 +118,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates a date that is a specified number of years away from a specified initial date.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The date yielded by adding the number of years specified by the <paramref name="years" /> parameter to the date specified by the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The date to which to add years. The <see cref="T:System.Globalization.UmAlQuraCalendar" /> class supports only dates from 04/30/1900 00.00.00 (Gregorian date) through 11/16/2077 23:59:59 (Gregorian date).</param>
         <param name="years">
@@ -204,13 +210,16 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the day of the month on which a specified date occurs.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 through 30 that represents the day of the month specified by the <paramref name="time" /> parameter. </para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The date value to read. The <see cref="T:System.Globalization.UmAlQuraCalendar" /> class supports only dates from 04/30/1900 00.00.00 (Gregorian date) through 11/16/2077 23:59:59 (Gregorian date).</param>
       </Docs>
@@ -230,7 +239,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -308,6 +316,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the day of the week on which a specified date occurs.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DayOfWeek" /> value that represents the day of the week specified by the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The date value to read. The <see cref="T:System.Globalization.UmAlQuraCalendar" /> class supports only dates from 04/30/1900 00.00.00 (Gregorian date) through 11/16/2077 23:59:59 (Gregorian date).</param>
       </Docs>
@@ -327,7 +339,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -337,6 +348,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the day of the year on which a specified date occurs.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 through 355 that represents the day of the year specified by the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The date value to read. The <see cref="T:System.Globalization.UmAlQuraCalendar" /> class supports only dates from 04/30/1900 00.00.00 (Gregorian date) through 11/16/2077 23:59:59 (Gregorian date).</param>
       </Docs>
@@ -358,7 +373,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -368,6 +382,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of days in the specified month of the specified year and era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified month in the specified year and era. The return value is 29 in a common year and 30 in a leap year.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A year. </param>
         <param name="month">
@@ -392,13 +410,16 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of days in the specified year of the specified era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified year and era. The number of days is 354 in a common year or 355 in a leap year.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A year. </param>
         <param name="era">
@@ -420,7 +441,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -430,6 +450,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the era in which a specified date occurs.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always returns the <see cref="F:System.Globalization.UmAlQuraCalendar.UmAlQuraEra" /> value.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The date value to read. </param>
       </Docs>
@@ -450,7 +474,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -460,6 +483,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the leap month for a specified year and era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always 0 because the <see cref="T:System.Globalization.UmAlQuraCalendar" /> class does not support leap months.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A year.</param>
         <param name="era">
@@ -481,13 +508,16 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the month in which a specified date occurs.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 1 through 12 that represents the month in the date specified by the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The date value to read. The <see cref="T:System.Globalization.UmAlQuraCalendar" /> class supports only dates from 04/30/1900 00.00.00 (Gregorian date) through 11/16/2077 23:59:59 (Gregorian date).</param>
       </Docs>
@@ -508,13 +538,16 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the number of months in the specified year of the specified era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always 12.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A year. </param>
         <param name="era">
@@ -536,13 +569,16 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the year of a date represented by a specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the year specified by the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The date value to read. The <see cref="T:System.Globalization.UmAlQuraCalendar" /> class supports only dates from 04/30/1900 00.00.00 (Gregorian date) through 11/16/2077 23:59:59 (Gregorian date).</param>
       </Docs>
@@ -565,7 +601,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -575,6 +610,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified date is a leap day.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified day is a leap day; otherwise, false. The return value is always false because the <see cref="T:System.Globalization.UmAlQuraCalendar" /> class does not support leap days.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A year. </param>
         <param name="month">
@@ -602,7 +641,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -612,6 +650,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified month in the specified year and era is a leap month.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Always false because the <see cref="T:System.Globalization.UmAlQuraCalendar" /> class does not support leap months.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A year. </param>
         <param name="month">
@@ -636,7 +678,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -646,6 +687,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified year in the specified era is a leap year.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified year is a leap year; otherwise, false.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A year. </param>
         <param name="era">
@@ -721,7 +766,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -731,6 +775,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.DateTime" /> that is set to the specified date, time, and era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that is set to the specified date and time in the current era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A year. </param>
         <param name="month">
@@ -764,7 +812,6 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -777,6 +824,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified year to a four-digit year by using the <see cref="P:System.Globalization.UmAlQuraCalendar.TwoDigitYearMax" /> property to determine the appropriate century.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="year" /> parameter is a 2-digit year, the return value is the corresponding 4-digit year. If the <paramref name="year" /> parameter is a 4-digit year, the return value is the unchanged <paramref name="year" /> parameter.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A 2-digit year from 0 through 99, or a 4-digit Um Al Qura calendar year from 1318 through 1450.</param>
       </Docs>

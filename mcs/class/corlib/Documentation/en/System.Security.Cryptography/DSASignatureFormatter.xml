@@ -89,7 +89,6 @@ f.SetKey (dsa);
         <Parameter Name="rgbHash" Type="System.Byte[]" />
       </Parameters>
       <Docs>
-        <returns>The signature is returned in a 40 bytes array.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The resulting signature data can be verified by using <see cref="M:System.Security.Cryptography.DSASignatureDeformatter.VerifySignature(System.Byte[],System.Byte[])" />.</para>
@@ -98,6 +97,10 @@ f.SetKey (dsa);
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates the Digital Signature Algorithm (<see cref="T:System.Security.Cryptography.DSA" />) PKCS #1 signature for the specified data.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The digital signature for the specified data.</para>
+        </returns>
         <param name="rgbHash">
           <attribution license="cc4" from="Microsoft" modified="false" />The data to be signed. </param>
       </Docs>

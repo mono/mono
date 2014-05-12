@@ -74,7 +74,6 @@
         <Parameter Name="level" Type="System.Security.Policy.PolicyLevel" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'SecurityElement'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The policy-level context is provided for resolution of named permission set references. For example, code groups use policy level to find named permission sets by name.</para>
@@ -84,6 +83,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an XML encoding of the security object and its current state.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The root element of the XML representation of the policy object.</para>
+        </returns>
         <param name="level">
           <attribution license="cc4" from="Microsoft" modified="false" />The policy-level context to resolve named permission set references. </param>
       </Docs>

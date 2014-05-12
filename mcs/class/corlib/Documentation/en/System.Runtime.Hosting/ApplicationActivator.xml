@@ -100,7 +100,6 @@
         <Parameter Name="activationContext" Type="System.ActivationContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -110,6 +109,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the application to be activated, using the specified activation context. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Runtime.Remoting.ObjectHandle" /> that is a wrapper for the return value of the application execution. The return value must be unwrapped to access the real object.  </para>
+        </returns>
         <param name="activationContext">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ActivationContext" /> that identifies the application to activate.</param>
       </Docs>
@@ -130,7 +133,6 @@
         <Parameter Name="activationCustomData" Type="System.String[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -140,6 +142,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the application to be activated, using the specified activation context  and custom activation data.  </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Runtime.Remoting.ObjectHandle" /> that is a wrapper for the return value of the application execution. The return value must be unwrapped to access the real object.</para>
+        </returns>
         <param name="activationContext">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ActivationContext" /> that identifies the application to activate.</param>
         <param name="activationCustomData">
@@ -161,7 +167,6 @@
         <Parameter Name="adSetup" Type="System.AppDomainSetup" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -171,6 +176,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of an application using the specified <see cref="T:System.AppDomainSetup" />  object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Runtime.Remoting.ObjectHandle" /> that is a wrapper for the return value of the application execution. The return value must be unwrapped to access the real object. </para>
+        </returns>
         <param name="adSetup">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AppDomainSetup" /> object whose <see cref="P:System.AppDomainSetup.ActivationArguments" /> property identifies the application to activate.</param>
       </Docs>

@@ -68,7 +68,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to determine whether the Clipboard contains audio data before retrieving it with the <see cref="M:System.Windows.Forms.Clipboard.GetAudioStream" /> method.</para>
@@ -80,6 +79,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether there is data on the Clipboard in the <see cref="F:System.Windows.Forms.DataFormats.WaveAudio" /> format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is audio data on the Clipboard; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ContainsData">
@@ -95,7 +98,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Windows.Forms.DataFormats" /> class contains pre-defined format names that you can use with this method.</para>
@@ -109,6 +111,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether there is data on the Clipboard that is in the specified format or can be converted to that format. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is data on the Clipboard that is in the specified <paramref name="format" /> or can be converted to that format; otherwise, false.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />The format of the data to look for. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats.</param>
       </Docs>
@@ -124,7 +130,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A file drop list is a collection of strings containing path information for files.</para>
@@ -137,6 +142,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether there is data on the Clipboard that is in the <see cref="F:System.Windows.Forms.DataFormats.FileDrop" /> format or can be converted to that format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is a file drop list on the Clipboard; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ContainsImage">
@@ -150,7 +159,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to determine whether the Clipboard contains image data before retrieving it with the <see cref="M:System.Windows.Forms.Clipboard.GetImage" /> method.</para>
@@ -162,6 +170,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether there is data on the Clipboard that is in the <see cref="F:System.Windows.Forms.DataFormats.Bitmap" /> format or can be converted to that format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is image data on the Clipboard; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ContainsText">
@@ -175,7 +187,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method checks for the presence of data in the <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format on WinXpFamily and Win2kFamily. Otherwise, this method checks for the presence of data in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> format.</para>
@@ -188,6 +199,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether there is data on the Clipboard in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> or <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format, depending on the operating system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is text data on the Clipboard; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ContainsText">
@@ -203,7 +218,6 @@
         <Parameter Name="format" Type="System.Windows.Forms.TextDataFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use this method to determine whether the Clipboard contains text data before retrieving it with the <see cref="Overload:System.Windows.Forms.Clipboard.GetText" /> method.</para>
@@ -215,6 +229,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether there is text data on the Clipboard in the format indicated by the specified <see cref="T:System.Windows.Forms.TextDataFormat" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if there is text data on the Clipboard in the value specified for <paramref name="format" />; otherwise, false.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.TextDataFormat" /> values.</param>
       </Docs>
@@ -230,7 +248,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Windows.Forms.Clipboard.ContainsAudio" /> method to determine whether the Clipboard contains audio data before retrieving it with this method.</para>
@@ -243,6 +260,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an audio stream from the Clipboard.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.IO.Stream" /> containing audio data or null if the Clipboard does not contain any data in the <see cref="F:System.Windows.Forms.DataFormats.WaveAudio" /> format.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetData">
@@ -258,7 +279,6 @@
         <Parameter Name="format" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Windows.Forms.Clipboard.ContainsData(System.String)" /> method to determine whether the Clipboard contains data in the specified format or a compatible format before retrieving it with this method.</para>
@@ -273,6 +293,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves data from the Clipboard in the specified format.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> representing the Clipboard data or null if the Clipboard does not contain any data that is in the specified <paramref name="format" /> or can be converted to that format.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />The format of the data to retrieve. See <see cref="T:System.Windows.Forms.DataFormats" /> for predefined formats.</param>
       </Docs>
@@ -285,7 +309,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Because the data type of the object returned from the Clipboard can vary, this method returns the data in an <see cref="T:System.Windows.Forms.IDataObject" />. Then you can use methods of the <see cref="T:System.Windows.Forms.IDataObject" /> interface to extract the data in its proper data type.</para>
@@ -298,6 +321,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the data that is currently on the system Clipboard.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Windows.Forms.IDataObject" /> that represents the data currently on the Clipboard, or null if there is no data on the Clipboard.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -315,7 +342,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>A file drop list is a collection of strings containing path information for files.</para>
@@ -330,6 +356,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a collection of file names from the Clipboard. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.Specialized.StringCollection" /> containing file names or null if the Clipboard does not contain any data that is in the <see cref="F:System.Windows.Forms.DataFormats.FileDrop" /> format or can be converted to that format.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetImage">
@@ -343,7 +373,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="M:System.Windows.Forms.Clipboard.ContainsImage" /> method to determine whether the Clipboard contains image data before retrieving it with this method.</para>
@@ -356,6 +385,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves an image from the Clipboard.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Drawing.Image" /> representing the Clipboard image data or null if the Clipboard does not contain any data that is in the <see cref="F:System.Windows.Forms.DataFormats.Bitmap" /> format or can be converted to that format.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetText">
@@ -369,7 +402,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns text data in the <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format on WinXpFamily and Win2kFamily. Otherwise, this method returns text data in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> format.</para>
@@ -383,6 +415,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves text data from the Clipboard in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> or <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format, depending on the operating system.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Clipboard text data or <see cref="F:System.String.Empty" /> if the Clipboard does not contain data in the <see cref="F:System.Windows.Forms.TextDataFormat.Text" /> or <see cref="F:System.Windows.Forms.TextDataFormat.UnicodeText" /> format, depending on the operating system.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetText">
@@ -398,7 +434,6 @@
         <Parameter Name="format" Type="System.Windows.Forms.TextDataFormat" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Use the <see cref="Overload:System.Windows.Forms.Clipboard.ContainsText" /> method to determine whether the Clipboard contains text data before retrieving it with this method.</para>
@@ -411,6 +446,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves text data from the Clipboard in the format indicated by the specified <see cref="T:System.Windows.Forms.TextDataFormat" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The Clipboard text data or <see cref="F:System.String.Empty" /> if the Clipboard does not contain data in the specified format.</para>
+        </returns>
         <param name="format">
           <attribution license="cc4" from="Microsoft" modified="false" />One of the <see cref="T:System.Windows.Forms.TextDataFormat" /> values.</param>
       </Docs>

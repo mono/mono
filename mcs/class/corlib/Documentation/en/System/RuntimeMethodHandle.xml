@@ -61,13 +61,16 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="obj" /> is a <see cref="T:System.RuntimeMethodHandle" /> and equal to the value of this instance; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Object" /> to compare to this instance.</param>
       </Docs>
@@ -92,13 +95,16 @@
         <Parameter Name="handle" Type="System.RuntimeMethodHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether this instance is equal to a specified <see cref="T:System.RuntimeMethodHandle" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="handle" /> is equal to the value of this instance; otherwise, false.</para>
+        </returns>
         <param name="handle">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeMethodHandle" /> to compare to this instance.</param>
       </Docs>
@@ -117,12 +123,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Obtains a pointer to the method represented by this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A pointer to the method represented by this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetHashCode">
@@ -138,13 +147,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A 32-bit signed integer hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetObjectData">
@@ -195,13 +207,16 @@
         <Parameter Name="right" Type="System.RuntimeMethodHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two instances of <see cref="T:System.RuntimeMethodHandle" /> are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of <paramref name="left" /> is equal to the value of <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeMethodHandle" /> to compare to <paramref name="right" />.</param>
         <param name="right">
@@ -224,13 +239,16 @@
         <Parameter Name="right" Type="System.RuntimeMethodHandle" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates whether two instances of <see cref="T:System.RuntimeMethodHandle" /> are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the value of <paramref name="left" /> is unequal to the value of <paramref name="right" />; otherwise, false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.RuntimeMethodHandle" /> to compare to <paramref name="right" />.</param>
         <param name="right">

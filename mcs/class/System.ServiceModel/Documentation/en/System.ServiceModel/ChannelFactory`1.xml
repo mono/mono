@@ -225,7 +225,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel of type <paramref name="TChannel" />, the generic parameter for the class.</para>
@@ -234,6 +233,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel of a specified type to a specified endpoint address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CreateChannel">
@@ -250,12 +253,15 @@
         <Parameter Name="address" Type="System.ServiceModel.EndpointAddress" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel that is used to send messages to a service at a specific endpoint address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
       </Docs>
@@ -274,12 +280,15 @@
         <Parameter Name="endpointConfigurationName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel that is used to send messages to a service whose endpoint is configured in a specified way.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</para>
+        </returns>
         <param name="endpointConfigurationName">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the endpoint configuration used for the service.</param>
       </Docs>
@@ -300,12 +309,15 @@
       </Parameters>
       <Docs>
         <param name="address">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel of a specified type that is used to send messages to a service endpoint that is configured with a specified binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</para>
+        </returns>
         <param name="binding">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to configure the endpoint.</param>
       </Docs>
@@ -325,12 +337,15 @@
         <Parameter Name="via" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel that is used to send messages to a service at a specific endpoint address through a specified transport address.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</para>
+        </returns>
         <param name="address">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.EndpointAddress" /> that provides the location of the service.</param>
         <param name="via">
@@ -354,12 +369,15 @@
       </Parameters>
       <Docs>
         <param name="address">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a channel of a specified type that is used to send messages to a service endpoint at a specified transport address that is configured with a specified binding.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="TChannel" /> of type <see cref="T:System.ServiceModel.Channels.IChannel" /> created by the factory.</para>
+        </returns>
         <param name="binding">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.Channels.Binding" /> used to configure the endpoint.</param>
         <param name="via">
@@ -378,12 +396,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a description of the service endpoint.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.Description.ServiceEndpoint" /> of the service.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

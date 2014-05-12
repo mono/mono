@@ -46,7 +46,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Derived types that override this method should return a new instance of a <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePart" /> object every time that the method is invoked and should never return null.</para>
@@ -55,6 +54,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of a part that the <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartDefinition" /> describes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The created part.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="ExportDefinitions">

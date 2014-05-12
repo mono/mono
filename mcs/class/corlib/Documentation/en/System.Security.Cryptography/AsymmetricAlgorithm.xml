@@ -129,12 +129,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'AsymmetricAlgorithm'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a default cryptographic object used to perform the asymmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.Security.Cryptography.RSACryptoServiceProvider" /> instance, unless the default settings have been changed with the <format type="text/html"><a href="03db52ef-010e-44ea-b6fd-b9c900ecad50">&lt;cryptoClass&gt; element</a></format>.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -153,12 +156,15 @@
         <Parameter Name="algName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'AsymmetricAlgorithm'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an instance of the specified implementation of an asymmetric algorithm.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the specified asymmetric algorithm implementation.</para>
+        </returns>
         <param name="algName">
           <attribution license="cc4" from="Microsoft" modified="false" />The asymmetric algorithm implementation to use. The following table shows the valid values for the <paramref name="algName" /> parameter and the algorithms they map to.</param>
       </Docs>
@@ -421,12 +427,15 @@
         <Parameter Name="includePrivateParameters" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, creates and returns an XML string representation of the current <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An XML string encoding of the current <see cref="T:System.Security.Cryptography.AsymmetricAlgorithm" /> object.</para>
+        </returns>
         <param name="includePrivateParameters">
           <attribution license="cc4" from="Microsoft" modified="false" />true to include private parameters; otherwise, false. </param>
       </Docs>

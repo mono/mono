@@ -500,11 +500,6 @@ public class WriteFragment
         <Parameter Name="ns" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" qualify="true" /> containing the
-   corresponding prefix, or <see cref="F:System.String.Empty" qualify="true" /> if the prefix is not found and <paramref name="ns" /> is
-   the default namespace, or <see langword="null" /> if no matching namespace URI is found in the current scope.</para>
-        </returns>
         <exception cref="T:System.ArgumentException">
           <paramref name="ns " /> is <see langword="null" /> or <see cref="F:System.String.Empty" qualify="true" />.</exception>
         <remarks>
@@ -517,6 +512,10 @@ public class WriteFragment
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the closest prefix defined in the current namespace scope for the namespace URI.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The matching prefix. Or null if no matching namespace URI is found in the current scope.</para>
+        </returns>
         <param name="ns">
           <attribution license="cc4" from="Microsoft" modified="false" />Namespace URI whose prefix you want to find. </param>
       </Docs>

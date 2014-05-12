@@ -76,7 +76,6 @@ Dim sampleObject As Object = New SampleDynamicObject()</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method exists for debugging purposes only.</para>
@@ -85,6 +84,10 @@ Dim sampleObject As Object = New SampleDynamicObject()</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the enumeration of all dynamic member names. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A sequence that contains dynamic member names.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMetaObject">
@@ -101,12 +104,15 @@ Dim sampleObject As Object = New SampleDynamicObject()</code>
         <Parameter Name="parameter" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a <see cref="T:System.Dynamic.DynamicMetaObject" /> that dispatches to the dynamic virtual methods. The object can be encapsulated inside another <see cref="T:System.Dynamic.DynamicMetaObject" /> to provide custom behavior for individual actions. This method supports the Dynamic Language Runtime infrastructure for language implementers and it is not intended to be used directly from your code.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object of the <see cref="T:System.Dynamic.DynamicMetaObject" /> type.</para>
+        </returns>
         <param name="parameter">
           <attribution license="cc4" from="Microsoft" modified="false" />The expression that represents <see cref="T:System.Dynamic.DynamicMetaObject" /> to dispatch to the dynamic virtual methods.</param>
       </Docs>
@@ -196,7 +202,6 @@ Dim sampleObject As Object = New SampleDynamicObject()</code>
         <Parameter Name="indexes" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Classes derived from the <see cref="T:System.Dynamic.DynamicObject" /> class can override this method to specify how a value that has a specified index should be deleted. When the method is not overridden, the run-time binder of the language determines the behavior. (In most cases, a language-specific run-time exception is thrown.)</para>
@@ -206,6 +211,10 @@ Dim sampleObject As Object = New SampleDynamicObject()</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the implementation for operations that delete an object by index. This method is not intended for use in C# or Visual Basic.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation is successful; otherwise, false. If this method returns false, the run-time binder of the language determines the behavior. (In most cases, a language-specific run-time exception is thrown.)</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />Provides information about the deletion.</param>
         <param name="indexes">
@@ -226,7 +235,6 @@ Dim sampleObject As Object = New SampleDynamicObject()</code>
         <Parameter Name="binder" Type="System.Dynamic.DeleteMemberBinder" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Classes derived from the <see cref="T:System.Dynamic.DynamicObject" /> class can override this method to specify how an object member should be deleted. When this method is not overridden, the run-time binder of the language determines the behavior. (In most cases, a language-specific run-time exception is thrown.)</para>
@@ -236,6 +244,10 @@ Dim sampleObject As Object = New SampleDynamicObject()</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the implementation for operations that delete an object member. This method is not intended for use in C# or Visual Basic.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation is successful; otherwise, false. If this method returns false, the run-time binder of the language determines the behavior. (In most cases, a language-specific run-time exception is thrown.)</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />Provides information about the deletion.</param>
       </Docs>
@@ -350,7 +362,6 @@ Dim sampleObject As Object = New SampleDynamicObject()</code>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Classes derived from the <see cref="T:System.Dynamic.DynamicObject" /> class can override this method to specify how operations that access an object by index should be performed for a dynamic object. When the method is not overridden, the run-time binder of the language determines the behavior. (In most cases, a language-specific run-time exception is thrown.)</para>
@@ -360,6 +371,10 @@ Dim sampleObject As Object = New SampleDynamicObject()</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the implementation for operations that set a value by index. Classes derived from the <see cref="T:System.Dynamic.DynamicObject" /> class can override this method to specify dynamic behavior for operations that access objects by a specified index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation is successful; otherwise, false. If this method returns false, the run-time binder of the language determines the behavior. (In most cases, a language-specific run-time exception is thrown.</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />Provides information about the operation. </param>
         <param name="indexes">
@@ -383,7 +398,6 @@ Dim sampleObject As Object = New SampleDynamicObject()</code>
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Classes derived from the <see cref="T:System.Dynamic.DynamicObject" /> class can override this method to specify how operations that set a value to a member should be performed for a dynamic object. When the method is not overridden, the run-time binder of the language determines the behavior. (In most cases, a language-specific run-time exception is thrown.)</para>
@@ -394,6 +408,10 @@ Dim sampleObject As Object = New SampleDynamicObject()</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides the implementation for operations that set member values. Classes derived from the <see cref="T:System.Dynamic.DynamicObject" /> class can override this method to specify dynamic behavior for operations such as setting a value for a property.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the operation is successful; otherwise, false. If this method returns false, the run-time binder of the language determines the behavior. (In most cases, a language-specific run-time exception is thrown.)</para>
+        </returns>
         <param name="binder">
           <attribution license="cc4" from="Microsoft" modified="false" />Provides information about the object that called the dynamic operation. The binder.Name property provides the name of the member to which the value is being assigned. For example, for the statement sampleObject.SampleProperty = "Test", where sampleObject is an instance of the class derived from the <see cref="T:System.Dynamic.DynamicObject" /> class, binder.Name returns "SampleProperty". The binder.IgnoreCase property specifies whether the member name is case-sensitive.</param>
         <param name="value">

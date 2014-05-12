@@ -366,7 +366,6 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -377,6 +376,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a delete operation by calling the business object method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property using the specified <paramref name="keys" /> and <paramref name="oldValues" /> collections.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows deleted; otherwise, -1, if the number is not known.</para>
+        </returns>
         <param name="keys">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of the key values used to identify the item to delete. These parameters are used with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property to perform the delete operation. If there are no parameters associated with the method, pass null.</param>
         <param name="oldValues">
@@ -514,7 +517,6 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -526,6 +528,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs a delete operation using the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> method and the specified <paramref name="keys" /> and <paramref name="oldValues" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows deleted; otherwise, -1, if the number is not known. For more information, see <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Delete" />.</para>
+        </returns>
         <param name="keys">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of parameters used with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.DeleteMethod" /> property to perform the delete operation. If there are no parameters associated with the method, pass null.</param>
         <param name="oldValues">
@@ -545,7 +551,6 @@
         <Parameter Name="values" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -558,6 +563,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs an insert operation by calling the business object method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property using the specified <paramref name="values" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows inserted; otherwise, -1, if the number is not known. For more information, see <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Insert" />.</para>
+        </returns>
         <param name="values">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of parameters used with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property to perform the insert operation. If there are no parameters associated with the method, pass null.</param>
       </Docs>
@@ -578,7 +587,6 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> class implements the inherited <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method to retrieve data using a business object. Page developers and data-bound control authors do not call the <see cref="M:System.Web.UI.WebControls.ObjectDataSourceView.ExecuteSelect(System.Web.UI.DataSourceSelectArguments)" /> method directly; instead, use the publicly exposed <see cref="Overload:System.Web.UI.WebControls.ObjectDataSourceView.Select" /> method.</para>
@@ -645,6 +653,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves data from the object that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.TypeName" /> property by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property and passing any values in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectParameters" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Collections.IEnumerable" /> list of data rows.</para>
+        </returns>
         <param name="arguments">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> used to request operations on the data beyond basic data retrieval.</param>
       </Docs>
@@ -661,7 +673,6 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -674,6 +685,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs an update operation by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property and using any parameters that are supplied in the <paramref name="keys" />, <paramref name="values" />, or <paramref name="oldValues" /> collections.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows updated; or -1, if the number is not known. For more information, see <see cref="M:System.Web.UI.WebControls.ObjectDataSource.Update" />.</para>
+        </returns>
         <param name="keys">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of primary keys to use with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property to perform the update database operation. If there are no keys associated with the method, pass null.</param>
         <param name="values">
@@ -771,7 +786,6 @@
         <Parameter Name="values" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -782,6 +796,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs an insert operation by calling the business object method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property using the specified <paramref name="values" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows inserted; otherwise, -1, if the number is not known.</para>
+        </returns>
         <param name="values">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> collection of parameters used with the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.InsertMethod" /> property to perform the insert operation. If there are no parameters associated with the method, pass null.</param>
       </Docs>
@@ -1384,7 +1402,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1396,6 +1413,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves the changes to the view state for the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> object since the time when the page was posted back to the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that contains the changes to the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> view state; otherwise null, if there is no view state associated with the object.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -1411,7 +1432,6 @@
         <Parameter Name="arguments" Type="System.Web.UI.DataSourceSelectArguments" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1421,6 +1441,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves data from the object that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.TypeName" /> property by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" /> property and passing any values in the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectParameters" /> collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerable" /> list of data rows. For more information, see <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.SelectMethod" />.</para>
+        </returns>
         <param name="arguments">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.UI.DataSourceSelectArguments" /> used to request operations on the data beyond basic data retrieval.</param>
       </Docs>
@@ -1697,7 +1721,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This member is an explicit interface member implementation. It can be used only when the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> instance is cast to an <see cref="T:System.Web.UI.IStateManager" /> interface.</para>
@@ -1706,6 +1729,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a description of this member, see <see cref="M:System.Web.UI.IStateManager.SaveViewState" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object that contains the changes to the <see cref="T:System.Web.UI.WebControls.ObjectDataSourceView" /> view state; otherwise, null.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IStateManager.TrackViewState">
@@ -1785,7 +1812,6 @@
         <Parameter Name="oldValues" Type="System.Collections.IDictionary" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -1796,6 +1822,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs an update operation by calling the method that is identified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property and using any parameters that are supplied in the <paramref name="keys" />, <paramref name="values" />, or <paramref name="oldValues" /> collections.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of rows updated; otherwise, -1, if the number is not known.</para>
+        </returns>
         <param name="keys">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.IDictionary" /> of the key values used to identify the item to update. These parameters are used with the method specified by the <see cref="P:System.Web.UI.WebControls.ObjectDataSourceView.UpdateMethod" /> property to perform the update operation. If there are no parameters associated with the method, pass null.</param>
         <param name="values">

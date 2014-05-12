@@ -54,12 +54,15 @@
         <Parameter Name="comparand" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value that indicates whether this instance is equal to a specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="comparand" /> is an instance of <see cref="T:System.Net.Sockets.IPPacketInformation" /> and equals the value of the instance; otherwise, false.</para>
+        </returns>
         <param name="comparand">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with this instance.</param>
       </Docs>
@@ -77,7 +80,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The hash code is constructed from the values of the <see cref="P:System.Net.Sockets.IPPacketInformation.Address" /> and <see cref="P:System.Net.Sockets.IPPacketInformation.Interface" /> properties.</para>
@@ -86,6 +88,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hash code for this instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An Int32 hash code.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Interface">
@@ -126,7 +132,6 @@
       <Docs>
         <param name="p1">To be added.</param>
         <param name="p2">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operator tests both the <see cref="P:System.Net.Sockets.IPPacketInformation.Address" /> and <see cref="P:System.Net.Sockets.IPPacketInformation.Interface" /> values for both arguments.</para>
@@ -135,6 +140,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two specified <see cref="T:System.Net.Sockets.IPPacketInformation" /> instances are equivalent.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="packetInformation1" /> and <paramref name="packetInformation2" /> are equal; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="op_Inequality">
@@ -155,7 +164,6 @@
       <Docs>
         <param name="p1">To be added.</param>
         <param name="p2">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operator tests both the <see cref="P:System.Net.Sockets.IPPacketInformation.Address" /> and <see cref="P:System.Net.Sockets.IPPacketInformation.Interface" /> values for both arguments.</para>
@@ -164,6 +172,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Tests whether two specified <see cref="T:System.Net.Sockets.IPPacketInformation" /> instances are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="packetInformation1" /> and <paramref name="packetInformation2" /> are unequal; otherwise, false.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

@@ -455,7 +455,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Control state is the essential state information needed even if view state is disabled. When an adapter needs to maintain its own control state information, it can override the <see cref="M:System.Web.UI.Adapters.ControlAdapter.SaveAdapterControlState" /> and <see cref="M:System.Web.UI.Adapters.ControlAdapter.LoadAdapterControlState(System.Object)" /> methods.</para>
@@ -466,6 +465,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves control state information for the control adapter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the adapter's control state information as a <see cref="T:System.Web.UI.StateBag" />. </para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="SaveAdapterViewState">
@@ -479,7 +482,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When an adapter needs to maintain its own view state information, it can override the <see cref="M:System.Web.UI.Adapters.ControlAdapter.SaveAdapterViewState" /> and <see cref="M:System.Web.UI.Adapters.ControlAdapter.LoadAdapterViewState(System.Object)" /> methods.</para>
@@ -490,6 +492,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves view state information for the control adapter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the adapter view state information as a <see cref="T:System.Web.UI.StateBag" />. </para>
+        </returns>
       </Docs>
     </Member>
   </Members>

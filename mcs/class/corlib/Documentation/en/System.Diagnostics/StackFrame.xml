@@ -198,12 +198,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>Only available if the debugging informations are available.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the column number in the file that contains the code that is executing. This information is typically extracted from the debugging symbols for the executable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file column number, or 0 (zero) if the file column number cannot be determined.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetFileLineNumber">
@@ -220,12 +223,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>Only available if the debugging informations are available.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the line number in the file that contains the code that is executing. This information is typically extracted from the debugging symbols for the executable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file line number, or 0 (zero) if the file line number cannot be determined.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetFileName">
@@ -242,12 +248,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>Only available if the debugging informations are available.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the file name that contains the code that is executing. This information is typically extracted from the debugging symbols for the executable.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The file name, or null if the file name cannot be determined.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetILOffset">
@@ -264,12 +273,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the offset from the start of the Microsoft intermediate language (MSIL) code for the method that is executing. This offset might be an approximation depending on whether or not the just-in-time (JIT) compiler is generating debugging code. The generation of this debugging information is controlled by the <see cref="T:System.Diagnostics.DebuggableAttribute" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The offset from the start of the MSIL code for the method that is executing.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetMethod">
@@ -286,7 +298,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'Reflection.MethodBase'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The method that is currently executing may be inherited from a base class, although it is called in a derived class. In this case, the <see cref="P:System.Reflection.MemberInfo.ReflectedType" /> property of the <see cref="T:System.Reflection.MethodBase" /> object that is returned by <see cref="M:System.Diagnostics.StackFrame.GetMethod" /> identifies the base class, not the derived class.  </para>
@@ -295,6 +306,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the method in which the frame is executing.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method in which the frame is executing.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetNativeOffset">
@@ -311,12 +326,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the offset from the start of the native just-in-time (JIT)-compiled code for the method that is being executed. The generation of this debugging information is controlled by the <see cref="T:System.Diagnostics.DebuggableAttribute" /> class.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The offset from the start of the JIT-compiled code for the method that is being executed.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="OFFSET_UNKNOWN">
@@ -358,12 +376,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Builds a readable representation of the stack trace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A readable representation of the stack trace.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

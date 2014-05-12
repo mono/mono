@@ -214,7 +214,6 @@
         <Parameter Name="requestUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -223,6 +222,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a DELETE request to the specified Uri as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
       </Docs>
@@ -241,7 +245,6 @@
         <Parameter Name="requestUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -250,6 +253,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a DELETE request to the specified Uri as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
       </Docs>
@@ -269,7 +277,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -278,6 +285,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a DELETE request to the specified Uri with a cancellation token as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="cancellationToken">
@@ -299,7 +311,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -308,6 +319,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a DELETE request to the specified Uri with a cancellation token as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="cancellationToken">
@@ -356,7 +372,6 @@
         <Parameter Name="requestUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -365,6 +380,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
       </Docs>
@@ -383,7 +403,6 @@
         <Parameter Name="requestUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -392,6 +411,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
       </Docs>
@@ -411,7 +435,6 @@
         <Parameter Name="completionOption" Type="System.Net.Http.HttpCompletionOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete based on the <paramref name="completionOption" /> parameter after the part or all of the response (including content) is read.</para>
@@ -420,6 +443,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri with an HTTP completion option as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="completionOption">
@@ -441,7 +468,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -450,6 +476,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri with a cancellation token as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="cancellationToken">
@@ -471,7 +501,6 @@
         <Parameter Name="completionOption" Type="System.Net.Http.HttpCompletionOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete based on the <paramref name="completionOption" /> parameter after the part or all of the response (including content) is read.</para>
@@ -480,6 +509,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri with an HTTP completion option as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="completionOption">
@@ -501,7 +535,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -510,6 +543,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri with a cancellation token as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="cancellationToken">
@@ -532,7 +570,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete based on the <paramref name="completionOption" /> parameter after the part or all of the response (including content) is read.</para>
@@ -541,6 +578,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri with an HTTP completion option and a cancellation token as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="completionOption">
@@ -565,7 +606,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete based on the <paramref name="completionOption" /> parameter after the part or all of the response (including content) is read.</para>
@@ -574,6 +614,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri with an HTTP completion option and a cancellation token as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="completionOption">
@@ -604,7 +649,6 @@
         <Parameter Name="requestUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response body is read. </para>
@@ -613,6 +657,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri and return the response body as a byte array in an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
       </Docs>
@@ -639,7 +688,6 @@
         <Parameter Name="requestUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response body is read.</para>
@@ -648,6 +696,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri and return the response body as a byte array in an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
       </Docs>
@@ -674,7 +727,6 @@
         <Parameter Name="requestUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response body is read. This method does not buffer the stream.</para>
@@ -683,6 +735,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri and return the response body as a stream in an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
       </Docs>
@@ -709,7 +766,6 @@
         <Parameter Name="requestUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response body is read. This method does not buffer the stream.</para>
@@ -718,6 +774,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri and return the response body as a stream in an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
       </Docs>
@@ -744,7 +805,6 @@
         <Parameter Name="requestUri" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response body is read.</para>
@@ -753,6 +813,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri and return the response body as a string in an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
       </Docs>
@@ -779,7 +844,6 @@
         <Parameter Name="requestUri" Type="System.Uri" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response body is read.</para>
@@ -788,6 +852,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a GET request to the specified Uri and return the response body as a string in an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
       </Docs>
@@ -829,7 +898,6 @@
         <Parameter Name="content" Type="System.Net.Http.HttpContent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -838,6 +906,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a POST request to the specified Uri as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="content">
@@ -859,7 +932,6 @@
         <Parameter Name="content" Type="System.Net.Http.HttpContent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -868,6 +940,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a POST request to the specified Uri as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="content">
@@ -890,7 +967,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -899,6 +975,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a POST request with a cancellation token as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="content">
@@ -923,7 +1004,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -932,6 +1012,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a POST request with a cancellation token as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="content">
@@ -955,7 +1040,6 @@
         <Parameter Name="content" Type="System.Net.Http.HttpContent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -964,6 +1048,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a PUT request to the specified Uri as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="content">
@@ -985,7 +1074,6 @@
         <Parameter Name="content" Type="System.Net.Http.HttpContent" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -994,6 +1082,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a PUT request to the specified Uri as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="content">
@@ -1016,7 +1109,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -1025,6 +1117,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a PUT request with a cancellation token as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="content">
@@ -1049,7 +1146,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete after the whole response (including content) is read.</para>
@@ -1058,6 +1154,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send a PUT request with a cancellation token as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="requestUri">
           <attribution license="cc4" from="Microsoft" modified="false" />The Uri the request is sent to.</param>
         <param name="content">
@@ -1080,7 +1181,6 @@
         <Parameter Name="request" Type="System.Net.Http.HttpRequestMessage" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete once the entire response including content is read.</para>
@@ -1089,6 +1189,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send an HTTP request as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />The HTTP request message to send.</param>
       </Docs>
@@ -1108,7 +1213,6 @@
         <Parameter Name="completionOption" Type="System.Net.Http.HttpCompletionOption" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. Depending on the value of the <paramref name="completionOption" /> parameter, the returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete as soon as a response is available or the entire response including content is read.</para>
@@ -1117,6 +1221,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send an HTTP request as an asynchronous operation. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />The HTTP request message to send.</param>
         <param name="completionOption">
@@ -1138,7 +1247,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete once the entire response including content is read.</para>
@@ -1147,6 +1255,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send an HTTP request as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />The HTTP request message to send.</param>
         <param name="cancellationToken">
@@ -1169,7 +1282,6 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This operation will not block. Depending on the value of the <paramref name="completionOption" /> parameter, the returned <see cref="T:System.Threading.Tasks.Task`1" /> object will complete as soon as a response is available or the entire response including content is read.</para>
@@ -1178,6 +1290,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Send an HTTP request as an asynchronous operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns <see cref="T:System.Threading.Tasks.Task`1" />.</para>
+          <para>The task object representing the asynchronous operation.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />The HTTP request message to send.</param>
         <param name="completionOption">

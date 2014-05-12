@@ -110,11 +110,6 @@
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if <paramref name="obj" /> is equal to the
-   current instance; otherwise, <see langword="false" />.</para>
-        </returns>
         <example>
           <para>
             <see langword="Example 1:" />
@@ -458,6 +453,10 @@ parameter.</para>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object is equal to the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified object  is equal to the current object; otherwise, false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The object to compare with the current object. </param>
       </Docs>
@@ -481,28 +480,6 @@ parameter.</para>
         <Parameter Name="objB" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="true" /> if one or more of the following statements is
-   true:</para>
-          <list type="bullet">
-            <item>
-              <term>
-                <paramref name="objA" /> and <paramref name="objB" /> refer to the same object,</term>
-            </item>
-            <item>
-              <term>
-                <paramref name="objA" /> and <paramref name="objB" /> are both null references,</term>
-            </item>
-            <item>
-              <term>
-                <paramref name="objA" /> is not 
-   <see langword="null" /> and
-   <paramref name="objA" />.Equals(<paramref name="objB" /> ) returns true;</term>
-            </item>
-          </list>
-          <para>otherwise returns <see langword="false" />.</para>
-        </returns>
         <example>
           <para>The following example demonstrates the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
           <code lang="C#">using System;
@@ -564,6 +541,10 @@ public class MyClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified object instances are considered equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the objects are considered equal; otherwise, false. If both <paramref name="objA" /> and <paramref name="objB" /> are null, the method returns true.</para>
+        </returns>
         <param name="objA">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="objB">
@@ -741,9 +722,6 @@ public class MyClass {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.Int32" /> containing the hash code for the current instance.</para>
-        </returns>
         <example>
           <para>
             <see langword="Example 1" />
@@ -888,6 +866,10 @@ public struct Int64 {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Serves as the default hash function. </para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A hash code for the current object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -906,9 +888,6 @@ public struct Int64 {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para> The instance of <see cref="T:System.Type" /> that represents the run-time type (the exact type) of the current instance.</para>
-        </returns>
         <example>
           <para>The following example demonstrates the fact that <see cref="M:System.Object.GetType" />
 returns the run-time type of the current instance:</para>
@@ -953,6 +932,10 @@ public class Test {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the <see cref="T:System.Type" /> of the current instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The exact runtime type of the current instance.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -971,11 +954,6 @@ public class Test {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A shallow copy of the current instance. The run-time
-      type (the exact type) of the returned object is the same as the run-time type of
-      the object that was copied.</para>
-        </returns>
         <example>
           <para>The following example shows a class called
    <see langword="MyClass" /> as well as a representation of the instance of
@@ -1054,6 +1032,10 @@ class MyDerivedClass: MyBaseClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a shallow copy of the current <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A shallow copy of the current <see cref="T:System.Object" />.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>
@@ -1080,12 +1062,6 @@ class MyDerivedClass: MyBaseClass {
         <Parameter Name="objB" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>
-          <para>
-            <see langword="True" /> if <paramref name="a" /> and <paramref name="b" /> refer
-   to the same object or are both null references; otherwise,
-<see langword="false" />.</para>
-        </returns>
         <example>
           <code lang="C#">using System;
 class MyClass {
@@ -1126,6 +1102,10 @@ class MyClass {
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Object" /> instances are the same instance.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="objA" /> is the same instance as <paramref name="objB" /> or if both are null; otherwise, false.</para>
+        </returns>
         <param name="objA">
           <attribution license="cc4" from="Microsoft" modified="false" />The first object to compare. </param>
         <param name="objB">
@@ -1148,9 +1128,6 @@ class MyClass {
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>
-          <para>A <see cref="T:System.String" /> representation of the current instance.</para>
-        </returns>
         <example>
           <para>The following example outputs the textual description of
       the value of an object of type <see cref="T:System.Object" /> to the console.</para>
@@ -1233,6 +1210,10 @@ public class NewClass : IStringable
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a string that represents the current object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current object.</para>
+        </returns>
       </Docs>
       <Excluded>0</Excluded>
     </Member>

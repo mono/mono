@@ -54,7 +54,6 @@
         <Parameter Name="sourceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method returns true if the source type is a string. Otherwise, this method always returns false.</para>
@@ -63,6 +62,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the converter can convert an object of the specified source type to the native type of the converter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the converter can perform the conversion; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> object that can be used to gain additional context information. </param>
         <param name="sourceType">
@@ -85,12 +88,15 @@
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified object to the native type of the converter.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents the specified object after conversion.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> object that can be used to gain additional context information. </param>
         <param name="culture">
@@ -113,7 +119,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method uses the <see cref="T:System.Web.UI.Design.IDataSourceProvider" /> implementation on the component's designer to retrieve the selected data source.</para>
@@ -122,6 +127,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the data fields present within the selected data source if information about them is available.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> listing the standard accessible data sources.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> object indicating the component or control to get values for. </param>
       </Docs>
@@ -140,7 +149,6 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If the list is exclusive, such as in an enumeration data type, then no other values are valid. If the list is not exclusive, then there are other valid values besides the list of standard values that <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> provides.</para>
@@ -149,6 +157,11 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the collection of standard values returned from <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> is a list of all possible values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.ComponentModel.TypeConverter.StandardValuesCollection" /> returned from <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> is an exclusive list of all possible values that are valid; false if other values are possible.</para>
+          <para>As implemented in this class, this method always returns false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> object that can be used to gain additional context information. </param>
       </Docs>
@@ -167,12 +180,15 @@
         <Parameter Name="context" Type="System.ComponentModel.ITypeDescriptorContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a value indicating whether the converter supports a standard set of values that can be picked from a list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <see cref="M:System.ComponentModel.TypeConverter.GetStandardValues" /> can be called to find a common set of values the object supports; otherwise, false.</para>
+        </returns>
         <param name="context">
           <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.ComponentModel.ITypeDescriptorContext" /> that can be used to gain additional context information. </param>
       </Docs>

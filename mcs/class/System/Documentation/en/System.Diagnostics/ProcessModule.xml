@@ -218,12 +218,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the name of the module to a string.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value of the <see cref="P:System.Diagnostics.ProcessModule.ModuleName" /> property.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

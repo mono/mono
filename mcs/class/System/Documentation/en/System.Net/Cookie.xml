@@ -280,12 +280,15 @@
         <Parameter Name="comparand" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Overrides the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns true if the <see cref="T:System.Net.Cookie" /> is equal to <paramref name="comparand" />. Two <see cref="T:System.Net.Cookie" /> instances are equal if their <see cref="P:System.Net.Cookie.Name" />, <see cref="P:System.Net.Cookie.Value" />, <see cref="P:System.Net.Cookie.Path" />, <see cref="P:System.Net.Cookie.Domain" />, and <see cref="P:System.Net.Cookie.Version" /> properties are equal. <see cref="P:System.Net.Cookie.Name" /> and <see cref="P:System.Net.Cookie.Domain" /> string comparisons are case-insensitive.</para>
+        </returns>
         <param name="comparand">
           <attribution license="cc4" from="Microsoft" modified="false" />A reference to a <see cref="T:System.Net.Cookie" />. </param>
       </Docs>
@@ -357,7 +360,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Classes that might be used as a key in a hash table must provide this override, because objects that are used as keys in a hash table are required to generate their own hash code through this method.</para>
@@ -366,6 +368,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Overrides the <see cref="M:System.Object.GetHashCode" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The 32-bit signed integer hash code for this instance.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="HttpOnly">
@@ -534,7 +540,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The exact format of the string depends on the RFC that this cookie conforms to.</para>
@@ -543,6 +548,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Overrides the <see cref="M:System.Object.ToString" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a string representation of this <see cref="T:System.Net.Cookie" /> object that is suitable for including in a HTTP Cookie: request header.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Value">

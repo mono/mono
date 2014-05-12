@@ -103,12 +103,15 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an object that represents a service provided by the component associated with the <see cref="T:System.ComponentModel.Design.DesignerActionList" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that represents a service provided by the <see cref="T:System.ComponentModel.Component" />. This value is null if the <see cref="T:System.ComponentModel.Component" /> does not provide the specified service.</para>
+        </returns>
         <param name="serviceType">
           <attribution license="cc4" from="Microsoft" modified="false" />A service provided by the <see cref="T:System.ComponentModel.Component" />.</param>
       </Docs>
@@ -124,7 +127,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The virtual <see cref="M:System.ComponentModel.Design.DesignerActionList.GetSortedActionItems" /> method is implemented to return, in the expected display order, a collection of objects derived from the <see cref="T:System.ComponentModel.Design.DesignerActionItem" /> class. These items can be of the following specific types.</para>
@@ -196,6 +198,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the collection of <see cref="T:System.ComponentModel.Design.DesignerActionItem" /> objects contained in the list.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.ComponentModel.Design.DesignerActionItem" /> array that contains the items in this list.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

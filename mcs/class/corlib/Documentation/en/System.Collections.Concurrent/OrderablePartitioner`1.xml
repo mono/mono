@@ -69,7 +69,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> The returned object implements the <see cref="T:System.Collections.Generic.IEnumerable`1" /> interface. Calling <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> on the object creates another partition over the sequence.</para>
@@ -81,6 +80,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an object that can partition the underlying collection into a variable number of partitions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can create partitions over the underlying data source.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOrderableDynamicPartitions">
@@ -95,7 +98,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para> The returned object implements the <see cref="T:System.Collections.Generic.IEnumerable`1" /> interface. Calling <see cref="M:System.Collections.Generic.IEnumerable`1.GetEnumerator" /> on the object creates another partition over the sequence.</para>
@@ -107,6 +109,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates an object that can partition the underlying collection into a variable number of partitions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that can create partitions over the underlying data source.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="GetOrderablePartitions">
@@ -123,7 +129,6 @@
         <Parameter Name="partitionCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Each partition is represented as an enumerator over key-value pairs.</para>
@@ -134,6 +139,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Partitions the underlying collection into the specified number of orderable partitions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A list containing <paramref name="partitionCount" /> enumerators.</para>
+        </returns>
         <param name="partitionCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of partitions to create.</param>
       </Docs>
@@ -152,7 +161,6 @@
         <Parameter Name="partitionCount" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation provides the same behavior as <see cref="M:System.Collections.Concurrent.OrderablePartitioner`1.GetOrderablePartitions(System.Int32)" /> except that the returned set of partitions does not provide the keys for the elements.</para>
@@ -162,6 +170,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Partitions the underlying collection into the given number of ordered partitions.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A list containing <paramref name="partitionCount" /> enumerators.</para>
+        </returns>
         <param name="partitionCount">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of partitions to create.</param>
       </Docs>

@@ -529,7 +529,6 @@
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>An instance of the default implementation of the specified algorithm.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a list of simple names recognized by this class, see <see cref="T:System.Security.Cryptography.CryptoConfig" />.</para>
@@ -538,6 +537,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified cryptographic object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the specified cryptographic object.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The simple name of the cryptographic object of which to create an instance. </param>
       </Docs>
@@ -565,7 +568,6 @@
         </Parameter>
       </Parameters>
       <Docs>
-        <returns>An instance of the default implementation of the specified algorithm.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a list of simple names recognized by this class, see <see cref="T:System.Security.Cryptography.CryptoConfig" />.</para>
@@ -574,6 +576,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new instance of the specified cryptographic object with the specified arguments.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of the specified cryptographic object.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The simple name of the cryptographic object of which to create an instance. </param>
         <param name="args">
@@ -596,7 +602,6 @@
         <Parameter Name="str" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>A byte array containing the ASN.1 encoded OID.</returns>
         <remarks>
           <para>
 A <see cref="T:System.Security.Cryptography.CryptographicUnexpectedOperationException" /> will be thrown if the OID is invalid, like: 
@@ -609,6 +614,10 @@ A <see cref="T:System.OverflowException" /> will be thrown if a part of the OID 
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Encodes the specified object identifier (OID).</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A byte array containing the encoded OID.</para>
+        </returns>
         <param name="str">
           <attribution license="cc4" from="Microsoft" modified="false" />The OID to encode. </param>
       </Docs>
@@ -629,7 +638,6 @@ A <see cref="T:System.OverflowException" /> will be thrown if a part of the OID 
         <Parameter Name="name" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>The OID string in dotted notation (e.g. "1.3.14.3.2.26") for the specified algorithm.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For a list of simple names recognized by this class, see <see cref="T:System.Security.Cryptography.CryptoConfig" />.</para>
@@ -638,6 +646,10 @@ A <see cref="T:System.OverflowException" /> will be thrown if a part of the OID 
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the object identifier (OID) of the algorithm corresponding to the specified simple name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The OID of the specified algorithm.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The simple name of the algorithm for which to get the OID. </param>
       </Docs>

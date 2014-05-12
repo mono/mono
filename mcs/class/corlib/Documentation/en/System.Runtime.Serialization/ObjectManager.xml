@@ -97,7 +97,6 @@
         <Parameter Name="objectID" Type="System.Int64" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>An object can be registered and issued an object ID with a call to the <see cref="M:System.Runtime.Serialization.ObjectManager.RegisterObject(System.Object,System.Int64)" /> method.</para>
@@ -106,6 +105,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the object with the specified object ID.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The object with the specified object ID if it has been previously stored or null if no such object has been registered.</para>
+        </returns>
         <param name="objectID">
           <attribution license="cc4" from="Microsoft" modified="false" />The ID of the requested object. </param>
       </Docs>

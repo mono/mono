@@ -128,7 +128,6 @@
         <Parameter Name="wizardStep" Type="System.Web.UI.WebControls.WizardStepBase" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -138,6 +137,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the <see cref="T:System.Web.UI.WebControls.WizardStepCollection" /> collection contains a specific <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived object is found in the <see cref="T:System.Web.UI.WebControls.WizardStepCollection" /> collection; otherwise, false.</para>
+        </returns>
         <param name="wizardStep">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived object to find in the <see cref="T:System.Web.UI.WebControls.WizardStepCollection" /> collection.</param>
       </Docs>
@@ -205,13 +208,16 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an <see cref="T:System.Collections.IEnumerator" />-implemented object that can be used to iterate through the <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived objects in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Collections.IEnumerator" />-implemented object that contains all the <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived objects in the <see cref="T:System.Web.UI.WebControls.WizardStepCollection" /> collection.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>2.0.0.0</AssemblyVersion>
@@ -227,7 +233,6 @@
         <Parameter Name="wizardStep" Type="System.Web.UI.WebControls.WizardStepBase" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -237,6 +242,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the index value that represents the position of the specified <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived object in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If found, the zero-based index of the first occurrence of the <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived object passed in within the current <see cref="T:System.Web.UI.WebControls.WizardStepCollection" /> collection; otherwise, -1.</para>
+        </returns>
         <param name="wizardStep">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.UI.WebControls.WizardStepBase" />-derived object to search for in the <see cref="T:System.Web.UI.WebControls.WizardStepCollection" /> collection.</param>
       </Docs>
@@ -453,12 +462,15 @@
       </Parameters>
       <Docs>
         <param name="ob">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Appends the specified object to the end of the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The position into which the new element was inserted.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Contains">
@@ -475,12 +487,15 @@
       </Parameters>
       <Docs>
         <param name="ob">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the collection contains the specified object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the <see cref="T:System.Object" /> is found in the <see cref="T:System.Collections.IList" />; otherwise false.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.IndexOf">
@@ -497,12 +512,15 @@
       </Parameters>
       <Docs>
         <param name="ob">To be added.</param>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines the index value that represents the position of the specified object in the collection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index value of the specified object in the collection.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Collections.IList.Insert">

@@ -51,7 +51,6 @@
         <Parameter Name="filename" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>a <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /></returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The concrete <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentReference" /> class inherits from the abstract <see cref="T:System.Web.Services.Discovery.DiscoveryReference" /> class. </para>
@@ -61,6 +60,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentReference" /> object for a given discovery document.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Discovery.DiscoveryDocumentReference" /> object that specifies the location of a .vsdisco file.</para>
+        </returns>
         <param name="filename">
           <attribution license="cc4" from="Microsoft" modified="false" />The file-system path of the discovery document.</param>
       </Docs>

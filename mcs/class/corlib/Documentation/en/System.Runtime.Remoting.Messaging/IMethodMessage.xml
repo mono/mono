@@ -92,12 +92,15 @@
         <Parameter Name="argNum" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a specific argument as an <see cref="T:System.Object" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The argument passed to the method.</para>
+        </returns>
         <param name="argNum">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of the requested argument. </param>
       </Docs>
@@ -118,12 +121,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the name of the argument passed to the method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The name of the specified argument passed to the method, or null if the current method is not implemented.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The number of the requested argument. </param>
       </Docs>

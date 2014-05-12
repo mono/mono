@@ -38,7 +38,6 @@
         <Parameter Name="channel" Type="System.ServiceModel.IContextChannel" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.GetExistingInstanceContext(System.ServiceModel.Channels.Message,System.ServiceModel.IContextChannel)" /> method is called when a message is received. Return the <see cref="T:System.ServiceModel.InstanceContext" /> object that you want to process the message, or null. In the case of null, indigo2 creates a new <see cref="T:System.ServiceModel.InstanceContext" /> object for the message and then calls the <see cref="M:System.ServiceModel.Dispatcher.IInstanceContextProvider.InitializeInstanceContext(System.ServiceModel.InstanceContext,System.ServiceModel.Channels.Message,System.ServiceModel.IContextChannel)" /> method.</para>
@@ -48,6 +47,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called when a new message is received.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ServiceModel.InstanceContext" /> object that is used to process the message; return null to instruct indigo2 to create a new <see cref="T:System.ServiceModel.InstanceContext" /> object.</para>
+        </returns>
         <param name="message">
           <attribution license="cc4" from="Microsoft" modified="false" />The incoming message.</param>
         <param name="channel">
@@ -101,7 +104,6 @@
         <Parameter Name="instanceContext" Type="System.ServiceModel.InstanceContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -112,6 +114,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Called when all <see cref="T:System.ServiceModel.InstanceContext" /> activities have completed to enable implementers to prevent the <see cref="T:System.ServiceModel.InstanceContext" /> from being recycled.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if indigo1 is to close and recycle the <see cref="T:System.ServiceModel.InstanceContext" /> object and adjust the value of <see cref="P:System.ServiceModel.Dispatcher.ServiceThrottle.MaxConcurrentInstances" />; otherwise, false.</para>
+        </returns>
         <param name="instanceContext">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ServiceModel.InstanceContext" /> object that is considered idle.</param>
       </Docs>

@@ -84,12 +84,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a resource expression that is formed by the expression editor sheet property values.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The resource expression string for the current settings in the sheet.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IsValid">

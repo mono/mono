@@ -97,7 +97,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'System.Collections.IEnumerator'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides a simple "foreach" style iteration over the collection of nodes in the XmlNodeList.</para>
@@ -106,6 +105,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an enumerator that iterates through the collection of nodes.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An enumerator used to iterate through the collection of nodes.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Item">
@@ -124,12 +127,15 @@
         <Parameter Name="index" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'XmlNode'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves a node at the given index.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Xml.XmlNode" /> with the specified index in the collection. If <paramref name="index" /> is greater than or equal to the number of nodes in the list, this returns null.</para>
+        </returns>
         <param name="index">
           <attribution license="cc4" from="Microsoft" modified="false" />The zero-based index into the list of nodes.</param>
       </Docs>

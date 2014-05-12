@@ -54,7 +54,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Multiple objects can be serialized into the same serialization store. When you are finished with the store, you can call its <see cref="M:System.ComponentModel.Design.Serialization.SerializationStore.System#IDisposable#Dispose" /> or <see cref="M:System.ComponentModel.Design.Serialization.SerializationStore.Close" /> method. Once closed, a serialization store can be used for deserialization, or it can be saved into a stream.</para>
@@ -64,6 +63,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new created serialization store.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Deserialize">
@@ -81,7 +84,6 @@
         <Parameter Name="store" Type="System.ComponentModel.Design.Serialization.SerializationStore" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method deserializes <paramref name="store" /> to produce a collection of objects contained within it. Objects are deserialized in the same order in which they were serialized.</para>
@@ -90,6 +92,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the given store to produce a collection of objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of objects created according to the stored state.</para>
+        </returns>
         <param name="store">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to deserialize.</param>
       </Docs>
@@ -110,7 +116,6 @@
         <Parameter Name="container" Type="System.ComponentModel.IContainer" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method deserializes <paramref name="store" /> to produce a collection of objects contained within it. Objects are deserialized in the same order in which they were serialized.</para>
@@ -120,6 +125,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Deserializes the given store and populates the given <see cref="T:System.ComponentModel.IContainer" /> with deserialized <see cref="T:System.ComponentModel.IComponent" /> objects.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A collection of objects created according to the stored state.</para>
+        </returns>
         <param name="store">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> to deserialize.</param>
         <param name="container">
@@ -240,7 +249,6 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>You can use the returned store to deserialize objects by passing it to one of the <see cref="Overload:System.ComponentModel.Design.Serialization.ComponentSerializationService.Deserialize" /> methods.</para>
@@ -249,6 +257,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Loads a <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> from a stream.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.Design.Serialization.SerializationStore" /> instance.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.IO.Stream" /> from which the store will be loaded.</param>
       </Docs>

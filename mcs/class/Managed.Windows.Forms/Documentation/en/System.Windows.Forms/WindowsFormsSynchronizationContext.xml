@@ -73,12 +73,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Copies the synchronization context.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A copy of the synchronization context.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="Dispose">

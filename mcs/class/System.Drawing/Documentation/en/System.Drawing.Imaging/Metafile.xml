@@ -1164,12 +1164,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'IntPtr'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a Windows handle to an enhanced <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A Windows handle to this enhanced <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1184,12 +1187,15 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'MetafileHeader'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with this <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with this <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
       </Docs>
       <AssemblyInfo>
         <AssemblyVersion>1.0.5000.0</AssemblyVersion>
@@ -1206,12 +1212,15 @@
         <Parameter Name="henhmetafile" Type="System.IntPtr" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MetafileHeader'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
         <param name="henhmetafile">
           <attribution license="cc4" from="Microsoft" modified="false" />The handle to the enhanced <see cref="T:System.Drawing.Imaging.Metafile" /> for which a header is returned. </param>
       </Docs>
@@ -1230,12 +1239,15 @@
         <Parameter Name="stream" Type="System.IO.Stream" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MetafileHeader'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
         <param name="stream">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.IO.Stream" /> containing the <see cref="T:System.Drawing.Imaging.Metafile" /> for which a header is retrieved. </param>
       </Docs>
@@ -1254,12 +1266,15 @@
         <Parameter Name="fileName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'MetafileHeader'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
         <param name="fileName">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> containing the name of the <see cref="T:System.Drawing.Imaging.Metafile" /> for which a header is retrieved. </param>
       </Docs>
@@ -1280,12 +1295,15 @@
       </Parameters>
       <Docs>
         <param name="henhmetafile">To be added.</param>
-        <returns>To be added: an object of type 'MetafileHeader'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Drawing.Imaging.MetafileHeader" /> associated with the specified <see cref="T:System.Drawing.Imaging.Metafile" />.</para>
+        </returns>
         <param name="wmfHeader">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Drawing.Imaging.WmfPlaceableFileHeader" />. </param>
       </Docs>

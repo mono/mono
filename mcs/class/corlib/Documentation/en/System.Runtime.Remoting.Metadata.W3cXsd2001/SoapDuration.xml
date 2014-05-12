@@ -65,12 +65,15 @@
         <Parameter Name="value" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'TimeSpan'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified <see cref="T:System.String" /> into a <see cref="T:System.TimeSpan" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.TimeSpan" /> object that is obtained from <paramref name="value" />.</para>
+        </returns>
         <param name="value">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.String" /> to convert. </param>
       </Docs>
@@ -91,12 +94,15 @@
         <Parameter Name="timeSpan" Type="System.TimeSpan" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'string'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the specified <see cref="T:System.TimeSpan" /> object as a <see cref="T:System.String" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> representation of <paramref name="timeSpan" /> in the format "PxxYxxDTxxHxxMxx.xxxS" or "PxxYxxDTxxHxxMxxS". The "PxxYxxDTxxHxxMxx.xxxS" is used if <see cref="P:System.TimeSpan.Milliseconds" /> does not equal zero.</para>
+        </returns>
         <param name="timeSpan">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.TimeSpan" /> object to convert. </param>
       </Docs>

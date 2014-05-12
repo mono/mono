@@ -139,7 +139,6 @@
         <Parameter Name="other" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -149,6 +148,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Object.Equals(System.Object)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Object" /> is equal to the current <see cref="T:System.Object" />; otherwise, false.</para>
+        </returns>
         <param name="other">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Object" /> to compare with the current <see cref="T:System.Object" />.</param>
       </Docs>
@@ -194,7 +197,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -204,6 +206,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.EventInfo.GetAddMethod" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object representing the method used to add an event-handler delegate to the event source.</para>
+        </returns>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
     </Member>
@@ -223,7 +229,6 @@
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -233,6 +238,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.EventInfo.GetAddMethod(System.Boolean)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object representing the method used to add an event-handler delegate to the event source.</para>
+        </returns>
         <param name="nonPublic">
           <attribution license="cc4" from="Microsoft" modified="false" />true to return non-public methods; otherwise, false.</param>
       </Docs>
@@ -254,7 +263,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -264,6 +272,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.MemberInfo.GetCustomAttributes(System.Boolean)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array that contains all the custom attributes, or an array with zero (0) elements if no attributes are defined.</para>
+        </returns>
         <param name="inherit">
           <attribution license="cc4" from="Microsoft" modified="false" />true to search a member's inheritance chain to find the attributes; otherwise, false.</param>
       </Docs>
@@ -286,7 +298,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -296,6 +307,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.MemberInfo.GetCustomAttributes(System.Type,System.Boolean)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An array of custom attributes applied to this member, or an array with zero (0) elements if no attributes have been applied.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of attribute to search for. Only attributes that are assignable to this type are returned. </param>
         <param name="inherit">
@@ -317,7 +332,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -327,6 +341,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Object.GetHashCode" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The hash code for the current instance.</para>
+        </returns>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
     </Member>
@@ -374,7 +392,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -384,6 +401,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.EventInfo.GetRaiseMethod" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method that is called when the event is raised.</para>
+        </returns>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
     </Member>
@@ -403,7 +424,6 @@
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -413,6 +433,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.EventInfo.GetRaiseMethod(System.Boolean)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Reflection.MethodInfo" /> object that was called when the event was raised.</para>
+        </returns>
         <param name="nonPublic">
           <attribution license="cc4" from="Microsoft" modified="false" />true to return non-public methods; otherwise, false.</param>
       </Docs>
@@ -432,7 +456,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -442,6 +465,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.EventInfo.GetRemoveMethod" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object representing the method used to remove an event-handler delegate from the event source.</para>
+        </returns>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
     </Member>
@@ -461,7 +488,6 @@
         <Parameter Name="nonPublic" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -471,6 +497,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.EventInfo.GetRemoveMethod(System.Boolean)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Reflection.MethodInfo" /> object representing the method used to remove an event-handler delegate from the event source.</para>
+        </returns>
         <param name="nonPublic">
           <attribution license="cc4" from="Microsoft" modified="false" />true to return non-public methods; otherwise, false.</param>
       </Docs>
@@ -490,7 +520,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -500,6 +529,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Object.GetType" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Type" /> object.</para>
+        </returns>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
     </Member>
@@ -613,7 +646,6 @@
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -623,6 +655,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Reflection.MemberInfo.IsDefined(System.Type,System.Boolean)" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if one or more instance of the <paramref name="attributeType" /> parameter is applied to this member; otherwise, false.</para>
+        </returns>
         <param name="attributeType">
           <attribution license="cc4" from="Microsoft" modified="false" />The Type object to which the custom attributes are applied. </param>
         <param name="inherit">
@@ -807,7 +843,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method is for access to managed classes from unmanaged code and should not be called from managed code.</para>
@@ -816,6 +851,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Provides COM objects with version-independent access to the <see cref="M:System.Object.ToString" /> method.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A string that represents the current <see cref="T:System.Object" />.</para>
+        </returns>
       </Docs>
       <AssemblyVersion>2.0.0.0</AssemblyVersion>
     </Member>

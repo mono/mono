@@ -37,12 +37,15 @@
         <Parameter Name="physicalDir" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'object'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates and configures an application domain for hosting ASP.NET.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An instance of a user-supplied class used to marshal calls into the newly created application domain.</para>
+        </returns>
         <param name="hostType">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of a user-supplied class to be created in the new application domain.</param>
         <param name="virtualDir">

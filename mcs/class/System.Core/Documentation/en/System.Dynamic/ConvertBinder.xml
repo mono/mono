@@ -56,12 +56,15 @@
         <Parameter Name="args" Type="System.Dynamic.DynamicMetaObject[]" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic convert operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The target of the dynamic convert operation.</param>
         <param name="args">
@@ -101,12 +104,15 @@
         <Parameter Name="target" Type="System.Dynamic.DynamicMetaObject" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Performs the binding of the dynamic convert operation if the target dynamic object cannot bind.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The target of the dynamic convert operation.</param>
       </Docs>
@@ -126,12 +132,15 @@
         <Parameter Name="errorSuggestion" Type="System.Dynamic.DynamicMetaObject" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in the derived class, performs the binding of the dynamic convert operation if the target dynamic object cannot bind.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Dynamic.DynamicMetaObject" /> representing the result of the binding.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The target of the dynamic convert operation.</param>
         <param name="errorSuggestion">

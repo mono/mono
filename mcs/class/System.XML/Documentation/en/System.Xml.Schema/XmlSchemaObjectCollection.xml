@@ -81,7 +81,6 @@
         <Parameter Name="item" Type="System.Xml.Schema.XmlSchemaObject" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>If Count already equals the capacity, the capacity of list is doubled by automatically reallocating the internal array and copying the existing elements to the new array before the new element is added.</para>
@@ -108,6 +107,10 @@ schema.Includes.Add(include);</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Adds an <see cref="T:System.Xml.Schema.XmlSchemaObject" /> to the XmlSchemaObjectCollection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index at which the item has been added.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchemaObject" />. </param>
       </Docs>
@@ -128,12 +131,15 @@ schema.Includes.Add(include);</code>
         <Parameter Name="item" Type="System.Xml.Schema.XmlSchemaObject" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Indicates if the specified <see cref="T:System.Xml.Schema.XmlSchemaObject" /> is in the XmlSchemaObjectCollection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified qualified name is in the collection; otherwise, returns false. If null is supplied, false is returned because there is no qualified name with a null name.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchemaObject" />. </param>
       </Docs>
@@ -184,12 +190,15 @@ schema.Includes.Add(include);</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added: an object of type 'XmlSchemaObjectEnumerator'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns an enumerator for iterating through the XmlSchemaObjects contained in the XmlSchemaObjectCollection.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The iterator returns <see cref="T:System.Xml.Schema.XmlSchemaObjectEnumerator" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="IndexOf">
@@ -208,12 +217,15 @@ schema.Includes.Add(include);</code>
         <Parameter Name="item" Type="System.Xml.Schema.XmlSchemaObject" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the collection index corresponding to the specified <see cref="T:System.Xml.Schema.XmlSchemaObject" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The index corresponding to the specified <see cref="T:System.Xml.Schema.XmlSchemaObject" />.</para>
+        </returns>
         <param name="item">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Schema.XmlSchemaObject" /> whose index you want to return. </param>
       </Docs>

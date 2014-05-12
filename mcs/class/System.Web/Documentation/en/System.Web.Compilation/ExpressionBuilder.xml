@@ -58,7 +58,6 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -68,6 +67,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns an object that represents an evaluated expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An object that represents the evaluated expression; otherwise, null if the inheritor does not implement <see cref="M:System.Web.Compilation.ExpressionBuilder.EvaluateExpression(System.Object,System.Web.UI.BoundPropertyEntry,System.Object,System.Web.Compilation.ExpressionBuilderContext)" />.</para>
+        </returns>
         <param name="target">
           <attribution license="cc4" from="Microsoft" modified="false" />The object containing the expression.</param>
         <param name="entry">
@@ -93,7 +96,6 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -103,6 +105,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns code that is used during page execution to obtain the evaluated expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.CodeDom.CodeExpression" /> that is used for property assignment.</para>
+        </returns>
         <param name="entry">
           <attribution license="cc4" from="Microsoft" modified="false" />The object that represents information about the property bound to by the expression.</param>
         <param name="parsedData">
@@ -126,7 +132,6 @@
         <Parameter Name="context" Type="System.Web.Compilation.ExpressionBuilderContext" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -136,6 +141,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns an object that represents the parsed expression.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> containing the parsed representation of the expression; otherwise, null if <see cref="M:System.Web.Compilation.ExpressionBuilder.ParseExpression(System.String,System.Type,System.Web.Compilation.ExpressionBuilderContext)" /> is not implemented.</para>
+        </returns>
         <param name="expression">
           <attribution license="cc4" from="Microsoft" modified="false" />The value of the declarative expression.</param>
         <param name="propertyType">

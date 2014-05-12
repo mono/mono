@@ -306,7 +306,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Web.UI.WebControls.Adapters.MenuAdapter.SaveAdapterControlState" /> method uses the <see cref="T:System.Web.UI.WebControls.Menu" /> control state to maintain the current navigation path of the menu. When an adapter needs to maintain private state information, it can override the <see cref="M:System.Web.UI.WebControls.Adapters.MenuAdapter.LoadAdapterControlState(System.Object)" /> and <see cref="M:System.Web.UI.WebControls.Adapters.MenuAdapter.SaveAdapterControlState" /> methods. An adapter might maintain private control state when there are complex features that need to maintain state across requests, separate from the associated control's state. The adapter needs to register for control state during the <see cref="M:System.Web.UI.WebControls.Adapters.MenuAdapter.OnInit(System.EventArgs)" /> method call in every request.</para>
@@ -315,6 +314,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Saves any changes to the adapter private control state that have occurred since the page was posted back to the server.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Object" /> that contains the adapter's control state information as a <see cref="T:System.Web.UI.StateBag" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="System.Web.UI.IPostBackEventHandler.RaisePostBackEvent">

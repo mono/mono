@@ -111,7 +111,6 @@ Console.WriteLine(root)</code>
         <Parameter Name="obj" Type="System.Object" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For two <see cref="T:System.Xml.Linq.XName" /> objects to be equal, they must have the same expanded name.</para>
@@ -120,6 +119,10 @@ Console.WriteLine(root)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified <see cref="T:System.Xml.Linq.XName" /> is equal to this <see cref="T:System.Xml.Linq.XName" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified <see cref="T:System.Xml.Linq.XName" /> is equal to the current <see cref="T:System.Xml.Linq.XName" />; otherwise false.</para>
+        </returns>
         <param name="obj">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Xml.Linq.XName" /> to compare to the current <see cref="T:System.Xml.Linq.XName" />.</param>
       </Docs>
@@ -138,7 +141,6 @@ Console.WriteLine(root)</code>
         <Parameter Name="expandedName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method contains overloads that allow you to create an <see cref="T:System.Xml.Linq.XName" />. You can create it from a expanded XML name in the form {namespace}localname, or from a namespace and a local name, specified separately.</para>
@@ -149,6 +151,10 @@ Console.WriteLine(root)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.Xml.Linq.XName" /> object from an expanded name.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XName" /> object constructed from the expanded name.</para>
+        </returns>
         <param name="expandedName">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.String" /> that contains an expanded XML name in the format {namespace}localname.</param>
       </Docs>
@@ -168,7 +174,6 @@ Console.WriteLine(root)</code>
         <Parameter Name="namespaceName" Type="System.String" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method contains overloads that allow you to create an <see cref="T:System.Xml.Linq.XName" />. You can create it from an expanded XML name in the form {namespace}localname, or from a namespace and a local name, specified separately.</para>
@@ -179,6 +184,10 @@ Console.WriteLine(root)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets an <see cref="T:System.Xml.Linq.XName" /> object from a local name and a namespace.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Xml.Linq.XName" /> object created from the specified local name and namespace.</para>
+        </returns>
         <param name="localName">
           <attribution license="cc4" from="Microsoft" modified="false" />A local (unqualified) name.</param>
         <param name="namespaceName">
@@ -197,7 +206,6 @@ Console.WriteLine(root)</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method serves as a hash function for <see cref="T:System.Xml.Linq.XName" />. You can use <see cref="M:System.Xml.Linq.XName.GetHashCode" /> in hashing algorithms, or in data structures such as a hash table.</para>
@@ -206,6 +214,10 @@ Console.WriteLine(root)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets a hash code for this <see cref="T:System.Xml.Linq.XName" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An <see cref="T:System.Int32" /> that contains the hash code for the <see cref="T:System.Xml.Linq.XName" />.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="LocalName">
@@ -289,7 +301,6 @@ Console.WriteLine(root)</code>
         <Parameter Name="right" Type="System.Xml.Linq.XName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The operator overloads == and != are included to enable comparisons between <see cref="T:System.Xml.Linq.XName" /> and a string, such as element.Name == "SomeElementName". The predefined reference equality operators in C# require one operand to be convertible to the type of the other through reference conversions only. These operators do not consider the implicit conversion from string to <see cref="T:System.Xml.Linq.XName" />.</para>
@@ -298,6 +309,10 @@ Console.WriteLine(root)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether two instances of <see cref="T:System.Xml.Linq.XName" /> are equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are equal; otherwise false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.Linq.XName" /> to compare.</param>
         <param name="right">
@@ -344,7 +359,6 @@ Console.WriteLine(root)</code>
         <Parameter Name="right" Type="System.Xml.Linq.XName" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The operator overloads == and != are included to enable comparisons between <see cref="T:System.Xml.Linq.XName" /> and a string, such as element.Name == "SomeElementName". The predefined reference equality operators in C# require one operand to be convertible to the type of the other through reference conversions only. These operators do not consider the implicit conversion from string to <see cref="T:System.Xml.Linq.XName" />.</para>
@@ -353,6 +367,10 @@ Console.WriteLine(root)</code>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a value indicating whether two instances of <see cref="T:System.Xml.Linq.XName" /> are not equal.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if <paramref name="left" /> and <paramref name="right" /> are not equal; otherwise false.</para>
+        </returns>
         <param name="left">
           <attribution license="cc4" from="Microsoft" modified="false" />The first <see cref="T:System.Xml.Linq.XName" /> to compare.</param>
         <param name="right">
@@ -420,12 +438,15 @@ Console.WriteLine(root)</code>
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the expanded XML name in the format {namespace}localname.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.String" /> that contains the expanded XML name in the format {namespace}localname.</para>
+        </returns>
       </Docs>
     </Member>
   </Members>

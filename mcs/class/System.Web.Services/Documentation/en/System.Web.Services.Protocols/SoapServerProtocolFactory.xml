@@ -44,13 +44,16 @@
         <Parameter Name="request" Type="System.Web.HttpRequest" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.Web.Services.Protocols.ServerProtocol" /> that can be used to process the XML Web service request specified by <paramref name="request" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.Web.Services.Protocols.ServerProtocol" /> that can be used to process the XML Web service request specified by <paramref name="request" />.</para>
+        </returns>
         <param name="request">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Web.HttpRequest" /> that represents the Web service request.</param>
       </Docs>

@@ -93,13 +93,16 @@
         <Parameter Name="serverType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Retrieves the <see cref="T:System.Object" /> that is stored in the cache using the key that was created from the specified protocol type and server type.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Object" /> that is stored in the cache using the key that was created from <paramref name="protocolType" /> and <paramref name="serverType" />.</para>
+        </returns>
         <param name="protocolType">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Type" /> that is used to create the key to retrieve <paramref name="value" /> from the cache.</param>
         <param name="serverType">

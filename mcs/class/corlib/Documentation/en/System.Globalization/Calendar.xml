@@ -155,7 +155,6 @@
         <Parameter Name="days" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="days" /> value is added to the specified <see cref="T:System.DateTime" />. If <paramref name="days" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
@@ -167,6 +166,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of days away from the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of days to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add days. </param>
         <param name="days">
@@ -190,7 +193,6 @@
         <Parameter Name="hours" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="hours" /> value is added to the specified <see cref="T:System.DateTime" />. If <paramref name="hours" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
@@ -202,6 +204,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of hours away from the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of hours to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add hours. </param>
         <param name="hours">
@@ -225,7 +231,6 @@
         <Parameter Name="milliseconds" Type="System.Double" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="milliseconds" /> value is rounded to the nearest integer before it is added to the specified <see cref="T:System.DateTime" />. If <paramref name="milliseconds" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
@@ -237,6 +242,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of milliseconds away from the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of milliseconds to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to add milliseconds to. </param>
         <param name="milliseconds">
@@ -260,7 +269,6 @@
         <Parameter Name="minutes" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="minutes" /> value is added to the specified <see cref="T:System.DateTime" />. If <paramref name="minutes" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
@@ -272,6 +280,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of minutes away from the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of minutes to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add minutes. </param>
         <param name="minutes">
@@ -295,7 +307,6 @@
         <Parameter Name="months" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="months" /> value is added to the specified <see cref="T:System.DateTime" />. If <paramref name="months" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
@@ -309,6 +320,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns a <see cref="T:System.DateTime" /> that is the specified number of months away from the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of months to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add months. </param>
         <param name="months">
@@ -332,7 +347,6 @@
         <Parameter Name="seconds" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="seconds" /> value is added to the specified <see cref="T:System.DateTime" />. If <paramref name="seconds" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
@@ -344,6 +358,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of seconds away from the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of seconds to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add seconds. </param>
         <param name="seconds">
@@ -367,7 +385,6 @@
         <Parameter Name="weeks" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="weeks" /> value is added to the specified <see cref="T:System.DateTime" />. If <paramref name="weeks" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
@@ -380,6 +397,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.DateTime" /> that is the specified number of weeks away from the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of weeks to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add weeks. </param>
         <param name="weeks">
@@ -403,7 +424,6 @@
         <Parameter Name="years" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <paramref name="years" /> value is added to the specified <see cref="T:System.DateTime" />. If <paramref name="years" /> is negative, the resulting <see cref="T:System.DateTime" /> is earlier than the specified <see cref="T:System.DateTime" />.</para>
@@ -417,6 +437,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns a <see cref="T:System.DateTime" /> that is the specified number of years away from the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that results from adding the specified number of years to the specified <see cref="T:System.DateTime" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to which to add years. </param>
         <param name="years">
@@ -467,7 +491,6 @@
       </ReturnValue>
       <Parameters />
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -477,6 +500,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new object that is a copy of the current <see cref="T:System.Globalization.Calendar" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new instance of <see cref="T:System.Object" /> that is the memberwise clone of the current <see cref="T:System.Globalization.Calendar" /> object.</para>
+        </returns>
       </Docs>
     </Member>
     <Member MemberName="CurrentEra">
@@ -566,12 +593,15 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the day of the month in the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A positive integer that represents the day of the month in the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -592,7 +622,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DayOfWeek'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="T:System.DayOfWeek" /> values are Sunday, Monday, Tuesday, Wednesday, Thursday, Friday, and Saturday.</para>
@@ -601,6 +630,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the day of the week in the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A <see cref="T:System.DayOfWeek" /> value that represents the day of the week in the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -621,7 +654,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The day of the year is defined as the number of days from the first day of the year. For example, in <see cref="T:System.Globalization.GregorianCalendar" />, <see cref="M:System.Globalization.Calendar.GetDayOfYear(System.DateTime)" /> for January 1 returns 1, and <see cref="M:System.Globalization.Calendar.GetDayOfYear(System.DateTime)" /> for December 31 returns 365 in a common year or 366 in a leap year.</para>
@@ -630,6 +662,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the day of the year in the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A positive integer that represents the day of the year in the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -651,7 +687,6 @@
         <Parameter Name="month" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For example, in <see cref="T:System.Globalization.GregorianCalendar" />, <see cref="M:System.Globalization.Calendar.GetDaysInMonth(System.Int32,System.Int32)" /> for February returns 28 in a common year or 29 in a leap year.</para>
@@ -660,6 +695,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of days in the specified month and year of the current era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified month in the specified year in the current era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -684,7 +723,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For example, in <see cref="T:System.Globalization.GregorianCalendar" />, <see cref="M:System.Globalization.Calendar.GetDaysInMonth(System.Int32,System.Int32)" /> for February returns 28 in a common year or 29 in a leap year.</para>
@@ -693,6 +731,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the number of days in the specified month, year, and era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified month in the specified year in the specified era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -717,7 +759,6 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For example, in <see cref="T:System.Globalization.GregorianCalendar" />, <see cref="M:System.Globalization.Calendar.GetDaysInYear(System.Int32)" /> returns 365 for a common year or 366 for a leap year.</para>
@@ -726,6 +767,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of days in the specified year of the current era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified year in the current era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
       </Docs>
@@ -747,7 +792,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For example, in <see cref="T:System.Globalization.GregorianCalendar" />, <see cref="M:System.Globalization.Calendar.GetDaysInYear(System.Int32)" /> returns 365 for a common year or 366 for a leap year.</para>
@@ -756,6 +800,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the number of days in the specified year and era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of days in the specified year in the specified era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="era">
@@ -778,12 +826,15 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the era in the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the era in <paramref name="time" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -804,12 +855,15 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the hours value in the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 0 to 23 that represents the hour in <paramref name="time" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -834,7 +888,6 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -844,6 +897,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the leap month for a specified year.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A positive integer that indicates the leap month in the specified year.</para>
+          <para>-or-</para>
+          <para>Zero if this calendar does not support a leap month or if the <paramref name="year" /> parameter does not represent a leap year.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A year.</param>
       </Docs>
@@ -869,7 +928,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -879,6 +937,12 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Calculates the leap month for a specified year and era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A positive integer that indicates the leap month in the specified year and era.</para>
+          <para>-or-</para>
+          <para>Zero if this calendar does not support a leap month or if the <paramref name="year" /> and <paramref name="era" /> parameters do not specify a leap year.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A year.</param>
         <param name="era">
@@ -901,12 +965,15 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'double'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the milliseconds value in the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A double-precision floating-point number from 0 to 999 that represents the milliseconds in the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -927,12 +994,15 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the minutes value in the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 0 to 59 that represents the minutes in <paramref name="time" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -953,7 +1023,6 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For example, in <see cref="T:System.Globalization.HebrewCalendar" />, <see cref="M:System.Globalization.Calendar.GetMonth(System.DateTime)" /> for Tishrei returns 1, and <see cref="M:System.Globalization.Calendar.GetMonth(System.DateTime)" /> for Elul returns 12 in a common year or 13 in a leap year.</para>
@@ -962,6 +1031,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the month in the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A positive integer that represents the month in <paramref name="time" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -982,7 +1055,6 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For example, in <see cref="T:System.Globalization.HebrewCalendar" />, <see cref="M:System.Globalization.Calendar.GetMonthsInYear(System.Int32)" /> returns 12 for a common year or 13 for a leap year.</para>
@@ -991,6 +1063,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the number of months in the specified year in the current era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of months in the specified year in the current era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
       </Docs>
@@ -1012,7 +1088,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>For example, in <see cref="T:System.Globalization.HebrewCalendar" />, <see cref="M:System.Globalization.Calendar.GetMonthsInYear(System.Int32)" /> returns 12 for a common year or 13 for a leap year.</para>
@@ -1021,6 +1096,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the number of months in the specified year in the specified era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The number of months in the specified year in the specified era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="era">
@@ -1043,12 +1122,15 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the seconds value in the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer from 0 to 59 that represents the seconds in <paramref name="time" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -1071,7 +1153,6 @@
         <Parameter Name="firstDayOfWeek" Type="System.DayOfWeek" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>This method can be used to determine the number of weeks in the year by setting <paramref name="time" /> to the last day of the year.</para>
@@ -1452,6 +1533,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns the week of the year that includes the date in the specified <see cref="T:System.DateTime" /> value.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A positive integer that represents the week of the year that includes the date in the <paramref name="time" /> parameter.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />A date and time value. </param>
         <param name="rule">
@@ -1476,12 +1561,15 @@
         <Parameter Name="time" Type="System.DateTime" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns the year in the specified <see cref="T:System.DateTime" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that represents the year in <paramref name="time" />.</para>
+        </returns>
         <param name="time">
           <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTime" /> to read. </param>
       </Docs>
@@ -1504,7 +1592,6 @@
         <Parameter Name="day" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To make up for the difference between the calendar year and the actual time that the earth rotates around the sun or the actual time that the moon rotates around the earth, a leap year has a different number of days from a standard calendar year. Each <see cref="T:System.Globalization.Calendar" /> implementation defines leap years differently.</para>
@@ -1514,6 +1601,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified date in the current era is a leap day.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified day is a leap day; otherwise, false.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -1541,7 +1632,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To make up for the difference between the calendar year and the actual time that the earth rotates around the sun or the actual time that the moon rotates around the earth, a leap year has a different number of days from a standard calendar year. Each <see cref="T:System.Globalization.Calendar" /> implementation defines leap years differently.</para>
@@ -1551,6 +1641,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, determines whether the specified date in the specified era is a leap day.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified day is a leap day; otherwise, false.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -1578,7 +1672,6 @@
         <Parameter Name="month" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To make up for the difference between the calendar year and the actual time that the earth rotates around the sun or the actual time that the moon rotates around the earth, a leap year has a different number of days from a standard calendar year. Each <see cref="T:System.Globalization.Calendar" /> implementation defines leap years differently.</para>
@@ -1588,6 +1681,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified month in the specified year in the current era is a leap month.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified month is a leap month; otherwise, false.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -1612,7 +1709,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To make up for the difference between the calendar year and the actual time that the earth rotates around the sun or the actual time that the moon rotates around the earth, a leap year has a different number of days from a standard calendar year. Each <see cref="T:System.Globalization.Calendar" /> implementation defines leap years differently.</para>
@@ -1622,6 +1718,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, determines whether the specified month in the specified year in the specified era is a leap month.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified month is a leap month; otherwise, false.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -1646,7 +1746,6 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To make up for the difference between the calendar year and the actual time that the earth rotates around the sun or the actual time that the moon rotates around the earth, a leap year has a different number of days from a standard calendar year. Each <see cref="T:System.Globalization.Calendar" /> implementation defines leap years differently.</para>
@@ -1655,6 +1754,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Determines whether the specified year in the current era is a leap year.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified year is a leap year; otherwise, false.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
       </Docs>
@@ -1676,7 +1779,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'bool'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>To make up for the difference between the calendar year and the actual time that the earth rotates around the sun or the actual time that the moon rotates around the earth, a leap year has a different number of days from a standard calendar year. Each <see cref="T:System.Globalization.Calendar" /> implementation defines leap years differently.</para>
@@ -1685,6 +1787,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, determines whether the specified year in the specified era is a leap year.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if the specified year is a leap year; otherwise, false.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="era">
@@ -1789,13 +1895,18 @@
         <Parameter Name="calendar" Type="System.Globalization.Calendar" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <since version=".NET 2.0" />
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a read-only version of the specified <see cref="T:System.Globalization.Calendar" /> object.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Globalization.Calendar" /> object specified by the <paramref name="calendar" /> parameter, if <paramref name="calendar" /> is read-only.</para>
+          <para>-or-</para>
+          <para>A read-only memberwise clone of the <see cref="T:System.Globalization.Calendar" /> object specified by <paramref name="calendar" />, if <paramref name="calendar" /> is not read-only.</para>
+        </returns>
         <param name="calendar">
           <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Globalization.Calendar" /> object.</param>
       </Docs>
@@ -1822,12 +1933,15 @@
         <Parameter Name="millisecond" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>To be added</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Returns a <see cref="T:System.DateTime" /> that is set to the specified date and time in the current era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that is set to the specified date and time in the current era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -1867,7 +1981,6 @@
         <Parameter Name="era" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'DateTime'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The <see cref="M:System.Globalization.Calendar.ToDateTime(System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32,System.Int32)" /> method is useful because it can convert any date in the current calendar to a Gregorian calendar date. The Gregorian date can subsequently be used, for example, to compare dates in different calendars or create an equivalent date in a particular calendar.</para>
@@ -1876,6 +1989,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>When overridden in a derived class, returns a <see cref="T:System.DateTime" /> that is set to the specified date and time in the specified era.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.DateTime" /> that is set to the specified date and time in the current era.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />An integer that represents the year. </param>
         <param name="month">
@@ -1910,7 +2027,6 @@
         <Parameter Name="year" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <returns>To be added: an object of type 'int'</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>
@@ -1923,6 +2039,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Converts the specified year to a four-digit year by using the <see cref="P:System.Globalization.Calendar.TwoDigitYearMax" /> property to determine the appropriate century.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An integer that contains the four-digit representation of <paramref name="year" />.</para>
+        </returns>
         <param name="year">
           <attribution license="cc4" from="Microsoft" modified="false" />A two-digit or four-digit integer that represents the year to convert. </param>
       </Docs>

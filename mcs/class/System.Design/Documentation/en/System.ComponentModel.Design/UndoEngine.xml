@@ -142,7 +142,6 @@
         <Parameter Name="primary" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>The default implementation of the <see cref="M:System.ComponentModel.Design.UndoEngine.CreateUndoUnit(System.String,System.Boolean)" /> method simply returns a new <see cref="T:System.ComponentModel.Design.UndoEngine.UndoUnit" />. </para>
@@ -152,6 +151,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Creates a new <see cref="T:System.ComponentModel.Design.UndoEngine.UndoUnit" />.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>A new <see cref="T:System.ComponentModel.Design.UndoEngine.UndoUnit" /> with a specified name.</para>
+        </returns>
         <param name="name">
           <attribution license="cc4" from="Microsoft" modified="false" />The name of the unit to create. </param>
         <param name="primary">
@@ -247,12 +250,15 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the requested service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested service, if found.</para>
+        </returns>
         <param name="serviceType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of service to retrieve.</param>
       </Docs>
@@ -270,12 +276,15 @@
         <Parameter Name="serviceType" Type="System.Type" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <remarks>To be added.</remarks>
         <summary>
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Gets the requested service.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The requested service, or null if the requested service is not found.</para>
+        </returns>
         <param name="serviceType">
           <attribution license="cc4" from="Microsoft" modified="false" />The type of service to retrieve.</param>
       </Docs>

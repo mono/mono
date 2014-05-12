@@ -77,7 +77,6 @@
         <Parameter Name="layoutEventArgs" Type="System.Windows.Forms.LayoutEventArgs" />
       </Parameters>
       <Docs>
-        <returns>To be added.</returns>
         <since version=".NET 2.0" />
         <remarks>
           <attribution license="cc4" from="Microsoft" modified="false" />
@@ -87,6 +86,10 @@
           <attribution license="cc4" from="Microsoft" modified="false" />
           <para>Requests that the layout engine perform a layout operation.</para>
         </summary>
+        <returns>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>true if layout should be performed again by the parent of <paramref name="container" />; otherwise, false.</para>
+        </returns>
         <param name="container">
           <attribution license="cc4" from="Microsoft" modified="false" />The container on which the layout engine will operate.</param>
         <param name="layoutEventArgs">
