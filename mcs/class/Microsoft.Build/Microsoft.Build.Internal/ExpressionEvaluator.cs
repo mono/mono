@@ -310,7 +310,6 @@ namespace Microsoft.Build.Internal.Expressions
 		public override string EvaluateAsString (EvaluationContext context)
 		{
 			var ret = EvaluateAsObject (context);
-			// FIXME: this "wrapper" is kind of hack, to prevent sequential property references such as $(X)$(Y).
 			return ret == null ? null : ret.ToString ();
 		}
 		
