@@ -36,9 +36,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Reflection;
-#if MONOWEB_DEP
 using Mono.Web.Util;
-#endif
 using System.Xml;
 using System.Configuration;
 using System.Configuration.Internal;
@@ -531,11 +529,7 @@ namespace System.Web.Configuration {
 				value = collection;
 			}
 #else
-#if MONOWEB_DEP
 			object value = SettingsMappingManager.MapSection (get_runtime_object.Invoke (section, new object [0]));
-#else
-			object value = null;
-#endif
 #endif
 			if (cachePath != null)
 				cacheKey = baseCacheKey ^ cachePath.GetHashCode ();
@@ -683,9 +677,7 @@ namespace System.Web.Configuration {
 			configurations.Remove (GetCurrentPath (ctx));
 		}
 
-#if TARGET_J2EE || MONOWEB_DEP
 		readonly static MethodInfo get_runtime_object = typeof (ConfigurationSection).GetMethod ("GetRuntimeObject", BindingFlags.NonPublic | BindingFlags.Instance);
-#endif		
 
 		public static object GetWebApplicationSection (string sectionName)
 		{
