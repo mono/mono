@@ -145,7 +145,7 @@ namespace System.Net.Mail {
 		}
 
 		internal TransferEncoding ContentTransferEncoding {
-			get { return ContentType.GuessTransferEncoding (BodyEncoding); }
+			get { return ContentType.GuessTransferEncoding (BodyEncoding ?? Encoding.ASCII); }
 		}
 
 		public Encoding BodyEncoding {
