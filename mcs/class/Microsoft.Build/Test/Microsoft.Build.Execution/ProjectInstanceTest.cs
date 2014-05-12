@@ -198,8 +198,8 @@ namespace MonoTests.Microsoft.Build.Execution
   <UsingTask AssemblyFile='{0}' TaskName='NonExistent' />
   <Target Name='X' />
 </Project>", thisAssembly);
-            var xml = XmlReader.Create (new StringReader (project_xml));
-            var root = ProjectRootElement.Create (xml);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
 			root.FullPath = "ProjectInstanceTest.MissingTypeForUsingTaskStillWorks.proj";
 			var proj = new ProjectInstance (root);
 			Assert.IsTrue (proj.Build (), "#1");
@@ -218,6 +218,23 @@ namespace MonoTests.Microsoft.Build.Execution
 			root.FullPath = "ProjectInstanceTest.MissingTypeForUsingTaskStillWorks2.proj";
 			var proj = new ProjectInstance (root);
 			Assert.IsTrue (proj.Build (), "#1");
+		}
+
+		[Test]
+		public void ExpandStringWithMetadata ()
+		{
+			string thisAssembly = new Uri (GetType ().Assembly.CodeBase).LocalPath;
+			string project_xml = string.Format (@"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+  <ItemGroup>
+    <Foo Include='xxx'><M>x</M></Foo>
+    <Foo Include='yyy'><M>y</M></Foo>
+  </ItemGroup>
+</Project>", thisAssembly);
+			var xml = XmlReader.Create (new StringReader (project_xml));
+			var root = ProjectRootElement.Create (xml);
+			root.FullPath = "ProjectInstanceTest.ExpandStringWithMetadata.proj";
+			var proj = new ProjectInstance (root);
+			Assert.AreEqual ("xxx;yyy", proj.ExpandString ("@(FOO)"), "#1"); // so, metadata is gone...
 		}
 	}
 	
