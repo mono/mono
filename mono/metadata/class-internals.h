@@ -323,7 +323,8 @@ struct _MonoClass {
 	guint8 min_align;
 	/* next byte */
 	USE_UINT8_BIT_FIELD(guint, packing_size    : 4);
-	/* still 4 bits free */
+	USE_UINT8_BIT_FIELD(guint, has_unity_native_intptr : 1); // This class has a IntPtr that points to a native class with an asset reference
+	/* still 3 bits free */
 	/* next byte */
 	USE_UINT8_BIT_FIELD(guint, ghcimpl         : 1); /* class has its own GetHashCode impl */ 
 	USE_UINT8_BIT_FIELD(guint, has_finalize    : 1); /* class has its own Finalize impl */ 
