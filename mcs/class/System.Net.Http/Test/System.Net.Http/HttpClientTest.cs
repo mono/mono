@@ -83,7 +83,7 @@ namespace MonoTests.System.Net.Http
 			}
 		}
 
-		const int WaitTimeout = 2500;
+		const int WaitTimeout = 5000;
 
 		string port, TestHost, LocalServer;
 
@@ -567,6 +567,30 @@ namespace MonoTests.System.Net.Http
 				var response = client.SendAsync (r).Result;
 
 				Assert.AreEqual ("H", response.Content.ReadAsStringAsync ().Result);
+			} finally {
+				listener.Close ();
+			}
+		}
+
+		[Test]
+		public void Send_Content_BomEncoding ()
+		{
+			var listener = CreateListener (l => {
+				var request = l.Request;
+
+				var str = l.Response.OutputStream;
+				str.WriteByte (0xEF);
+				str.WriteByte (0xBB);
+				str.WriteByte (0xBF);
+				str.WriteByte (71);
+			});
+
+			try {
+				var client = new HttpClient ();
+				var r = new HttpRequestMessage (HttpMethod.Get, LocalServer);
+				var response = client.SendAsync (r).Result;
+
+				Assert.AreEqual ("G", response.Content.ReadAsStringAsync ().Result);
 			} finally {
 				listener.Close ();
 			}
