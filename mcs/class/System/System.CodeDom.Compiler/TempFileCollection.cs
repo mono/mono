@@ -263,7 +263,9 @@ namespace System.CodeDom.Compiler {
 
 		protected virtual void Dispose(bool disposing)
 		{
-			Delete();
+			try { Delete(); }
+			catch { if (disposing) throw; }
+
 			if (disposing) {
 				GC.SuppressFinalize (true);
 			}
