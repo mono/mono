@@ -428,17 +428,12 @@ namespace Microsoft.Build.Evaluation
 		
 		bool Evaluate (string unexpandedValue)
 		{
-			return string.IsNullOrWhiteSpace (unexpandedValue) || new ExpressionEvaluator (this, null).EvaluateAsBoolean (unexpandedValue);
+			return string.IsNullOrWhiteSpace (unexpandedValue) || new ExpressionEvaluator (this).EvaluateAsBoolean (unexpandedValue);
 		}
 
 		public string ExpandString (string unexpandedValue)
 		{
-			return ExpandString (unexpandedValue, null);
-		}
-		
-		string ExpandString (string unexpandedValue, string replacementForMissingStuff)
-		{
-			return WindowsCompatibilityExtensions.NormalizeFilePath (new ExpressionEvaluator (this, replacementForMissingStuff).Evaluate (unexpandedValue));
+			return WindowsCompatibilityExtensions.NormalizeFilePath (new ExpressionEvaluator (this).Evaluate (unexpandedValue));
 		}
 
 		public static string GetEvaluatedItemIncludeEscaped (ProjectItem item)

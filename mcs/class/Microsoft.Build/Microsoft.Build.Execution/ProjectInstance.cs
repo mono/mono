@@ -438,17 +438,12 @@ namespace Microsoft.Build.Execution
 		
 		public bool EvaluateCondition (string condition)
 		{
-			return string.IsNullOrWhiteSpace (condition) || new ExpressionEvaluator (this, null).EvaluateAsBoolean (condition);
+			return string.IsNullOrWhiteSpace (condition) || new ExpressionEvaluator (this).EvaluateAsBoolean (condition);
 		}
 
 		public string ExpandString (string unexpandedValue)
 		{
-			return ExpandString (unexpandedValue, null);
-		}
-		
-		string ExpandString (string unexpandedValue, string replacementForMissingStuff)
-		{
-			return WindowsCompatibilityExtensions.NormalizeFilePath (new ExpressionEvaluator (this, replacementForMissingStuff).Evaluate (unexpandedValue));
+			return WindowsCompatibilityExtensions.NormalizeFilePath (new ExpressionEvaluator (this).Evaluate (unexpandedValue));
 		}
 
 		public ICollection<ProjectItemInstance> GetItems (string itemType)
