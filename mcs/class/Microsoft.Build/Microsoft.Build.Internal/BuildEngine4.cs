@@ -365,14 +365,29 @@ namespace Microsoft.Build.Internal
 							throw new InvalidOperationException (string.Format ("Task {0} does not have property {1} specified as TaskParameter", taskInstance.Name, toItem.TaskParameter));
 						if (!pi.CanRead)
 							throw new InvalidOperationException (string.Format ("Task {0} has property {1} specified as TaskParameter, but it is write-only", taskInstance.Name, toItem.TaskParameter));
-						var value = ConvertFrom (pi.GetValue (task, null));
+						var value = pi.GetValue (task, null);
+						var valueString = ConvertFrom (value);
 						if (toItem != null) {
-							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Item {0} from TaskParameter {1}: {2}", toItem.ItemType, toItem.TaskParameter, value), null, null, MessageImportance.Low));
-							foreach (var item in value.Split (';'))
-								args.Project.AddItem (toItem.ItemType, item);
+							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Item {0} from TaskParameter {1}: {2}", toItem.ItemType, toItem.TaskParameter, valueString), null, null, MessageImportance.Low));
+							Action<ITaskItem> addItem = i => {
+								var metadata = new ArrayList (i.MetadataNames).ToArray ().Cast<string> ().Select (n => new KeyValuePair<string,string> (n, i.GetMetadata (n)));
+								args.Project.AddItem (toItem.ItemType, i.ItemSpec, metadata);
+							};
+							var taskItemArray = value as ITaskItem [];
+							if (taskItemArray != null) {
+								foreach (var ti in taskItemArray)
+									addItem (ti);
+							} else {
+								var taskItem = value as ITaskItem;
+								if (taskItem != null) 
+									addItem (taskItem);
+								else
+									foreach (var item in valueString.Split (';'))
+										args.Project.AddItem (toItem.ItemType, item);
+							}
 						} else {
-							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Property {0} from TaskParameter {1}: {2}", toProp.PropertyName, toProp.TaskParameter, value), null, null, MessageImportance.Low));
-							args.Project.SetProperty (toProp.PropertyName, value);
+							LogMessageEvent (new BuildMessageEventArgs (string.Format ("Output Property {0} from TaskParameter {1}: {2}", toProp.PropertyName, toProp.TaskParameter, valueString), null, null, MessageImportance.Low));
+							args.Project.SetProperty (toProp.PropertyName, valueString);
 						}
 					}
 				}
