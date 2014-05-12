@@ -79,8 +79,17 @@
         <param name="metadata">To be added.</param>
         <param name="policyImportExtensions">To be added.</param>
         <param name="wsdlImportExtensions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this constructor to control the metadata to be imported and the policy and WSDL importers to be used. </para>
+          <block subset="none" type="note">
+            <para>If custom policy importers or custom WSDL importers are passed to this constructor any custom importers specified in application configuration files are not loaded. If you want to add a custom importer, you must reconstruct the importers collections prior to using this constructor. See the Example section.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a <see cref="T:System.ServiceModel.Description.WsdlImporter" /> object from the specified metadata, custom policy importers, and custom WSDL importers.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="ImportAllBindings">

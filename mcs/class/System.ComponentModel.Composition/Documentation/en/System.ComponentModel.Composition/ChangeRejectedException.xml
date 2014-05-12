@@ -81,9 +81,13 @@
         <Parameter Name="errors" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.CompositionError&gt;" />
       </Parameters>
       <Docs>
-        <param name="errors">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.ChangeRejectedException" /> class with a list of composition errors. </para>
+        </summary>
+        <param name="errors">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of errors that occurred during composition.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">

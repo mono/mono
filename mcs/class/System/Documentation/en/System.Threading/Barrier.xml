@@ -62,10 +62,18 @@
         <Parameter Name="postPhaseAction" Type="System.Action&lt;System.Threading.Barrier&gt;" />
       </Parameters>
       <Docs>
-        <param name="participantCount">To be added.</param>
-        <param name="postPhaseAction">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <paramref name="postPhaseAction" /> delegate will be executed after all participants have arrived at the barrier in one phase. The participants will not be released to the next phase until the postPhaseAction delegate has completed execution.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Threading.Barrier" /> class.</para>
+        </summary>
+        <param name="participantCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of participating threads.</param>
+        <param name="postPhaseAction">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Action`1" /> to be executed after each phase. null (Nothing in Visual Basic) may be passed to indicate no action is taken.</param>
       </Docs>
     </Member>
     <Member MemberName="AddParticipant">

@@ -115,11 +115,16 @@
         <Parameter Name="filter" Type="System.Func&lt;System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <param name="catalog">To be added.</param>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Filters the specified catalog with the specified filter function.</para>
+        </summary>
+        <param name="catalog">
+          <attribution license="cc4" from="Microsoft" modified="false" />The catalog to filter.</param>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The filter function.</param>
       </Docs>
     </Member>
     <Member MemberName="Imports">

@@ -90,9 +90,13 @@
         <Parameter Name="innerExceptions" Type="System.Collections.Generic.IEnumerable&lt;System.Exception&gt;" />
       </Parameters>
       <Docs>
-        <param name="innerExceptions">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.AggregateException" /> class with references to the inner exceptions that are the cause of this exception.</para>
+        </summary>
+        <param name="innerExceptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exceptions that are the cause of the current exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -214,10 +218,15 @@
         <Parameter Name="innerExceptions" Type="System.Collections.Generic.IEnumerable&lt;System.Exception&gt;" />
       </Parameters>
       <Docs>
-        <param name="message">To be added.</param>
-        <param name="innerExceptions">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.AggregateException" /> class with a specified error message and references to the inner exceptions that are the cause of this exception.</para>
+        </summary>
+        <param name="message">
+          <attribution license="cc4" from="Microsoft" modified="false" />The error message that explains the reason for the exception.</param>
+        <param name="innerExceptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The exceptions that are the cause of the current exception.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -394,9 +403,16 @@
         <Parameter Name="predicate" Type="System.Func&lt;System.Exception,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <param name="predicate">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each invocation of the <paramref name="predicate" /> returns true or false to indicate whether the <see cref="T:System.Exception" /> was handled. After all invocations, if any exceptions went unhandled, all unhandled exceptions will be put into a new <see cref="T:System.AggregateException" /> which will be thrown. Otherwise, the <see cref="M:System.AggregateException.Handle(System.Func{System.Exception,System.Boolean})" /> method simply returns. If any invocations of the <paramref name="predicate" /> throws an exception, it will halt the processing of any more exceptions and immediately propagate the thrown exception as-is.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Invokes a handler on each <see cref="T:System.Exception" /> contained by this <see cref="T:System.AggregateException" />.</para>
+        </summary>
+        <param name="predicate">
+          <attribution license="cc4" from="Microsoft" modified="false" />The predicate to execute for each exception. The predicate accepts as an argument the <see cref="T:System.Exception" /> to be processed and returns a Boolean to indicate whether the exception was handled.</param>
       </Docs>
     </Member>
     <Member MemberName="InnerExceptions">

@@ -682,18 +682,6 @@ class BinarySearchExample {
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The one-dimensional array to search.</param>
-        <param name="value">The object for which to search.</param>
-        <param name="comparer">
-          <para>The implementation to use when comparing elements.</para>
-          <para>-or-</para>
-          <para>
-            <see langword="null" /> to use the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T:System.IComparable" /> implementation of each element.</para>
-        </param>
-        <summary>
-          <para>Searches an entire one-dimensional sorted array for a value using the specified <see cref="T:System.Collections.Generic.IComparer&lt;T&gt;" /> interface.</para>
-        </summary>
         <returns>
           <para>One of the following values based on the result of the search operation:</para>
           <list type="table">
@@ -718,17 +706,6 @@ class BinarySearchExample {
             </item>
           </list>
         </returns>
-        <remarks>
-          <para>The comparer customizes how the elements are compared.</para>
-          <para>The elements of <paramref name="array" /> must already be sorted in increasing value according to the sort order defined by <paramref name="comparer" />; otherwise, the behavior is unspecified</para>
-          <para>If <paramref name="comparer" /> is not <see langword="null" />, the elements of <paramref name="array" /> are compared to the specified value using the specified  <see cref="T:System.Collections.Generic.IComparer" /> implementation. </para>
-          <para>If <paramref name="comparer" /> is <see langword="null" />, the default comparer is used.</para>
-          <para>Duplicate elements are allowed. If the array contains more than one element equal to <paramref name="value" />, the method returns the index of only one of the occurrences, but not necessarily the first one.</para>
-          <para>
-            <block subset="none" type="note">
-              <see langword="null" /> can always be compared with any other reference type; therefore, comparisons with <see langword="null" /> do not generate an exception.</block>
-          </para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" /> .</exception>
@@ -736,6 +713,35 @@ class BinarySearchExample {
           <para>
             <paramref name="comparer" /> is <see langword="null" />, and neither <paramref name="value" /> nor the elements of the array implement the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T:System.IComparable" /> interface.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not support searching arrays that contain negative indexes. <paramref name="array" /> must be sorted before calling this method.</para>
+          <para>If the <see cref="T:System.Array" /> does not contain the specified value, the method returns a negative integer. You can apply the bitwise complement operator (~ in C#, Not in Visual Basic) to the negative result to produce an index. If this index is equal to the size of the array, there are no elements larger than <paramref name="value" /> in the array. Otherwise, it is the index of the first element that is larger than <paramref name="value" />. </para>
+          <para>The comparer customizes how the elements are compared. For example, you can use a <see cref="T:System.Collections.CaseInsensitiveComparer" /> as the comparer to perform case-insensitive string searches.</para>
+          <para>If <paramref name="comparer" /> is not null, the elements of <paramref name="array" /> are compared to the specified value using the specified <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface implementation. The elements of <paramref name="array" /> must already be sorted in increasing value according to the sort order defined by <paramref name="comparer" />; otherwise, the result might be incorrect.</para>
+          <para>If <paramref name="comparer" /> is null, the comparison is done using the <see cref="T:System.IComparable`1" /> generic interface implementation provided by <paramref name="T" />. The elements of <paramref name="array" /> must already be sorted in increasing value according to the sort order defined by the <see cref="T:System.IComparable`1" /> implementation; otherwise, the result might be incorrect.</para>
+          <block subset="none" type="note">
+            <para>If <paramref name="comparer" /> is null and <paramref name="value" /> does not implement the <see cref="T:System.IComparable`1" /> generic interface, the elements of <paramref name="array" /> are not tested for <see cref="T:System.IComparable`1" /> before the search begins. An exception is thrown if the search encounters an element that does not implement <see cref="T:System.IComparable`1" />.</para>
+          </block>
+          <para>Duplicate elements are allowed. If the <see cref="T:System.Array" /> contains more than one element equal to <paramref name="value" />, the method returns the index of only one of the occurrences, and not necessarily the first one.</para>
+          <para>null can always be compared with any other reference type; therefore, comparisons with null do not generate an exception. </para>
+          <block subset="none" type="note">
+            <para>For every element tested, <paramref name="value" /> is passed to the appropriate <see cref="T:System.IComparable`1" /> implementation, even if <paramref name="value" /> is null. That is, the <see cref="T:System.IComparable`1" /> implementation determines how a given element compares to null.</para>
+          </block>
+          <para>This method is an O(log <paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches an entire one-dimensional sorted array for a value using the specified <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sorted one-dimensional, zero-based <see cref="T:System.Array" /> to search.  </param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to search for.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Generic.IComparer`1" /> implementation to use when comparing elements.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="BinarySearch&lt;T&gt;">
@@ -850,20 +856,6 @@ class BinarySearchExample {
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The one-dimensional array to search.</param>
-        <param name="index">The starting index of the range to search.</param>
-        <param name="length">The length of the range to search.</param>
-        <param name="value">The object for which to search.</param>
-        <param name="comparer">
-          <para>The implementation to use when comparing elements.</para>
-          <para>-or-</para>
-          <para>
-            <see langword="null" /> to use the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T:System.IComparable" /> implementation of each element.</para>
-        </param>
-        <summary>
-          <para>Searches a range of elements in a one-dimensional sorted array for a value, using the specified <see cref="T:System.Collections.Generic.IComparer&lt;T&gt;" /> interface.</para>
-        </summary>
         <returns>
           <para>One of the following values based on the result of the search operation:</para>
           <list type="table">
@@ -888,17 +880,6 @@ class BinarySearchExample {
             </item>
           </list>
         </returns>
-        <remarks>
-          <para>The comparer customizes how the elements are compared.</para>
-          <para>The elements of <paramref name="array" /> must already be sorted in increasing value according to the sort order defined by <paramref name="comparer" />; otherwise, the behavior is unspecified.</para>
-          <para>If <paramref name="comparer" /> is not <see langword="null" />, the elements of <paramref name="array" /> are compared to the specified value using the specified  <see cref="T:System.Collections.Generic.IComparer&lt;T&gt;" /> implementation. </para>
-          <para>If <paramref name="comparer" /> is <see langword="null" />, the comparison is done using the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T:System.IComparable " /> implementation provided by the element itself or by the specified value.</para>
-          <para>Duplicate elements are allowed. If the array contains more than one element equal to <paramref name="value" />, the method returns the index of only one of the occurrences, but not necessarily the first one.</para>
-          <para>
-            <block subset="none" type="note">
-              <see langword="null" /> can always be compared with any other reference type; therefore, comparisons with <see langword="null" /> do not generate an exception.</block>
-          </para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentException">
           <para>
@@ -917,6 +898,36 @@ class BinarySearchExample {
           <para>
             <paramref name="comparer" /> is <see langword="null" />, and neither <paramref name="value" /> nor the elements of the array implement the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T:System.IComparable" /> interface.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method does not support searching arrays that contain negative indexes. <paramref name="array" /> must be sorted before calling this method.</para>
+          <para>If the array does not contain the specified value, the method returns a negative integer. You can apply the bitwise complement operator (~ in C#, Not in Visual Basic) to the negative result  to produce an index. If this index is equal to the size of the array, there are no elements larger than <paramref name="value" /> in the array. Otherwise, it is the index of the first element that is larger than <paramref name="value" />. </para>
+          <para>The comparer customizes how the elements are compared. For example, you can use a <see cref="T:System.Collections.CaseInsensitiveComparer" /> as the comparer to perform case-insensitive string searches.</para>
+          <para>If <paramref name="comparer" /> is not null, the elements of <paramref name="array" /> are compared to the specified value using the specified <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface implementation. The elements of <paramref name="array" /> must already be sorted in increasing value according to the sort order defined by <paramref name="comparer" />; otherwise, the result might be incorrect.</para>
+          <para>If <paramref name="comparer" /> is null, the comparison is done using the <see cref="T:System.IComparable`1" /> generic interface implementation provided for type <paramref name="T" />. The elements of <paramref name="array" /> must already be sorted in increasing value according to the sort order defined by the <see cref="T:System.IComparable`1" /> implementation; otherwise, the result might be incorrect.</para>
+          <para>Duplicate elements are allowed. If the <see cref="T:System.Array" /> contains more than one element equal to <paramref name="value" />, the method returns the index of only one of the occurrences, and not necessarily the first one.</para>
+          <para>null can always be compared with any other reference type; therefore, comparisons with null do not generate an exception when using <see cref="T:System.IComparable`1" />. </para>
+          <block subset="none" type="note">
+            <para>For every element tested, <paramref name="value" /> is passed to the appropriate <see cref="T:System.IComparable`1" /> implementation, even if <paramref name="value" /> is null. That is, the <see cref="T:System.IComparable`1" /> implementation determines how a given element compares to null.</para>
+          </block>
+          <para>This method is an O(log <paramref name="n" />) operation, where <paramref name="n" /> is <paramref name="length" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches a range of elements in a one-dimensional sorted array for a value, using the specified <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The sorted one-dimensional, zero-based <see cref="T:System.Array" /> to search. </param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index of the range to search.</param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The length of the range to search.</param>
+        <param name="value">
+          <attribution license="cc4" from="Microsoft" modified="false" />The object to search for.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Generic.IComparer`1" /> implementation to use when comparing elements.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Clear">
@@ -1166,24 +1177,30 @@ public class ArrayCloneExample {
         <Parameter Name="converter" Type="System.Converter&lt;TInput,TOutput&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TInput">To be added.</typeparam>
-        <typeparam name="TOutput">To be added.</typeparam>
-        <param name="array">The one-dimensional array to convert.</param>
-        <param name="converter">
-          <para>A <see cref="T:System.Converter&lt;T,U&gt;" /> that converts each element from one type to another type.</para>
-        </param>
-        <summary>
-          <para>Converts an array of one type to an array of another type.</para>
-        </summary>
         <returns>
           <para>A new array of the target type containing the converted elements from <paramref name="array" />.</para>
         </returns>
-        <remarks>
-          <para>The <see cref="T:System.Converter&lt;T,U&gt;" /> is a delegate that converts an array element to the target type.  The elements of  <paramref name="array" /> are individually passed to this converter, and the converted elements are saved in the new array. The source array remains unchanged.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" /> is <see langword="null" /> or <paramref name="converter" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Converter`2" /> is a delegate to a method that converts an object to the target type.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Converter`2" />, and the converted elements are saved in the new array.</para>
+          <para>The source <paramref name="array" /> remains unchanged.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Converts an array of one type to an array of another type.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to convert to a target type.</param>
+        <param name="converter">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Converter`2" /> that converts each element from one type to another type.</param>
+        <typeparam name="TInput">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the source array.</typeparam>
+        <typeparam name="TOutput">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the target array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Copy">
@@ -2334,24 +2351,28 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array to search.</param>
-        <param name="match">
-          <para>The predicate that defines the conditions of the elements to search for.</para>
-        </param>
-        <summary>
-          <para>Determines whether the specified array contains any element that matches the conditions defined by the specified predicate.</para>
-        </summary>
         <returns>
           <para>
             <see langword="true" />, if the array contains one or more elements that match the conditions defined by the specified predicate; otherwise, <see langword="false" />.</para>
         </returns>
-        <remarks>
-          <para>The predicate returns <see langword="true" /> if the object passed to it matches the delegate. Each element of <paramref name="array" /> is passed to the predicate in turn, and processing is stopped when the predicate returns <see langword="true" />.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Predicate`1" /> is a delegate to a method that returns true if the object passed to it matches the conditions defined in the delegate.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Predicate`1" />, and processing is stopped when a match is found.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether the specified array contains elements that match the conditions defined by the specified predicate.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
+        <param name="match">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Predicate`1" /> that defines the conditions of the elements to search for.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Find&lt;T&gt;">
@@ -2373,23 +2394,27 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array to search.</param>
-        <param name="match">
-          <para>The predicate that defines the conditions of the element to search for.</para>
-        </param>
-        <summary>
-          <para>Searches for an element that matches the predicate, and returns the first occurrence within the entire array.</para>
-        </summary>
         <returns>
           <para>The first element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <paramref name="T" />.</para>
         </returns>
-        <remarks>
-          <para>The elements of <paramref name="array" /> are individually passed to the predicate, moving forward in the array, starting with the first element and ending with the last element. Processing is stopped when the predicate returns <see langword="true" />.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Predicate`1" /> is a delegate to a method or a lambda expression that returns true if the object passed to it matches the conditions defined in the delegate or lambda expression.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Predicate`1" />, starting with the first element and ending with the last element.  Processing is stopped when a match is found.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the first occurrence within the entire <see cref="T:System.Array" />.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based array to search.</param>
+        <param name="match">
+          <attribution license="cc4" from="Microsoft" modified="false" />The predicate that defines the conditions of the element to search for.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FindAll&lt;T&gt;">
@@ -2411,23 +2436,27 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array to search.</param>
-        <param name="match">
-          <para>The predicate that specifies the elements to search for.</para>
-        </param>
-        <summary>
-          <para>Retrieves all the elements that match the conditions defined by the specified predicate.</para>
-        </summary>
         <returns>
           <para>An array containing all the elements that match the conditions defined by the specified predicate, if found; otherwise, an empty array.</para>
         </returns>
-        <remarks>
-          <para>The elements of <paramref name="array" /> are individually passed to the predicate, and those elements for which the predicate returns <see langword="true" />, are saved in the returned array.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Predicate`1" /> is a delegate to a method that returns true if the object passed to it matches the conditions defined in the delegate.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Predicate`1" />, and the elements that match the conditions are saved in the returned array.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves all the elements that match the conditions defined by the specified predicate.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
+        <param name="match">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Predicate`1" /> that defines the conditions of the elements to search for.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FindIndex&lt;T&gt;">
@@ -2449,23 +2478,28 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array to search.</param>
-        <param name="match">
-          <para>The predicate that specifies the elements to search for.</para>
-        </param>
-        <summary>
-          <para>Searches for an element that matches the predicate, and returns the zero-based index of the first occurrence within the entire array.</para>
-        </summary>
         <returns>
           <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
         </returns>
-        <remarks>
-          <para>The elements of <paramref name="array" /> are individually passed to the predicate. The array is searched forward starting at the first element and ending at the last element. Processing is stopped when the predicate returns <see langword="true" />.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Array" /> is searched forward starting at the first element and ending at the last element.</para>
+          <para>The <see cref="T:System.Predicate`1" /> is a delegate to a method that returns true if the object passed to it matches the conditions defined in the delegate.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Predicate`1" />.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the first occurrence within the entire <see cref="T:System.Array" />.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
+        <param name="match">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Predicate`1" /> that defines the conditions of the element to search for.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FindIndex&lt;T&gt;">
@@ -2488,28 +2522,32 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array to search.</param>
-        <param name="startIndex">
-          <para>The zero-based starting index of the search.</para>
-        </param>
-        <param name="match">
-          <para>The predicate that specifies the elements to search for.</para>
-        </param>
-        <summary>
-          <para>Searches for an element that matches the predicate, and returns the zero-based index of the first occurrence within the range of elements in the array that extends from the specified index to the last element.</para>
-        </summary>
         <returns>
           <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
         </returns>
-        <remarks>
-          <para>The elements of <paramref name="array" /> are individually passed to the predicate. The array is searched forward starting at the specified index and ending at the last element.  Processing is stopped when the predicate returns <see langword="true" />.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="startIndex" /> is less than zero or greater than <paramref name="array" /><see langword=".Length" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Array" /> is searched forward starting at <paramref name="startIndex" /> and ending at the last element.</para>
+          <para>The <see cref="T:System.Predicate`1" /> is a delegate to a method that returns true if the object passed to it matches the conditions defined in the delegate.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Predicate`1" />.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the number of elements from <paramref name="startIndex" /> to the end of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the first occurrence within the range of elements in the <see cref="T:System.Array" /> that extends from the specified index to the last element.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the search.</param>
+        <param name="match">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Predicate`1" /> that defines the conditions of the element to search for.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FindIndex&lt;T&gt;">
@@ -2533,26 +2571,9 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array to search.</param>
-        <param name="startIndex">
-          <para>The zero-based starting index of the search</para>
-        </param>
-        <param name="count">
-          <para>The number of consecutive elements to search.</para>
-        </param>
-        <param name="match">
-          <para>The predicate that specifies the elements to search for.</para>
-        </param>
-        <summary>
-          <para>Searches for an element that matches the predicate, and returns the zero-based index of the first occurrence within the range of elements in the array that starts at the specified index and contains the specified number of elements.</para>
-        </summary>
         <returns>
           <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
         </returns>
-        <remarks>
-          <para>The elements of <paramref name="array" /> are individually passed to the predicate. The array is searched forward starting at the specified index and going for <paramref name="count" /> elements.  Processing is stopped when the predicate returns <see langword="true" />.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2566,6 +2587,26 @@ public class Create3DArrayExample
           <para>
             <paramref name="startIndex" /> + <paramref name="count" /> is greater than <paramref name="array" /><see langword=".Length" />.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Array" /> is searched forward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> plus <paramref name="count" /> minus 1, if <paramref name="count" /> is greater than 0.</para>
+          <para>The <see cref="T:System.Predicate`1" /> is a delegate to a method that returns true if the object passed to it matches the conditions defined in the delegate.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Predicate`1" />.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <paramref name="count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the first occurrence within the range of elements in the <see cref="T:System.Array" /> that starts at the specified index and contains the specified number of elements.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the search.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the section to search.</param>
+        <param name="match">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Predicate`1" /> that defines the conditions of the element to search for.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FindLast&lt;T&gt;">
@@ -2587,23 +2628,27 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array to search.</param>
-        <param name="match">
-          <para>The predicate that specifies the elements to search for.</para>
-        </param>
-        <summary>
-          <para>Searches for an element that matches the predicate, and returns the last occurrence within the entire array.</para>
-        </summary>
         <returns>
           <para>The last element that matches the conditions defined by the specified predicate, if found; otherwise, the default value for type <paramref name="T" />.</para>
         </returns>
-        <remarks>
-          <para>The elements of <paramref name="array" /> are individually passed to the predicate, moving backward in the array, starting with the last element and ending with the first element. Processing is stopped when a match is found.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Predicate`1" /> is a delegate to a method that returns true if the object passed to it matches the conditions defined in the delegate.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Predicate`1" />, moving backward in the <see cref="T:System.Array" />, starting with the last element and ending with the first element.  Processing is stopped when a match is found.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the last occurrence within the entire <see cref="T:System.Array" />.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
+        <param name="match">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Predicate`1" /> that defines the conditions of the element to search for.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FindLastIndex&lt;T&gt;">
@@ -2625,23 +2670,28 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array to search.</param>
-        <param name="match">
-          <para>The predicate that specifies the elements to search for.</para>
-        </param>
-        <summary>
-          <para>Searches for an element that matches the predicate, and returns the zero-based index of the last occurrence within the entire array.</para>
-        </summary>
         <returns>
           <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
         </returns>
-        <remarks>
-          <para>The elements of <paramref name="array" /> are individually passed to the predicate. The array is searched backwards starting at the last element and ending at the first element.  Processing is stopped when the predicate returns <see langword="true" />.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Array" /> is searched backward starting at the last element and ending at the first element.</para>
+          <para>The <see cref="T:System.Predicate`1" /> is a delegate to a method that returns true if the object passed to it matches the conditions defined in the delegate.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Predicate`1" />.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the last occurrence within the entire <see cref="T:System.Array" />.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
+        <param name="match">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Predicate`1" /> that defines the conditions of the element to search for.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FindLastIndex&lt;T&gt;">
@@ -2664,28 +2714,32 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array to search.</param>
-        <param name="startIndex">
-          <para>The zero-based starting index of the backward search.</para>
-        </param>
-        <param name="match">
-          <para>The predicate that specifies the elements to search for.</para>
-        </param>
-        <summary>
-          <para>Searches for an element that matches the predicate, and returns the zero-based index of the last occurrence within the range of elements in the array that extends from the specified index to the last element.</para>
-        </summary>
         <returns>
           <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
         </returns>
-        <remarks>
-          <para>The elements of <paramref name="array" /> are individually passed to the predicate. The array is searched backward starting at the specified index and ending at the first element. Processing is stopped when the predicate returns <see langword="true" />.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
         <exception cref="T:System.ArgumentOutOfRangeException">
           <paramref name="startIndex" /> is less than zero or greater than <paramref name="array" /><see langword=".Length" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Array" /> is searched backward starting at <paramref name="startIndex" /> and ending at the first element.</para>
+          <para>The <see cref="T:System.Predicate`1" /> is a delegate to a method that returns true if the object passed to it matches the conditions defined in the delegate.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Predicate`1" />.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the number of elements from the beginning of <paramref name="array" /> to <paramref name="startIndex" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the last occurrence within the range of elements in the <see cref="T:System.Array" /> that extends from the first element to the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the backward search.</param>
+        <param name="match">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Predicate`1" /> that defines the conditions of the element to search for.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="FindLastIndex&lt;T&gt;">
@@ -2709,26 +2763,9 @@ public class Create3DArrayExample
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array to search.</param>
-        <param name="startIndex">
-          <para>The zero-based starting index of the backward search.</para>
-        </param>
-        <param name="count">
-          <para>The number of consecutive elements to search.</para>
-        </param>
-        <param name="match">
-          <para>The predicate that specifies the elements to search for.</para>
-        </param>
-        <summary>
-          <para>Searches for an element that matches the predicate, and returns the zero-based index of the last occurrence within the range of elements in the array that ends at the specified index and contains the specified number of elements.</para>
-        </summary>
         <returns>
           <para>The zero-based index of the first occurrence of an element that matches the conditions defined by <paramref name="match" />, if found; otherwise, -1.</para>
         </returns>
-        <remarks>
-          <para>The elements of <paramref name="array" /> are individually passed to the predicate. The array is searched backward starting at the specified index and going for <paramref name="count" /> elements. Processing is stopped when the predicate returns <see langword="true" />.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
@@ -2742,6 +2779,26 @@ public class Create3DArrayExample
           <para>
             <paramref name="count" /> is greater than <paramref name="startIndex" /> + 1.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Array" /> is searched backward starting at <paramref name="startIndex" /> and ending at <paramref name="startIndex" /> minus <paramref name="count" /> plus 1, if <paramref name="count" /> is greater than 0.</para>
+          <para>The <see cref="T:System.Predicate`1" /> is a delegate to a method that returns true if the object passed to it matches the conditions defined in the delegate.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Predicate`1" />.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is <paramref name="count" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches for an element that matches the conditions defined by the specified predicate, and returns the zero-based index of the last occurrence within the range of elements in the <see cref="T:System.Array" /> that contains the specified number of elements and ends at the specified index.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to search.</param>
+        <param name="startIndex">
+          <attribution license="cc4" from="Microsoft" modified="false" />The zero-based starting index of the backward search.</param>
+        <param name="count">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the section to search.</param>
+        <param name="match">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Predicate`1" /> that defines the conditions of the element to search for.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ForEach&lt;T&gt;">
@@ -2763,20 +2820,24 @@ public class Create3DArrayExample
         <Parameter Name="action" Type="System.Action&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array on whose elements the action is to be performed.</param>
-        <param name="action">
-          <para>The action to perform on each element of <paramref name="array" />.</para>
-        </param>
-        <summary>
-          <para>Performs the specified action on each element of the specified array.</para>
-        </summary>
-        <remarks>
-          <para>The elements of <paramref name="array" /> are individually passed to the action. The elements of the current array are individually passed to the action delegate, sequentially, in index order, and on the same thread as that used to call <see langword="ForEach" />. Execution stops if the action throws an exception.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="action" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Action`1" /> is a delegate to a method that performs an action on the object passed to it.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Action`1" />.</para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs the specified action on each element of the specified array.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> on whose elements the action is to be performed.</param>
+        <param name="action">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Action`1" /> to perform on each element of <paramref name="array" />.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetEnumerator">
@@ -5576,24 +5637,6 @@ public class ArraySortExample {
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">
-          <para>The array to sort.</para>
-        </param>
-        <param name="comparer">
-          <para>The <see cref="T:System.Collections.Generic.IComparer&lt;T&gt;" /> implementation to use when comparing elements.</para>
-          <para>-or-</para>
-          <para>
-            <see langword="null" />  to use the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T:System.IComparable" /> implementation of each element.</para>
-        </param>
-        <summary>
-          <para>Sorts the elements in an array using the specified comparer.</para>
-        </summary>
-        <remarks>
-          <para>If <paramref name="comparer" /> is null, each element of <paramref name="array" /> must implement the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T:System.IComparable" /> interface to be capable of comparisons with every other element in <paramref name="array" />.</para>
-          <para>If the sort is not successfully completed, the results are undefined.</para>
-          <para>This implementation performs an unstable sort; that is, if two elements are equal, their order might not be preserved. In contrast, a stable sort preserves the order of elements that are equal.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5603,6 +5646,35 @@ public class ArraySortExample {
           <para>
             <paramref name="comparer" /> is <see langword="null" />, and one or more elements in <paramref name="array" /> that are used in a comparison do not implement the <see cref="T:System.IComparable&lt;T&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="comparer" /> is null, each element of <paramref name="array" /> must implement the <see cref="T:System.IComparable`1" /> generic interface to be capable of comparisons with every other element in <paramref name="array" />.</para>
+          <para>If the sort is not successfully completed, the results are undefined.</para>
+          <para>This method uses the introspective sort (introsort) algorithm as follows:  </para>
+          <list type="bullet">
+            <item>
+              <para>If the partition size is fewer than 16 elements, it uses an <see cref="http://en.wikipedia.org/wiki/Insertion_sort">insertion sort</see> algorithm. </para>
+            </item>
+            <item>
+              <para>If the number of partitions exceeds 2 * Log<superscript>N</superscript>, where  N is the range of the input array, it uses a <see cref="http://en.wikipedia.org/wiki/Heapsort">Heapsort</see> algorithm.</para>
+            </item>
+            <item>
+              <para>Otherwise, it uses a <see cref="http://en.wikipedia.org/wiki/Quicksort">Quicksort</see> algorithm. </para>
+            </item>
+          </list>
+          <para>This implementation performs an unstable sort; that is, if two elements are equal, their order might not be preserved. In contrast, a stable sort preserves the order of elements that are equal.</para>
+          <para>For arrays that are sorted by using the Heapsort and Quicksort algorithms, in the worst case, this method is an O(<paramref name="n" /> log <paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the elements in an <see cref="T:System.Array" /> using the specified <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-base <see cref="T:System.Array" /> to sort</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface implementation to use when comparing elements, or null to use the <see cref="T:System.IComparable`1" /> generic interface implementation of each element.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Sort&lt;T&gt;">
@@ -5624,20 +5696,6 @@ public class ArraySortExample {
         <Parameter Name="comparison" Type="System.Comparison&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">
-          <para>The array to sort.</para>
-        </param>
-        <param name="comparison">
-          <para>The <see cref="T:System.Comparison&lt;T&gt;" /> to use when comparing elements.</para>
-        </param>
-        <summary>
-          <para>Sorts the elements in an array using the specified comparison.</para>
-        </summary>
-        <remarks>
-          <para>If the sort is not successfully completed, the results are undefined.</para>
-          <para>This implementation performs an unstable sort; that is, if two elements are equal, their order might not be preserved. In contrast, a stable sort preserves the order of elements that are equal.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5646,6 +5704,34 @@ public class ArraySortExample {
           <para>
             <paramref name="comparison" /> is <see langword="null" />.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the sort is not successfully completed, the results are undefined.</para>
+          <para>This method uses introspective sort (introsort) algorithm as follows:  </para>
+          <list type="bullet">
+            <item>
+              <para>If the partition size is fewer than 16 elements, it uses an <see cref="http://en.wikipedia.org/wiki/Insertion_sort">insertion sort</see> algorithm. </para>
+            </item>
+            <item>
+              <para>If the number of partitions exceeds 2 * Log<superscript>N</superscript>, where  N is the range of the input array, it uses a <see cref="http://en.wikipedia.org/wiki/Heapsort">Heapsort</see> algorithm.</para>
+            </item>
+            <item>
+              <para>Otherwise, it uses a <see cref="http://en.wikipedia.org/wiki/Quicksort">Quicksort</see> algorithm. </para>
+            </item>
+          </list>
+          <para>This implementation performs an unstable sort; that is, if two elements are equal, their order might not be preserved. In contrast, a stable sort preserves the order of elements that are equal.</para>
+          <para>For arrays that are sorted by using the Heapsort and Quicksort algorithms, in the worst case, this method is an O(<paramref name="n" /> log <paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the elements in an <see cref="T:System.Array" /> using the specified <see cref="T:System.Comparison`1" />.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to sort</param>
+        <param name="comparison">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Comparison`1" /> to use when comparing elements.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Sort&lt;T&gt;">
@@ -5734,26 +5820,6 @@ public class ArraySortExample {
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">
-          <para>The array to sort.</para>
-        </param>
-        <param name="index">The starting index of the range to sort.</param>
-        <param name="length">The number of elements in the range to sort.</param>
-        <param name="comparer">
-          <para>The <see cref="T:System.Collections.Generic.IComparer&lt;K&gt;" /> implementation to use when comparing elements.</para>
-          <para>-or-</para>
-          <para>
-            <see langword="null" />  to use the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T:System.IComparable" /> implementation of each element.</para>
-        </param>
-        <summary>
-          <para>Sorts the elements in a range of elements in an array using the specified comparer.</para>
-        </summary>
-        <remarks>
-          <para>If <paramref name="comparer" /> is null, each element within the specified range of elements in <paramref name="array" /> must implement the <see cref="T:System.IComparable" /> interface to be capable of comparisons with every other element in <paramref name="array" />.</para>
-          <para>If the sort is not successfully completed, the results are undefined.</para>
-          <para>This implementation performs an unstable sort; that is, if two elements are equal, their order might not be preserved. In contrast, a stable sort preserves the order of elements that are equal.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5774,6 +5840,39 @@ public class ArraySortExample {
           <para>
             <paramref name="comparer" /> is <see langword="null" />, and one or more elements in <paramref name="array" /> that are used in a comparison do not implement the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="comparer" /> is null, each element within the specified range of elements in <paramref name="array" /> must implement the <see cref="T:System.IComparable`1" /> generic interface to be capable of comparisons with every other element in <paramref name="array" />.</para>
+          <para>If the sort is not successfully completed, the results are undefined.</para>
+          <para>This method uses the introspective sort (introsort) algorithm as follows:  </para>
+          <list type="bullet">
+            <item>
+              <para>If the partition size is fewer than 16 elements, it uses an <see cref="http://en.wikipedia.org/wiki/Insertion_sort">insertion sort</see> algorithm. </para>
+            </item>
+            <item>
+              <para>If the number of partitions exceeds 2 * Log<superscript>N</superscript>, where  N is the range of the input array, it uses a <see cref="http://en.wikipedia.org/wiki/Heapsort">Heapsort</see> algorithm.</para>
+            </item>
+            <item>
+              <para>Otherwise, it uses a <see cref="http://en.wikipedia.org/wiki/Quicksort">Quicksort</see> algorithm. </para>
+            </item>
+          </list>
+          <para>This implementation performs an unstable sort; that is, if two elements are equal, their order might not be preserved. In contrast, a stable sort preserves the order of elements that are equal.</para>
+          <para>For arrays that are sorted by using the Heapsort and Quicksort algorithms, in the worst case, this method is an O(<paramref name="n" /> log <paramref name="n" />) operation, where <paramref name="n" /> is <paramref name="length" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts the elements in a range of elements in an <see cref="T:System.Array" /> using the specified <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to sort.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index of the range to sort.</param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the range to sort.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface implementation to use when comparing elements, or null to use the <see cref="T:System.IComparable`1" /> generic interface implementation of each element.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Sort&lt;TKey,TValue&gt;">
@@ -5864,39 +5963,6 @@ public class ArraySortExample {
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TKey">To be added.</typeparam>
-        <typeparam name="TValue">To be added.</typeparam>
-        <param name="keys">
-          <para>The array that contains the keys to sort.</para>
-        </param>
-        <param name="items">
-          <para>The array that contains the items that correspond to each of the keys in <paramref name="keys" />.</para>
-          <para>-or-</para>
-          <para>
-            <see langword="null" /> to sort only the <paramref name="keys" /> array.</para>
-        </param>
-        <param name="comparer">
-          <para>The <see cref="T:System.Collections.Generic.IComparer&lt;K&gt;" /> implementation to use when comparing elements.</para>
-          <para>-or-</para>
-          <para>
-            <see langword="null" />  to use the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T:System.IComparable" /> implementation of each element.</para>
-        </param>
-        <summary>
-          <para>Sorts a pair of arrays based on the keys in the first array, using the specified <see cref="T:System.Collections.Generic.IComparer" />.</para>
-        </summary>
-        <remarks>
-          <para>This version of <see cref="M:System.Array.Sort" />  is equivalent to <see cref="M:System.Array.Sort&lt;K,V&gt;" /><see langword="(" /><paramref name="keys" /><see langword=", " /><paramref name="items" /><see langword=", " /><see langword="0, " /><paramref name="keys" /><see langword=".Length" /><see langword=", " /><paramref name="comparer" /><see langword=")" />.</para>
-          <para>If <paramref name="items" /> is non-null, each key in <paramref name="keys" /> is required to have
-   a corresponding item in <paramref name="items" />. The sort is performed according to the
-   order of <paramref name="keys" />. After a key is repositioned during the sort,
-   the corresponding item in <paramref name="items" /> is similarly repositioned. Only
-<paramref name="keys" />.Length elements of <paramref name="items" /> will be sorted. Therefore, 
-<paramref name="items" /> is sorted according to the arrangement of
-   the corresponding keys in <paramref name="keys" />. If the sort is not successfully
-   completed, the results are unspecified.</para>
-          <para>If <paramref name="comparer" /> is a null reference, each element of <paramref name="keys" /> is required to implement the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T:System.IComparable" /> interface to be capable of comparisons
-with every other element in <paramref name="keys" />.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <para>
@@ -5910,6 +5976,41 @@ with every other element in <paramref name="keys" />.</para>
           <para>
             <paramref name="comparer" /> is <see langword="null" />, and one or more elements in <paramref name="keys" /> that are used in a comparison  do not implement the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each key in the <paramref name="keys" /> <see cref="T:System.Array" /> has a corresponding item in the <paramref name="items" /> <see cref="T:System.Array" />. When a key is repositioned during the sorting, the corresponding item in the <paramref name="items" /> <see cref="T:System.Array" /> is similarly repositioned. Therefore, the <paramref name="items" /> <see cref="T:System.Array" /> is sorted according to the arrangement of the corresponding keys in the <paramref name="keys" /> <see cref="T:System.Array" />.</para>
+          <para>If <paramref name="comparer" /> is null, each key in the <paramref name="keys" /> <see cref="T:System.Array" /> must implement the <see cref="T:System.IComparable`1" /> generic interface to be capable of comparisons with every other key.</para>
+          <para>You can sort if there are more items than keys, but the items that have no corresponding keys will not be sorted. You cannot sort if there are more keys than items; doing this throws an <see cref="T:System.ArgumentException" />.</para>
+          <para>If the sort is not successfully completed, the results are undefined.</para>
+          <para>This method uses the introspective sort (introsort) algorithm as follows:  </para>
+          <list type="bullet">
+            <item>
+              <para>If the partition size is fewer than 16 elements, it uses an <see cref="http://en.wikipedia.org/wiki/Insertion_sort">insertion sort</see> algorithm. </para>
+            </item>
+            <item>
+              <para>If the number of partitions exceeds 2 * Log<superscript>N</superscript>, where  N is the range of the input array, it uses a <see cref="http://en.wikipedia.org/wiki/Heapsort">Heapsort</see> algorithm.</para>
+            </item>
+            <item>
+              <para>Otherwise, it uses a <see cref="http://en.wikipedia.org/wiki/Quicksort">Quicksort</see> algorithm. </para>
+            </item>
+          </list>
+          <para>This implementation performs an unstable sort; that is, if two elements are equal, their order might not be preserved. In contrast, a stable sort preserves the order of elements that are equal.</para>
+          <para>For arrays that are sorted by using the Heapsort and Quicksort algorithms, in the worst case, this method is an O(<paramref name="n" /> log <paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts a pair of <see cref="T:System.Array" /> objects (one contains the keys and the other contains the corresponding items) based on the keys in the first <see cref="T:System.Array" /> using the specified <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface.</para>
+        </summary>
+        <param name="keys">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> that contains the keys to sort. </param>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> that contains the items that correspond to the keys in <paramref name="keys" />, or null to sort only <paramref name="keys" />.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface implementation to use when comparing elements, or null to use the <see cref="T:System.IComparable`1" /> generic interface implementation of each element.</param>
+        <typeparam name="TKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the key array.</typeparam>
+        <typeparam name="TValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the items array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Sort&lt;TKey,TValue&gt;">
@@ -6016,40 +6117,6 @@ with every other element in <paramref name="keys" />.</para>
         <Parameter Name="comparer" Type="System.Collections.Generic.IComparer&lt;TKey&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TKey">To be added.</typeparam>
-        <typeparam name="TValue">To be added.</typeparam>
-        <param name="keys">
-          <para>The array that contains the keys to sort.</para>
-        </param>
-        <param name="items">
-          <para>The array that contains the items that correspond to each of the keys in <paramref name="keys" />.</para>
-          <para>-or-</para>
-          <para>
-            <see langword="null" /> to sort only the <paramref name="keys" /> array.</para>
-        </param>
-        <param name="index">The starting index of the range to sort.</param>
-        <param name="length">The number of elements in the range to sort.</param>
-        <param name="comparer">
-          <para>The <see cref="T:System.Collections.Generic.IComparer&lt;K&gt;" /> implementation to use when comparing elements.</para>
-          <para>-or-</para>
-          <para>
-            <see langword="null" />  to use the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T:System.IComparable" /> implementation of each element.</para>
-        </param>
-        <summary>
-          <para>Sorts a range of elements in a pair of arrays based on the keys in the first array using the specified <see cref="T:System.Collections.Generic.IComparer&lt;K&gt;" />.</para>
-        </summary>
-        <remarks>
-          <para>If <paramref name="items" /> is non-null, each key in <paramref name="keys" /> is required to have
-   a corresponding item in <paramref name="items" />. The sort is performed according to the
-   order of <paramref name="keys" />. After a key is repositioned during the sort,
-   the corresponding item in <paramref name="items" /> is similarly repositioned. Only
-<paramref name="keys" />.Length elements of <paramref name="items" /> will be sorted. Therefore, 
-<paramref name="items" /> is sorted according to the arrangement of
-   the corresponding keys in <paramref name="keys" />. If the sort is not successfully
-   completed, the results are undefined.</para>
-          <para>If <paramref name="comparer" /> is a null reference, each element of <paramref name="keys" /> is required to implement the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T:System.IComparable" /> interface to be capable of comparisons
-with every other element in <paramref name="keys" />.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentException">
           <para>
@@ -6073,6 +6140,45 @@ with every other element in <paramref name="keys" />.</para>
           <para>
             <paramref name="comparer" /> is <see langword="null" />, and one or more elements in <paramref name="keys" /> that are used in a comparison do not implement the <see cref="T:System.IComparable&lt;K&gt;" /> or <see cref="T: System.IComparable" /> interface.</para>
         </exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Each key in the <paramref name="keys" /> <see cref="T:System.Array" /> has a corresponding item in the <paramref name="items" /> <see cref="T:System.Array" />. When a key is repositioned during the sorting, the corresponding item in the <paramref name="items" /> <see cref="T:System.Array" /> is similarly repositioned. Therefore, the <paramref name="items" /> <see cref="T:System.Array" /> is sorted according to the arrangement of the corresponding keys in the <paramref name="keys" /> <see cref="T:System.Array" />.</para>
+          <para>If <paramref name="comparer" /> is null, each key within the specified range of elements in the <paramref name="keys" /> <see cref="T:System.Array" /> must implement the <see cref="T:System.IComparable`1" /> generic interface to be capable of comparisons with every other key.</para>
+          <para>You can sort if there are more items than keys, but the items that have no corresponding keys will not be sorted. You cannot sort if there are more keys than items; doing this throws an <see cref="T:System.ArgumentException" />.</para>
+          <para>If the sort is not successfully completed, the results are undefined.</para>
+          <para>This method uses the introspective sort (introsort) algorithm as follows:  </para>
+          <list type="bullet">
+            <item>
+              <para>If the partition size is fewer than 16 elements, it uses an <see cref="http://en.wikipedia.org/wiki/Insertion_sort">insertion sort</see> algorithm. </para>
+            </item>
+            <item>
+              <para>If the number of partitions exceeds 2 * Log<superscript>N</superscript>, where  N is the range of the input array, it uses a <see cref="http://en.wikipedia.org/wiki/Heapsort">Heapsort</see> algorithm.</para>
+            </item>
+            <item>
+              <para>Otherwise, it uses a <see cref="http://en.wikipedia.org/wiki/Quicksort">Quicksort</see> algorithm. </para>
+            </item>
+          </list>
+          <para>This implementation performs an unstable sort; that is, if two elements are equal, their order might not be preserved. In contrast, a stable sort preserves the order of elements that are equal.</para>
+          <para>For arrays that are sorted by using the Heapsort and Quicksort algorithms, in the worst case, this method is an O(<paramref name="n" /> log <paramref name="n" />) operation, where <paramref name="n" /> is <paramref name="length" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sorts a range of elements in a pair of <see cref="T:System.Array" /> objects (one contains the keys and the other contains the corresponding items) based on the keys in the first <see cref="T:System.Array" /> using the specified <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface.</para>
+        </summary>
+        <param name="keys">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> that contains the keys to sort. </param>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> that contains the items that correspond to the keys in <paramref name="keys" />, or null to sort only <paramref name="keys" />.</param>
+        <param name="index">
+          <attribution license="cc4" from="Microsoft" modified="false" />The starting index of the range to sort.</param>
+        <param name="length">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of elements in the range to sort.</param>
+        <param name="comparer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.Collections.Generic.IComparer`1" /> generic interface implementation to use when comparing elements, or null to use the <see cref="T:System.IComparable`1" /> generic interface implementation of each element.</param>
+        <typeparam name="TKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the key array.</typeparam>
+        <typeparam name="TValue">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the items array.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="SyncRoot">
@@ -6462,24 +6568,28 @@ with every other element in <paramref name="keys" />.</para>
         <Parameter Name="match" Type="System.Predicate&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="array">The array to check against the conditions.</param>
-        <param name="match">
-          <para>The predicate against which the elements are checked..</para>
-        </param>
-        <summary>
-          <para>Determines whether every element in the array matches the predicate.</para>
-        </summary>
         <returns>
           <para>
             <see langword="true" />, if every element in <paramref name="array" /> matches the specified predicate; otherwise, <see langword="false" />.</para>
         </returns>
-        <remarks>
-          <para>The predicate returns <see langword="true" /> if the object passed to it matches the delegate.  The elements of <paramref name="array" /> are individually passed to the predicate, and processing is stopped when the delegate returns <see langword="false" /> for any element.</para>
-        </remarks>
         <since version=".NET 2.0" />
         <exception cref="T:System.ArgumentNullException">
           <paramref name="array" />  or <paramref name="match" /> is <see langword="null" />.</exception>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Predicate`1" /> is a delegate to a method that returns true if the object passed to it matches the conditions defined in the delegate.  The elements of <paramref name="array" /> are individually passed to the <see cref="T:System.Predicate`1" />, and processing is stopped when the delegate returns false for any element. </para>
+          <para>This method is an O(<paramref name="n" />) operation, where <paramref name="n" /> is the <see cref="P:System.Array.Length" /> of <paramref name="array" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Determines whether every element in the array matches the conditions defined by the specified predicate.</para>
+        </summary>
+        <param name="array">
+          <attribution license="cc4" from="Microsoft" modified="false" />The one-dimensional, zero-based <see cref="T:System.Array" /> to check against the conditions.</param>
+        <param name="match">
+          <attribution license="cc4" from="Microsoft" modified="false" />The predicate that defines the conditions to check against the elements.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the elements of the array.</typeparam>
       </Docs>
     </Member>
   </Members>

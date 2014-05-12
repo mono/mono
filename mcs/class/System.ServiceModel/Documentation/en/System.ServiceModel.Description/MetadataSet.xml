@@ -63,9 +63,16 @@
         <Parameter Name="sections" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Description.MetadataSection&gt;" />
       </Parameters>
       <Docs>
-        <param name="sections">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Description.MetadataSet" /> from <paramref name="sections" />.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Description.MetadataSet" /> class that contains the specified collection of <see cref="T:System.ServiceModel.Description.MetadataSection" /> objects.</para>
+        </summary>
+        <param name="sections">
+          <attribution license="cc4" from="Microsoft" modified="false" />The metadata values that the <see cref="T:System.ServiceModel.Description.MetadataSet" /> is to contain.</param>
       </Docs>
     </Member>
     <Member MemberName="Attributes">

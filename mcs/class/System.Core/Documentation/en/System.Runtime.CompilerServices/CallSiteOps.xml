@@ -56,11 +56,17 @@
         <Parameter Name="rule" Type="T" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="site">To be added.</param>
-        <param name="rule">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds a rule to the cache maintained on the dynamic call site.</para>
+        </summary>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the call site rule.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Bind&lt;T&gt;">
@@ -94,13 +100,20 @@
         <Parameter Name="args" Type="System.Object[]" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="binder">To be added.</param>
-        <param name="site">To be added.</param>
-        <param name="args">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates the call site target with a new rule based on the arguments.</para>
+        </summary>
+        <param name="binder">
+          <attribution license="cc4" from="Microsoft" modified="false" />The call site binder.</param>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />Arguments to the call site.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ClearMatch">
@@ -163,11 +176,16 @@
         <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="site">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an instance of a dynamic call site used for cache lookup.</para>
+        </summary>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetCachedRules&lt;T&gt;">
@@ -199,11 +217,16 @@
         <Parameter Name="cache" Type="System.Runtime.CompilerServices.RuleCache&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="cache">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Searches the dynamic rule cache for rules applicable to the dynamic operation.</para>
+        </summary>
+        <param name="cache">
+          <attribution license="cc4" from="Microsoft" modified="false" />The cache.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />. </typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetMatch">
@@ -267,11 +290,16 @@
         <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="site">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Retrieves binding rule cache.</para>
+        </summary>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetRules&lt;T&gt;">
@@ -303,11 +331,16 @@
         <Parameter Name="site" Type="System.Runtime.CompilerServices.CallSite&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="site">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the dynamic binding rules from the call site.</para>
+        </summary>
+        <param name="site">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="MoveRule&lt;T&gt;">
@@ -341,12 +374,19 @@
         <Parameter Name="i" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="cache">To be added.</param>
-        <param name="rule">To be added.</param>
-        <param name="i">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Moves the binding rule within the cache.</para>
+        </summary>
+        <param name="cache">
+          <attribution license="cc4" from="Microsoft" modified="false" />The call site rule cache.</param>
+        <param name="rule">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the call site rule.</param>
+        <param name="i">
+          <attribution license="cc4" from="Microsoft" modified="false" />An index of the call site rule.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />. </typeparam>
       </Docs>
     </Member>
     <Member MemberName="SetNotMatched">
@@ -411,11 +451,17 @@
         <Parameter Name="matched" Type="System.Int32" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="this">To be added.</param>
-        <param name="matched">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Updates rules in the cache.</para>
+        </summary>
+        <param name="this">
+          <attribution license="cc4" from="Microsoft" modified="false" />An instance of the dynamic call site.</param>
+        <param name="matched">
+          <attribution license="cc4" from="Microsoft" modified="false" />The matched rule index.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate of the <see cref="T:System.Runtime.CompilerServices.CallSite" />.</typeparam>
       </Docs>
     </Member>
   </Members>

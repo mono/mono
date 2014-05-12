@@ -54,10 +54,15 @@
         <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="knownTypes">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Json.DataContractJsonSerializer" /> class to serialize or deserialize an object of the specified type, with a collection of known types that may be present in the object graph. </para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" />  of <see cref="T:System.Type" /> that contains the types that may be present in the object graph.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -142,11 +147,17 @@
         <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="rootName">To be added.</param>
-        <param name="knownTypes">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Json.DataContractJsonSerializer" /> class to serialize or deserialize an object of a specified type using the XML root element specified by a parameter, with a collection of known types that may be present in the object graph.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that is serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the XML element that encloses the content to serialize or deserialize. The default is "root".</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" />  of <see cref="T:System.Type" /> that contains the types that may be present in the object graph.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -162,11 +173,17 @@
         <Parameter Name="knownTypes" Type="System.Collections.Generic.IEnumerable&lt;System.Type&gt;" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="rootName">To be added.</param>
-        <param name="knownTypes">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Json.DataContractJsonSerializer" /> class to serialize or deserialize an object of a specified type using the XML root element specified by a parameter of type <see cref="T:System.Xml.XmlDictionaryString" />, with a collection of known types that may be present in the object graph.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that is serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that contains the root element name of the content. </param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> that contains the types that may be present in the object graph.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -185,14 +202,23 @@
         <Parameter Name="alwaysEmitTypeInformation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="knownTypes">To be added.</param>
-        <param name="maxItemsInObjectGraph">To be added.</param>
-        <param name="ignoreExtensionDataObject">To be added.</param>
-        <param name="dataContractSurrogate">To be added.</param>
-        <param name="alwaysEmitTypeInformation">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Json.DataContractJsonSerializer" /> class to serialize or deserialize an object of the specified type. This method also specifies a list of known types that may be present in the object graph, the maximum number of graph items to serialize or deserialize, whether to ignore unexpected data or emit type information, and a surrogate for custom serialization.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that is serialized or deserialized.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that contains the root element name of the content. </param>
+        <param name="maxItemsInObjectGraph">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> that contains the types that may be present in the object graph.</param>
+        <param name="ignoreExtensionDataObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore the <see cref="T:System.Runtime.Serialization.IExtensibleDataObject" /> interface upon serialization and ignore unexpected data upon deserialization; otherwise, false. The default is false.</param>
+        <param name="dataContractSurrogate">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> to customize the serialization process.</param>
+        <param name="alwaysEmitTypeInformation">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to emit type information; otherwise, false. The default is false.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -212,15 +238,25 @@
         <Parameter Name="alwaysEmitTypeInformation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="rootName">To be added.</param>
-        <param name="knownTypes">To be added.</param>
-        <param name="maxItemsInObjectGraph">To be added.</param>
-        <param name="ignoreExtensionDataObject">To be added.</param>
-        <param name="dataContractSurrogate">To be added.</param>
-        <param name="alwaysEmitTypeInformation">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Json.DataContractJsonSerializer" /> class to serialize or deserialize an object of the specified type. This method also specifies the root name of the XML element, a list of known types that may be present in the object graph, the maximum number of graph items to serialize or deserialize, whether to ignore unexpected data or emit type information, and a surrogate for custom serialization.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that is serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the XML element that encloses the content to serialize or deserialize. The default is "root".</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> that contains the types that may be present in the object graph.</param>
+        <param name="maxItemsInObjectGraph">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of items in the graph to serialize or deserialize. The default is the value returned by the <see cref="F:System.Int32.MaxValue" /> property.</param>
+        <param name="ignoreExtensionDataObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore the <see cref="T:System.Runtime.Serialization.IExtensibleDataObject" /> interface upon serialization and ignore unexpected data upon deserialization; otherwise, false. The default is false.</param>
+        <param name="dataContractSurrogate">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> to customize the serialization process.</param>
+        <param name="alwaysEmitTypeInformation">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to emit type information; otherwise, false. The default is false.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -240,15 +276,25 @@
         <Parameter Name="alwaysEmitTypeInformation" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="type">To be added.</param>
-        <param name="rootName">To be added.</param>
-        <param name="knownTypes">To be added.</param>
-        <param name="maxItemsInObjectGraph">To be added.</param>
-        <param name="ignoreExtensionDataObject">To be added.</param>
-        <param name="dataContractSurrogate">To be added.</param>
-        <param name="alwaysEmitTypeInformation">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Runtime.Serialization.Json.DataContractJsonSerializer" /> class to serialize or deserialize an object of the specified type. This method also specifies the root name of the XML element, a list of known types that may be present in the object graph, the maximum number of graph items to serialize or deserialize, whether to ignore unexpected data or emit type information, and a surrogate for custom serialization.</para>
+        </summary>
+        <param name="type">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the instances that are serialized or deserialized.</param>
+        <param name="rootName">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.XmlDictionaryString" /> that contains the root element name of the content.</param>
+        <param name="knownTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.IEnumerable`1" /> of <see cref="T:System.Type" /> that contains the known types that may be present in the object graph.</param>
+        <param name="maxItemsInObjectGraph">
+          <attribution license="cc4" from="Microsoft" modified="false" />The maximum number of items in the graph to serialize or deserialize. The default is the value returned by the <see cref="F:System.Int32.MaxValue" /> property.</param>
+        <param name="ignoreExtensionDataObject">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to ignore the <see cref="T:System.Runtime.Serialization.IExtensibleDataObject" /> interface upon serialization and ignore unexpected data upon deserialization; otherwise, false. The default is false.</param>
+        <param name="dataContractSurrogate">
+          <attribution license="cc4" from="Microsoft" modified="false" />An implementation of the <see cref="T:System.Runtime.Serialization.IDataContractSurrogate" /> to customize the serialization process.</param>
+        <param name="alwaysEmitTypeInformation">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to emit type information; otherwise, false. The default is false.</param>
       </Docs>
     </Member>
     <Member MemberName="DataContractSurrogate">

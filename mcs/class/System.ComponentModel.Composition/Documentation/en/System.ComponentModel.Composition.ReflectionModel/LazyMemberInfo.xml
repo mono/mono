@@ -50,10 +50,15 @@
         <Parameter Name="accessorsCreator" Type="System.Func&lt;System.Reflection.MemberInfo[]&gt;" />
       </Parameters>
       <Docs>
-        <param name="memberType">To be added.</param>
-        <param name="accessorsCreator">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.ReflectionModel.LazyMemberInfo" /> class for a member of the specified type with the specified accessors.</para>
+        </summary>
+        <param name="memberType">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the represented member.</param>
+        <param name="accessorsCreator">
+          <attribution license="cc4" from="Microsoft" modified="false" />A function whose return value is a collection of the accessors for the represented member.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">

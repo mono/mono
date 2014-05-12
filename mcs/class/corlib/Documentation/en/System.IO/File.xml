@@ -110,10 +110,18 @@
         <Parameter Name="contents" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="contents">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method creates the file if it doesn’t exist, but it doesn't create new directories. Therefore, the value of the <paramref name="path" /> parameter must contain existing directories.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends lines to a file, and then closes the file. If the specified file does not exist, this method creates a file, writes the specified lines to the file, and then closes the file.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to append the lines to. The file is created if it doesn't already exist.</param>
+        <param name="contents">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lines to append to the file.</param>
       </Docs>
     </Member>
     <Member MemberName="AppendAllLines">
@@ -132,11 +140,29 @@
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="contents">To be added.</param>
-        <param name="encoding">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method creates the file if it doesn’t exist, but it doesn't create new directories. Therefore, the value of the <paramref name="path" /> parameter must contain existing directories.</para>
+          <para>You can use this method to create a file that contains the following:</para>
+          <list type="bullet">
+            <item>
+              <para>The results of a <format type="text/html"><a href="73cafe73-37cf-46e7-bfa7-97c7eea7ced9">LINQ to Objects</a></format> query on the lines of a file, as obtained by using the <see cref="Overload:System.IO.File.ReadLines" /> method.</para>
+            </item>
+            <item>
+              <para>The contents of a collection that implements an <see cref="T:System.Collections.Generic.IEnumerable`1" /> of strings. </para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Appends lines to a file by using a specified encoding, and then closes the file. If the specified file does not exist, this method creates a file, writes the specified lines to the file, and then closes the file.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to append the lines to. The file is created if it doesn't already exist.</param>
+        <param name="contents">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lines to append to the file.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding to use.</param>
       </Docs>
     </Member>
     <Member MemberName="AppendAllText">
@@ -2169,10 +2195,20 @@ that provides access to the specified file.</para>
         <Parameter Name="contents" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="contents">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The default behavior of the <see cref="M:System.IO.File.WriteAllLines(System.String,System.Collections.Generic.IEnumerable{System.String})" /> method is to write out data by using UTF-8 encoding without a byte order mark (BOM). If it is necessary to include a UTF-8 identifier, such as a byte order mark, at the beginning of a file, use the <see cref="M:System.IO.File.WriteAllLines(System.String,System.Collections.Generic.IEnumerable{System.String},System.Text.Encoding)" /> method overload with <see cref="P:System.Text.Encoding.UTF8" /> encoding.</para>
+          <para>If the target file already exists, it is overwritten.</para>
+          <para>You can use this method to create the contents for a collection class that takes an <see cref="T:System.Collections.Generic.IEnumerable`1" /> in its constructor, such as a <see cref="M:System.Collections.Generic.List`1.#ctor(System.Collections.Generic.IEnumerable{`0})" />, <see cref="M:System.Collections.Generic.HashSet`1.#ctor" />, or a <see cref="M:System.Collections.Generic.SortedSet`1.#ctor" /> class.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new file, writes a collection of strings to the file, and then closes the file.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to write to.</param>
+        <param name="contents">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lines to write to the file.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAllLines">
@@ -2224,11 +2260,29 @@ that provides access to the specified file.</para>
         <Parameter Name="encoding" Type="System.Text.Encoding" />
       </Parameters>
       <Docs>
-        <param name="path">To be added.</param>
-        <param name="contents">To be added.</param>
-        <param name="encoding">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the target file already exists, it is overwritten.</para>
+          <para>You can use this method to create a file that contains the following:</para>
+          <list type="bullet">
+            <item>
+              <para>The results of a <format type="text/html"><a href="73cafe73-37cf-46e7-bfa7-97c7eea7ced9">LINQ to Objects</a></format> query on the lines of a file, as obtained by using the <see cref="Overload:System.IO.File.ReadLines" /> method.</para>
+            </item>
+            <item>
+              <para>The contents of a collection that implements an <see cref="T:System.Collections.Generic.IEnumerable`1" /> of strings.</para>
+            </item>
+          </list>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new file by using the specified encoding, writes a collection of strings to the file, and then closes the file.</para>
+        </summary>
+        <param name="path">
+          <attribution license="cc4" from="Microsoft" modified="false" />The file to write to.</param>
+        <param name="contents">
+          <attribution license="cc4" from="Microsoft" modified="false" />The lines to write to the file.</param>
+        <param name="encoding">
+          <attribution license="cc4" from="Microsoft" modified="false" />The character encoding to use.</param>
       </Docs>
     </Member>
     <Member MemberName="WriteAllLines">

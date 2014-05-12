@@ -392,10 +392,15 @@
         <Parameter Name="export" Type="System.Lazy&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="export">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes the specified export from composition and releases its resources if possible.</para>
+        </summary>
+        <param name="export">
+          <attribution license="cc4" from="Microsoft" modified="false" />An indirect reference to the export to remove.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the export.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ReleaseExports">
@@ -412,9 +417,16 @@
         <Parameter Name="exports" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.Export&gt;" />
       </Parameters>
       <Docs>
-        <param name="exports">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The behavior of this method may vary depending on the context in which the <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> was constructed. For more information, see the <see cref="M:System.ComponentModel.Composition.Hosting.CompositionContainer.ReleaseExport(System.ComponentModel.Composition.Primitives.Export)" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Releases a set of <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects from the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionContainer" />. </para>
+        </summary>
+        <param name="exports">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ComponentModel.Composition.Primitives.Export" /> objects to be released.</param>
       </Docs>
     </Member>
     <Member MemberName="ReleaseExports&lt;T&gt;">
@@ -434,10 +446,15 @@
         <Parameter Name="exports" Type="System.Collections.Generic.IEnumerable&lt;System.Lazy&lt;T&gt;&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="exports">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes a collection of exports from composition and releases their resources if possible.</para>
+        </summary>
+        <param name="exports">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of indirect references to the exports to be removed.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the exports.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="ReleaseExports&lt;T,TMetadataView&gt;">

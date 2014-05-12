@@ -133,9 +133,13 @@
         <Parameter Name="removeMethod" Type="System.Action&lt;System.Runtime.InteropServices.WindowsRuntime.EventRegistrationToken&gt;" />
       </Parameters>
       <Docs>
-        <param name="removeMethod">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Removes all the event handlers that can be removed by using the specified method. </para>
+        </summary>
+        <param name="removeMethod">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate that represents the method that removes event handlers from the wrt event. </param>
       </Docs>
     </Member>
     <Member MemberName="RemoveEventHandler&lt;T&gt;">

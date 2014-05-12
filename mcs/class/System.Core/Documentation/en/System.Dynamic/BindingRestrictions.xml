@@ -40,10 +40,14 @@
         <Parameter Name="contributingObjects" Type="System.Collections.Generic.IList&lt;System.Dynamic.DynamicMetaObject&gt;" />
       </Parameters>
       <Docs>
-        <param name="contributingObjects">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Combines binding restrictions from the list of <see cref="T:System.Dynamic.DynamicMetaObject" /> instances into one set of restrictions.</para>
+        </summary>
+        <param name="contributingObjects">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list of <see cref="T:System.Dynamic.DynamicMetaObject" /> instances from which to combine restrictions.</param>
       </Docs>
     </Member>
     <Member MemberName="Empty">

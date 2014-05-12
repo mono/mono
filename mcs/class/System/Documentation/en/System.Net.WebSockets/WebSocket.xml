@@ -226,16 +226,27 @@
         <Parameter Name="internalBuffer" Type="System.ArraySegment&lt;System.Byte&gt;" />
       </Parameters>
       <Docs>
-        <param name="innerStream">To be added.</param>
-        <param name="subProtocol">To be added.</param>
-        <param name="receiveBufferSize">To be added.</param>
-        <param name="sendBufferSize">To be added.</param>
-        <param name="keepAliveInterval">To be added.</param>
-        <param name="useZeroMaskingKey">To be added.</param>
-        <param name="internalBuffer">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This API supports the .NET Framework infrastructure and is not intended to be used directly from your code.</para>
+          <para>Allows callers to create a client side WebSocket class which will use the WSPC for framing purposes.</para>
+        </summary>
+        <param name="innerStream">
+          <attribution license="cc4" from="Microsoft" modified="false" />The connection to be used for IO operations.</param>
+        <param name="subProtocol">
+          <attribution license="cc4" from="Microsoft" modified="false" />The subprotocol accepted by the client.</param>
+        <param name="receiveBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size in bytes of the client WebSocket receive buffer.</param>
+        <param name="sendBufferSize">
+          <attribution license="cc4" from="Microsoft" modified="false" />The size in bytes of the client WebSocket send buffer.</param>
+        <param name="keepAliveInterval">
+          <attribution license="cc4" from="Microsoft" modified="false" />Determines how regularly a frame is sent over the connection as a keep-alive. Applies only when the connection is idle.</param>
+        <param name="useZeroMaskingKey">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether a random key or a static key (just zeros) should be used for the WebSocket masking.</param>
+        <param name="internalBuffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />Will be used as the internal buffer in the WPC. The size has to be at least 2 * ReceiveBufferSize + SendBufferSize + 256 + 20 (16 on 32-bit).</param>
       </Docs>
     </Member>
     <Member MemberName="CreateServerBuffer">
@@ -377,11 +388,19 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task`1" />   object will complete after the data has been received on the  WebSocket.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Receives data from the WebSocket connection asynchronously.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />References the application buffer that is the storage location for the received data.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />Propagate the notification that operations should be canceled.</param>
       </Docs>
     </Member>
     <Member MemberName="RegisterPrefixes">
@@ -425,13 +444,23 @@
         <Parameter Name="cancellationToken" Type="System.Threading.CancellationToken" />
       </Parameters>
       <Docs>
-        <param name="buffer">To be added.</param>
-        <param name="messageType">To be added.</param>
-        <param name="endOfMessage">To be added.</param>
-        <param name="cancellationToken">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This operation will not block. The returned <see cref="T:System.Threading.Tasks.Task" />   object will complete after the data has been sent on the WebSocket.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends data over the WebSocket connection asynchronously.</para>
+        </summary>
+        <param name="buffer">
+          <attribution license="cc4" from="Microsoft" modified="false" />The buffer to be sent over the connection.</param>
+        <param name="messageType">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the application is sending a binary or text message.</param>
+        <param name="endOfMessage">
+          <attribution license="cc4" from="Microsoft" modified="false" />Indicates whether the data in “buffer” is the last part of a message.</param>
+        <param name="cancellationToken">
+          <attribution license="cc4" from="Microsoft" modified="false" />The token that propagates the notification that operations should be canceled.</param>
       </Docs>
     </Member>
     <Member MemberName="State">

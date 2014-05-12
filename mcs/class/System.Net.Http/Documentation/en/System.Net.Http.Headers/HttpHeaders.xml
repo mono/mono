@@ -53,10 +53,20 @@
         <Parameter Name="values" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The header <paramref name="values" /> will be parsed and validated.</para>
+          <para>If the specified header does not exist, the <see cref="M:System.Net.Http.Headers.HttpHeaders.Add(System.String,System.Collections.Generic.IEnumerable{System.String})" /> method inserts a new header into the list of header name/value pairs.</para>
+          <para>If the specified header is already present, <paramref name="values" /> are added to the comma-separated list of values associated with the header.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the specified header and its values into the <see cref="T:System.Net.Http.Headers.HttpHeaders" /> collection.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The header to add to the collection.</param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of header values to add to the collection.</param>
       </Docs>
     </Member>
     <Member MemberName="Add">
@@ -256,11 +266,16 @@
         <Parameter Name="values" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Returns a value that indicates whether the specified header and its values were added to the <see cref="T:System.Net.Http.Headers.HttpHeaders" /> collection without validating the provided information.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The header to add to the collection.</param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />The values of the header.</param>
       </Docs>
     </Member>
     <Member MemberName="TryAddWithoutValidation">

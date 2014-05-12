@@ -33,9 +33,17 @@
         <Parameter Name="providers" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Hosting.ExportProvider&gt;" />
       </Parameters>
       <Docs>
-        <param name="providers">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> class consults the providers in the order in which they have been specified when it calls <see cref="M:System.ComponentModel.Composition.Hosting.ExportProvider.GetExports(System.ComponentModel.Composition.Primitives.ImportDefinition)" />. </para>
+          <para>The <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> does not take ownership of the specified providers. That is, it tries to dispose of any of the providers when it is disposed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateExportProvider" /> class.</para>
+        </summary>
+        <param name="providers">
+          <attribution license="cc4" from="Microsoft" modified="false" />The prioritized list of export providers. The providers are consulted in the order in which they are supplied.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">

@@ -48,9 +48,13 @@
         <Parameter Name="workspaces" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Syndication.Workspace&gt;" />
       </Parameters>
       <Docs>
-        <param name="workspaces">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.ServiceDocument" /> class, initializing it with the specified collection of <see cref="T:System.ServiceModel.Syndication.Workspace" /> instances.</para>
+        </summary>
+        <param name="workspaces">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of workspaces.</param>
       </Docs>
     </Member>
     <Member MemberName="AttributeExtensions">

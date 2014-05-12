@@ -39,9 +39,13 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.Json.JsonValue&gt;" />
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Json.JsonArray" /> class with the specified items.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumeration of objects of type <see cref="T:System.Json.JsonValue" /> used to initialize the JavaScript Object Notation (JSON) array.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -107,9 +111,13 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.Json.JsonValue&gt;" />
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Adds the elements from a collection of type <see cref="T:System.Json.JsonValue" /> to the array.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of types to add.</param>
       </Docs>
     </Member>
     <Member MemberName="AddRange">

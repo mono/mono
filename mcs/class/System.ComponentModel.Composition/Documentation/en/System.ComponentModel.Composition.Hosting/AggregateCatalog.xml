@@ -49,9 +49,13 @@
         <Parameter Name="catalogs" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.ComposablePartCatalog&gt;" />
       </Parameters>
       <Docs>
-        <param name="catalogs">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateCatalog" /> class with the specified catalogs.</para>
+        </summary>
+        <param name="catalogs">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ComponentModel.Composition.Primitives.ComposablePartCatalog" /> objects to add to the <see cref="T:System.ComponentModel.Composition.Hosting.AggregateCatalog" /> or null to create an empty <see cref="T:System.ComponentModel.Composition.Hosting.AggregateCatalog" />. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">

@@ -164,11 +164,19 @@
         <Parameter Name="source" Type="System.Collections.Generic.IEnumerable&lt;TSource&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ordering used in the created partitioner is determined by the natural order of the elements as retrieved from the source enumerable. For more information and examples, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an orderable partitioner from a <see cref="T:System.Collections.Generic.IEnumerable`1" /> instance.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumerable to be partitioned.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of the elements in source enumerable.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Create&lt;TSource&gt;">
@@ -189,12 +197,21 @@
         <Parameter Name="partitionerOptions" Type="System.Collections.Concurrent.EnumerablePartitionerOptions" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="source">To be added.</param>
-        <param name="partitionerOptions">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The ordering used in the created partitioner is determined by the natural order of the elements as retrieved from the source enumerable.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an orderable partitioner from a <see cref="T:System.Collections.Generic.IEnumerable`1" /> instance.</para>
+        </summary>
+        <param name="source">
+          <attribution license="cc4" from="Microsoft" modified="false" />The enumerable to be partitioned.</param>
+        <param name="partitionerOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />Options to control the buffering behavior of the partitioner.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of the elements in source enumerable.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Create&lt;TSource&gt;">
@@ -215,12 +232,21 @@
         <Parameter Name="loadBalance" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <typeparam name="TSource">To be added.</typeparam>
-        <param name="list">To be added.</param>
-        <param name="loadBalance">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>For more information and examples, see <format type="text/html"><a href="96153688-9a01-47c4-8430-909cee9a2887">Custom Partitioners for PLINQ and TPL</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates an orderable partitioner from an <see cref="T:System.Collections.Generic.IList`1" /> instance.</para>
+        </summary>
+        <param name="list">
+          <attribution license="cc4" from="Microsoft" modified="false" />The list to be partitioned.</param>
+        <param name="loadBalance">
+          <attribution license="cc4" from="Microsoft" modified="false" />A Boolean value that indicates whether the created partitioner should dynamically load balance between partitions rather than statically partition.</param>
+        <typeparam name="TSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />Type of the elements in source list.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Create&lt;TSource&gt;">

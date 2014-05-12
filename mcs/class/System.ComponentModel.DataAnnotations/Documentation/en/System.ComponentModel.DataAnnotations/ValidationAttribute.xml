@@ -48,9 +48,16 @@
         <Parameter Name="errorMessageAccessor" Type="System.Func&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="errorMessageAccessor">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This constructor provides a resource accessor function that is used by the <see cref="P:System.ComponentModel.DataAnnotations.ValidationAttribute.ErrorMessageString" /> property to retrieve an error message. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.DataAnnotations.ValidationAttribute" /> class by using the function that enables access to validation resources.</para>
+        </summary>
+        <param name="errorMessageAccessor">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function that enables access to validation resources.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">

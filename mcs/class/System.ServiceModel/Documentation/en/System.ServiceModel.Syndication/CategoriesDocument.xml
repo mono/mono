@@ -76,10 +76,14 @@
         <Parameter Name="categories" Type="System.Collections.ObjectModel.Collection&lt;System.ServiceModel.Syndication.SyndicationCategory&gt;" />
       </Parameters>
       <Docs>
-        <param name="categories">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> instance.</para>
+        </summary>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ServiceModel.Syndication.SyndicationCategory" /> instances used to initialize the new <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> instance. </param>
       </Docs>
     </Member>
     <Member MemberName="Create">
@@ -122,12 +126,21 @@
         <Parameter Name="scheme" Type="System.String" />
       </Parameters>
       <Docs>
-        <param name="categories">To be added.</param>
-        <param name="isFixed">To be added.</param>
-        <param name="scheme">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If the <paramref name="isFixed" /> parameter is set to true, the categories contained within the categories document are immutable. If the <paramref name="isFixed" /> parameter is set to true, additional categories can be added to the categories document.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.CategoriesDocument" /> class. </para>
+        </summary>
+        <param name="categories">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of categories.</param>
+        <param name="isFixed">
+          <attribution license="cc4" from="Microsoft" modified="false" />A value that specifies whether a user can add a category to the categories document.</param>
+        <param name="scheme">
+          <attribution license="cc4" from="Microsoft" modified="false" />The scheme of the categories document.</param>
       </Docs>
     </Member>
     <Member MemberName="ElementExtensions">

@@ -35,10 +35,15 @@
         <Parameter Name="argNames" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="argCount">To be added.</param>
-        <param name="argNames">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new CallInfo that represents arguments in the dynamic binding process.</para>
+        </summary>
+        <param name="argCount">
+          <attribution license="cc4" from="Microsoft" modified="false" />The number of arguments.</param>
+        <param name="argNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />The argument names.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">

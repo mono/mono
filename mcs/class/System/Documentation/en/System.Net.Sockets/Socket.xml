@@ -1089,13 +1089,42 @@ instance.</para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <param name="socketFlags">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The asynchronous <see cref="M:System.Net.Sockets.Socket.BeginReceive(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> operation must be completed by calling the <see cref="M:System.Net.Sockets.Socket.EndReceive(System.IAsyncResult)" /> method. Typically, the method is invoked by the <paramref name="callback" /> delegate.</para>
+          <para>This method does not block until the operation is complete. To block until the operation is complete, use one of the <see cref="Overload:System.Net.Sockets.Socket.Receive" /> method overloads.</para>
+          <para>To cancel a pending <see cref="Overload:System.Net.Sockets.Socket.BeginReceive" />, call the <see cref="M:System.Net.Sockets.Socket.Close" /> method.</para>
+          <para>For detailed information about using the asynchronous programming model, see <format type="text/html"><a href="41972034-92ed-450a-9664-ab93fcc6f1fb">Asynchronous Programming Overview</a></format>.</para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>All I/O initiated by a given thread is canceled when that thread exits. A pending asynchronous operation can fail if the thread exits before the operation completes.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="state" /> is an instantiation of a user-defined class. </para>
+          </block>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The execution context (the security context, the impersonated user, and the calling context) is cached for the asynchronous <see cref="T:System.Net.Sockets.Socket" /> methods. After the first use of a particular context (a specific asynchronous <see cref="T:System.Net.Sockets.Socket" /> method, a specific <see cref="T:System.Net.Sockets.Socket" /> instance, and a specific callback), subsequent uses of that context will see a performance improvement.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Begins to asynchronously receive data from a connected <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </summary>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that is the storage location for the received data.</param>
+        <param name="socketFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Net.Sockets.SocketFlags" /> values.</param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.AsyncCallback" /> delegate that references the method to invoke when the operation is complete.</param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />A user-defined object that contains information about the receive operation. This object is passed to the <see cref="M:System.Net.Sockets.Socket.EndReceive(System.IAsyncResult)" /> delegate when the operation is complete.</param>
       </Docs>
     </Member>
     <Member MemberName="BeginReceive">
@@ -1428,13 +1457,46 @@ method.</para>
         <Parameter Name="state" Type="System.Object" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <param name="socketFlags">To be added.</param>
-        <param name="callback">To be added.</param>
-        <param name="state">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method starts an asynchronous send operation to the remote host established in the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />, <see cref="M:System.Net.Sockets.Socket.BeginConnect(System.Net.EndPoint,System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.Sockets.Socket.Accept" />, or <see cref="M:System.Net.Sockets.Socket.BeginAccept(System.AsyncCallback,System.Object)" /> method. <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> will throw an exception if you do not first call <see cref="M:System.Net.Sockets.Socket.Accept" />, <see cref="M:System.Net.Sockets.Socket.BeginAccept(System.AsyncCallback,System.Object)" />, <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />, or <see cref="M:System.Net.Sockets.Socket.BeginConnect(System.Net.EndPoint,System.AsyncCallback,System.Object)" />. Calling the <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method gives you the ability to send data within a separate execution thread.</para>
+          <para>You can create a callback method that implements the <see cref="T:System.AsyncCallback" /> delegate and pass its name to the <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method. To do this, at the very minimum, your <paramref name="state" /> parameter must contain the connected or default <see cref="T:System.Net.Sockets.Socket" /> being used for communication. If your callback needs more information, you can create a small class or structure to hold the <see cref="T:System.Net.Sockets.Socket" /> and the other required information. Pass an instance of this class to the <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method through the <paramref name="state" /> parameter.</para>
+          <para>Your callback method should invoke the <see cref="M:System.Net.Sockets.Socket.EndSend(System.IAsyncResult)" /> method. When your application calls <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" />, the system will use a separate thread to execute the specified callback method, and will block on <see cref="M:System.Net.Sockets.Socket.EndSend(System.IAsyncResult)" /> until the <see cref="T:System.Net.Sockets.Socket" /> sends the number of bytes requested or throws an exception. If you want the original thread to block after you call the <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> method, use the <see cref="M:System.Threading.WaitHandle.WaitOne(System.Int32,System.Boolean)" /> method. Call the Set method on a T:System.Threading.ManualResetEvent in the callback method when you want the original thread to continue executing. For additional information on writing callback methods see <format type="text/html"><a href="6DDD7866-9804-4571-84DE-83F5CC017A5A">[&lt;topic://cpconcallbacksample&gt;]</a></format>.</para>
+          <para>Although intended for connection-oriented protocols, <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> also works for connectionless protocols, provided that you first call the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> or <see cref="M:System.Net.Sockets.Socket.BeginConnect(System.Net.EndPoint,System.AsyncCallback,System.Object)" /> method to establish a default remote host. If you are using a connectionless protocol and plan to send data to several different hosts, you should use <see cref="M:System.Net.Sockets.Socket.BeginSendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint,System.AsyncCallback,System.Object)" />. It is okay to use <see cref="M:System.Net.Sockets.Socket.BeginSendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint,System.AsyncCallback,System.Object)" /> even after you have established a default remote host with <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />. You can also change the default remote host prior to calling <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> by making another call to <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> or <see cref="M:System.Net.Sockets.Socket.BeginConnect(System.Net.EndPoint,System.AsyncCallback,System.Object)" />. With connectionless protocols, you must also be sure that the size of your buffer does not exceed the maximum packet size of the underlying service provider. If it does, the datagram will not be sent and <see cref="M:System.Net.Sockets.Socket.BeginSend(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.AsyncCallback,System.Object)" /> will throw a <see cref="T:System.Net.Sockets.SocketException" />.</para>
+          <para>If you specify the <see cref="F:System.Net.Sockets.SocketFlags.DontRoute" /> flag as the <paramref name="socketflags" /> parameter, the data you are sending will not be routed. </para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>All I/O initiated by a given thread is canceled when that thread exits. A pending asynchronous operation can fail if the thread exits before the operation completes. </para>
+          </block>
+          <block subset="none" type="note">
+            <para>
+              <paramref name="state" /> is an instantiation of a user-defined class. </para>
+          </block>
+          <block subset="none" type="note">
+            <para>The successful completion of a send does not indicate that the data was successfully delivered. If no buffer space is available within the transport system to hold the data to be transmitted, send will block unless the socket has been placed in nonblocking mode.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The execution context (the security context, the impersonated user, and the calling context) is cached for the asynchronous <see cref="T:System.Net.Sockets.Socket" /> methods. After the first use of a particular context (a specific asynchronous <see cref="T:System.Net.Sockets.Socket" /> method, a specific <see cref="T:System.Net.Sockets.Socket" /> instance, and a specific callback), subsequent uses of that context will see a performance improvement.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends data asynchronously to a connected <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </summary>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of type <see cref="T:System.Byte" /> that contains the data to send. </param>
+        <param name="socketFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Net.Sockets.SocketFlags" /> values. </param>
+        <param name="callback">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.AsyncCallback" /> delegate. </param>
+        <param name="state">
+          <attribution license="cc4" from="Microsoft" modified="false" />An object that contains state information for this request. </param>
       </Docs>
     </Member>
     <Member MemberName="BeginSend">
@@ -3962,10 +4024,26 @@ containing the number of bytes received.</para>
         <Parameter Name="buffers" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads data into the buffers parameter and returns the number of bytes successfully read. You can call from both connection-oriented and connectionless sockets.</para>
+          <para>This overload requires you to provide one or more receive buffers.</para>
+          <para>If you are using a connection-oriented protocol, you must either call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> to establish a remote host connection, or <see cref="M:System.Net.Sockets.Socket.Accept" /> to accept an incoming connection prior to calling <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" />. The <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> method will only read data that arrives from the remote host connection established in the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> or <see cref="M:System.Net.Sockets.Socket.Accept" /> method. If you are using a connectionless protocol, you can also use the <see cref="M:System.Net.Sockets.Socket.ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@)" /> method. <see cref="M:System.Net.Sockets.Socket.ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@)" /> will allow you to receive data arriving from any host.</para>
+          <para>If no data is available for reading, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> method will block until data is available, unless a time-out value was set by using <see cref="P:System.Net.Sockets.Socket.ReceiveTimeout" />. If the time-out value was exceeded, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> call will throw a <see cref="T:System.Net.Sockets.SocketException" />. If you are in non-blocking mode, and there is no data available in the in the protocol stack buffer, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> method will complete immediately and throw a <see cref="T:System.Net.Sockets.SocketException" />. You can use the <see cref="P:System.Net.Sockets.Socket.Available" /> property to determine if data is available for reading. When <see cref="P:System.Net.Sockets.Socket.Available" /> is non-zero, retry the receive operation.</para>
+          <para>If you are using a connection-oriented <see cref="T:System.Net.Sockets.Socket" />, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> method will read as much data as is available, up to the size of the buffer. If the remote host shuts down the <see cref="T:System.Net.Sockets.Socket" /> connection with the <see cref="M:System.Net.Sockets.Socket.Shutdown(System.Net.Sockets.SocketShutdown)" /> method, and all available data has been received, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> method will complete immediately and return zero bytes.</para>
+          <para>If you are using a connectionless <see cref="T:System.Net.Sockets.Socket" />, <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will read the first enqueued datagram from the destination address you specify in the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> method. If the datagram you receive is larger than the size of the <paramref name="buffers" /> parameter, <paramref name="buffers" /> gets filled with the first part of the message, the excess data is lost and a <see cref="T:System.Net.Sockets.SocketException" /> is thrown.</para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <para>Note   This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Receives data from a bound <see cref="T:System.Net.Sockets.Socket" /> into the list of receive buffers.</para>
+        </summary>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of <see cref="T:System.ArraySegment`1" />s of type <see cref="T:System.Byte" /> that contains the received data.</param>
       </Docs>
     </Member>
     <Member MemberName="Receive">
@@ -4050,11 +4128,30 @@ containing the number of bytes received.</para>
         <Parameter Name="socketFlags" Type="System.Net.Sockets.SocketFlags" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <param name="socketFlags">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method reads data into the <paramref name="buffers" /> parameter and returns the number of bytes successfully read. You can call from both connection-oriented and connectionless sockets.</para>
+          <para>This overload requires you to provide one or more receive buffers. The <see cref="T:System.Net.Sockets.SocketFlags" /> value defaults to <see cref="F:System.Net.Sockets.SocketFlags.None" />.</para>
+          <para>If you are using a connection-oriented protocol, you must either call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> to establish a remote host connection, or <see cref="M:System.Net.Sockets.Socket.Accept" /> to accept an incoming connection prior to calling <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" />. The <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method will only read data that arrives from the remote host connection established in the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> or <see cref="M:System.Net.Sockets.Socket.Accept" /> method. If you are using a connectionless protocol, you can also use the <see cref="M:System.Net.Sockets.Socket.ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@)" /> method. <see cref="M:System.Net.Sockets.Socket.ReceiveFrom(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint@)" /> will allow you to receive data arriving from any host.</para>
+          <para>If no data is available for reading, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method will block until data is available, unless a time-out value was set by using <see cref="P:System.Net.Sockets.Socket.ReceiveTimeout" />. If the time-out value was exceeded, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> call throws a <see cref="T:System.Net.Sockets.SocketException" />. If you are in non-blocking mode, and there is no data available in the in the protocol stack buffer, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method will complete immediately and throw a <see cref="T:System.Net.Sockets.SocketException" />. You can use the <see cref="P:System.Net.Sockets.Socket.Available" /> property to determine if data is available for reading. When <see cref="P:System.Net.Sockets.Socket.Available" /> is non-zero, retry the receive operation.</para>
+          <para>If you are using a connection-oriented <see cref="T:System.Net.Sockets.Socket" />, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method will read as much data as is available, up to the size of the buffer. If the remote host shuts down the <see cref="T:System.Net.Sockets.Socket" /> connection with the <see cref="M:System.Net.Sockets.Socket.Shutdown(System.Net.Sockets.SocketShutdown)" /> method, and all available data has been received, the <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method will complete immediately and return zero bytes.</para>
+          <para>If you are using a connectionless <see cref="T:System.Net.Sockets.Socket" />, <see cref="M:System.Net.Sockets.Socket.Receive(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will read the first enqueued datagram from the destination address you specify in the <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> method. If the datagram you receive is larger than the size of the <paramref name="buffers" /> parameter, <paramref name="buffers" /> gets filled with the first part of the message, the excess data is lost and a <see cref="T:System.Net.Sockets.SocketException" /> is thrown.</para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Receives data from a bound <see cref="T:System.Net.Sockets.Socket" /> into the list of receive buffers, using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
+        </summary>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of <see cref="T:System.ArraySegment`1" />s of type <see cref="T:System.Byte" /> that contains the received data.</param>
+        <param name="socketFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Net.Sockets.SocketFlags" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="Receive">
@@ -5045,10 +5142,31 @@ containing the number of bytes sent.</para>
         <Parameter Name="buffers" Type="System.Collections.Generic.IList&lt;System.ArraySegment&lt;System.Byte&gt;&gt;" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>
+            <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}})" /> can be used for both connection-oriented and connectionless protocols.</para>
+          <para>This overload requires at least one buffer that contains the data you want to send.</para>
+          <para>If you are using a connectionless protocol, you must call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> before calling this method, or <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will throw a <see cref="T:System.Net.Sockets.SocketException" />. If you are using a connection-oriented protocol, you must either use <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> to establish a remote host connection, or use <see cref="M:System.Net.Sockets.Socket.Accept" /> to accept an incoming connection.</para>
+          <para>If you are using a connectionless protocol and plan to send data to several different hosts, you should use the <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> method. If you do not use the <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> method, you will have to call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> before each call to <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" />. You can use <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> even after you have established a default remote host with <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />. You can also change the default remote host prior to calling <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> by making another call to <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />.</para>
+          <para>If you are using a connection-oriented protocol, <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will block until all of the bytes in the buffer are sent, unless a time-out was set by using <see cref="P:System.Net.Sockets.Socket.SendTimeout" />. If the time-out value was exceeded, the <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> call will throw a <see cref="T:System.Net.Sockets.SocketException" />. In nonblocking mode, <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> may complete successfully even if it sends less than the number of bytes in the buffer. It is your application's responsibility to keep track of the number of bytes sent and to retry the operation until the application sends the bytes in the buffer. There is also no guarantee that the data you send will appear on the network immediately. To increase network efficiency, the underlying system may delay transmission until a significant amount of outgoing data is collected. A successful completion of the <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method means that the underlying system has had room to buffer your data for a network send. </para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The successful completion of a send does not indicate that the data was successfully delivered. If no buffer space is available within the transport system to hold the data to be transmitted, send will block unless the socket has been placed in nonblocking mode.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the set of buffers in the list to a connected <see cref="T:System.Net.Sockets.Socket" />.</para>
+        </summary>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of <see cref="T:System.ArraySegment`1" />s of type <see cref="T:System.Byte" /> that contains the data to be sent. </param>
       </Docs>
     </Member>
     <Member MemberName="Send">
@@ -5131,11 +5249,31 @@ containing the number of bytes sent.</para>
         <Parameter Name="socketFlags" Type="System.Net.Sockets.SocketFlags" />
       </Parameters>
       <Docs>
-        <param name="buffers">To be added.</param>
-        <param name="socketFlags">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This overload requires at least one buffer that contains the data you want to send. The <see cref="T:System.Net.Sockets.SocketFlags" /> value defaults to 0. If you specify the <see cref="F:System.Net.Sockets.SocketFlags.DontRoute" /> flag as the <paramref name="socketFlags" /> parameter, the data you are sending will not be routed. </para>
+          <para>If you are using a connectionless protocol, you must call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> before calling this method, or <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will throw a <see cref="T:System.Net.Sockets.SocketException" />. If you are using a connection-oriented protocol, you must either use <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> to establish a remote host connection, or use <see cref="M:System.Net.Sockets.Socket.Accept" /> to accept an incoming connection.</para>
+          <para>If you are using a connectionless protocol and plan to send data to several different hosts, you should use the <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> method. If you do not use the <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> method, you will have to call <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" /> before each call to <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" />. You can use <see cref="M:System.Net.Sockets.Socket.SendTo(System.Byte[],System.Int32,System.Int32,System.Net.Sockets.SocketFlags,System.Net.EndPoint)" /> even after you have established a default remote host with <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />. You can also change the default remote host prior to calling <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> by making another call to <see cref="M:System.Net.Sockets.Socket.Connect(System.Net.EndPoint)" />.</para>
+          <para>If you are using a connection-oriented protocol, <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> will block until all of the bytes in the buffer are sent, unless a time-out was set by using <see cref="P:System.Net.Sockets.Socket.SendTimeout" />. If the time-out value was exceeded, the <see cref="M:System.Net.Sockets.Socket.Send(System.Byte[],System.Int32,System.Net.Sockets.SocketFlags)" /> call will throw a <see cref="T:System.Net.Sockets.SocketException" />. In non-blocking mode, <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> may complete successfully even if it sends less than the number of bytes in the buffer. It is your application's responsibility to keep track of the number of bytes sent and to retry the operation until the application sends the bytes in the buffer. There is also no guarantee that the data you send will appear on the network immediately. To increase network efficiency, the underlying system may delay transmission until a significant amount of outgoing data is collected. A successful completion of the <see cref="M:System.Net.Sockets.Socket.Send(System.Collections.Generic.IList{System.ArraySegment{System.Byte}},System.Net.Sockets.SocketFlags)" /> method means that the underlying system has had room to buffer your data for a network send. </para>
+          <block subset="none" type="note">
+            <para>If you receive a <see cref="T:System.Net.Sockets.SocketException" />, use the <see cref="P:System.Net.Sockets.SocketException.ErrorCode" /> property to obtain the specific error code. After you have obtained this code, refer to the Windows Sockets version 2 API error code documentation in the MSDN library for a detailed description of the error.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>The successful completion of a send does not indicate that the data was successfully delivered. If no buffer space is available within the transport system to hold the data to be transmitted, send will block unless the socket has been placed in nonblocking mode.</para>
+          </block>
+          <block subset="none" type="note">
+            <para>This member outputs trace information when you enable network tracing in your application. For more information, see <format type="text/html"><a href="E993B7C3-087F-45D8-9C02-9DDED936D804">[&lt;topic://conUsingNetworkTracing&gt;]</a></format>.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sends the set of buffers in the list to a connected <see cref="T:System.Net.Sockets.Socket" />, using the specified <see cref="T:System.Net.Sockets.SocketFlags" />.</para>
+        </summary>
+        <param name="buffers">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of <see cref="T:System.ArraySegment`1" />s of type <see cref="T:System.Byte" /> that contains the data to be sent.</param>
+        <param name="socketFlags">
+          <attribution license="cc4" from="Microsoft" modified="false" />A bitwise combination of the <see cref="T:System.Net.Sockets.SocketFlags" /> values.</param>
       </Docs>
     </Member>
     <Member MemberName="Send">

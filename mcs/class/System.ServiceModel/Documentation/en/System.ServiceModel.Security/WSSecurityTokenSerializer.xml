@@ -136,8 +136,11 @@
         <param name="samlSerializer">To be added.</param>
         <param name="securityStateEncoder">To be added.</param>
         <param name="knownTypes">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.WSSecurityTokenSerializer" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -166,8 +169,11 @@
         <param name="maximumKeyDerivationOffset">To be added.</param>
         <param name="maximumKeyDerivationLabelLength">To be added.</param>
         <param name="maximumKeyDerivationNonceLength">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.WSSecurityTokenSerializer" /> class.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName="CanReadKeyIdentifierClauseCore">

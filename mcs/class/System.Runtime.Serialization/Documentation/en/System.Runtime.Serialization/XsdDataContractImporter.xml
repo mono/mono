@@ -103,11 +103,16 @@
         <Parameter Name="typeNames" Type="System.Collections.Generic.ICollection&lt;System.Xml.XmlQualifiedName&gt;" />
       </Parameters>
       <Docs>
-        <param name="schemas">To be added.</param>
-        <param name="typeNames">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a value that indicates whether the specified set of types contained in an <see cref="T:System.Xml.Schema.XmlSchemaSet" /> can be transformed into CLR types generated into a <see cref="T:System.CodeDom.CodeCompileUnit" />.</para>
+        </summary>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Schema.XmlSchemaSet" /> that contains the schemas to transform.</param>
+        <param name="typeNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Collections.Generic.ICollection`1" /> of <see cref="T:System.Xml.XmlQualifiedName" /> that represents the set of schema types to import.</param>
       </Docs>
     </Member>
     <Member MemberName="CanImport">
@@ -316,10 +321,15 @@
         <Parameter Name="typeNames" Type="System.Collections.Generic.ICollection&lt;System.Xml.XmlQualifiedName&gt;" />
       </Parameters>
       <Docs>
-        <param name="schemas">To be added.</param>
-        <param name="typeNames">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Transforms the specified set of schema types contained in an <see cref="T:System.Xml.Schema.XmlSchemaSet" /> into CLR types generated into a <see cref="T:System.CodeDom.CodeCompileUnit" />.</para>
+        </summary>
+        <param name="schemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Xml.Schema.XmlSchemaSet" /> that contains the schema representations.</param>
+        <param name="typeNames">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Generic.ICollection`1" />  (of <see cref="T:System.Xml.XmlQualifiedName" />) that represents the set of schema types to import.</param>
       </Docs>
     </Member>
     <Member MemberName="Import">

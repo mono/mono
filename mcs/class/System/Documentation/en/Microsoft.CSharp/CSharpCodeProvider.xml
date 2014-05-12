@@ -56,9 +56,16 @@
         <Parameter Name="providerOptions" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="providerOptions">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The value for <paramref name="providerOptions" /> is obtained from the <format type="text/html"><a href="014f2e0b-c0b5-4fc4-92d3-73f02978b2a1">&lt;providerOption&gt;</a></format> element in the configuration file. You can identify the version of the <see cref="T:Microsoft.CSharp.CSharpCodeProvider" /> you want to use by specifying the &lt;providerOption&gt; element, supplying "CompilerVersion" as the option name, and supplying the version number (for example, "v3.5") as the option value.  You must precede the version number with a lower case "v". </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:Microsoft.CSharp.CSharpCodeProvider" /> class by using the specified provider options. </para>
+        </summary>
+        <param name="providerOptions">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Generic.IDictionary`2" /> object that contains the provider options from the configuration file.</param>
       </Docs>
     </Member>
     <Member MemberName="CreateCompiler">

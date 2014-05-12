@@ -6856,12 +6856,22 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="typeResolver" Type="System.Func&lt;System.Reflection.Assembly,System.String,System.Boolean,System.Type&gt;" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <param name="assemblyResolver">To be added.</param>
-        <param name="typeResolver">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Usage scenarios for this method and details about the <paramref name="assemblyResolver" /> and <paramref name="typeResolver" /> parameters can be found in the <see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type},System.Boolean,System.Boolean)" /> method overload.</para>
+          <para>Calling this method overload is the same as calling the <see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type},System.Boolean,System.Boolean)" /> method overload and specifying false for the <paramref name="throwOnError" /> and <paramref name="ignoreCase" /> parameters. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type with the specified name, optionally providing custom methods to resolve the assembly and the type.</para>
+        </summary>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to get. If the <paramref name="typeResolver" /> parameter is provided, the type name can be any string that <paramref name="typeResolver" /> is capable of resolving. If the <paramref name="assemblyResolver" /> parameter is provided or if standard type resolution is used, <paramref name="typeName" /> must be an assembly-qualified name (see <see cref="P:System.Type.AssemblyQualifiedName" />), unless the type is in the currently executing assembly or in Mscorlib.dll, in which case it is sufficient to supply the type name qualified by its namespace.</param>
+        <param name="assemblyResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the assembly that is specified in <paramref name="typeName" />. The assembly name is passed to <paramref name="assemblyResolver" /> as an <see cref="T:System.Reflection.AssemblyName" /> object. If <paramref name="typeName" /> does not contain the name of an assembly, <paramref name="assemblyResolver" /> is not called. If <paramref name="assemblyResolver" /> is not supplied, standard assembly resolution is performed. </param>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the type that is specified by <paramref name="typeName" /> from the assembly that is returned by <paramref name="assemblyResolver" /> or by standard assembly resolution. If no assembly is provided, the <paramref name="typeResolver" /> method can provide one. The method also takes a parameter that specifies whether to perform a case-insensitive search; false is passed to that parameter. </param>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -6881,13 +6891,24 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="throwOnError" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <param name="assemblyResolver">To be added.</param>
-        <param name="typeResolver">To be added.</param>
-        <param name="throwOnError">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Usage scenarios for this method and details about the <paramref name="assemblyResolver" /> and <paramref name="typeResolver" /> parameters can be found in the <see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type},System.Boolean,System.Boolean)" /> method overload.</para>
+          <para>Calling this method overload is the same as calling the <see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type},System.Boolean,System.Boolean)" /> method overload and specifying false for the <paramref name="ignoreCase" /> parameter. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type with the specified name, specifying whether to throw an exception if the type is not found, and optionally providing custom methods to resolve the assembly and the type.</para>
+        </summary>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to get. If the <paramref name="typeResolver" /> parameter is provided, the type name can be any string that <paramref name="typeResolver" /> is capable of resolving. If the <paramref name="assemblyResolver" /> parameter is provided or if standard type resolution is used, <paramref name="typeName" /> must be an assembly-qualified name (see <see cref="P:System.Type.AssemblyQualifiedName" />), unless the type is in the currently executing assembly or in Mscorlib.dll, in which case it is sufficient to supply the type name qualified by its namespace.</param>
+        <param name="assemblyResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the assembly that is specified in <paramref name="typeName" />. The assembly name is passed to <paramref name="assemblyResolver" /> as an <see cref="T:System.Reflection.AssemblyName" /> object. If <paramref name="typeName" /> does not contain the name of an assembly, <paramref name="assemblyResolver" /> is not called. If <paramref name="assemblyResolver" /> is not supplied, standard assembly resolution is performed. </param>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the type that is specified by <paramref name="typeName" /> from the assembly that is returned by <paramref name="assemblyResolver" /> or by standard assembly resolution. If no assembly is provided, the method can provide one. The method also takes a parameter that specifies whether to perform a case-insensitive search; false is passed to that parameter. </param>
+        <param name="throwOnError">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an exception if the type cannot be found; false to return null. Specifying false also suppresses some other exception conditions, but not all of them. See the Exceptions section.</param>
       </Docs>
     </Member>
     <Member MemberName="GetType">
@@ -6908,14 +6929,317 @@ permission, returns <see langword="null" />.</para>
         <Parameter Name="ignoreCase" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="typeName">To be added.</param>
-        <param name="assemblyResolver">To be added.</param>
-        <param name="typeResolver">To be added.</param>
-        <param name="throwOnError">To be added.</param>
-        <param name="ignoreCase">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method overload and its associated overloads (<see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type})" /> and <see cref="M:System.Type.GetType(System.String,System.Func{System.Reflection.AssemblyName,System.Reflection.Assembly},System.Func{System.Reflection.Assembly,System.String,System.Boolean,System.Type},System.Boolean)" />) to replace the default implementation of the <see cref="M:System.Type.GetType(System.String)" /> method with more flexible implementations. By providing your own methods that resolve type names and the names of the assemblies that contain them, you can do the following:</para>
+          <list type="bullet">
+            <item>
+              <para>Control which version of an assembly a type is loaded from.</para>
+            </item>
+            <item>
+              <para>Provide another place to look for a type name that does not include an assembly name.</para>
+            </item>
+            <item>
+              <para>Load assemblies using partial assembly names.</para>
+            </item>
+            <item>
+              <para>Return subclasses of <see cref="T:System.Type" /> that are not created by the common language runtime (CLR).</para>
+            </item>
+          </list>
+          <para>For example, in version-tolerant serialization this method enables you to search for a "best fit" assembly by using a partial name. Other overloads of the <see cref="M:System.Type.GetType(System.String)" /> method require an assembly-qualified type name, which includes the version number. </para>
+          <para>Alternate implementations of the type system may need to return subclasses of <see cref="T:System.Type" /> that are not created by the CLR; all types that are returned by other overloads of the <see cref="M:System.Type.GetType(System.String)" /> method are runtime types.</para>
+          <format type="text/html">
+            <a href="#usage_notes" />
+          </format>
+          <format type="text/html">
+            <h2>Usage Notes</h2>
+          </format>
+          <para>This method overload and its associated overloads parse <paramref name="typeName" /> into the name of a type and the name of an assembly, and then resolve the names. Resolution of the assembly name occurs before resolution of the type name, because a type name must be resolved in the context of an assembly. </para>
+          <block subset="none" type="note">
+            <para>If you are unfamiliar with the concept of assembly-qualified type names, see the <see cref="P:System.Type.AssemblyQualifiedName" /> property.</para>
+          </block>
+          <para>If <paramref name="typeName" /> is not an assembly-qualified name, assembly resolution is skipped. Unqualified type names can be resolved in the context of Mscorlib.dll or the currently executing assembly, or you can optionally provide an assembly in the <paramref name="typeResolver" /> parameter. The effects of including or omitting the assembly name for different kinds of name resolution are displayed as a table in the <format type="text/html"><a href="#mixed_name_resolution">Mixed Name Resolution</a></format> section.</para>
+          <para>General usage notes:</para>
+          <list type="bullet">
+            <item>
+              <para>Do not pass methods to <paramref name="assemblyResolver" /> or <paramref name="typeResolver" /> if they come from unknown or untrusted callers. Use only methods that you provide or that you are familiar with.</para>
+              <block subset="none" type="note">
+                <para>Using methods from unknown or untrusted callers could result in elevation of privilege for malicious code. </para>
+              </block>
+            </item>
+            <item>
+              <para>If you omit the <paramref name="assemblyResolver" /> and/or <paramref name="typeResolver" /> parameters, the value of the <paramref name="throwOnError" /> parameter is passed to the methods that perform the default resolution. </para>
+            </item>
+            <item>
+              <para>If <paramref name="throwOnError" /> is true, this method throws a <see cref="T:System.TypeLoadException" /> when <paramref name="typeResolver" /> returns null, and a <see cref="T:System.IO.FileNotFoundException" /> when <paramref name="assemblyResolver" /> returns null.</para>
+            </item>
+            <item>
+              <para>This method does not catch exceptions thrown by <paramref name="assemblyResolver" /> and <paramref name="typeResolver" />. You are responsible for any exceptions that are thrown by the resolver methods.</para>
+            </item>
+          </list>
+          <format type="text/html">
+            <a href="#resolving_assemblies" />
+          </format>
+          <format type="text/html">
+            <h2>Resolving Assemblies</h2>
+          </format>
+          <para>The <paramref name="assemblyResolver" /> method receives an <see cref="T:System.Reflection.AssemblyName" /> object, which is produced by parsing the string assembly name that is included in <paramref name="typeName" />. If <paramref name="typeName" /> does not contain an assembly name, <paramref name="assemblyResolver" /> is not called and null is passed to <paramref name="typeResolver" />. </para>
+          <para>If <paramref name="assemblyResolver" /> is not supplied, standard assembly probing is used to locate the assembly. If <paramref name="assemblyResolver" /> is provided, the <see cref="M:System.Type.GetType(System.String)" /> method does not do standard probing; in that case you must ensure that your <paramref name="assemblyResolver" /> can handle all the assemblies you pass to it.</para>
+          <para>The <paramref name="assemblyResolver" /> method should return null if the assembly cannot be resolved. If <paramref name="assemblyResolver" /> returns null, <paramref name="typeResolver" /> is not called and no further processing occurs; additionally, if <paramref name="throwOnError" /> is true, a <see cref="T:System.IO.FileNotFoundException" /> is thrown.</para>
+          <para>If the <see cref="T:System.Reflection.AssemblyName" /> that is passed to <paramref name="assemblyResolver" /> is a partial name, one or more of its parts are null. For example, if it has no version, the <see cref="P:System.Reflection.AssemblyName.Version" /> property is null. If the <see cref="P:System.Reflection.AssemblyName.Version" /> property, the <see cref="P:System.Reflection.AssemblyName.CultureInfo" /> property, and the <see cref="M:System.Reflection.AssemblyName.GetPublicKeyToken" /> method all return null, then only the simple name of the assembly was supplied. The <paramref name="assemblyResolver" /> method can use or ignore all parts of the assembly name.</para>
+          <para>The effects of different assembly resolution options are displayed as a table in the <format type="text/html"><a href="#mixed_name_resolution">Mixed Name Resolution</a></format> section, for simple and assembly-qualified type names.</para>
+          <format type="text/html">
+            <a href="#resolving_types" />
+          </format>
+          <format type="text/html">
+            <h2>Resolving Types</h2>
+          </format>
+          <para>If <paramref name="typeName" /> does not specify an assembly name, <paramref name="typeResolver" /> is always called. If <paramref name="typeName" /> specifies an assembly name, <paramref name="typeResolver" /> is called only when the assembly name is successfully resolved. If <paramref name="assemblyResolver" /> or standard assembly probing returns null, <paramref name="typeResolver" /> is not called. </para>
+          <para>The <paramref name="typeResolver" /> method receives three arguments: </para>
+          <list type="bullet">
+            <item>
+              <para>The assembly to search or null if <paramref name="typeName" /> does not contain an assembly name.</para>
+            </item>
+            <item>
+              <para>The simple name of the type. In the case of a nested type, this is the outermost containing type. In the case of a generic type, this is the simple name of the generic type.</para>
+            </item>
+            <item>
+              <para>A Boolean value that is true if the case of type names is to be ignored. </para>
+            </item>
+          </list>
+          <para>The implementation determines the way these arguments are used. The <paramref name="typeResolver" /> method should return null if it cannot resolve the type. If <paramref name="typeResolver" /> returns null and <paramref name="throwOnError" /> is true, this overload of <see cref="M:System.Type.GetType(System.String)" /> throws a <see cref="T:System.TypeLoadException" />. </para>
+          <para>The effects of different type resolution options are displayed as a table in the <format type="text/html"><a href="#mixed_name_resolution">Mixed Name Resolution</a></format> section, for simple and assembly-qualified type names.</para>
+          <format type="text/html">
+            <h2>Resolving Nested Types</h2>
+          </format>
+          <para>If <paramref name="typeName" /> is a nested type, only the name of the outermost containing type is passed to <paramref name="typeResolver" />. When <paramref name="typeResolver" /> returns this type, the <see cref="M:System.Type.GetNestedType(System.String)" /> method is called recursively until the innermost nested type has been resolved. </para>
+          <format type="text/html">
+            <h2>Resolving Generic Types</h2>
+          </format>
+          <para>The <see cref="M:System.Type.GetType(System.String)" /> is called recursively to resolve generic types: First to resolve the generic type itself, and then to resolve its type arguments. If a type argument is generic, <see cref="M:System.Type.GetType(System.String)" /> is called recursively to resolve its type arguments, and so on.</para>
+          <para>The combination of <paramref name="assemblyResolver" /> and <paramref name="typeResolver" /> that you provide must be capable of resolving all levels of this recursion. For example, suppose you supply an <paramref name="assemblyResolver" /> that controls the loading of MyAssembly. Suppose you want to resolve the generic type Dictionary&lt;string, MyType&gt; (Dictionary(Of String, MyType) in Visual Basic). You might pass the following generic type name:</para>
+          <code>"System.Collections.Generic.Dictionary`2[System.String,[MyNamespace.MyType, MyAssembly]]"</code>
+          <para>Notice that MyType is the only assembly-qualified type argument. The names of the <see cref="T:System.Collections.Generic.Dictionary`2" /> and <see cref="T:System.String" /> classes are not assembly-qualified. Your <paramref name="typeResolver" /> must be able handle either an assembly or null, because it will receive null for <see cref="T:System.Collections.Generic.Dictionary`2" /> and <see cref="T:System.String" />. It can handle that case by calling an overload of the <see cref="M:System.Type.GetType(System.String)" /> method that takes a string, because both of the unqualified type names are in Mscorlib.dll:</para>
+          <para>code reference: GetTypeOnSteroids#1</para>
+          <para>The <paramref name="assemblyResolver" /> method is not called for the dictionary type and the string type, because those type names are not assembly-qualified.</para>
+          <para>Now suppose that instead of System.String, the first generic argument type is YourType, from YourAssembly: </para>
+          <code>"System.Collections.Generic.Dictionary`2[[YourNamespace.YourType, YourAssembly, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null], [MyNamespace.MyType, MyAssembly]]"</code>
+          <para>Because this assembly is neither Mscorlib.dll nor the currently executing assembly, you cannot resolve YourType without an assembly-qualified name. Because your <paramref name="assemblyResolve" /> will be called recursively, it must be able to handle this case. Instead of returning null for assemblies other than MyAssembly, it now performs an assembly load using the supplied <see cref="T:System.Reflection.AssemblyName" /> object.</para>
+          <para>code reference: GetTypeOnSteroids#2</para>
+          <para>Back to <format type="text/html"><a href="#usage_notes">Usage Notes</a></format>.</para>
+          <format type="text/html">
+            <h2>Resolving Type Names with Special Characters</h2>
+          </format>
+          <para>Certain characters have special meanings in assembly-qualified names. If a simple type name contains these characters, the characters cause parsing errors when the simple name is part of an assembly-qualified name. To avoid the parsing errors, you must escape the special characters with a backslash before you can pass the assembly-qualified name to the <see cref="M:System.Type.GetType(System.String)" /> method. For example, if a type is named Strange]Type, the escape character must be added ahead of the square bracket as follows: Strange\]Type. </para>
+          <block subset="none" type="note">
+            <para>Names with such special characters cannot be created in Visual Basic or C#, but can be created by using Microsoft intermediate language (MSIL) or by emitting dynamic assemblies. </para>
+          </block>
+          <para>The following table shows the special characters for type names.</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Character</para>
+                </term>
+                <description>
+                  <para>Meaning</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>, (comma)</para>
+              </term>
+              <description>
+                <para>Delimiter for assembly-qualified names.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>[] (square brackets)</para>
+              </term>
+              <description>
+                <para>As a suffix pair, indicates an array type; as a delimiter pair, encloses generic argument lists and assembly-qualified names.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>&amp; (ampersand)</para>
+              </term>
+              <description>
+                <para>As a suffix, indicates that a type is a reference type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>* (asterisk)</para>
+              </term>
+              <description>
+                <para>As a suffix, indicates that a type is a pointer type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>+ (plus)</para>
+              </term>
+              <description>
+                <para>Delimiter for nested types.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>\ (backslash)</para>
+              </term>
+              <description>
+                <para>Escape character.</para>
+              </description>
+            </item>
+          </list>
+          <para>Properties such as <see cref="P:System.Type.AssemblyQualifiedName" /> return correctly escaped strings. You must pass correctly escaped strings to the <see cref="M:System.Type.GetType(System.String)" /> method. In turn, the <see cref="M:System.Type.GetType(System.String)" /> method passes correctly escaped names to <paramref name="typeResolver" /> and to the default type resolution methods. If you need to compare a name to an unescaped name in <paramref name="typeResolver" />, you must remove the escape characters. </para>
+          <para>Back to <format type="text/html"><a href="#usage_notes">Usage Notes</a></format>.</para>
+          <format type="text/html">
+            <a href="#mixed_name_resolution" />
+          </format>
+          <format type="text/html">
+            <h2>Mixed Name Resolution</h2>
+          </format>
+          <para>The following table summarizes the interactions between <paramref name="assemblyResolver" />, <paramref name="typeResolver" />, and default name resolution, for all combinations of type name and assembly name in <paramref name="typeName" />:</para>
+          <list type="table">
+            <listheader>
+              <item>
+                <term>
+                  <para>Contents of type name</para>
+                </term>
+                <description>
+                  <para>Assembly resolver method</para>
+                </description>
+                <description>
+                  <para>Type resolver method</para>
+                </description>
+                <description>
+                  <para>Result</para>
+                </description>
+              </item>
+            </listheader>
+            <item>
+              <term>
+                <para>type, assembly</para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+              <description>
+                <para>null</para>
+              </description>
+              <description>
+                <para>Equivalent to calling the <see cref="M:System.Type.GetType(System.String,System.Boolean,System.Boolean)" /> method overload. </para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>type, assembly</para>
+              </term>
+              <description>
+                <para>provided</para>
+              </description>
+              <description>
+                <para>null</para>
+              </description>
+              <description>
+                <para>
+                  <paramref name="assemblyResolver" /> returns the assembly or returns null if it cannot resolve the assembly. If the assembly is resolved, the <see cref="M:System.Reflection.Assembly.GetType(System.String,System.Boolean,System.Boolean)" /> method overload is used to load the type from the assembly; otherwise, there is no attempt to resolve the type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>type, assembly</para>
+              </term>
+              <description>
+                <para>null</para>
+              </description>
+              <description>
+                <para>provided</para>
+              </description>
+              <description>
+                <para>Equivalent to converting the assembly name to an <see cref="T:System.Reflection.AssemblyName" /> object and calling the <see cref="M:System.Reflection.Assembly.Load(System.Reflection.AssemblyName)" /> method overload to get the assembly. If the assembly is resolved, it is passed to <paramref name="typeResolver" />; otherwise, <paramref name="typeResolver" /> is not called and there is no further attempt to resolve the type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>type, assembly</para>
+              </term>
+              <description>
+                <para>provided</para>
+              </description>
+              <description>
+                <para>provided</para>
+              </description>
+              <description>
+                <para>
+                  <paramref name="assemblyResolver" /> returns the assembly or returns null if it cannot resolve the assembly. If the assembly is resolved, it is passed to <paramref name="typeResolver" />; otherwise, <paramref name="typeResolver" /> is not called and there is no further attempt to resolve the type.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>type</para>
+              </term>
+              <description>
+                <para>null, provided</para>
+              </description>
+              <description>
+                <para>null</para>
+              </description>
+              <description>
+                <para>Equivalent to calling the <see cref="M:System.Type.GetType(System.String,System.Boolean,System.Boolean)" /> method overload. Because the assembly name is not provided, only Mscorlib.dll and the currently executing assembly are searched. If <paramref name="assemblyResolver" /> is provided, it is ignored.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>type</para>
+              </term>
+              <description>
+                <para>null, provided</para>
+              </description>
+              <description>
+                <para>provided</para>
+              </description>
+              <description>
+                <para>
+                  <paramref name="typeResolver" /> is called, and null is passed for the assembly. <paramref name="typeResolver" /> can provide a type from any assembly, including assemblies it loads for the purpose. If <paramref name="assemblyResolver" /> is provided, it is ignored.</para>
+              </description>
+            </item>
+            <item>
+              <term>
+                <para>assembly</para>
+              </term>
+              <description>
+                <para>null, provided</para>
+              </description>
+              <description>
+                <para>null, provided</para>
+              </description>
+              <description>
+                <para>A <see cref="T:System.IO.FileLoadException" /> is thrown, because the assembly name is parsed as if it were an assembly-qualified type name. This results in an invalid assembly name.</para>
+              </description>
+            </item>
+          </list>
+          <para>Back to: <format type="text/html"><a href="#usage_notes">Usage Notes</a></format>, <format type="text/html"><a href="#resolving_assemblies">Resolving Assemblies</a></format>, <format type="text/html"><a href="#resolving_types">Resolving Types</a></format>.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets the type with the specified name, specifying whether to perform a case-sensitive search and whether to throw an exception if the type is not found, and optionally providing custom methods to resolve the assembly and the type.</para>
+        </summary>
+        <param name="typeName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the type to get. If the <paramref name="typeResolver" /> parameter is provided, the type name can be any string that <paramref name="typeResolver" /> is capable of resolving. If the <paramref name="assemblyResolver" /> parameter is provided or if standard type resolution is used, <paramref name="typeName" /> must be an assembly-qualified name (see <see cref="P:System.Type.AssemblyQualifiedName" />), unless the type is in the currently executing assembly or in Mscorlib.dll, in which case it is sufficient to supply the type name qualified by its namespace.</param>
+        <param name="assemblyResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the assembly that is specified in <paramref name="typeName" />. The assembly name is passed to <paramref name="assemblyResolver" /> as an <see cref="T:System.Reflection.AssemblyName" /> object. If <paramref name="typeName" /> does not contain the name of an assembly, <paramref name="assemblyResolver" /> is not called. If <paramref name="assemblyResolver" /> is not supplied, standard assembly resolution is performed. </param>
+        <param name="typeResolver">
+          <attribution license="cc4" from="Microsoft" modified="false" />A method that locates and returns the type that is specified by <paramref name="typeName" /> from the assembly that is returned by <paramref name="assemblyResolver" /> or by standard assembly resolution. If no assembly is provided, the method can provide one. The method also takes a parameter that specifies whether to perform a case-insensitive search; the value of <paramref name="ignoreCase" /> is passed to that parameter. </param>
+        <param name="throwOnError">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to throw an exception if the type cannot be found; false to return null. Specifying false also suppresses some other exception conditions, but not all of them. See the Exceptions section.</param>
+        <param name="ignoreCase">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to perform a case-insensitive search for <paramref name="typeName" />, false to perform a case-sensitive search for <paramref name="typeName" />. </param>
       </Docs>
     </Member>
     <Member MemberName="GetTypeArray">

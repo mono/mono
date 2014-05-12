@@ -55,10 +55,15 @@
         <Parameter Name="children" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Hosting.CompositionScopeDefinition&gt;" />
       </Parameters>
       <Docs>
-        <param name="catalog">To be added.</param>
-        <param name="children">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionScopeDefinition" /> class with the specified underlying catalog and children.</para>
+        </summary>
+        <param name="catalog">
+          <attribution license="cc4" from="Microsoft" modified="false" />The underlying catalog for this catalog.</param>
+        <param name="children">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of the child scopes of this catalog.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -74,11 +79,17 @@
         <Parameter Name="publicSurface" Type="System.Collections.Generic.IEnumerable&lt;System.ComponentModel.Composition.Primitives.ExportDefinition&gt;" />
       </Parameters>
       <Docs>
-        <param name="catalog">To be added.</param>
-        <param name="children">To be added.</param>
-        <param name="publicSurface">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.CompositionScopeDefinition" /> class with the specified underlying catalog, children, and public surface.</para>
+        </summary>
+        <param name="catalog">
+          <attribution license="cc4" from="Microsoft" modified="false" />The underlying catalog for this catalog.</param>
+        <param name="children">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of the child scopes of this catalog.</param>
+        <param name="publicSurface">
+          <attribution license="cc4" from="Microsoft" modified="false" />The public surface for this catalog.</param>
       </Docs>
     </Member>
     <Member MemberName="Changed">

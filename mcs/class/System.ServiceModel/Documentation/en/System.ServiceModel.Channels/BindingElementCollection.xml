@@ -49,8 +49,11 @@
       </Parameters>
       <Docs>
         <param name="bindings">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Channels.BindingElementCollection" /> class from an enumerable set of binding elements.</para>
+        </summary>
       </Docs>
     </Member>
     <Member MemberName=".ctor">

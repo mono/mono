@@ -32,9 +32,13 @@
         <Parameter Name="translations" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.FaultReasonText&gt;" />
       </Parameters>
       <Docs>
-        <param name="translations">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.FaultReason" /> class using the specified list of fault translations. </para>
+        </summary>
+        <param name="translations">
+          <attribution license="cc4" from="Microsoft" modified="false" />A list of <see cref="T:System.ServiceModel.FaultReasonText" /> objects; each object describes the fault in a specific language. </param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">

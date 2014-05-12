@@ -80,12 +80,18 @@
         <Parameter Name="returnLabel" Type="System.Linq.Expressions.LabelTarget" />
       </Parameters>
       <Docs>
-        <param name="args">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <param name="returnLabel">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Performs the runtime binding of the dynamic operation on a set of arguments.</para>
+        </summary>
+        <param name="args">
+          <attribution license="cc4" from="Microsoft" modified="false" />An array of arguments to the dynamic operation.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The array of <see cref="T:System.Linq.Expressions.ParameterExpression" /> instances that represent the parameters of the call site in the binding process.</param>
+        <param name="returnLabel">
+          <attribution license="cc4" from="Microsoft" modified="false" />A LabelTarget used to return the result of the dynamic binding.</param>
       </Docs>
     </Member>
     <Member MemberName="Defer">

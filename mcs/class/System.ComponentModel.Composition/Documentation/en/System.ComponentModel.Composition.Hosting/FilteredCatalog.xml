@@ -34,10 +34,15 @@
         <Parameter Name="filter" Type="System.Func&lt;System.ComponentModel.Composition.Primitives.ComposablePartDefinition,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <param name="catalog">To be added.</param>
-        <param name="filter">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ComponentModel.Composition.Hosting.FilteredCatalog" /> class with the specified underlying catalog and filter.</para>
+        </summary>
+        <param name="catalog">
+          <attribution license="cc4" from="Microsoft" modified="false" />The underlying catalog.</param>
+        <param name="filter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The function to filter parts.</param>
       </Docs>
     </Member>
     <Member MemberName="Changed">
@@ -208,10 +213,14 @@
         <Parameter Name="importFilter" Type="System.Func&lt;System.ComponentModel.Composition.Primitives.ImportDefinition,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <param name="importFilter">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a new <see cref="T:System.ComponentModel.Composition.Hosting.FilteredCatalog" /> object that contains all the parts from this catalog and all dependencies that can be reached through imports that match the specified filter.</para>
+        </summary>
+        <param name="importFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The filter for imports.</param>
       </Docs>
     </Member>
     <Member MemberName="IncludeDependents">
@@ -248,10 +257,14 @@
         <Parameter Name="importFilter" Type="System.Func&lt;System.ComponentModel.Composition.Primitives.ImportDefinition,System.Boolean&gt;" />
       </Parameters>
       <Docs>
-        <param name="importFilter">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a new <see cref="T:System.ComponentModel.Composition.Hosting.FilteredCatalog" /> object that contains all the parts from this catalog and all dependents that can be reached through imports that match the specified filter.</para>
+        </summary>
+        <param name="importFilter">
+          <attribution license="cc4" from="Microsoft" modified="false" />The filter for imports.</param>
       </Docs>
     </Member>
     <Member MemberName="OnChanged">

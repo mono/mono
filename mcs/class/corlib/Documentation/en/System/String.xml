@@ -2060,10 +2060,21 @@ is a null reference.</description>
         <Parameter Name="values" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method concatenates each object in <paramref name="values" />; it does not add any delimiters. To specify a delimiter between each member of <paramref name="values" />, call the <see cref="M:System.String.Join(System.String,System.Collections.Generic.IEnumerable{System.String})" /> method.</para>
+          <para>An <see cref="F:System.String.Empty" /> string is used in place of any null argument.</para>
+          <para>
+                                                                                                                                                                                                                                                                                                                                        <see cref="M:System.String.Concat(System.Collections.Generic.IEnumerable{System.String})" /> is a convenience method that lets you concatenate each element in an IEnumerable(Of String) collection without first converting the elements to a string array. It is particularly useful with Language-Integrated Query (LINQ) query expressions. The following example passes a List(Of String) object that contains either the uppercase or lowercase letters of the alphabet to a lambda expression that selects letters that are equal to or greater than a particular letter (which, in the example, is "M"). The IEnumerable(Of String) collection that is returned by the <see cref="M:System.Linq.Enumerable.Where``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})" /> method is passed to the <see cref="M:System.String.Concat(System.Collections.Generic.IEnumerable{System.String})" /> method to display the result as a single string. </para>
+          <para>code reference: System.String.Concat#3</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Concatenates the members of a constructed <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection of type <see cref="T:System.String" />.</para>
+        </summary>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection object that implements <see cref="T:System.Collections.Generic.IEnumerable`1" /> and whose generic type argument is <see cref="T:System.String" />.</param>
       </Docs>
     </Member>
     <Member MemberName="Concat">
@@ -2547,11 +2558,22 @@ public class StringConcatExample {
         <Parameter Name="values" Type="System.Collections.Generic.IEnumerable&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The method concatenates each object in <paramref name="values" />; it does not add any delimiters.</para>
+          <para>An <see cref="F:System.String.Empty" /> string is used in place of any null argument.</para>
+          <para>
+                                                                                                                                                                                                                                                                                                                                            <see cref="M:System.String.Concat``1(System.Collections.Generic.IEnumerable{``0})" /> is a convenience method that lets you concatenate each element in an <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection without first converting the elements to strings. It is particularly useful with Language-Integrated Query (LINQ) query expressions, as the example illustrates. The string representation of each object in the <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection is derived by calling that object's ToString method. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Concatenates the members of an <see cref="T:System.Collections.Generic.IEnumerable`1" /> implementation.</para>
+        </summary>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection object that implements the <see cref="T:System.Collections.Generic.IEnumerable`1" /> interface.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the members of <paramref name="values" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="Contains">
@@ -4491,11 +4513,22 @@ public class StringExample {
         <Parameter Name="values" Type="System.Collections.Generic.IEnumerable&lt;System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="separator">To be added.</param>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="separator" /> is null, an empty string (<see cref="F:System.String.Empty" />) is used instead. If any member of <paramref name="values" /> is null, an empty string is used instead.</para>
+          <para>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                <see cref="M:System.String.Join(System.String,System.Collections.Generic.IEnumerable{System.String})" /> is a convenience method that lets you concatenate each element in an IEnumerable(Of String) collection without first converting the elements to a string array. It is particularly useful with Language-Integrated Query (LINQ) query expressions. The following example passes a List(Of String) object that contains either the uppercase or lowercase letters of the alphabet to a lambda expression that selects letters that are equal to or greater than a particular letter (which, in the example, is "M"). The IEnumerable(Of String) collection returned by the <see cref="M:System.Linq.Enumerable.Where``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})" /> method is passed to the <see cref="M:System.String.Join(System.String,System.Collections.Generic.IEnumerable{System.String})" /> method to display the result as a single string. </para>
+          <para>code reference: System.String.Join#4</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Concatenates the members of a constructed <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection of type <see cref="T:System.String" />, using the specified separator between each member.</para>
+        </summary>
+        <param name="separator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to use as a separator. <paramref name="separator" /> is included in the returned string only if <paramref name="values" /> has more than one element.</param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection that contains the strings to concatenate.</param>
       </Docs>
     </Member>
     <Member MemberName="Join">
@@ -4691,12 +4724,25 @@ public class StringJoin {
         <Parameter Name="values" Type="System.Collections.Generic.IEnumerable&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="separator">To be added.</param>
-        <param name="values">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>If <paramref name="separator" /> is null, an empty string (<see cref="F:System.String.Empty" />) is used instead. If any member of <paramref name="values" /> is null, an empty string is used instead.</para>
+          <para>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        <see cref="M:System.String.Join``1(System.String,System.Collections.Generic.IEnumerable{``0})" /> is a convenience method that lets you concatenate each member of an <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection without first converting them to strings. The string representation of each object in the <see cref="T:System.Collections.Generic.IEnumerable`1" /> collection is derived by calling that object's ToString method. </para>
+          <para>This method is particular useful with Language-Integrated Query (LINQ) query expressions. For example, the following code defines a very simple Animal class that contains the name of an animal and the order to which it belongs. It then defines a <see cref="T:System.Collections.Generic.List`1" /> object that contains a number of Animal objects. The <see cref="M:System.Linq.Enumerable.Where``1(System.Collections.Generic.IEnumerable{``0},System.Func{``0,System.Boolean})" /> extension method is called to extract the Animal objects whose Order property equals "Rodent". The result is passed to the <see cref="M:System.String.Join``1(System.String,System.Collections.Generic.IEnumerable{``0})" /> method.</para>
+          <para>code reference: System.String.Join#5</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Concatenates the members of a collection, using the specified separator between each member.</para>
+        </summary>
+        <param name="separator">
+          <attribution license="cc4" from="Microsoft" modified="false" />The string to use as a separator. <paramref name="separator" /> is included in the returned string only if <paramref name="values" /> has more than one element.</param>
+        <param name="values">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection that contains the objects to concatenate.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the members of <paramref name="values" />.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="LastIndexOf">

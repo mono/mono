@@ -111,10 +111,15 @@
         <Parameter Name="additionalDefaults" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="template">To be added.</param>
-        <param name="additionalDefaults">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplate" /> class.</para>
+        </summary>
+        <param name="template">
+          <attribution license="cc4" from="Microsoft" modified="false" />The template string.</param>
+        <param name="additionalDefaults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary that contains a list of default values for the template parameters.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -130,11 +135,17 @@
         <Parameter Name="additionalDefaults" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="template">To be added.</param>
-        <param name="ignoreTrailingSlash">To be added.</param>
-        <param name="additionalDefaults">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.UriTemplate" /> class.</para>
+        </summary>
+        <param name="template">
+          <attribution license="cc4" from="Microsoft" modified="false" />The template string.</param>
+        <param name="ignoreTrailingSlash">
+          <attribution license="cc4" from="Microsoft" modified="false" />true if the trailing slash “/” characters are ignored; otherwise false.</param>
+        <param name="additionalDefaults">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary that contains a list of default values for the template parameters.</param>
       </Docs>
     </Member>
     <Member MemberName="BindByName">
@@ -152,11 +163,25 @@
         <Parameter Name="parameters" Type="System.Collections.Generic.IDictionary&lt;System.String,System.String&gt;" />
       </Parameters>
       <Docs>
-        <param name="baseAddress">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The <see cref="T:System.Collections.Generic.IDictionary{System.String,System.String}" /> parameter contains a collection of parameter name and value pairs. The parameters are matched up against the variables within the template by a case-insensitive comparison.</para>
+          <block subset="none" type="note">
+            <para>The name/value collection passed to this method must contain a key for every template variable. Extra name/value pairs that do not match template variables are appended to the query string of the final URI. </para>
+          </block>
+          <block subset="none" type="note">
+            <para>It is possible to pass in text within the name/value pairs that prevent the generated URI from matching the template that is used to generate it. Examples of such text includes: '/', '..', '*', '{', and '}'.</para>
+          </block>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new URI from the template and the collection of parameters.</para>
+        </summary>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />The base address.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary that contains a collection of parameter name/value pairs.</param>
       </Docs>
     </Member>
     <Member MemberName="BindByName">
@@ -211,12 +236,18 @@
         <Parameter Name="omitDefaults" Type="System.Boolean" />
       </Parameters>
       <Docs>
-        <param name="baseAddress">To be added.</param>
-        <param name="parameters">To be added.</param>
-        <param name="omitDefaults">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new URI from the template and the collection of parameters.</para>
+        </summary>
+        <param name="baseAddress">
+          <attribution license="cc4" from="Microsoft" modified="false" />A URI that contains the base address.</param>
+        <param name="parameters">
+          <attribution license="cc4" from="Microsoft" modified="false" />A dictionary that contains a collection of parameter name/value pairs.</param>
+        <param name="omitDefaults">
+          <attribution license="cc4" from="Microsoft" modified="false" />true is the default values are ignored; otherwise false.</param>
       </Docs>
     </Member>
     <Member MemberName="BindByName">

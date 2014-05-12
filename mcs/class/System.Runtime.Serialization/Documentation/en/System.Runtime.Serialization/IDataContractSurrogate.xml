@@ -142,9 +142,16 @@
         <Parameter Name="customDataTypes" Type="System.Collections.ObjectModel.Collection&lt;System.Type&gt;" />
       </Parameters>
       <Docs>
-        <param name="customDataTypes">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>This method is required during schema export or schema import only if annotations are inserted into the schema using the <see cref="Overload:System.Runtime.Serialization.IDataContractSurrogate.GetCustomDataToExport" /> method.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Sets the collection of known types to use for serialization and deserialization of the custom data objects. </para>
+        </summary>
+        <param name="customDataTypes">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.ObjectModel.Collection`1" />  of <see cref="T:System.Type" /> to add known types to.</param>
       </Docs>
     </Member>
     <Member MemberName="GetObjectToSerialize">

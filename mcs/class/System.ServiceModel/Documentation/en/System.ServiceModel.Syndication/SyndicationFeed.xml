@@ -317,9 +317,16 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Syndication.SyndicationItem&gt;" />
       </Parameters>
       <Docs>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>The collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects passed into this constructor is buffered.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> class with the specified collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects.</para>
+        </summary>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -388,12 +395,19 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Syndication.SyndicationItem&gt;" />
       </Parameters>
       <Docs>
-        <param name="title">To be added.</param>
-        <param name="description">To be added.</param>
-        <param name="feedAlternateLink">To be added.</param>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> class with the specified title, description, URI, and collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects.</para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The title of the feed.</param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The description of the feed.</param>
+        <param name="feedAlternateLink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The URI for the feed.</param>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -444,14 +458,23 @@
         <Parameter Name="items" Type="System.Collections.Generic.IEnumerable&lt;System.ServiceModel.Syndication.SyndicationItem&gt;" />
       </Parameters>
       <Docs>
-        <param name="title">To be added.</param>
-        <param name="description">To be added.</param>
-        <param name="feedAlternateLink">To be added.</param>
-        <param name="id">To be added.</param>
-        <param name="lastUpdatedTime">To be added.</param>
-        <param name="items">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new instance of the <see cref="T:System.ServiceModel.Syndication.SyndicationFeed" /> class. </para>
+        </summary>
+        <param name="title">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication feed title.</param>
+        <param name="description">
+          <attribution license="cc4" from="Microsoft" modified="false" />The syndication feed description.</param>
+        <param name="feedAlternateLink">
+          <attribution license="cc4" from="Microsoft" modified="false" />The alternate URI for the syndication feed.</param>
+        <param name="id">
+          <attribution license="cc4" from="Microsoft" modified="false" />The ID of the syndication feed.</param>
+        <param name="lastUpdatedTime">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="T:System.DateTimeOffset" /> that contains the last time the syndication feed was updated.</param>
+        <param name="items">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of <see cref="T:System.ServiceModel.Syndication.SyndicationItem" /> objects.</param>
       </Docs>
     </Member>
     <Member MemberName="AttributeExtensions">

@@ -51,10 +51,14 @@
         <Parameter Name="nodes" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.Linq.Expressions.Expression&gt;" />
       </Parameters>
       <Docs>
-        <param name="nodes">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Dispatches the list of expressions to one of the more specialized visit methods in this class.</para>
+        </summary>
+        <param name="nodes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expressions to visit.</param>
       </Docs>
     </Member>
     <Member MemberName="Visit">
@@ -99,12 +103,18 @@
         <Parameter Name="elementVisitor" Type="System.Func&lt;T,T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="nodes">To be added.</param>
-        <param name="elementVisitor">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visits all nodes in the collection using a specified element visitor.</para>
+        </summary>
+        <param name="nodes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The nodes to visit.</param>
+        <param name="elementVisitor">
+          <attribution license="cc4" from="Microsoft" modified="false" />A delegate that visits a single element, optionally replacing it with a new element.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the nodes.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="VisitAndConvert&lt;T&gt;">
@@ -129,12 +139,18 @@
         <Parameter Name="callerName" Type="System.String" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="nodes">To be added.</param>
-        <param name="callerName">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visits an expression, casting the result back to the original expression type.</para>
+        </summary>
+        <param name="nodes">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
+        <param name="callerName">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the calling method; used to report to report a better error message.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the expression.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="VisitAndConvert&lt;T&gt;">
@@ -548,11 +564,16 @@
         <Parameter Name="node" Type="System.Linq.Expressions.Expression&lt;T&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="T">To be added.</typeparam>
-        <param name="node">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Visits the children of the <see cref="T:System.Linq.Expressions.Expression`1" />.</para>
+        </summary>
+        <param name="node">
+          <attribution license="cc4" from="Microsoft" modified="false" />The expression to visit.</param>
+        <typeparam name="T">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the delegate.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="VisitListInit">

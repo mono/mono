@@ -1509,12 +1509,23 @@
         <Parameter Name="assemblyAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.Reflection.Emit.CustomAttributeBuilder&gt;" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="access">To be added.</param>
-        <param name="assemblyAttributes">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method overload to specify attributes that do not work correctly unless they are applied when a dynamic assembly is created. For example, security attributes such as <see cref="T:System.Security.SecurityTransparentAttribute" /> and <see cref="T:System.Security.SecurityCriticalAttribute" /> do not work correctly if they are added after a dynamic assembly has been created. </para>
+          <para>This method should be used only to define a dynamic assembly in the current application domain. For more information about this restriction, see the <see cref="M:System.AppDomain.Load(System.Reflection.AssemblyName)" /> method overload. </para>
+          <para>This method overload is introduced in the net_v35_long. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a dynamic assembly with the specified name, access mode, and custom attributes.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mode for the dynamic assembly. </param>
+        <param name="assemblyAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable list of attributes to be applied to the assembly, or null if there are no attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="DefineDynamicAssembly">
@@ -1617,13 +1628,24 @@
         <Parameter Name="securityContextSource" Type="System.Security.SecurityContextSource" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="access">To be added.</param>
-        <param name="assemblyAttributes">To be added.</param>
-        <param name="securityContextSource">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method overload to specify attributes that do not work correctly unless they are applied when a dynamic assembly is created. For example, security attributes such as <see cref="T:System.Security.SecurityTransparentAttribute" /> and <see cref="T:System.Security.SecurityCriticalAttribute" /> do not work correctly if they are added after a dynamic assembly has been created. </para>
+          <para>This method should be used only to define a dynamic assembly in the current application domain. For more information about this restriction, see the <see cref="M:System.AppDomain.Load(System.Reflection.AssemblyName)" /> method overload.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a dynamic assembly with the specified name, access mode, and custom attributes, and using the specified source for its security context.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />The access mode for the dynamic assembly. </param>
+        <param name="assemblyAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable list of attributes to be applied to the assembly, or null if there are no attributes.</param>
+        <param name="securityContextSource">
+          <attribution license="cc4" from="Microsoft" modified="false" />The source of the security context.</param>
       </Docs>
     </Member>
     <Member MemberName="DefineDynamicAssembly">
@@ -1745,14 +1767,26 @@
         <Parameter Name="assemblyAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.Reflection.Emit.CustomAttributeBuilder&gt;" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="access">To be added.</param>
-        <param name="dir">To be added.</param>
-        <param name="isSynchronized">To be added.</param>
-        <param name="assemblyAttributes">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method overload to specify attributes that do not work correctly unless they are applied when a dynamic assembly is created. For example, security attributes such as <see cref="T:System.Security.SecurityTransparentAttribute" /> and <see cref="T:System.Security.SecurityCriticalAttribute" /> do not work correctly if they are added after a dynamic assembly has been created. </para>
+          <para>If <paramref name="isSynchronized" /> is true, the following methods of the resulting <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> will be synchronized: <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.DefineDynamicModule" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.DefineResource" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.AddResourceFile" />, <see cref="M:System.Reflection.Emit.AssemblyBuilder.GetDynamicModule(System.String)" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.SetEntryPoint" />, and <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.Save" />. If two of these methods are called on different threads, one will block until the other is completed.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a dynamic assembly using the specified name, access mode, storage directory, and synchronization option.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />The mode in which the dynamic assembly will be accessed. </param>
+        <param name="dir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the directory where the dynamic assembly will be saved. If <paramref name="dir" /> is null, the current directory is used. </param>
+        <param name="isSynchronized">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to synchronize the creation of modules, types, and members in the dynamic assembly; otherwise, false. </param>
+        <param name="assemblyAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable list of attributes to be applied to the assembly, or null if there are no attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="DefineDynamicAssembly">
@@ -2022,18 +2056,44 @@
         <Parameter Name="assemblyAttributes" Type="System.Collections.Generic.IEnumerable&lt;System.Reflection.Emit.CustomAttributeBuilder&gt;" />
       </Parameters>
       <Docs>
-        <param name="name">To be added.</param>
-        <param name="access">To be added.</param>
-        <param name="dir">To be added.</param>
-        <param name="evidence">To be added.</param>
-        <param name="requiredPermissions">To be added.</param>
-        <param name="optionalPermissions">To be added.</param>
-        <param name="refusedPermissions">To be added.</param>
-        <param name="isSynchronized">To be added.</param>
-        <param name="assemblyAttributes">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Use this method overload to specify attributes that do not work correctly unless they are applied when a dynamic assembly is created. For example, security attributes such as <see cref="T:System.Security.SecurityTransparentAttribute" /> and <see cref="T:System.Security.SecurityCriticalAttribute" /> do not work correctly if they are added after a dynamic assembly has been created. </para>
+          <para>The permission requests specified for the <paramref name="requiredPermissions" />, <paramref name="optionalPermissions" />, and <paramref name="refusedPermissions" /> parameters are used only if the <paramref name="evidence" /> parameter is also supplied, or if the dynamic assembly is saved and reloaded into memory.</para>
+          <block subset="none" type="note">
+            <para>When you develop code that emits dynamic assemblies, we recommend that you include the <see cref="F:System.Security.Permissions.SecurityPermissionFlag.SkipVerification" /> flag in the <paramref name="refusedPermissions" /> parameter. The inclusion of this flag ensures that the Microsoft intermediate language (MSIL) will be verified. This technique will detect the unintentional generation of unverifiable code, which otherwise is very difficult to detect. A limitation of this technique is that it also causes <see cref="T:System.Security.SecurityException" /> to be thrown when it is used with code that demands full trust.</para>
+          </block>
+          <para>Only fully trusted callers can supply evidence when defining a dynamic <see cref="T:System.Reflection.Assembly" />. The runtime maps the <see cref="T:System.Security.Policy.Evidence" /> through the security policy to determine the granted permissions. Partially trusted callers must supply null for the <paramref name="evidence" /> parameter. If <paramref name="evidence" /> is null, the runtime copies the permission sets (that is, the current grant and deny sets) from the caller's assembly to the dynamic assembly that is being defined, and marks the policy as resolved. </para>
+          <para>If the dynamic assembly is saved to disk, subsequent loads will get grants based on policies that are associated with the location where the dynamic assembly was saved.</para>
+          <para>If <paramref name="isSynchronized" /> is true, the following methods of the resulting <see cref="T:System.Reflection.Emit.AssemblyBuilder" /> will be synchronized: <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.DefineDynamicModule" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.DefineResource" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.AddResourceFile" />, <see cref="M:System.Reflection.Emit.AssemblyBuilder.GetDynamicModule(System.String)" />, <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.SetEntryPoint" />, and <see cref="Overload:System.Reflection.Emit.AssemblyBuilder.Save" />. If two of these methods are called on different threads, one will block until the other is completed.</para>
+          <block subset="none" type="note">
+            <para>In the .NET Framework versions 1.0, 1.1, and 2.0, the declarative security attributes applied to a dynamic assembly by using the <paramref name="requiredPermissions" />, <paramref name="optionalPermissions" />, and <paramref name="refusedPermissions" /> parameters are stored in the old XML metadata format. For more information about these attributes, see <format type="text/html"><a href="9eeddee8-ca89-4440-b84b-fd613f590cd5">Emitting Declarative Security Attributes</a></format>.</para>
+          </block>
+          <para>This method overload is introduced in the net_v35_long. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Defines a dynamic assembly with the specified name, access mode, storage directory, evidence, permission requests, synchronization option, and custom attributes.</para>
+        </summary>
+        <param name="name">
+          <attribution license="cc4" from="Microsoft" modified="false" />The unique identity of the dynamic assembly. </param>
+        <param name="access">
+          <attribution license="cc4" from="Microsoft" modified="false" />The mode in which the dynamic assembly will be accessed. </param>
+        <param name="dir">
+          <attribution license="cc4" from="Microsoft" modified="false" />The name of the directory where the dynamic assembly will be saved. If <paramref name="dir" /> is null, the current directory is used. </param>
+        <param name="evidence">
+          <attribution license="cc4" from="Microsoft" modified="false" />The evidence that is supplied for the dynamic assembly. The evidence is used unaltered as the final set of evidence used for policy resolution. </param>
+        <param name="requiredPermissions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The required permissions request. </param>
+        <param name="optionalPermissions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The optional permissions request. </param>
+        <param name="refusedPermissions">
+          <attribution license="cc4" from="Microsoft" modified="false" />The refused permissions request. </param>
+        <param name="isSynchronized">
+          <attribution license="cc4" from="Microsoft" modified="false" />true to synchronize the creation of modules, types, and members in the dynamic assembly; otherwise, false. </param>
+        <param name="assemblyAttributes">
+          <attribution license="cc4" from="Microsoft" modified="false" />An enumerable list of attributes to be applied to the assembly, or null if there are no attributes.</param>
       </Docs>
     </Member>
     <Member MemberName="DoCallBack">

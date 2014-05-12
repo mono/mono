@@ -89,9 +89,13 @@
       </Parameters>
       <Docs>
         <param name="msg">To be added.</param>
-        <param name="filters">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.MessageFilterException" /> class with a specified error message and a collection of the filters that exceeded the quota of nodes.</para>
+        </summary>
+        <param name="filters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" />s that exceeded the quota of nodes.</param>
       </Docs>
     </Member>
     <Member MemberName=".ctor">
@@ -130,9 +134,13 @@
       <Docs>
         <param name="msg">To be added.</param>
         <param name="inner">To be added.</param>
-        <param name="filters">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Dispatcher.MessageFilterException" /> class, the inner exception that caused the current exception, and a collection of the filters that exceeded the quota of nodes.</para>
+        </summary>
+        <param name="filters">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of <see cref="T:System.ServiceModel.Dispatcher.MessageFilter" />s that exceeded the quota of nodes.</param>
       </Docs>
     </Member>
     <Member MemberName="Filters">

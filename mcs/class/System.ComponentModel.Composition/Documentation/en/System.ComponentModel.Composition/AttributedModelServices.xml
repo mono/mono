@@ -415,11 +415,16 @@
         <Parameter Name="metadata" Type="System.Collections.Generic.IDictionary&lt;System.String,System.Object&gt;" />
       </Parameters>
       <Docs>
-        <typeparam name="TMetadataView">To be added.</typeparam>
-        <param name="metadata">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Gets a metadata view object from a dictionary of loose metadata.</para>
+        </summary>
+        <param name="metadata">
+          <attribution license="cc4" from="Microsoft" modified="false" />A collection of loose metadata.</param>
+        <typeparam name="TMetadataView">
+          <attribution license="cc4" from="Microsoft" modified="false" />The type of the metadata view object to get.</typeparam>
       </Docs>
     </Member>
     <Member MemberName="GetTypeIdentity">

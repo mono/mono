@@ -96,11 +96,16 @@
         <Parameter Name="body" Type="System.Linq.Expressions.Expression" />
       </Parameters>
       <Docs>
-        <param name="testValues">To be added.</param>
-        <param name="body">To be added.</param>
-        <summary>To be added.</summary>
         <returns>To be added.</returns>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Creates a new expression that is like this one, but using the supplied children. If all of the children are the same, it will return this expression.</para>
+        </summary>
+        <param name="testValues">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.SwitchCase.TestValues" /> property of the result.</param>
+        <param name="body">
+          <attribution license="cc4" from="Microsoft" modified="false" />The <see cref="P:System.Linq.Expressions.SwitchCase.Body" /> property of the result.</param>
       </Docs>
     </Member>
   </Members>

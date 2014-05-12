@@ -44,10 +44,20 @@
         <Parameter Name="to" Type="System.Nullable&lt;System.Int64&gt;" />
       </Parameters>
       <Docs>
-        <param name="from">To be added.</param>
-        <param name="to">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>An example of a byte-range in a Range header in an HTTP protocol request that requests the first 100 bytes would be would be the following: </para>
+          <para>Range: bytes=0-99\r\n\r\n</para>
+          <para>For this example, the <paramref name="from" /> parameter would be specified as 0 and the <paramref name="to" /> parameter would be specified as 99. </para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.Net.Http.Headers.RangeItemHeaderValue" /> class.</para>
+        </summary>
+        <param name="from">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position at which to start sending data.</param>
+        <param name="to">
+          <attribution license="cc4" from="Microsoft" modified="false" />The position at which to stop sending data.</param>
       </Docs>
     </Member>
     <Member MemberName="Equals">

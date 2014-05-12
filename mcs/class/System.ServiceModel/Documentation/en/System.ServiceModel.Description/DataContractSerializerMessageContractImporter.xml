@@ -76,11 +76,20 @@
         <Parameter Name="policy" Type="System.Collections.Generic.ICollection&lt;System.Xml.XmlElement&gt;" />
       </Parameters>
       <Docs>
-        <param name="wsdlDocuments">To be added.</param>
-        <param name="xmlSchemas">To be added.</param>
-        <param name="policy">To be added.</param>
-        <summary>To be added.</summary>
-        <remarks>To be added.</remarks>
+        <remarks>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a service description and schema set to use when importing a set of WSDL documents.</para>
+        </remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Specifies a service description and schema set to use when importing a set of WSDL documents.</para>
+        </summary>
+        <param name="wsdlDocuments">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Web.Services.Description.ServiceDescriptionCollection" /> that represents the WSDL documents to inspect.</param>
+        <param name="xmlSchemas">
+          <attribution license="cc4" from="Microsoft" modified="false" />An <see cref="T:System.Xml.Schema.XmlSchemaSet" /> that represents the schemas to use when converting messages.</param>
+        <param name="policy">
+          <attribution license="cc4" from="Microsoft" modified="false" />A <see cref="T:System.Collections.Generic.ICollection`1" /> that contains the policy documents to use when importing messages.</param>
       </Docs>
     </Member>
     <Member MemberName="System.ServiceModel.Description.IWsdlImportExtension.ImportContract">

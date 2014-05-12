@@ -33,10 +33,15 @@
         <Parameter Name="tokenPolicies" Type="System.Collections.ObjectModel.ReadOnlyCollection&lt;System.IdentityModel.Policy.IAuthorizationPolicy&gt;" />
       </Parameters>
       <Docs>
-        <param name="token">To be added.</param>
-        <param name="tokenPolicies">To be added.</param>
-        <summary>To be added.</summary>
         <remarks>To be added.</remarks>
+        <summary>
+          <attribution license="cc4" from="Microsoft" modified="false" />
+          <para>Initializes a new instance of the <see cref="T:System.ServiceModel.Security.SecurityTokenSpecification" /> class using the specified token and token policies.</para>
+        </summary>
+        <param name="token">
+          <attribution license="cc4" from="Microsoft" modified="false" />The security token.</param>
+        <param name="tokenPolicies">
+          <attribution license="cc4" from="Microsoft" modified="false" />The collection of security token policies.</param>
       </Docs>
     </Member>
     <Member MemberName="SecurityToken">
