@@ -1463,6 +1463,12 @@ public class DebuggerTests
 		Assert.AreEqual ("static_foo", (e as StepEvent).Method.Name);
 		obj = frame.GetThis ();
 		AssertValue (null, obj);
+
+		// vtypes which reference themselves recursively
+		e = run_until ("vtypes4_2");
+		frame = e.Thread.GetFrames () [0];
+
+		Assert.IsTrue (frame.GetArgument (0) is StructMirror);
 	}
 
 	[Test]

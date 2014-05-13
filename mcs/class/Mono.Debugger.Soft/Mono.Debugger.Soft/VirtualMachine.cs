@@ -567,6 +567,10 @@ namespace Mono.Debugger.Soft
 		}
 
 		internal Value DecodeValue (ValueImpl v) {
+			return DecodeValue (v, null);
+		}
+
+		internal Value DecodeValue (ValueImpl v, Dictionary<int, Value> parent_vtypes) {
 			if (v.Value != null)
 				return new PrimitiveValue (this, v.Value);
 
@@ -582,12 +586,21 @@ namespace Mono.Debugger.Soft
 			case ElementType.Object:
 				return GetObject (v.Objid);
 			case ElementType.ValueType:
+				if (parent_vtypes == null)
+					parent_vtypes = new Dictionary<int, Value> ();
+				StructMirror vtype;
 				if (v.IsEnum)
-					return new EnumMirror (this, GetType (v.Klass), DecodeValues (v.Fields));
+					vtype = new EnumMirror (this, GetType (v.Klass), (Value[])null);
 				else
-					return new StructMirror (this, GetType (v.Klass), DecodeValues (v.Fields));
+					vtype = new StructMirror (this, GetType (v.Klass), (Value[])null);
+				parent_vtypes [parent_vtypes.Count] = vtype;
+				vtype.SetFields (DecodeValues (v.Fields, parent_vtypes));
+				parent_vtypes.Remove (parent_vtypes.Count - 1);
+				return vtype;
 			case (ElementType)ValueTypeId.VALUE_TYPE_ID_NULL:
 				return new PrimitiveValue (this, null);
+			case (ElementType)ValueTypeId.VALUE_TYPE_ID_PARENT_VTYPE:
+				return parent_vtypes [v.Index];
 			default:
 				throw new NotImplementedException ("" + v.Type);
 			}
@@ -597,6 +610,13 @@ namespace Mono.Debugger.Soft
 			Value[] res = new Value [values.Length];
 			for (int i = 0; i < values.Length; ++i)
 				res [i] = DecodeValue (values [i]);
+			return res;
+		}
+
+		internal Value[] DecodeValues (ValueImpl[] values, Dictionary<int, Value> parent_vtypes) {
+			Value[] res = new Value [values.Length];
+			for (int i = 0; i < values.Length; ++i)
+				res [i] = DecodeValue (values [i], parent_vtypes);
 			return res;
 		}
 

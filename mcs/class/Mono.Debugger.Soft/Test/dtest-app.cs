@@ -139,6 +139,18 @@ public struct NestedStruct {
 public struct NestedInner {
 }
 
+public interface IRecStruct {
+	void foo (object o);
+}
+
+struct RecStruct : IRecStruct {
+	public object o;
+
+	public void foo (object o) {
+		this.o = o;
+	}
+}
+
 interface ITest
 {
 	void Foo ();
@@ -617,6 +629,7 @@ public class Tests : TestsBase, ITest2
 		t.vtypes1 (s, arr);
 		vtypes2 (s);
 		vtypes3 (s);
+		vtypes4 ();
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
@@ -635,6 +648,17 @@ public class Tests : TestsBase, ITest2
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]
 	public static void vtypes3 (AStruct s) {
 		AStruct.static_foo (5);
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void vtypes4_2 (IRecStruct o) {
+	}
+
+	[MethodImplAttribute (MethodImplOptions.NoInlining)]
+	public static void vtypes4 () {
+		IRecStruct s = new RecStruct ();
+		s.foo (s);
+		vtypes4_2 (s);
 	}
 
 	[MethodImplAttribute (MethodImplOptions.NoInlining)]

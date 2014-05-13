@@ -149,7 +149,8 @@ namespace Mono.Debugger.Soft
 
 	enum ValueTypeId {
 		VALUE_TYPE_ID_NULL = 0xf0,
-		VALUE_TYPE_ID_TYPE = 0xf1
+		VALUE_TYPE_ID_TYPE = 0xf1,
+		VALUE_TYPE_ID_PARENT_VTYPE = 0xf2
 	}
 
 	[Flags]
@@ -209,6 +210,7 @@ namespace Mono.Debugger.Soft
 		public ValueImpl[] Fields; // for ElementType.ValueType
 		public bool IsEnum; // For ElementType.ValueType
 		public long Id; /* For VALUE_TYPE_ID_TYPE */
+		public int Index; /* For VALUE_TYPE_PARENT_VTYPE */
 	}
 
 	class ModuleInfo {
@@ -413,7 +415,7 @@ namespace Mono.Debugger.Soft
 		 * with newer runtimes, and vice versa.
 		 */
 		internal const int MAJOR_VERSION = 2;
-		internal const int MINOR_VERSION = 32;
+		internal const int MINOR_VERSION = 33;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -848,6 +850,8 @@ namespace Mono.Debugger.Soft
 					return new ValueImpl { Type = etype };
 				case (ElementType)ValueTypeId.VALUE_TYPE_ID_TYPE:
 					return new ValueImpl () { Type = etype, Id = ReadId () };
+				case (ElementType)ValueTypeId.VALUE_TYPE_ID_PARENT_VTYPE:
+					return new ValueImpl () { Type = etype, Index = ReadInt () };
 				default:
 					throw new NotImplementedException ("Unable to handle type " + etype);
 				}
