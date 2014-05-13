@@ -249,15 +249,15 @@ namespace Mono.Debugger.Soft
 				}
 
 				// Add the arguments as well
-				var pi = vm.conn.Method_GetParamInfo (id);
+				var pi = GetParameters ();
 
-				locals = new LocalVariable [pi.param_count + li.names.Length];
+				locals = new LocalVariable [pi.Length + li.names.Length];
 
-				for (int i = 0; i < pi.param_count; ++i)
-					locals [i] = new LocalVariable (vm, this, i, pi.param_types [i], pi.param_names [i], -1, -1, true);
+				for (int i = 0; i < pi.Length; ++i)
+					locals [i] = new LocalVariable (vm, this, i, pi[i].ParameterType.Id, pi[i].ParameterType.Name, -1, -1, true);
 
 				for (int i = 0; i < li.names.Length; ++i)
-					locals [i + pi.param_count] = new LocalVariable (vm, this, i, li.types [i], li.names [i], li.live_range_start [i], li.live_range_end [i], false);
+					locals [i + pi.Length] = new LocalVariable (vm, this, i, li.types [i], li.names [i], li.live_range_start [i], li.live_range_end [i], false);
 			}
 			return locals;
 		}
