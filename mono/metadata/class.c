@@ -4330,6 +4330,8 @@ mono_class_init (MonoClass *class)
 
 	mono_stats.initialized_class_count++;
 
+	class->user_data = NULL;
+
 	if (class->generic_class && !class->generic_class->is_dynamic) {
 		MonoClass *gklass = class->generic_class->container_class;
 
@@ -7774,6 +7776,33 @@ mono_class_get_nested_types (MonoClass* klass, gpointer *iter)
 		return item->data;
 	}
 	return NULL;
+}
+
+/**
+ * mono_class_get_userdata:
+ * @class: the MonoClass to act on
+ *
+ * Returns: the userdata associated with this class. Unity uses this to store classID information.
+ */
+
+void*
+mono_class_get_userdata (MonoClass *klass)
+{
+	return klass->user_data;
+}
+
+/**
+ * mono_class_set_userdata:
+ * @klass: the MonoClass to act on
+ * @userdata : the data to set
+ *
+ * Unity uses the userdata of a class to store classID information
+ */
+
+void
+mono_class_set_userdata (MonoClass *klass, void* userdata)
+{
+	klass->user_data = userdata;
 }
 
 /**
