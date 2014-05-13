@@ -480,6 +480,17 @@ int GC_get_suspend_signal GC_PROTO(())
 #endif
 }
 
+int GC_get_restart_signal GC_PROTO(())
+{
+#if defined(SIG_THR_RESTART) && defined(GC_PTHREADS) && !defined(GC_MACOSX_THREADS) && !defined(GC_OPENBSD_THREADS)
+	return SIG_THR_RESTART;
+#else
+	return -1;
+#endif
+}
+
+
+
 GC_bool GC_is_initialized = FALSE;
 
 void GC_init()

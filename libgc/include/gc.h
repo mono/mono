@@ -429,6 +429,10 @@ GC_API size_t GC_get_total_bytes GC_PROTO((void));
 /* Return -1 otherwise. */
 int GC_get_suspend_signal GC_PROTO((void));
 
+/* Return the signal used by the gc to resume threads on posix platforms. */
+/* Return -1 otherwise. */
+int GC_get_restart_signal GC_PROTO((void));
+
 /* Disable garbage collection.  Even GC_gcollect calls will be 		*/
 /* ineffective.								*/
 GC_API void GC_disable GC_PROTO((void));
