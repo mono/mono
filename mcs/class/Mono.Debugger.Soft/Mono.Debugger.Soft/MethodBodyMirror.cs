@@ -61,12 +61,14 @@ namespace Mono.Debugger.Soft
 
 		ResolvedToken ResolveToken (int token)
 		{
-			ResolvedToken resolvedToken;
-			if (!tokensCache.TryGetValue (token, out resolvedToken)) {
-				resolvedToken = vm.conn.Method_ResolveToken (Method.Id, token);
-				tokensCache.Add (token, resolvedToken);
+			lock (tokensCache) {
+				ResolvedToken resolvedToken;
+				if (!tokensCache.TryGetValue (token, out resolvedToken)) {
+					resolvedToken = vm.conn.Method_ResolveToken (Method.Id, token);
+					tokensCache.Add (token, resolvedToken);
+				}
+				return resolvedToken;
 			}
-			return resolvedToken;
 		}
 
 		// Adapted from Cecil
