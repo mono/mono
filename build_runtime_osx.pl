@@ -55,7 +55,7 @@ for my $arch (@arches)
 	}
 
 	my $sdkPath = "$xcodePath/Developer/SDKs/MacOSX$sdkversion.sdk";
-	if ($ENV{'UNITY_THISISABUILDMACHINE'})
+	if ($ENV{'UNITY_THISISABUILDMACHINE'} && !$iphone_simulator)
 	{
 		# Set up clang toolchain
 		$sdkPath = "$unityPath/External/MacBuildEnvironment/builds/MacOSX$sdkversion.sdk";
