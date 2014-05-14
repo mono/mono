@@ -337,7 +337,7 @@ namespace Microsoft.Build.Internal
 						valueInstance = ConvertTo (p.Value, prop.PropertyType);
 						prop.SetValue (task, valueInstance, null);
 					} else if (p.Value.Any ()) {
-						string valueString = string.Join (";", p.Value.Where (o => o != null).Select (o => ConvertTo (o, typeof (string))));
+						string valueString = string.Join (";", p.Value.Where (o => o != null).Select (o => ConvertTo (o, typeof (string))).Where (s => s != null));
 						if (string.IsNullOrEmpty (valueString) && !requiredProps.Contains (prop))
 							continue;
 						valueInstance = ConvertTo (valueString, prop.PropertyType);
