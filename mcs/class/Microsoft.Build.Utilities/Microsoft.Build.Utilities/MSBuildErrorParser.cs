@@ -66,12 +66,12 @@ namespace Microsoft.Build.Utilities
 
 			//find the origin section
 			//the filename may include a colon for Windows drive e.g. C:\foo, so ignore colon in first 2 chars
-			int originEnd = line.IndexOf (':', originStart + 2) - 1;
+			int originEnd = line[originStart] == ':'? originStart : line.IndexOf (':', originStart + 2) - 1;
 			int categoryStart = originEnd + 2;
 			MovePrevNonSpace (line, ref originEnd);
 
 			//if there is no origin section, then we can't parse the message
-			if (originEnd < 0 || originEnd <= originStart)
+			if (originEnd < 0 || originEnd < originStart)
 				return null;
 
 			//find the category section, if there is one
@@ -87,7 +87,7 @@ namespace Microsoft.Build.Utilities
 			//if there is a category section and it parses
 			if (categoryEnd > 0 && ParseCategory (line, categoryStart, categoryEnd, result)) {
 				//then parse the origin section
-				if (!ParseOrigin (line, originStart, originEnd, result))
+				if (originEnd > originStart && !ParseOrigin (line, originStart, originEnd, result))
 					return null;
 			} else {
 				//there is no origin, parse the origin section as if it were the category

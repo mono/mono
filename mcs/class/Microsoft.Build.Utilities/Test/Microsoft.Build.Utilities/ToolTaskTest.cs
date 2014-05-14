@@ -129,6 +129,24 @@ namespace MonoTests.Microsoft.Build.Utilities {
 			).SetName ("CaseInsensitivity");
 
 			yield return new TestCaseData (
+				": error  CS66 : ",
+				new LogEvent {
+					Origin = "#TASKNAME",
+					IsError = true,
+					Code = "CS66"
+				}
+			).SetName ("EmptyOrigin");
+
+			yield return new TestCaseData (
+				"     : error  CS66 : ",
+				new LogEvent {
+					Origin = "#TASKNAME",
+					IsError = true,
+					Code = "CS66"
+				}
+			).SetName ("BlankOrigin");
+
+			yield return new TestCaseData (
 				"error   CS66 : error in 'hello:thing'",
 				new LogEvent {
 					Origin = "#TASKNAME",
