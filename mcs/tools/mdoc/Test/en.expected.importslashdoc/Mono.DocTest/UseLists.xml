@@ -104,6 +104,7 @@
         </remarks>
         <exception cref="T:System.Exception">To be added; from:
           <see cref="M:Mono.DocTest.UseLists.Process(System.Collections.Generic.List{System.Int32})" /></exception>
+        <exception cref="Whatever">text!</exception>
       </Docs>
     </Member>
     <Member MemberName="Process">
