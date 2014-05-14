@@ -311,7 +311,7 @@ namespace Microsoft.Build.Internal
 			task.BuildEngine = this;
 			
 			// Prepare task parameters.
-			var evaluatedTaskParams = taskInstance.Parameters.Select (p => new KeyValuePair<string,string> (p.Key, project.ExpandString (p.Value)));
+			var evaluatedTaskParams = taskInstance.Parameters.Select (p => new KeyValuePair<string,object[]> (p.Key, project.EvaluateAsStringOrItems (p.Value).ToArray ()));
 			
 			var requiredProps = task.GetType ().GetProperties ()
 				.Where (p => p.CanWrite && p.GetCustomAttributes (typeof (RequiredAttribute), true).Any ());
@@ -327,15 +327,22 @@ namespace Microsoft.Build.Internal
 					continue;
 				}
 				var prop = task.GetType ().GetProperty (p.Key);
+				object valueInstance = null;
 				if (prop == null)
 					throw new InvalidOperationException (string.Format ("Task {0} does not have property {1}", taskInstance.Name, p.Key));
 				if (!prop.CanWrite)
 					throw new InvalidOperationException (string.Format ("Task {0} has property {1} but it is read-only.", taskInstance.Name, p.Key));
-				if (string.IsNullOrEmpty (p.Value) && !requiredProps.Contains (prop))
-					continue;
 				try {
-					var valueInstance = ConvertTo (p.Value, prop.PropertyType);
-					prop.SetValue (task, valueInstance, null);
+					if (p.Value.All (o => o is ITaskItem)) {
+						valueInstance = ConvertTo (p.Value, prop.PropertyType);
+						prop.SetValue (task, valueInstance, null);
+					} else if (p.Value.Any ()) {
+						string valueString = string.Join (";", p.Value.Where (o => o != null).Select (o => ConvertTo (o, typeof (string))));
+						if (string.IsNullOrEmpty (valueString) && !requiredProps.Contains (prop))
+							continue;
+						valueInstance = ConvertTo (valueString, prop.PropertyType);
+						prop.SetValue (task, valueInstance, null);
+					}
 				} catch (Exception ex) {
 					throw new InvalidOperationException (string.Format ("Failed to convert '{0}' for property '{1}' of type {2}", p.Value, prop.Name, prop.PropertyType), ex);
 				}
@@ -397,14 +404,25 @@ namespace Microsoft.Build.Internal
 			return true;
 		}
 		
-		object ConvertTo (string source, Type targetType)
+		object ConvertTo (object sourceObject, Type targetType)
 		{
-			if (targetType == typeof(ITaskItem) || targetType.IsSubclassOf (typeof(ITaskItem)))
+			if (sourceObject == null)
+				return null;
+			if (sourceObject.GetType () == targetType)
+				return sourceObject;
+			var arr = sourceObject is IEnumerable<object> ? ((IEnumerable<object>) sourceObject).ToArray ()
+				: sourceObject is ICollection
+				? (object []) new ArrayList ((ICollection) sourceObject).ToArray (typeof(object)) : null;
+			if (targetType.IsArray && sourceObject.GetType ().IsArray)
+				return new ArrayList (arr.Select (o => ConvertTo (o, targetType.GetElementType ())).Where (o => o != null).ToArray ())
+						.ToArray (targetType.GetElementType ());
+			var source = sourceObject is string ? (string) sourceObject : arr == null || !arr.Any () ? string.Empty : string.Join (";", arr.Select (o => ConvertTo (o, typeof (string))).Where (s => s != null));
+			if (targetType == typeof (ITaskItem) || targetType.IsSubclassOf (typeof (ITaskItem)))
 				return new TargetOutputTaskItem () { ItemSpec = WindowsCompatibilityExtensions.FindMatchingPath (source.Trim ()) };
 			if (targetType.IsArray)
 				return new ArrayList (source.Split (';').Select (s => s.Trim ()).Where (s => !string.IsNullOrEmpty (s)).Select (s => ConvertTo (s, targetType.GetElementType ())).ToArray ())
 						.ToArray (targetType.GetElementType ());
-			if (targetType == typeof(bool)) {
+			if (targetType == typeof (bool)) {
 				switch (source != null ? source.ToLower (CultureInfo.InvariantCulture) : string.Empty) {
 				case "true":
 				case "yes":

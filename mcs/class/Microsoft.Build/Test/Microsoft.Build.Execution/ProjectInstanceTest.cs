@@ -223,13 +223,12 @@ namespace MonoTests.Microsoft.Build.Execution
 		[Test]
 		public void ExpandStringWithMetadata ()
 		{
-			string thisAssembly = new Uri (GetType ().Assembly.CodeBase).LocalPath;
-			string project_xml = string.Format (@"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+			string project_xml = @"<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
   <ItemGroup>
     <Foo Include='xxx'><M>x</M></Foo>
     <Foo Include='yyy'><M>y</M></Foo>
   </ItemGroup>
-</Project>", thisAssembly);
+</Project>";
 			var xml = XmlReader.Create (new StringReader (project_xml));
 			var root = ProjectRootElement.Create (xml);
 			root.FullPath = "ProjectInstanceTest.ExpandStringWithMetadata.proj";

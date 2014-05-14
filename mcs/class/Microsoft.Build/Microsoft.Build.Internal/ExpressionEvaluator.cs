@@ -96,6 +96,14 @@ namespace Microsoft.Build.Internal.Expressions
 				throw new InvalidProjectFileException (string.Format ("failed to evaluate expression as boolean: '{0}': {1}", source, ex.Message), ex);
 			}
 		}
+
+		public IEnumerable<object> EvaluateAsStringOrItems (string unexpandedValue)
+		{
+			var exprList = new ExpressionParserManual (unexpandedValue ?? string.Empty, ExpressionValidationType.LaxString).Parse ();
+			if (exprList == null)
+				throw new ArgumentNullException ("exprList");
+			return exprList.Select (e => e.EvaluateAsStringOrItems (CreateContext (unexpandedValue)));
+		}
 	}
 	
 	class EvaluationContext
@@ -113,6 +121,12 @@ namespace Microsoft.Build.Internal.Expressions
 		
 		Stack<object> evaluating_items = new Stack<object> ();
 		Stack<object> evaluating_props = new Stack<object> ();
+
+		List<ITaskItem> evaluated_task_items = new List<ITaskItem> ();
+
+		public IList<ITaskItem> EvaluatedTaskItems {
+			get { return evaluated_task_items; }
+		}
 		
 		public IEnumerable<object> GetItems (string name)
 		{
@@ -139,8 +153,12 @@ namespace Microsoft.Build.Internal.Expressions
 				var eval = item as ProjectItem;
 				if (eval != null)
 					return Evaluator.Evaluate (eval.EvaluatedInclude);
-				else
-					return Evaluator.Evaluate (((ProjectItemInstance) item).EvaluatedInclude);
+				else {
+					var inst = (ProjectItemInstance) item;
+					if (!evaluated_task_items.Contains (inst))
+						evaluated_task_items.Add (inst);
+					return Evaluator.Evaluate (inst.EvaluatedInclude);
+				}
 			} finally {
 				evaluating_items.Pop ();
 			}
@@ -190,6 +208,11 @@ namespace Microsoft.Build.Internal.Expressions
 					return false;
 			}
 			throw new InvalidProjectFileException (this.Location, string.Format ("Condition '{0}' is evaluated as '{1}' and cannot be converted to boolean", context.Source, ret));
+		}
+
+		public virtual object EvaluateAsStringOrItems (EvaluationContext context)
+		{
+			return EvaluateAsString (context);
 		}
 	}
 	
@@ -405,6 +428,16 @@ namespace Microsoft.Build.Internal.Expressions
 		
 		public override string EvaluateAsString (EvaluationContext context)
 		{
+			// FIXME: enable this and fix regressions.
+			/*
+			var ret = EvaluateAsStringOrItems (context);
+			if (ret == null)
+				return null;
+			if (ret is string)
+				return (string) ret;
+			string itemType = Application.Name.Name;
+			return string.Join (";", ((IEnumerable<object>) ret).Select (item => context.EvaluateItem (itemType, item)));
+			*/
 			string itemType = Application.Name.Name;
 			var items = context.GetItems (itemType);
 			if (!items.Any ())
@@ -417,13 +450,33 @@ namespace Microsoft.Build.Internal.Expressions
 					var ret = string.Concat (Application.Expressions.Select (e => e.EvaluateAsString (context)));
 					context.ContextItem = null;
 					return ret;
-					}));
+				}));
 		}
 		
 		public override object EvaluateAsObject (EvaluationContext context)
 		{
 			return EvaluateAsString (context);
 		}
+
+		// FIXME: enable this and fix regressions.
+		/*
+		public override object EvaluateAsStringOrItems (EvaluationContext context)
+		{
+			string itemType = Application.Name.Name;
+			var items = context.GetItems (itemType);
+			if (!items.Any ())
+				return null;
+			if (Application.Expressions == null)
+				return items;
+			else
+				return string.Join (";", items.Select (item => {
+					context.ContextItem = item;
+					var ret = string.Concat (Application.Expressions.Select (e => e.EvaluateAsString (context)));
+					context.ContextItem = null;
+					return ret;
+				}));
+		}
+		*/
 	}
 
 	partial class MetadataAccessExpression : Expression
